@@ -1,9 +1,11 @@
 <%
+
 var fuseRouter = require('fuse-router.js');
 var fuse = require('fuse.js');
 var util = require('fuse-util.js');
-var zones;
-var currentZones;
+var zones = {};
+var currentZone = null;
+var handlebars = require('handlebars-helpers.js');
 var requestId = function makeId() {
     var text = "";
     var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
