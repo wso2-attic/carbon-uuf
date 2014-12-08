@@ -2,7 +2,6 @@
 
 var fuseRouter = require('fuse-router.js');
 var fuse = require('fuse.js');
-var util = require('fuse-util.js');
 var zones = {};
 var currentZone = null;
 var handlebars = require('handlebars-helpers.js');
