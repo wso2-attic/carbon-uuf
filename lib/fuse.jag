@@ -1,0 +1,18 @@
+<%
+var fuseRouter = require('fuse-router.js');
+var fuse = require('fuse.js');
+var util = require('fuse-util.js');
+var zones;
+var currentZones;
+var requestId = function makeId() {
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    for (var i = 0; i < 5; i++)
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+    return text;
+}();
+var fuseDebug = false;
+fuseRouter.route();
+
+%>
