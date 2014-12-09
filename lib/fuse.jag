@@ -4,7 +4,7 @@
 var fuseState = {
     zones: {},
     appName: '',
-    currentZone: null
+    currentZone: []
 };
 
 var requestId = function makeId() {
@@ -15,8 +15,8 @@ var requestId = function makeId() {
 
     return text;
 }();
-//var fuseDebug = false;
-var fuseDebug = true;
+var fuseDebug = false;
+//var fuseDebug = true;
 
 var handlebars = require('handlebars-helpers.js');
 var fuseRouter = require('fuse-router.js');
