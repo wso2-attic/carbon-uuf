@@ -1,10 +1,12 @@
 <%
 
-var fuseRouter = require('fuse-router.js');
-var fuse = require('fuse.js');
-var zones = {};
-var currentZone = null;
-var handlebars = require('handlebars-helpers.js');
+//global object to pass request stat among fuse framework files.
+var fuseState = {
+    zones: {},
+    appName: '',
+    currentZone: null
+};
+
 var requestId = function makeId() {
     var text = "";
     var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -13,7 +15,14 @@ var requestId = function makeId() {
 
     return text;
 }();
-var fuseDebug = false;
+//var fuseDebug = false;
+var fuseDebug = true;
+
+var handlebars = require('handlebars-helpers.js');
+var fuseRouter = require('fuse-router.js');
+var fuse = require('fuse.js');
+
+
 fuseRouter.route();
 
 %>
