@@ -1,8 +1,4 @@
 {
   "extends": "bootstrap",
-  "predicate": {
-    "app-setting": {
-      "theme": "default"
-    }
-  }
+  "predicate": "config.theme == 'default'"
 }
