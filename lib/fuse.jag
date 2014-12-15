@@ -4,7 +4,8 @@
 var fuseState = {
     zones: {},
     appName: '',
-    currentZone: []
+    currentZone: [], //TODO: rename to zone Stack
+    currentUnit: null
 };
 
 var requestId = function makeId() {
