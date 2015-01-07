@@ -3,16 +3,15 @@
 {{/zone}}
 
 {{#zone "main"}}
-    <form>
+    <form class="{{self.class}}">
         <input type="text" class="form-control" placeholder="User Name" required autofocus>
         <input type="password" class="form-control" placeholder="Password" required>
         <button class="btn btn-lg btn-primary btn-block" type="submit">
             Sign in
         </button>
-        <label class="checkbox pull-left">
-            <input type="checkbox" value="remember-me">
-            Remember me
+        <label class="pull-left">
+            <input type="checkbox" value="remember-me"> Remember me
         </label>
-        <a href="#" class="pull-right need-help">Create an account</a>
+        <a href="#" class="pull-right create-account">Create an account</a>
     </form>
 {{/zone}}
