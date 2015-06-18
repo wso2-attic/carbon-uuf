@@ -1,19 +1,3 @@
-License
-=======
-Copyright 2015 manu@wso2.com
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-
 Prerequisites
 =============
 The Fuse or Unified UI Framework can be used to develop jaggery applications running within any WSO2 product containing the Jaggery runtime such
@@ -22,9 +6,9 @@ as the WSO2 Application Server.
 Getting Started
 ===============
 1. Clone this repo: https://github.com/manuranga/fuse.git
-2. Change the name of the fuse folder to the name of your application 
+2. Change the name of the fuse folder to the name of your application
 3. Select a WSO2 Product containing the Jaggery runtime such as WSO2 Application Server
-4. Copy the folder to the 
+4. Copy the folder to the
     {CARBON_PRODUCT_HOME}/repository/deployment/server/jaggeryapps directory
 5. Navigate to https://localhost:9443/fuse/ (or if you have changed the name navigate to: https://localhost:9443/{your-app-name})
 
@@ -70,7 +54,7 @@ A unit (component) consists of four main elements:
 
 ####{unit-name}.json
 Allows a unit (component) to inherit from another unit (component) by defining an extend property
-Allows a scope (predicate) to be defined for the component by using the predicate property 
+Allows a scope (predicate) to be defined for the component by using the predicate property
 
 ####{unit-name}.js
 When a unit (component) is loaded this script is executed and may contain server side initialization logic
@@ -84,6 +68,5 @@ Contains images,css and other resources neccessary to render a UI element
 
 Tooling
 =======
-We have written a yeoman generator that will ease the creation of framework components such as pages, layouts and units (components).The generator-uuf 
+We have written a yeoman generator that will ease the creation of framework components such as pages, layouts and units (components).The generator-uuf
 is available at: https://github.com/splinter/generator-uuf
-
