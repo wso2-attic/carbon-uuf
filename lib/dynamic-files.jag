@@ -1,0 +1,11 @@
+<%
+var isCachingEnabled = false;
+var Utils = require("utils.js");
+var configs = Utils.getConfigurations(isCachingEnabled);
+var lookUpTable = Utils.getLookUpTable(configs);
+var DynamicRouter = new (require("dynamic-files-router.js")).DynamicRouter();
+
+// TODO: handle error/exceptions
+DynamicRouter.route(request, response, lookUpTable, configs);
+
+%>
