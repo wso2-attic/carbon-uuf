@@ -1,0 +1,11 @@
+<%
+var isCachingEnabled = false;
+var Utils = require("utils.js");
+var configs = Utils.getConfigurations(isCachingEnabled);
+var lookUpTable = Utils.getLookUpTable(configs);
+var StaticRouter = new (require("static-files-router.js")).StaticRouter();
+
+// TODO: handle error/exceptions
+StaticRouter.route(request, response, lookUpTable, configs);
+
+%>

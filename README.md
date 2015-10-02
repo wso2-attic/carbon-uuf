@@ -1,19 +1,7 @@
 Prerequisites
 =============
-The Fuse or Unified UI Framework can be used to develop jaggery applications running within any WSO2 product containing the Jaggery runtime such
+Unified UI Framework can be used to develop [Jaggery](http://jaggeryjs.org/) applications running within any WSO2 product containing the Jaggery runtime such
 as the WSO2 Application Server.
-
-Getting Started
-===============
-1. Clone this repo: https://github.com/manuranga/fuse.git
-2. Change the name of the fuse folder to the name of your application
-3. Select a WSO2 Product containing the Jaggery runtime such as WSO2 Application Server
-4. Copy the folder to the
-    {CARBON_PRODUCT_HOME}/repository/deployment/server/jaggeryapps directory
-5. Navigate to https://localhost:9443/fuse/ (or if you have changed the name navigate to: https://localhost:9443/{your-app-name})
-
-This repo doubles as both the framework repository as well as a sample.The framework source code is found in the libs folder while the rest of
-the folders provide scaffolding for a sample application.
 
 Elements of the framework
 ===========================
@@ -64,9 +52,3 @@ Contains the UI representation as a Handlebars template.Please refer to  http://
 
 ####public folder
 Contains images,css and other resources neccessary to render a UI element
-
-
-Tooling
-=======
-We have written a yeoman generator that will ease the creation of framework components such as pages, layouts and units (components).The generator-uuf
-is available at: https://github.com/splinter/generator-uuf

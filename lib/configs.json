@@ -1,0 +1,15 @@
+{
+    "constants": {
+        "DIRECTORY_APP_ROOT": "/app",
+        "DIRECTORY_APP_LAYOUTS": "/app/layouts",
+        "DIRECTORY_APP_PAGES": "/app/pages",
+        "DIRECTORY_APP_UNITS": "/app/units",
+        "DIRECTORY_APP_UNIT_PUBLIC": "/public",
+        "DIRECTORY_CACHE": "/cache",
+        "DIRECTORY_DEBUG": "/debug",
+        "LIBRARY_HANDLEBARS": "handlebars-v2.0.0.js",
+        "LIBRARY_LESS": "less-rhino-1.7.5.js"
+    },
+    "caching": false,
+    "debugging": true
+}
