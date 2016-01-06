@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sign In | WSO2</title>
+</head>
+<body>
+<div>
+    <p>
+        You are now being redirected to Identity Server. If the redirection fails, please click on
+        the button below.
+    </p>
+
+    <form method="post" action="{{identityProviderUrl}}">
+        <input type="hidden" name="SAMLRequest" value="{{encodedSAMLAuthRequest}}" />
+        <input type="hidden" name="RelayState" value="{{relayState}}" />
+        <input type="hidden" name="SSOAuthSessionID" value="{{sessionId}}" />
+        <button type="submit">Redirect manually</button>
+    </form>
+</div>
+<script type="text/javascript">document.forms[0].submit();</script>
+</body>
+</html>
