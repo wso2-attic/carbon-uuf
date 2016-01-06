@@ -1,0 +1,37 @@
+<%
+var oldSendErrorFunction = response.sendError;
+var prevErrorPageRoutingFinished = true;
+response.sendError = function (status, message) {
+    if (!prevErrorPageRoutingFinished) {
+        // Previous error page routing process failed, at some point "response.sendError" function
+        // was called. To avoid recursion, call the default "sendError" function.
+        oldSendErrorFunction.call(this, status, message);
+        return;
+    }
+
+    prevErrorPageRoutingFinished = false;
+    try {
+        require("error-pages-router.js").route(status, message, request, response);
+    } catch (e) {
+        // An exception was thrown when routing the error page. Hence call the default "sendError"
+        // function.
+        var log = new Log("error-pages");
+        if ((typeof e) == "string") {
+            // JS "throw message" type errors
+            log.error(e);
+            oldSendErrorFunction.call(this, 500, e);
+        } else {
+            if (e.stack) {
+                // Java/Rhino Exceptions
+                log.error(e.message, e);
+                oldSendErrorFunction.call(this, 500, e.message);
+            } else if (e.message) {
+                // JS "throw new Error(message)" type errors
+                log.error(e.message);
+                oldSendErrorFunction.call(this, 500, e.message);
+            }
+        }
+    }
+    prevErrorPageRoutingFinished = true;
+};
+%>
