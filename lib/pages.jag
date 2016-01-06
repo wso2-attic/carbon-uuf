@@ -1,6 +1,6 @@
 <%
-var DynamicRouter = require("dynamic-files-router.js");
+include("error-pages.jag");
 
-// TODO: handle error/exceptions
+var DynamicRouter = require("pages-router.js");
 DynamicRouter.route(request, response);
 %>
