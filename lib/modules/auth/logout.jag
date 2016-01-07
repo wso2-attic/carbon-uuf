@@ -3,7 +3,7 @@ include("/lib/error-pages.jag");
 
 (function () {
     var log = new Log("auth-module-logout");
-    var authModule = require("auth.js").module;
+    var authModule = require("/lib/modules/auth/auth.js").module;
 
     if (!authModule.isEnabled()) {
         log.warn("Auth module is not enabled in the application configuration file.");

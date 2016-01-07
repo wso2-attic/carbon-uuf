@@ -11,7 +11,7 @@ response.sendError = function (status, message) {
 
     prevErrorPageRoutingFinished = false;
     try {
-        require("error-pages-router.js").route(status, message, request, response);
+        require("/lib/error-pages-router.js").route(status, message, request, response);
     } catch (e) {
         // An exception was thrown when routing the error page. Hence call the default "sendError"
         // function.

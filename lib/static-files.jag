@@ -1,4 +1,4 @@
 <%
-var StaticRouter = require("static-files-router.js");
+var StaticRouter = require("/lib/static-files-router.js");
 StaticRouter.route(request, response);
 %>
