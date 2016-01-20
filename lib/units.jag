@@ -1,6 +1,6 @@
 <%
 include("/lib/error-pages.jag");
 
-var UnitsRouter = require("/lib/units-router.js");
-UnitsRouter.route(request, response);
+var unitsRouter = require("/lib/units-router.js");
+unitsRouter.route(request, response);
 %>
