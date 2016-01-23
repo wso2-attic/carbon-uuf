@@ -1,5 +1,5 @@
 <%
-include("/lib/error-pages.jag");
+require("/lib/error-pages-router.js");
 
 (function () {
     var log = new Log("auth-module-login");
