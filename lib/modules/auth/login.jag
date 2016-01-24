@@ -1,0 +1,33 @@
+<%
+require("/lib/error-pages-router.js");
+
+(function () {
+    var log = new Log("auth-module-login");
+    var authModule = require("/lib/modules/auth/auth.js").module;
+
+    if (!authModule.isEnabled()) {
+        log.warn("Auth module is not enabled in the application configuration file.");
+        response.sendError(404);
+        return;
+    }
+
+    var currentUser = authModule.getCurrentUser();
+    if (currentUser) {
+        if (log.isDebugEnabled()) {
+            log.debug("User '" + currentUser.username + "' is already logged in.");
+        }
+        var referer = request.getHeader("referer");
+        var redirectUrl = (referer) ? referer : (authModule.getAppContext() + "/");
+        response.sendRedirect(redirectUrl);
+        return;
+    }
+
+    if (authModule.isSsoEnabled()) {
+        // SSO is enabled.
+        authModule.renderSsoIntermediatePage("login", response);
+    } else {
+        // Generic login process is enabled.
+        authModule.login(request, response);
+    }
+})();
+%>
