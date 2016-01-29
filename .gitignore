@@ -1,4 +1,15 @@
 #################
+## Java
+#################
+*.class
+
+# Package files
+*.jar
+*.war
+*.ear
+
+
+#################
 ## Eclipse
 #################
 *.pydevproject
@@ -167,3 +178,5 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+
+target
