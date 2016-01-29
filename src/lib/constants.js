@@ -1,12 +1,14 @@
 /**
  * Application constants.
  */
+/** @typedef {{constants:Object.<string,string>}} Constants*/
 var constants = {
     // Paths - Directories
     DIRECTORY_APP: "/app",
     DIRECTORY_APP_LAYOUTS: "/app/layouts",
-    DIRECTORY_APP_PAGES: "/app/pages",
-    DIRECTORY_APP_UNITS: "/app/units",
+    DIRECTORY_APP_COMPONENTS: "/app/components",
+    DIRECTORY_APP_PAGES: "/pages",
+    DIRECTORY_APP_UNITS: "/units",
     DIRECTORY_APP_UNIT_PUBLIC: "public",
     DIRECTORY_CACHE: "/cache",
     DIRECTORY_CONF: "/conf",

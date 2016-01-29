@@ -42,6 +42,7 @@ var route;
         var appData = renderingContext.app;
         var loginPageFullName = appData.conf[constants.APP_CONF_LOGIN_PAGE];
         if (loginPageFullName) {
+            /** @type {UIComponent}*/
             var loginPage = lookupTable.pages[loginPageFullName];
             if (loginPage) {
                 loginPage = utils.getFurthestChild(loginPage);

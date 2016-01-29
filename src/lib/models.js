@@ -11,6 +11,8 @@ function UIComponent() {
     this.type = null;
     /** @type {string} */
     this.path = null;
+    /** @type {string} */
+    this.collection = null;
     /** @type {boolean} */
     this.disabled = false;
     /** @type {number} */

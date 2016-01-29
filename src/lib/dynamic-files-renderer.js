@@ -94,7 +94,7 @@ var renderer = {};
                 if (e.stack) {
                     // Java/Rhino Exceptions
                     log.error(e.message, e);
-                    response.sendError(500, e.message);
+                    response.sendError(500, e.message + "\n" + e.stack);
                 } else if (e.message) {
                     // JS "throw new Error(message)" type errors
                     log.error(e.message);

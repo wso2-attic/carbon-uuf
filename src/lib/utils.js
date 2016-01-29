@@ -9,7 +9,10 @@ var utils = {};
 (function (utils) {
     var log = new Log("utils");
     var constants = require("/lib/constants.js").constants;
-    var models = require("/lib/models.js");
+    var models = /** @type {{Layout: function(new: Layout), UIComponent: function(new: UIComponent)}} */
+                 require("/lib/models.js");
+    var Layout = models.Layout;
+    var UIComponent = models.UIComponent;
 
     /**
      * Extends the specified child object from the specified parent object.
@@ -119,19 +122,18 @@ var utils = {};
         var bIndex = isNaN(tmpIndex) ? 1000000 : tmpIndex;
 
         if (aIndex == bIndex) {
-            if (aIndex == 1000000) {
-                // Neither 'a' nor 'b' specified index in the definition.
-                return a.fullName.localeCompare(b.fullName);
-            }
-            if (a.children.indexOf(b.fullName) >= 0) {
+            //Since we have toString of UIComponent, we can pass a string to indexOf and get the correct output
+            if (a.children.indexOf(/** @type {UIComponent} */ b.fullName) >= 0) {
                 // 'b' is a child of 'a', hence 'b' should come before 'a'
                 return 1;
-            } else if (b.children.indexOf(a.fullName) >= 0) {
+                //Since we have toString of UIComponent, we can pass a string to indexOf and get the correct output
+            } else if (b.children.indexOf(/** @type {UIComponent} */ a.fullName) >= 0) {
                 // 'a' is a child of 'b', hence 'a' should come before 'b'
                 return -1;
             } else {
                 // 'a' and 'b' has same index value in their definitions.
-                return a.fullName.localeCompare(b.fullName);
+                // Type casting is necessary due to bug in IDE.
+                return /** @type{number} */ a.fullName.localeCompare(b.fullName);
             }
         }
         // If 'a' should come after 'b' then return 1, otherwise -1.
@@ -160,24 +162,21 @@ var utils = {};
             }
 
             var layoutFullName = layoutFileName.substr(0, index);
-            layoutsData[layoutFullName] = new models.Layout(layoutFullName,
+
+            layoutsData[layoutFullName] = new Layout(layoutFullName,
                                                             layoutsDir + "/" + layoutFileName);
         }
         return layoutsData;
     }
 
     /**
-     * Returns data of the specified UI components (pages or units).
      * @param componentType {string} UI component type (page or unit)
      * @param componentsPath {string} path to directory where UI components are located
-     * @return {{map: Object.<string, UIComponent>, array: UIComponent[]}} UI components' data
+     * @param uiComponentsMap {Object.<string, UIComponent>} map to be filled with discovered components
+     * @param uiComponentsList {UIComponent[]} list to be filled with discovered components
+     * @param collectionName {string=} optional parameter, collection to which UI component belongs to
      */
-    function getUiComponentsData(componentType, componentsPath) {
-        /** @type {Object.<string, UIComponent>} */
-        var uiComponentsMap = {};
-        /** @type {UIComponent[]} */
-        var uiComponentsList = [];
-        // Traverse all components and gather data
+    function populateComponentCollections(componentsPath, componentType, uiComponentsMap, uiComponentsList, collectionName) {
         var componentsDirectories = new File(componentsPath).listFiles();
         var numberOfFiles = componentsDirectories.length;
         for (var i = 0; i < numberOfFiles; i++) {
@@ -187,23 +186,28 @@ var utils = {};
                 continue;
             }
 
-            // UI Component name should be in {namespace}.{short_name} format.
+            // UI component's full name is calculated by combining the collection and component name by a dot
+            // Short name is the last part (separated by dot) of the  full name
             var componentFullName = componentDirectory.getName();
-            var componentShortName = componentFullName.substr(componentFullName.lastIndexOf(".")
-                                                              + 1);
+            var componentPath = componentsPath + "/" + componentFullName;
+            if(collectionName !== undefined){
+                componentFullName = collectionName + '.' + componentFullName;
+            }
+            var componentShortName = componentFullName.substr(componentFullName.lastIndexOf(".") + 1);
             if (!componentShortName || (componentShortName.length == 0)) {
                 // Invalid name for an UI component
                 throw new Error("Name '" + componentFullName + "' of " + componentType
-                                + " is invalid. Name of a " + componentType
-                                + " should be in {namespace}.{short_name} format.");
+                + " is invalid. Name of a " + componentType
+                + " should be in {namespace}.{short_name} format.");
             }
-            var componentPath = componentsPath + "/" + componentFullName;
+
             /** @type {UIComponent} */
-            var uiComponent = new models.UIComponent();
+            var uiComponent = new UIComponent();
             uiComponent.fullName = componentFullName;
             uiComponent.shortName = componentShortName;
             uiComponent.path = componentPath;
             uiComponent.type = componentType;
+            uiComponent.collection = collectionName;
             // UI component's template is read form the <component_short_name>.hbs file.
             var templateFile = new File(componentPath + "/" + componentShortName + ".hbs");
             if (templateFile.isExists() && !templateFile.isDirectory()) {
@@ -215,10 +219,11 @@ var utils = {};
                 uiComponent.scriptFilePath = scriptFile.getPath();
             }
             // UI component's definition is read form the <component_short_name>.json file.
+            var definitionFilePath = componentPath + "/" + componentShortName + ".json";
             var definitionFile = new File(componentPath + "/" + componentShortName + ".json");
             if (!definitionFile.isExists() || definitionFile.isDirectory()) {
                 throw new Error("Definition file of " + componentType + " '" + componentFullName
-                                + "' does not exists.");
+                + "' does not exist at " + definitionFilePath);
             } else {
                 uiComponent.definition = require(definitionFile.getPath());
             }
@@ -226,7 +231,40 @@ var utils = {};
             uiComponentsMap[componentFullName] = uiComponent;
             uiComponentsList.push(uiComponent);
         }
+    }
 
+    /**
+     * Returns data of the specified UI components (pages or units).
+     * @param componentType {string} UI component type (page or unit)
+     * @param componentsPath {string} path to sub-directory where UI components are located (pages or units)
+     * @return {{map: Object.<string, UIComponent>, array: UIComponent[]}} UI components' data
+     */
+    function getUiComponentsData(componentType, componentsPath) {
+        /** @type {Object.<string, UIComponent>} */
+        var uiComponentsMap = {};
+        /** @type {UIComponent[]} */
+        var uiComponentsList = [];
+
+        // Load app level pages. these are not sheared via a component.
+        populateComponentCollections(constants.DIRECTORY_APP + componentsPath, componentType,
+                                     uiComponentsMap, uiComponentsList);
+
+        // Traverse all component collection dirs and gather data
+        var componentsCollectionDirectories = new File(constants.DIRECTORY_APP_COMPONENTS).listFiles();
+        var numberOfFiles = componentsCollectionDirectories.length;
+        for (var i = 0; i < numberOfFiles; i++) {
+            var componentCollectionDirectory = componentsCollectionDirectories[i];
+            if (!componentCollectionDirectory.isDirectory()) {
+                // This is not an UI component, so ignore.
+                continue;
+            }
+            var componentCollectionName = componentCollectionDirectory.getName();
+            var componentCollectionDirectoryPath = constants.DIRECTORY_APP_COMPONENTS + '/' + componentCollectionName +
+                                                   componentsPath;
+
+            populateComponentCollections(componentCollectionDirectoryPath, componentType,
+                                         uiComponentsMap, uiComponentsList, componentCollectionName);
+        }
         // Inheritance chaining
         var numberOfComponents = uiComponentsList.length;
         var extendsKey = constants.UI_COMPONENT_DEFINITION_EXTENDS;
@@ -270,7 +308,7 @@ var utils = {};
     utils.parseBoolean = function (obj, defaultValue) {
         switch (typeof obj) {
             case 'boolean':
-                return obj;
+                return /**@type{Boolean}*/ obj;
             case 'number':
                 return (obj > 0);
             case 'string':
@@ -362,6 +400,8 @@ var utils = {};
      * @return {LookupTable} lookup table
      */
     utils.getLookupTable = function (configs) {
+        /** @type {{success: boolean, message: string}} */
+        var validationData;
         var isCachingEnabled = utils.parseBoolean(configs[constants.APP_CONF_CACHE_ENABLED]);
         if (isCachingEnabled) {
             var cachedLookupTable = application.get(constants.CACHE_KEY_LOOKUP_TABLE);
@@ -398,7 +438,7 @@ var utils = {};
                 // This unit is extended by one or more child unit(s).
                 continue;
             }
-            var validationData = validateUnitDefinition(unit);
+            validationData = validateUnitDefinition(unit);
             if (!validationData.success) {
                 // Invalid unit definition.
                 throw new Error(validationData.message);
@@ -440,12 +480,15 @@ var utils = {};
                 // This page is extended by one or more child page(s).
                 continue;
             }
-            var validationData = validatePageDefinition(page, layoutsData);
+            validationData = validatePageDefinition(page, layoutsData);
             if (!validationData.success) {
                 // Invalid page definition.
                 throw new Error(validationData.message);
             }
-
+            if (page.collection) {
+                var prefix = '/' + page.collection.substr(page.collection.lastIndexOf(".") + 1);
+                pageDefinition[constants.PAGE_DEFINITION_URI] = prefix + pageDefinition[constants.PAGE_DEFINITION_URI];
+            }
             var pageUri = pageDefinition[constants.PAGE_DEFINITION_URI];
             if (uriPagesMap[pageUri]) {
                 // Some other page is already registered for this URI.
@@ -571,7 +614,7 @@ var utils = {};
      */
     utils.getCurrentUser = function () {
         /** @type {User} */
-        var user = session.get(constants.CACHE_KEY_USER);
+        var user = /** @type {User} */ session.get(constants.CACHE_KEY_USER);
         if (user && user.username) {
             // load permissions
             return user;
