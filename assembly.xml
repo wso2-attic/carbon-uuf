@@ -9,8 +9,8 @@
     </formats>
     <fileSets>
         <fileSet>
-            <directory>${project.basedir}/src/lib</directory>
-            <outputDirectory>/${project.artifactId}/lib</outputDirectory>
+            <directory>${project.basedir}/src</directory>
+            <outputDirectory>/${project.artifactId}</outputDirectory>
         </fileSet>
     </fileSets>
 </assembly>
