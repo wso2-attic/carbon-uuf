@@ -5,7 +5,7 @@ var graph = new joint.dia.Graph();
 var paper = new joint.dia.Paper({
     el: document.getElementById('paper'),
     width: 695,
-    height: 200,
+    height: 340,
     gridSize: 1,
     model: graph,
     linkPinning: false,
@@ -13,185 +13,31 @@ var paper = new joint.dia.Paper({
     linkConnectionPoint: joint.util.shapePerimeterConnectionPoint
 });
 
-var app = new erd.Entity({
-
-    position: { x: 100, y: 10 },
-    attrs: {
-        text: {
-            fill: '#ffffff',
-            text: 'App',
-            'letter-spacing': 0,
-            style: { 'text-shadow': '1px 0 1px #333333' }
+var element = function(name, x, y){
+    return new erd.Entity({
+        position: { x: x, y: y },
+        attrs: {
+            text: {
+                fill: '#ffffff',
+                text: name
+            }
         }
-    },
-    props: {
-       'descriptionId' : 'dd'
-    }
-});
+    });
+};
+
 
 var mvn = new erd.IdentifyingRelationship({
 
-    position: { x: 350, y: 0 },
+    position: { x: 200, y: 0 },
     attrs: {
         text: {
             fill: '#ffffff',
             text: '     Maven \n Dependancy',
             'letter-spacing': 0,
-            style: { 'text-shadow': '1px 0 1px #333333' }
         }
     }
 });
 
-var component = new erd.Entity({
-
-    position: { x: 530, y: 10 },
-    attrs: {
-        text: {
-            fill: '#ffffff',
-            text: 'Component',
-            'letter-spacing': 0,
-            style: { 'text-shadow': '1px 0 1px #333333' }
-        }
-    }
-});
-
-
-/*
-var isa = new erd.ISA({
-
-    position: { x: 125, y: 300 },
-    attrs: {
-        text: {
-            text: 'ISA',
-            fill: '#ffffff',
-            'letter-spacing': 0,
-            style: { 'text-shadow': '1px 0 1px #333333' }
-        },
-        polygon: {
-            fill: '#fdb664',
-            stroke: 'none',
-            filter: { name: 'dropShadow',  args: { dx: 0, dy: 2, blur: 1, color: '#333333' }}
-        }
-    }
-});
-
-var number = new erd.Key({
-
-    position: { x: 1, y: 90 },
-    attrs: {
-        text: {
-            fill: '#ffffff',
-            text: 'Number',
-            'letter-spacing': 0,
-            style: { 'text-shadow': '1px 0 1px #333333' }
-        },
-        '.outer, .inner': {
-            fill: '#feb662',
-            stroke: 'none'
-        },
-        '.outer': {
-            filter: { name: 'dropShadow',  args: { dx: 0, dy: 2, blur: 2, color: '#222138' }}
-        }
-    }
-});
-
-var employeeName = new erd.Normal({
-
-    position: { x: 75, y: 30 },
-    attrs: {
-        text: {
-            fill: '#ffffff',
-            text: 'Name',
-            'letter-spacing': 0,
-            style: { 'text-shadow': '1px 0 1px #333333' }
-        },
-        '.outer': {
-            fill: '#fe8550',
-            stroke: '#fe854f',
-            filter: { name: 'dropShadow',  args: { dx: 0, dy: 2, blur: 2, color: '#222138' }}
-        }
-    }
-});
-
-var skills = new erd.Multivalued({
-
-    position: { x: 150, y: 90 },
-    attrs: {
-        text: {
-            fill: '#ffffff',
-            text: 'Skills',
-            'letter-spacing': 0,
-            style: { 'text-shadow': '1px 0px 1px #333333' }
-        },
-        '.inner': {
-            fill: '#fe8550',
-            stroke: 'none',
-            rx: 43,
-            ry: 21
-
-        },
-        '.outer': {
-            fill: '#464a65',
-            stroke: '#fe8550',
-            filter: { name: 'dropShadow',  args: { dx: 0, dy: 2, blur: 2, color: '#222138' }}
-        }
-    }
-});
-
-var amount = new erd.Derived({
-
-    position: { x: 440, y: 80 },
-    attrs: {
-        text: {
-            fill: '#ffffff',
-            text: 'Amount',
-            'letter-spacing': 0,
-            style: { 'text-shadow': '1px 0 1px #333333' }
-        },
-        '.inner': {
-            fill: '#fca079',
-            stroke: 'none',
-            'display': 'block'
-        },
-        '.outer': {
-            fill: '#464a65',
-            stroke: '#fe854f',
-            'stroke-dasharray': '3,1',
-            filter: { name: 'dropShadow',  args: { dx: 0, dy: 2, blur: 2, color: '#222138' }}
-        }
-    }
-});
-
-var uses = new erd.Relationship({
-
-    position: { x: 300, y: 390 },
-    attrs: {
-        text: {
-            fill: '#ffffff',
-            text: 'Uses',
-            'letter-spacing': 0,
-            style: { 'text-shadow': '1px 0 1px #333333' }
-        },
-        '.outer': {
-            fill: '#797d9a',
-            stroke: 'none',
-            filter: { name: 'dropShadow',  args: { dx: 0, dy: 2, blur: 1, color: '#333333' }}
-        }
-    }
-});
-
-// Create new shapes by cloning
-
-var salesman = employee.clone().translate(0, 200).attr('text/text', 'Salesman');
-
-var date = employeeName.clone().position(590, 80).attr('text/text', 'Date');
-
-var car = employee.clone().position(430, 400).attr('text/text', 'Company car');
-
-var plate = number.clone().position(405, 500).attr('text/text', 'Plate');
-*/
-
-// Helpers
 
 var createLink = function(elm1, elm2) {
 
@@ -203,37 +49,74 @@ var createLink = function(elm1, elm2) {
     return myLink.addTo(graph);
 };
 
-var createLabel = function(txt) {
+var createLabel = function(txt,pos) {
     return {
         labels: [{
-            position: 50,
+            position: pos||25,
             attrs: {
                 text: { offset: {dy:1000}, text: txt, fill: '#000' },
                 rect: { fill: '#fff' }
-            }
+            },
+            props:{ }
         }]
     };
 };
 
 // Add shapes to the graph
 
-graph.addCells([app, mvn, component]);
+var app = element('App', 0, 10) ;
+var component = element('Component', 325, 10) ;
+var layout = element('Layout', 1505, 120) ;
+var page = element('Page', 165, 95) ;
+var zone = element('Zone', 165, 175) ;
+var unit = element('Unit', 165, 255) ;
+
+graph.addCells([app, mvn, component, unit, zone, page, layout ]);
 
 createLink(app, mvn).set(createLabel('1'));
 createLink(mvn, component).set(createLabel('n'));
+createLink(app, unit).set(createLabel('n')).set('vertices', [{ x: 100, y: 200 }]).set('smooth', true);
+createLink(component, unit).set(createLabel('n')).set('vertices', [{ x: 370, y: 200 }]).set('smooth', true);
+createLink(zone, unit).set(createLabel('n',12));
+createLink(app, page).set(createLabel('n'));
+createLink(component, page).set(createLabel('n'));
+createLink(zone, page).set(createLabel('n',8));
 
 paper.on('cell:pointerdown', 
     function(cellView, evt, x, y) { 
-        var text = cellView.model.attributes.attrs.text.text; 
-        var titleEl = $('h3:contains("'+text+'")');
-        titleEl.show();
-        console.log();
-        //console.log(document.getElementById(cellView.model.attributes.props.descriptionId)); 
+        var attrs = cellView.model.attributes.attrs;
+        var titleEl;
+        if(attrs){
+            var text = attrs.text.text; 
+            titleEl = $('h3').filter(function () { return $(this).html() == text; });
+        }else{
+            var source = graph.getCell(cellView.model.attributes.source.id).attributes.attrs.text.text;
+            var target = graph.getCell(cellView.model.attributes.target.id).attributes.attrs.text.text;
+            titleEl = $('h3').filter(function () { 
+                var html = $(this).text();
+                return html.indexOf(source)>-1 &&  html.indexOf(target)>-1;
+            });
+        }
+        hideAll();
+        doSection(titleEl,function(el){el.show()});
     }
 );
 
-$(function(){
+var doSection = function(el,func,notFirst){
+    var $el  = $(el);
+    var next = $el.next();
+    if(!notFirst || el.is('p') || el.is('figure')){
+        func($el);
+        return doSection(next, func, true);
+    }else{
+        return;
+    }
+};
+
+var hideAll = function(){
     $('h3').each(function(i,el){
-        $(el).hide().next('p').hide();
+        var els = doSection(el, function(el){el.hide()});
     });
-});
+};
+
+$(hideAll);
