@@ -105,7 +105,7 @@ paper.on('cell:pointerdown',
 var doSection = function(el,func,notFirst){
     var $el  = $(el);
     var next = $el.next();
-    if(!notFirst || el.is('p') || el.is('figure')){
+    if(!notFirst || el.is('p') || el.is('figure') || el.hasClass('highlight')){
         func($el);
         return doSection(next, func, true);
     }else{
