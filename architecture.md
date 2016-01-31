@@ -7,3 +7,9 @@ css: joint
 ## Model
 
 {% include diagram.html %}
+
+### App
+hlll
+
+### Component
+hlll

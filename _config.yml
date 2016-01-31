@@ -11,7 +11,7 @@ title:            UUF
 tagline:          'Unified UI Framework'
 description:      'Framework for building composable web apps on top of WSO2 Carbon'
 url:              http://github.com/wso2/carbon-uuf
-baseurl:          /
+baseurl:          /carbon-uuf/
 
 author:
   name:           'WSO2'

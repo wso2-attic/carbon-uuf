@@ -5,7 +5,7 @@ var graph = new joint.dia.Graph();
 var paper = new joint.dia.Paper({
     el: document.getElementById('paper'),
     width: 695,
-    height: 600,
+    height: 200,
     gridSize: 1,
     model: graph,
     linkPinning: false,
@@ -15,58 +15,42 @@ var paper = new joint.dia.Paper({
 
 var app = new erd.Entity({
 
-    position: { x: 100, y: 200 },
+    position: { x: 100, y: 10 },
     attrs: {
         text: {
             fill: '#ffffff',
             text: 'App',
             'letter-spacing': 0,
             style: { 'text-shadow': '1px 0 1px #333333' }
-        },
-        '.outer, .inner': {
-            fill: '#31d0c6',
-            stroke: 'none',
-            filter: { name: 'dropShadow',  args: { dx: 0.5, dy: 2, blur: 2, color: '#333333' }}
         }
+    },
+    props: {
+       'descriptionId' : 'dd'
     }
 });
 
 var mvn = new erd.IdentifyingRelationship({
 
-    position: { x: 350, y: 190 },
+    position: { x: 350, y: 0 },
     attrs: {
         text: {
             fill: '#ffffff',
             text: '     Maven \n Dependancy',
             'letter-spacing': 0,
             style: { 'text-shadow': '1px 0 1px #333333' }
-        },
-        '.inner': {
-            fill: '#7c68fd',
-            stroke: 'none'
-        },
-        '.outer': {
-            fill: 'none',
-            stroke: '#7c68fd',
-            filter: { name: 'dropShadow',  args: { dx: 0, dy: 2, blur: 1, color: '#333333' }}
         }
     }
 });
 
 var component = new erd.Entity({
 
-    position: { x: 530, y: 200 },
+    position: { x: 530, y: 10 },
     attrs: {
         text: {
             fill: '#ffffff',
             text: 'Component',
             'letter-spacing': 0,
             style: { 'text-shadow': '1px 0 1px #333333' }
-        },
-        '.outer, .inner': {
-            fill: '#31d0c6',
-            stroke: 'none',
-            filter: { name: 'dropShadow',  args: { dx: 0.5, dy: 2, blur: 2, color: '#333333' }}
         }
     }
 });
@@ -222,10 +206,10 @@ var createLink = function(elm1, elm2) {
 var createLabel = function(txt) {
     return {
         labels: [{
-            position: -20,
+            position: 50,
             attrs: {
-                text: { dy: -8, text: txt, fill: '#000' },
-                rect: { fill: 'none' }
+                text: { offset: {dy:1000}, text: txt, fill: '#000' },
+                rect: { fill: '#fff' }
             }
         }]
     };
@@ -236,10 +220,20 @@ var createLabel = function(txt) {
 graph.addCells([app, mvn, component]);
 
 createLink(app, mvn).set(createLabel('1'));
-createLink(employee, mvn);
+createLink(mvn, component).set(createLabel('n'));
 
 paper.on('cell:pointerdown', 
     function(cellView, evt, x, y) { 
-        console.log('cell view ' + cellView.model.id + ' was clicked'); 
+        var text = cellView.model.attributes.attrs.text.text; 
+        var titleEl = $('h3:contains("'+text+'")');
+        titleEl.show();
+        console.log();
+        //console.log(document.getElementById(cellView.model.attributes.props.descriptionId)); 
     }
 );
+
+$(function(){
+    $('h3').each(function(i,el){
+        $(el).hide().next('p').hide();
+    });
+});
