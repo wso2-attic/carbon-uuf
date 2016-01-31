@@ -1,0 +1,28 @@
+# Dependencies
+markdown:         redcarpet
+highlighter:      pygments
+
+# Permalinks
+permalink:        pretty
+relative_permalinks: false
+
+# Setup
+title:            UUF
+tagline:          'Unified UI Framework'
+description:      'Framework for building composable web apps on top of WSO2 Carbon'
+url:              http://github.com/wso2/carbon-uuf
+baseurl:          /
+
+author:
+  name:           'WSO2'
+  url:            https://wso2.com/
+
+paginate:         5
+paginate_path: "/articles/page:num/"
+
+# Custom vars
+version:          1.0.0
+
+github:
+  repo:           http://github.com/wso2/carbon-uuf
+gems: [jekyll-paginate]
