@@ -17,8 +17,10 @@ This is the deployable element.
 This is the re-usable element.
 
 ### Page
-Page owns a URL.
 Page owns a URL. Otherwise, it's very similar to a Unit, and have similar structures.
+
+### Zone
+Zone are the placeholders for HTML.
 
 ### Unit
 This is a collection of HTML elements ,and back-end logic that's needed to render it. 
