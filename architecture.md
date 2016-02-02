@@ -11,24 +11,24 @@ Click on an element or a link to highlight
 {% include diagram.html %}
 
 ### App
-This is the deployable element.
+App is the deployable artifact.
 
 ### Component
-This is the re-usable element.
+This is the re-usable element. A component can contain muliple pages and muliple fragments.
 
 ### Page
-Page owns a URL. Otherwise, it's very similar to a Unit, and have similar structures.
+Page owns a URL. Pages can push elements to Zones defined. It can also define zones in it's markup.
 
 ### Zone
 Zone are the placeholders for HTML.
 
-### Unit
-This is a collection of HTML elements ,and back-end logic that's needed to render it. 
-This may also contain some css, front end js and other public resources (eg: fonts).
+### Fragment
+Fragment is a UI Template (collection of HTML elements) and a controller logic (back-end logic) that will be used to render the template.
+It can also define CSS, JS and public resources (eg: fonts). 
 
-### App contains Units
-Apps can contain Units directly. 
-These units are not meant to be shared with other projects, But will get used in multiple places in the same App.
+### App contains Fragments 
+Apps can contain Fragments directly. 
+These fragments are not meant to be shared with other projects, But will get used in multiple places in the same App.
 
 sample dir structure
 {% highlight text %}
@@ -38,4 +38,4 @@ org.wso2.apim.uuf.store
 {% endhighlight %}
 
 
-### Unit contains Unit
+### Fragments contains Fragments
