@@ -239,3 +239,16 @@ Do not allow adding new vertices: .connection-wrap { pointer-events: none; }
     padding: 0px 5px 0px 5px;
 }
 .link-tools .tool-remove { display: none }
+
+.marker-vertices {
+  display: none;
+}
+
+.highlighted {
+  outline: 2px dotted rgba(148, 96, 55, 0.6);
+  opacity: initial;
+}
+
+.marker-arrowhead{
+  fill: #f1c40f
+}

@@ -9,7 +9,7 @@ relative_permalinks: false
 # Setup
 title:            UUF
 tagline:          'Unified UI Framework'
-description:      'Framework for building composable web apps on top of WSO2 Carbon'
+description:      'Unified UI Framework - Framework for building composable web apps on top of WSO2 Carbon'
 url:              http://github.com/wso2/carbon-uuf
 baseurl:          /carbon-uuf
 
