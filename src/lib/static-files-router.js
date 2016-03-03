@@ -130,7 +130,7 @@ var route;
             var uiComponentFullName = parts[0];
 
             if(uiComponentFullName == 'app'){
-                var file = new File('app/public/' + requestedResourceUri.substr(4));
+                var file = new File('/app/public/' + requestedResourceUri.substr(4));
                 requestedResources.push({
                     type: splitFileName(parts[numberOfParts - 1]).extension,
                     file: file
