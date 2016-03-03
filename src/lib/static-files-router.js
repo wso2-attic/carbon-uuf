@@ -128,33 +128,42 @@ var route;
             }
 
             var uiComponentFullName = parts[0];
-            var uiComponent = uiComponents[uiComponentFullName];
-            if (!uiComponent) {
-                rv.success = false;
-                rv.status = 404;
-                rv.message =
-                    "Requested UI Component '" + uiComponentFullName + "' does not exists.";
-                return rv;
-            }
 
-            var resourceType = splitFileName(parts[numberOfParts - 1]).extension;
-            var relativeFilePath = uiComponentPublicDirectory
-                                   + requestedResourceUri.substr(uiComponentFullName.length);
-            var resourceFile = getFileInUiComponent(uiComponent, relativeFilePath, lookupTable);
-            if (resourceFile) {
+            if(uiComponentFullName == 'app'){
+                var file = new File('app/public/' + requestedResourceUri.substr(4));
                 requestedResources.push({
-                    type: resourceType,
-                    file: resourceFile,
-                    provider: uiComponent
+                    type: splitFileName(parts[numberOfParts - 1]).extension,
+                    file: file
                 });
-            } else {
-                // Requested file either does not exists or it is a directory.
-                rv.success = false;
-                rv.status = 404;
-                rv.message = "Requested resource '" + relativeFilePath
-                             + "' does not exists in UI Component '" + uiComponent.fullName
-                             + "' or its parents " + stringify(uiComponent.parents) + ".";
-                return rv;
+            }else{
+                var uiComponent = uiComponents[uiComponentFullName];
+                if (!uiComponent) {
+                    rv.success = false;
+                    rv.status = 404;
+                    rv.message =
+                        "Requested UI Component '" + uiComponentFullName + "' does not exists.";
+                    return rv;
+                }
+
+                var resourceType = splitFileName(parts[numberOfParts - 1]).extension;
+                var relativeFilePath = uiComponentPublicDirectory
+                    + requestedResourceUri.substr(uiComponentFullName.length);
+                var resourceFile = getFileInUiComponent(uiComponent, relativeFilePath, lookupTable);
+                if (resourceFile) {
+                    requestedResources.push({
+                        type: resourceType,
+                        file: resourceFile,
+                        provider: uiComponent
+                    });
+                } else {
+                    // Requested file either does not exists or it is a directory.
+                    rv.success = false;
+                    rv.status = 404;
+                    rv.message = "Requested resource '" + relativeFilePath
+                        + "' does not exists in UI Component '" + uiComponent.fullName
+                        + "' or its parents " + stringify(uiComponent.parents) + ".";
+                    return rv;
+                }
             }
         }
 
