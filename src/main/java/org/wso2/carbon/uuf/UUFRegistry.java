@@ -90,6 +90,7 @@ public class UUFRegistry {
 
 
     public static void main(String[] args) {
+        //TODO: only if debug is enabled
         DebugAppender.attach();
         UUFRegistry registry = new UUFRegistry(new FileSystemAppFactory(new String[]{"."}));
         new MicroservicesRunner().deploy(new UUFService(registry)).start();

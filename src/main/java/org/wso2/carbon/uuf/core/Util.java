@@ -3,7 +3,10 @@ package org.wso2.carbon.uuf.core;
 import java.nio.file.Path;
 
 public class Util {
+
+    //TODO: move to Factory
     public static Path relativePath(Path path) {
+        path = path.normalize();
         int pageIndex = -1;
         int count = path.getNameCount();
         for (int i = count; i >= 1; i--) {

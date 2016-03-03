@@ -67,7 +67,6 @@ public class UUFService implements Microservice {
         } finally {
             MDC.remove("uuf-request");
         }
-//        return Response.ok().entity(request.getUri() ).build();
     }
 
 }
