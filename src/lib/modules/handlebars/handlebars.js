@@ -217,6 +217,22 @@ var render;
             script.getFile = function (relativeFilePath) {
                 return utils.getFileInUiComponent(uiComponent, relativeFilePath);
             };
+            script.callService = function (method, uri) {
+                var file = utils.getFileInUiComponent(uiComponent, 'mock/' + uiComponent.shortName
+                    + '-mock.json');
+                if (file) {
+                    var mock = require(file.getPath());
+                    var key = method + ' ' + uri;
+                    if (mock[key]) {
+                        return mock[key];
+                    } else {
+                        throw  new Error('mock entry for ' + key + ' doesn\'t exist in '
+                            + uiComponent + '\'s mock file');
+                    }
+                }else{
+                    throw  new Error('mock file for ' + uiComponent + ' doesn\'t exist');
+                }
+            };
             var rv = script[constants.UI_COMPONENT_JS_FUNCTION_ON_REQUEST](scriptContext);
             return (rv) ? rv : {};
         } catch (e) {
@@ -270,6 +286,7 @@ var render;
             app: {name: appName, context: appContext, conf: appConf},
             page: {params: pageParams, publicUri: pagePublicUri},
             uriParams: uriParams,
+            method: request.getMethod(),
             user: user,
             handlebars: handlebarsEnvironment
         };
