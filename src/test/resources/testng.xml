@@ -1,0 +1,9 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+
+<suite name="uuf-core" verbose="1" >
+    <test name="uuf-core"   >
+        <packages>
+            <package name="org.wso2.carbon.uuf" />
+        </packages>
+    </test>
+</suite>
