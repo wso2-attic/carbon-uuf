@@ -23,7 +23,6 @@ public class App {
         }
 
         this.context = context;
-
         // convert the list to maps since we want O(1) access by name
         this.frags = frags.stream().collect(Collectors.toMap(Fragment::getName, Function.identity()));
         Collections.sort(pages, (o1, o2) -> o1.getUri().compareTo(o2.getUri()));
@@ -40,7 +39,6 @@ public class App {
         } else {
             throw new UUFException("No page by the URI '" + request.getUri() + "'", Response.Status.NOT_FOUND);
         }
-
     }
 
     @Nullable

@@ -23,7 +23,7 @@ public class FileSystemAppFactory implements AppFactory {
         this.paths = paths;
     }
 
-    public App createFromComponents(Path components, String context) throws IOException {
+    private App createFromComponents(Path components, String context) throws IOException {
         List<Page> pages = new ArrayList<>();
 
         try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(components)) {
@@ -44,41 +44,7 @@ public class FileSystemAppFactory implements AppFactory {
             try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(pagesDir)) {
                 for (Path pageDir : dirStream) {
                     if (Files.isDirectory(pageDir)) {
-                        String name = pageDir.getFileName().toString();
-
-                        Renderble template;
-                        Executable executable = null;
-
-                        Path hbsFile = pageDir.resolve(name + ".hbs");
-                        if (Files.isRegularFile(hbsFile)) {
-                            Path jsFile = pageDir.resolve(name + ".js");
-                            if (Files.isRegularFile(jsFile)) {
-                                executable = new JSExecutable(
-                                        new String(Files.readAllBytes(jsFile)),
-                                        Util.relativePath(jsFile).toString());
-                            }
-                            //TODO: use UTF-8
-                            template = new HandlebarsRenderble(
-                                    new String(Files.readAllBytes(hbsFile)),
-                                    Util.relativePath(hbsFile).toString());
-                        } else {
-                            throw new UUFException(
-                                    "page must contain a template in '" + pageDir.toString() + "'",
-                                    Response.Status.INTERNAL_SERVER_ERROR);
-                        }
-
-                        Path yamlFile = pageDir.resolve(name + ".yaml");
-                        String uri = null;
-                        if (Files.isRegularFile(yamlFile)) {
-                            this.yaml = new Yaml();
-                            Map map = (Map) yaml.load(Files.newBufferedReader(yamlFile));
-                            uri = (String) map.get("uri");
-                        }
-                        if (uri == null) {
-                            uri = "/" + name;
-                        }
-
-                        pages.add(new Page(new UriPatten(uri), template, executable));
+                        pages.add(createPage(pageDir));
                     } else {
                         log.warn("page must be a directory " + component.toString() + "'");
                     }
@@ -90,6 +56,44 @@ public class FileSystemAppFactory implements AppFactory {
                 log.warn("pages must be a directory " + pagesDir.toString() + "'");
             }
         }
+    }
+
+    private Page createPage(Path pageDir) throws IOException {
+        String name = pageDir.getFileName().toString();
+
+        Renderble template;
+        Executable executable = null;
+
+        Path hbsFile = pageDir.resolve(name + ".hbs");
+        if (Files.isRegularFile(hbsFile)) {
+            Path jsFile = pageDir.resolve(name + ".js");
+            if (Files.isRegularFile(jsFile)) {
+                executable = new JSExecutable(
+                        new String(Files.readAllBytes(jsFile)),
+                        Util.relativePath(jsFile).toString());
+            }
+            //TODO: use UTF-8
+            template = new HandlebarsRenderble(
+                    new String(Files.readAllBytes(hbsFile)),
+                    Util.relativePath(hbsFile).toString());
+        } else {
+            throw new UUFException(
+                    "page must contain a template in '" + pageDir.toString() + "'",
+                    Response.Status.INTERNAL_SERVER_ERROR);
+        }
+
+        Path yamlFile = pageDir.resolve(name + ".yaml");
+        String uri = null;
+        if (Files.isRegularFile(yamlFile)) {
+            this.yaml = new Yaml();
+            Map map = (Map) yaml.load(Files.newBufferedReader(yamlFile));
+            uri = (String) map.get("uri");
+        }
+        if (uri == null) {
+            uri = "/" + name;
+        }
+
+        return new Page(new UriPatten(uri), template, executable);
     }
 
 
