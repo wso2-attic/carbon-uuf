@@ -180,3 +180,4 @@ $RECYCLE.BIN/
 *.lnk
 
 target
+dependency-reduced-pom.xml
