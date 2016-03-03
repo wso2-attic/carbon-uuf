@@ -16,7 +16,7 @@ import java.util.*;
 public class FileSystemAppFactory implements AppFactory {
 
     private final String[] paths;
-    private static final Logger log = LoggerFactory.getLogger(UUFService.class);
+    private static final Logger log = LoggerFactory.getLogger(FileSystemAppFactory.class);
     private Yaml yaml;
 
     public FileSystemAppFactory(String[] paths) {
@@ -86,7 +86,9 @@ public class FileSystemAppFactory implements AppFactory {
             }
 
         } else {
-            log.warn("pages must be a directory " + component.toString() + "'");
+            if (Files.exists(pagesDir)) {
+                log.warn("pages must be a directory " + pagesDir.toString() + "'");
+            }
         }
     }
 
