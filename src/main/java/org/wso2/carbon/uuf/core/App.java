@@ -23,8 +23,9 @@ public class App {
         }
 
         this.context = context;
-        // convert the list to maps since we want O(1) access by name
+        // convert the list to maps since we want O(1) access by name.
         this.frags = frags.stream().collect(Collectors.toMap(Fragment::getName, Function.identity()));
+        // we sort uri so that more wildcard-ed ones go to the bottom.
         Collections.sort(pages, (o1, o2) -> o1.getUri().compareTo(o2.getUri()));
         this.pages = pages;
     }

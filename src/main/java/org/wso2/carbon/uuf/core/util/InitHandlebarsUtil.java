@@ -1,6 +1,8 @@
 package org.wso2.carbon.uuf.core.util;
 
+import com.github.jknack.handlebars.Context;
 import com.github.jknack.handlebars.Handlebars;
+import com.github.jknack.handlebars.TagType;
 import com.github.jknack.handlebars.Template;
 import com.github.jknack.handlebars.io.StringTemplateSource;
 import com.github.jknack.handlebars.io.TemplateSource;
@@ -11,12 +13,15 @@ import org.wso2.carbon.uuf.core.UUFException;
 
 import javax.ws.rs.core.Response;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
+
+import static javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
 
 public class InitHandlebarsUtil {
     private static final Handlebars HANDLEBARS = new Handlebars();
-    public static final String ZONES_KEY = InitHandlebarsUtil.class.getName() + "#zones";
-    public static final String LAYOUT_KEY = InitHandlebarsUtil.class.getName() + "#layout";
+    private static final String ZONES_KEY = InitHandlebarsUtil.class.getName() + "#zones";
+    private static final String LAYOUT_KEY = InitHandlebarsUtil.class.getName() + "#layout";
 
     static {
 
@@ -38,6 +43,10 @@ public class InitHandlebarsUtil {
 
             sb.append(options.fn.text());
             TemplateSource source = new StringTemplateSource(options.fn.filename(), sb.toString());
+            if (zones == null) {
+                zones = new HashMap<String, Renderble>();
+                options.data(ZONES_KEY, zones);
+            }
             zones.put(zoneName, new HandlebarsRenderble(source));
             return "";
         });
@@ -48,10 +57,18 @@ public class InitHandlebarsUtil {
             if (originalLayout != null) {
                 throw new UUFException(
                         "multiple layout '" + layoutName + "','" + originalLayout + "'  defined",
-                        Response.Status.INTERNAL_SERVER_ERROR);
+                        INTERNAL_SERVER_ERROR);
             }
             options.data(LAYOUT_KEY, layoutName);
             return "";
+        });
+
+        HANDLEBARS.registerHelperMissing((context, options) -> {
+            if (options.tagType == TagType.VAR) {
+                return "";
+            } else {
+                throw new UUFException("unknown helper" + context, INTERNAL_SERVER_ERROR);
+            }
         });
     }
 
@@ -59,7 +76,15 @@ public class InitHandlebarsUtil {
         try {
             return HANDLEBARS.compile(source);
         } catch (IOException e) {
-            throw new UUFException("pages template completions error", Response.Status.INTERNAL_SERVER_ERROR, e);
+            throw new UUFException("pages template completions error", INTERNAL_SERVER_ERROR, e);
         }
+    }
+
+    public static Map<String, Renderble> getFillingZones(Context context) {
+        return context.data(ZONES_KEY);
+    }
+
+    public static String getLayoutName(Context context) {
+        return context.data(LAYOUT_KEY);
     }
 }

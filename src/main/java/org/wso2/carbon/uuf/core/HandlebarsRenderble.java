@@ -10,19 +10,29 @@ import javax.annotation.Nullable;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
 
 public class HandlebarsRenderble implements Renderble {
 
     private final Template template;
-    private final TemplateSource source;
+    private final Map<String, Renderble> fillingZones;
+    @Nullable
+    private final String layoutName;
 
 
     public HandlebarsRenderble(TemplateSource source) {
-        this.source = source;
         this.template = RuntimeHandlebarsUtil.compile(source);
+
+        Context context = Context.newContext(Collections.EMPTY_MAP);
+        try {
+            Template preTemplate = InitHandlebarsUtil.compile(source);
+            preTemplate.apply(context);
+        } catch (IOException e) {
+            throw new UUFException("pages template completions error", Response.Status.INTERNAL_SERVER_ERROR, e);
+        }
+        this.layoutName = InitHandlebarsUtil.getLayoutName(context);
+        this.fillingZones = InitHandlebarsUtil.getFillingZones(context);
     }
 
 
@@ -39,16 +49,7 @@ public class HandlebarsRenderble implements Renderble {
 
     @Override
     public Map<String, Renderble> getFillingZones() {
-        Map<String, Renderble> map = new HashMap<>();
-        Context context = Context.newContext(Collections.EMPTY_MAP);
-        context.data(InitHandlebarsUtil.ZONES_KEY, map);
-        try {
-            Template preTemplate = InitHandlebarsUtil.compile(source);
-            preTemplate.apply(context);
-        } catch (IOException e) {
-            throw new UUFException("pages template completions error", Response.Status.INTERNAL_SERVER_ERROR, e);
-        }
-        return map;
+        return fillingZones;
     }
 
     @Override
@@ -59,13 +60,6 @@ public class HandlebarsRenderble implements Renderble {
     @Override
     @Nullable
     public String getLayoutName() {
-        Context context = Context.newContext(Collections.EMPTY_MAP);
-        try {
-            Template preTemplate = InitHandlebarsUtil.compile(source);
-            preTemplate.apply(context);
-        } catch (IOException e) {
-            throw new UUFException("pages template completions error", Response.Status.INTERNAL_SERVER_ERROR, e);
-        }
-        return (String) context.data(InitHandlebarsUtil.LAYOUT_KEY);
+        return layoutName;
     }
 }
