@@ -137,9 +137,7 @@ public class FileSystemAppFactory implements AppFactory {
             template = new HandlebarsRenderble(source);
             layout = layouts.get(template.getLayoutName());
         } else {
-            throw new UUFException(
-                    "page must contain a template in '" + pageDir.toString() + "'",
-                    Response.Status.INTERNAL_SERVER_ERROR);
+            throw new UUFException("page must contain a template in '" + pageDir.toString() + "'");
         }
 
         Path yamlFile = pageDir.resolve(name + ".yaml");

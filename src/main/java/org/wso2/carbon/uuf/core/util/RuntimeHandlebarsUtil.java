@@ -11,8 +11,6 @@ import org.wso2.carbon.uuf.core.UUFException;
 import java.io.IOException;
 import java.util.Map;
 
-import static javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
-
 public class RuntimeHandlebarsUtil {
 
     private static final ImmutableSet<String> KEYWORDS = ImmutableSet.of("layout", "fillZone");
@@ -29,7 +27,7 @@ public class RuntimeHandlebarsUtil {
                 String content = renderble.render(options.context.model(), zones).trim();
                 return new Handlebars.SafeString(content);
             }
-            throw new UUFException("zone '" + zoneName + "' not available", INTERNAL_SERVER_ERROR);
+            throw new UUFException("zone '" + zoneName + "' not available");
         });
 
         HANDLEBARS.registerHelperMissing((context, options) -> {
@@ -38,8 +36,7 @@ public class RuntimeHandlebarsUtil {
             }
             throw new UUFException(
                     "value not available for the variable '" +
-                            options.helperName + "' in " + context,
-                    INTERNAL_SERVER_ERROR);
+                            options.helperName + "' in " + context);
         });
 
     }

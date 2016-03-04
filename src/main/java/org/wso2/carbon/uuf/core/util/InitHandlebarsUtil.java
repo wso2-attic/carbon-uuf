@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
 
 public class InitHandlebarsUtil {
     private static final Handlebars HANDLEBARS = new Handlebars();
@@ -26,7 +25,7 @@ public class InitHandlebarsUtil {
         HANDLEBARS.registerHelper("fillZone", (context, options) -> {
             Map<String, Renderble> zones = options.data(ZONES_KEY);
             if (!(context instanceof String)) {
-                throw new UUFException("fillZone must have a string literal name", INTERNAL_SERVER_ERROR);
+                throw new UUFException("fillZone must have a string literal name");
             }
             String zoneName = (String) context;
 
@@ -57,8 +56,7 @@ public class InitHandlebarsUtil {
             Object originalLayout = options.data(LAYOUT_KEY);
             if (originalLayout != null) {
                 throw new UUFException(
-                        "multiple layout '" + layoutName + "','" + originalLayout + "'  defined",
-                        INTERNAL_SERVER_ERROR);
+                        "multiple layout '" + layoutName + "','" + originalLayout + "'  defined");
             }
             options.data(LAYOUT_KEY, layoutName);
             return "";
@@ -68,7 +66,7 @@ public class InitHandlebarsUtil {
             if (options.tagType == TagType.VAR) {
                 return "";
             } else {
-                throw new UUFException("unknown helper" + context, INTERNAL_SERVER_ERROR);
+                throw new UUFException("unknown helper" + context);
             }
         });
     }
