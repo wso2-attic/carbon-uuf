@@ -1,8 +1,7 @@
 package org.wso2.carbon.uuf.core;
 
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.Map;
 
@@ -16,5 +15,10 @@ public interface Renderble {
 
     default Map<String, Renderble> getFillingZones() {
         return Collections.emptyMap();
+    }
+
+    @Nullable
+    default String getLayoutName() {
+        return null;
     }
 }

@@ -1,8 +1,8 @@
-package org.wso2.carbon.uuf.core;
+package org.wso2.carbon.uuf.core.util;
 
 import java.nio.file.Path;
 
-public class Util {
+public class FileUtil {
 
     //TODO: move to Factory
     public static Path relativePath(Path path) {

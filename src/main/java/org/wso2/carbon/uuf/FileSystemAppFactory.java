@@ -1,8 +1,11 @@
 package org.wso2.carbon.uuf;
 
+import com.github.jknack.handlebars.io.StringTemplateSource;
+import com.github.jknack.handlebars.io.TemplateSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.core.*;
+import org.wso2.carbon.uuf.core.util.FileUtil;
 import org.yaml.snakeyaml.Yaml;
 
 import javax.ws.rs.core.Response;
@@ -70,12 +73,13 @@ public class FileSystemAppFactory implements AppFactory {
             if (Files.isRegularFile(jsFile)) {
                 executable = new JSExecutable(
                         new String(Files.readAllBytes(jsFile)),
-                        Util.relativePath(jsFile).toString());
+                        FileUtil.relativePath(jsFile).toString());
             }
             //TODO: use UTF-8
-            template = new HandlebarsRenderble(
-                    new String(Files.readAllBytes(hbsFile)),
-                    Util.relativePath(hbsFile).toString());
+            TemplateSource source = new StringTemplateSource(
+                    FileUtil.relativePath(hbsFile).toString(),
+                    new String(Files.readAllBytes(hbsFile)));
+            template = new HandlebarsRenderble(source);
         } else {
             throw new UUFException(
                     "page must contain a template in '" + pageDir.toString() + "'",

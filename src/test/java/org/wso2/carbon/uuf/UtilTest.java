@@ -3,7 +3,7 @@ package org.wso2.carbon.uuf;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-import org.wso2.carbon.uuf.core.Util;
+import org.wso2.carbon.uuf.core.util.FileUtil;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -33,7 +33,7 @@ public class UtilTest {
 
     @Test(dataProvider = "pathProvider")
     public void testEmptyPath(String originalPath, String relativePath) throws Exception {
-        Path path = Util.relativePath(Paths.get(originalPath));
+        Path path = FileUtil.relativePath(Paths.get(originalPath));
         Assert.assertEquals(path.toString(), relativePath, "path should relativized.");
     }
 
