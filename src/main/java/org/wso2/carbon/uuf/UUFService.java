@@ -40,8 +40,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Path("/")
 public class UUFService implements Microservice {
 
-    private UUFRegistry registry;
-    private AtomicInteger count = new AtomicInteger(0);
+    private final UUFRegistry registry;
+    private final AtomicInteger count = new AtomicInteger(0);
 
     public UUFService(UUFRegistry server) {
         this.registry = server;

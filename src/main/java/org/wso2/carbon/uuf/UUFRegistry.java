@@ -16,11 +16,18 @@ import java.util.Map;
 public class UUFRegistry {
 
     private static final Logger log = LoggerFactory.getLogger(UUFRegistry.class);
-    private Map<String, App> apps = new HashMap<>();
     private final AppFactory appFactory;
+    private final Map<String, App> apps = new HashMap<>();
 
     public UUFRegistry(AppFactory appFactory) {
         this.appFactory = appFactory;
+    }
+
+    public static void main(String[] args) {
+        //TODO: only if debug is enabled
+        DebugAppender.attach();
+        UUFRegistry registry = new UUFRegistry(new FileSystemAppFactory(new String[]{"."}));
+        new MicroservicesRunner().deploy(new UUFService(registry)).start();
     }
 
     public Response.ResponseBuilder serve(HttpRequest request) {
@@ -75,23 +82,29 @@ public class UUFRegistry {
                 }
             }
 
-            log.error("error while serving context '" + appName + "'", e);
-
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
-            e.printStackTrace(pw);
-            return Response.ok()
-                    .entity(sw.toString())
-                    .status(e.getStatus())
-                    .header("Content-Type", "text/plain");
+            return sendError(appName, e, e.getStatus());
+        } catch (Exception e) {
+            Response.Status status = Response.Status.INTERNAL_SERVER_ERROR;
+            Throwable cause = e.getCause();
+            while (cause != null) {
+                if (cause instanceof UUFException) {
+                    status = ((UUFException) cause).getStatus();
+                    break;
+                }
+                cause = e.getCause();
+            }
+            return sendError(appName, e, status);
         }
     }
 
+    private Response.ResponseBuilder sendError(String appName, Exception e, Response.Status status) {
+        log.error("error while serving context '" + appName + "'", e);
 
-    public static void main(String[] args) {
-        //TODO: only if debug is enabled
-        DebugAppender.attach();
-        UUFRegistry registry = new UUFRegistry(new FileSystemAppFactory(new String[]{"."}));
-        new MicroservicesRunner().deploy(new UUFService(registry)).start();
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        e.printStackTrace(pw);
+        return Response.status(status)
+                .entity(sw.toString())
+                .header("Content-Type", "text/plain");
     }
 }

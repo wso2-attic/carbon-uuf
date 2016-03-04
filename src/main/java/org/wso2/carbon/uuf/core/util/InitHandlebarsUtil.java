@@ -6,12 +6,10 @@ import com.github.jknack.handlebars.TagType;
 import com.github.jknack.handlebars.Template;
 import com.github.jknack.handlebars.io.StringTemplateSource;
 import com.github.jknack.handlebars.io.TemplateSource;
-import org.apache.commons.logging.impl.LogKitLogger;
 import org.wso2.carbon.uuf.core.HandlebarsRenderble;
 import org.wso2.carbon.uuf.core.Renderble;
 import org.wso2.carbon.uuf.core.UUFException;
 
-import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,6 +25,9 @@ public class InitHandlebarsUtil {
 
         HANDLEBARS.registerHelper("fillZone", (context, options) -> {
             Map<String, Renderble> zones = options.data(ZONES_KEY);
+            if (!(context instanceof String)) {
+                throw new UUFException("fillZone must have a string literal name", INTERNAL_SERVER_ERROR);
+            }
             String zoneName = (String) context;
 
             //we will prepend with a space and enter string to make the line numbers correct
@@ -44,7 +45,7 @@ public class InitHandlebarsUtil {
             sb.append(options.fn.text());
             TemplateSource source = new StringTemplateSource(options.fn.filename(), sb.toString());
             if (zones == null) {
-                zones = new HashMap<String, Renderble>();
+                zones = new HashMap<>();
                 options.data(ZONES_KEY, zones);
             }
             zones.put(zoneName, new HandlebarsRenderble(source));
@@ -76,7 +77,7 @@ public class InitHandlebarsUtil {
         try {
             return HANDLEBARS.compile(source);
         } catch (IOException e) {
-            throw new UUFException("pages template completions error", INTERNAL_SERVER_ERROR, e);
+            throw new UUFException("pages template completions error", e);
         }
     }
 

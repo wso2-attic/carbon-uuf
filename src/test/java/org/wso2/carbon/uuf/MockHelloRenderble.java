@@ -1,7 +1,6 @@
 package org.wso2.carbon.uuf;
 
 import org.wso2.carbon.uuf.core.Renderble;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.Map;
 

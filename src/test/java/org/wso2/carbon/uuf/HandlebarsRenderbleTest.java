@@ -30,7 +30,7 @@ public class HandlebarsRenderbleTest {
                 "{{layout \"my-layout\"}}"));
 
         String layoutName = renderble.getLayoutName();
-        Assert.assertEquals(layoutName,"my-layout","a layout is defined in the template");
+        Assert.assertEquals(layoutName, "my-layout", "a layout is defined in the template");
 
     }
 

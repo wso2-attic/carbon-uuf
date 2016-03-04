@@ -7,7 +7,6 @@ import org.wso2.carbon.uuf.core.util.InitHandlebarsUtil;
 import org.wso2.carbon.uuf.core.util.RuntimeHandlebarsUtil;
 
 import javax.annotation.Nullable;
-import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
@@ -29,7 +28,7 @@ public class HandlebarsRenderble implements Renderble {
             Template preTemplate = InitHandlebarsUtil.compile(source);
             preTemplate.apply(context);
         } catch (IOException e) {
-            throw new UUFException("pages template completions error", Response.Status.INTERNAL_SERVER_ERROR, e);
+            throw new UUFException("pages template completions error", e);
         }
         this.layoutName = InitHandlebarsUtil.getLayoutName(context);
         this.fillingZones = InitHandlebarsUtil.getFillingZones(context);
@@ -39,11 +38,11 @@ public class HandlebarsRenderble implements Renderble {
     @Override
     public String render(Object o, Map<String, Renderble> zones) {
         Context context = Context.newContext(o);
-        context.data(RuntimeHandlebarsUtil.ZONES_KEY, zones);
+        RuntimeHandlebarsUtil.setZones(context, zones);
         try {
             return template.apply(context);
         } catch (IOException e) {
-            throw new UUFException("Handlebars rendering failed", Response.Status.INTERNAL_SERVER_ERROR, e);
+            throw new UUFException("Handlebars rendering failed", e);
         }
     }
 

@@ -12,7 +12,7 @@ public class Page {
     @Nullable
     private final Executable script;
     @Nullable
-    private Renderble layout;
+    private final Renderble layout;
 
     public Page(UriPatten uri, Renderble template) {
         this(uri, template, null, null);

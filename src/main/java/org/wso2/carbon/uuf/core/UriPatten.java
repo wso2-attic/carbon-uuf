@@ -7,9 +7,9 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class UriPatten implements Comparable<UriPatten> {
-    private Pattern patten;
-    private String pattenString;
     private static final Pattern WILDCARD = Pattern.compile("\\{(\\w+)\\}");
+    private Pattern patten;
+    private final String pattenString;
 
     public UriPatten(String patten) {
         pattenString = patten;

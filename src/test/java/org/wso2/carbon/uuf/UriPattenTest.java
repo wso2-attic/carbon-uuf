@@ -5,9 +5,6 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import org.wso2.carbon.uuf.core.UriPatten;
 
-import java.lang.reflect.Array;
-import java.util.Arrays;
-
 public class UriPattenTest {
 
     @DataProvider

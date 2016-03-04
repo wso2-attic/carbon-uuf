@@ -6,18 +6,19 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import javax.ws.rs.core.Response;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class App {
+    private static final Logger log = LoggerFactory.getLogger(App.class);
     private final String context;
     private final List<Page> pages;
     private final Map<String, Fragment> frags;
 
-    private static final Logger log = LoggerFactory.getLogger(App.class);
-
-    public App(String context, List<Page> pages, List<Fragment> frags, List<Renderble> layouts) {
+    public App(String context, List<Page> pages, List<Fragment> frags) {
         if (!context.startsWith("/")) {
             throw new IllegalArgumentException("app context must start with a '/'");
         }

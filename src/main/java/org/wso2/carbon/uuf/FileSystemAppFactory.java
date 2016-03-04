@@ -4,22 +4,35 @@ import com.github.jknack.handlebars.io.StringTemplateSource;
 import com.github.jknack.handlebars.io.TemplateSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.uuf.core.*;
+import org.wso2.carbon.uuf.core.App;
+import org.wso2.carbon.uuf.core.Executable;
+import org.wso2.carbon.uuf.core.HandlebarsRenderble;
+import org.wso2.carbon.uuf.core.JSExecutable;
+import org.wso2.carbon.uuf.core.Page;
+import org.wso2.carbon.uuf.core.Renderble;
+import org.wso2.carbon.uuf.core.UUFException;
+import org.wso2.carbon.uuf.core.UriPatten;
 import org.wso2.carbon.uuf.core.util.FileUtil;
 import org.yaml.snakeyaml.Yaml;
 
 import javax.ws.rs.core.Response;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class FileSystemAppFactory implements AppFactory {
 
-    private final String[] paths;
     private static final Logger log = LoggerFactory.getLogger(FileSystemAppFactory.class);
+    private final String[] paths;
 
     public FileSystemAppFactory(String[] paths) {
         this.paths = paths;
@@ -27,28 +40,70 @@ public class FileSystemAppFactory implements AppFactory {
 
     private App createFromComponents(Path components, String context) throws IOException {
         List<Page> pages = new ArrayList<>();
+        Map<String, Renderble> layouts = new HashMap<>();
 
         try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(components)) {
-            for (Path component : dirStream) {
+            for (Path component : dirStream)
                 if (Files.isDirectory(component)) {
-                    createPages(component, pages);
+                    createLayouts(component.resolve("layouts"), layouts, component.getFileName().toString());
                 } else {
-                    log.warn("component must be a directory " + component.toString() + "'");
+                    log.warn("component must be a directory " + component + "'");
                 }
-            }
         }
-        return new App(context, pages, Collections.emptyList(), null);
+        try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(components)) {
+            for (Path component : dirStream)
+                if (Files.isDirectory(component)) {
+                    createPages(component.resolve("pages"), pages, layouts);
+                } else {
+                    log.warn("component must be a directory " + component + "'");
+                }
+        }
+        return new App(context, pages, Collections.emptyList());
     }
 
-    private void createPages(Path component, List<Page> pages) throws IOException {
-        Path pagesDir = component.resolve("pages");
+    private void createLayouts(Path layoutsDir, Map<String, Renderble> layouts, String componentName) throws IOException {
+        if (Files.isDirectory(layoutsDir)) {
+            try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(layoutsDir)) {
+                for (Path layoutDir : dirStream) {
+                    String fileName = layoutDir.getFileName().toString();
+                    if (Files.isRegularFile(layoutDir) && fileName.endsWith(".hbs")) {
+                        layouts.put(componentName + "." + fileName.substring(0, fileName.length() - 4), createLayout(layoutDir));
+                    } else {
+                        log.warn("layout must be a hbs file " + layoutDir + "'");
+                    }
+                }
+            }
+
+        } else {
+            if (Files.exists(layoutsDir)) {
+                log.warn("layouts must be a directory " + layoutsDir + "'");
+            }
+        }
+
+    }
+
+    private Renderble createLayout(Path hbsFile) {
+        try {
+            TemplateSource source = new StringTemplateSource(
+                    FileUtil.relativePath(hbsFile).toString(),
+                    new String(Files.readAllBytes(hbsFile)));
+            return new HandlebarsRenderble(source);
+        } catch (IOException e) {
+            throw new UUFException(
+                    "error creating the  '" + hbsFile.toString() + "'",
+                    e);
+
+        }
+    }
+
+    private void createPages(Path pagesDir, List<Page> pages, Map<String, Renderble> layouts) throws IOException {
         if (Files.isDirectory(pagesDir)) {
             try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(pagesDir)) {
                 for (Path pageDir : dirStream) {
                     if (Files.isDirectory(pageDir)) {
-                        pages.add(createPage(pageDir));
+                        pages.add(createPage(pageDir, layouts));
                     } else {
-                        log.warn("page must be a directory " + component.toString() + "'");
+                        log.warn("page must be a directory " + pageDir.toString() + "'");
                     }
                 }
             }
@@ -60,10 +115,11 @@ public class FileSystemAppFactory implements AppFactory {
         }
     }
 
-    private Page createPage(Path pageDir) throws IOException {
+    private Page createPage(Path pageDir, Map<String, Renderble> layouts) throws IOException {
         String name = pageDir.getFileName().toString();
 
         Renderble template;
+        Renderble layout;
         Executable executable = null;
 
         Path hbsFile = pageDir.resolve(name + ".hbs");
@@ -74,11 +130,12 @@ public class FileSystemAppFactory implements AppFactory {
                         new String(Files.readAllBytes(jsFile)),
                         FileUtil.relativePath(jsFile).toString());
             }
-            //TODO: use UTF-8
+            String content = new String(Files.readAllBytes(hbsFile), StandardCharsets.UTF_8);
             TemplateSource source = new StringTemplateSource(
                     FileUtil.relativePath(hbsFile).toString(),
-                    new String(Files.readAllBytes(hbsFile)));
+                    content);
             template = new HandlebarsRenderble(source);
+            layout = layouts.get(template.getLayoutName());
         } else {
             throw new UUFException(
                     "page must contain a template in '" + pageDir.toString() + "'",
@@ -96,7 +153,7 @@ public class FileSystemAppFactory implements AppFactory {
             uri = "/" + name;
         }
 
-        return new Page(new UriPatten(uri), template, executable, null);
+        return new Page(new UriPatten(uri), template, executable, layout);
     }
 
 
@@ -110,7 +167,7 @@ public class FileSystemAppFactory implements AppFactory {
                     return createFromComponents(path.resolve("components"), context);
                 } catch (IOException e) {
                     throw new UUFException("error while creating app for '" + name + "'",
-                            Response.Status.INTERNAL_SERVER_ERROR);
+                            e);
                 }
             }
         }

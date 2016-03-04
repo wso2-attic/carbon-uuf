@@ -7,6 +7,14 @@ import org.apache.log4j.spi.LoggingEvent;
 
 public class DebugAppender extends AppenderSkeleton {
 
+    public static void attach() {
+        DebugAppender appender = new DebugAppender();
+        appender.setThreshold(Level.DEBUG);
+        Logger logger = Logger.getLogger("org.wso2.carbon.uuf");
+        logger.setLevel(Level.DEBUG);
+        Logger.getRootLogger().addAppender(appender);
+    }
+
     @Override
     protected void append(LoggingEvent event) {
         String requestId = (String) event.getMDC("uuf-request");
@@ -23,13 +31,5 @@ public class DebugAppender extends AppenderSkeleton {
     @Override
     public void close() {
 
-    }
-
-    public static void attach() {
-        DebugAppender appender = new DebugAppender();
-        appender.setThreshold(Level.DEBUG);
-        Logger logger = Logger.getLogger("org.wso2.carbon.uuf");
-        logger.setLevel(Level.DEBUG);
-        Logger.getRootLogger().addAppender(appender);
     }
 }
