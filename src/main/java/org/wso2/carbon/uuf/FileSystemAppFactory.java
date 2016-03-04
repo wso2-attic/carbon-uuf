@@ -35,7 +35,7 @@ public class FileSystemAppFactory implements AppFactory {
                 }
             }
         }
-        return new App(context, pages, Collections.emptyList());
+        return new App(context, pages, Collections.emptyList(), null);
     }
 
     private void createPages(Path component, List<Page> pages) throws IOException {
@@ -93,7 +93,7 @@ public class FileSystemAppFactory implements AppFactory {
             uri = "/" + name;
         }
 
-        return new Page(new UriPatten(uri), template, executable);
+        return new Page(new UriPatten(uri), template, executable, null);
     }
 
 

@@ -1,14 +1,15 @@
 package org.wso2.carbon.uuf;
 
 import org.wso2.carbon.uuf.core.Renderble;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.Map;
 
-public class MockRenderble implements Renderble {
-    private static final String HELLO = "Welcome to the world of tomorrow";
+public class MockHelloRenderble implements Renderble {
+    private static final String HELLO = "Welcome to the <world> of tomorrow";
 
     @Override
-    public String render(Object o) {
+    public String render(Object o, Map<String, Renderble> zones) {
         if (o instanceof Map) {
             String name = (String) ((Map) o).get("name");
             if (name != null) {

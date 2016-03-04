@@ -1,11 +1,10 @@
 package org.wso2.carbon.uuf;
 
+import com.google.common.collect.ImmutableMap;
 import io.netty.handler.codec.http.DefaultFullHttpRequest;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import org.wso2.carbon.uuf.core.Fragment;
-import org.wso2.carbon.uuf.core.Page;
-import org.wso2.carbon.uuf.core.UriPatten;
+import org.wso2.carbon.uuf.core.*;
 
 import java.util.Collections;
 import java.util.Map;
@@ -18,15 +17,41 @@ public class PageTest {
 
     @Test
     public void testRenderNonExecPage() throws Exception {
-        Page page = new Page(new UriPatten("/page1"), new MockRenderble());
+        Page page = new Page(new UriPatten("/page1"), new MockHelloRenderble());
         String pageOutput = page.serve(new DefaultFullHttpRequest(HTTP_1_1, GET, "/my-app/page1"), FRAGMENTS);
-        Assert.assertEquals(pageOutput, "Welcome to the world of tomorrow !", "page should render with an empty model");
+        Assert.assertEquals(pageOutput,
+                "Welcome to the <world> of tomorrow !", "page should render with an empty model");
     }
 
     @Test
     public void testRenderPage() throws Exception {
-        Page page = new Page(new UriPatten("/page1"), new MockRenderble(), new MockExecutable());
+        Page page = new Page(new UriPatten("/page1"), new MockHelloRenderble(), new MockExecutable(), null);
         String pageOutput = page.serve(new DefaultFullHttpRequest(HTTP_1_1, GET, "/my-app/page1"), FRAGMENTS);
-        Assert.assertEquals(pageOutput, "Welcome to the world of tomorrow, Fry", "page should render with a model");
+        Assert.assertEquals(pageOutput, "Welcome to the <world> of tomorrow, Fry", "page should render with a model");
+    }
+
+    @Test
+    public void testPageWithLayout() throws Exception {
+        Page page = new Page(
+                new UriPatten("/page1"),
+                (data, zones) -> zones.get("all-zone").render(data, Collections.emptyMap()),
+                null,
+                new Renderble() {
+                    @Override
+                    public String render(Object o, Map<String, Renderble> zones) {
+                        return null;
+                    }
+
+                    @Override
+                    public Map<String, Renderble> getFillingZones() {
+                        return ImmutableMap.of("all-zone", new MockHelloRenderble());
+                    }
+                }
+        );
+        String pageOutput = page.serve(new DefaultFullHttpRequest(HTTP_1_1, GET, "/my-app/page1"), FRAGMENTS);
+
+
+        System.out.println(page);
+//        Assert.assertEquals(pageOutput, "Welcome to the world of tomorrow, Fry", "page should render with a model");
     }
 }

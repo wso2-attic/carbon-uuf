@@ -14,16 +14,19 @@ public class Page {
     private final Renderble template;
     @Nullable
     private final Executable script;
+    @Nullable
+    private Renderble layout;
 
     public Page(UriPatten uri, Renderble template) {
-        this(uri, template, null);
+        this(uri, template, null, null);
     }
 
 
-    public Page(UriPatten uri, Renderble template, @Nullable Executable script) {
+    public Page(UriPatten uri, Renderble template, @Nullable Executable script, @Nullable Renderble layout) {
         this.uri = uri;
         this.template = template;
         this.script = script;
+        this.layout = layout;
     }
 
     public UriPatten getUri() {
@@ -36,6 +39,9 @@ public class Page {
             model = script.execute();
         } else {
             model = Collections.EMPTY_MAP;
+        }
+        if (layout != null) {
+           return layout.render(model, template.getFillingZones());
         }
         return template.render(model);
     }

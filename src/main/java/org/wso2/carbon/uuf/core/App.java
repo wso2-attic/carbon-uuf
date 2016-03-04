@@ -17,7 +17,7 @@ public class App {
 
     private static final Logger log = LoggerFactory.getLogger(App.class);
 
-    public App(String context, List<Page> pages, List<Fragment> frags) {
+    public App(String context, List<Page> pages, List<Fragment> frags, List<Renderble> layouts) {
         if (!context.startsWith("/")) {
             throw new IllegalArgumentException("app context must start with a '/'");
         }
