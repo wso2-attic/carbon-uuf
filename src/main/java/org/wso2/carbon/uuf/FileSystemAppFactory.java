@@ -20,7 +20,6 @@ public class FileSystemAppFactory implements AppFactory {
 
     private final String[] paths;
     private static final Logger log = LoggerFactory.getLogger(FileSystemAppFactory.class);
-    private Yaml yaml;
 
     public FileSystemAppFactory(String[] paths) {
         this.paths = paths;
@@ -89,7 +88,7 @@ public class FileSystemAppFactory implements AppFactory {
         Path yamlFile = pageDir.resolve(name + ".yaml");
         String uri = null;
         if (Files.isRegularFile(yamlFile)) {
-            this.yaml = new Yaml();
+            Yaml yaml = new Yaml();
             Map map = (Map) yaml.load(Files.newBufferedReader(yamlFile));
             uri = (String) map.get("uri");
         }

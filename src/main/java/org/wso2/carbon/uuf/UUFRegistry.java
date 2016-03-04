@@ -18,7 +18,6 @@ public class UUFRegistry {
     private static final Logger log = LoggerFactory.getLogger(UUFRegistry.class);
     private Map<String, App> apps = new HashMap<>();
     private final AppFactory appFactory;
-    private HttpRequest request;
 
     public UUFRegistry(AppFactory appFactory) {
         this.appFactory = appFactory;

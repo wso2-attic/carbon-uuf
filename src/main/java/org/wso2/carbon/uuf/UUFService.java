@@ -18,8 +18,6 @@ package org.wso2.carbon.uuf;
 
 import io.netty.handler.codec.http.HttpRequest;
 import org.osgi.service.component.annotations.Component;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.wso2.msf4j.Microservice;
 import org.wso2.msf4j.util.SystemVariableUtil;
@@ -49,7 +47,9 @@ public class UUFService implements Microservice {
         this.registry = server;
     }
 
+    @SuppressWarnings("unused")
     public UUFService() {
+        // we need this constructor for running in OSGi mode.
         this(new UUFRegistry(new FileSystemAppFactory(
                 SystemVariableUtil.getValue("uufApps", ".").split("\\s*,\\s*")
         )));
@@ -61,11 +61,14 @@ public class UUFService implements Microservice {
     public Response get(@Context HttpRequest request) {
         try {
             MDC.put("uuf-request", String.valueOf(count.incrementAndGet()));
-
             Response.ResponseBuilder response = registry.serve(request);
             return response.build();
         } finally {
-            MDC.remove("uuf-request");
+            try {
+                MDC.remove("uuf-request");
+            } catch (Exception ex) {
+                //ignore, just catching so ide wan't complain. MDC will never throw an IllegalArgumentException.
+            }
         }
     }
 

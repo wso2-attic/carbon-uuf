@@ -3,8 +3,6 @@ package org.wso2.carbon.uuf.core;
 import com.github.jknack.handlebars.Context;
 import com.github.jknack.handlebars.Template;
 import com.github.jknack.handlebars.io.TemplateSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.core.util.InitHandlebarsUtil;
 import org.wso2.carbon.uuf.core.util.RuntimeHandlebarsUtil;
 
@@ -17,8 +15,6 @@ import java.util.Map;
 
 
 public class HandlebarsRenderble implements Renderble {
-
-    private static final Logger log = LoggerFactory.getLogger(HandlebarsRenderble.class);
 
     private final Template template;
     private final TemplateSource source;
