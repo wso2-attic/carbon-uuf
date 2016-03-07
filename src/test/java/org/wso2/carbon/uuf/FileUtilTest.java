@@ -3,12 +3,12 @@ package org.wso2.carbon.uuf;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-import org.wso2.carbon.uuf.core.util.FileUtil;
+import org.wso2.carbon.uuf.artifact.FileUtil;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class UtilTest {
+public class FileUtilTest {
     @DataProvider
     public Object[][] pathProvider() {
         return new Object[][]{
