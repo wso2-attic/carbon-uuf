@@ -3,7 +3,9 @@ package org.wso2.carbon.uuf;
 import io.netty.handler.codec.http.HttpRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.uuf.artifact.FromArtifactAppCreator;
 import org.wso2.carbon.uuf.core.App;
+import org.wso2.carbon.uuf.core.AppCreator;
 import org.wso2.carbon.uuf.core.UUFException;
 import org.wso2.msf4j.MicroservicesRunner;
 
@@ -16,17 +18,17 @@ import java.util.Map;
 public class UUFRegistry {
 
     private static final Logger log = LoggerFactory.getLogger(UUFRegistry.class);
-    private final AppFactory appFactory;
+    private final AppCreator appCreator;
     private final Map<String, App> apps = new HashMap<>();
 
-    public UUFRegistry(AppFactory appFactory) {
-        this.appFactory = appFactory;
+    public UUFRegistry(AppCreator appCreator) {
+        this.appCreator = appCreator;
     }
 
     public static void main(String[] args) {
         //TODO: only if debug is enabled
         DebugAppender.attach();
-        UUFRegistry registry = new UUFRegistry(new FileSystemAppFactory(new String[]{"."}));
+        UUFRegistry registry = new UUFRegistry(new FromArtifactAppCreator(new String[]{"."}));
         new MicroservicesRunner().deploy(new UUFService(registry)).start();
     }
 
@@ -59,7 +61,7 @@ public class UUFRegistry {
         App app = apps.get(appName);
         try {
             if (app == null) {
-                app = appFactory.createApp(appName, "/" + appName);
+                app = appCreator.createApp(appName, "/" + appName);
                 apps.put(appName, app);
             }
             String page = app.serve(request);
