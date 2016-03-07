@@ -6,6 +6,9 @@ import java.util.Arrays;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+/**
+ * Note: this class has a natural ordering that is inconsistent with equals.
+ */
 public class UriPatten implements Comparable<UriPatten> {
     private static final Pattern WILDCARD = Pattern.compile("\\{(\\w+)\\}");
     private Pattern patten;

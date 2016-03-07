@@ -5,10 +5,11 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import org.wso2.carbon.uuf.core.UriPatten;
 
+import java.util.Arrays;
+
 import static java.lang.Integer.signum;
 
 public class UriPattenTest {
-
     @DataProvider
     public Object[][] pattenProvider() {
         return new Object[][]{
@@ -31,6 +32,8 @@ public class UriPattenTest {
                 {"/", "/"},
                 {"/a", "/a"},
                 {"/{a}", "/b"},
+                {"/{a}b", "/xb"},
+                {"/x{a}o/y{b}o", "/xpo/ypo"},
         };
     }
 
@@ -54,10 +57,10 @@ public class UriPattenTest {
         UriPatten[] pattens = new UriPatten[]{
                 new UriPatten("/"),
                 new UriPatten("/a"),
-                new UriPatten("/{a}"),
                 new UriPatten("/ab"),
                 new UriPatten("/a{b}"),
                 new UriPatten("/{a}/{b}"),
+                new UriPatten("/{a}"),
                 new UriPatten("/{a}"),
                 new UriPatten("/a/{b}"),
                 new UriPatten("/ab/{b}"),
