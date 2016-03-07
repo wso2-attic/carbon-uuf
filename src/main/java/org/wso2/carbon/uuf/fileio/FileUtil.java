@@ -1,4 +1,4 @@
-package org.wso2.carbon.uuf.artifact;
+package org.wso2.carbon.uuf.fileio;
 
 import com.github.jknack.handlebars.io.StringTemplateSource;
 import com.github.jknack.handlebars.io.TemplateSource;

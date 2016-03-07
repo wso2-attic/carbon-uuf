@@ -19,7 +19,7 @@ package org.wso2.carbon.uuf;
 import io.netty.handler.codec.http.HttpRequest;
 import org.osgi.service.component.annotations.Component;
 import org.slf4j.MDC;
-import org.wso2.carbon.uuf.artifact.FromArtifactAppCreator;
+import org.wso2.carbon.uuf.fileio.FromArtifactAppCreator;
 import org.wso2.msf4j.Microservice;
 import org.wso2.msf4j.util.SystemVariableUtil;
 

@@ -1,4 +1,4 @@
-package org.wso2.carbon.uuf.artifact;
+package org.wso2.carbon.uuf.fileio;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

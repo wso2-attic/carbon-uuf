@@ -3,7 +3,7 @@ package org.wso2.carbon.uuf;
 import io.netty.handler.codec.http.HttpRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.uuf.artifact.FromArtifactAppCreator;
+import org.wso2.carbon.uuf.fileio.FromArtifactAppCreator;
 import org.wso2.carbon.uuf.core.App;
 import org.wso2.carbon.uuf.core.AppCreator;
 import org.wso2.carbon.uuf.core.UUFException;

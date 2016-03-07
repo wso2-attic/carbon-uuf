@@ -3,7 +3,7 @@ package org.wso2.carbon.uuf;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-import org.wso2.carbon.uuf.artifact.FileUtil;
+import org.wso2.carbon.uuf.fileio.FileUtil;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
