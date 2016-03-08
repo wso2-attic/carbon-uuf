@@ -2,6 +2,7 @@ package org.wso2.carbon.uuf.fileio;
 
 import org.wso2.carbon.uuf.core.App;
 import org.wso2.carbon.uuf.core.AppCreator;
+import org.wso2.carbon.uuf.core.Fragment;
 import org.wso2.carbon.uuf.core.Page;
 import org.wso2.carbon.uuf.core.UUFException;
 
@@ -21,12 +22,13 @@ public class FromArtifactAppCreator implements AppCreator {
 
     private final String[] paths;
     private final PageCreator pageCreator = new PageCreator();
+    private final FragmentCreator fragmentCreator = new FragmentCreator();
 
     public FromArtifactAppCreator(String[] paths) {
         this.paths = paths;
     }
 
-    private static Stream<Path> pagesOfAComponent(Path componentDir) {
+    private static Stream<Path> subDirsOfAComponent(Path componentDir, String dirName) {
         try {
             Path pagesDir = componentDir.resolve("pages");
             if (Files.isDirectory(pagesDir)) {
@@ -47,11 +49,16 @@ public class FromArtifactAppCreator implements AppCreator {
         LayoutCreator layoutCreator = new LayoutCreator(components);
         List<Page> pages = Files
                 .list(components)
-                .flatMap(FromArtifactAppCreator::pagesOfAComponent)
+                .flatMap(component -> subDirsOfAComponent(component, "pages"))
                 .map(pageDir -> pageCreator.createPage(pageDir, layoutCreator))
                 .collect(Collectors.toList());
 
-        return new App(context, pages, Collections.emptyList());
+        List<Fragment> fragments = Files
+                .list(components)
+                .flatMap(component -> subDirsOfAComponent(component, "fragments"))
+                .map(fragmentCreator::createFragment)
+                .collect(Collectors.toList());
+        return new App(context, pages, Collections.emptyMap());
     }
 
 

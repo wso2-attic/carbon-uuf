@@ -8,7 +8,7 @@ public class MockHelloRenderble implements Renderble {
     private static final String HELLO = "Welcome to the <world> of tomorrow";
 
     @Override
-    public String render(Object o, Map<String, Renderble> zones) {
+    public String render(Object o, Map<String, Renderble> zones, Map<String, Renderble> fragments) {
         if (o instanceof Map) {
             String name = (String) ((Map) o).get("name");
             if (name != null) {
@@ -20,4 +20,5 @@ public class MockHelloRenderble implements Renderble {
             return HELLO + ", " + o.toString();
         }
     }
+
 }

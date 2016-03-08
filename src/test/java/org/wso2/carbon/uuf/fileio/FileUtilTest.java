@@ -1,4 +1,4 @@
-package org.wso2.carbon.uuf;
+package org.wso2.carbon.uuf.fileio;
 
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;

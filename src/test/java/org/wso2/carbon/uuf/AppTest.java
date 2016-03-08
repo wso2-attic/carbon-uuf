@@ -5,7 +5,6 @@ import io.netty.handler.codec.http.HttpRequest;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.wso2.carbon.uuf.core.App;
-import org.wso2.carbon.uuf.core.Fragment;
 import org.wso2.carbon.uuf.core.Page;
 import org.wso2.carbon.uuf.core.Renderble;
 import org.wso2.carbon.uuf.core.UUFException;
@@ -24,12 +23,11 @@ public class AppTest {
     private final static List<Page> PAGES =
             Collections.singletonList(new Page(new UriPatten("/page1"), null, null, null) {
                 @Override
-                public String serve(HttpRequest request, Map<String, Fragment> frags) {
+                public String serve(HttpRequest request, Map<String, Renderble> fragments) {
                     return MOCK_PAGE1_CONTENT;
                 }
             });
-    private final static List<Fragment> FRAGMENTS = Collections.emptyList();
-    private final static List<Renderble> LAYOUTS = Collections.emptyList();
+    private final static Map<String, Renderble> FRAGMENTS = Collections.emptyMap();
     private final static App APP = new App("/my-APP", PAGES, FRAGMENTS);
 
     @Test

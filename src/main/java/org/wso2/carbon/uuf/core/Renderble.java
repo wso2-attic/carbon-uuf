@@ -7,11 +7,8 @@ import java.util.Map;
 
 public interface Renderble {
 
-    String render(Object o, Map<String, Renderble> zones);
 
-    default String render(Object o) {
-        return render(o, Collections.emptyMap());
-    }
+    String render(Object o, Map<String, Renderble> zones, Map<String, Renderble> fragments);
 
     default Map<String, Renderble> getFillingZones() {
         return Collections.emptyMap();

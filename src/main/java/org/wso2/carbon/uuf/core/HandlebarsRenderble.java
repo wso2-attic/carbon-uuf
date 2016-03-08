@@ -36,9 +36,10 @@ public class HandlebarsRenderble implements Renderble {
 
 
     @Override
-    public String render(Object o, Map<String, Renderble> zones) {
+    public String render(Object o, Map<String, Renderble> zones, Map<String, Renderble> fragments) {
         Context context = Context.newContext(o);
         RuntimeHandlebarsUtil.setZones(context, zones);
+        RuntimeHandlebarsUtil.setFragment(context, fragments);
         try {
             return template.apply(context);
         } catch (IOException e) {

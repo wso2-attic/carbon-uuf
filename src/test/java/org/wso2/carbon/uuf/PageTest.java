@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableMap;
 import io.netty.handler.codec.http.DefaultFullHttpRequest;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import org.wso2.carbon.uuf.core.Fragment;
 import org.wso2.carbon.uuf.core.Page;
 import org.wso2.carbon.uuf.core.Renderble;
 import org.wso2.carbon.uuf.core.UriPatten;
@@ -16,7 +15,7 @@ import static io.netty.handler.codec.http.HttpMethod.GET;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
 public class PageTest {
-    private final static Map<String, Fragment> FRAGMENTS = Collections.emptyMap();
+    private final static Map<String, Renderble> FRAGMENTS = Collections.emptyMap();
 
     @Test
     public void testRenderNonExecPage() throws Exception {
@@ -39,7 +38,7 @@ public class PageTest {
                 new UriPatten("/page1"),
                 new Renderble() {
                     @Override
-                    public String render(Object o, Map<String, Renderble> zones) {
+                    public String render(Object o, Map<String, Renderble> zones, Map<String, Renderble> fragments) {
                         return null;
                     }
 
@@ -49,7 +48,7 @@ public class PageTest {
                     }
                 },
                 () -> ImmutableMap.of("name", "Bender"),
-                (data, zones) -> zones.get("all-zone").render(data, Collections.emptyMap())
+                (data, zones, fragments) -> zones.get("all-zone").render(data, zones, fragments)
         );
         String pageOutput = page.serve(new DefaultFullHttpRequest(HTTP_1_1, GET, "/my-app/page1"), FRAGMENTS);
         Assert.assertEquals(pageOutput, "Welcome to the <world> of tomorrow, Bender", "page should render with a model");

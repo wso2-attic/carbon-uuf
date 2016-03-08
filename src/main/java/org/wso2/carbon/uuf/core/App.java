@@ -9,26 +9,27 @@ import javax.ws.rs.core.Response;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public class App {
     private static final Logger log = LoggerFactory.getLogger(App.class);
     private final String context;
     private final List<Page> pages;
-    private final Map<String, Fragment> frags;
+    private final Map<String, Renderble> fragmentMap;
 
-    public App(String context, List<Page> pages, List<Fragment> frags) {
+    public App(String context, List<Page> pages, Map<String, Renderble> fragmentMap) {
         if (!context.startsWith("/")) {
             throw new IllegalArgumentException("app context must start with a '/'");
         }
 
         this.context = context;
-        // convert the list to maps since we want O(1) access by name.
-        this.frags = frags.stream().collect(Collectors.toMap(Fragment::getName, Function.identity()));
+        this.fragmentMap = fragmentMap;
         // we sort uri so that more wildcard-ed ones go to the bottom.
         Collections.sort(pages, (o1, o2) -> o1.getUri().compareTo(o2.getUri()));
         this.pages = pages;
+
+        //TODO:remove comment
+//        // convert the list to maps since we want O(1) access by name.
+//        this.fragmentMap = fragmentMap.stream().collect(Collectors.toMap(Fragment::getName, Function.identity()));
     }
 
     public String serve(HttpRequest request) {
@@ -37,9 +38,11 @@ public class App {
             if (log.isDebugEnabled()) {
                 log.debug("page " + page + " is selected");
             }
-            return page.serve(request, frags);
+            return page.serve(request, fragmentMap);
         } else {
-            throw new UUFException("No page by the URI '" + request.getUri() + "'", Response.Status.NOT_FOUND);
+            throw new UUFException(
+                    "No page by the URI '" + request.getUri() + "'",
+                    Response.Status.NOT_FOUND);
         }
     }
 

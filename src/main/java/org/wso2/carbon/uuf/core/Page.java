@@ -30,7 +30,7 @@ public class Page {
         return uri;
     }
 
-    public String serve(HttpRequest request, Map<String, Fragment> frags) {
+    public String serve(HttpRequest request, Map<String, Renderble> fragments) {
         Object model;
         if (script != null) {
             model = script.execute();
@@ -38,9 +38,9 @@ public class Page {
             model = Collections.EMPTY_MAP;
         }
         if (layout != null) {
-            return layout.render(model, template.getFillingZones());
+            return layout.render(model, template.getFillingZones(), fragments);
         }
-        return template.render(model);
+        return template.render(model, Collections.emptyMap(), Collections.emptyMap());
     }
 
     @Override
