@@ -2,7 +2,9 @@ package org.wso2.carbon.uuf.fileio;
 
 import com.github.jknack.handlebars.io.StringTemplateSource;
 import com.github.jknack.handlebars.io.TemplateSource;
+import org.wso2.carbon.uuf.core.Executable;
 import org.wso2.carbon.uuf.core.HandlebarsRenderble;
+import org.wso2.carbon.uuf.core.JSExecutable;
 import org.wso2.carbon.uuf.core.Renderble;
 
 import java.io.IOException;
@@ -10,10 +12,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class FileUtil {
+class FileUtil {
 
-    //TODO: move to Factory
-    public static Path relativePath(Path path) {
+    private static Path relativePath(Path path) {
         path = path.normalize();
         int pageIndex = -1;
         int count = path.getNameCount();
@@ -40,5 +41,13 @@ public class FileUtil {
                 content);
         template = new HandlebarsRenderble(source);
         return template;
+    }
+
+    static Executable createExecutable(Path jsFile) throws IOException {
+        Executable executable;
+        executable = new JSExecutable(
+                new String(Files.readAllBytes(jsFile)),
+                FileUtil.relativePath(jsFile).toString());
+        return executable;
     }
 }

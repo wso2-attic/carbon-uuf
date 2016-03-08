@@ -1,7 +1,6 @@
 package org.wso2.carbon.uuf.fileio;
 
 import org.wso2.carbon.uuf.core.Executable;
-import org.wso2.carbon.uuf.core.JSExecutable;
 import org.wso2.carbon.uuf.core.Page;
 import org.wso2.carbon.uuf.core.Renderble;
 import org.wso2.carbon.uuf.core.UUFException;
@@ -27,9 +26,7 @@ class PageCreator {
             if (Files.isRegularFile(hbsFile)) {
                 Path jsFile = pageDir.resolve(name + ".js");
                 if (Files.isRegularFile(jsFile)) {
-                    executable = new JSExecutable(
-                            new String(Files.readAllBytes(jsFile)),
-                            FileUtil.relativePath(jsFile).toString());
+                    executable = FileUtil.createExecutable(jsFile);
                 }
                 template = FileUtil.createRenderble(hbsFile);
                 String layoutName = template.getLayoutName();

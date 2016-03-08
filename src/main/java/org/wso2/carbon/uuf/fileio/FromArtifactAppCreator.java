@@ -1,7 +1,5 @@
 package org.wso2.carbon.uuf.fileio;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.core.App;
 import org.wso2.carbon.uuf.core.AppCreator;
 import org.wso2.carbon.uuf.core.Page;
@@ -21,7 +19,6 @@ import java.util.stream.Stream;
 
 public class FromArtifactAppCreator implements AppCreator {
 
-    private static final Logger log = LoggerFactory.getLogger(FromArtifactAppCreator.class);
     private final String[] paths;
     private final PageCreator pageCreator = new PageCreator();
 
