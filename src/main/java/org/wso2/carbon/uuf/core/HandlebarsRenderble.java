@@ -18,10 +18,14 @@ public class HandlebarsRenderble implements Renderble {
     private final Map<String, Renderble> fillingZones;
     @Nullable
     private final String layoutName;
+    private final String name;
 
 
     public HandlebarsRenderble(TemplateSource source) {
         this.template = RuntimeHandlebarsUtil.compile(source);
+        // We have to separately remember this since there is a bug in Handlebar lib's
+        // filename() method when the file is empty or stats with a comment
+        this.name = source.filename();
 
         Context context = Context.newContext(Collections.EMPTY_MAP);
         try {
@@ -54,7 +58,7 @@ public class HandlebarsRenderble implements Renderble {
 
     @Override
     public String toString() {
-        return "{path:'" + template.filename() + "'}";
+        return "{path:'" + name + "'}";
     }
 
     @Override
