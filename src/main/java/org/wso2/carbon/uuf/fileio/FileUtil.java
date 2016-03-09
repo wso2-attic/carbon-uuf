@@ -15,7 +15,7 @@ import java.nio.file.Path;
 class FileUtil {
 
     static Path relativePath(Path path) {
-        path = path.normalize();
+        path = path.toAbsolutePath().normalize();
         int pageIndex = -1;
         int count = path.getNameCount();
         for (int i = count; i >= 1; i--) {
