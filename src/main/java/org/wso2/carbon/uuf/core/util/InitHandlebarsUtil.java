@@ -2,7 +2,6 @@ package org.wso2.carbon.uuf.core.util;
 
 import com.github.jknack.handlebars.Context;
 import com.github.jknack.handlebars.Handlebars;
-import com.github.jknack.handlebars.TagType;
 import com.github.jknack.handlebars.Template;
 import com.github.jknack.handlebars.io.StringTemplateSource;
 import com.github.jknack.handlebars.io.TemplateSource;
@@ -62,13 +61,7 @@ public class InitHandlebarsUtil {
             return "";
         });
 
-        HANDLEBARS.registerHelperMissing((context, options) -> {
-            if (options.tagType == TagType.VAR) {
-                return "";
-            } else {
-                throw new UUFException("unknown helper" + context);
-            }
-        });
+        HANDLEBARS.registerHelperMissing((context, options) -> "");
     }
 
     public static Template compile(TemplateSource source) {
