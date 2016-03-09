@@ -66,8 +66,8 @@ public class FromArtifactAppCreator implements AppCreator {
     public App createApp(String name, String context) {
         // app list mush be <white-space> and comma separated. <white-space> in app names not allowed
         for (String pathString : paths) {
-            Path path = FileSystems.getDefault().getPath(pathString);
-            if (name.equals(path.toAbsolutePath().normalize().getFileName().toString())) {
+            Path path = FileSystems.getDefault().getPath(pathString).toAbsolutePath().normalize();
+            if (name.equals(path.getFileName().toString())) {
                 try {
                     return createFromComponents(path.resolve("components"), context);
                 } catch (IOException e) {
