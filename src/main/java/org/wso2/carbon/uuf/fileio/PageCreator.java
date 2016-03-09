@@ -20,14 +20,12 @@ class PageCreator {
 
             Renderble template;
             Renderble layout = null;
-            Executable executable = null;
+            Executable executable;
 
             Path hbsFile = pageDir.resolve(name + ".hbs");
             if (Files.isRegularFile(hbsFile)) {
                 Path jsFile = pageDir.resolve(name + ".js");
-                if (Files.isRegularFile(jsFile)) {
-                    executable = FileUtil.createExecutable(jsFile);
-                }
+                executable = FileUtil.createExecutable(jsFile);
                 template = FileUtil.createRenderble(hbsFile);
                 String layoutName = template.getLayoutName();
                 if (layoutName != null) {

@@ -43,8 +43,10 @@ public class HandlebarsRenderbleTest {
         HandlebarsRenderble renderble = new HandlebarsRenderble(new StringTemplateSource(
                 "my-file.hbs",
                 "{{includeFragment \"news\"}}"));
-        Fragment fragment = new Fragment((o, z, f) -> "Good news, " + o + "!", null);
-
+        Fragment fragment = new Fragment(
+                "my-news-fragment",
+                (o, z, f) -> "Good news, " + o + "!",
+                /*script*/ null);
         String news = renderble.render(
                 "everyone",
                 Collections.emptyMap(),

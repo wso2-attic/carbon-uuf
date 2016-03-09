@@ -40,7 +40,7 @@ public class Page {
         if (layout != null) {
             return layout.render(model, template.getFillingZones(), fragments);
         }
-        return template.render(model, Collections.emptyMap(), Collections.emptyMap());
+        return template.render(model, Collections.emptyMap(), fragments);
     }
 
     @Override

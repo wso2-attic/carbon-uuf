@@ -7,6 +7,7 @@ import org.wso2.carbon.uuf.core.HandlebarsRenderble;
 import org.wso2.carbon.uuf.core.JSExecutable;
 import org.wso2.carbon.uuf.core.Renderble;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -43,11 +44,17 @@ class FileUtil {
         return template;
     }
 
+    @Nullable
     static Executable createExecutable(Path jsFile) throws IOException {
-        Executable executable;
-        executable = new JSExecutable(
-                new String(Files.readAllBytes(jsFile)),
-                FileUtil.relativePath(jsFile).toString());
-        return executable;
+        if (Files.isRegularFile(jsFile)) {
+
+            Executable executable;
+            executable = new JSExecutable(
+                    new String(Files.readAllBytes(jsFile)),
+                    FileUtil.relativePath(jsFile).toString());
+            return executable;
+        } else {
+            return null;
+        }
     }
 }

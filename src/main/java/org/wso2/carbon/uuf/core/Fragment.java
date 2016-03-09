@@ -6,11 +6,13 @@ import java.util.Map;
 
 public class Fragment implements Renderble {
 
+    private String name;
     private final Renderble template;
     @Nullable
-    private Executable script;
+    private final Executable script;
 
-    public Fragment(Renderble template, @Nullable Executable script) {
+    public Fragment(String name, Renderble template, @Nullable Executable script) {
+        this.name = name;
         this.template = template;
         this.script = script;
     }
@@ -24,5 +26,9 @@ public class Fragment implements Renderble {
             templateInput = o;
         }
         return template.render(templateInput, zones, fragments);
+    }
+
+    public String getName() {
+        return name;
     }
 }

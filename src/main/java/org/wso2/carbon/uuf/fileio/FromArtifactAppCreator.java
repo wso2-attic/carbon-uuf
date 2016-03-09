@@ -13,7 +13,6 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -30,7 +29,7 @@ public class FromArtifactAppCreator implements AppCreator {
 
     private static Stream<Path> subDirsOfAComponent(Path componentDir, String dirName) {
         try {
-            Path pagesDir = componentDir.resolve("pages");
+            Path pagesDir = componentDir.resolve(dirName);
             if (Files.isDirectory(pagesDir)) {
                 return Files.list(pagesDir);
             } else {
@@ -58,7 +57,7 @@ public class FromArtifactAppCreator implements AppCreator {
                 .flatMap(component -> subDirsOfAComponent(component, "fragments"))
                 .map(fragmentCreator::createFragment)
                 .collect(Collectors.toList());
-        return new App(context, pages, Collections.emptyMap());
+        return new App(context, pages, fragments);
     }
 
 
