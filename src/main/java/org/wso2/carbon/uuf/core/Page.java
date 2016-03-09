@@ -45,7 +45,7 @@ public class Page {
 
     @Override
     public String toString() {
-        return "{uri:'" + uri + "',template:" + template +
+        return "{uri:" + uri + ",template:" + template +
                 (script != null ? ",script:" + script : "") +
                 (layout != null ? ",layout:" + layout + "}" : "}");
     }
