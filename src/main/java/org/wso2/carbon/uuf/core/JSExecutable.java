@@ -15,7 +15,7 @@ public class JSExecutable implements Executable {
         this.fileName = fileName;
         try {
             ScriptEngine engine = engineManager.getEngineByName("nashorn");
-            engine.eval(script);
+            engine.eval(script + "//@ sourceURL=" + fileName);
             this.engine = (Invocable) engine;
         } catch (ScriptException e) {
             throw new UUFException("error evaluating javascript", e);
