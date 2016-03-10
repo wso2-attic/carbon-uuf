@@ -38,7 +38,20 @@ public class FromArtifactAppCreator implements AppCreator {
                 return Stream.empty();
             }
         } catch (IOException e) {
-            throw new UUFException("error while finding the pages", e);
+            throw new UUFException("error while finding the pages of " + componentDir, e);
+        }
+    }
+
+    private static Stream<? extends Path> findHbs(Path path, Path components) {
+        try {
+            return Files
+                    .find(
+                            path,
+                            Integer.MAX_VALUE,
+                            (p, a) -> p.getFileName().toString().endsWith(".hbs"))
+                    .map(components::relativize);
+        } catch (IOException e) {
+            throw new UUFException("error while finding a page", e);
         }
     }
 
@@ -50,13 +63,16 @@ public class FromArtifactAppCreator implements AppCreator {
         LayoutCreator layoutCreator = new LayoutCreator(components);
         List<Page> pages = Files
                 .list(components)
-                .flatMap(component -> subDirsOfAComponent(component, "pages"))
-                .map(pageDir -> pageCreator.createPage(pageDir, layoutCreator))
+                .flatMap(c -> subDirsOfAComponent(c, "pages"))
+                .flatMap(p -> findHbs(p, components))
+                .parallel()
+                .map(p -> pageCreator.createPage(p, layoutCreator, components))
                 .collect(Collectors.toList());
 
         List<Fragment> fragments = Files
                 .list(components)
-                .flatMap(component -> subDirsOfAComponent(component, "fragments"))
+                .flatMap(c -> subDirsOfAComponent(c, "fragments"))
+                .parallel()
                 .map(fragmentCreator::createFragment)
                 .collect(Collectors.toList());
         return new App(context, pages, fragments);

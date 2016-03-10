@@ -5,56 +5,50 @@ import org.wso2.carbon.uuf.core.Page;
 import org.wso2.carbon.uuf.core.Renderble;
 import org.wso2.carbon.uuf.core.UUFException;
 import org.wso2.carbon.uuf.core.UriPatten;
-import org.yaml.snakeyaml.Yaml;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Map;
 
 class PageCreator {
 
-    Page createPage(Path pageDir, LayoutCreator layoutCreator) {
+    Page createPage(Path templateFile, LayoutCreator layoutCreator, Path components) {
         try {
-            String name = pageDir.getFileName().toString();
-
-            Renderble template;
             Renderble layout = null;
-            Executable executable;
+            Path templateFileAbsolute = components.resolve(templateFile);
 
-            Path hbsFile = pageDir.resolve(name + ".hbs");
-            if (Files.isRegularFile(hbsFile)) {
-                Path jsFile = pageDir.resolve(name + ".js");
-                executable = FileUtil.createExecutable(jsFile);
-                template = FileUtil.createRenderble(hbsFile);
-                String layoutName = template.getLayoutName();
-                if (layoutName != null) {
-                    layout = layoutCreator.createLayout(layoutName, pageDir.getParent());
-                }
-
-                return new Page(getUriPatten(pageDir), template, executable, layout);
-            } else {
-                throw new UUFException("page must contain a template in '" + pageDir.toString() + "'");
+            String name = templateFileAbsolute.getFileName().toString();
+            int dotPos = name.lastIndexOf(".");
+            if (dotPos >= 0) {
+                name = name.substring(0, dotPos);
             }
+
+            Path jsFile = templateFileAbsolute.getParent().resolve(name + ".js");
+            Renderble template = FileUtil.createRenderble(templateFileAbsolute);
+            Executable executable = FileUtil.createExecutable(jsFile);
+            String layoutName = template.getLayoutName();
+            if (layoutName != null) {
+                layout = layoutCreator.createLayout(layoutName, templateFileAbsolute.getParent());
+            }
+
+            return new Page(getUriPatten(templateFile, name), template, executable, layout);
         } catch (IOException e) {
             // have to catch checked exception because we want to use it in a Stream mapping
             throw new UUFException("error creating the page", e);
         }
     }
 
-    private UriPatten getUriPatten(Path pageDir) throws IOException {
-        String name = pageDir.getFileName().toString();
-        Path yamlFile = pageDir.resolve(name + ".yaml");
-        String uri = null;
-        if (Files.isRegularFile(yamlFile)) {
-            Yaml yaml = new Yaml();
-            Map map = (Map) yaml.load(Files.newBufferedReader(yamlFile));
-            uri = (String) map.get("uri");
+    private UriPatten getUriPatten(Path pageDir, String name) throws IOException {
+        StringBuilder uri = new StringBuilder();
+        for (int i = 2; i < pageDir.getNameCount() - 1; i++) {
+            Path aPageDir = pageDir.getName(i);
+            uri.append("/");
+            uri.append(aPageDir.toString());
         }
-        if (uri == null) {
-            uri = "/" + name;
+        uri.append("/");
+        if (!name.equals("index")) {
+            uri.append(name);
         }
-        return new UriPatten(uri);
+        return new UriPatten(uri.toString());
     }
 
 }
