@@ -18,121 +18,130 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>org.wso2.msf4j</groupId>
-        <artifactId>msf4j-service</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
-    </parent>
-
     <groupId>org.wso2.carbon.uuf</groupId>
     <artifactId>carbon-uuf</artifactId>
-    <packaging>jar</packaging>
-    <!--<packaging>bundle</packaging>-->
+    <packaging>pom</packaging>
+    <version>1.0.0-SNAPSHOT</version>
+    <name>WSO2 Carbon - Unified UI Framework - Parent</name>
+    <url>https://github.com/wso2/carbon-uuf</url>
+    <description>Unified Ui Framework for Composable Web Apps</description>
 
-    <name>Unified Ui Framework for Composable Web Apps</name>
-    <url>http://maven.apache.org</url>
-    <dependencies>
-        <dependency>
-            <groupId>com.github.jknack</groupId>
-            <artifactId>handlebars</artifactId>
-            <version>4.0.4</version>
-        </dependency>
-        <dependency>
-            <groupId>org.wso2.eclipse.osgi</groupId>
-            <artifactId>org.eclipse.osgi</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.wso2.msf4j</groupId>
-            <artifactId>msf4j-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>javax.ws.rs</groupId>
-            <artifactId>javax.ws.rs-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-buffer</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-transport</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-handler</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-codec</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-codec-http</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.testng</groupId>
-            <artifactId>testng</artifactId>
-            <version>6.8</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.wso2.orbit.org.yaml</groupId>
-            <artifactId>snakeyaml</artifactId>
-            <version>1.16.0.wso2v1</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.code.findbugs</groupId>
-            <artifactId>jsr305</artifactId>
-            <version>${jsr305.version}</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-    </dependencies>
+    <parent>
+        <groupId>org.wso2</groupId>
+        <artifactId>wso2</artifactId>
+        <version>2</version>
+    </parent>
+
+    <modules>
+        <module>uuf-core</module>
+    </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.github.jknack</groupId>
+                <artifactId>handlebars</artifactId>
+                <version>${com.github.jknack.handlebars.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.orbit.org.yaml</groupId>
+                <artifactId>snakeyaml</artifactId>
+                <version>${org.wso2.orbit.org.yaml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.eclipse.osgi</groupId>
+                <artifactId>org.eclipse.osgi</artifactId>
+                <version>${equinox.osgi.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.msf4j</groupId>
+                <artifactId>msf4j-core</artifactId>
+                <version>${msf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.ws.rs</groupId>
+                <artifactId>javax.ws.rs-api</artifactId>
+                <version>${rs-api.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-buffer</artifactId>
+                <version>${netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-transport</artifactId>
+                <version>${netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-handler</artifactId>
+                <version>${netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-codec</artifactId>
+                <version>${netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-codec-http</artifactId>
+                <version>${netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.code.gson</groupId>
+                <artifactId>gson</artifactId>
+                <version>${gson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.testng</groupId>
+                <artifactId>testng</artifactId>
+                <scope>test</scope>
+                <version>${testng.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.code.findbugs</groupId>
+                <artifactId>jsr305</artifactId>
+                <version>${jsr305.version}</version>
+                <scope>provided</scope>
+                <optional>true</optional>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <properties>
-        <private.package>org.wso2.carbon.uuf.*</private.package>
-        <import.package>
-            org.osgi.framework.*;version="${osgi.framework.import.version.range}",
-            org.wso2.msf4j.*,
-            javax.ws.rs.*,
-            javax.xml.bind*,
-            org.slf4j.*,
-        </import.package>
-        <jsr305.version>2.0.1</jsr305.version>
-        <microservice.mainClass>org.wso2.carbon.uuf.UUFRegistry</microservice.mainClass>
-        <baseimage.name>java:openjdk-8u66-jre</baseimage.name>
-        <maven.dockerplugin.version>0.3.5</maven.dockerplugin.version>
+        <!-- Dependencies for UUF -->
         <handlebars-version>4.0.3</handlebars-version>
+        <com.github.jknack.handlebars.version>4.0.4</com.github.jknack.handlebars.version>
+        <org.wso2.orbit.org.yaml.version>1.16.0.wso2v1</org.wso2.orbit.org.yaml.version>
+        <osgi.framework.import.version.range>[1.8.0, 2.0.0)</osgi.framework.import.version.range>
+
+        <!-- Dependencies for MSF4J -->
+        <pax.logging.api.version>1.8.4</pax.logging.api.version>
+        <pax.logging.log4j2.version>1.8.4</pax.logging.log4j2.version>
+        <equinox.osgi.version>3.10.2.v20150203-1939</equinox.osgi.version>
+        <msf4j.version>1.0.0</msf4j.version>
+        <rs-api.version>2.0</rs-api.version>
+        <netty.version>4.0.30.Final</netty.version>
+        <netty.version.range>[4.0,5)</netty.version.range>
+        <slf4j.version>1.7.5</slf4j.version>
+        <slf4j.version.range>[1.7,2)</slf4j.version.range>
+        <slf4j.log4j.version>1.6.0</slf4j.log4j.version>
+        <gson.version>2.2.4</gson.version>
+        <gson.version.range>[2.2,3)</gson.version.range>
+        <jsr305.version>2.0.1</jsr305.version>
+
+        <!-- Other Dependencies -->
+        <testng.version>6.9.4</testng.version>
+
+        <!-- Source and target java version -->
+        <wso2.maven.compiler.source>1.8</wso2.maven.compiler.source>
+        <wso2.maven.compiler.target>1.8</wso2.maven.compiler.target>
     </properties>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>com.spotify</groupId>
-                <artifactId>docker-maven-plugin</artifactId>
-                <version>${maven.dockerplugin.version}</version>
-                <configuration>
-                    <imageName>${project.artifactId}:${project.version}</imageName>
-                    <baseImage>${baseimage.name}</baseImage>
-                    <entryPoint>["java", "-jar", "/${project.build.finalName}.jar"]</entryPoint>
-                    <!-- copy the service's jar file from target into the root directory of the image -->
-                    <resources>
-                        <resource>
-                            <targetPath>/</targetPath>
-                            <directory>${project.build.directory}</directory>
-                            <include>${project.build.finalName}.jar</include>
-                        </resource>
-                    </resources>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 </project>
