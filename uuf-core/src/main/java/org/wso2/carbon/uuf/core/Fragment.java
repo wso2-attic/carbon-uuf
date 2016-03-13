@@ -1,27 +1,26 @@
 package org.wso2.carbon.uuf.core;
 
 
-import javax.annotation.Nullable;
 import java.util.Map;
+import java.util.Optional;
 
-public class Fragment implements Renderble {
+public class Fragment implements Renderable {
 
     private String name;
-    private final Renderble template;
-    @Nullable
-    private final Executable script;
+    private final Renderable template;
+    private final Optional<Executable> script;
 
-    public Fragment(String name, Renderble template, @Nullable Executable script) {
+    public Fragment(String name, Renderable template, Optional<Executable> script) {
         this.name = name;
         this.template = template;
         this.script = script;
     }
 
     @Override
-    public String render(Object o, Map<String, Renderble> zones, Map<String, Renderble> fragments) {
+    public String render(Object o, Map<String, Renderable> zones, Map<String, Renderable> fragments) {
         Object templateInput;
-        if (script != null) {
-            templateInput = script.execute();
+        if (script.isPresent()) {
+            templateInput = script.get().execute();
         } else {
             templateInput = o;
         }

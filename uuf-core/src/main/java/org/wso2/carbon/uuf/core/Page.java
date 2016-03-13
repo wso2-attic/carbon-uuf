@@ -5,21 +5,20 @@ import io.netty.handler.codec.http.HttpRequest;
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 
 public class Page {
     private final UriPatten uri;
-    private final Renderble template;
-    @Nullable
-    private final Executable script;
-    @Nullable
-    private final Renderble layout;
+    private final Renderable template;
+    private final Optional<Executable> script;
+    private final Optional<Renderable> layout;
 
-    public Page(UriPatten uri, Renderble template) {
-        this(uri, template, null, null);
+    public Page(UriPatten uri, Renderable template) {
+        this(uri, template, Optional.empty(), Optional.empty());
     }
 
 
-    public Page(UriPatten uri, Renderble template, @Nullable Executable script, @Nullable Renderble layout) {
+    public Page(UriPatten uri, Renderable template, Optional<Executable> script, Optional<Renderable> layout) {
         this.uri = uri;
         this.template = template;
         this.script = script;
@@ -30,15 +29,15 @@ public class Page {
         return uri;
     }
 
-    public String serve(HttpRequest request, Map<String, Renderble> fragments) {
+    public String serve(HttpRequest request, Map<String, Renderable> fragments) {
         Object model;
-        if (script != null) {
-            model = script.execute();
+        if (script.isPresent()) {
+            model = script.get().execute();
         } else {
             model = Collections.EMPTY_MAP;
         }
-        if (layout != null) {
-            return layout.render(model, template.getFillingZones(), fragments);
+        if (layout.isPresent()) {
+            return layout.get().render(model, template.getFillingZones(), fragments);
         }
         return template.render(model, Collections.emptyMap(), fragments);
     }
@@ -46,8 +45,8 @@ public class Page {
     @Override
     public String toString() {
         return "{uri:" + uri + ",template:" + template +
-                (script != null ? ",script:" + script : "") +
-                (layout != null ? ",layout:" + layout + "}" : "}");
+                (script.isPresent() ? ",script:" + script : "") +
+                (layout.isPresent() ? ",layout:" + layout + "}" : "}");
     }
 
 }

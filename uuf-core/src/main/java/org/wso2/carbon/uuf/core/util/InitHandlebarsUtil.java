@@ -5,8 +5,8 @@ import com.github.jknack.handlebars.Handlebars;
 import com.github.jknack.handlebars.Template;
 import com.github.jknack.handlebars.io.StringTemplateSource;
 import com.github.jknack.handlebars.io.TemplateSource;
-import org.wso2.carbon.uuf.core.HandlebarsRenderble;
-import org.wso2.carbon.uuf.core.Renderble;
+import org.wso2.carbon.uuf.core.HandlebarsRenderable;
+import org.wso2.carbon.uuf.core.Renderable;
 import org.wso2.carbon.uuf.core.UUFException;
 
 import java.io.IOException;
@@ -22,7 +22,7 @@ public class InitHandlebarsUtil {
     static {
 
         HANDLEBARS.registerHelper("fillZone", (context, options) -> {
-            Map<String, Renderble> zones = options.data(ZONES_KEY);
+            Map<String, Renderable> zones = options.data(ZONES_KEY);
             if (!(context instanceof String)) {
                 throw new UUFException("fillZone must have a string literal name");
             }
@@ -46,7 +46,7 @@ public class InitHandlebarsUtil {
                 zones = new HashMap<>();
                 options.data(ZONES_KEY, zones);
             }
-            zones.put(zoneName, new HandlebarsRenderble(source));
+            zones.put(zoneName, new HandlebarsRenderable(source));
             return "";
         });
 
@@ -72,7 +72,7 @@ public class InitHandlebarsUtil {
         }
     }
 
-    public static Map<String, Renderble> getFillingZones(Context context) {
+    public static Map<String, Renderable> getFillingZones(Context context) {
         return context.data(ZONES_KEY);
     }
 

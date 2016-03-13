@@ -3,15 +3,15 @@ package org.wso2.carbon.uuf.fileio;
 import com.github.jknack.handlebars.io.StringTemplateSource;
 import com.github.jknack.handlebars.io.TemplateSource;
 import org.wso2.carbon.uuf.core.Executable;
-import org.wso2.carbon.uuf.core.HandlebarsRenderble;
+import org.wso2.carbon.uuf.core.HandlebarsRenderable;
 import org.wso2.carbon.uuf.core.JSExecutable;
-import org.wso2.carbon.uuf.core.Renderble;
+import org.wso2.carbon.uuf.core.Renderable;
 
-import javax.annotation.Nullable;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Optional;
 
 class FileUtil {
 
@@ -34,27 +34,24 @@ class FileUtil {
         return path;
     }
 
-    static Renderble createRenderble(Path hbsFile) throws IOException {
-        Renderble template;
+    static Renderable createRenderble(Path hbsFile) throws IOException {
         String content = new String(Files.readAllBytes(hbsFile), StandardCharsets.UTF_8);
         TemplateSource source = new StringTemplateSource(
                 relativePath(hbsFile).toString(),
                 content);
-        template = new HandlebarsRenderble(source);
-        return template;
+        return new HandlebarsRenderable(source);
     }
 
-    @Nullable
-    static Executable createExecutable(Path jsFile) throws IOException {
+    static Optional<Executable> createExecutable(Path jsFile) throws IOException {
         if (Files.isRegularFile(jsFile)) {
 
             Executable executable;
             executable = new JSExecutable(
                     new String(Files.readAllBytes(jsFile)),
                     FileUtil.relativePath(jsFile).toString());
-            return executable;
+            return Optional.of(executable);
         } else {
-            return null;
+            return Optional.empty();
         }
     }
 }

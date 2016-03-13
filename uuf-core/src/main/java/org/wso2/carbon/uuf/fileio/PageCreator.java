@@ -2,18 +2,19 @@ package org.wso2.carbon.uuf.fileio;
 
 import org.wso2.carbon.uuf.core.Executable;
 import org.wso2.carbon.uuf.core.Page;
-import org.wso2.carbon.uuf.core.Renderble;
+import org.wso2.carbon.uuf.core.Renderable;
 import org.wso2.carbon.uuf.core.UUFException;
 import org.wso2.carbon.uuf.core.UriPatten;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Optional;
 
 class PageCreator {
 
     Page createPage(Path templateFile, LayoutCreator layoutCreator, Path components) {
         try {
-            Renderble layout = null;
+            Renderable layout = null;
             Path templateFileAbsolute = components.resolve(templateFile);
 
             String name = templateFileAbsolute.getFileName().toString();
@@ -23,14 +24,14 @@ class PageCreator {
             }
 
             Path jsFile = templateFileAbsolute.getParent().resolve(name + ".js");
-            Renderble template = FileUtil.createRenderble(templateFileAbsolute);
-            Executable executable = FileUtil.createExecutable(jsFile);
+            Renderable template = FileUtil.createRenderble(templateFileAbsolute);
+            Optional<Executable> executable = FileUtil.createExecutable(jsFile);
             String layoutName = template.getLayoutName();
             if (layoutName != null) {
                 layout = layoutCreator.createLayout(layoutName, templateFileAbsolute.getParent());
             }
 
-            return new Page(getUriPatten(templateFile, name), template, executable, layout);
+            return new Page(getUriPatten(templateFile, name), template, executable, Optional.ofNullable(layout));
         } catch (IOException e) {
             // have to catch checked exception because we want to use it in a Stream mapping
             throw new UUFException("error creating the page", e);

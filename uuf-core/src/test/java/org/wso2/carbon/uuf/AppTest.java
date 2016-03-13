@@ -7,7 +7,7 @@ import org.testng.annotations.Test;
 import org.wso2.carbon.uuf.core.App;
 import org.wso2.carbon.uuf.core.Fragment;
 import org.wso2.carbon.uuf.core.Page;
-import org.wso2.carbon.uuf.core.Renderble;
+import org.wso2.carbon.uuf.core.Renderable;
 import org.wso2.carbon.uuf.core.UUFException;
 import org.wso2.carbon.uuf.core.UriPatten;
 
@@ -24,7 +24,7 @@ public class AppTest {
     private final static List<Page> PAGES =
             Collections.singletonList(new Page(new UriPatten("/page1"), null, null, null) {
                 @Override
-                public String serve(HttpRequest request, Map<String, Renderble> fragments) {
+                public String serve(HttpRequest request, Map<String, Renderable> fragments) {
                     return MOCK_PAGE1_CONTENT;
                 }
             });

@@ -1,6 +1,6 @@
 package org.wso2.carbon.uuf.fileio;
 
-import org.wso2.carbon.uuf.core.Renderble;
+import org.wso2.carbon.uuf.core.Renderable;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -13,7 +13,7 @@ class LayoutCreator {
         this.componentsDir = componentsDir;
     }
 
-    public Renderble createLayout(String layoutFullName, Path currentComponent) throws IOException {
+    public Renderable createLayout(String layoutFullName, Path currentComponent) throws IOException {
         Path component;
         String layoutName;
         int lastDot = layoutFullName.lastIndexOf('.');

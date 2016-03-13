@@ -7,29 +7,30 @@ import com.google.common.collect.ImmutableMap;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.wso2.carbon.uuf.core.Fragment;
-import org.wso2.carbon.uuf.core.HandlebarsRenderble;
-import org.wso2.carbon.uuf.core.Renderble;
+import org.wso2.carbon.uuf.core.HandlebarsRenderable;
+import org.wso2.carbon.uuf.core.Renderable;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 
-public class HandlebarsRenderbleTest {
+public class HandlebarsRenderableTest {
 
     @Test
     public void testZones() {
 
         StringTemplateSource source = new StringTemplateSource("my-file.hbs", "{{defineZone \"my-zone\"}}");
-        HandlebarsRenderble hb = new HandlebarsRenderble(source);
+        HandlebarsRenderable hb = new HandlebarsRenderable(source);
         String s = hb.render(
                 ImmutableMap.of("name", "Leela"),
-                ImmutableMap.of("my-zone", new MockHelloRenderble()),
+                ImmutableMap.of("my-zone", new MockHelloRenderable()),
                 Collections.emptyMap());
         Assert.assertEquals(s, "Welcome to the <world> of tomorrow, Leela");
     }
 
     @Test
     public void testLayoutName() {
-        HandlebarsRenderble renderble = new HandlebarsRenderble(new StringTemplateSource(
+        HandlebarsRenderable renderble = new HandlebarsRenderable(new StringTemplateSource(
                 "my-file.hbs",
                 "{{layout \"my-layout\"}}"));
 
@@ -40,13 +41,13 @@ public class HandlebarsRenderbleTest {
 
     @Test
     public void testFragment() {
-        HandlebarsRenderble renderble = new HandlebarsRenderble(new StringTemplateSource(
+        HandlebarsRenderable renderble = new HandlebarsRenderable(new StringTemplateSource(
                 "my-file.hbs",
                 "{{includeFragment \"news\"}}"));
         Fragment fragment = new Fragment(
                 "my-news-fragment",
                 (o, z, f) -> "Good news, " + o + "!",
-                /*script*/ null);
+                /*script*/ Optional.empty());
         String news = renderble.render(
                 "everyone",
                 Collections.emptyMap(),
@@ -56,11 +57,11 @@ public class HandlebarsRenderbleTest {
 
     @Test
     public void testFillingZones() {
-        HandlebarsRenderble renderble = new HandlebarsRenderble(new StringTemplateSource(
+        HandlebarsRenderable renderble = new HandlebarsRenderable(new StringTemplateSource(
                 "my-file.hbs",
                 "\n{{#fillZone \"my-zone\"}} {{a}}{{/fillZone}}"));
-        Map<String, Renderble> fillingZones = renderble.getFillingZones();
-        Renderble fillingZone = fillingZones.get("my-zone");
+        Map<String, Renderable> fillingZones = renderble.getFillingZones();
+        Renderable fillingZone = fillingZones.get("my-zone");
         Assert.assertNotNull(fillingZone, "zone's inner content must be available under name 'my-zone'");
         try {
             fillingZone.render(

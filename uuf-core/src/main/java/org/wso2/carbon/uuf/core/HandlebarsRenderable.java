@@ -12,16 +12,16 @@ import java.util.Collections;
 import java.util.Map;
 
 
-public class HandlebarsRenderble implements Renderble {
+public class HandlebarsRenderable implements Renderable {
 
     private final Template template;
-    private final Map<String, Renderble> fillingZones;
+    private final Map<String, Renderable> fillingZones;
     @Nullable
     private final String layoutName;
     private final String name;
 
 
-    public HandlebarsRenderble(TemplateSource source) {
+    public HandlebarsRenderable(TemplateSource source) {
         this.template = RuntimeHandlebarsUtil.compile(source);
         // We have to separately remember this since there is a bug in Handlebar lib's
         // filename() method when the file is empty or stats with a comment
@@ -40,7 +40,7 @@ public class HandlebarsRenderble implements Renderble {
 
 
     @Override
-    public String render(Object o, Map<String, Renderble> zones, Map<String, Renderble> fragments) {
+    public String render(Object o, Map<String, Renderable> zones, Map<String, Renderable> fragments) {
         Context context = Context.newContext(o);
         RuntimeHandlebarsUtil.setZones(context, zones);
         RuntimeHandlebarsUtil.setFragment(context, fragments);
@@ -52,7 +52,7 @@ public class HandlebarsRenderble implements Renderble {
     }
 
     @Override
-    public Map<String, Renderble> getFillingZones() {
+    public Map<String, Renderable> getFillingZones() {
         return fillingZones;
     }
 
