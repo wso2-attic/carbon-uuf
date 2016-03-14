@@ -78,6 +78,6 @@ public class InitHandlebarsUtil {
     }
 
     public static Optional<String> getLayoutName(Context context) {
-        return Optional.of(context.data(LAYOUT_KEY));
+        return Optional.ofNullable(context.data(LAYOUT_KEY));
     }
 }
