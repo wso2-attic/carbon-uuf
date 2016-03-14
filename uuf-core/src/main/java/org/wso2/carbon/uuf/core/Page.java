@@ -1,30 +1,27 @@
 package org.wso2.carbon.uuf.core;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
+
+import java.util.Collections;
 import java.util.Map;
-import java.util.Optional;
 
 public class Page {
 
-    private final String name;
     private final String path;
     private final UriPatten uriPatten;
-    private final Renderable renderer;
-    private final Optional<Renderable> layout;
+    private final Renderable layout;
+    private final Map<String, Renderable> fillZones;
 
-    public Page(String name, String path, UriPatten uriPatten, Renderable renderer) {
-        this(name, path, uriPatten, renderer, Optional.empty());
+    public Page(String path, UriPatten uriPatten, Renderable layout) {
+        this(path, uriPatten, layout, Collections.emptyMap());
     }
 
-    public Page(String name, String path, UriPatten uriPatten, Renderable renderer, Optional<Renderable> layout) {
-        this.name = name;
+    public Page(String path, UriPatten uriPatten, Renderable layout, Map<String, Renderable> fillZones) {
         this.path = path;
         this.uriPatten = uriPatten;
-        this.renderer = renderer;
         this.layout = layout;
-    }
-
-    public String getName() {
-        return name;
+        this.fillZones = fillZones;
     }
 
     public String getPath() {
@@ -35,28 +32,22 @@ public class Page {
         return uriPatten;
     }
 
-    public String serve(Map model, Map<String, Fragment> bindings, Map<String, Fragment> fragments) {
-        String tmp = renderer.render(model, bindings, fragments);
-        if (layout.isPresent()) {
-            return layout.get().render(model, bindings, fragments);
+    public String serve(Map model, Map<String, Renderable> bindings, Map<String, Fragment> fragments) {
+        Multimap<String, Renderable> combined = ArrayListMultimap.create();
+        // add bindings
+        for (Map.Entry<String, Renderable> entry : bindings.entrySet()) {
+            combined.put(entry.getKey(), entry.getValue());
         }
-        return tmp;
-    }
-
-    @Override
-    public int hashCode() {
-        return this.name.hashCode();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return (obj != null) && (obj instanceof Page) && (this.name.equals(((Page) obj).name));
+        // add fill zones
+        for (Map.Entry<String, Renderable> entry : fillZones.entrySet()) {
+            combined.put(entry.getKey(), entry.getValue());
+        }
+        return layout.render(model, combined, fragments);
     }
 
     @Override
     public String toString() {
-        return "{\"name\": \"" + name + "\", \"path\": \"" + path + "\", \"uriPattern\": \"" + uriPatten.toString() +
-                "\", \"renderer\": \"" + renderer.toString() + "\", \"layout\": \"" + layout.toString() + "\"}";
+        return "{\"path\": \"" + path + "\", \"uriPattern\": \"" + uriPatten.toString() + "\", \"layout\": \"" +
+                layout.toString() + "\"}";
     }
-
 }
