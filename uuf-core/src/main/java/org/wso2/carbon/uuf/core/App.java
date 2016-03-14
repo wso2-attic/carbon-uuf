@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.core.Response;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -17,11 +18,10 @@ public class App {
     private static final Logger log = LoggerFactory.getLogger(App.class);
     private final String context;
     private final List<Page> pages;
-    private final List<Fragment> fragments;
     private final Map<String, Fragment> fragmentsMap;
-    private final Map<String, Fragment> bindings;
+    private final Map<String, Renderable> bindings;
 
-    public App(String context, List<Page> pages, List<Fragment> fragments, Map<String, Fragment> bindings) {
+    public App(String context, List<Page> pages, List<Fragment> fragments, Map<String, Renderable> bindings) {
         if (!context.startsWith("/")) {
             throw new IllegalArgumentException("app context must start with a '/'");
         }
@@ -31,7 +31,6 @@ public class App {
         Collections.sort(pages, (o1, o2) -> o1.getUriPatten().compareTo(o2.getUriPatten()));
         this.pages = pages;
 
-        this.fragments = fragments;
         // Convert the list to maps since we want O(1) access by name.
         this.fragmentsMap = fragments.stream().collect(Collectors.toMap(Fragment::getName, Function.identity()));
 
@@ -42,38 +41,34 @@ public class App {
         return pages;
     }
 
-    public List<Fragment> getFragments() {
-        return fragments;
-    }
-
     public Map<String, Fragment> getFragmentsMap() {
         return fragmentsMap;
     }
 
-    public Map<String, Fragment> getBindings() {
+    public Map<String, Renderable> getBindings() {
         return bindings;
     }
 
     public String serve(HttpRequest request, HttpResponse response) {
-        Optional<Page> page = getPage(request.getUri());
-        if (page.isPresent()) {
-            if (log.isDebugEnabled()) {
-                log.debug("page " + page + " is selected");
-            }
-            return page.get().serve(null, null, null);
-        } else {
-            throw new UUFException(
-                    "No page by the URI '" + request.getUri() + "'",
-                    Response.Status.NOT_FOUND);
+        String pageUri = request.getUri().substring(context.length());
+        Optional<Page> servingPage = getPage(pageUri);
+        if (!servingPage.isPresent()) {
+            throw new UUFException("Requested page '" + pageUri + "' does not exists.", Response.Status.NOT_FOUND);
         }
+
+        Page page = servingPage.get();
+        if (log.isDebugEnabled()) {
+            log.debug("Page '" + page.toString() + "' is serving.");
+        }
+
+        Map<String, Object> model = new HashMap<>();
+        model.put("pageUri", pageUri);
+
+        return page.serve(model, bindings, fragmentsMap);
     }
 
-    private Optional<Page> getPage(String uri) {
-        if (!uri.startsWith(context)) {
-            throw new IllegalArgumentException("Request for '" + uri + "' can't be served by " + this);
-        }
-
-        String relativeUri = uri.substring(context.length());
+    public Optional<Page> getPage(String pageUri) {
+        String relativeUri = pageUri.substring(context.length());
         for (Page p : pages) {
             if (p.getUriPatten().match(relativeUri)) {
                 return Optional.of(p);
@@ -84,6 +79,6 @@ public class App {
 
     @Override
     public String toString() {
-        return "App{context='" + context + "'}";
+        return "{\"context\": \"" + context + "\"}";
     }
 }
