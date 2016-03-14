@@ -13,6 +13,7 @@ import org.wso2.carbon.uuf.core.Renderable;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 public class HandlebarsRenderableTest {
 
@@ -34,8 +35,12 @@ public class HandlebarsRenderableTest {
                 "my-file.hbs",
                 "{{layout \"my-layout\"}}"));
 
-        String layoutName = renderble.getLayoutName();
-        Assert.assertEquals(layoutName, "my-layout", "a layout is defined in the template");
+        Optional<String> layoutName = renderble.getLayoutName();
+        if (layoutName.isPresent()) {
+            Assert.assertEquals(layoutName.get(), "my-layout", "a layout is defined in the template");
+        } else {
+            Assert.fail("layout name was not present");
+        }
 
     }
 
