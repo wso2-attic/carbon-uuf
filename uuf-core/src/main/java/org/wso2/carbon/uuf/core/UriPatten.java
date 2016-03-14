@@ -50,6 +50,6 @@ public class UriPatten implements Comparable<UriPatten> {
 
     @Override
     public String toString() {
-        return "{patten='" + pattenString + "'}";
+        return "{\"patten\": \"" + pattenString + "\"}";
     }
 }
