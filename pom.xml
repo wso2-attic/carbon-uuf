@@ -99,6 +99,11 @@
                 <version>${gson.version}</version>
             </dependency>
             <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.testng</groupId>
                 <artifactId>testng</artifactId>
                 <scope>test</scope>
@@ -120,6 +125,7 @@
         <com.github.jknack.handlebars.version>4.0.4</com.github.jknack.handlebars.version>
         <org.wso2.orbit.org.yaml.version>1.16.0.wso2v1</org.wso2.orbit.org.yaml.version>
         <osgi.framework.import.version.range>[1.8.0, 2.0.0)</osgi.framework.import.version.range>
+        <guava.version>13.0.1</guava.version>
 
         <!-- Dependencies for MSF4J -->
         <pax.logging.api.version>1.8.4</pax.logging.api.version>
