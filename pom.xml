@@ -34,15 +34,47 @@
 
     <modules>
         <module>uuf-core</module>
+        <module>product/p2-features/org.wso2.uuf.core.feature</module>
+        <module>product</module>
     </modules>
 
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <groupId>org.wso2.carbon</groupId>
+                <artifactId>wso2carbon-kernel</artifactId>
+                <version>${carbon.kernel.version}</version>
+                <type>zip</type>
+            </dependency>
+            <!-- Dependencies for Handlebar -->
+            <dependency>
                 <groupId>com.github.jknack</groupId>
                 <artifactId>handlebars</artifactId>
                 <version>${com.github.jknack.handlebars.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.mozilla</groupId>
+                        <artifactId>rhino</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
+            <dependency>
+                <groupId>org.antlr</groupId>
+                <artifactId>antlr4-runtime</artifactId>
+                <version>${antlr-version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.abego.treelayout</groupId>
+                        <artifactId>org.abego.treelayout.core</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${org.apache.commons.commons-lang3.version}</version>
+            </dependency>
+
             <dependency>
                 <groupId>org.wso2.orbit.org.yaml</groupId>
                 <artifactId>snakeyaml</artifactId>
@@ -57,6 +89,16 @@
                 <groupId>org.wso2.msf4j</groupId>
                 <artifactId>msf4j-core</artifactId>
                 <version>${msf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.osgi</groupId>
+                <artifactId>org.osgi.core</artifactId>
+                <version>${osgi.api.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon</groupId>
+                <artifactId>org.wso2.carbon.launcher</artifactId>
+                <version>${carbon.kernel.version}</version>
             </dependency>
             <dependency>
                 <groupId>javax.ws.rs</groupId>
@@ -99,11 +141,6 @@
                 <version>${gson.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.google.guava</groupId>
-                <artifactId>guava</artifactId>
-                <version>${guava.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.testng</groupId>
                 <artifactId>testng</artifactId>
                 <scope>test</scope>
@@ -119,13 +156,71 @@
         </dependencies>
     </dependencyManagement>
 
+    <repositories>
+        <!-- Before adding ANYTHING in here, please start a discussion on the dev list.
+             Ideally the Axis2 build should only use Maven central (which is available
+             by default) and nothing else. We had troubles with other repositories in
+             the past. Therefore configuring additional repositories here should be
+             considered very carefully. -->
+        <repository>
+            <id>wso2-nexus</id>
+            <name>WSO2 internal Repository</name>
+            <url>http://maven.wso2.org/nexus/content/groups/wso2-public/</url>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>daily</updatePolicy>
+                <checksumPolicy>ignore</checksumPolicy>
+            </releases>
+        </repository>
+        <repository>
+            <id>wso2.releases</id>
+            <name>WSO2 internal Repository</name>
+            <url>http://maven.wso2.org/nexus/content/repositories/releases/</url>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>daily</updatePolicy>
+                <checksumPolicy>ignore</checksumPolicy>
+            </releases>
+        </repository>
+        <repository>
+            <id>wso2.snapshots</id>
+            <name>WSO2 Snapshot Repository</name>
+            <url>http://maven.wso2.org/nexus/content/repositories/snapshots/</url>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>daily</updatePolicy>
+            </snapshots>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </repository>
+        <repository>
+            <id>wso2-staging</id>
+            <name>WSO2 internal Repository</name>
+            <url>http://maven.wso2.org/nexus/content/repositories/orgwso2carbonapimgt-174/</url>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>daily</updatePolicy>
+                <checksumPolicy>ignore</checksumPolicy>
+            </releases>
+        </repository>
+    </repositories>
+
     <properties>
+        <uuf.version>1.0.0-SNAPSHOT</uuf.version>
+
+        <carbon.kernel.version>5.0.0</carbon.kernel.version>
+        <carbon.kernel.version.range>[5.0,6)</carbon.kernel.version.range>
+        <carbon.feature.plugin.version>2.0.0</carbon.feature.plugin.version>
+
         <!-- Dependencies for UUF -->
-        <handlebars-version>4.0.3</handlebars-version>
-        <com.github.jknack.handlebars.version>4.0.4</com.github.jknack.handlebars.version>
+        <com.github.jknack.handlebars.version>4.0.3.wso2v1</com.github.jknack.handlebars.version>
         <org.wso2.orbit.org.yaml.version>1.16.0.wso2v1</org.wso2.orbit.org.yaml.version>
         <osgi.framework.import.version.range>[1.8.0, 2.0.0)</osgi.framework.import.version.range>
-        <guava.version>13.0.1</guava.version>
+        <osgi.api.version>6.0.0</osgi.api.version>
+        <handlebars-version>4.0.3</handlebars-version>
+        <antlr-version>4.5.1-1</antlr-version>
+        <org.apache.commons.commons-lang3.version>3.1</org.apache.commons.commons-lang3.version>
 
         <!-- Dependencies for MSF4J -->
         <pax.logging.api.version>1.8.4</pax.logging.api.version>
@@ -141,6 +236,7 @@
         <gson.version>2.2.4</gson.version>
         <gson.version.range>[2.2,3)</gson.version.range>
         <jsr305.version>2.0.1</jsr305.version>
+        <guava.version.range>[13.0,14)</guava.version.range>
 
         <!-- Other Dependencies -->
         <testng.version>6.9.4</testng.version>
