@@ -1,33 +1,63 @@
 package org.wso2.carbon.uuf.core;
 
+import javax.annotation.Nonnull;
 
-import java.util.Map;
-import java.util.Optional;
+/**
+ *
+ */
+public class Fragment implements Comparable<Fragment> {
 
-public class Fragment implements Renderable {
+    private final String name;
+    private final String path;
+    private int index = Integer.MAX_VALUE;
+    private final Renderable renderer;
 
-    private String name;
-    private final Renderable template;
-    private final Optional<Executable> script;
-
-    public Fragment(String name, Renderable template, Optional<Executable> script) {
+    public Fragment(String name, String path, Renderable renderer) {
         this.name = name;
-        this.template = template;
-        this.script = script;
-    }
-
-    @Override
-    public String render(Object o, Map<String, Renderable> zones, Map<String, Renderable> fragments) {
-        Object templateInput;
-        if (script.isPresent()) {
-            templateInput = script.get().execute();
-        } else {
-            templateInput = o;
-        }
-        return template.render(templateInput, zones, fragments);
+        this.path = path;
+        this.renderer = renderer;
     }
 
     public String getName() {
         return name;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
+    }
+
+
+    public Renderable getRenderer() {
+        return renderer;
+    }
+
+    @Override
+    public int compareTo(@Nonnull Fragment other) {
+        int deltaOfIndexes = (this.index - other.index);
+        return (deltaOfIndexes < 0) ? +1 : ((deltaOfIndexes > 0) ? -1 : 0);
+    }
+
+    @Override
+    public int hashCode() {
+        return name.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return (obj != null) && (obj instanceof Fragment) && (this.name.equals(((Fragment) obj).name));
+    }
+
+    @Override
+    public String toString() {
+        return "{\"name\": \"" + name + "\", \"path\": \"" + path + "\", \"index\": \"" + String.valueOf(index) +
+                "\", \"renderer\": \"" + renderer.toString() + "\"}";
     }
 }

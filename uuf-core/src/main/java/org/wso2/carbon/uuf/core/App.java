@@ -1,6 +1,7 @@
 package org.wso2.carbon.uuf.core;
 
 import io.netty.handler.codec.http.HttpRequest;
+import io.netty.handler.codec.http.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,32 +17,50 @@ public class App {
     private static final Logger log = LoggerFactory.getLogger(App.class);
     private final String context;
     private final List<Page> pages;
-    private final Map<String, Renderable> fragmentMap;
+    private final List<Fragment> fragments;
+    private final Map<String, Fragment> fragmentsMap;
+    private final Map<String, Fragment> bindings;
 
-    public App(String context, List<Page> pages, List<Fragment> fragmentMap) {
+    public App(String context, List<Page> pages, List<Fragment> fragments, Map<String, Fragment> bindings) {
         if (!context.startsWith("/")) {
             throw new IllegalArgumentException("app context must start with a '/'");
         }
-
         this.context = context;
 
-        // we sort uri so that more wildcard-ed ones go to the bottom.
-        Collections.sort(pages, (o1, o2) -> o1.getUri().compareTo(o2.getUri()));
+        // We sort uri so that more wildcard-ed ones go to the bottom.
+        Collections.sort(pages, (o1, o2) -> o1.getUriPatten().compareTo(o2.getUriPatten()));
         this.pages = pages;
 
-        // convert the list to maps since we want O(1) access by name.
-        this.fragmentMap = fragmentMap
-                .stream()
-                .collect(Collectors.toMap(Fragment::getName, Function.identity()));
+        this.fragments = fragments;
+        // Convert the list to maps since we want O(1) access by name.
+        this.fragmentsMap = fragments.stream().collect(Collectors.toMap(Fragment::getName, Function.identity()));
+
+        this.bindings = bindings;
     }
 
-    public String serve(HttpRequest request) {
+    public List<Page> getPages() {
+        return pages;
+    }
+
+    public List<Fragment> getFragments() {
+        return fragments;
+    }
+
+    public Map<String, Fragment> getFragmentsMap() {
+        return fragmentsMap;
+    }
+
+    public Map<String, Fragment> getBindings() {
+        return bindings;
+    }
+
+    public String serve(HttpRequest request, HttpResponse response) {
         Optional<Page> page = getPage(request.getUri());
         if (page.isPresent()) {
             if (log.isDebugEnabled()) {
                 log.debug("page " + page + " is selected");
             }
-            return page.get().serve(request, fragmentMap);
+            return page.get().serve(null, null, null);
         } else {
             throw new UUFException(
                     "No page by the URI '" + request.getUri() + "'",
@@ -49,14 +68,14 @@ public class App {
         }
     }
 
-    public Optional<Page> getPage(String uri) {
+    private Optional<Page> getPage(String uri) {
         if (!uri.startsWith(context)) {
             throw new IllegalArgumentException("Request for '" + uri + "' can't be served by " + this);
         }
 
         String relativeUri = uri.substring(context.length());
         for (Page p : pages) {
-            if (p.getUri().match(relativeUri)) {
+            if (p.getUriPatten().match(relativeUri)) {
                 return Optional.of(p);
             }
         }
