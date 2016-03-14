@@ -31,11 +31,11 @@ public class HandlebarsRenderableTest {
 
     @Test
     public void testLayoutName() {
-        HandlebarsRenderable renderble = new HandlebarsRenderable(new StringTemplateSource(
+        HandlebarsRenderable renderable = new HandlebarsRenderable(new StringTemplateSource(
                 "my-file.hbs",
                 "{{layout \"my-layout\"}}"));
 
-        Optional<String> layoutName = renderble.getLayoutName();
+        Optional<String> layoutName = renderable.getLayoutName();
         if (layoutName.isPresent()) {
             Assert.assertEquals(layoutName.get(), "my-layout", "a layout is defined in the template");
         } else {
@@ -46,14 +46,14 @@ public class HandlebarsRenderableTest {
 
     @Test
     public void testFragment() {
-        HandlebarsRenderable renderble = new HandlebarsRenderable(new StringTemplateSource(
+        HandlebarsRenderable renderable = new HandlebarsRenderable(new StringTemplateSource(
                 "my-file.hbs",
                 "{{includeFragment \"news\"}}"));
         Fragment fragment = new Fragment(
                 "my-news-fragment",
                 (o, z, f) -> "Good news, " + o + "!",
                 /*script*/ Optional.empty());
-        String news = renderble.render(
+        String news = renderable.render(
                 "everyone",
                 Collections.emptyMap(),
                 ImmutableMap.of("news", fragment));
@@ -62,10 +62,10 @@ public class HandlebarsRenderableTest {
 
     @Test
     public void testFillingZones() {
-        HandlebarsRenderable renderble = new HandlebarsRenderable(new StringTemplateSource(
+        HandlebarsRenderable renderable = new HandlebarsRenderable(new StringTemplateSource(
                 "my-file.hbs",
                 "\n{{#fillZone \"my-zone\"}} {{a}}{{/fillZone}}"));
-        Map<String, Renderable> fillingZones = renderble.getFillingZones();
+        Map<String, Renderable> fillingZones = renderable.getFillingZones();
         Renderable fillingZone = fillingZones.get("my-zone");
         Assert.assertNotNull(fillingZone, "zone's inner content must be available under name 'my-zone'");
         try {
