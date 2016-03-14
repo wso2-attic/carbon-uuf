@@ -1,7 +1,6 @@
 package org.wso2.carbon.uuf.core;
 
 import io.netty.handler.codec.http.HttpRequest;
-import io.netty.handler.codec.http.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,7 +48,7 @@ public class App {
         return bindings;
     }
 
-    public String serve(HttpRequest request, HttpResponse response) {
+    public String serve(HttpRequest request) {
         String pageUri = request.getUri().substring(context.length());
         Optional<Page> servingPage = getPage(pageUri);
         if (!servingPage.isPresent()) {
@@ -68,9 +67,8 @@ public class App {
     }
 
     public Optional<Page> getPage(String pageUri) {
-        String relativeUri = pageUri.substring(context.length());
         for (Page p : pages) {
-            if (p.getUriPatten().match(relativeUri)) {
+            if (p.getUriPatten().match(pageUri)) {
                 return Optional.of(p);
             }
         }

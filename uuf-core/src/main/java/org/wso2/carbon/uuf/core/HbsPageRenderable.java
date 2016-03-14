@@ -10,7 +10,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 
-public class HbsPageRenderable extends HandlebarsRenderable {
+public class HbsPageRenderable extends HbsRenderable {
     private final Optional<String> layoutName;
     private final Map<String, Renderable> fillingZones;
 

@@ -9,7 +9,9 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -71,7 +73,7 @@ public class FromArtifactAppCreator implements AppCreator {
                 .parallel()
                 .map(fragmentCreator::createFragment)
                 .collect(Collectors.toList());
-        return new App(context, pages, fragments);
+        return new App(context, pages, fragments, new HashMap<>());
     }
 
 

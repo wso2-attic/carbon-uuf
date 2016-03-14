@@ -7,6 +7,6 @@ public class MockExecutable implements Executable {
 
     @Override
     public Object execute() {
-        return ImmutableMap.of("name", "Fry");
+        return ImmutableMap.of("name", "Alice");
     }
 }
