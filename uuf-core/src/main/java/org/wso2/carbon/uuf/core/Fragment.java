@@ -1,15 +1,13 @@
 package org.wso2.carbon.uuf.core;
 
-import javax.annotation.Nonnull;
+import com.google.common.collect.Multimap;
 
-/**
- *
- */
-public class Fragment implements Comparable<Fragment> {
+import java.util.Map;
+
+public class Fragment {
 
     private final String name;
     private final String path;
-    private int index = Integer.MAX_VALUE;
     private final Renderable renderer;
 
     public Fragment(String name, String path, Renderable renderer) {
@@ -26,38 +24,13 @@ public class Fragment implements Comparable<Fragment> {
         return path;
     }
 
-    public int getIndex() {
-        return index;
-    }
-
-    public void setIndex(int index) {
-        this.index = index;
-    }
-
-
-    public Renderable getRenderer() {
-        return renderer;
-    }
-
-    @Override
-    public int compareTo(@Nonnull Fragment other) {
-        int deltaOfIndexes = (this.index - other.index);
-        return (deltaOfIndexes < 0) ? +1 : ((deltaOfIndexes > 0) ? -1 : 0);
-    }
-
-    @Override
-    public int hashCode() {
-        return name.hashCode();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return (obj != null) && (obj instanceof Fragment) && (this.name.equals(((Fragment) obj).name));
+    public String render(Map model, Multimap<String, Renderable> bindings, Map<String, Fragment> fragments) {
+        return renderer.render(model, bindings, fragments);
     }
 
     @Override
     public String toString() {
-        return "{\"name\": \"" + name + "\", \"path\": \"" + path + "\", \"index\": \"" + String.valueOf(index) +
-                "\", \"renderer\": \"" + renderer.toString() + "\"}";
+        return "{\"name\": \"" + name + "\", \"path\": \"" + path + "\", \"renderer\": \"" + renderer.toString() +
+                "\"}";
     }
 }
