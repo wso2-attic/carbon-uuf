@@ -1,9 +1,9 @@
 package org.wso2.carbon.uuf.core;
 
 
-import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 
 public interface Renderable {
 
@@ -14,8 +14,7 @@ public interface Renderable {
         return Collections.emptyMap();
     }
 
-    @Nullable
-    default String getLayoutName() {
+    default Optional<String> getLayoutName() {
         return null;
     }
 }

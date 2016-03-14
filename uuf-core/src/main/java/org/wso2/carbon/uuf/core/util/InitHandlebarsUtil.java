@@ -12,6 +12,7 @@ import org.wso2.carbon.uuf.core.UUFException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 
 public class InitHandlebarsUtil {
@@ -76,7 +77,7 @@ public class InitHandlebarsUtil {
         return context.data(ZONES_KEY);
     }
 
-    public static String getLayoutName(Context context) {
-        return context.data(LAYOUT_KEY);
+    public static Optional<String> getLayoutName(Context context) {
+        return Optional.of(context.data(LAYOUT_KEY));
     }
 }

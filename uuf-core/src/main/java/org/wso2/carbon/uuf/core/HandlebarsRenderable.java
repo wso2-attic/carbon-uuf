@@ -6,18 +6,17 @@ import com.github.jknack.handlebars.io.TemplateSource;
 import org.wso2.carbon.uuf.core.util.InitHandlebarsUtil;
 import org.wso2.carbon.uuf.core.util.RuntimeHandlebarsUtil;
 
-import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 
 
 public class HandlebarsRenderable implements Renderable {
 
     private final Template template;
     private final Map<String, Renderable> fillingZones;
-    @Nullable
-    private final String layoutName;
+    private final Optional<String> layoutName;
     private final String name;
 
 
@@ -62,8 +61,7 @@ public class HandlebarsRenderable implements Renderable {
     }
 
     @Override
-    @Nullable
-    public String getLayoutName() {
+    public Optional<String> getLayoutName() {
         return layoutName;
     }
 }

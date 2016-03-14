@@ -1,10 +1,6 @@
 package org.wso2.carbon.uuf.fileio;
 
-import org.wso2.carbon.uuf.core.Executable;
-import org.wso2.carbon.uuf.core.Page;
-import org.wso2.carbon.uuf.core.Renderable;
-import org.wso2.carbon.uuf.core.UUFException;
-import org.wso2.carbon.uuf.core.UriPatten;
+import org.wso2.carbon.uuf.core.*;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -26,9 +22,9 @@ class PageCreator {
             Path jsFile = templateFileAbsolute.getParent().resolve(name + ".js");
             Renderable template = FileUtil.createRenderble(templateFileAbsolute);
             Optional<Executable> executable = FileUtil.createExecutable(jsFile);
-            String layoutName = template.getLayoutName();
-            if (layoutName != null) {
-                layout = layoutCreator.createLayout(layoutName, templateFileAbsolute.getParent());
+            Optional<String> layoutName = template.getLayoutName();
+            if (layoutName.isPresent()) {
+                layout = layoutCreator.createLayout(layoutName.get(), templateFileAbsolute.getParent());
             }
 
             return new Page(getUriPatten(templateFile, name), template, executable, Optional.ofNullable(layout));

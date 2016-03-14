@@ -2,7 +2,6 @@ package org.wso2.carbon.uuf.core;
 
 import io.netty.handler.codec.http.HttpRequest;
 
-import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;

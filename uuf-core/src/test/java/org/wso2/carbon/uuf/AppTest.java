@@ -4,12 +4,7 @@ import io.netty.handler.codec.http.DefaultFullHttpRequest;
 import io.netty.handler.codec.http.HttpRequest;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import org.wso2.carbon.uuf.core.App;
-import org.wso2.carbon.uuf.core.Fragment;
-import org.wso2.carbon.uuf.core.Page;
-import org.wso2.carbon.uuf.core.Renderable;
-import org.wso2.carbon.uuf.core.UUFException;
-import org.wso2.carbon.uuf.core.UriPatten;
+import org.wso2.carbon.uuf.core.*;
 
 import javax.ws.rs.core.Response;
 import java.util.Collections;
