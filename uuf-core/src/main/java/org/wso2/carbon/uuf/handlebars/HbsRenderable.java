@@ -1,10 +1,13 @@
-package org.wso2.carbon.uuf.core;
+package org.wso2.carbon.uuf.handlebars;
 
 import com.github.jknack.handlebars.Context;
 import com.github.jknack.handlebars.Template;
 import com.github.jknack.handlebars.io.TemplateSource;
 import com.google.common.collect.Multimap;
-import org.wso2.carbon.uuf.core.util.RuntimeHandlebarsUtil;
+import org.wso2.carbon.uuf.core.Fragment;
+import org.wso2.carbon.uuf.core.Renderable;
+import org.wso2.carbon.uuf.core.UUFException;
+import org.wso2.carbon.uuf.handlebars.util.RuntimeHandlebarsUtil;
 
 import java.io.IOException;
 import java.util.Map;

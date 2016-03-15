@@ -1,9 +1,11 @@
-package org.wso2.carbon.uuf.core;
+package org.wso2.carbon.uuf.handlebars;
 
 import com.github.jknack.handlebars.Context;
 import com.github.jknack.handlebars.Template;
 import com.github.jknack.handlebars.io.TemplateSource;
-import org.wso2.carbon.uuf.core.util.InitHandlebarsUtil;
+import org.wso2.carbon.uuf.core.Renderable;
+import org.wso2.carbon.uuf.core.UUFException;
+import org.wso2.carbon.uuf.handlebars.util.InitHandlebarsUtil;
 
 import java.io.IOException;
 import java.util.Collections;

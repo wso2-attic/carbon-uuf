@@ -1,4 +1,6 @@
-package org.wso2.carbon.uuf.core;
+package org.wso2.carbon.uuf.handlebars;
+
+import org.wso2.carbon.uuf.core.UUFException;
 
 import javax.script.Invocable;
 import javax.script.ScriptEngine;

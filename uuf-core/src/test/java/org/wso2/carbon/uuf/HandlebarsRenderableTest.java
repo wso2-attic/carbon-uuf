@@ -9,8 +9,8 @@ import com.google.common.collect.ImmutableMap;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.wso2.carbon.uuf.core.Fragment;
-import org.wso2.carbon.uuf.core.HbsRenderable;
-import org.wso2.carbon.uuf.core.HbsPageRenderable;
+import org.wso2.carbon.uuf.handlebars.HbsRenderable;
+import org.wso2.carbon.uuf.handlebars.HbsPageRenderable;
 import org.wso2.carbon.uuf.core.Renderable;
 
 import java.util.Collections;

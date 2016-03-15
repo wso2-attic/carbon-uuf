@@ -2,9 +2,9 @@ package org.wso2.carbon.uuf.fileio;
 
 import com.github.jknack.handlebars.io.StringTemplateSource;
 import com.github.jknack.handlebars.io.TemplateSource;
-import org.wso2.carbon.uuf.core.Executable;
-import org.wso2.carbon.uuf.core.HbsPageRenderable;
-import org.wso2.carbon.uuf.core.JSExecutable;
+import org.wso2.carbon.uuf.handlebars.Executable;
+import org.wso2.carbon.uuf.handlebars.HbsPageRenderable;
+import org.wso2.carbon.uuf.handlebars.JSExecutable;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
