@@ -1,13 +1,12 @@
 package org.wso2.carbon.uuf.fileio;
 
+import org.apache.commons.lang3.StringUtils;
 import org.wso2.carbon.uuf.core.App;
 import org.wso2.carbon.uuf.core.AppCreator;
 import org.wso2.carbon.uuf.core.Fragment;
 import org.wso2.carbon.uuf.core.Page;
 import org.wso2.carbon.uuf.core.Renderable;
 import org.wso2.carbon.uuf.core.UUFException;
-import org.apache.commons.lang3.StringUtils;
-import org.wso2.carbon.uuf.core.*;
 
 import javax.ws.rs.core.Response;
 import java.io.FileNotFoundException;
@@ -17,6 +16,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
