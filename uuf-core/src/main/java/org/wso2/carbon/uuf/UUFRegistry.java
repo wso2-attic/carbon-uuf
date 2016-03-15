@@ -64,7 +64,7 @@ public class UUFRegistry {
                 app = appCreator.createApp(appName, "/" + appName);
                 apps.put(appName, app);
             }
-            String page = app.serve(request);
+            String page = app.renderPage(request);
             return Response.ok().entity(page).header("Content-Type", "text/html");
         } catch (UUFException e) {
 

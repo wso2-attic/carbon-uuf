@@ -48,7 +48,7 @@ public class App {
         return bindings;
     }
 
-    public String serve(HttpRequest request) {
+    public String renderPage(HttpRequest request) {
         String pageUri = request.getUri().substring(context.length());
         Optional<Page> servingPage = getPage(pageUri);
         if (!servingPage.isPresent()) {
