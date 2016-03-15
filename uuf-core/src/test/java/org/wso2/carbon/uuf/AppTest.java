@@ -36,14 +36,14 @@ public class AppTest {
 
     @Test
     public void testMatchingPage() throws Exception {
-        String output = testApp.serve(new DefaultFullHttpRequest(HTTP_1_1, GET, TEST_APP_CONTEXT + TEST_PAGE_URI));
-        Assert.assertEquals(output, TEST_PAGE_CONTENT, "Since url matches, should serve the page content.");
+        String output = testApp.renderPage(new DefaultFullHttpRequest(HTTP_1_1, GET, TEST_APP_CONTEXT + TEST_PAGE_URI));
+        Assert.assertEquals(output, TEST_PAGE_CONTENT, "Since url matches, should render the page content.");
     }
 
     @Test
     public void testMissingPage() throws Exception {
         try {
-            testApp.serve(new DefaultFullHttpRequest(HTTP_1_1, GET, TEST_APP_CONTEXT + "/page2"));
+            testApp.renderPage(new DefaultFullHttpRequest(HTTP_1_1, GET, TEST_APP_CONTEXT + "/page2"));
             Assert.fail("An exception should be thrown because the page2 doesn't exist");
         } catch (UUFException e) {
             Assert.assertEquals(e.getStatus(), Response.Status.NOT_FOUND, "page doesn't exist.");

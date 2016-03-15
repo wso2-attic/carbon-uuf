@@ -12,6 +12,7 @@ import org.wso2.msf4j.MicroservicesRunner;
 import javax.ws.rs.core.Response;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,14 +29,14 @@ public class UUFRegistry {
     public static void main(String[] args) {
         //TODO: only if debug is enabled
         DebugAppender.attach();
-        UUFRegistry registry = new UUFRegistry(new FromArtifactAppCreator(new String[]{"."}));
+        UUFRegistry registry = new UUFRegistry(new FromArtifactAppCreator(new String[] { "." }));
         new MicroservicesRunner().deploy(new UUFService(registry)).start();
     }
 
     public Response.ResponseBuilder serve(HttpRequest request) {
         if (log.isDebugEnabled()) {
-            log.debug("request received " + request.getMethod() + " "
-                    + request.getUri() + " " + request.getProtocolVersion());
+            log.debug("request received " + request.getMethod() + " " + request.getUri() + " " + request
+                    .getProtocolVersion());
         }
 
         String uri = request.getUri();
@@ -57,17 +58,23 @@ public class UUFRegistry {
         }
 
         String appName = uri.substring(1, firstSlash);
+        String resourcePath = uri.substring(firstSlash, uri.length());
 
         App app = apps.get(appName);
         try {
-            if (app == null) {
-                app = appCreator.createApp(appName, "/" + appName);
-                apps.put(appName, app);
+            if (isStaticResourceRequest(resourcePath)) {
+                Path resource = appCreator.resolve(appName, resourcePath);
+                return Response.ok().entity(resource);
+            } else {
+                if (app == null) {
+                    app = appCreator.createApp(appName, "/" + appName);
+                    apps.put(appName, app);
+                }
+                String page = app.renderPage(request);
+                return Response.ok().entity(page).header("Content-Type", "text/html");
             }
-            String page = app.serve(request);
-            return Response.ok().entity(page).header("Content-Type", "text/html");
-        } catch (UUFException e) {
 
+        } catch (UUFException e) {
 
             // https://googlewebmastercentral.blogspot.com/2010/04/to-slash-or-not-to-slash.html
             // if the tailing / is extra or a it is missing, send 301
@@ -99,14 +106,19 @@ public class UUFRegistry {
         }
     }
 
+    private boolean isStaticResourceRequest(String resourcePath) {
+        if (resourcePath.startsWith(AppCreator.STATIC_RESOURCE_PREFIX)) {
+            return true;
+        }
+        return false;
+    }
+
     private Response.ResponseBuilder sendError(String appName, Exception e, Response.Status status) {
         log.error("error while serving context '" + appName + "'", e);
 
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
         e.printStackTrace(pw);
-        return Response.status(status)
-                .entity(sw.toString())
-                .header("Content-Type", "text/plain");
+        return Response.status(status).entity(sw.toString()).header("Content-Type", "text/plain");
     }
 }
