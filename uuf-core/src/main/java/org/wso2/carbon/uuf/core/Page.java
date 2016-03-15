@@ -2,6 +2,7 @@ package org.wso2.carbon.uuf.core;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
+import org.wso2.carbon.uuf.handlebars.Executable;
 
 import java.util.Map;
 import java.util.Optional;

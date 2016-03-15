@@ -2,7 +2,7 @@ package org.wso2.carbon.uuf;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import org.wso2.carbon.uuf.core.Executable;
+import org.wso2.carbon.uuf.handlebars.Executable;
 import org.wso2.carbon.uuf.core.Fragment;
 import org.wso2.carbon.uuf.core.Page;
 import org.wso2.carbon.uuf.core.Renderable;
