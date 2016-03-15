@@ -1,16 +1,23 @@
 package org.wso2.carbon.uuf.fileio;
 
-import org.wso2.carbon.uuf.core.*;
+import org.wso2.carbon.uuf.core.Executable;
+import org.wso2.carbon.uuf.core.HbsPageRenderable;
+import org.wso2.carbon.uuf.core.Page;
+import org.wso2.carbon.uuf.core.Renderable;
+import org.wso2.carbon.uuf.core.UUFException;
+import org.wso2.carbon.uuf.core.UriPatten;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Collections;
+import java.util.Map;
 import java.util.Optional;
 
 class PageCreator {
 
     Page createPage(Path templateFile, LayoutCreator layoutCreator, Path components) {
         try {
-            Renderable layout = null;
+            Renderable layout;
             Path templateFileAbsolute = components.resolve(templateFile);
 
             String name = templateFileAbsolute.getFileName().toString();
@@ -20,14 +27,19 @@ class PageCreator {
             }
 
             Path jsFile = templateFileAbsolute.getParent().resolve(name + ".js");
-            Renderable template = FileUtil.createRenderble(templateFileAbsolute);
+            HbsPageRenderable template = FileUtil.createRenderble(templateFileAbsolute);
             Optional<Executable> executable = FileUtil.createExecutable(jsFile);
             Optional<String> layoutName = template.getLayoutName();
+            Map<String, Renderable> fillingZones;
             if (layoutName.isPresent()) {
                 layout = layoutCreator.createLayout(layoutName.get(), templateFileAbsolute.getParent());
+                fillingZones = template.getFillingZones();
+            } else {
+                layout = template;
+                fillingZones = Collections.emptyMap();
             }
 
-            return new Page(getUriPatten(templateFile, name), template, executable, Optional.ofNullable(layout));
+            return new Page(getUriPatten(templateFile, name), layout, fillingZones, executable);
         } catch (IOException e) {
             // have to catch checked exception because we want to use it in a Stream mapping
             throw new UUFException("error creating the page", e);

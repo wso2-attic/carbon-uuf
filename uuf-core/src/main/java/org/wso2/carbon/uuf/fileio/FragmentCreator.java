@@ -24,11 +24,8 @@ public class FragmentCreator {
         }
 
         try {
-            return new Fragment(
-                    name,
-                    FileUtil.createRenderble(fragmentDir.resolve(fileName + ".hbs")),
-                    FileUtil.createExecutable(fragmentDir.resolve(fileName + ".js"))
-            );
+            return new Fragment(name, fragmentDir.toString(), FileUtil.createRenderble(fragmentDir.resolve(
+                    fileName + ".hbs")));
         } catch (IOException e) {
             throw new UUFException("error creating the fragment", e);
         }

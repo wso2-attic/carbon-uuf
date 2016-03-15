@@ -5,7 +5,7 @@ import com.github.jknack.handlebars.Handlebars;
 import com.github.jknack.handlebars.Template;
 import com.github.jknack.handlebars.io.StringTemplateSource;
 import com.github.jknack.handlebars.io.TemplateSource;
-import org.wso2.carbon.uuf.core.HandlebarsRenderable;
+import org.wso2.carbon.uuf.core.HbsRenderable;
 import org.wso2.carbon.uuf.core.Renderable;
 import org.wso2.carbon.uuf.core.UUFException;
 
@@ -47,7 +47,7 @@ public class InitHandlebarsUtil {
                 zones = new HashMap<>();
                 options.data(ZONES_KEY, zones);
             }
-            zones.put(zoneName, new HandlebarsRenderable(source));
+            zones.put(zoneName, new HbsRenderable(source));
             return "";
         });
 

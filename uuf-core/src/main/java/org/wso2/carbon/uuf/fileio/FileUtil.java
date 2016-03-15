@@ -3,9 +3,8 @@ package org.wso2.carbon.uuf.fileio;
 import com.github.jknack.handlebars.io.StringTemplateSource;
 import com.github.jknack.handlebars.io.TemplateSource;
 import org.wso2.carbon.uuf.core.Executable;
-import org.wso2.carbon.uuf.core.HandlebarsRenderable;
+import org.wso2.carbon.uuf.core.HbsPageRenderable;
 import org.wso2.carbon.uuf.core.JSExecutable;
-import org.wso2.carbon.uuf.core.Renderable;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -34,12 +33,12 @@ class FileUtil {
         return path;
     }
 
-    static Renderable createRenderble(Path hbsFile) throws IOException {
+    static HbsPageRenderable createRenderble(Path hbsFile) throws IOException {
         String content = new String(Files.readAllBytes(hbsFile), StandardCharsets.UTF_8);
         TemplateSource source = new StringTemplateSource(
                 relativePath(hbsFile).toString(),
                 content);
-        return new HandlebarsRenderable(source);
+        return new HbsPageRenderable(source);
     }
 
     static Optional<Executable> createExecutable(Path jsFile) throws IOException {

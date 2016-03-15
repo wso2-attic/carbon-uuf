@@ -3,76 +3,50 @@ package org.wso2.carbon.uuf;
 import com.github.jknack.handlebars.HandlebarsError;
 import com.github.jknack.handlebars.HandlebarsException;
 import com.github.jknack.handlebars.io.StringTemplateSource;
+import com.github.jknack.handlebars.io.TemplateSource;
+import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ImmutableMap;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.wso2.carbon.uuf.core.Fragment;
-import org.wso2.carbon.uuf.core.HandlebarsRenderable;
+import org.wso2.carbon.uuf.core.HbsRenderable;
+import org.wso2.carbon.uuf.core.HbsPageRenderable;
 import org.wso2.carbon.uuf.core.Renderable;
 
 import java.util.Collections;
 import java.util.Map;
-import java.util.Optional;
-import java.util.function.Supplier;
 
 public class HandlebarsRenderableTest {
 
     @Test
     public void testZones() {
-
-        StringTemplateSource source = new StringTemplateSource("my-file.hbs", "{{defineZone \"my-zone\"}}");
-        HandlebarsRenderable hb = new HandlebarsRenderable(source);
-        String s = hb.render(
-                ImmutableMap.of("name", "Leela"),
-                ImmutableMap.of("my-zone", new MockHelloRenderable()),
-                Collections.emptyMap());
-        Assert.assertEquals(s, "Welcome to the <world> of tomorrow, Leela");
-    }
-
-    @Test
-    public void testLayoutName() {
-        HandlebarsRenderable renderable = new HandlebarsRenderable(new StringTemplateSource(
-                "my-file.hbs",
-                "{{layout \"my-layout\"}}"));
-
-        Optional<String> layoutName = renderable.getLayoutName();
-        if (layoutName.isPresent()) {
-            Assert.assertEquals(layoutName.get(), "my-layout", "a layout is defined in the template");
-        } else {
-            Assert.fail("layout name was not present");
-        }
-
+        TemplateSource source = new StringTemplateSource("my-file.hbs", "{{defineZone \"my-zone\"}}");
+        HbsRenderable hb = new HbsRenderable(source);
+        String output = hb.render(ImmutableMap.of("name", "Leela"),
+                                  ImmutableListMultimap.of("my-zone", new MockHelloRenderable()),
+                                  Collections.emptyMap());
+        Assert.assertEquals(output, "Welcome to the <world> of tomorrow, Leela");
     }
 
     @Test
     public void testFragment() {
-        HandlebarsRenderable renderable = new HandlebarsRenderable(new StringTemplateSource(
-                "my-file.hbs",
-                "{{includeFragment \"news\"}}"));
-        Fragment fragment = new Fragment(
-                "my-news-fragment",
-                (o, z, f) -> "Good news, " + o + "!",
-                /*script*/ Optional.empty());
-        String news = renderable.render(
-                "everyone",
-                Collections.emptyMap(),
-                ImmutableMap.of("news", fragment));
-        Assert.assertEquals(news, "Good news, everyone!");
+        TemplateSource hbsTemplate = new StringTemplateSource("my-file.hbs", "{{includeFragment \"news\"}}");
+        HbsRenderable renderable = new HbsRenderable(hbsTemplate);
+        Fragment fragment = new Fragment("my-news-fragment", "/mock/path", (m, b, f) -> ("Good news, " + m + "!"));
+        String output = renderable.render("everyone", ImmutableListMultimap.of(), ImmutableMap.of("news", fragment));
+        Assert.assertEquals(output, "Good news, everyone!");
     }
 
     @Test
     public void testFillingZones() {
-        HandlebarsRenderable renderable = new HandlebarsRenderable(new StringTemplateSource(
-                "my-file.hbs",
-                "\n{{#fillZone \"my-zone\"}} {{a}}{{/fillZone}}"));
-        Map<String, Renderable> fillingZones = renderable.getFillingZones();
+        TemplateSource hbsTemplate = new StringTemplateSource("my-file.hbs",
+                                                              "\n{{#fillZone \"my-zone\"}} {{a}}{{/fillZone}}");
+        HbsPageRenderable hbsPageRenderable = new HbsPageRenderable(hbsTemplate);
+        Map<String, Renderable> fillingZones = hbsPageRenderable.getFillingZones();
         Renderable fillingZone = fillingZones.get("my-zone");
         Assert.assertNotNull(fillingZone, "zone's inner content must be available under name 'my-zone'");
         try {
-            fillingZone.render(
-                    Collections.emptyMap(),
-                    Collections.emptyMap(),
-                    Collections.emptyMap());
+            fillingZone.render(Collections.emptyMap(), ImmutableListMultimap.of(), Collections.emptyMap());
             Assert.fail("can't render with an empty map since 'a' var is expected.");
         } catch (HandlebarsException ex) {
             HandlebarsError error = ex.getError();
@@ -80,10 +54,8 @@ public class HandlebarsRenderableTest {
             Assert.assertEquals(error.column, 26, "error is in the 26th column");
         }
 
-        String rendered = fillingZone.render(
-                ImmutableMap.of("a", "apple"),
-                Collections.emptyMap(),
-                Collections.emptyMap());
+        String rendered = fillingZone.render(ImmutableMap.of("a", "apple"), ImmutableListMultimap.of(),
+                                             Collections.emptyMap());
         Assert.assertEquals(rendered.trim(), "apple");
     }
 }
