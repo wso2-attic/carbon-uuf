@@ -13,14 +13,12 @@ public class Page {
     private final Renderable layout;
     private final Map<String, Renderable> fillZones;
 
-
     public Page(UriPatten uriPatten, Renderable layout, Map<String, Renderable> fillZones,
                 Optional<Executable> script) {
         this.uriPatten = uriPatten;
         this.layout = layout;
         this.fillZones = fillZones;
     }
-
 
     public UriPatten getUriPatten() {
         return uriPatten;
