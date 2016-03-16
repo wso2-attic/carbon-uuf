@@ -35,7 +35,7 @@ public class RuntimeHandlebarsUtil {
             StringBuilder buffer = new StringBuilder();
             for (Renderable renderable : renderables) {
                 //TODO: maybe use the same context
-                String content = renderable.render(options.context.model(), bindings, fragments).trim();
+                String content = renderable.render(options.context, bindings, fragments).trim();
                 buffer.append(content);
             }
             return new Handlebars.SafeString(buffer.toString());
@@ -50,7 +50,7 @@ public class RuntimeHandlebarsUtil {
             Fragment fragment = fragments.get(fragmentName);
             if (fragment != null) {
                 //TODO: maybe use the same context
-                String content = fragment.render(options.context.model(), bindings, fragments).trim();
+                String content = fragment.render(options.hash, bindings, fragments).trim();
                 return new Handlebars.SafeString(content);
             }
             throw new UUFException("fragment '" + fragmentName + "' not available");
