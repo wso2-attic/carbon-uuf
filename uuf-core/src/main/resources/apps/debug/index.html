@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>UUF Debuger</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+<script>
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', 'api/pages');
+    xhr.send(null);
+    xhr.onreadystatechange = function () {
+        var DONE = 4; // readyState 4 means the request is done.
+        var OK = 200; // status 200 is a successful return.
+        if (xhr.readyState === DONE) {
+            if (xhr.status === OK)
+                console.log(xhr.responseText); // 'This is the returned text.'
+                document.querySelectorAll('body').item(0).textContent = "pages = " + xhr.responseText;
+        } else {
+            console.log('Error: ' + xhr.status); // An error occurred during the request.
+        }
+    };
+</script>
+</body>
+</html>

@@ -39,7 +39,6 @@ public class Page {
 
     @Override
     public String toString() {
-        return "{\"uriPattern\": \"" + uriPatten.toString() + "\", \"layout\": \"" +
-                layout.toString() + "\"}";
+        return "{\"uriPattern\": " + uriPatten.toString() + ", \"layout\": " + layout.toString() + "}";
     }
 }

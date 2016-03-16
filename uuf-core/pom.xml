@@ -85,6 +85,10 @@
         </dependency>
         <!-- Other Dependencies -->
         <dependency>
+            <groupId>commons-io.wso2</groupId>
+            <artifactId>commons-io</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
             <scope>test</scope>
@@ -102,6 +106,7 @@
             io.netty.handler.*,
             javax.script,
             org.apache.commons.lang3,
+            org.apache.commons.io,
             com.github.jknack.handlebars.*,
             org.yaml.snakeyaml,
             jdk.nashorn.api.scripting

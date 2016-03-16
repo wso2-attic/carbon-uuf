@@ -33,7 +33,6 @@
     </parent>
 
     <modules>
-        <module>nashorn-osgi-fragment</module>
         <module>uuf-core</module>
         <module>product/p2-features/org.wso2.uuf.core.feature</module>
         <module>product</module>
@@ -148,9 +147,9 @@
                 <version>${testng.version}</version>
             </dependency>
             <dependency>
-                <groupId>io.mszu.scripting</groupId>
-                <artifactId>nashorn-scripting-api-fragment</artifactId>
-                <version>${nashorn-fragment.version}</version>
+                <groupId>commons-io.wso2</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>${commons-io.wso2.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.google.code.findbugs</groupId>
@@ -244,6 +243,7 @@
         <jsr305.version>2.0.1</jsr305.version>
         <guava.version.range>[13.0,14)</guava.version.range>
         <nashorn-osgi-fragment.version>1.0.0</nashorn-osgi-fragment.version>
+        <commons-io.wso2.version>2.4.0.wso2v1</commons-io.wso2.version>
 
         <!-- Other Dependencies -->
         <testng.version>6.9.4</testng.version>
