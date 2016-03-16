@@ -1,9 +1,14 @@
 package org.wso2.carbon.uuf.fileio;
 
 import org.wso2.carbon.uuf.core.Renderable;
+import org.wso2.carbon.uuf.handlebars.HbsRenderable;
+import org.wso2.carbon.uuf.handlebars.JSExecutable;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Optional;
 
 class LayoutCreator {
 
@@ -13,7 +18,8 @@ class LayoutCreator {
         this.componentsDir = componentsDir;
     }
 
-    public Renderable createLayout(String layoutFullName, Path currentComponent) throws IOException {
+    public Renderable createLayout(String layoutFullName, Path currentComponent, Optional<JSExecutable> script)
+            throws IOException {
         Path component;
         String layoutName;
         int lastDot = layoutFullName.lastIndexOf('.');
@@ -25,7 +31,8 @@ class LayoutCreator {
             component = currentComponent;
             layoutName = layoutFullName;
         }
-        Path hbsFile = component.resolve("layouts").resolve(layoutName + ".hbs");
-        return FileUtil.createRenderble(hbsFile);
+        Path hbsFilePath = component.resolve("layouts").resolve(layoutName + ".hbs");
+        return new HbsRenderable(new String(Files.readAllBytes(hbsFilePath), StandardCharsets.UTF_8), hbsFilePath,
+                                 script);
     }
 }

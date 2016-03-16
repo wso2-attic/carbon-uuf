@@ -3,13 +3,13 @@ package org.wso2.carbon.uuf.handlebars.util;
 import com.github.jknack.handlebars.Context;
 import com.github.jknack.handlebars.Handlebars;
 import com.github.jknack.handlebars.Template;
-import com.github.jknack.handlebars.io.StringTemplateSource;
 import com.github.jknack.handlebars.io.TemplateSource;
-import org.wso2.carbon.uuf.handlebars.HbsRenderable;
 import org.wso2.carbon.uuf.core.Renderable;
 import org.wso2.carbon.uuf.core.UUFException;
+import org.wso2.carbon.uuf.handlebars.HbsRenderable;
 
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -42,12 +42,11 @@ public class InitHandlebarsUtil {
             }
 
             sb.append(options.fn.text());
-            TemplateSource source = new StringTemplateSource(options.fn.filename(), sb.toString());
             if (zones == null) {
                 zones = new HashMap<>();
                 options.data(ZONES_KEY, zones);
             }
-            zones.put(zoneName, new HbsRenderable(source));
+            zones.put(zoneName, new HbsRenderable(sb.toString(), Paths.get(options.fn.filename())));
             return "";
         });
 

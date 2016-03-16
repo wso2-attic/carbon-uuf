@@ -66,7 +66,7 @@ public class FromArtifactAppCreator implements AppCreator {
                 .parallel()
                 .map(fragmentCreator::createFragment)
                 .collect(Collectors.toMap( Fragment::getName, Function.identity()));
-        Path bindingsConfig = components.resolve("bindings.yaml");
+        Path bindingsConfig = components.resolve("root/bindings.yaml");
         Map<String, Renderable> bindings = FileUtil.getBindings(bindingsConfig, fragments);
         return new App(context, pages, fragments, bindings);
     }

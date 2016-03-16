@@ -2,10 +2,8 @@ package org.wso2.carbon.uuf.core;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
-import org.wso2.carbon.uuf.handlebars.Executable;
 
 import java.util.Map;
-import java.util.Optional;
 
 public class Page {
 
@@ -13,8 +11,7 @@ public class Page {
     private final Renderable layout;
     private final Map<String, Renderable> fillZones;
 
-    public Page(UriPatten uriPatten, Renderable layout, Map<String, Renderable> fillZones,
-                Optional<Executable> script) {
+    public Page(UriPatten uriPatten, Renderable layout, Map<String, Renderable> fillZones) {
         this.uriPatten = uriPatten;
         this.layout = layout;
         this.fillZones = fillZones;
@@ -24,7 +21,7 @@ public class Page {
         return uriPatten;
     }
 
-    public String serve(Object model, Map<String, Renderable> bindings, Map<String, Fragment> fragments) {
+    public String serve(Map<String, Object> model, Map<String, Renderable> bindings, Map<String, Fragment> fragments) {
         Multimap<String, Renderable> combined = ArrayListMultimap.create();
         // add bindings
         for (Map.Entry<String, Renderable> entry : bindings.entrySet()) {

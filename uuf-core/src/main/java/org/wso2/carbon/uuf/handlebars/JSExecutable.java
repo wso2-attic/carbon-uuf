@@ -7,12 +7,14 @@ import org.wso2.carbon.uuf.core.UUFException;
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
+import java.nio.file.Path;
+import java.util.Optional;
 
 @SuppressWarnings("PackageAccessibility")
-public class JSExecutable implements Executable {
+public class JSExecutable {
 
+    private final String scriptFilePath;
     private final Invocable engine;
-    private final String fileName;
     private static final NashornScriptEngineFactory factory = new NashornScriptEngineFactory();
 
     private class MSSCaller extends AbstractJSObject {
@@ -27,36 +29,43 @@ public class JSExecutable implements Executable {
         }
     }
 
-    public JSExecutable(String script, String fileName) {
-        this.fileName = fileName;
+    public JSExecutable(String scriptSource) {
+        this(scriptSource, Optional.<Path>empty());
+    }
+
+    public JSExecutable(String scriptSource, Optional<Path> scriptFilePath) {
+        if (scriptFilePath.isPresent()) {
+            // Append script file name for debugging purposes
+            this.scriptFilePath = scriptFilePath.get().toString();
+            scriptSource = scriptSource + "//@ sourceURL=" + scriptFilePath;
+        } else {
+            this.scriptFilePath = "";
+        }
         try {
             ScriptEngine engine = factory.getScriptEngine("-strict");
             engine.put("MSSCaller", new MSSCaller());
             engine.eval("var callService = function(method,uri){return JSON.parse(MSSCaller(method,uri))}");
-            engine.eval(script + "//@ sourceURL=" + fileName);
+            engine.eval(scriptSource);
             this.engine = (Invocable) engine;
         } catch (ScriptException e) {
             throw new UUFException("error evaluating javascript", e);
         }
     }
 
-    @Override
-    public Object execute() {
+    public Object execute(Object context) {
+        Object rv;
         try {
-            return engine.invokeFunction("onRequest");
+            rv = engine.invokeFunction("onRequest", context);
         } catch (ScriptException e) {
-            throw new UUFException(
-                    "error while executing " + fileName,
-                    e);
+            throw new UUFException("error while executing script " + scriptFilePath, e);
         } catch (NoSuchMethodException e) {
-            throw new UUFException(
-                    "method 'onRequest' not defined in " + fileName,
-                    e);
+            throw new UUFException("method 'onRequest' not defined in the script " + scriptFilePath, e);
         }
+        return rv;
     }
 
     @Override
     public String toString() {
-        return "{path:'" + fileName + "'}";
+        return "{path:'" + scriptFilePath + "'}";
     }
 }
