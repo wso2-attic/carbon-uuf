@@ -1,15 +1,9 @@
 package org.wso2.carbon.uuf.fileio;
 
 import org.apache.commons.lang3.StringUtils;
-import org.wso2.carbon.uuf.core.App;
-import org.wso2.carbon.uuf.core.AppCreator;
-import org.wso2.carbon.uuf.core.Fragment;
-import org.wso2.carbon.uuf.core.Page;
-import org.wso2.carbon.uuf.core.Renderable;
-import org.wso2.carbon.uuf.core.UUFException;
+import org.wso2.carbon.uuf.core.*;
 
 import javax.ws.rs.core.Response;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.FileSystems;
@@ -107,18 +101,18 @@ public class FromArtifactAppCreator implements AppCreator {
         Path appPath = getAppPath(appName);
         String resourcePathParts[] = resourcePath.split("/");
 
+        //TODO: handle ArrayIndexOutOfBoundException and avoid split()
         int fourthSlash = StringUtils.ordinalIndexOf(resourcePath, "/", 4);
-        String subResourcePath = resourcePath.substring(fourthSlash, resourcePath.length());
-
+        String subResourcePath = resourcePath.substring(fourthSlash + 1, resourcePath.length());
         String resourceUriPart = resourcePathParts[1];
         String componentUriPart = resourcePathParts[2];
         String fragmentUriPart = resourcePathParts[3];
 
-        if (resourceUriPart.equals(AppCreator.STATIC_RESOURCE_PREFIX)) {
+        if (!resourceUriPart.equals(AppCreator.STATIC_RESOURCE_PREFIX)) {
             throw new IllegalArgumentException("resourcePath should starts with `/public`!");
         }
 
-        Path componentPath = appPath.resolve(componentUriPart);
+        Path componentPath = appPath.resolve("components").resolve(componentUriPart);
         Path fragmentPath;
         if (fragmentUriPart.equals(AppCreator.STATIC_RESOURCE_PATH_PARAM_BASE)) {
             fragmentPath = componentPath;
