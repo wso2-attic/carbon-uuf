@@ -12,6 +12,7 @@ import org.wso2.msf4j.MicroservicesRunner;
 import javax.ws.rs.core.Response;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -66,7 +67,8 @@ public class UUFRegistry {
             if (isStaticResourceRequest(resourcePath)) {
                 Path resource = appCreator.resolve(appName, resourcePath);
                 if (Files.exists(resource) && Files.isRegularFile(resource)) {
-                    return Response.ok(resource.toFile(), Files.probeContentType(resource));
+                    return Response.ok(resource.toFile(),
+                            URLConnection.guessContentTypeFromName(resourcePath));
                 } else {
                     return Response.status(Response.Status.NOT_FOUND).entity(
                             "Requested resource `" + uri + "` does not exists!");
