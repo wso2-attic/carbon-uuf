@@ -24,7 +24,7 @@ import java.util.stream.Stream;
 
 public class FromArtifactAppCreator implements AppCreator {
 
-    public static final String ROOT_COMPONENT_NAME = "ROOT";
+    public static final String ROOT_COMPONENT_NAME = "root";
 
     private final String[] paths;
     private final PageCreator pageCreator = new PageCreator();
