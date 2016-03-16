@@ -103,6 +103,8 @@
             javax.script,
             org.apache.commons.lang3,
             com.github.jknack.handlebars.*,
+            org.yaml.snakeyaml,
+            jdk.nashorn.api.scripting
         </import.package>
     </properties>
 
