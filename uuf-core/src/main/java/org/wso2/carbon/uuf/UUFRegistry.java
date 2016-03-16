@@ -67,7 +67,7 @@ public class UUFRegistry {
         App app = apps.get(appName);
         try {
             String type = URLConnection.guessContentTypeFromName(resourcePath);
-            if(type == null){
+            if (type == null) {
                 type = "application/octet-stream";
             }
             if (isStaticResourceRequest(resourcePath)) {
@@ -85,11 +85,12 @@ public class UUFRegistry {
                     apps.put(appName, app);
                 }
                 if (resourcePath.startsWith("/debug/api/")) {
-                    return Response.ok(app.getPages().toString());
+                    return Response.ok(app.getPages().toString(), "application/json");
                 }
                 if (resourcePath.startsWith("/debug/")) {
                     if (resourcePath.endsWith("/")) {
                         resourcePath = resourcePath + "index.html";
+                        type = URLConnection.guessContentTypeFromName(resourcePath);
                     }
                     InputStream resourceAsStream = this.getClass().getResourceAsStream("/apps" + resourcePath);
                     String debugContent = IOUtils.toString(
