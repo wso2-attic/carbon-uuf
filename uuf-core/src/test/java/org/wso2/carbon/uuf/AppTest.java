@@ -4,14 +4,17 @@ import io.netty.handler.codec.http.DefaultFullHttpRequest;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-import org.wso2.carbon.uuf.core.*;
-import org.wso2.carbon.uuf.handlebars.Executable;
+import org.wso2.carbon.uuf.core.App;
+import org.wso2.carbon.uuf.core.Fragment;
+import org.wso2.carbon.uuf.core.Page;
+import org.wso2.carbon.uuf.core.Renderable;
+import org.wso2.carbon.uuf.core.UUFException;
+import org.wso2.carbon.uuf.core.UriPatten;
 
 import javax.ws.rs.core.Response;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import static io.netty.handler.codec.http.HttpMethod.GET;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
@@ -27,7 +30,7 @@ public class AppTest {
         UriPatten testPageUriPattern = new UriPatten(TEST_PAGE_URI);
         Renderable testPageLayout = (model, bindings, fragments) -> TEST_PAGE_CONTENT;
         Map<String, Renderable> testFillZones = Collections.emptyMap();
-        Page testPage = new Page(testPageUriPattern, testPageLayout, testFillZones, Optional.<Executable>empty());
+        Page testPage = new Page(testPageUriPattern, testPageLayout, testFillZones);
         List<Page> testPages = Collections.singletonList(testPage);
         Map<String, Fragment> testFragments = Collections.emptyMap();
         Map<String, Renderable> testBindings = Collections.emptyMap();

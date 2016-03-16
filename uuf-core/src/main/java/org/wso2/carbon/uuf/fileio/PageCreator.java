@@ -1,11 +1,10 @@
 package org.wso2.carbon.uuf.fileio;
 
-import org.wso2.carbon.uuf.handlebars.Executable;
-import org.wso2.carbon.uuf.handlebars.HbsPageRenderable;
 import org.wso2.carbon.uuf.core.Page;
 import org.wso2.carbon.uuf.core.Renderable;
 import org.wso2.carbon.uuf.core.UUFException;
 import org.wso2.carbon.uuf.core.UriPatten;
+import org.wso2.carbon.uuf.handlebars.HbsPageRenderable;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -28,7 +27,6 @@ class PageCreator {
 
             Path jsFile = templateFileAbsolute.getParent().resolve(name + ".js");
             HbsPageRenderable template = FileUtil.createRenderble(templateFileAbsolute);
-            Optional<Executable> executable = FileUtil.createExecutable(jsFile);
             Optional<String> layoutName = template.getLayoutName();
             Map<String, Renderable> fillingZones;
             if (layoutName.isPresent()) {
@@ -39,7 +37,7 @@ class PageCreator {
                 fillingZones = Collections.emptyMap();
             }
 
-            return new Page(getUriPatten(templateFile, name), layout, fillingZones, executable);
+            return new Page(getUriPatten(templateFile, name), layout, fillingZones);
         } catch (IOException e) {
             // have to catch checked exception because we want to use it in a Stream mapping
             throw new UUFException("error creating the page", e);
