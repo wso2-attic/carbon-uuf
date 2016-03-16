@@ -96,50 +96,37 @@ public class FromArtifactAppCreator implements AppCreator {
      * </ul>
      * These path types are mapped into following file paths on the file system;
      * <ul>
-     *     <li>root_resource_path: {appName}/public/{subResourcePath}</li>
-     *     <li>root_fragment_path: {appName}/fragments/{fragmentName}/public/{subResourcePath}</li>
-     *     <li>component_resource_path: {appName}/components/public/{subResourcePath}</li>
-     *     <li>fragment_resource_path: {appName}/components/{componentName}/{fragmentName}/public/{subResourcePath}</li>
+     *      <li>{appName}/components/[{componentName}|ROOT]/[{fragmentName}|base]/public/{subResourcePath}</li>
      * </ul>
-     * @param appName
-     * @param resourcePath
-     * @return
+     * @param appName application name
+     * @param resourcePath resource uri
+     * @return resolved path
      */
     @Override
     public Path resolve(String appName, String resourcePath) {
-        final Path appPath = getAppPath(appName);
-        final String resourcePathParts[] = resourcePath.split("/");
+        Path appPath = getAppPath(appName);
+        String resourcePathParts[] = resourcePath.split("/");
 
-        final int fourthSlash = StringUtils.ordinalIndexOf(resourcePath, "/", 4);
-        final String subResourcePath = resourcePath.substring(fourthSlash, resourcePath.length());
-        final String sep = File.separator;
+        int fourthSlash = StringUtils.ordinalIndexOf(resourcePath, "/", 4);
+        String subResourcePath = resourcePath.substring(fourthSlash, resourcePath.length());
 
-        if (resourcePathParts[1].equals(AppCreator.STATIC_RESOURCE_PREFIX)) {
-            if (resourcePathParts[2].equals(AppCreator.STATIC_RESOURCE_PATH_PARAM_ROOT)) {
-                if (resourcePathParts[3].equals(AppCreator.STATIC_RESOURCE_PATH_PARAM_BASE)) {
-                    //root_resource_path: {appName}/public/{subResourcePath}
-                    return appPath.resolve("public" + sep + subResourcePath);
-                } else {
-                    //root_fragment_path: {appName}/fragments/{fragmentName}/public/{subResourcePath}
-                    return appPath.resolve("fragments" + sep + resourcePathParts[3] + sep + "public" + sep
-                            + subResourcePath);
-                }
-            } else {
-                if (resourcePathParts[3].equals(AppCreator.STATIC_RESOURCE_PATH_PARAM_BASE)) {
-                    //component_resource_path: {appName}/components/public/{subResourcePath}
-                    return appPath.resolve("components" + sep + resourcePathParts[2] + sep + "public" + sep
-                            + subResourcePath);
-                } else {
-                    //fragment_resource_path: {appName}/components/{componentName}/{fragmentName}/public/{subResourcePath}
-                    return appPath.resolve(
-                            "components" + sep + resourcePathParts[2] + sep + resourcePathParts[3] + sep
-                                    + "public" + sep + subResourcePath);
-                }
-            }
+        String resourceUriPart = resourcePathParts[1];
+        String componentUriPart = resourcePathParts[2];
+        String fragmentUriPart = resourcePathParts[3];
+
+        if (resourceUriPart.equals(AppCreator.STATIC_RESOURCE_PREFIX)) {
+            throw new IllegalArgumentException("resourcePath should starts with `/public`!");
         }
 
-        throw new UUFException("Resource by uri '" + resourcePath + "' is not found in " + appName,
-                Response.Status.NOT_FOUND);
+        Path componentPath = appPath.resolve(componentUriPart);
+        Path fragmentPath;
+        if (fragmentUriPart.equals(AppCreator.STATIC_RESOURCE_PATH_PARAM_BASE)) {
+            fragmentPath = componentPath;
+        } else {
+            fragmentPath = componentPath.resolve(fragmentUriPart);
+        }
+        //{appName}/components/[{componentName}|ROOT]/[{fragmentName}|base]/public/{subResourcePath}
+        return fragmentPath.resolve("public").resolve(subResourcePath);
     }
 
     private Path getAppPath(String name) {
