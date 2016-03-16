@@ -21,7 +21,7 @@ public class Page {
         return uriPatten;
     }
 
-    public String serve(Object model, Map<String, Renderable> bindings, Map<String, Fragment> fragments) {
+    public String serve(Map<String, Object> model, Map<String, Renderable> bindings, Map<String, Fragment> fragments) {
         Multimap<String, Renderable> combined = ArrayListMultimap.create();
         // add bindings
         for (Map.Entry<String, Renderable> entry : bindings.entrySet()) {
