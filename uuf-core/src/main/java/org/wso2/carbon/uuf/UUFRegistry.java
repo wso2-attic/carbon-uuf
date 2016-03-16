@@ -12,6 +12,7 @@ import org.wso2.msf4j.MicroservicesRunner;
 import javax.ws.rs.core.Response;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
@@ -64,14 +65,19 @@ public class UUFRegistry {
         try {
             if (isStaticResourceRequest(resourcePath)) {
                 Path resource = appCreator.resolve(appName, resourcePath);
-                return Response.ok().entity(resource);
+                if (Files.exists(resource) && Files.isRegularFile(resource)) {
+                    return Response.ok(resource.toFile(), Files.probeContentType(resource));
+                } else {
+                    return Response.status(Response.Status.NOT_FOUND).entity(
+                            "Requested resource `" + uri + "` does not exists!");
+                }
             } else {
                 if (app == null) {
                     app = appCreator.createApp(appName, "/" + appName);
                     apps.put(appName, app);
                 }
                 String page = app.renderPage(request);
-                return Response.ok().entity(page).header("Content-Type", "text/html");
+                return Response.ok(page).header("Content-Type", "text/html");
             }
 
         } catch (UUFException e) {
@@ -107,7 +113,7 @@ public class UUFRegistry {
     }
 
     private boolean isStaticResourceRequest(String resourcePath) {
-        if (resourcePath.startsWith(AppCreator.STATIC_RESOURCE_PREFIX)) {
+        if (resourcePath.startsWith("/" + AppCreator.STATIC_RESOURCE_PREFIX)) {
             return true;
         }
         return false;

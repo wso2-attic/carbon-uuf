@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.wso2.carbon.uuf.core.*;
 
 import javax.ws.rs.core.Response;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.FileSystems;
@@ -73,36 +74,54 @@ public class FromArtifactAppCreator implements AppCreator {
         }
     }
 
+    /**
+     * This method resolves static routing request uris. URI types categorized into;
+     * <ul>
+     *     <li>root_resource_uri: /public/root/base/{subResourceUri}</li>
+     *     <li>root_fragment_uri: /public/root/{fragmentName}/{subResourceUri}</li>
+     *     <li>component_resource_uri: /public/{componentName}/base/{subResourceUri}</li>
+     *     <li>fragment_resource_uri: /public/{componentName}/{fragmentName}/{subResourceUri}</li>
+     * </ul>
+     * These path types are mapped into following file paths on the file system;
+     * <ul>
+     *     <li>root_resource_path: {appName}/public/{subResourcePath}</li>
+     *     <li>root_fragment_path: {appName}/fragments/{fragmentName}/public/{subResourcePath}</li>
+     *     <li>component_resource_path: {appName}/components/public/{subResourcePath}</li>
+     *     <li>fragment_resource_path: {appName}/components/{componentName}/{fragmentName}/public/{subResourcePath}</li>
+     * </ul>
+     * @param appName
+     * @param resourcePath
+     * @return
+     */
     @Override
     public Path resolve(String appName, String resourcePath) {
-        // component_resource_path: /public/<component_name>/base/js/lib.js
-        // fragment_resource_path: /public/<component_name>/<fragment_name>/js/lib.js
-        // root_resource_path: /public/root/base/js/lib.js
-        // root_fragment_path: /public/root/<fragment_name>/js/lib.js
+        final Path appPath = getAppPath(appName);
+        final String resourcePathParts[] = resourcePath.split("/");
 
-        String filePath = "";
-        Path appPath = getAppPath(appName);
-        String resourcePathParts[] = resourcePath.split("/");
+        final int fourthSlash = StringUtils.ordinalIndexOf(resourcePath, "/", 4);
+        final String subResourcePath = resourcePath.substring(fourthSlash, resourcePath.length());
+        final String sep = File.separator;
 
-        int thirdSlash = StringUtils.ordinalIndexOf(resourcePath, "/", 3);
-        String subResourcePath = resourcePath.substring(thirdSlash, resourcePath.length());
-
-        if (resourcePathParts[0].equals(AppCreator.STATIC_RESOURCE_PREFIX)) {
-            if (resourcePathParts[1].equals(AppCreator.STATIC_RESOURCE_PATH_PARAM_ROOT)) {
-                if (resourcePathParts[2].equals(AppCreator.STATIC_RESOURCE_PATH_PARAM_BASE)) {
-                    //root_resource_path
-                    appPath.resolve(subResourcePath);
+        if (resourcePathParts[1].equals(AppCreator.STATIC_RESOURCE_PREFIX)) {
+            if (resourcePathParts[2].equals(AppCreator.STATIC_RESOURCE_PATH_PARAM_ROOT)) {
+                if (resourcePathParts[3].equals(AppCreator.STATIC_RESOURCE_PATH_PARAM_BASE)) {
+                    //root_resource_path: {appName}/public/{subResourcePath}
+                    return appPath.resolve("public" + sep + subResourcePath);
                 } else {
-                    //root_fragment_path
-                    appPath.resolve(subResourcePath);
+                    //root_fragment_path: {appName}/fragments/{fragmentName}/public/{subResourcePath}
+                    return appPath.resolve("fragments" + sep + resourcePathParts[3] + sep + "public" + sep
+                            + subResourcePath);
                 }
             } else {
-                if (resourcePathParts[2].equals(AppCreator.STATIC_RESOURCE_PATH_PARAM_BASE)) {
-                    //component_resource_path
-                    appPath.resolve(subResourcePath);
+                if (resourcePathParts[3].equals(AppCreator.STATIC_RESOURCE_PATH_PARAM_BASE)) {
+                    //component_resource_path: {appName}/components/public/{subResourcePath}
+                    return appPath.resolve("components" + sep + resourcePathParts[2] + sep + "public" + sep
+                            + subResourcePath);
                 } else {
-                    //fragment_resource_path
-                    appPath.resolve(subResourcePath);
+                    //fragment_resource_path: {appName}/components/{componentName}/{fragmentName}/public/{subResourcePath}
+                    return appPath.resolve(
+                            "components" + sep + resourcePathParts[2] + sep + resourcePathParts[3] + sep
+                                    + "public" + sep + subResourcePath);
                 }
             }
         }
