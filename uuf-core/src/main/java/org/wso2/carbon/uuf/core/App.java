@@ -67,4 +67,8 @@ public class App {
     public String toString() {
         return "{\"context\": \"" + context + "\"}";
     }
+
+    public List<Page> getPages() {
+        return Collections.unmodifiableList(pages);
+    }
 }

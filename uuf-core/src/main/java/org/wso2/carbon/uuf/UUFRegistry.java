@@ -1,6 +1,7 @@
 package org.wso2.carbon.uuf;
 
 import io.netty.handler.codec.http.HttpRequest;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.core.App;
@@ -10,6 +11,7 @@ import org.wso2.carbon.uuf.fileio.FromArtifactAppCreator;
 import org.wso2.msf4j.MicroservicesRunner;
 
 import javax.ws.rs.core.Response;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URLConnection;
@@ -31,7 +33,7 @@ public class UUFRegistry {
     public static void main(String[] args) {
         //TODO: only if debug is enabled
         DebugAppender.attach();
-        UUFRegistry registry = new UUFRegistry(new FromArtifactAppCreator(new String[] { "." }));
+        UUFRegistry registry = new UUFRegistry(new FromArtifactAppCreator(new String[]{"."}));
         new MicroservicesRunner().deploy(new UUFService(registry)).start();
     }
 
@@ -64,11 +66,15 @@ public class UUFRegistry {
 
         App app = apps.get(appName);
         try {
+            String type = URLConnection.guessContentTypeFromName(resourcePath);
+            if (type == null) {
+                type = "application/octet-stream";
+            }
             if (isStaticResourceRequest(resourcePath)) {
                 Path resource = appCreator.resolve(appName, resourcePath);
                 if (Files.exists(resource) && Files.isRegularFile(resource)) {
                     return Response.ok(resource.toFile(),
-                            URLConnection.guessContentTypeFromName(resourcePath));
+                            type);
                 } else {
                     return Response.status(Response.Status.NOT_FOUND).entity(
                             "Requested resource `" + uri + "` does not exists!");
@@ -78,10 +84,24 @@ public class UUFRegistry {
                     app = appCreator.createApp(appName, "/" + appName);
                     apps.put(appName, app);
                 }
+                if (resourcePath.startsWith("/debug/api/")) {
+                    return Response.ok(app.getPages().toString(), "application/json");
+                }
+                if (resourcePath.startsWith("/debug/")) {
+                    if (resourcePath.endsWith("/")) {
+                        resourcePath = resourcePath + "index.html";
+                        type = URLConnection.guessContentTypeFromName(resourcePath);
+                    }
+                    InputStream resourceAsStream = this.getClass().getResourceAsStream("/apps" + resourcePath);
+                    String debugContent = IOUtils.toString(
+                            resourceAsStream,
+                            "UTF-8");
+                    return Response.ok(debugContent, type);
+                }
                 String page = app.renderPage(request);
                 return Response.ok(page).header("Content-Type", "text/html");
             }
-
+            //TODO: Don't catch this Ex, move the logic below the 'instanceof' check
         } catch (UUFException e) {
 
             // https://googlewebmastercentral.blogspot.com/2010/04/to-slash-or-not-to-slash.html
