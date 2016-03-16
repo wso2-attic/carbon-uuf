@@ -147,6 +147,11 @@
                 <version>${testng.version}</version>
             </dependency>
             <dependency>
+                <groupId>io.mszu.scripting</groupId>
+                <artifactId>nashorn-scripting-api-fragment</artifactId>
+                <version>${nashorn-fragment.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>com.google.code.findbugs</groupId>
                 <artifactId>jsr305</artifactId>
                 <version>${jsr305.version}</version>
@@ -237,6 +242,7 @@
         <gson.version.range>[2.2,3)</gson.version.range>
         <jsr305.version>2.0.1</jsr305.version>
         <guava.version.range>[13.0,14)</guava.version.range>
+        <nashorn-fragment.version>1.0.0</nashorn-fragment.version>
 
         <!-- Other Dependencies -->
         <testng.version>6.9.4</testng.version>
