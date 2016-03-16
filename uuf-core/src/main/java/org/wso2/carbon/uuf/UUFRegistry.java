@@ -93,7 +93,7 @@ public class UUFRegistry {
                             "Requested resource `" + uri + "` does not exists!");
                 }
             } else {
-                if (app == null) {
+                if (app == null || debugAppender.isPresent()) {
                     app = appCreator.createApp(appName, "/" + appName);
                     apps.put(appName, app);
                 }
