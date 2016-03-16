@@ -9,6 +9,7 @@ import org.wso2.carbon.uuf.core.AppCreator;
 import org.wso2.carbon.uuf.core.UUFException;
 import org.wso2.carbon.uuf.fileio.FromArtifactAppCreator;
 import org.wso2.msf4j.MicroservicesRunner;
+import org.wso2.msf4j.util.SystemVariableUtil;
 
 import javax.ws.rs.core.Response;
 import java.io.InputStream;
@@ -22,31 +23,38 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class UUFRegistry {
 
     private static final Logger log = LoggerFactory.getLogger(UUFRegistry.class);
     private final AppCreator appCreator;
+    private Optional<DebugAppender> debugAppender;
     private final Map<String, App> apps = new HashMap<>();
 
-    public UUFRegistry(AppCreator appCreator) {
+    public UUFRegistry(AppCreator appCreator, Optional<DebugAppender> debugAppender) {
         this.appCreator = appCreator;
+        this.debugAppender = debugAppender;
+    }
+
+    public static Optional<DebugAppender> createDebugAppender() {
+        String uufDebug = SystemVariableUtil.getValue("uufDebug", "false");
+        if (uufDebug.equalsIgnoreCase("true")) {
+            DebugAppender appender = new DebugAppender();
+            appender.attach();
+            return Optional.of(appender);
+        } else {
+            return Optional.empty();
+        }
     }
 
     public static void main(String[] args) {
-        //TODO: only if debug is enabled
-        DebugAppender.attach();
         List<Path> uufAppsPath = Arrays.asList(FileSystems.getDefault().getPath("."));
-        UUFRegistry registry = new UUFRegistry(new FromArtifactAppCreator(uufAppsPath));
+        UUFRegistry registry = new UUFRegistry(new FromArtifactAppCreator(uufAppsPath), createDebugAppender());
         new MicroservicesRunner().deploy(new UUFService(registry)).start();
     }
 
     public Response.ResponseBuilder serve(HttpRequest request) {
-        if (log.isDebugEnabled()) {
-            log.debug("request received " + request.getMethod() + " " + request.getUri() + " " + request
-                    .getProtocolVersion());
-        }
-
         String uri = request.getUri().replaceAll("/+","/");
         if (!uri.startsWith("/")) {
             uri = "/" + uri;
@@ -67,6 +75,11 @@ public class UUFRegistry {
 
         String appName = uri.substring(1, firstSlash);
         String resourcePath = uri.substring(firstSlash, uri.length());
+
+        if (log.isDebugEnabled() && !resourcePath.startsWith("/debug/")) {
+            log.debug("request received " + request.getMethod() + " " + request.getUri() + " " + request
+                    .getProtocolVersion());
+        }
 
         App app = apps.get(appName);
         try {
@@ -90,15 +103,27 @@ public class UUFRegistry {
                 if (resourcePath.startsWith("/debug/api/")) {
                     return Response.ok(app.getPages().toString(), "application/json");
                 }
+                if (resourcePath.startsWith("/debug/logs")) {
+                    if (debugAppender.isPresent()) {
+                        return Response.ok(debugAppender.get().asJson(), "application/json");
+                    } else {
+                        return Response.status(Response.Status.GONE);
+                    }
+                }
                 if (resourcePath.startsWith("/debug/")) {
                     if (resourcePath.endsWith("/")) {
                         resourcePath = resourcePath + "index.html";
                         type = URLConnection.guessContentTypeFromName(resourcePath);
                     }
-                    InputStream resourceAsStream = this.getClass().getResourceAsStream(
-                            "/apps" + resourcePath);
-                    String debugContent = IOUtils.toString(resourceAsStream, "UTF-8");
-                    return Response.ok(debugContent, type);
+                    InputStream resourceAsStream = this.getClass().getResourceAsStream("/apps" + resourcePath);
+                    if (resourceAsStream != null) {
+                        String debugContent = IOUtils.toString(
+                                resourceAsStream,
+                                "UTF-8");
+                        return Response.ok(debugContent, type);
+                    } else {
+                        return Response.status(Response.Status.NOT_FOUND);
+                    }
                 }
                 String page = app.renderPage(request);
                 return Response.ok(page).header("Content-Type", "text/html");

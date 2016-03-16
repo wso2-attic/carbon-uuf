@@ -1,27 +1,52 @@
 package org.wso2.carbon.uuf;
 
+import com.google.gson.Gson;
 import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.spi.LoggingEvent;
 
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
+
 public class DebugAppender extends AppenderSkeleton {
 
-    public static void attach() {
-        DebugAppender appender = new DebugAppender();
-        appender.setThreshold(Level.DEBUG);
+    private static final int CAPACITY = 1000;
+    private ConcurrentLinkedQueue<DebugMessage> messages = new ConcurrentLinkedQueue<>();
+
+    private static class DebugMessage {
+        private String requestId;
+        private LoggingEvent event;
+
+        DebugMessage(String requestId, LoggingEvent event) {
+            this.requestId = requestId;
+            this.event = event;
+        }
+    }
+
+    public void attach() {
+        setThreshold(Level.DEBUG);
         Logger logger = Logger.getLogger("org.wso2.carbon.uuf");
         logger.setLevel(Level.DEBUG);
-        Logger.getRootLogger().addAppender(appender);
+        Logger.getRootLogger().addAppender(this);
     }
 
     @Override
-    protected void append(LoggingEvent event) {
+    public void append(LoggingEvent event) {
         String requestId = (String) event.getMDC("uuf-request");
         if (requestId != null) {
-            System.out.print("#" + requestId + " ");
+            messages.add(new DebugMessage(requestId, event));
+            if (messages.size() > CAPACITY) {
+                messages.poll();
+            }
         }
     }
+
+    public String asJson() {
+        Gson gson = new Gson();
+        return gson.toJson(messages);
+    }
+
 
     @Override
     public boolean requiresLayout() {
@@ -30,6 +55,5 @@ public class DebugAppender extends AppenderSkeleton {
 
     @Override
     public void close() {
-
     }
 }

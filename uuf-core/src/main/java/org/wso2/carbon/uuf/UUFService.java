@@ -30,8 +30,11 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+
+import static org.wso2.carbon.uuf.UUFRegistry.createDebugAppender;
 
 /**
  * UUF Main Service.
@@ -52,7 +55,7 @@ public class UUFService implements Microservice {
     }
 
     @SuppressWarnings("unused")
-    public UUFService() throws IOException {
+    public UUFService() throws IOException{
         // we need this constructor for running in OSGi mode.
         this(new UUFRegistry(new FromArtifactAppCreator(
                 Files.list(Utils.getCarbonHome().resolve("deployment").resolve("uufapps"))
