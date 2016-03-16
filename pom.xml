@@ -33,6 +33,7 @@
     </parent>
 
     <modules>
+        <module>nashorn-osgi-fragment</module>
         <module>uuf-core</module>
         <module>product/p2-features/org.wso2.uuf.core.feature</module>
         <module>product</module>
