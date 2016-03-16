@@ -106,6 +106,9 @@ public class UUFRegistry {
                     status = ((UUFException) cause).getStatus();
                     break;
                 }
+                if (cause == e.getCause()) {
+                    break;
+                }
                 cause = e.getCause();
             }
             return sendError(appName, e, status);

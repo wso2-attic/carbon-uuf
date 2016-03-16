@@ -10,17 +10,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public class App {
     private static final Logger log = LoggerFactory.getLogger(App.class);
     private final String context;
     private final List<Page> pages;
-    private final Map<String, Fragment> fragmentsMap;
+    private final Map<String, Fragment> fragments;
     private final Map<String, Renderable> bindings;
 
-    public App(String context, List<Page> pages, List<Fragment> fragments, Map<String, Renderable> bindings) {
+    public App(String context, List<Page> pages, Map<String, Fragment> fragments, Map<String, Renderable> bindings) {
         if (!context.startsWith("/")) {
             throw new IllegalArgumentException("app context must start with a '/'");
         }
@@ -30,9 +28,7 @@ public class App {
         Collections.sort(pages, (o1, o2) -> o1.getUriPatten().compareTo(o2.getUriPatten()));
         this.pages = pages;
 
-        // Convert the list to maps since we want O(1) access by name.
-        this.fragmentsMap = fragments.stream().collect(Collectors.toMap(Fragment::getName, Function.identity()));
-
+        this.fragments = fragments;
         this.bindings = bindings;
     }
 
@@ -40,8 +36,8 @@ public class App {
         return pages;
     }
 
-    public Map<String, Fragment> getFragmentsMap() {
-        return fragmentsMap;
+    public Map<String, Fragment> getFragments() {
+        return fragments;
     }
 
     public Map<String, Renderable> getBindings() {
@@ -63,7 +59,7 @@ public class App {
         Map<String, Object> model = new HashMap<>();
         model.put("pageUri", pageUri);
 
-        return page.serve(model, bindings, fragmentsMap);
+        return page.serve(model, bindings, fragments);
     }
 
     public Optional<Page> getPage(String pageUri) {

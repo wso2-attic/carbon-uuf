@@ -42,4 +42,9 @@ public class PageTest {
         String output = testPage.serve(null, testBindings, testFragments);
         Assert.assertEquals(output, TEST_PAGE_CONTENT, "Page renders with a model");
     }
+
+    @Test
+    public void bindingCombine(){
+
+    }
 }

@@ -24,6 +24,10 @@ public class Fragment {
         return path;
     }
 
+    public Renderable getRenderer() {
+        return renderer;
+    }
+
     public String render(Object model, Multimap<String, Renderable> bindings, Map<String, Fragment> fragments) {
         return renderer.render(model, bindings, fragments);
     }

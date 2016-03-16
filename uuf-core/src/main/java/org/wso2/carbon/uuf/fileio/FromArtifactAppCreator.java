@@ -1,7 +1,12 @@
 package org.wso2.carbon.uuf.fileio;
 
 import org.apache.commons.lang3.StringUtils;
-import org.wso2.carbon.uuf.core.*;
+import org.wso2.carbon.uuf.core.App;
+import org.wso2.carbon.uuf.core.AppCreator;
+import org.wso2.carbon.uuf.core.Fragment;
+import org.wso2.carbon.uuf.core.Page;
+import org.wso2.carbon.uuf.core.Renderable;
+import org.wso2.carbon.uuf.core.UUFException;
 
 import javax.ws.rs.core.Response;
 import java.io.File;
@@ -11,8 +16,9 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -60,9 +66,15 @@ public class FromArtifactAppCreator implements AppCreator {
                 p -> findHbs(p, components)).parallel().map(
                 p -> pageCreator.createPage(p, layoutCreator, components)).collect(Collectors.toList());
 
-        List<Fragment> fragments = Files.list(components).flatMap(c -> subDirsOfAComponent(c, "fragments"))
-                .parallel().map(fragmentCreator::createFragment).collect(Collectors.toList());
-        return new App(context, pages, fragments, new HashMap<>());
+       Map<String,Fragment> fragments = Files
+                .list(components)
+                .flatMap(c -> subDirsOfAComponent(c, "fragments"))
+                .parallel()
+                .map(fragmentCreator::createFragment)
+                .collect(Collectors.toMap( Fragment::getName, Function.identity()));
+        Path bindingsConfig = components.resolve("bindings.yaml");
+        Map<String, Renderable> bindings = FileUtil.getBindings(bindingsConfig, fragments);
+        return new App(context, pages, fragments, bindings);
     }
 
     @Override

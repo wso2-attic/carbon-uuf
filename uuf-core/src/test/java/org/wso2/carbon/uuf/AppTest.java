@@ -29,7 +29,7 @@ public class AppTest {
         Map<String, Renderable> testFillZones = Collections.emptyMap();
         Page testPage = new Page(testPageUriPattern, testPageLayout, testFillZones, Optional.<Executable>empty());
         List<Page> testPages = Collections.singletonList(testPage);
-        List<Fragment> testFragments = Collections.emptyList();
+        Map<String, Fragment> testFragments = Collections.emptyMap();
         Map<String, Renderable> testBindings = Collections.emptyMap();
         testApp = new App(TEST_APP_CONTEXT, testPages, testFragments, testBindings);
     }

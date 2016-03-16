@@ -2,14 +2,20 @@ package org.wso2.carbon.uuf.fileio;
 
 import com.github.jknack.handlebars.io.StringTemplateSource;
 import com.github.jknack.handlebars.io.TemplateSource;
+import org.wso2.carbon.uuf.core.Fragment;
+import org.wso2.carbon.uuf.core.Renderable;
+import org.wso2.carbon.uuf.core.UUFException;
 import org.wso2.carbon.uuf.handlebars.Executable;
 import org.wso2.carbon.uuf.handlebars.HbsPageRenderable;
 import org.wso2.carbon.uuf.handlebars.JSExecutable;
+import org.yaml.snakeyaml.Yaml;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 class FileUtil {
@@ -52,5 +58,18 @@ class FileUtil {
         } else {
             return Optional.empty();
         }
+    }
+
+    static Map<String, Renderable> getBindings(Path bindingsConfig, Map<String, Fragment> fragments) throws IOException {
+        Map<String, String> config = (Map<String, String>) new Yaml().load(Files.newInputStream(bindingsConfig));
+        Map<String, Renderable> rv = new HashMap<>();
+        for (Map.Entry<String, String> entry : config.entrySet()) {
+            Fragment fragment = fragments.get(entry.getValue());
+            if (fragment == null) {
+                throw new UUFException("Fragment '" + entry.getValue() + "' does not exists");
+            }
+            rv.put(entry.getKey(), fragment.getRenderer());
+        }
+        return rv;
     }
 }
