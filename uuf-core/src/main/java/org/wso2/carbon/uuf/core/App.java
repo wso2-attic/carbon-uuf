@@ -32,34 +32,26 @@ public class App {
         this.bindings = bindings;
     }
 
-    public List<Page> getPages() {
-        return pages;
-    }
-
     public Map<String, Fragment> getFragments() {
         return fragments;
-    }
-
-    public Map<String, Renderable> getBindings() {
-        return bindings;
     }
 
     public String renderPage(HttpRequest request) {
         String pageUri = request.getUri().substring(context.length());
         Optional<Page> servingPage = getPage(pageUri);
-        if (!servingPage.isPresent()) {
+        if (servingPage.isPresent()) {
+            Page page = servingPage.get();
+            if (log.isDebugEnabled()) {
+                log.debug("Page '" + page.toString() + "' is serving.");
+            }
+
+            Map<String, Object> model = new HashMap<>();
+            model.put("pageUri", pageUri);
+
+            return page.serve(model, bindings, fragments);
+        } else {
             throw new UUFException("Requested page '" + pageUri + "' does not exists.", Response.Status.NOT_FOUND);
         }
-
-        Page page = servingPage.get();
-        if (log.isDebugEnabled()) {
-            log.debug("Page '" + page.toString() + "' is serving.");
-        }
-
-        Map<String, Object> model = new HashMap<>();
-        model.put("pageUri", pageUri);
-
-        return page.serve(model, bindings, fragments);
     }
 
     public Optional<Page> getPage(String pageUri) {
