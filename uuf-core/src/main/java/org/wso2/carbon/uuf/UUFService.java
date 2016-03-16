@@ -28,7 +28,10 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import static org.wso2.carbon.uuf.UUFRegistry.createDebugAppender;
 
 /**
  * UUF Main Service.
@@ -53,7 +56,7 @@ public class UUFService implements Microservice {
         // we need this constructor for running in OSGi mode.
         this(new UUFRegistry(new FromArtifactAppCreator(
                 SystemVariableUtil.getValue("uufApps", ".").split("\\s*,\\s*")
-        )));
+        ), createDebugAppender()));
     }
 
     @GET
