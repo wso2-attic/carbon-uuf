@@ -54,8 +54,9 @@
             <artifactId>commons-lang3</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.mszu.scripting</groupId>
-            <artifactId>nashorn-scripting-api-fragment</artifactId>
+            <groupId>org.wso2.carbon.uuf</groupId>
+            <artifactId>nashorn-osgi-fragment</artifactId>
+            <version>${nashorn-osgi-fragment.version}</version>
         </dependency>
     </dependencies>
 
@@ -102,8 +103,8 @@
                                     <version>${antlr-version}</version>
                                 </bundle>
                                 <bundle>
-                                    <symbolicName>io.mszu.scripting.nashorn-scripting-api-fragment</symbolicName>
-                                    <version>${nashorn-fragment.version}</version>
+                                    <symbolicName>nashorn-osgi-fragment</symbolicName>
+                                    <version>${nashorn-osgi-fragment.version}</version>
                                 </bundle>
                                 <bundle>
                                     <symbolicName>org.apache.commons.lang3</symbolicName>

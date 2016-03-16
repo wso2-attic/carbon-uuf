@@ -33,6 +33,7 @@
     </parent>
 
     <modules>
+        <module>nashorn-osgi-fragment</module>
         <module>uuf-core</module>
         <module>product/p2-features/org.wso2.uuf.core.feature</module>
         <module>product</module>
@@ -242,7 +243,7 @@
         <gson.version.range>[2.2,3)</gson.version.range>
         <jsr305.version>2.0.1</jsr305.version>
         <guava.version.range>[13.0,14)</guava.version.range>
-        <nashorn-fragment.version>1.0.0</nashorn-fragment.version>
+        <nashorn-osgi-fragment.version>1.0.0</nashorn-osgi-fragment.version>
 
         <!-- Other Dependencies -->
         <testng.version>6.9.4</testng.version>

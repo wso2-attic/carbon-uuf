@@ -12,12 +12,14 @@ public class Page {
     private final UriPatten uriPatten;
     private final Renderable layout;
     private final Map<String, Renderable> fillZones;
+    private Optional<Executable> script;
 
     public Page(UriPatten uriPatten, Renderable layout, Map<String, Renderable> fillZones,
                 Optional<Executable> script) {
         this.uriPatten = uriPatten;
         this.layout = layout;
         this.fillZones = fillZones;
+        this.script = script;
     }
 
     public UriPatten getUriPatten() {
@@ -33,6 +35,9 @@ public class Page {
         // add fill zones
         for (Map.Entry<String, Renderable> entry : fillZones.entrySet()) {
             combined.put(entry.getKey(), entry.getValue());
+        }
+        if (script.isPresent()) {
+            script.get().execute();
         }
         return layout.render(model, combined, fragments);
     }
