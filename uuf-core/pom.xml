@@ -107,6 +107,7 @@
             javax.script,
             org.apache.commons.lang3,
             org.apache.commons.io,
+            org.wso2.carbon.kernel.utils,
             com.github.jknack.handlebars.*,
             org.yaml.snakeyaml,
             jdk.nashorn.api.scripting

@@ -55,15 +55,15 @@
         </fileSet>
 
         <fileSet>
-            <directory>carbon-home/deployment/microservices</directory>
-            <outputDirectory>deployment/microservices</outputDirectory>
+            <directory>carbon-home/deployment/</directory>
+            <outputDirectory>deployment/</outputDirectory>
             <fileMode>644</fileMode>
         </fileSet>
 
         <!-- Copy the samples -->
         <fileSet>
             <directory>../samples/</directory>
-            <outputDirectory>samples</outputDirectory>
+            <outputDirectory>deployment/uufapps</outputDirectory>
             <excludes>
                 <exclude>**/target/**</exclude>
                 <exclude>**/.vagrant.d/**</exclude>

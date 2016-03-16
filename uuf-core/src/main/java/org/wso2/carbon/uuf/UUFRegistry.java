@@ -16,9 +16,12 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URLConnection;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -46,12 +49,13 @@ public class UUFRegistry {
     }
 
     public static void main(String[] args) {
-        UUFRegistry registry = new UUFRegistry(new FromArtifactAppCreator(new String[]{"."}), createDebugAppender());
+        List<Path> uufAppsPath = Arrays.asList(FileSystems.getDefault().getPath("."));
+        UUFRegistry registry = new UUFRegistry(new FromArtifactAppCreator(uufAppsPath), createDebugAppender());
         new MicroservicesRunner().deploy(new UUFService(registry)).start();
     }
 
     public Response.ResponseBuilder serve(HttpRequest request) {
-        String uri = request.getUri();
+        String uri = request.getUri().replaceAll("/+","/");
         if (!uri.startsWith("/")) {
             uri = "/" + uri;
         }
@@ -86,8 +90,7 @@ public class UUFRegistry {
             if (isStaticResourceRequest(resourcePath)) {
                 Path resource = appCreator.resolve(appName, resourcePath);
                 if (Files.exists(resource) && Files.isRegularFile(resource)) {
-                    return Response.ok(resource.toFile(),
-                            type);
+                    return Response.ok(resource.toFile(), type);
                 } else {
                     return Response.status(Response.Status.NOT_FOUND).entity(
                             "Requested resource `" + uri + "` does not exists!");

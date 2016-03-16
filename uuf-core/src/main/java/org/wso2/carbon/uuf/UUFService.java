@@ -19,6 +19,7 @@ package org.wso2.carbon.uuf;
 import io.netty.handler.codec.http.HttpRequest;
 import org.osgi.service.component.annotations.Component;
 import org.slf4j.MDC;
+import org.wso2.carbon.kernel.utils.Utils;
 import org.wso2.carbon.uuf.fileio.FromArtifactAppCreator;
 import org.wso2.msf4j.Microservice;
 import org.wso2.msf4j.util.SystemVariableUtil;
@@ -28,10 +29,11 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import static org.wso2.carbon.uuf.UUFRegistry.createDebugAppender;
+import java.util.stream.Collectors;
 
 /**
  * UUF Main Service.
@@ -52,11 +54,11 @@ public class UUFService implements Microservice {
     }
 
     @SuppressWarnings("unused")
-    public UUFService() {
+    public UUFService() throws IOException{
         // we need this constructor for running in OSGi mode.
         this(new UUFRegistry(new FromArtifactAppCreator(
-                SystemVariableUtil.getValue("uufApps", ".").split("\\s*,\\s*")
-        ), createDebugAppender()));
+                Files.list(Utils.getCarbonHome().resolve("deployment").resolve("uufapps"))
+                        .collect(Collectors.toList())), Optional.empty()));
     }
 
     @GET
