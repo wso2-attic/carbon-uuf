@@ -20,11 +20,11 @@ public class FromArtifactAppCreator implements AppCreator {
 
     public static final String ROOT_COMPONENT_NAME = "root";
 
-    private final String[] paths;
+    private final List<Path> paths;
     private final PageCreator pageCreator = new PageCreator();
     private final FragmentCreator fragmentCreator = new FragmentCreator();
 
-    public FromArtifactAppCreator(String[] paths) {
+    public FromArtifactAppCreator(List<Path> paths) {
         this.paths = paths;
     }
 
@@ -120,18 +120,19 @@ public class FromArtifactAppCreator implements AppCreator {
             fragmentPath = componentPath.resolve(fragmentUriPart);
         }
         //{appName}/components/[{componentName}|ROOT]/[{fragmentName}|base]/public/{subResourcePath}
+
         return fragmentPath.resolve("public").resolve(subResourcePath);
     }
 
     private Path getAppPath(String name) {
         // app list mush be <white-space> and comma separated. <white-space> in app names not allowed
-        for (String pathString : paths) {
-            Path path = FileSystems.getDefault().getPath(pathString).toAbsolutePath().normalize();
+        for (Path uufAppPath : paths) {
+            Path path = uufAppPath.toAbsolutePath().normalize();
             if (name.equals(path.getFileName().toString())) {
                 return path;
             }
         }
-        throw new UUFException("app by the name '" + name + "' is not found in " + Arrays.toString(paths),
+        throw new UUFException("app by the name '" + name + "' is not found!",
                 Response.Status.NOT_FOUND);
     }
 }

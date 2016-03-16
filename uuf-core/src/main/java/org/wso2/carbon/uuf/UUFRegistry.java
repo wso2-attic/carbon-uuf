@@ -15,9 +15,12 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URLConnection;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class UUFRegistry {
@@ -33,7 +36,8 @@ public class UUFRegistry {
     public static void main(String[] args) {
         //TODO: only if debug is enabled
         DebugAppender.attach();
-        UUFRegistry registry = new UUFRegistry(new FromArtifactAppCreator(new String[]{"."}));
+        List<Path> uufAppsPath = Arrays.asList(FileSystems.getDefault().getPath("."));
+        UUFRegistry registry = new UUFRegistry(new FromArtifactAppCreator(uufAppsPath));
         new MicroservicesRunner().deploy(new UUFService(registry)).start();
     }
 
@@ -43,7 +47,7 @@ public class UUFRegistry {
                     .getProtocolVersion());
         }
 
-        String uri = request.getUri();
+        String uri = request.getUri().replaceAll("/+","/");
         if (!uri.startsWith("/")) {
             uri = "/" + uri;
         }
@@ -73,8 +77,7 @@ public class UUFRegistry {
             if (isStaticResourceRequest(resourcePath)) {
                 Path resource = appCreator.resolve(appName, resourcePath);
                 if (Files.exists(resource) && Files.isRegularFile(resource)) {
-                    return Response.ok(resource.toFile(),
-                            type);
+                    return Response.ok(resource.toFile(), type);
                 } else {
                     return Response.status(Response.Status.NOT_FOUND).entity(
                             "Requested resource `" + uri + "` does not exists!");
@@ -92,10 +95,9 @@ public class UUFRegistry {
                         resourcePath = resourcePath + "index.html";
                         type = URLConnection.guessContentTypeFromName(resourcePath);
                     }
-                    InputStream resourceAsStream = this.getClass().getResourceAsStream("/apps" + resourcePath);
-                    String debugContent = IOUtils.toString(
-                            resourceAsStream,
-                            "UTF-8");
+                    InputStream resourceAsStream = this.getClass().getResourceAsStream(
+                            "/apps" + resourcePath);
+                    String debugContent = IOUtils.toString(resourceAsStream, "UTF-8");
                     return Response.ok(debugContent, type);
                 }
                 String page = app.renderPage(request);
