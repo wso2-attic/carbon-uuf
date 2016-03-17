@@ -35,18 +35,20 @@ class FileUtil {
     static Map<String, Renderable> getBindings(Path bindingsConfig, Map<String, Fragment> fragments)
             throws IOException {
         Map<String, Renderable> binding = new HashMap<>();
-        Object yaml = new Yaml().load(Files.newInputStream(bindingsConfig));
-        if (yaml != null && yaml instanceof Map) {
-            //TODO: give proper error when val is a complex value
-            @SuppressWarnings("unchecked")
-            Map<String, String> config = (Map<String, String>) yaml;
-            for (Map.Entry<String, String> entry : config.entrySet()) {
-                Fragment fragment = fragments.get(entry.getValue());
-                if (fragment == null) {
-                    throw new UUFException(
-                            "Fragment '" + entry.getValue() + "'  '" + bindingsConfig + "' does not exists");
+        if (Files.exists(bindingsConfig)) {
+            Object yaml = new Yaml().load(Files.newInputStream(bindingsConfig));
+            if (yaml != null && yaml instanceof Map) {
+                //TODO: give proper error when val is a complex value
+                @SuppressWarnings("unchecked")
+                Map<String, String> config = (Map<String, String>) yaml;
+                for (Map.Entry<String, String> entry : config.entrySet()) {
+                    Fragment fragment = fragments.get(entry.getValue());
+                    if (fragment == null) {
+                        throw new UUFException(
+                                "Fragment '" + entry.getValue() + "'  '" + bindingsConfig + "' does not exists");
+                    }
+                    binding.put(entry.getKey(), fragment.getRenderer());
                 }
-                binding.put(entry.getKey(), fragment.getRenderer());
             }
         }
         return binding;

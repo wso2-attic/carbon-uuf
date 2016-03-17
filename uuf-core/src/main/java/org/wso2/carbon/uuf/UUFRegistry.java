@@ -1,5 +1,6 @@
 package org.wso2.carbon.uuf;
 
+import com.google.common.collect.ImmutableMap;
 import io.netty.handler.codec.http.HttpRequest;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -19,11 +20,7 @@ import java.net.URLConnection;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class UUFRegistry {
 
@@ -55,7 +52,7 @@ public class UUFRegistry {
     }
 
     public Response.ResponseBuilder serve(HttpRequest request) {
-        String uri = request.getUri().replaceAll("/+","/");
+        String uri = request.getUri().replaceAll("/+", "/");
         if (!uri.startsWith("/")) {
             uri = "/" + uri;
         }
@@ -83,17 +80,14 @@ public class UUFRegistry {
 
         App app = apps.get(appName);
         try {
-            String type = URLConnection.guessContentTypeFromName(resourcePath);
-            if (type == null) {
-                type = "application/octet-stream";
-            }
+            String type = getMime(resourcePath);
             if (isStaticResourceRequest(resourcePath)) {
                 Path resource = appCreator.resolve(appName, resourcePath);
                 if (Files.exists(resource) && Files.isRegularFile(resource)) {
                     return Response.ok(resource.toFile(), type);
                 } else {
                     return Response.status(Response.Status.NOT_FOUND).entity(
-                            "Requested resource `" + uri + "` does not exists!");
+                            "Requested resource '" + uri + "' does not exists at '" + resource + "'");
                 }
             } else {
                 if (app == null || debugAppender.isPresent()) {
@@ -113,7 +107,6 @@ public class UUFRegistry {
                 if (resourcePath.startsWith("/debug/")) {
                     if (resourcePath.endsWith("/")) {
                         resourcePath = resourcePath + "index.html";
-                        type = URLConnection.guessContentTypeFromName(resourcePath);
                     }
                     InputStream resourceAsStream = this.getClass().getResourceAsStream("/apps" + resourcePath);
                     if (resourceAsStream != null) {
@@ -136,11 +129,11 @@ public class UUFRegistry {
             if (e.getStatus() == Response.Status.NOT_FOUND && app != null) {
                 if (uri.endsWith("/")) {
                     String uriNoSlash = uri.substring(0, uri.length() - 1);
-                    if (app.getPage(uriNoSlash) != null) {
+                    if (app.getPage(uriNoSlash).isPresent()) {
                         return Response.status(301).header("Location", uriNoSlash);
                     }
                 } else {
-                    if (app.getPage(uri + "/") != null) {
+                    if (app.getPage(uri + "/").isPresent()) {
                         return Response.status(301).header("Location", uri + "/");
                     }
                 }
@@ -162,6 +155,21 @@ public class UUFRegistry {
             }
             return sendError(appName, e, status);
         }
+    }
+
+    private String getMime(String resourcePath) {
+        if (resourcePath.endsWith("/")) {
+            return "text/html";
+        }
+        String mime = URLConnection.guessContentTypeFromName(resourcePath);
+        if (mime == null) {
+            int i = resourcePath.lastIndexOf('.');
+            if (i >= 0) {
+                ImmutableMap<String, String> map = ImmutableMap.of("css", "text/css");
+                return map.get(resourcePath.substring(i + 1));
+            }
+        }
+        return mime;
     }
 
     private boolean isStaticResourceRequest(String resourcePath) {

@@ -10,6 +10,7 @@ import org.wso2.carbon.uuf.handlebars.HbsRenderable;
 
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -73,7 +74,8 @@ public class InitHandlebarsUtil {
     }
 
     public static Map<String, Renderable> getFillingZones(Context context) {
-        return context.data(ZONES_KEY);
+        Map<String, Renderable> zones = context.data(ZONES_KEY);
+        return zones == null ? Collections.emptyMap() : zones;
     }
 
     public static Optional<String> getLayoutName(Context context) {

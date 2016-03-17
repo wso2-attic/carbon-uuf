@@ -18,8 +18,9 @@ public class RuntimeHandlebarsUtil {
 
     private static final ImmutableSet<String> KEYWORDS = ImmutableSet.of("layout", "fillZone");
     private static final Handlebars HANDLEBARS = new Handlebars();
-    private static final String BINDING_KEY = RuntimeHandlebarsUtil.class.getName() + "#zones";
+    private static final String BINDING_KEY = RuntimeHandlebarsUtil.class.getName() + "#bindings";
     private static final String FRAGMENT_KEY = RuntimeHandlebarsUtil.class.getName() + "#fragments";
+    private static final String CONFIG_KEY = RuntimeHandlebarsUtil.class.getName() + "#config";
 
 
     static {
@@ -40,6 +41,20 @@ public class RuntimeHandlebarsUtil {
             }
             return new Handlebars.SafeString(buffer.toString());
 
+        });
+
+        HANDLEBARS.registerHelper("config", (configKey, options) -> {
+            Map<String, String> configMap = options.data(CONFIG_KEY);
+            String config = null;
+            if (configMap != null) {
+                String configKeyStr = (String) configKey;
+                config = configMap.get(configKeyStr);
+            }
+            if (config != null) {
+                return config;
+            } else {
+                return options.fn();
+            }
         });
 
         HANDLEBARS.registerHelper("includeFragment", (context, options) -> {

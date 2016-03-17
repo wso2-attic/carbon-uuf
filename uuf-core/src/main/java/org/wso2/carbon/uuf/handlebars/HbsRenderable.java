@@ -12,6 +12,7 @@ import org.wso2.carbon.uuf.handlebars.util.RuntimeHandlebarsUtil;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 
@@ -21,31 +22,28 @@ public class HbsRenderable implements Renderable {
     private final Optional<JSExecutable> script;
 
     public HbsRenderable(String templateSource) {
-        this(templateSource, Optional.<Path>empty(), Optional.<String>empty(), Optional.<Path>empty());
+        this(templateSource, Optional.empty(), Optional.empty(), Optional.empty());
     }
 
     public HbsRenderable(String templateSource, Path templatePath) {
-        this(templateSource, Optional.of(templatePath), Optional.<String>empty(), Optional.<Path>empty());
+        this(templateSource, Optional.of(templatePath), Optional.empty(), Optional.empty());
     }
 
     public HbsRenderable(String templateSource, Path templatePath, String scriptSource, Path scriptPath) {
         this(templateSource, Optional.of(templatePath), Optional.of(scriptSource), Optional.of(scriptPath));
     }
 
+    public HbsRenderable(String templateSource, Path templatePath, Optional<JSExecutable> script) {
+        this.templatePath = Optional.of(templatePath);
+        this.template = new StringTemplateSource(getPath(), templateSource);
+        this.script = script;
+    }
+
     private HbsRenderable(String templateSource, Optional<Path> templatePath, Optional<String> scriptSource,
                           Optional<Path> scriptPath) {
         this.templatePath = templatePath;
-        String fileName = templatePath.isPresent() ? templatePath.get().toString() : "";
-        this.template = new StringTemplateSource(fileName, templateSource);
-        this.script = scriptSource.isPresent() ? Optional.of(new JSExecutable(scriptSource.get(), scriptPath)) :
-                Optional.<JSExecutable>empty();
-    }
-
-    public HbsRenderable(String templateSource, Path templatePath, Optional<JSExecutable> script) {
-        this.templatePath = Optional.of(templatePath);
-        String fileName = this.templatePath.isPresent() ? this.templatePath.get().toString() : "";
-        this.template = new StringTemplateSource(fileName, templateSource);
-        this.script = script;
+        this.template = new StringTemplateSource(getPath(), templateSource);
+        this.script = scriptSource.map((s) -> new JSExecutable(s, scriptPath));
     }
 
     public Optional<JSExecutable> getScript() {
@@ -59,14 +57,16 @@ public class HbsRenderable implements Renderable {
     @Override
     public String render(Object model, Multimap<String, Renderable> bindings,
                          Map<String, Fragment> fragments) {
-        Object jsModel = script.isPresent() ? script.get().execute(model) : new Object();
+        Object jsModel = script.map(e -> e.execute(model)).orElse(Collections.EMPTY_MAP);
         Context context = Context.newContext(jsModel);
+        //TODO: detect uncombined scenarios
         if (model instanceof Context) {
             Context parentContext = (Context) model;
-            context.combine((Map) parentContext.model());
-
+            if (parentContext.model() instanceof Map) {
+                //noinspection unchecked
+                context.combine((Map) parentContext.model());
+            }
         }
-        //.combine( model);
         RuntimeHandlebarsUtil.setBindings(context, bindings);
         RuntimeHandlebarsUtil.setFragments(context, fragments);
         try {
@@ -79,6 +79,10 @@ public class HbsRenderable implements Renderable {
 
     @Override
     public String toString() {
-        return "{\"path\": \"" + (templatePath.isPresent() ? templatePath.get().toString() : "") + "\"}";
+        return "{\"path\": \"" + getPath() + "\"}";
+    }
+
+    private String getPath() {
+        return templatePath.map(Path::toString).orElse("\"<inline-template>\"");
     }
 }

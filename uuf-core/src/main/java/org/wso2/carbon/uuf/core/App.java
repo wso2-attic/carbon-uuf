@@ -22,14 +22,14 @@ public class App {
         if (!context.startsWith("/")) {
             throw new IllegalArgumentException("app context must start with a '/'");
         }
-        this.context = context;
 
         // We sort uri so that more wildcard-ed ones go to the bottom.
         Collections.sort(pages, (o1, o2) -> o1.getUriPatten().compareTo(o2.getUriPatten()));
-        this.pages = pages;
 
+        this.context = context;
         this.fragments = fragments;
         this.bindings = bindings;
+        this.pages = pages;
     }
 
     public Map<String, Fragment> getFragments() {
