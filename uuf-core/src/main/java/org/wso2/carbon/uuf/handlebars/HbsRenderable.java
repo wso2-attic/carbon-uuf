@@ -12,6 +12,7 @@ import org.wso2.carbon.uuf.handlebars.util.RuntimeHandlebarsUtil;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 
@@ -58,14 +59,14 @@ public class HbsRenderable implements Renderable {
 
     @Override
     public String render(Object model, Multimap<String, Renderable> bindings, Map<String, Fragment> fragments) {
-        Object jsModel = executable.map(e -> e.execute(model)).orElse(model);
-        Context context = Context.newContext(jsModel);
-        //TODO: detect uncombined scenarios
-        if (model instanceof Context) {
-            Context parentContext = (Context) model;
-            if (parentContext.model() instanceof Map) {
+        Context context = objectToContext(model);
+        if (executable.isPresent()) {
+            Object jsModel = executable.get().execute(Collections.EMPTY_MAP);
+            if (jsModel instanceof Map) {
                 //noinspection unchecked
-                context.combine((Map) parentContext.model());
+                context.combine((Map<String, ?>) jsModel);
+            } else {
+                throw new UnsupportedOperationException();
             }
         }
         RuntimeHandlebarsUtil.setBindings(context, bindings);
@@ -74,6 +75,14 @@ public class HbsRenderable implements Renderable {
             return compiledTemplate.apply(context);
         } catch (IOException e) {
             throw new UUFException("Handlebars rendering failed", e);
+        }
+    }
+
+    private Context objectToContext(Object candidateContext) {
+        if (candidateContext instanceof Context) {
+            return (Context) candidateContext;
+        } else {
+            return Context.newContext(candidateContext);
         }
     }
 

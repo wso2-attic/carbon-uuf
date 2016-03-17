@@ -46,7 +46,7 @@ public class UUFRegistry {
     }
 
     public static void main(String[] args) {
-        List<Path> uufAppsPath = Arrays.asList(FileSystems.getDefault().getPath("."));
+        List<Path> uufAppsPath = Collections.singletonList(FileSystems.getDefault().getPath("."));
         UUFRegistry registry = new UUFRegistry(new FromArtifactAppCreator(uufAppsPath), createDebugAppender());
         new MicroservicesRunner().deploy(new UUFService(registry)).start();
     }
@@ -131,12 +131,12 @@ public class UUFRegistry {
             // if the tailing / is extra or a it is missing, send 301
             if (e.getStatus() == Response.Status.NOT_FOUND && app != null) {
                 if (uri.endsWith("/")) {
-                    String uriNoSlash = uri.substring(0, uri.length() - 1);
+                    String uriNoSlash = resourcePath.substring(0, uri.length() - 1);
                     if (app.getPage(uriNoSlash).isPresent()) {
                         return Response.status(301).header("Location", uriNoSlash);
                     }
                 } else {
-                    if (app.getPage(uri + "/").isPresent()) {
+                    if (app.getPage(resourcePath + "/").isPresent()) {
                         return Response.status(301).header("Location", uri + "/");
                     }
                 }

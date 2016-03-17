@@ -54,11 +54,14 @@ public class UUFService implements Microservice {
     }
 
     @SuppressWarnings("unused")
-    public UUFService() throws IOException{
-        // we need this constructor for running in OSGi mode.
-        this(new UUFRegistry(new FromArtifactAppCreator(
-                Files.list(Utils.getCarbonHome().resolve("deployment").resolve("uufapps"))
-                        .collect(Collectors.toList())), Optional.empty()));
+    public UUFService() throws IOException {
+        // we need an empty constructor for running in OSGi mode.
+        this(new UUFRegistry(
+                new FromArtifactAppCreator(
+                        Files
+                                .list(Utils.getCarbonHome().resolve("deployment").resolve("uufapps"))
+                                .collect(Collectors.toList())),
+                Optional.empty()));
     }
 
     @GET
