@@ -46,7 +46,7 @@ public class UUFRegistry {
     }
 
     public static void main(String[] args) {
-        List<Path> uufAppsPath = Arrays.asList(FileSystems.getDefault().getPath("."));
+        List<Path> uufAppsPath = Collections.singletonList(FileSystems.getDefault().getPath("."));
         UUFRegistry registry = new UUFRegistry(new FromArtifactAppCreator(uufAppsPath), createDebugAppender());
         new MicroservicesRunner().deploy(new UUFService(registry)).start();
     }
