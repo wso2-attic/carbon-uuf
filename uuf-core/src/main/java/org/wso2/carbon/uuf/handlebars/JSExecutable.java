@@ -11,9 +11,9 @@ import java.nio.file.Path;
 import java.util.Optional;
 
 @SuppressWarnings("PackageAccessibility")
-public class JSExecutable {
+public class JSExecutable implements Executable {
 
-    private final String scriptFilePath;
+    private final Optional<Path> scriptPath;
     private final Invocable engine;
     private static final NashornScriptEngineFactory factory = new NashornScriptEngineFactory();
 
@@ -33,14 +33,17 @@ public class JSExecutable {
         this(scriptSource, Optional.<Path>empty());
     }
 
-    public JSExecutable(String scriptSource, Optional<Path> scriptFilePath) {
-        if (scriptFilePath.isPresent()) {
+    public JSExecutable(String scriptSource, Path scriptPath) {
+        this(scriptSource, Optional.of(scriptPath));
+    }
+
+    private JSExecutable(String scriptSource, Optional<Path> scriptPath) {
+        this.scriptPath = scriptPath;
+        if (scriptPath.isPresent()) {
             // Append script file name for debugging purposes
-            this.scriptFilePath = scriptFilePath.get().toString();
-            scriptSource = scriptSource + "//@ sourceURL=" + scriptFilePath;
-        } else {
-            this.scriptFilePath = "";
+            scriptSource = scriptSource + "//@ sourceURL=" + getPath();
         }
+
         try {
             ScriptEngine engine = factory.getScriptEngine("-strict");
             engine.put("MSSCaller", new MSSCaller());
@@ -52,20 +55,24 @@ public class JSExecutable {
         }
     }
 
+    private String getPath() {
+        return scriptPath.map(Path::toString).orElse("\"<in-memory-script>\"");
+    }
+
     public Object execute(Object context) {
         Object rv;
         try {
             rv = engine.invokeFunction("onRequest", context);
         } catch (ScriptException e) {
-            throw new UUFException("error while executing script " + scriptFilePath, e);
+            throw new UUFException("error while executing script " + getPath(), e);
         } catch (NoSuchMethodException e) {
-            throw new UUFException("method 'onRequest' not defined in the script " + scriptFilePath, e);
+            throw new UUFException("method 'onRequest' not defined in the script " + getPath(), e);
         }
         return rv;
     }
 
     @Override
     public String toString() {
-        return "{path:'" + scriptFilePath + "'}";
+        return "{path:'" + getPath() + "'}";
     }
 }
