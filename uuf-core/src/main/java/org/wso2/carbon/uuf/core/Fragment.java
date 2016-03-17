@@ -7,6 +7,7 @@ import java.util.Map;
 public class Fragment {
 
     private final String name;
+    //TODO:remove
     private final String path;
     private final Renderable renderer;
 
@@ -34,7 +35,6 @@ public class Fragment {
 
     @Override
     public String toString() {
-        return "{\"name\": \"" + name + "\", \"path\": \"" + path + "\", \"renderer\": \"" + renderer.toString() +
-                "\"}";
+        return "{\"name\": \"" + name + "\", \"path\": \"" + path + "\", \"renderer\": " + renderer.toString() + "}";
     }
 }
