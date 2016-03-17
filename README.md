@@ -13,9 +13,9 @@ Pure Package
 ------------
 
 Pure package is a java package in which
-  1. No IO/DB
+  1. No IO/DB is being done
   2. Classes are immutable
-  3. Each function's input depends only on its input (and some immutable class local variables)
+  3. Each function's output depends only on its input (and some immutable class local variables)
 
 Advantages
   1. Trivially unit testable/ mockable
