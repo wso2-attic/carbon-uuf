@@ -6,10 +6,8 @@ import org.wso2.carbon.uuf.core.*;
 import javax.ws.rs.core.Response;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -103,20 +101,23 @@ public class FromArtifactAppCreator implements AppCreator {
         Path appPath = getAppPath(appName);
         String resourcePathParts[] = resourcePath.split("/");
 
-        //TODO: handle ArrayIndexOutOfBoundException and avoid split()
-        int fourthSlash = StringUtils.ordinalIndexOf(resourcePath, "/", 4);
-        String subResourcePath = resourcePath.substring(fourthSlash + 1, resourcePath.length());
-        String resourceUriPart = resourcePathParts[1];
+        if (resourcePathParts.length < 5) {
+            throw new IllegalArgumentException("Invalid resourcePath! `" + resourcePath + "`");
+        }
+
+        String resourceUriPrefixPart = resourcePathParts[1];
         String componentUriPart = resourcePathParts[2];
         String fragmentUriPart = resourcePathParts[3];
+        int fourthSlash = StringUtils.ordinalIndexOf(resourcePath, "/", 4);
+        String subResourcePath = resourcePath.substring(fourthSlash + 1, resourcePath.length());
 
-        if (!resourceUriPart.equals(AppCreator.STATIC_RESOURCE_PREFIX)) {
-            throw new IllegalArgumentException("resourcePath should starts with `/public`!");
+        if (!resourceUriPrefixPart.equals(AppCreator.STATIC_RESOURCE_URI_PREFIX)) {
+            throw new IllegalArgumentException("Resource path should starts with `/public`!");
         }
 
         Path componentPath = appPath.resolve("components").resolve(componentUriPart);
         Path fragmentPath;
-        if (fragmentUriPart.equals(AppCreator.STATIC_RESOURCE_PATH_PARAM_BASE)) {
+        if (fragmentUriPart.equals(AppCreator.STATIC_RESOURCE_URI_BASE_PREFIX)) {
             fragmentPath = componentPath;
         } else {
             fragmentPath = componentPath.resolve(fragmentUriPart);

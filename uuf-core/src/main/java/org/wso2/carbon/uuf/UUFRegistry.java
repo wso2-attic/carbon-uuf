@@ -176,7 +176,7 @@ public class UUFRegistry {
     }
 
     private boolean isStaticResourceRequest(String resourcePath) {
-        return resourcePath.startsWith("/" + AppCreator.STATIC_RESOURCE_PREFIX);
+        return resourcePath.startsWith("/" + AppCreator.STATIC_RESOURCE_URI_PREFIX);
     }
 
     private Response.ResponseBuilder sendError(String appName, Exception e, Response.Status status) {
