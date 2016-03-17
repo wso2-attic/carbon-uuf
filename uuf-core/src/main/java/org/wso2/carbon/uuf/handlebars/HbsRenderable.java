@@ -12,52 +12,51 @@ import org.wso2.carbon.uuf.handlebars.util.RuntimeHandlebarsUtil;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 
 public class HbsRenderable implements Renderable {
     private final TemplateSource template;
     private final Optional<Path> templatePath;
-    private final Optional<JSExecutable> script;
+    private final Optional<Executable> executable;
 
     public HbsRenderable(String templateSource) {
-        this(templateSource, Optional.empty(), Optional.empty(), Optional.empty());
+        this(templateSource, Optional.<Path>empty(), Optional.<Executable>empty());
     }
 
     public HbsRenderable(String templateSource, Path templatePath) {
-        this(templateSource, Optional.of(templatePath), Optional.empty(), Optional.empty());
+        this(templateSource, Optional.of(templatePath), Optional.<Executable>empty());
     }
 
-    public HbsRenderable(String templateSource, Path templatePath, String scriptSource, Path scriptPath) {
-        this(templateSource, Optional.of(templatePath), Optional.of(scriptSource), Optional.of(scriptPath));
+    public HbsRenderable(String templateSource, Executable executable) {
+        this(templateSource, Optional.<Path>empty(), Optional.of(executable));
     }
 
-    public HbsRenderable(String templateSource, Path templatePath, Optional<JSExecutable> script) {
-        this.templatePath = Optional.of(templatePath);
-        this.template = new StringTemplateSource(getPath(), templateSource);
-        this.script = script;
+    public HbsRenderable(String templateSource, Path templatePath, Executable executable) {
+        this(templateSource, Optional.of(templatePath), Optional.of(executable));
     }
 
-    private HbsRenderable(String templateSource, Optional<Path> templatePath, Optional<String> scriptSource,
-                          Optional<Path> scriptPath) {
+    private HbsRenderable(String templateSource, Optional<Path> templatePath, Optional<Executable> executable) {
         this.templatePath = templatePath;
         this.template = new StringTemplateSource(getPath(), templateSource);
-        this.script = scriptSource.map((s) -> new JSExecutable(s, scriptPath));
+        this.executable = executable;
     }
 
-    public Optional<JSExecutable> getScript() {
-        return script;
+    public Optional<Executable> getScript() {
+        return executable;
     }
 
     public TemplateSource getTemplate() {
         return template;
     }
 
+    private String getPath() {
+        return templatePath.map(Path::toString).orElse("\"<inline-template>\"");
+    }
+
     @Override
-    public String render(Object model, Multimap<String, Renderable> bindings,
-                         Map<String, Fragment> fragments) {
-        Object jsModel = script.map(e -> e.execute(model)).orElse(Collections.EMPTY_MAP);
+    public String render(Object model, Multimap<String, Renderable> bindings, Map<String, Fragment> fragments) {
+        Object jsModel = executable.map(e -> e.execute(model)).orElse(model);
         Context context = Context.newContext(jsModel);
         //TODO: detect uncombined scenarios
         if (model instanceof Context) {
@@ -80,9 +79,5 @@ public class HbsRenderable implements Renderable {
     @Override
     public String toString() {
         return "{\"path\": \"" + getPath() + "\"}";
-    }
-
-    private String getPath() {
-        return templatePath.map(Path::toString).orElse("\"<inline-template>\"");
     }
 }
