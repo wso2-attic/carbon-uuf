@@ -94,8 +94,11 @@ public class UUFRegistry {
                     app = appCreator.createApp(appName, "/" + appName);
                     apps.put(appName, app);
                 }
-                if (resourcePath.startsWith("/debug/api/")) {
-                    return Response.ok(app.getPages().toString(), "application/json");
+                if (resourcePath.equals("/debug/api/pages/")) {
+                    return Response.ok(app.getPages().toString());
+                }
+                if (resourcePath.startsWith("/debug/api/fragments/")) {
+                    return Response.ok(app.getFragments().toString());
                 }
                 if (resourcePath.startsWith("/debug/logs")) {
                     if (debugAppender.isPresent()) {

@@ -5,11 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.core.Response;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class App {
     private static final Logger log = LoggerFactory.getLogger(App.class);
@@ -30,10 +26,6 @@ public class App {
         this.fragments = fragments;
         this.bindings = bindings;
         this.pages = pages;
-    }
-
-    public Map<String, Fragment> getFragments() {
-        return fragments;
     }
 
     public String renderPage(HttpRequest request) {
@@ -66,6 +58,10 @@ public class App {
     @Override
     public String toString() {
         return "{\"context\": \"" + context + "\"}";
+    }
+
+    public Collection<Fragment> getFragments() {
+        return fragments.values();
     }
 
     public List<Page> getPages() {
