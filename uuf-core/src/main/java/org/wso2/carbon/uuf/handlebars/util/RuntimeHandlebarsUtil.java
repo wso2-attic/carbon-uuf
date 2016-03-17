@@ -16,7 +16,7 @@ import java.util.Map;
 
 public class RuntimeHandlebarsUtil {
 
-    private static final ImmutableSet<String> KEYWORDS = ImmutableSet.of("layout", "fillZone");
+    private static final ImmutableSet<String> KEYWORDS = ImmutableSet.of("layout", "fillZone", "headCss");
     private static final Handlebars HANDLEBARS = new Handlebars();
     private static final String BINDING_KEY = RuntimeHandlebarsUtil.class.getName() + "#bindings";
     private static final String FRAGMENT_KEY = RuntimeHandlebarsUtil.class.getName() + "#fragments";
@@ -57,18 +57,26 @@ public class RuntimeHandlebarsUtil {
             }
         });
 
-        HANDLEBARS.registerHelper("includeFragment", (context, options) -> {
+
+        HANDLEBARS.registerHelper("includeFragment", (fragmentName, options) -> {
             //TODO: remove duplicate, defineZone
             Multimap<String, Renderable> bindings = options.data(BINDING_KEY);
             Map<String, Fragment> fragments = options.data(FRAGMENT_KEY);
-            String fragmentName = (String) context;
-            Fragment fragment = fragments.get(fragmentName);
+            String fragmentNameStr = (String) fragmentName;
+            Fragment fragment = fragments.get(fragmentNameStr);
             if (fragment != null) {
                 //TODO: maybe use the same context
-                String content = fragment.render(options.hash, bindings, fragments).trim();
+                Map<String, Object> fragmentArgs = options.hash;
+                Object fragmentContext;
+                if (fragmentArgs.isEmpty()) {
+                    fragmentContext = options.context;
+                } else {
+                    fragmentContext = fragmentArgs;
+                }
+                String content = fragment.render(fragmentContext, bindings, fragments).trim();
                 return new Handlebars.SafeString(content);
             }
-            throw new UUFException("fragment '" + fragmentName + "' not available");
+            throw new UUFException("fragment '" + fragmentNameStr + "' not available");
         });
 
         HANDLEBARS.registerHelperMissing((context, options) -> {

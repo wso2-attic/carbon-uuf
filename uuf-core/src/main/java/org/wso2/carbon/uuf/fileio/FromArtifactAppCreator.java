@@ -120,7 +120,7 @@ public class FromArtifactAppCreator implements AppCreator {
         if (fragmentUriPart.equals(AppCreator.STATIC_RESOURCE_URI_BASE_PREFIX)) {
             fragmentPath = componentPath;
         } else {
-            fragmentPath = componentPath.resolve(fragmentUriPart);
+            fragmentPath = componentPath.resolve("fragments").resolve(fragmentUriPart);
         }
         //{appName}/components/[{componentName}|ROOT]/[{fragmentName}|base]/public/{subResourcePath}
 

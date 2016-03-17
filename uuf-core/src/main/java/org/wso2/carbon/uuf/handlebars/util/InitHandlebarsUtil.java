@@ -10,16 +10,14 @@ import org.wso2.carbon.uuf.handlebars.HbsRenderable;
 
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 
 public class InitHandlebarsUtil {
     private static final Handlebars HANDLEBARS = new Handlebars();
     private static final String ZONES_KEY = InitHandlebarsUtil.class.getName() + "#zones";
     private static final String LAYOUT_KEY = InitHandlebarsUtil.class.getName() + "#layout";
+    private static final String CSS_KEY = InitHandlebarsUtil.class.getName() + "#css";
 
     static {
 
@@ -59,6 +57,20 @@ public class InitHandlebarsUtil {
                         "multiple layout '" + layoutName + "','" + originalLayout + "'  defined");
             }
             options.data(LAYOUT_KEY, layoutName);
+            return "";
+        });
+
+        HANDLEBARS.registerHelper("headCss", (cssUri, options) -> {
+            String cssUriString = cssUri.toString();
+            if (cssUriString.startsWith("/")) {
+                throw new IllegalArgumentException("URI fragment relative public URI should start with '/'");
+            }
+            List<String> cssMap = options.data(CSS_KEY);
+            if (cssMap == null) {
+                cssMap = new ArrayList<>();
+                options.data(CSS_KEY, cssMap);
+            }
+            cssMap.add(cssUriString);
             return "";
         });
 
