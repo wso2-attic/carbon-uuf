@@ -13,8 +13,9 @@ public class App {
     private final List<Page> pages;
     private final Map<String, Fragment> fragments;
     private final Map<String, Renderable> bindings;
+    private final Map<String, String> configuration;
 
-    public App(String context, List<Page> pages, Map<String, Fragment> fragments, Map<String, Renderable> bindings) {
+    public App(String context, List<Page> pages, Map<String, Fragment> fragments, Map<String, Renderable> bindings, Map<String, String> configuration) {
         if (!context.startsWith("/")) {
             throw new IllegalArgumentException("app context must start with a '/'");
         }
@@ -26,6 +27,7 @@ public class App {
         this.fragments = fragments;
         this.bindings = bindings;
         this.pages = pages;
+        this.configuration = configuration;
     }
 
     public String renderPage(HttpRequest request) {
@@ -39,6 +41,7 @@ public class App {
 
             Map<String, Object> model = new HashMap<>();
             model.put("pageUri", pageUri);
+            model.put("config", configuration);
 
             return page.serve(model, bindings, fragments);
         } else {

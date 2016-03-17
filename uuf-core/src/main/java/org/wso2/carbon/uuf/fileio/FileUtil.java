@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 class FileUtil {
 
@@ -35,22 +36,33 @@ class FileUtil {
     static Map<String, Renderable> getBindings(Path bindingsConfig, Map<String, Fragment> fragments)
             throws IOException {
         Map<String, Renderable> binding = new HashMap<>();
-        if (Files.exists(bindingsConfig)) {
-            Object yaml = new Yaml().load(Files.newInputStream(bindingsConfig));
-            if (yaml != null && yaml instanceof Map) {
-                //TODO: give proper error when val is a complex value
-                @SuppressWarnings("unchecked")
-                Map<String, String> config = (Map<String, String>) yaml;
-                for (Map.Entry<String, String> entry : config.entrySet()) {
-                    Fragment fragment = fragments.get(entry.getValue());
-                    if (fragment == null) {
-                        throw new UUFException(
-                                "Fragment '" + entry.getValue() + "'  '" + bindingsConfig + "' does not exists");
-                    }
-                    binding.put(entry.getKey(), fragment.getRenderer());
+        Optional<Map> config = readYamlConfig(bindingsConfig);
+        if (config.isPresent()) {
+            @SuppressWarnings("unchecked") Map<String, String> configuration = config.get();
+            for (Map.Entry<String, String> entry : configuration.entrySet()) {
+                Fragment fragment = fragments.get(entry.getValue());
+                if (fragment == null) {
+                    throw new UUFException(
+                            "Fragment '" + entry.getValue() + "'  '" + bindingsConfig + "' does not exists");
                 }
+                binding.put(entry.getKey(), fragment.getRenderer());
             }
         }
         return binding;
     }
+
+    @SuppressWarnings("unchecked")
+    public static Map<String, String> getConfiguration(Path appConfig) throws IOException {
+        Optional<Map> config = readYamlConfig(appConfig);
+        return (config.isPresent()) ? (Map<String, String>) config.get() : new HashMap<>();
+    }
+
+    private static Optional<Map> readYamlConfig(Path configPath) throws IOException {
+        if (!Files.exists(configPath)) {
+            return Optional.empty();
+        }
+        Map config = new Yaml().loadAs(Files.newInputStream(configPath), Map.class);
+        return (config != null) ? Optional.of(config) : Optional.empty();
+    }
+
 }

@@ -14,9 +14,15 @@
     <div class="container-fluid">
         <div class="pull-left brand float-remove-xs text-center-xs">
             <a href="/">
-                <img src="/pet-store/public/org.wso2.uuf.base/base/images/logo.png" alt="{{config "productName"}}"
-                     title="" class="logo"/>
-                <h1>{{#config "productName"}}Unified UI Template App{{/config}}</h1>
+                <img src="/pet-store/public/org.wso2.uuf.base/base/images/logo.png"
+                     alt="{{config "productName"}}"
+                     title="{{config "productName"}}" class="logo"/>
+                <h1>{{#if config.productName}}
+                    {{config.productName}}
+                {{else}}
+                    Unified UI Template App
+                {{/if}}
+                </h1>
             </a>
         </div>
         <div class="pull-right auth float-remove-xs text-center-xs">
