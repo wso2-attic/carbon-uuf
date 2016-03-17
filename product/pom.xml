@@ -65,7 +65,7 @@
             <type>zip</type>
         </dependency>
         <dependency>
-            <groupId>com.github.jknack</groupId>
+            <groupId>org.wso2.orbit.com.github.jknack</groupId>
             <artifactId>handlebars</artifactId>
         </dependency>
         <dependency>
