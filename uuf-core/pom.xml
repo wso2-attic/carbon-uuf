@@ -80,15 +80,6 @@
             <artifactId>netty-codec-http</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>${slf4j.log4j.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
         </dependency>
@@ -106,6 +97,11 @@
             <artifactId>testng</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.ops4j.pax.logging</groupId>
+            <artifactId>pax-logging-log4j2</artifactId>
+            <version>1.8.4</version>
+        </dependency>
     </dependencies>
 
     <properties>
@@ -115,6 +111,7 @@
             org.wso2.msf4j.*,
             javax.ws.rs.*,
             org.slf4j.*,
+            org.apache.logging.log4j,
             com.google.common.*;version="${guava.version.range}",
             io.netty.handler.*,
             javax.script,
