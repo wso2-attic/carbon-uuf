@@ -3,6 +3,7 @@ package org.wso2.carbon.uuf.fileio;
 import org.wso2.carbon.uuf.core.Fragment;
 import org.wso2.carbon.uuf.core.UUFException;
 import org.wso2.carbon.uuf.handlebars.HbsRenderable;
+import org.wso2.carbon.uuf.handlebars.JSExecutable;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -36,7 +37,8 @@ public class FragmentCreator {
             Path scriptPath = fragmentDir.resolve(fileName + ".js");
             if (scriptPath.toFile().exists()) {
                 String scriptSource = new String(Files.readAllBytes(scriptPath), StandardCharsets.UTF_8);
-                hbsRenderable = new HbsRenderable(templateSource, templatePath, scriptSource, scriptPath);
+                JSExecutable script = new JSExecutable(scriptSource, scriptPath);
+                hbsRenderable = new HbsRenderable(templateSource, templatePath, script);
             } else {
                 hbsRenderable = new HbsRenderable(templateSource, templatePath);
             }

@@ -6,6 +6,7 @@ import org.wso2.carbon.uuf.core.Renderable;
 import org.wso2.carbon.uuf.core.UUFException;
 import org.wso2.carbon.uuf.core.UriPatten;
 import org.wso2.carbon.uuf.handlebars.HbsRenderable;
+import org.wso2.carbon.uuf.handlebars.JSExecutable;
 import org.wso2.carbon.uuf.handlebars.util.InitHandlebarsUtil;
 
 import java.io.IOException;
@@ -31,8 +32,8 @@ class PageCreator {
             HbsRenderable hbsRenderable;
             if (scriptPath.toFile().exists()) {
                 String scriptSource = new String(Files.readAllBytes(scriptPath), StandardCharsets.UTF_8);
-                hbsRenderable = new HbsRenderable(templateSource, templateAbsolutePath, scriptSource,
-                                                  scriptPath);
+                JSExecutable script = new JSExecutable(scriptSource, scriptPath);
+                hbsRenderable = new HbsRenderable(templateSource, templateAbsolutePath, script);
             } else {
                 hbsRenderable = new HbsRenderable(templateSource, templateAbsolutePath);
             }
