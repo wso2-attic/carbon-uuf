@@ -35,7 +35,7 @@
     <dependencies>
         <!-- Dependencies for UUF -->
         <dependency>
-            <groupId>com.github.jknack</groupId>
+            <groupId>org.wso2.orbit.com.github.jknack</groupId>
             <artifactId>handlebars</artifactId>
         </dependency>
         <dependency>
@@ -80,6 +80,11 @@
             <artifactId>slf4j-api</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>${slf4j.log4j.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
         </dependency>
@@ -96,7 +101,6 @@
     </dependencies>
 
     <properties>
-        <private.package>org.wso2.carbon.uuf.*</private.package>
         <import.package>
             org.osgi.framework.*;version="${osgi.framework.import.version.range}",
             org.wso2.msf4j.*,
