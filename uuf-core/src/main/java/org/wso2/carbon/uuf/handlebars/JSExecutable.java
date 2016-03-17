@@ -45,7 +45,8 @@ public class JSExecutable implements Executable {
         }
 
         try {
-            ScriptEngine engine = factory.getScriptEngine("-strict");
+            String[] scriptArgs = {"-strict"};
+            ScriptEngine engine = factory.getScriptEngine(scriptArgs);
             engine.put("MSSCaller", new MSSCaller());
             engine.eval("var callService = function(method,uri){return JSON.parse(MSSCaller(method,uri))}");
             engine.eval(scriptSource);
