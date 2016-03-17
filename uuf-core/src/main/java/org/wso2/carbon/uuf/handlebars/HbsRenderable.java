@@ -19,6 +19,7 @@ public class HbsRenderable implements Renderable {
     private final TemplateSource template;
     private final Optional<Path> templatePath;
     private final Optional<Executable> executable;
+    private final Template compiledTemplate;
 
     public HbsRenderable(String templateSource) {
         this(templateSource, Optional.<Path>empty(), Optional.<Executable>empty());
@@ -40,6 +41,7 @@ public class HbsRenderable implements Renderable {
         this.templatePath = templatePath;
         this.template = new StringTemplateSource(getPath(), templateSource);
         this.executable = executable;
+        this.compiledTemplate = RuntimeHandlebarsUtil.compile(template);
     }
 
     public Optional<Executable> getScript() {
@@ -69,7 +71,6 @@ public class HbsRenderable implements Renderable {
         RuntimeHandlebarsUtil.setBindings(context, bindings);
         RuntimeHandlebarsUtil.setFragments(context, fragments);
         try {
-            Template compiledTemplate = RuntimeHandlebarsUtil.compile(template);
             return compiledTemplate.apply(context);
         } catch (IOException e) {
             throw new UUFException("Handlebars rendering failed", e);
