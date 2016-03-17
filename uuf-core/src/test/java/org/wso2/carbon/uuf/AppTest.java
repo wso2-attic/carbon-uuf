@@ -34,7 +34,7 @@ public class AppTest {
         List<Page> testPages = Collections.singletonList(testPage);
         Map<String, Fragment> testFragments = Collections.emptyMap();
         Map<String, Renderable> testBindings = Collections.emptyMap();
-        testApp = new App(TEST_APP_CONTEXT, testPages, testFragments, testBindings);
+        testApp = new App(TEST_APP_CONTEXT, testPages, testFragments, testBindings, Collections.emptyMap());
     }
 
     @Test
