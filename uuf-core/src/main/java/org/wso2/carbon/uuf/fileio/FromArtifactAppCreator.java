@@ -90,7 +90,7 @@ public class FromArtifactAppCreator implements AppCreator {
      * </ul>
      * These path types are mapped into following file paths on the file system;
      * <ul>
-     *      <li>{appName}/components/[{componentName}|ROOT]/[{fragmentName}|base]/public/{subResourcePath}</li>
+     *      <li>{appName}/components/[{componentName}|ROOT]/[fragments/{fragmentName}|base]/public/{subResourcePath}</li>
      * </ul>
      * @param appName application name
      * @param resourcePath resource uri
@@ -122,7 +122,7 @@ public class FromArtifactAppCreator implements AppCreator {
         } else {
             fragmentPath = componentPath.resolve("fragments").resolve(fragmentUriPart);
         }
-        //{appName}/components/[{componentName}|ROOT]/[{fragmentName}|base]/public/{subResourcePath}
+        //{appName}/components/[{componentName}|ROOT]/[fragments/{fragmentName}|base]/public/{subResourcePath}
 
         return fragmentPath.resolve("public").resolve(subResourcePath);
     }
