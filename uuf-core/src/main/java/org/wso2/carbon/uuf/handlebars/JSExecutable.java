@@ -30,7 +30,7 @@ public class JSExecutable implements Executable {
     }
 
     public JSExecutable(String scriptSource) {
-        this(scriptSource, Optional.<Path>empty());
+        this(scriptSource, Optional.empty());
     }
 
     public JSExecutable(String scriptSource, Path scriptPath) {
