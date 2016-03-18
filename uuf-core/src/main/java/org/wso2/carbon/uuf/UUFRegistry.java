@@ -80,11 +80,11 @@ public class UUFRegistry {
 
         App app = apps.get(appName);
         try {
-            String type = getMime(resourcePath);
             if (isStaticResourceRequest(resourcePath)) {
                 Path resource = appCreator.resolve(appName, resourcePath);
                 if (Files.exists(resource) && Files.isRegularFile(resource)) {
-                    return Response.ok(resource.toFile(), type);
+                    //TODO: use non blocking mime map
+                    return Response.ok(resource.toFile(), getMime(resourcePath));
                 } else {
                     return Response.status(Response.Status.NOT_FOUND).entity(
                             "Requested resource '" + uri + "' does not exists at '" + resource + "'");
@@ -116,7 +116,7 @@ public class UUFRegistry {
                         String debugContent = IOUtils.toString(
                                 resourceAsStream,
                                 "UTF-8");
-                        return Response.ok(debugContent, type);
+                        return Response.ok(debugContent, getMime(resourcePath));
                     } else {
                         return Response.status(Response.Status.NOT_FOUND);
                     }
