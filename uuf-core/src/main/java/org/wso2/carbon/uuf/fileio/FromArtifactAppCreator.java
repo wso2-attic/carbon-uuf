@@ -54,20 +54,25 @@ public class FromArtifactAppCreator implements AppCreator {
         }
 
         LayoutCreator layoutCreator = new LayoutCreator(components);
-        List<Page> pages = Files.list(components).flatMap(c -> subDirsOfAComponent(c, "pages")).flatMap(
-                p -> findHbs(p, components)).parallel().map(
-                p -> pageCreator.createPage(p, layoutCreator, components)).collect(Collectors.toList());
+        List<Page> pages = Files
+                .list(components)
+                .flatMap(c -> subDirsOfAComponent(c, "pages"))
+                .flatMap(p -> findHbs(p, components))
+                .parallel()
+                .map(p -> pageCreator.createPage(p, layoutCreator, components))
+                .collect(Collectors.toList());
 
-       Map<String,Fragment> fragments = Files
+        Map<String, Fragment> fragments = Files
                 .list(components)
                 .flatMap(c -> subDirsOfAComponent(c, "fragments"))
                 .parallel()
                 .map(fragmentCreator::createFragment)
-                .collect(Collectors.toMap( Fragment::getName, Function.identity()));
+                .collect(Collectors.toMap(Fragment::getName, Function.identity()));
+
         Path bindingsConfig = components.resolve("root/bindings.yaml");
         Map<String, Renderable> bindings = FileUtil.getBindings(bindingsConfig, fragments);
         Path appConfig = components.resolve("root/config.yaml");
-        Map<String , String> configuration = FileUtil.getConfiguration(appConfig);
+        Map<String, String> configuration = FileUtil.getConfiguration(appConfig);
         return new App(context, pages, fragments, bindings, configuration);
     }
 
@@ -83,16 +88,17 @@ public class FromArtifactAppCreator implements AppCreator {
     /**
      * This method resolves static routing request uris. URI types categorized into;
      * <ul>
-     *     <li>root_resource_uri: /public/root/base/{subResourceUri}</li>
-     *     <li>root_fragment_uri: /public/root/{fragmentName}/{subResourceUri}</li>
-     *     <li>component_resource_uri: /public/{componentName}/base/{subResourceUri}</li>
-     *     <li>fragment_resource_uri: /public/{componentName}/{fragmentName}/{subResourceUri}</li>
+     * <li>root_resource_uri: /public/root/base/{subResourceUri}</li>
+     * <li>root_fragment_uri: /public/root/{fragmentName}/{subResourceUri}</li>
+     * <li>component_resource_uri: /public/{componentName}/base/{subResourceUri}</li>
+     * <li>fragment_resource_uri: /public/{componentName}/{fragmentName}/{subResourceUri}</li>
      * </ul>
      * These path types are mapped into following file paths on the file system;
      * <ul>
-     *      <li>{appName}/components/[{componentName}|ROOT]/[{fragmentName}|base]/public/{subResourcePath}</li>
+     * <li>{appName}/components/[{componentName}|ROOT]/[{fragmentName}|base]/public/{subResourcePath}</li>
      * </ul>
-     * @param appName application name
+     *
+     * @param appName      application name
      * @param resourcePath resource uri
      * @return resolved path
      */
