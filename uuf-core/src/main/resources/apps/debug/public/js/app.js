@@ -1,5 +1,6 @@
 $(function () {
     'use strict';
+    
     var contentDiv = $('#content');
     $(window).on('hashchange', function () {
         var hash = location.hash.substr(1);
@@ -16,4 +17,9 @@ $(function () {
             contentChild.show();
         }
     }).trigger('hashchange');
+    
+    $("#menu-toggle").click(function(e) {
+        e.preventDefault();
+        $("#wrapper").toggleClass("toggled");
+    });
 });

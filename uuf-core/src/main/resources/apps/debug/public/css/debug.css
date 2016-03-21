@@ -1,0 +1,189 @@
+#wrapper {
+    padding-left: 0;
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+    overflow-x: hidden;
+}
+
+#wrapper.toggled {
+    padding-left: 250px;
+}
+
+#logo {
+    display: block;
+    margin: 0 auto;
+    width: 120px;
+    height: 70px;
+    background: url(../images/uuf-logo.svg) no-repeat 50% 50%;
+}
+
+.header-logo {
+    margin: 10px 0;
+    width: 250px;
+}
+
+.header-logo h1 {
+    margin: 0;
+    color: #7fb2f0;
+    text-align: center;
+    font-size: 17px;
+}
+
+.page-header {
+    margin: 0;
+    padding-bottom: 0;
+    background: #101010;
+    color: #fff;
+    min-width: 500px;
+}
+
+.page-header a {
+    color: #7FB2F0;
+    text-decoration: underline;
+}
+
+.page-header a:hover {
+    text-decoration: none;
+    color: #fff;
+}
+
+.page-header .git-link {
+    line-height: 50px;
+    font-size: 20px;
+    text-decoration: none;
+    color: #fff;
+}
+
+#sidebar-wrapper {
+    z-index: 1000;
+    position: fixed;
+    left: 250px;
+    width: 0;
+    height: 100%;
+    margin-left: -250px;
+    overflow-y: auto;
+    background: #101010;
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+    overflow-x: hidden;
+}
+
+#wrapper.toggled #sidebar-wrapper {
+    width: 250px;
+}
+
+.page-title h1 {
+    margin: 0;
+    font-size: 25px;
+    line-height: 50px;
+    padding: 0 20px;
+}
+
+#page-content-wrapper {
+    width: 100%;
+    padding: 0;
+    position: absolute;
+}
+
+#wrapper.toggled #page-content-wrapper {
+    position: absolute;
+    margin-right: -250px;
+}
+
+.sidebar-toggle-button,
+.sidebar-toggle-button:focus,
+.sidebar-toggle-button:visited,
+.sidebar-toggle-button:active,
+.sidebar-toggle-button:hover {
+    float: left;
+    height: 50px;
+    line-height: 50px;
+    font-size: 18px;
+    background: #4E7AC7;
+    color: #ffffff;
+    margin-left: -15px;
+}
+
+/* Sidebar Styles */
+
+.sidebar-nav {
+    width: 250px;
+    padding: 20px 0 0 0;
+    list-style: none;
+}
+
+.sidebar-nav li {
+    line-height: 40px;
+}
+
+.sidebar-nav li a {
+    display: block;
+    text-decoration: none;
+    color: #e4e4e4;
+    padding: 0 20px;
+    border-left: 3px solid transparent;
+}
+
+.sidebar-nav li.active a {
+    background: rgba(255,255,255,0.2);
+    color: #fff;
+    border-left-color: #7FB2F0;
+}
+
+.sidebar-nav li:hover a {
+    text-decoration: none;
+    color: #fff;
+    background: rgb(73, 78, 84);
+}
+
+.sidebar-nav li a:active,
+.sidebar-nav li a:focus {
+    text-decoration: none;
+}
+
+.sidebar-nav > .sidebar-brand {
+    height: 65px;
+    font-size: 18px;
+    line-height: 60px;
+}
+
+.sidebar-nav > .sidebar-brand a {
+    color: #999999;
+}
+
+.sidebar-nav > .sidebar-brand a:hover {
+    color: #fff;
+    background: none;
+}
+
+@media(min-width:768px) {
+    #wrapper {
+        padding-left: 250px;
+    }
+
+    #wrapper.toggled {
+        padding-left: 0;
+    }
+
+    #sidebar-wrapper {
+        width: 250px;
+    }
+
+    #wrapper.toggled #sidebar-wrapper {
+        width: 0;
+    }
+
+    #page-content-wrapper {
+        padding: 20px;
+        position: relative;
+    }
+
+    #wrapper.toggled #page-content-wrapper {
+        position: relative;
+        margin-right: 0;
+    }
+}
