@@ -269,6 +269,9 @@
         <!-- Source and target java version -->
         <wso2.maven.compiler.source>1.8</wso2.maven.compiler.source>
         <wso2.maven.compiler.target>1.8</wso2.maven.compiler.target>
+
+        <!-- can't run tests from intellij without this -->
+        <maven-resources/>
     </properties>
 
 </project>
