@@ -9,9 +9,9 @@ public class Page {
 
     private final UriPatten uriPatten;
     private final Renderable layout;
-    private final Map<String, Renderable> fillZones;
+    private final Map<String, ? extends Renderable> fillZones;
 
-    public Page(UriPatten uriPatten, Renderable layout, Map<String, Renderable> fillZones) {
+    public Page(UriPatten uriPatten, Renderable layout, Map<String, ? extends Renderable> fillZones) {
         this.uriPatten = uriPatten;
         this.layout = layout;
         this.fillZones = fillZones;
@@ -28,7 +28,7 @@ public class Page {
             combined.put(entry.getKey(), entry.getValue());
         }
         // add fill zones
-        for (Map.Entry<String, Renderable> entry : fillZones.entrySet()) {
+        for (Map.Entry<String, ? extends Renderable> entry : fillZones.entrySet()) {
             combined.put(entry.getKey(), entry.getValue());
         }
         return layout.render(model, combined, fragments);

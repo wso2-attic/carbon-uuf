@@ -12,9 +12,17 @@ import java.util.Optional;
 
 public class HbsPageRenderableTest {
 
+    @Test
+    public void testHeadJsInZones() {
+        String content = "{{#fillZone \"myZone\"}}{{headJs \"my.js\"}}{{headJs \"ok.js\"}}{{/fillZone}}";
+        TemplateSource templateSource = new StringTemplateSource("<test>", content);
+        HbsPageRenderable renderable = new HbsPageRenderable(templateSource, Optional.empty());
+        List<String> js = renderable.getFillingZones().get("myZone").getHeadJs();
+        Assert.assertEquals(js, ImmutableList.of("my.js", "ok.js"));
+    }
 
     @Test
-    public void testJs() {
+    public void testHeadJs() {
         TemplateSource templateSource = new StringTemplateSource("<test>", "{{headJs \"my.js\"}} {{headJs \"ok.js\"}}");
         HbsPageRenderable renderable = new HbsPageRenderable(templateSource, Optional.empty());
         List<String> js = renderable.getHeadJs();

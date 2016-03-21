@@ -1,4 +1,4 @@
-package org.wso2.carbon.uuf.handlebars.helpers;
+package org.wso2.carbon.uuf.handlebars.helpers.init;
 
 import com.github.jknack.handlebars.Helper;
 import com.github.jknack.handlebars.Options;
@@ -7,13 +7,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ResourceInitHelper implements Helper<String> {
+public class ResourceHelper implements Helper<String> {
 
-    public static ResourceInitHelper JS_INSTANCE = new ResourceInitHelper("headJs");
+    public static ResourceHelper JS_INSTANCE = new ResourceHelper("headJs");
     private final String resourceKey;
 
-    private ResourceInitHelper(String resourceType) {
-        resourceKey = ResourceInitHelper.class.getName() + "#" + resourceType;
+    private ResourceHelper(String resourceType) {
+        resourceKey = ResourceHelper.class.getName() + "#" + resourceType;
     }
 
     @Override

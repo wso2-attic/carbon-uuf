@@ -2,6 +2,7 @@ package org.wso2.carbon.uuf.fileio;
 
 import com.github.jknack.handlebars.io.StringTemplateSource;
 import com.github.jknack.handlebars.io.TemplateSource;
+import com.sun.javafx.UnmodifiableArrayList;
 import org.wso2.carbon.uuf.core.Page;
 import org.wso2.carbon.uuf.core.Renderable;
 import org.wso2.carbon.uuf.core.UUFException;
@@ -36,7 +37,7 @@ class PageCreator {
 
             Optional<String> layoutName = hbsRenderable.getLayoutName();
             Renderable layout;
-            Map<String, Renderable> fillingZones = hbsRenderable.getFillingZones();
+            Map<String, HbsPageRenderable> fillingZones = hbsRenderable.getFillingZones();
             if (layoutName.isPresent()) {
                 layout = layoutCreator.createLayout(
                         layoutName.get(),

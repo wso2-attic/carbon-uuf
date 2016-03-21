@@ -1,4 +1,4 @@
-package org.wso2.carbon.uuf.handlebars.helpers;
+package org.wso2.carbon.uuf.handlebars.helpers.init;
 
 import com.github.jknack.handlebars.Helper;
 import com.github.jknack.handlebars.Options;
@@ -7,12 +7,12 @@ import org.wso2.carbon.uuf.handlebars.HbsPageRenderable;
 
 import java.io.IOException;
 
-public class LayoutInitHelper implements Helper<String> {
+public class LayoutHelper implements Helper<String> {
 
     public static final String LAYOUT_KEY = HbsPageRenderable.class.getName() + "#layout";
-    public static final LayoutInitHelper INSTANCE = new LayoutInitHelper();
+    public static final LayoutHelper INSTANCE = new LayoutHelper();
 
-    private LayoutInitHelper() {
+    private LayoutHelper() {
     }
 
     @Override

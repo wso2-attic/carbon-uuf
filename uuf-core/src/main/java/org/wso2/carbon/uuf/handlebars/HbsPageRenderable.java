@@ -4,26 +4,25 @@ import com.github.jknack.handlebars.Context;
 import com.github.jknack.handlebars.Handlebars;
 import com.github.jknack.handlebars.Template;
 import com.github.jknack.handlebars.io.TemplateSource;
-import org.wso2.carbon.uuf.core.Renderable;
 import org.wso2.carbon.uuf.core.UUFException;
-import org.wso2.carbon.uuf.handlebars.helpers.FillZoneInitHelper;
-import org.wso2.carbon.uuf.handlebars.helpers.LayoutInitHelper;
-import org.wso2.carbon.uuf.handlebars.helpers.ResourceInitHelper;
+import org.wso2.carbon.uuf.handlebars.helpers.init.FillZoneHelper;
+import org.wso2.carbon.uuf.handlebars.helpers.init.LayoutHelper;
+import org.wso2.carbon.uuf.handlebars.helpers.init.ResourceHelper;
 
 import java.io.IOException;
 import java.util.*;
 
 public class HbsPageRenderable extends HbsRenderable {
-    private final Map<String, Renderable> fillingZone;
+    private final Map<String, HbsPageRenderable> fillingZone;
     private final List<String> headJs;
     private final Optional<String> layout;
 
     private static final Handlebars HANDLEBARS = new Handlebars();
 
     static {
-        HANDLEBARS.registerHelper("fillZone", FillZoneInitHelper.INSTANCE);
-        HANDLEBARS.registerHelper("layout", LayoutInitHelper.INSTANCE);
-        HANDLEBARS.registerHelper("headJs", ResourceInitHelper.JS_INSTANCE);
+        HANDLEBARS.registerHelper("fillZone", FillZoneHelper.INSTANCE);
+        HANDLEBARS.registerHelper("layout", LayoutHelper.INSTANCE);
+        HANDLEBARS.registerHelper("headJs", ResourceHelper.JS_INSTANCE);
     }
 
 
@@ -37,10 +36,10 @@ public class HbsPageRenderable extends HbsRenderable {
         } catch (IOException e) {
             throw new UUFException("pages template completions error", e);
         }
-        Map<String, Renderable> zones = context.data(FillZoneInitHelper.ZONES_KEY);
+        Map<String, HbsPageRenderable> zones = context.data(FillZoneHelper.ZONES_KEY);
         fillingZone = (zones == null) ? Collections.emptyMap() : zones;
-        layout = Optional.ofNullable(context.data(LayoutInitHelper.LAYOUT_KEY));
-        List<String> headJsList = context.data(ResourceInitHelper.JS_INSTANCE.getResourceKey());
+        layout = Optional.ofNullable(context.data(LayoutHelper.LAYOUT_KEY));
+        List<String> headJsList = context.data(ResourceHelper.JS_INSTANCE.getResourceKey());
         headJs = (headJsList == null) ? Collections.emptyList() : headJsList;
     }
 
@@ -48,7 +47,7 @@ public class HbsPageRenderable extends HbsRenderable {
         return headJs;
     }
 
-    public Map<String, Renderable> getFillingZones() {
+    public Map<String, HbsPageRenderable> getFillingZones() {
         return fillingZone;
     }
 

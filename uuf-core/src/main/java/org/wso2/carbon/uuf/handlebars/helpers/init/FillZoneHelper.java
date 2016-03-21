@@ -1,10 +1,11 @@
-package org.wso2.carbon.uuf.handlebars.helpers;
+package org.wso2.carbon.uuf.handlebars.helpers.init;
 
 import com.github.jknack.handlebars.Helper;
 import com.github.jknack.handlebars.Options;
 import com.github.jknack.handlebars.io.StringTemplateSource;
 import com.github.jknack.handlebars.io.TemplateSource;
 import org.wso2.carbon.uuf.core.Renderable;
+import org.wso2.carbon.uuf.handlebars.HbsPageRenderable;
 import org.wso2.carbon.uuf.handlebars.HbsRenderable;
 
 import java.io.IOException;
@@ -13,11 +14,11 @@ import java.util.Map;
 import java.util.Optional;
 
 
-public class FillZoneInitHelper implements Helper<String> {
-    public static final String ZONES_KEY = FillZoneInitHelper.class.getName() + "#zones";
-    public static final FillZoneInitHelper INSTANCE = new FillZoneInitHelper();
+public class FillZoneHelper implements Helper<String> {
+    public static final String ZONES_KEY = FillZoneHelper.class.getName() + "#zones";
+    public static final FillZoneHelper INSTANCE = new FillZoneHelper();
 
-    private FillZoneInitHelper() {
+    private FillZoneHelper() {
     }
 
 
@@ -45,7 +46,7 @@ public class FillZoneInitHelper implements Helper<String> {
         TemplateSource templateSource = new StringTemplateSource(
                 options.fn.filename(),
                 sb.toString());
-        zones.put(zoneName, new HbsRenderable(templateSource, Optional.empty()));
+        zones.put(zoneName, new HbsPageRenderable(templateSource, Optional.empty()));
         return "";
     }
 }
