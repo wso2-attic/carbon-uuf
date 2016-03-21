@@ -60,6 +60,21 @@ public class HandlebarsRenderableTest {
     }
 
     @Test
+    public void testFragmentWithDefineZone() {
+        final String fragmentContent = "This is the content of the test-fragment.";
+        HbsRenderable fragmentRenderable = new HbsRenderable(fragmentContent + "{{defineZone \"test-zone\"}}");
+        Fragment fragment = new Fragment("test-fragment", "/mock/path", fragmentRenderable);
+
+        final String zoneContent = "This is the content of the test-zone.";
+        HbsRenderable fillZoneRenderable = new HbsRenderable(zoneContent);
+
+        HbsRenderable hbsRenderable = new HbsRenderable("{{includeFragment \"test-fragment\"}}");
+        Multimap<String, Renderable> bindings = ImmutableListMultimap.of("test-zone", fillZoneRenderable);
+        String output = hbsRenderable.render(new Object(), bindings, ImmutableMap.of("test-fragment", fragment));
+        Assert.assertEquals(output, (fragmentContent + zoneContent));
+    }
+
+    @Test
     public void testZones() {
         HbsRenderable defineZoneRenderable = new HbsRenderable("{{defineZone \"test-zone\"}}");
         final String zoneContent = "This is the content of the test-zone.";
