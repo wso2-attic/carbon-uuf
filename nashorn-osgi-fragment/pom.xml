@@ -24,7 +24,6 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.wso2.carbon.uuf</groupId>
     <artifactId>nashorn-osgi-fragment</artifactId>
     <packaging>bundle</packaging>
     <version>1.0.0</version>
