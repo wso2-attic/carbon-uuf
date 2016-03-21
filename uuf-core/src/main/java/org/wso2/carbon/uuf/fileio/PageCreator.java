@@ -1,12 +1,13 @@
 package org.wso2.carbon.uuf.fileio;
 
 import com.github.jknack.handlebars.Context;
+import com.github.jknack.handlebars.io.StringTemplateSource;
+import com.github.jknack.handlebars.io.TemplateSource;
 import org.wso2.carbon.uuf.core.Page;
 import org.wso2.carbon.uuf.core.Renderable;
 import org.wso2.carbon.uuf.core.UUFException;
 import org.wso2.carbon.uuf.core.UriPatten;
 import org.wso2.carbon.uuf.handlebars.HbsRenderable;
-import org.wso2.carbon.uuf.handlebars.JSExecutable;
 import org.wso2.carbon.uuf.handlebars.util.InitHandlebarsUtil;
 
 import java.io.IOException;
@@ -27,20 +28,18 @@ class PageCreator {
             if (dotPos >= 0) {
                 name = name.substring(0, dotPos);
             }
-            String templateSource = new String(Files.readAllBytes(templateAbsolutePath), StandardCharsets.UTF_8);
-            Path scriptPath = templateAbsolutePath.getParent().resolve(name + ".js");
-            HbsRenderable hbsRenderable;
-            if (scriptPath.toFile().exists()) {
-                String scriptSource = new String(Files.readAllBytes(scriptPath), StandardCharsets.UTF_8);
-                JSExecutable script = new JSExecutable(scriptSource, scriptPath);
-                hbsRenderable = new HbsRenderable(templateSource, templateAbsolutePath, script);
-            } else {
-                hbsRenderable = new HbsRenderable(templateSource, templateAbsolutePath);
-            }
+            String templateString = new String(Files.readAllBytes(templateAbsolutePath), StandardCharsets.UTF_8);
+            Path scriptPath = templateAbsolutePath.resolveSibling(name + ".js");
+            TemplateSource templateSource = new StringTemplateSource(
+                    FileUtil.relativePath(templateAbsolutePath).toString(),
+                    templateString);
+            HbsRenderable hbsRenderable = new HbsRenderable(
+                    templateSource,
+                    FileUtil.createScriptIfExist(scriptPath));
 
             // Do initial parse to identify layout & fill zones
             Context initialParseContext = Context.newContext(new Object());
-            InitHandlebarsUtil.compile(hbsRenderable.getTemplate()).apply(initialParseContext);
+            InitHandlebarsUtil.compile(templateSource).apply(initialParseContext);
             Optional<String> layoutName = InitHandlebarsUtil.getLayoutName(initialParseContext);
             Renderable layout;
             Map<String, Renderable> fillingZones;
@@ -58,6 +57,7 @@ class PageCreator {
             throw new UUFException("error creating the page", e);
         }
     }
+
 
     private UriPatten getUriPatten(Path pageDir, String name) throws IOException {
         StringBuilder uri = new StringBuilder();

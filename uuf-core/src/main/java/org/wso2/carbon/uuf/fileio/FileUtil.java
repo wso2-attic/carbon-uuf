@@ -3,9 +3,12 @@ package org.wso2.carbon.uuf.fileio;
 import org.wso2.carbon.uuf.core.Fragment;
 import org.wso2.carbon.uuf.core.Renderable;
 import org.wso2.carbon.uuf.core.UUFException;
+import org.wso2.carbon.uuf.handlebars.Executable;
+import org.wso2.carbon.uuf.handlebars.JSExecutable;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -65,4 +68,13 @@ class FileUtil {
         return (config != null) ? Optional.of(config) : Optional.empty();
     }
 
+    public static Optional<Executable> createScriptIfExist(Path scriptPath) throws IOException {
+        if (scriptPath.toFile().exists()) {
+            String scriptSource = new String(Files.readAllBytes(scriptPath), StandardCharsets.UTF_8);
+            JSExecutable script = new JSExecutable(scriptSource, scriptPath);
+            return Optional.of(script);
+        } else {
+            return Optional.empty();
+        }
+    }
 }

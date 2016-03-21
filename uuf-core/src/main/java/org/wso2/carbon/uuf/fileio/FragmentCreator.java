@@ -1,14 +1,16 @@
 package org.wso2.carbon.uuf.fileio;
 
+import com.github.jknack.handlebars.io.StringTemplateSource;
+import com.github.jknack.handlebars.io.TemplateSource;
 import org.wso2.carbon.uuf.core.Fragment;
 import org.wso2.carbon.uuf.core.UUFException;
 import org.wso2.carbon.uuf.handlebars.HbsRenderable;
-import org.wso2.carbon.uuf.handlebars.JSExecutable;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Optional;
 
 import static org.wso2.carbon.uuf.fileio.FromArtifactAppCreator.ROOT_COMPONENT_NAME;
 
@@ -27,25 +29,22 @@ public class FragmentCreator {
             name = componentName + "." + fileName;
         }
 
-        HbsRenderable hbsRenderable;
         try {
-            Path templatePath = fragmentDir.resolve(fileName + ".hbs");
-            if (!templatePath.toFile().exists()) {
+            Path templateAbsolutePath = fragmentDir.resolve(fileName + ".hbs");
+            if (!Files.exists(templateAbsolutePath)) {
                 throw new UUFException("'" + fileName + "' fragment does not have a template.");
             }
-            String templateSource = new String(Files.readAllBytes(templatePath), StandardCharsets.UTF_8);
-            Path scriptPath = fragmentDir.resolve(fileName + ".js");
-            if (scriptPath.toFile().exists()) {
-                String scriptSource = new String(Files.readAllBytes(scriptPath), StandardCharsets.UTF_8);
-                JSExecutable script = new JSExecutable(scriptSource, scriptPath);
-                hbsRenderable = new HbsRenderable(templateSource, templatePath, script);
-            } else {
-                hbsRenderable = new HbsRenderable(templateSource, templatePath);
-            }
+            String templateString = new String(Files.readAllBytes(templateAbsolutePath), StandardCharsets.UTF_8);
+            Path scriptPath = templateAbsolutePath.resolveSibling(name + ".js");
+            TemplateSource templateSource = new StringTemplateSource(
+                    FileUtil.relativePath(templateAbsolutePath).toString(),
+                    templateString);
+            HbsRenderable hbsRenderable = new HbsRenderable(
+                    templateSource,
+                    FileUtil.createScriptIfExist(scriptPath));
+            return new Fragment(name, fragmentDir.toString(), hbsRenderable);
         } catch (IOException e) {
             throw new UUFException("Cannot create '" + name + "' fragment.");
         }
-
-        return new Fragment(name, fragmentDir.toString(), hbsRenderable);
     }
 }
