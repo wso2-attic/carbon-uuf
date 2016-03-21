@@ -14,14 +14,13 @@
 #logo {
     display: block;
     margin: 0 auto;
-    width: 120px;
-    height: 70px;
+    height: 24px;
     background: url(../images/uuf-logo.svg) no-repeat 50% 50%;
 }
 
 .header-logo {
-    margin: 10px 0;
-    width: 250px;
+    padding-top: 7px;
+    background: #2C2E4E;
 }
 
 .header-logo h1 {
@@ -34,7 +33,7 @@
 .page-header {
     margin: 0;
     padding-bottom: 0;
-    background: #101010;
+    background: #25263A;
     color: #fff;
     min-width: 500px;
 }
@@ -64,7 +63,7 @@
     height: 100%;
     margin-left: -250px;
     overflow-y: auto;
-    background: #101010;
+    background: #25263A;
     -webkit-transition: all 0.5s ease;
     -moz-transition: all 0.5s ease;
     -o-transition: all 0.5s ease;
