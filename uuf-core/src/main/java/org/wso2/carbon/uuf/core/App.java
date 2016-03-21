@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.core.Response;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class App {
     private static final Logger log = LoggerFactory.getLogger(App.class);
@@ -14,6 +15,7 @@ public class App {
     private final Map<String, Fragment> fragments;
     private final Map<String, Renderable> bindings;
     private final Map<String, String> configuration;
+    private final Map<String, Component> components;
 
     public App(String context, List<Page> pages, Map<String, Fragment> fragments, Map<String, Renderable> bindings, Map<String, String> configuration) {
         if (!context.startsWith("/")) {
@@ -28,6 +30,16 @@ public class App {
         this.bindings = bindings;
         this.pages = pages;
         this.configuration = configuration;
+        components = null;
+    }
+
+    public App(String context, Set<Component> components) {
+        this.context = context;
+        this.components = components.stream().collect(Collectors.toMap(Component::getName, fragment -> fragment));
+        fragments = null;
+        pages = null;
+        configuration = null;
+        bindings = null;
     }
 
     public String renderPage(HttpRequest request) {
