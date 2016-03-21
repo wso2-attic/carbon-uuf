@@ -5,6 +5,9 @@ import com.github.jknack.handlebars.Template;
 import com.github.jknack.handlebars.io.StringTemplateSource;
 import com.github.jknack.handlebars.io.TemplateSource;
 import com.google.common.collect.Multimap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.wso2.carbon.uuf.DebugUtil;
 import org.wso2.carbon.uuf.core.Fragment;
 import org.wso2.carbon.uuf.core.Renderable;
 import org.wso2.carbon.uuf.core.UUFException;
@@ -21,6 +24,7 @@ public class HbsRenderable implements Renderable {
     private final Optional<Path> templatePath;
     private final Optional<Executable> executable;
     private final Template compiledTemplate;
+    private static final Logger log = LoggerFactory.getLogger(HbsRenderable.class);
 
     public HbsRenderable(String templateSource) {
         this(templateSource, Optional.<Path>empty(), Optional.<Executable>empty());
@@ -72,6 +76,9 @@ public class HbsRenderable implements Renderable {
         RuntimeHandlebarsUtil.setBindings(context, bindings);
         RuntimeHandlebarsUtil.setFragments(context, fragments);
         try {
+            if (log.isDebugEnabled()) {
+                log.debug("Template " + this + " was applied with context " + DebugUtil.safeJsonString(context));
+            }
             return compiledTemplate.apply(context);
         } catch (IOException e) {
             throw new UUFException("Handlebars rendering failed", e);

@@ -6,6 +6,8 @@ import com.github.jknack.handlebars.Template;
 import com.github.jknack.handlebars.io.TemplateSource;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.core.Fragment;
 import org.wso2.carbon.uuf.core.Renderable;
 import org.wso2.carbon.uuf.core.UUFException;
@@ -21,6 +23,7 @@ public class RuntimeHandlebarsUtil {
     private static final String BINDING_KEY = RuntimeHandlebarsUtil.class.getName() + "#bindings";
     private static final String FRAGMENT_KEY = RuntimeHandlebarsUtil.class.getName() + "#fragments";
     private static final String CONFIG_KEY = RuntimeHandlebarsUtil.class.getName() + "#config";
+    private static final Logger log = LoggerFactory.getLogger(RuntimeHandlebarsUtil.class);
 
 
     static {
@@ -72,6 +75,10 @@ public class RuntimeHandlebarsUtil {
                     fragmentContext = options.context;
                 } else {
                     fragmentContext = fragmentArgs;
+                }
+
+                if (log.isDebugEnabled()) {
+                    log.debug("Fragment " + fragment + " is called from " + options.fn);
                 }
                 String content = fragment.render(fragmentContext, bindings, fragments).trim();
                 return new Handlebars.SafeString(content);
