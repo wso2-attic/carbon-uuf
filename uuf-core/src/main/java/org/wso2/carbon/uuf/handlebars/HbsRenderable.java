@@ -1,6 +1,7 @@
 package org.wso2.carbon.uuf.handlebars;
 
 import com.github.jknack.handlebars.Context;
+import com.github.jknack.handlebars.Handlebars;
 import com.github.jknack.handlebars.Template;
 import com.github.jknack.handlebars.io.TemplateSource;
 import com.google.common.collect.Multimap;
@@ -10,7 +11,10 @@ import org.wso2.carbon.uuf.DebugUtil;
 import org.wso2.carbon.uuf.core.Fragment;
 import org.wso2.carbon.uuf.core.Renderable;
 import org.wso2.carbon.uuf.core.UUFException;
-import org.wso2.carbon.uuf.handlebars.util.RuntimeHandlebarsUtil;
+import org.wso2.carbon.uuf.handlebars.helpers.runtime.ConfigHelper;
+import org.wso2.carbon.uuf.handlebars.helpers.runtime.DefineZoneHelper;
+import org.wso2.carbon.uuf.handlebars.helpers.runtime.IncludeFragmentHelper;
+import org.wso2.carbon.uuf.handlebars.helpers.runtime.MissingHelper;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -18,15 +22,31 @@ import java.util.Map;
 import java.util.Optional;
 
 public class HbsRenderable implements Renderable {
+
+    public static final String BINDING_KEY = HbsRenderable.class.getName() + "#bindings";
+    public static final String FRAGMENT_KEY = HbsRenderable.class.getName() + "#fragments";
+
     private final Optional<Executable> executable;
     private final Template compiledTemplate;
     private static final Logger log = LoggerFactory.getLogger(HbsRenderable.class);
     private final String templatePath;
+    private static final Handlebars HANDLEBARS = new Handlebars();
+
+    static {
+        HANDLEBARS.registerHelper("defineZone", DefineZoneHelper.INSTANCE);
+        HANDLEBARS.registerHelper("config", ConfigHelper.INSTANCE);
+        HANDLEBARS.registerHelper("includeFragment", IncludeFragmentHelper.INSTANCE);
+        HANDLEBARS.registerHelperMissing(MissingHelper.INSTANCE);
+    }
 
     public HbsRenderable(TemplateSource template, Optional<Executable> executable) {
         this.executable = executable;
         this.templatePath = template.filename();
-        this.compiledTemplate = RuntimeHandlebarsUtil.compile(template);
+        try {
+            this.compiledTemplate = HANDLEBARS.compile(template);
+        } catch (IOException e) {
+            throw new UUFException("pages template completions error", e);
+        }
     }
 
     public Optional<Executable> getScript() {
@@ -46,8 +66,8 @@ public class HbsRenderable implements Renderable {
                 throw new UnsupportedOperationException();
             }
         }
-        RuntimeHandlebarsUtil.setBindings(context, bindings);
-        RuntimeHandlebarsUtil.setFragments(context, fragments);
+        context.data(FRAGMENT_KEY, fragments);
+        context.data(BINDING_KEY, bindings);
         try {
             if (log.isDebugEnabled()) {
                 log.debug("Template " + this + " was applied with context " + DebugUtil.safeJsonString(context));
