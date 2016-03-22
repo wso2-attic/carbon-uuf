@@ -27,7 +27,6 @@ public class IncludeFragmentHelper implements Helper<String> {
         Map<String, Fragment> fragments = options.data(FRAGMENT_KEY);
         Fragment fragment = fragments.get(fragmentName);
         if (fragment != null) {
-            //TODO: maybe use the same context
             Map<String, Object> fragmentArgs = options.hash;
             Object fragmentContext;
             if (fragmentArgs.isEmpty()) {
