@@ -1,8 +1,8 @@
 package org.wso2.carbon.uuf;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import io.netty.handler.codec.http.DefaultFullHttpRequest;
-import io.netty.handler.codec.http.DefaultHttpRequest;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -18,10 +18,9 @@ import javax.ws.rs.core.Response;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.Optional;
 
 import static io.netty.handler.codec.http.HttpMethod.GET;
-import static io.netty.handler.codec.http.HttpVersion.HTTP_1_0;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
 public class AppTest {
@@ -59,23 +58,24 @@ public class AppTest {
     }
 
     @Test
-    public void testServeToComponent() throws Exception {
-        Component cmp1 = new Component("test.cmp1", "/cmp1", Collections.emptySet(), Collections.emptySet()) {
+    public void testServeToComponent() {
+        Component cmp1 = new Component("root", "", Collections.emptySet(), Collections.emptySet(),
+                                       Collections.emptyMap(), Collections.emptyMap()) {
             @Override
-            public String renderPage(String pageUri) {
-                return "rendered page from component 1";
+            public Optional<String> renderPage(String pageUri) {
+                return Optional.empty();
             }
         };
-        Component cmp2 = new Component("test.cmp2", "/cmp2", Collections.emptySet(), Collections.emptySet()) {
+        Component cmp2 = new Component("test.cmp", Collections.emptySet(), Collections.emptySet(),
+                                       Collections.emptyMap(), Collections.emptyMap()) {
             @Override
-            public String renderPage(String pageUri) {
-                return "rendered page from component 2";
+            public Optional<String> renderPage(String pageUri) {
+                return Optional.of("rendered page from component");
             }
         };
-        Set<Component> components = ImmutableSet.of(cmp1, cmp2);
-        App app = new App("/test", components);
-        String output = app.renderPage(new DefaultHttpRequest(HTTP_1_0, GET, "/test/cmp1/rest/of/the/url"));
-        Assert.assertEquals(output, "rendered page from component 1");
+        App app = new App("/test", ImmutableSet.of(cmp1, cmp2), ImmutableMap.of());
+        String output = app.renderPage("/test/cmp/rest/of/the/url");
+        Assert.assertEquals(output, "rendered page from component");
     }
 
 }
