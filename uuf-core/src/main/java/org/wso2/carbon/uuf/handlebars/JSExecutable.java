@@ -7,13 +7,12 @@ import org.wso2.carbon.uuf.core.UUFException;
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
-import java.nio.file.Path;
 import java.util.Optional;
 
 @SuppressWarnings("PackageAccessibility")
 public class JSExecutable implements Executable {
 
-    private final Optional<Path> scriptPath;
+    private final Optional<String> scriptPath;
     private final Invocable engine;
     private static final NashornScriptEngineFactory factory = new NashornScriptEngineFactory();
 
@@ -29,15 +28,7 @@ public class JSExecutable implements Executable {
         }
     }
 
-    public JSExecutable(String scriptSource) {
-        this(scriptSource, Optional.empty());
-    }
-
-    public JSExecutable(String scriptSource, Path scriptPath) {
-        this(scriptSource, Optional.of(scriptPath));
-    }
-
-    private JSExecutable(String scriptSource, Optional<Path> scriptPath) {
+    public JSExecutable(String scriptSource, Optional<String> scriptPath) {
         this.scriptPath = scriptPath;
         if (scriptPath.isPresent()) {
             // Append script file name for debugging purposes
@@ -57,7 +48,7 @@ public class JSExecutable implements Executable {
     }
 
     private String getPath() {
-        return scriptPath.map(Path::toString).orElse("\"<in-memory-script>\"");
+        return scriptPath.orElse("\"<in-memory-script>\"");
     }
 
     public Object execute(Object context) {

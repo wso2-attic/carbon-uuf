@@ -2,7 +2,6 @@ package org.wso2.carbon.uuf.fileio;
 
 import com.github.jknack.handlebars.io.StringTemplateSource;
 import com.github.jknack.handlebars.io.TemplateSource;
-import com.sun.javafx.UnmodifiableArrayList;
 import org.wso2.carbon.uuf.core.Page;
 import org.wso2.carbon.uuf.core.Renderable;
 import org.wso2.carbon.uuf.core.UUFException;
@@ -55,7 +54,7 @@ class PageCreator {
     }
 
 
-    private UriPatten getUriPatten(Path pageDir, String name) throws IOException {
+    private UriPatten getUriPatten(Path pageDir, String name) {
         StringBuilder uri = new StringBuilder();
         for (int i = 2; i < pageDir.getNameCount() - 1; i++) {
             Path aPageDir = pageDir.getName(i);

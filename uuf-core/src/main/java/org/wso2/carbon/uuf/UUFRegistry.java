@@ -26,7 +26,7 @@ public class UUFRegistry {
 
     private static final Logger log = LoggerFactory.getLogger(UUFRegistry.class);
     private final AppCreator appCreator;
-    private Optional<DebugAppender> debugAppender;
+    private final Optional<DebugAppender> debugAppender;
     private final Map<String, App> apps = new HashMap<>();
 
     public UUFRegistry(AppCreator appCreator, Optional<DebugAppender> debugAppender) {

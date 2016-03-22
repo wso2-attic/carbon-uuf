@@ -13,7 +13,7 @@ import java.util.Optional;
 
 class LayoutCreator {
 
-    private Path componentsDir;
+    private final Path componentsDir;
 
     public LayoutCreator(Path componentsDir) {
         this.componentsDir = componentsDir;
