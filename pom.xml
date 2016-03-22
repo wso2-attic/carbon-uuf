@@ -32,6 +32,13 @@
         <version>2</version>
     </parent>
 
+    <scm>
+        <connection>scm:git:https://github.com/wso2/carbon-uuf.git</connection>
+        <url>https://github.com/wso2/carbon-uuf.git</url>
+        <developerConnection>scm:git:https://github.com/wso2/carbon-uuf.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
     <modules>
         <module>nashorn-osgi-fragment</module>
         <module>uuf-core</module>
