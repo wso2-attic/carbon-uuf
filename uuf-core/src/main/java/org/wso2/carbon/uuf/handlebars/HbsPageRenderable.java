@@ -10,7 +10,10 @@ import org.wso2.carbon.uuf.handlebars.helpers.init.LayoutHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.init.ResourceHelper;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 public class HbsPageRenderable extends HbsRenderable {
     private final Map<String, HbsPageRenderable> fillingZone;
@@ -23,6 +26,7 @@ public class HbsPageRenderable extends HbsRenderable {
         HANDLEBARS.registerHelper("fillZone", FillZoneHelper.INSTANCE);
         HANDLEBARS.registerHelper("layout", LayoutHelper.INSTANCE);
         HANDLEBARS.registerHelper("headJs", ResourceHelper.JS_INSTANCE);
+        HANDLEBARS.registerHelperMissing((context, options) -> "");
     }
 
 
