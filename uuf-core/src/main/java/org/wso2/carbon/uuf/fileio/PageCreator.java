@@ -6,7 +6,7 @@ import org.wso2.carbon.uuf.core.Page;
 import org.wso2.carbon.uuf.core.Renderable;
 import org.wso2.carbon.uuf.core.UUFException;
 import org.wso2.carbon.uuf.core.UriPatten;
-import org.wso2.carbon.uuf.handlebars.HbsPageRenderable;
+import org.wso2.carbon.uuf.handlebars.HbsInitRenderable;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -30,13 +30,13 @@ class PageCreator {
             TemplateSource templateSource = new StringTemplateSource(
                     FileUtil.relativePath(templateAbsolutePath).toString(),
                     templateString);
-            HbsPageRenderable hbsRenderable = new HbsPageRenderable(
+            HbsInitRenderable hbsRenderable = new HbsInitRenderable(
                     templateSource,
                     FileUtil.createScriptIfExist(scriptPath));
 
             Optional<String> layoutName = hbsRenderable.getLayoutName();
             Renderable layout;
-            Map<String, HbsPageRenderable> fillingZones = hbsRenderable.getFillingZones();
+            Map<String, HbsInitRenderable> fillingZones = hbsRenderable.getFillingZones();
             if (layoutName.isPresent()) {
                 layout = layoutCreator.createLayout(
                         layoutName.get(),

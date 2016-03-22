@@ -5,8 +5,7 @@ import com.github.jknack.handlebars.Options;
 import com.github.jknack.handlebars.io.StringTemplateSource;
 import com.github.jknack.handlebars.io.TemplateSource;
 import org.wso2.carbon.uuf.core.Renderable;
-import org.wso2.carbon.uuf.handlebars.HbsPageRenderable;
-import org.wso2.carbon.uuf.handlebars.HbsRenderable;
+import org.wso2.carbon.uuf.handlebars.HbsInitRenderable;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -46,7 +45,7 @@ public class FillZoneHelper implements Helper<String> {
         TemplateSource templateSource = new StringTemplateSource(
                 options.fn.filename(),
                 sb.toString());
-        zones.put(zoneName, new HbsPageRenderable(templateSource, Optional.empty()));
+        zones.put(zoneName, new HbsInitRenderable(templateSource, Optional.empty()));
         return "";
     }
 }
