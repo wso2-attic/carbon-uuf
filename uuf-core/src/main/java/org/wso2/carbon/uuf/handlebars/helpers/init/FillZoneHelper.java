@@ -6,21 +6,23 @@ import com.github.jknack.handlebars.io.StringTemplateSource;
 import com.github.jknack.handlebars.io.TemplateSource;
 import org.wso2.carbon.uuf.core.Renderable;
 import org.wso2.carbon.uuf.handlebars.HbsPageRenderable;
-import org.wso2.carbon.uuf.handlebars.HbsRenderable;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-
 public class FillZoneHelper implements Helper<String> {
     public static final String ZONES_KEY = FillZoneHelper.class.getName() + "#zones";
-    public static final FillZoneHelper INSTANCE = new FillZoneHelper();
+
+    private static final FillZoneHelper INSTANCE = new FillZoneHelper();
 
     private FillZoneHelper() {
     }
 
+    public static FillZoneHelper getInstance() {
+        return INSTANCE;
+    }
 
     @Override
     public CharSequence apply(String zoneName, Options options) throws IOException {
@@ -43,9 +45,7 @@ public class FillZoneHelper implements Helper<String> {
             zones = new HashMap<>();
             options.data(ZONES_KEY, zones);
         }
-        TemplateSource templateSource = new StringTemplateSource(
-                options.fn.filename(),
-                sb.toString());
+        TemplateSource templateSource = new StringTemplateSource(options.fn.filename(), sb.toString());
         zones.put(zoneName, new HbsPageRenderable(templateSource, Optional.empty()));
         return "";
     }

@@ -23,13 +23,12 @@ public class HbsPageRenderable extends HbsRenderable {
     private static final Handlebars HANDLEBARS = new Handlebars();
 
     static {
-        HANDLEBARS.registerHelper("fillZone", FillZoneHelper.INSTANCE);
-        HANDLEBARS.registerHelper("layout", LayoutHelper.INSTANCE);
+        HANDLEBARS.registerHelper("fillZone", FillZoneHelper.getInstance());
+        HANDLEBARS.registerHelper("layout", LayoutHelper.getInstance());
         HANDLEBARS.registerHelper("headJs", ResourceHelper.JS_INSTANCE);
         HANDLEBARS.registerHelperMissing((context, options) -> "");
     }
-
-
+    
     public HbsPageRenderable(TemplateSource template, Optional<Executable> executable) {
         super(template, executable);
         Template compiledTemplate;

@@ -10,9 +10,13 @@ import java.io.IOException;
 public class LayoutHelper implements Helper<String> {
 
     public static final String LAYOUT_KEY = HbsPageRenderable.class.getName() + "#layout";
-    public static final LayoutHelper INSTANCE = new LayoutHelper();
+    private static final LayoutHelper INSTANCE = new LayoutHelper();
 
     private LayoutHelper() {
+    }
+
+    public static LayoutHelper getInstance() {
+        return INSTANCE;
     }
 
     @Override
