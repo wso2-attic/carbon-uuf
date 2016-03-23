@@ -41,7 +41,7 @@ public class FragmentCreator {
             HbsRenderable hbsRenderable = new HbsRenderable(
                     templateSource,
                     FileUtil.createScriptIfExist(scriptPath));
-            return new Fragment(name, fragmentDir.toString(), hbsRenderable);
+            return null;//new Fragment(name, fragmentDir.toString(), hbsRenderable);
         } catch (IOException e) {
             throw new UUFException("Cannot create '" + name + "' fragment.");
         }

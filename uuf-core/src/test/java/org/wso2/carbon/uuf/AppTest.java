@@ -1,6 +1,6 @@
 package org.wso2.carbon.uuf;
 
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.wso2.carbon.uuf.core.App;
@@ -43,13 +43,14 @@ public class AppTest {
 //        }
 //    }
 
+    //TODO: enable
     @Test
     public void testServeToComponent() {
 
         Component cmp1 = new Component(
                 "root",
                 "/",
-               /*pages*/ Collections.emptySet(),
+               /*pages*/ Collections.emptySortedSet(),
                /*fragments*/ Collections.emptySet(),
                /*config*/ Collections.emptyMap(),
                /*binding*/ Collections.emptyMap()) {
@@ -60,7 +61,8 @@ public class AppTest {
         };
         Component cmp2 = new Component(
                 "test.component.orange",
-               /*pages*/ Collections.emptySet(),
+                "/orange",
+               /*pages*/ Collections.emptySortedSet(),
                /*fragments*/ Collections.emptySet(),
                /*config*/ Collections.emptyMap(),
                /*binding*/ Collections.emptyMap()) {
@@ -69,7 +71,7 @@ public class AppTest {
                 return Optional.of("page " + pageUri + " rendered");
             }
         };
-        App app = new App("/test", ImmutableMap.of("/", cmp1, "/orange", cmp2));
+        App app = new App("/test", ImmutableSet.of(cmp1, cmp2));
         String output = app.renderPage("/orange/rest/of/the/url");
         Assert.assertEquals(output, "page /rest/of/the/url rendered");
     }

@@ -1,28 +1,23 @@
 package org.wso2.carbon.uuf.fileio;
 
-import com.google.common.collect.ImmutableMap;
-import org.apache.commons.lang3.StringUtils;
 import org.wso2.carbon.uuf.core.App;
-import org.wso2.carbon.uuf.core.AppCreator;
-import org.wso2.carbon.uuf.core.Component;
 import org.wso2.carbon.uuf.core.Fragment;
 import org.wso2.carbon.uuf.core.Page;
+import org.wso2.carbon.uuf.core.Renderable;
 import org.wso2.carbon.uuf.core.UUFException;
-import org.yaml.snakeyaml.Yaml;
 
 import javax.ws.rs.core.Response;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class FromArtifactAppCreator implements AppCreator {
+public class FromArtifactAppCreator {
 
     public static final String ROOT_COMPONENT_NAME = "root";
 
@@ -78,16 +73,12 @@ public class FromArtifactAppCreator implements AppCreator {
                 .collect(Collectors.toMap(Fragment::getName, Function.identity()));
 
         Path bindingsConfig = components.resolve("root/bindings.yaml");
-
-//        Map<String, Renderable> bindings = FileUtil.getBindings(bindingsConfig, fragments);
+        Map<String, Renderable> bindings = FileUtil.getBindings(bindingsConfig, fragments);
         Path appConfig = components.resolve("root/config.yaml");
-        Map config = new Yaml().loadAs(Files.newInputStream(appConfig), Map.class);
         Map<String, String> configuration = FileUtil.getConfiguration(appConfig);
-        Component component = new Component("org.wso2.xxx", "/", Collections.emptySet(), Collections.emptySet(), configuration, config);
-        return new App(context, ImmutableMap.of("/", component));
+        return new App(context, pages, fragments, bindings, configuration);
     }
 
-    @Override
     public App createApp(String name, String context) {
         try {
             return createFromComponents(getAppPath(name).resolve("components"), context);
@@ -96,52 +87,8 @@ public class FromArtifactAppCreator implements AppCreator {
         }
     }
 
-    /**
-     * This method resolves static routing request uris. URI types categorized into;
-     * <ul>
-     * <li>root_resource_uri: /public/root/base/{subResourceUri}</li>
-     * <li>root_fragment_uri: /public/root/{fragmentName}/{subResourceUri}</li>
-     * <li>component_resource_uri: /public/{componentName}/base/{subResourceUri}</li>
-     * <li>fragment_resource_uri: /public/{componentName}/{fragmentName}/{subResourceUri}</li>
-     * </ul>
-     * These path types are mapped into following file paths on the file system;
-     * <ul>
-     * <li>{appName}/components/[{componentName}|ROOT]/[{fragmentName}|base]/public/{subResourcePath}</li>
-     * </ul>
-     *
-     * @param appName      application name
-     * @param resourcePath resource uri
-     * @return resolved path
-     */
-    @Override
     public Path resolve(String appName, String resourcePath) {
-        Path appPath = getAppPath(appName);
-        String resourcePathParts[] = resourcePath.split("/");
-
-        if (resourcePathParts.length < 5) {
-            throw new IllegalArgumentException("Invalid resourcePath! `" + resourcePath + "`");
-        }
-
-        String resourceUriPrefixPart = resourcePathParts[1];
-        String componentUriPart = resourcePathParts[2];
-        String fragmentUriPart = resourcePathParts[3];
-        int fourthSlash = StringUtils.ordinalIndexOf(resourcePath, "/", 4);
-        String subResourcePath = resourcePath.substring(fourthSlash + 1, resourcePath.length());
-
-        if (!resourceUriPrefixPart.equals(AppCreator.STATIC_RESOURCE_URI_PREFIX)) {
-            throw new IllegalArgumentException("Resource path should starts with `/public`!");
-        }
-
-        Path componentPath = appPath.resolve("components").resolve(componentUriPart);
-        Path fragmentPath;
-        if (fragmentUriPart.equals(AppCreator.STATIC_RESOURCE_URI_BASE_PREFIX)) {
-            fragmentPath = componentPath;
-        } else {
-            fragmentPath = componentPath.resolve("fragments").resolve(fragmentUriPart);
-        }
-        //{appName}/components/[{componentName}|ROOT]/[{fragmentName}|base]/public/{subResourcePath}
-
-        return fragmentPath.resolve("public").resolve(subResourcePath);
+        throw new UnsupportedOperationException();
     }
 
     private Path getAppPath(String name) {

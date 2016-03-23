@@ -5,7 +5,7 @@ import com.google.common.collect.Multimap;
 
 import java.util.Map;
 
-public class Page {
+public class Page implements Comparable<Page> {
 
     private final UriPatten uriPatten;
     private final Renderable layout;
@@ -37,5 +37,10 @@ public class Page {
     @Override
     public String toString() {
         return "{\"uriPattern\": " + uriPatten.toString() + ", \"layout\": " + layout.toString() + "}";
+    }
+
+    @Override
+    public int compareTo(Page o) {
+        return this.getUriPatten().compareTo(o.getUriPatten());
     }
 }

@@ -37,7 +37,7 @@ public class UriPatten implements Comparable<UriPatten> {
             }
         }
         if (a.length == b.length) {
-            return 0;
+            return o.pattenString.compareTo(pattenString);
         } else {
             return b.length - a.length;
         }

@@ -7,8 +7,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.core.App;
 import org.wso2.carbon.uuf.core.AppCreator;
+import org.wso2.carbon.uuf.core.Resolver;
 import org.wso2.carbon.uuf.core.UUFException;
-import org.wso2.carbon.uuf.fileio.FromArtifactAppCreator;
+import org.wso2.carbon.uuf.fileio.ArtifactResolver;
 import org.wso2.msf4j.MicroservicesRunner;
 import org.wso2.msf4j.util.SystemVariableUtil;
 
@@ -27,16 +28,20 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static org.wso2.carbon.uuf.core.Resolver.STATIC_RESOURCE_URI_PREFIX;
+
 public class UUFRegistry {
 
     private static final Logger log = LoggerFactory.getLogger(UUFRegistry.class);
     private final AppCreator appCreator;
     private final Optional<DebugAppender> debugAppender;
     private final Map<String, App> apps = new HashMap<>();
+    private Resolver resolver;
 
-    public UUFRegistry(AppCreator appCreator, Optional<DebugAppender> debugAppender) {
+    public UUFRegistry(AppCreator appCreator, Optional<DebugAppender> debugAppender, Resolver resolver) {
         this.appCreator = appCreator;
         this.debugAppender = debugAppender;
+        this.resolver = resolver;
     }
 
     public static Optional<DebugAppender> createDebugAppender() {
@@ -52,7 +57,9 @@ public class UUFRegistry {
 
     public static void main(String[] args) {
         List<Path> uufAppsPath = Collections.singletonList(FileSystems.getDefault().getPath("."));
-        UUFRegistry registry = new UUFRegistry(new FromArtifactAppCreator(uufAppsPath), createDebugAppender());
+        ArtifactResolver resolver = new ArtifactResolver(uufAppsPath);
+        UUFRegistry registry = new UUFRegistry(new AppCreator(resolver),
+                createDebugAppender(), resolver);
         new MicroservicesRunner().deploy(new UUFService(registry)).start();
     }
 
@@ -86,7 +93,7 @@ public class UUFRegistry {
         App app = apps.get(appName);
         try {
             if (isStaticResourceRequest(resourcePath)) {
-                Path resource = appCreator.resolve(appName, resourcePath);
+                Path resource = resolver.resolveStatic(appName, resourcePath);
                 if (Files.exists(resource) && Files.isRegularFile(resource)) {
                     //TODO: use non blocking mime map
                     return Response.ok(resource.toFile(), getMime(resourcePath));
@@ -147,7 +154,7 @@ public class UUFRegistry {
             // if the tailing / is extra or a it is missing, send 301
             if (e.getStatus() == Response.Status.NOT_FOUND && app != null) {
                 if (uri.endsWith("/")) {
-                    String uriWithoutSlash = resourcePath.substring(0, uri.length() - 1);
+                    String uriWithoutSlash = resourcePath.substring(0, resourcePath.length() - 1);
                     if (app.hasPage(uriWithoutSlash)) {
                         return Response.status(301).header("Location", uriWithoutSlash);
                     }
@@ -193,7 +200,7 @@ public class UUFRegistry {
     }
 
     private boolean isStaticResourceRequest(String resourcePath) {
-        return resourcePath.startsWith("/" + AppCreator.STATIC_RESOURCE_URI_PREFIX);
+        return resourcePath.startsWith("/" + STATIC_RESOURCE_URI_PREFIX);
     }
 
     private Response.ResponseBuilder sendError(String appName, Exception e, Response.Status status) {

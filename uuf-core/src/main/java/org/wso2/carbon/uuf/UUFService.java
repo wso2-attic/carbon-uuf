@@ -20,7 +20,8 @@ import io.netty.handler.codec.http.HttpRequest;
 import org.osgi.service.component.annotations.Component;
 import org.slf4j.MDC;
 import org.wso2.carbon.kernel.utils.Utils;
-import org.wso2.carbon.uuf.fileio.FromArtifactAppCreator;
+import org.wso2.carbon.uuf.core.AppCreator;
+import org.wso2.carbon.uuf.fileio.ArtifactResolver;
 import org.wso2.msf4j.Microservice;
 
 import javax.ws.rs.GET;
@@ -55,12 +56,14 @@ public class UUFService implements Microservice {
     @SuppressWarnings("unused")
     public UUFService() throws IOException {
         // we need an empty constructor for running in OSGi mode.
-        this(new UUFRegistry(
-                new FromArtifactAppCreator(
-                        Files
-                                .list(Utils.getCarbonHome().resolve("deployment").resolve("uufapps"))
-                                .collect(Collectors.toList())),
-                Optional.empty()));
+        this(getRegistry());
+    }
+
+    private static UUFRegistry getRegistry() throws IOException {
+        ArtifactResolver resolver = new ArtifactResolver(Files
+                .list(Utils.getCarbonHome().resolve("deployment").resolve("uufapps"))
+                .collect(Collectors.toList()));
+        return new UUFRegistry(new AppCreator(resolver), Optional.empty(), resolver);
     }
 
     @GET

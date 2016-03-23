@@ -12,21 +12,9 @@ import java.util.Optional;
 @SuppressWarnings("PackageAccessibility")
 public class JSExecutable implements Executable {
 
+    private static final NashornScriptEngineFactory factory = new NashornScriptEngineFactory();
     private final Optional<String> scriptPath;
     private final Invocable engine;
-    private static final NashornScriptEngineFactory factory = new NashornScriptEngineFactory();
-
-    private class MSSCaller extends AbstractJSObject {
-        @Override
-        public Object call(Object jsThis, Object... args) {
-            return "{}";
-        }
-
-        @Override
-        public boolean isFunction() {
-            return true;
-        }
-    }
 
     public JSExecutable(String scriptSource, Optional<String> scriptPath) {
         this.scriptPath = scriptPath;
@@ -66,5 +54,17 @@ public class JSExecutable implements Executable {
     @Override
     public String toString() {
         return "{path:'" + getPath() + "'}";
+    }
+
+    private class MSSCaller extends AbstractJSObject {
+        @Override
+        public Object call(Object jsThis, Object... args) {
+            return "{}";
+        }
+
+        @Override
+        public boolean isFunction() {
+            return true;
+        }
     }
 }

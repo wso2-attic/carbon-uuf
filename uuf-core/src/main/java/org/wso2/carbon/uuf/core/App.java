@@ -8,6 +8,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class App {
     public static final String ROOT_COMPONENT_NAME = "root";
@@ -22,38 +25,32 @@ public class App {
     private final List<Page> pages;
     private final Map<String, Fragment> fragments;
 
-//    public App(String context, List<Page> pages, Map<String, Fragment> fragments, Map<String, Renderable> bindings,
-//               Map<String, String> configuration) {
-//        if (!context.startsWith("/")) {
-//            throw new IllegalArgumentException("app context must start with a '/'");
-//        }
-//
-//        // We sort uri so that more wildcard-ed ones go to the bottom.
-//        Collections.sort(pages, (o1, o2) -> o1.getUriPatten().compareTo(o2.getUriPatten()));
-//
-//        this.context = context;
-//        this.fragments = fragments;
-//        this.bindings = bindings;
-//        this.pages = pages;
-//        this.configuration = configuration;
-//        components = null;
-//        rootComponent = components.get("/");
-//        if (rootComponent == null) {
-//            throw new UUFException("App must have a root component");
-//        }
-//    }
+    public App(String context, List<Page> pages, Map<String, Fragment> fragments, Map<String, Renderable> bindings,
+               Map<String, String> configuration) {
+        if (!context.startsWith("/")) {
+            throw new IllegalArgumentException("app context must start with a '/'");
+        }
 
-    public App(String context, Map<String, Component> components) {
+        // We sort uri so that more wildcard-ed ones go to the bottom.
+        Collections.sort(pages, (o1, o2) -> o1.getUriPatten().compareTo(o2.getUriPatten()));
+
+        this.context = context;
+        this.fragments = fragments;
+        this.bindings = bindings;
+        this.pages = pages;
+        this.configuration = configuration;
+        components = Collections.emptyMap();
+        rootComponent = null;
+    }
+
+    public App(String context, Set<Component> components) {
         if (!context.startsWith("/")) {
             throw new IllegalArgumentException("app context must start with a '/'");
         }
 
         this.context = context;
-        this.components = Collections.unmodifiableMap(components);
-        this.rootComponent = components.get("/");
-        if (rootComponent == null) {
-            throw new UUFException("App must have a root component");
-        }
+        this.components = components.stream().collect(Collectors.toMap(Component::getContext, Function.identity()));
+        this.rootComponent = this.components.get("/");
 
         //TODO: calculate base on the components
         this.configuration = Collections.emptyMap();

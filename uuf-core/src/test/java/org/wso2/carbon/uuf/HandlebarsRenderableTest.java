@@ -65,7 +65,7 @@ public class HandlebarsRenderableTest {
         HbsRenderable hbsRenderable = createHbsRenderable("{{includeFragment \"test-fragment\"}}");
         final String fragmentContent = "This is the content of the test-fragment.";
         HbsRenderable fragmentRenderable = createHbsRenderable(fragmentContent);
-        Fragment fragment = new Fragment("test-fragment", "/mock/path", fragmentRenderable);
+        Fragment fragment = new Fragment("test-fragment", fragmentRenderable);
         String output = hbsRenderable.render(new Object(), ImmutableListMultimap.of(), ImmutableMap.of("test-fragment",
                 fragment));
         Assert.assertEquals(output, fragmentContent);
@@ -75,7 +75,7 @@ public class HandlebarsRenderableTest {
     public void testFragmentWithDefineZone() {
         final String fragmentContent = "This is the content of the test-fragment.";
         HbsRenderable fragmentRenderable = createHbsRenderable(fragmentContent + "{{defineZone \"test-zone\"}}");
-        Fragment fragment = new Fragment("test-fragment", "/mock/path", fragmentRenderable);
+        Fragment fragment = new Fragment("test-fragment", fragmentRenderable);
 
         final String zoneContent = "This is the content of the test-zone.";
         HbsRenderable fillZoneRenderable = createHbsRenderable(zoneContent);
