@@ -1,0 +1,6 @@
+{{layout "org.wso2.uuf.base.main"}}
+
+{{#fillZone "content"}}
+username :
+password :
+{{/fillZone}}

@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -34,6 +35,7 @@ public class Component {
         this.name = name;
         this.context = context;
         this.pages = pages.stream().collect(Collectors.toList());
+        //TODO: use a sorted Set and avoid sorting
         // We sort pages based on their URIs so that more wildcard-ed ones go to the bottom.
         Collections.sort(this.pages, (p1, p2) -> p1.getUriPatten().compareTo(p2.getUriPatten()));
         this.fragments = fragments.stream().collect(Collectors.toMap(Fragment::getName, fragment -> fragment));
@@ -43,15 +45,19 @@ public class Component {
             Fragment fragment = this.fragments.get(entry.getValue());
             if (fragment == null) {
                 throw new UUFException("Fragment '" + entry.getValue() + "' does not exists in Component '" + name +
-                                               "'. Hence cannot bind it to zone '" + entry.getKey() + "'.");
+                        "'. Hence cannot bind it to zone '" + entry.getKey() + "'.");
             }
             bindings.put(entry.getKey(), fragment.getRenderer());
         }
     }
 
     private static String getContextFormName(String name) {
-        String[] parts = name.split("\\.");
-        return ("/" + parts[parts.length - 1]);
+        int lastDot = name.lastIndexOf('.');
+        if (lastDot >= 0) {
+            return name.substring(lastDot);
+        } else {
+            return name;
+        }
     }
 
     public Map<String, Renderable> getBindings() {
@@ -64,30 +70,38 @@ public class Component {
 
     public Optional<String> renderPage(String pageUri) {
         Optional<Page> servingPage = getPage(pageUri);
-        if (!servingPage.isPresent()) {
-            return Optional.<String>empty();
+        if (log.isDebugEnabled() && servingPage.isPresent()) {
+            log.debug("Component '" + name + "' is serving Page '" +
+                    servingPage.get().toString() + "' for URI '" + pageUri + "'.");
         }
+        return servingPage.map(page -> page.serve(createModel(pageUri), bindings, fragments));
+    }
 
-        Page page = servingPage.get();
-        if (log.isDebugEnabled()) {
-            log.debug("Component '" + name + "' is serving Page '" + page.toString() + "' for URI '" + pageUri + "'.");
-        }
+    private Map<String, Object> createModel(String pageUri) {
         Map<String, Object> model = new HashMap<>();
         model.put("pageUri", pageUri);
         model.put("config", configuration);
-        return Optional.of(page.serve(model, bindings, fragments));
+        return model;
     }
 
     private Optional<Page> getPage(String pageUri) {
-        for (Page p : pages) {
-            if (p.getUriPatten().match(pageUri)) {
-                return Optional.of(p);
-            }
-        }
-        return Optional.empty();
+        return pages.stream().filter(page -> page.getUriPatten().match(pageUri)).findFirst();
+    }
+
+    public boolean hasPage(String uri) {
+        return getPage(uri).isPresent();
     }
 
     public String getName() {
         return name;
+    }
+
+    public Set<Page> getPages() {
+        //TODO: convert pages to a set
+        return new HashSet<>(pages);
+    }
+
+    public Map<String, Fragment> getFragments() {
+        return fragments;
     }
 }

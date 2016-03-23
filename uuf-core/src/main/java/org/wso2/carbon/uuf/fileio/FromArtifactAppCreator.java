@@ -1,13 +1,21 @@
 package org.wso2.carbon.uuf.fileio;
 
+import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.StringUtils;
-import org.wso2.carbon.uuf.core.*;
+import org.wso2.carbon.uuf.core.App;
+import org.wso2.carbon.uuf.core.AppCreator;
+import org.wso2.carbon.uuf.core.Component;
+import org.wso2.carbon.uuf.core.Fragment;
+import org.wso2.carbon.uuf.core.Page;
+import org.wso2.carbon.uuf.core.UUFException;
+import org.yaml.snakeyaml.Yaml;
 
 import javax.ws.rs.core.Response;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -70,10 +78,13 @@ public class FromArtifactAppCreator implements AppCreator {
                 .collect(Collectors.toMap(Fragment::getName, Function.identity()));
 
         Path bindingsConfig = components.resolve("root/bindings.yaml");
-        Map<String, Renderable> bindings = FileUtil.getBindings(bindingsConfig, fragments);
+
+//        Map<String, Renderable> bindings = FileUtil.getBindings(bindingsConfig, fragments);
         Path appConfig = components.resolve("root/config.yaml");
+        Map config = new Yaml().loadAs(Files.newInputStream(appConfig), Map.class);
         Map<String, String> configuration = FileUtil.getConfiguration(appConfig);
-        return new App(context, pages, fragments, bindings, configuration);
+        Component component = new Component("org.wso2.xxx", "/", Collections.emptySet(), Collections.emptySet(), configuration, config);
+        return new App(context, ImmutableMap.of("/", component));
     }
 
     @Override
