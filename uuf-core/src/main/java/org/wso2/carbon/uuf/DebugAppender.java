@@ -13,16 +13,6 @@ public class DebugAppender extends AppenderSkeleton {
     private static final int CAPACITY = 1000;
     private final ConcurrentLinkedQueue<DebugMessage> messages = new ConcurrentLinkedQueue<>();
 
-    private static class DebugMessage {
-        private final String requestId;
-        private final LoggingEvent event;
-
-        DebugMessage(String requestId, LoggingEvent event) {
-            this.requestId = requestId;
-            this.event = event;
-        }
-    }
-
     public void attach() {
         setThreshold(Level.DEBUG);
         Logger logger = Logger.getLogger("org.wso2.carbon.uuf");
@@ -46,7 +36,6 @@ public class DebugAppender extends AppenderSkeleton {
         return gson.toJson(messages);
     }
 
-
     @Override
     public boolean requiresLayout() {
         return false;
@@ -54,5 +43,15 @@ public class DebugAppender extends AppenderSkeleton {
 
     @Override
     public void close() {
+    }
+
+    private static class DebugMessage {
+        private final String requestId;
+        private final LoggingEvent event;
+
+        DebugMessage(String requestId, LoggingEvent event) {
+            this.requestId = requestId;
+            this.event = event;
+        }
     }
 }

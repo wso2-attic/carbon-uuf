@@ -1,7 +1,12 @@
 package org.wso2.carbon.uuf;
 
 import com.github.jknack.handlebars.Context;
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,6 +24,15 @@ public class DebugUtil {
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.registerTypeAdapter(Context.class, new HbsContextSerializer());
         gson = gsonBuilder.create();
+    }
+
+    public static String safeJsonString(Object obj) {
+        try {
+            return gson.toJson(obj);
+        } catch (Error error) {
+            log.debug("Un-serializable object detected " + obj, error);
+            return "{\"__uuf_error__\":true}";
+        }
     }
 
     private static class HbsContextSerializer implements JsonSerializer<Context> {
@@ -42,15 +56,6 @@ public class DebugUtil {
                 e.printStackTrace();
             }
             return serialized;
-        }
-    }
-
-    public static String safeJsonString(Object obj) {
-        try {
-            return gson.toJson(obj);
-        } catch (Error error) {
-            log.debug("Un-serializable object detected " + obj, error);
-            return "{\"__uuf_error__\":true}";
         }
     }
 

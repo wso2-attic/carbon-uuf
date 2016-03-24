@@ -10,8 +10,8 @@ import java.util.stream.Collectors;
  */
 public class UriPatten implements Comparable<UriPatten> {
     private static final Pattern WILDCARD = Pattern.compile("\\{(\\w+)\\}");
-    private Pattern patten;
     private final String pattenString;
+    private Pattern patten;
 
     public UriPatten(String patten) {
         pattenString = patten;
