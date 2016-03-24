@@ -10,13 +10,12 @@ import java.io.IOException;
 public class MissingHelper implements Helper {
 
     private static final ImmutableSet<String> KEYWORDS = ImmutableSet.of("layout", "fillZone", "headCss");
-    public static final MissingHelper INSTANCE = new MissingHelper();
 
     @Override
     public CharSequence apply(Object arg, Options options) throws IOException {
         if (KEYWORDS.contains(options.helperName)) {
             return "";
         }
-        throw new UUFException("value not available for the variable/helper '" + options.helperName + "' in " + arg);
+        throw new UUFException("Cannot evaluate the variable/helper '" + options.helperName + "' in '" + arg + "'.");
     }
 }

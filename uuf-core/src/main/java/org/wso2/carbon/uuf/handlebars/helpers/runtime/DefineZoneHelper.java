@@ -17,12 +17,6 @@ import static org.wso2.carbon.uuf.handlebars.HbsRenderable.FRAGMENT_KEY;
 
 public class DefineZoneHelper implements Helper<String> {
 
-    public static final DefineZoneHelper INSTANCE = new DefineZoneHelper();
-
-    private DefineZoneHelper() {
-
-    }
-
     @Override
     public CharSequence apply(String zoneName, Options options) throws IOException {
         //TODO: remove duplicate, IncludeFragmentHelper

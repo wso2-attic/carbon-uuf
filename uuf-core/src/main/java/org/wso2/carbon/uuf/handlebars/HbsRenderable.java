@@ -27,15 +27,17 @@ public class HbsRenderable implements Renderable {
     public static final String BINDING_KEY = HbsRenderable.class.getName() + "#bindings";
     public static final String FRAGMENT_KEY = HbsRenderable.class.getName() + "#fragments";
     public static final String WRITER_KEY = HbsRenderable.class.getName() + "#writer";
+    //
+
     private static final Logger log = LoggerFactory.getLogger(HbsRenderable.class);
     private static final Handlebars HANDLEBARS = new Handlebars();
 
     static {
-        HANDLEBARS.registerHelper("defineZone", DefineZoneHelper.INSTANCE);
-        HANDLEBARS.registerHelper("includeFragment", IncludeFragmentHelper.INSTANCE);
+        HANDLEBARS.registerHelper("defineZone", new DefineZoneHelper());
+        HANDLEBARS.registerHelper("includeFragment", new IncludeFragmentHelper());
         HANDLEBARS.registerHelper("headerJs", ResourceHelper.getHeaderJsInstance());
-        HANDLEBARS.registerHelper("placeholder", PlaceholderHelper.getInstance());
-        HANDLEBARS.registerHelperMissing(MissingHelper.INSTANCE);
+        HANDLEBARS.registerHelper("placeholder", new PlaceholderHelper());
+        HANDLEBARS.registerHelperMissing(new MissingHelper());
     }
 
     private final Optional<Executable> executable;
