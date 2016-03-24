@@ -14,7 +14,6 @@ public class MissingHelper implements Helper {
 
     @Override
     public CharSequence apply(Object arg, Options options) throws IOException {
-
         if (KEYWORDS.contains(options.helperName)) {
             return "";
         }

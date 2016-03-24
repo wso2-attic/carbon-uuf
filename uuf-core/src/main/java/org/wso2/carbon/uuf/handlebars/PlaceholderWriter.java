@@ -6,17 +6,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class MarkedWriter extends Writer {
+public class PlaceholderWriter extends Writer {
 
     private List<StringBuilder> buffers;
     private StringBuilder currentBuffer;
-    private List<String> markers;
+    private List<String> placeholders;
 
-    public MarkedWriter() {
+    public PlaceholderWriter() {
         buffers = new ArrayList<>();
         currentBuffer = new StringBuilder();
         buffers.add(currentBuffer);
-        markers = new ArrayList<>();
+        placeholders = new ArrayList<>();
     }
 
     @Override
@@ -70,21 +70,21 @@ public class MarkedWriter extends Writer {
     public void close() throws IOException {
         currentBuffer = null;
         buffers = null;
-        markers = null;
+        placeholders = null;
     }
 
-    public void addMarker(final String markerName) {
+    public void addPlaceholder(final String placeholderName) {
         currentBuffer = new StringBuilder();
         buffers.add(currentBuffer);
-        markers.add(markerName);
+        placeholders.add(placeholderName);
     }
 
-    public String toString(Map<String, String> markerValues) {
+    public String toString(Map<String, String> placeholderValues) {
         StringBuilder tmpBuffer = new StringBuilder();
         tmpBuffer.append(buffers.get(0));
-        for (int i = 0; i < markers.size(); i++) {
-            String markerValue = markerValues.get(markers.get(i));
-            tmpBuffer.append(markerValue);
+        for (int i = 0; i < placeholders.size(); i++) {
+            String placeholderValue = placeholderValues.get(placeholders.get(i));
+            tmpBuffer.append(placeholderValue);
             tmpBuffer.append(buffers.get(i + 1));
         }
         return tmpBuffer.toString();

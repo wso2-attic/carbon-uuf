@@ -77,7 +77,7 @@ public class HbsRenderable implements Renderable {
         if (log.isDebugEnabled()) {
             log.debug("Template " + this + " was applied with context " + DebugUtil.safeJsonString(context));
         }
-        MarkedWriter writer = new MarkedWriter();
+        PlaceholderWriter writer = new PlaceholderWriter();
         context.data(WRITER_KEY, writer);
         try {
             compiledTemplate.apply(context, writer);
