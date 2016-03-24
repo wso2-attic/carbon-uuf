@@ -1,11 +1,14 @@
 package org.wso2.carbon.uuf.handlebars.helpers.runtime;
 
+import com.github.jknack.handlebars.Context;
 import com.github.jknack.handlebars.Helper;
 import com.github.jknack.handlebars.Options;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ResourceHelper implements Helper<String> {
 
@@ -46,5 +49,13 @@ public class ResourceHelper implements Helper<String> {
 
     public String getResourceKey() {
         return resourceKey;
+    }
+
+    public static Map<String, String> getResources(Context context) {
+        String headerJsKey = ResourceHelper.class.getName() + "#headerJs";
+        List<String> headJsList = context.data(headerJsKey);
+        Map<String, String> rv = new HashMap<>();
+        rv.put("headerJs", ((headJsList == null || headJsList.isEmpty()) ? "" : headJsList.toString()));
+        return rv;
     }
 }
