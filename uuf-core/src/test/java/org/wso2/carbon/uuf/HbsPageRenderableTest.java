@@ -14,19 +14,19 @@ public class HbsPageRenderableTest {
 
     @Test
     public void testHeadJsInZones() {
-        String content = "{{#fillZone \"myZone\"}}{{headJs \"my.js\"}}{{headJs \"ok.js\"}}{{/fillZone}}";
+        String content = "{{#fillZone \"myZone\"}}{{headerJs \"/my.js\"}}{{headerJs \"/ok.js\"}}{{/fillZone}}";
         TemplateSource templateSource = new StringTemplateSource("<test>", content);
         HbsPageRenderable renderable = new HbsPageRenderable(templateSource, Optional.empty());
         List<String> js = renderable.getFillingZones().get("myZone").getHeadJs();
-        Assert.assertEquals(js, ImmutableList.of("my.js", "ok.js"));
+        Assert.assertEquals(js, ImmutableList.of("/my.js", "/ok.js"));
     }
 
     @Test
     public void testHeadJs() {
-        TemplateSource templateSource = new StringTemplateSource("<test>", "{{headJs \"my.js\"}} {{headJs \"ok.js\"}}");
+        TemplateSource templateSource = new StringTemplateSource("<test>", "{{headerJs \"/my.js\"}} {{headerJs \"/ok.js\"}}");
         HbsPageRenderable renderable = new HbsPageRenderable(templateSource, Optional.empty());
         List<String> js = renderable.getHeadJs();
-        Assert.assertEquals(js, ImmutableList.of("my.js", "ok.js"));
+        Assert.assertEquals(js, ImmutableList.of("/my.js", "/ok.js"));
     }
 
 }
