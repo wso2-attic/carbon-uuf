@@ -14,6 +14,8 @@ import org.wso2.carbon.uuf.core.UUFException;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.DefineZoneHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.IncludeFragmentHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.MissingHelper;
+import org.wso2.carbon.uuf.handlebars.helpers.runtime.PlaceholderHelper;
+import org.wso2.carbon.uuf.handlebars.helpers.runtime.ResourceHelper;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -24,12 +26,15 @@ public class HbsRenderable implements Renderable {
 
     public static final String BINDING_KEY = HbsRenderable.class.getName() + "#bindings";
     public static final String FRAGMENT_KEY = HbsRenderable.class.getName() + "#fragments";
+    public static final String WRITER_KEY = HbsRenderable.class.getName() + "#writer";
     private static final Logger log = LoggerFactory.getLogger(HbsRenderable.class);
     private static final Handlebars HANDLEBARS = new Handlebars();
 
     static {
         HANDLEBARS.registerHelper("defineZone", DefineZoneHelper.INSTANCE);
         HANDLEBARS.registerHelper("includeFragment", IncludeFragmentHelper.INSTANCE);
+        HANDLEBARS.registerHelper("headerJs", ResourceHelper.getHeaderJsInstance());
+        HANDLEBARS.registerHelper("placeholder", PlaceholderHelper.getInstance());
         HANDLEBARS.registerHelperMissing(MissingHelper.INSTANCE);
     }
 
@@ -73,12 +78,13 @@ public class HbsRenderable implements Renderable {
             log.debug("Template " + this + " was applied with context " + DebugUtil.safeJsonString(context));
         }
         MarkedWriter writer = new MarkedWriter();
+        context.data(WRITER_KEY, writer);
         try {
             compiledTemplate.apply(context, writer);
         } catch (IOException e) {
             throw new UUFException("Handlebars rendering failed", e);
         }
-        return writer.toString();
+        return writer.toString(ResourceHelper.getResources(context));
     }
 
     private Context objectToContext(Object candidateContext) {
