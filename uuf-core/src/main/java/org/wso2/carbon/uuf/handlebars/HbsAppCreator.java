@@ -8,6 +8,7 @@ import org.wso2.carbon.uuf.core.create.AppCreator;
 import org.wso2.carbon.uuf.core.create.ComponentReference;
 import org.wso2.carbon.uuf.core.create.FileReference;
 import org.wso2.carbon.uuf.core.create.FragmentReference;
+import org.wso2.carbon.uuf.core.create.Resolver;
 
 import java.util.*;
 import java.util.stream.Collectors;

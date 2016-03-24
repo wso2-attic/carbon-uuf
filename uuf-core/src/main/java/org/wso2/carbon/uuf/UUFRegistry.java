@@ -7,7 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.core.App;
 import org.wso2.carbon.uuf.core.BundleCreator;
-import org.wso2.carbon.uuf.core.Resolver;
+import org.wso2.carbon.uuf.core.create.Resolver;
 import org.wso2.carbon.uuf.core.UUFException;
 import org.wso2.carbon.uuf.core.create.AppCreator;
 import org.wso2.carbon.uuf.fileio.ArtifactResolver;
@@ -31,7 +31,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static org.wso2.carbon.uuf.core.Resolver.STATIC_RESOURCE_URI_PREFIX;
+import static org.wso2.carbon.uuf.core.create.Resolver.STATIC_RESOURCE_URI_PREFIX;
 
 public class UUFRegistry {
 

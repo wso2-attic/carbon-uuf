@@ -1,6 +1,4 @@
-package org.wso2.carbon.uuf.core;
-
-import org.wso2.carbon.uuf.core.create.ComponentReference;
+package org.wso2.carbon.uuf.core.create;
 
 import java.nio.file.Path;
 import java.util.stream.Stream;
