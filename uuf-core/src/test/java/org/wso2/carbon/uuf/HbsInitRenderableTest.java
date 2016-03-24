@@ -3,8 +3,6 @@ package org.wso2.carbon.uuf;
 import com.github.jknack.handlebars.HandlebarsError;
 import com.github.jknack.handlebars.HandlebarsException;
 import com.github.jknack.handlebars.io.StringTemplateSource;
-import com.github.jknack.handlebars.io.TemplateSource;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -12,7 +10,6 @@ import org.wso2.carbon.uuf.core.Renderable;
 import org.wso2.carbon.uuf.handlebars.HbsInitRenderable;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -21,7 +18,6 @@ public class HbsInitRenderableTest {
         StringTemplateSource stringTemplateSource = new StringTemplateSource("<test-source>", sourceStr);
         return new HbsInitRenderable(stringTemplateSource, Optional.empty());
     }
-
 
     @Test
     public void testNoZonesInZones() {
@@ -34,23 +30,6 @@ public class HbsInitRenderableTest {
         } catch (HandlebarsException e) {
             Assert.assertTrue(e.getMessage().contains("not valid"));
         }
-    }
-
-    @Test
-    public void testHeadJsInZones() {
-        String content = "{{#fillZone \"myZone\"}}{{headerJs \"/my.js\"}}{{headerJs \"/ok.js\"}}{{/fillZone}}";
-        TemplateSource templateSource = new StringTemplateSource("<test>", content);
-        HbsInitRenderable renderable = new HbsInitRenderable(templateSource, Optional.empty());
-        List<String> js = renderable.getFillingZones().get("myZone").getHeadJs();
-        Assert.assertEquals(js, ImmutableList.of("/my.js", "/ok.js"));
-    }
-
-    @Test
-    public void testHeaderJs() {
-        TemplateSource templateSource = new StringTemplateSource("<test>", "{{headerJs \"/my.js\"}} {{headerJs \"/ok.js\"}}");
-        HbsInitRenderable renderable = new HbsInitRenderable(templateSource, Optional.empty());
-        List<String> js = renderable.getHeadJs();
-        Assert.assertEquals(js, ImmutableList.of("/my.js", "/ok.js"));
     }
 
     @Test
@@ -68,5 +47,4 @@ public class HbsInitRenderableTest {
             Assert.assertEquals(error.column, 27, "error is in the 26th column");
         }
     }
-
 }
