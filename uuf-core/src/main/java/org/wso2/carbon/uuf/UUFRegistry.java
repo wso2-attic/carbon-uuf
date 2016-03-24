@@ -189,6 +189,7 @@ public class UUFRegistry {
         if (resourcePath.endsWith("/")) {
             return "text/html";
         }
+        //TODO: getFileNameMap() is a synchronized method, find a better approach
         String mime = URLConnection.guessContentTypeFromName(resourcePath);
         if (mime == null) {
             int i = resourcePath.lastIndexOf('.');
