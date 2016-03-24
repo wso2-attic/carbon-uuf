@@ -7,11 +7,9 @@ import com.github.jknack.handlebars.io.TemplateSource;
 import org.wso2.carbon.uuf.core.UUFException;
 import org.wso2.carbon.uuf.handlebars.helpers.init.FillZoneHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.init.LayoutHelper;
-import org.wso2.carbon.uuf.handlebars.helpers.runtime.ResourceHelper;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -40,7 +38,6 @@ public class HbsInitRenderable extends HbsRenderable {
         Map<String, HbsInitRenderable> zones = context.data(FillZoneHelper.ZONES_KEY);
         fillingZone = (zones == null) ? Collections.emptyMap() : zones;
         layout = Optional.ofNullable(context.data(LayoutHelper.LAYOUT_KEY));
-        List<String> headJsList = context.data(ResourceHelper.getHeaderJsInstance().getResourceKey());
     }
 
     public Map<String, HbsInitRenderable> getFillingZones() {

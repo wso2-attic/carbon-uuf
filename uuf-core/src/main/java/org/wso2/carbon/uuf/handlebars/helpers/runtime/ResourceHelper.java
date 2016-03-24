@@ -47,15 +47,16 @@ public class ResourceHelper implements Helper<String> {
         return "";
     }
 
-    public String getResourceKey() {
-        return resourceKey;
-    }
-
-    public static Map<String, String> getResources(Context context) {
+    public static Map<String, String> getAllResources(Context context) {
         String headerJsKey = ResourceHelper.class.getName() + "#headerJs";
         List<String> headJsList = context.data(headerJsKey);
         Map<String, String> rv = new HashMap<>();
         rv.put("headerJs", ((headJsList == null || headJsList.isEmpty()) ? "" : headJsList.toString()));
         return rv;
+    }
+
+    private List<String> getResources(Context context) {
+        List<String> resourcesList = context.data(this.resourceKey);
+        return (resourcesList == null) ? new ArrayList<>(0) : resourcesList;
     }
 }

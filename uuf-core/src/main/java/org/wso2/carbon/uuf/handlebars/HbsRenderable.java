@@ -84,7 +84,7 @@ public class HbsRenderable implements Renderable {
         } catch (IOException e) {
             throw new UUFException("Handlebars rendering failed", e);
         }
-        return writer.toString(ResourceHelper.getResources(context));
+        return writer.toString(ResourceHelper.getAllResources(context));
     }
 
     private Context objectToContext(Object candidateContext) {
