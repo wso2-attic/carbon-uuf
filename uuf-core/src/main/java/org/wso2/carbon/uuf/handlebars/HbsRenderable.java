@@ -11,7 +11,6 @@ import org.wso2.carbon.uuf.DebugUtil;
 import org.wso2.carbon.uuf.core.Fragment;
 import org.wso2.carbon.uuf.core.Renderable;
 import org.wso2.carbon.uuf.core.UUFException;
-import org.wso2.carbon.uuf.handlebars.helpers.runtime.ConfigHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.DefineZoneHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.IncludeFragmentHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.MissingHelper;
@@ -34,7 +33,6 @@ public class HbsRenderable implements Renderable {
 
     static {
         HANDLEBARS.registerHelper("defineZone", DefineZoneHelper.INSTANCE);
-        HANDLEBARS.registerHelper("config", ConfigHelper.INSTANCE);
         HANDLEBARS.registerHelper("includeFragment", IncludeFragmentHelper.INSTANCE);
         HANDLEBARS.registerHelperMissing(MissingHelper.INSTANCE);
     }
@@ -53,12 +51,12 @@ public class HbsRenderable implements Renderable {
         return executable;
     }
 
-
     @Override
     public String render(Object model, Multimap<String, Renderable> bindings, Map<String, Fragment> fragments) {
         Context context = objectToContext(model);
         if (executable.isPresent()) {
-            Object jsModel = executable.get().execute(Collections.EMPTY_MAP);
+            //TODO: set context for executable
+            Object jsModel = executable.get().execute(Collections.emptyMap());
             if (jsModel instanceof Map) {
                 //noinspection unchecked
                 context.combine((Map<String, ?>) jsModel);
@@ -68,14 +66,16 @@ public class HbsRenderable implements Renderable {
         }
         context.data(FRAGMENT_KEY, fragments);
         context.data(BINDING_KEY, bindings);
+        if (log.isDebugEnabled()) {
+            log.debug("Template " + this + " was applied with context " + DebugUtil.safeJsonString(context));
+        }
+        MarkedWriter writer = new MarkedWriter();
         try {
-            if (log.isDebugEnabled()) {
-                log.debug("Template " + this + " was applied with context " + DebugUtil.safeJsonString(context));
-            }
-            return compiledTemplate.apply(context);
+            compiledTemplate.apply(context, writer);
         } catch (IOException e) {
             throw new UUFException("Handlebars rendering failed", e);
         }
+        return writer.toString();
     }
 
     private Context objectToContext(Object candidateContext) {
