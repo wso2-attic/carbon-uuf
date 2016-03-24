@@ -51,7 +51,6 @@ public class HandlebarsRenderableTest {
         Assert.assertEquals(output, "Hello Alice! Have a good day.");
     }
 
-
     @Test
     public void testTemplateWithJsExecutable() {
         JSExecutable script = new JSExecutable("function onRequest(){ return {name: \"Alice\"}; }", Optional.empty());
@@ -67,7 +66,7 @@ public class HandlebarsRenderableTest {
         HbsRenderable fragmentRenderable = createHbsRenderable(fragmentContent);
         Fragment fragment = new Fragment("test-fragment", fragmentRenderable);
         String output = hbsRenderable.render(new Object(), ImmutableListMultimap.of(), ImmutableMap.of("test-fragment",
-                fragment));
+                                                                                                       fragment));
         Assert.assertEquals(output, fragmentContent);
     }
 
@@ -94,5 +93,13 @@ public class HandlebarsRenderableTest {
         Multimap<String, Renderable> bindings = ImmutableListMultimap.of("test-zone", fillZoneRenderable);
         String output = defineZoneRenderable.render(new Object(), bindings, Collections.emptyMap());
         Assert.assertEquals(output, zoneContent);
+    }
+
+    @Test
+    public void testHeaderJs() {
+        HbsRenderable hbsRenderable = createHbsRenderable("<head>{{placeholder \"headerJs\"}}</head>" +
+                                                                  "{{headerJs \"/my.js\"}}{{headerJs \"/ok.js\"}}");
+        String output = hbsRenderable.render(new Object(), ImmutableListMultimap.of(), Collections.emptyMap());
+        Assert.assertEquals(output, "<head>[/my.js, /ok.js]</head>");
     }
 }
