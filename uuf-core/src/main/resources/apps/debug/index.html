@@ -1,28 +1,105 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>UUF Debuger</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <title>UUF Debuger</title>
+    
+    <!-- bootstrap -->
+    <link href="public/lib/bootstrap-3.3.6/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- font-awesome -->
+    <link href="public/lib/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet">
+    
+    <!-- custom css -->
+    <link href="public/css/debug.css" rel="stylesheet">
+
 </head>
+
 <body>
-<script>
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', 'api/pages');
-    xhr.send(null);
-    xhr.onreadystatechange = function () {
-        var DONE = 4; // readyState 4 means the request is done.
-        var OK = 200; // status 200 is a successful return.
-        if (xhr.readyState === DONE) {
-            if (xhr.status === OK)
-                console.log(xhr.responseText); // 'This is the returned text.'
-                document.querySelectorAll('body').item(0).textContent = "pages = " + xhr.responseText;
-        } else {
-            console.log('Error: ' + xhr.status); // An error occurred during the request.
-        }
-    };
-</script>
+    
+    <div id="wrapper">
+        
+        <!-- Sidebar -->
+        <div id="sidebar-wrapper">
+            <div class="header-logo">
+                <a id="logo" href="/doc"></a>
+                <h1>WSO2 UUF</h1>
+            </div>
+            <ul class="sidebar-nav">
+                <li class="active">
+                    <a title="Pages" href="#pages">
+                        <i class="fa fa-file-o fa-fw"></i>
+                        <span>Pages</span>
+                    </a>
+                </li>
+                <li>
+                    <a title="Fragments" href="#fragments">
+                        <i class="fa fa-clone fa-fw"></i>
+                        <span>Fragments</span>
+                    </a>
+                </li>
+                <li>
+                    <a title="Logs" href="#logs">
+                        <i class="fa fa-list fa-fw"></i>
+                        <span>Logs</span>
+                    </a>
+                </li>
+                <li>
+                    <a title="Trace" href="#trace">
+                        <i class="fa fa-sitemap  fa-fw"></i>
+                        <span>Trace</span>
+                    </a>
+                </li>
+                <li>
+                    <a title="Network" href="#network">
+                        <i class="fa fa-exchange fa-fw"></i>
+                        <span>Network</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <!-- /#sidebar-wrapper -->
+        
+        <!-- page-header -->
+        <div class="page-header">
+            <div class="container-fluid clearfix">
+                <a href="#menu-toggle" class="sidebar-toggle-button pull-left" id="menu-toggle">
+                    <span class="icon fa-stack">
+                        <i class="fa fa-bars fa-stack-1x"></i>
+                    </span>
+                </a>
+                <div class="page-title pull-left">
+                    <h1>Debug <a href="/pet-store">pet-store</a></h1>
+                </div>
+                <a class="git-link pull-right" href="https://github.com/wso2-incubator/uuf-samples/tree/master/sample-apps/sample-1/pet-store-non-working">
+                    <i class="fa fa-github fa-fw"></i><span>git</span>
+                </a>
+            </div>
+        </div>
+        <!-- /page-header -->
+        
+        <!-- #page-content-wrapper -->
+        <div id="page-content-wrapper">
+            <div id="content" class="container-fluid container-limited"></div>
+        </div>
+        <!-- /#page-content-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+    
+    <!-- jquery -->
+    <script src="public/lib/jquery-2.2.1/js/jquery-2.2.1.min.js"></script>
+
+    <!-- bootstrap core javaScript -->
+    <script src="public/lib/bootstrap-3.3.6/js/bootstrap.min.js"></script>
+
+    <!-- app script -->
+    <script src="public/js/app.js"></script>
+        
 </body>
 </html>

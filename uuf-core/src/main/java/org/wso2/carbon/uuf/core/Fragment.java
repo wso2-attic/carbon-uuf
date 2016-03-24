@@ -7,13 +7,10 @@ import java.util.Map;
 public class Fragment {
 
     private final String name;
-    //TODO:remove
-    private final String path;
     private final Renderable renderer;
 
-    public Fragment(String name, String path, Renderable renderer) {
+    public Fragment(String name, Renderable renderer) {
         this.name = name;
-        this.path = path;
         this.renderer = renderer;
     }
 
@@ -21,9 +18,6 @@ public class Fragment {
         return name;
     }
 
-    public String getPath() {
-        return path;
-    }
 
     public Renderable getRenderer() {
         return renderer;
@@ -35,6 +29,6 @@ public class Fragment {
 
     @Override
     public String toString() {
-        return "{\"name\": \"" + name + "\", \"path\": \"" + path + "\", \"renderer\": " + renderer.toString() + "}";
+        return "{\"name\": \"" + name + "\", \"renderer\": " + renderer.toString() + "}";
     }
 }

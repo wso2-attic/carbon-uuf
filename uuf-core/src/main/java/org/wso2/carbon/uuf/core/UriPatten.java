@@ -1,7 +1,6 @@
 package org.wso2.carbon.uuf.core;
 
 
-import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -27,7 +26,7 @@ public class UriPatten implements Comparable<UriPatten> {
     }
 
     @Override
-    public int compareTo(@Nonnull UriPatten o) {
+    public int compareTo(UriPatten o) {
         String[] a = WILDCARD.split(pattenString);
         String[] b = WILDCARD.split(o.pattenString);
         for (int i = 0; i < Math.min(a.length, b.length); i++) {
@@ -38,7 +37,7 @@ public class UriPatten implements Comparable<UriPatten> {
             }
         }
         if (a.length == b.length) {
-            return 0;
+            return o.pattenString.compareTo(pattenString);
         } else {
             return b.length - a.length;
         }

@@ -1,5 +1,7 @@
 package org.wso2.carbon.uuf.fileio;
 
+import com.github.jknack.handlebars.io.StringTemplateSource;
+import com.github.jknack.handlebars.io.TemplateSource;
 import org.wso2.carbon.uuf.core.Renderable;
 import org.wso2.carbon.uuf.handlebars.Executable;
 import org.wso2.carbon.uuf.handlebars.HbsRenderable;
@@ -11,7 +13,7 @@ import java.util.Optional;
 
 class LayoutCreator {
 
-    private Path componentsDir;
+    private final Path componentsDir;
 
     public LayoutCreator(Path componentsDir) {
         this.componentsDir = componentsDir;
@@ -30,12 +32,11 @@ class LayoutCreator {
             component = currentComponent;
             layoutName = layoutFullName;
         }
-        Path layoutPath = component.resolve("layouts").resolve(layoutName + ".hbs");
-        String layoutSource = new String(Files.readAllBytes(layoutPath));
-        if (executable.isPresent()) {
-            return new HbsRenderable(layoutSource, layoutPath, executable.get());
-        } else {
-            return new HbsRenderable(layoutSource, layoutPath);
-        }
+        Path layoutAbsolutePath = component.resolve("layouts").resolve(layoutName + ".hbs");
+        String layoutString = new String(Files.readAllBytes(layoutAbsolutePath));
+        TemplateSource layoutSource = new StringTemplateSource(
+                FileUtil.relativePath(layoutAbsolutePath).toString(),
+                layoutString);
+        return new HbsRenderable(layoutSource, executable);
     }
 }

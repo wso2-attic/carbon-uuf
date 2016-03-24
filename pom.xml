@@ -32,6 +32,13 @@
         <version>2</version>
     </parent>
 
+    <scm>
+        <connection>scm:git:https://github.com/wso2/carbon-uuf.git</connection>
+        <url>https://github.com/wso2/carbon-uuf.git</url>
+        <developerConnection>scm:git:https://github.com/wso2/carbon-uuf.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
     <modules>
         <module>nashorn-osgi-fragment</module>
         <module>uuf-core</module>
@@ -270,6 +277,9 @@
         <!-- Source and target java version -->
         <wso2.maven.compiler.source>1.8</wso2.maven.compiler.source>
         <wso2.maven.compiler.target>1.8</wso2.maven.compiler.target>
+
+        <!-- can't run tests from intellij without this -->
+        <maven-resources/>
     </properties>
 
 </project>

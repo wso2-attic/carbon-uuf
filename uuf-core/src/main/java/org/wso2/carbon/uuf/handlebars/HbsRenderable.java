@@ -1,67 +1,70 @@
 package org.wso2.carbon.uuf.handlebars;
 
 import com.github.jknack.handlebars.Context;
+import com.github.jknack.handlebars.Handlebars;
 import com.github.jknack.handlebars.Template;
-import com.github.jknack.handlebars.io.StringTemplateSource;
 import com.github.jknack.handlebars.io.TemplateSource;
 import com.google.common.collect.Multimap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.wso2.carbon.uuf.DebugUtil;
 import org.wso2.carbon.uuf.core.Fragment;
 import org.wso2.carbon.uuf.core.Renderable;
 import org.wso2.carbon.uuf.core.UUFException;
-import org.wso2.carbon.uuf.handlebars.util.RuntimeHandlebarsUtil;
+import org.wso2.carbon.uuf.handlebars.helpers.runtime.DefineZoneHelper;
+import org.wso2.carbon.uuf.handlebars.helpers.runtime.IncludeFragmentHelper;
+import org.wso2.carbon.uuf.handlebars.helpers.runtime.MissingHelper;
+import org.wso2.carbon.uuf.handlebars.helpers.runtime.PlaceholderHelper;
+import org.wso2.carbon.uuf.handlebars.helpers.runtime.ResourceHelper;
 
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 
 public class HbsRenderable implements Renderable {
-    private final TemplateSource template;
-    private final Optional<Path> templatePath;
+
+    public static final String BINDING_KEY = HbsRenderable.class.getName() + "#bindings";
+    public static final String FRAGMENT_KEY = HbsRenderable.class.getName() + "#fragments";
+    public static final String WRITER_KEY = HbsRenderable.class.getName() + "#writer";
+    private static final Logger log = LoggerFactory.getLogger(HbsRenderable.class);
+    private static final Handlebars HANDLEBARS = new Handlebars();
+
+    static {
+        HANDLEBARS.registerHelper("defineZone", DefineZoneHelper.INSTANCE);
+        HANDLEBARS.registerHelper("includeFragment", IncludeFragmentHelper.INSTANCE);
+        HANDLEBARS.registerHelper("headerJs", ResourceHelper.getHeaderJsInstance());
+        HANDLEBARS.registerHelper("placeholder", PlaceholderHelper.getInstance());
+        HANDLEBARS.registerHelperMissing(MissingHelper.INSTANCE);
+    }
+
     private final Optional<Executable> executable;
     private final Template compiledTemplate;
+    private final String templatePath;
 
-    public HbsRenderable(String templateSource) {
-        this(templateSource, Optional.<Path>empty(), Optional.<Executable>empty());
-    }
-
-    public HbsRenderable(String templateSource, Path templatePath) {
-        this(templateSource, Optional.of(templatePath), Optional.<Executable>empty());
-    }
-
-    public HbsRenderable(String templateSource, Executable executable) {
-        this(templateSource, Optional.<Path>empty(), Optional.of(executable));
-    }
-
-    public HbsRenderable(String templateSource, Path templatePath, Executable executable) {
-        this(templateSource, Optional.of(templatePath), Optional.of(executable));
-    }
-
-    private HbsRenderable(String templateSource, Optional<Path> templatePath, Optional<Executable> executable) {
-        this.templatePath = templatePath;
-        this.template = new StringTemplateSource(getPath(), templateSource);
+    public HbsRenderable(TemplateSource template, Optional<Executable> executable) {
         this.executable = executable;
-        this.compiledTemplate = RuntimeHandlebarsUtil.compile(template);
+        this.templatePath = template.filename();
+        try {
+            this.compiledTemplate = HANDLEBARS.compile(template);
+        } catch (IOException e) {
+            throw new UUFException("pages template completions error", e);
+        }
     }
 
     public Optional<Executable> getScript() {
         return executable;
     }
 
-    public TemplateSource getTemplate() {
-        return template;
-    }
-
-    private String getPath() {
-        return templatePath.map(Path::toString).orElse("\"<inline-template>\"");
-    }
-
     @Override
     public String render(Object model, Multimap<String, Renderable> bindings, Map<String, Fragment> fragments) {
         Context context = objectToContext(model);
         if (executable.isPresent()) {
-            Object jsModel = executable.get().execute(Collections.EMPTY_MAP);
+            //TODO: set context for executable
+            Object jsModel = executable.get().execute(Collections.emptyMap());
+            if (log.isDebugEnabled()) {
+                log.debug("js ran produced output " + DebugUtil.safeJsonString(jsModel));
+            }
             if (jsModel instanceof Map) {
                 //noinspection unchecked
                 context.combine((Map<String, ?>) jsModel);
@@ -69,13 +72,19 @@ public class HbsRenderable implements Renderable {
                 throw new UnsupportedOperationException();
             }
         }
-        RuntimeHandlebarsUtil.setBindings(context, bindings);
-        RuntimeHandlebarsUtil.setFragments(context, fragments);
+        context.data(FRAGMENT_KEY, fragments);
+        context.data(BINDING_KEY, bindings);
+        if (log.isDebugEnabled()) {
+            log.debug("Template " + this + " was applied with context " + DebugUtil.safeJsonString(context));
+        }
+        PlaceholderWriter writer = new PlaceholderWriter();
+        context.data(WRITER_KEY, writer);
         try {
-            return compiledTemplate.apply(context);
+            compiledTemplate.apply(context, writer);
         } catch (IOException e) {
             throw new UUFException("Handlebars rendering failed", e);
         }
+        return writer.toString(ResourceHelper.getResources(context));
     }
 
     private Context objectToContext(Object candidateContext) {
@@ -88,6 +97,7 @@ public class HbsRenderable implements Renderable {
 
     @Override
     public String toString() {
-        return "{\"path\": \"" + getPath() + "\"}";
+        return "{\"path\": \"" + templatePath + "\"" +
+                (executable.isPresent() ? ",\"js\": \"" + executable + "\"}" : "}");
     }
 }

@@ -6,17 +6,16 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.spi.LoggingEvent;
 
-import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class DebugAppender extends AppenderSkeleton {
 
     private static final int CAPACITY = 1000;
-    private ConcurrentLinkedQueue<DebugMessage> messages = new ConcurrentLinkedQueue<>();
+    private final ConcurrentLinkedQueue<DebugMessage> messages = new ConcurrentLinkedQueue<>();
 
     private static class DebugMessage {
-        private String requestId;
-        private LoggingEvent event;
+        private final String requestId;
+        private final LoggingEvent event;
 
         DebugMessage(String requestId, LoggingEvent event) {
             this.requestId = requestId;

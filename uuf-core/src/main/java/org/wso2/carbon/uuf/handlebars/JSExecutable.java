@@ -23,32 +23,12 @@ import java.util.Optional;
 @SuppressWarnings("PackageAccessibility")
 public class JSExecutable implements Executable {
 
-    private final Optional<Path> scriptPath;
-    private final Invocable engine;
     private static final NashornScriptEngineFactory factory = new NashornScriptEngineFactory();
+    private final Optional<String> scriptPath;
+    private final Invocable engine;
     private static final Logger log = LoggerFactory.getLogger(JSExecutable.class);
 
-    private class MSSCaller extends AbstractJSObject {
-        @Override
-        public Object call(Object jsThis, Object... args) {
-            return "{}";
-        }
-
-        @Override
-        public boolean isFunction() {
-            return true;
-        }
-    }
-
-    public JSExecutable(String scriptSource) {
-        this(scriptSource, Optional.<Path>empty());
-    }
-
-    public JSExecutable(String scriptSource, Path scriptPath) {
-        this(scriptSource, Optional.of(scriptPath));
-    }
-
-    private JSExecutable(String scriptSource, Optional<Path> scriptPath) {
+    public JSExecutable(String scriptSource, Optional<String> scriptPath) {
         this.scriptPath = scriptPath;
         if (scriptPath.isPresent()) {
             // Append script file name for debugging purposes
@@ -89,7 +69,7 @@ public class JSExecutable implements Executable {
     }
 
     private String getPath() {
-        return scriptPath.map(Path::toString).orElse("\"<in-memory-script>\"");
+        return scriptPath.orElse("\"<in-memory-script>\"");
     }
 
     public Object execute(Object context) {
@@ -107,5 +87,17 @@ public class JSExecutable implements Executable {
     @Override
     public String toString() {
         return "{path:'" + getPath() + "'}";
+    }
+
+    private class MSSCaller extends AbstractJSObject {
+        @Override
+        public Object call(Object jsThis, Object... args) {
+            return "{}";
+        }
+
+        @Override
+        public boolean isFunction() {
+            return true;
+        }
     }
 }

@@ -5,13 +5,13 @@ import com.google.common.collect.Multimap;
 
 import java.util.Map;
 
-public class Page {
+public class Page implements Comparable<Page> {
 
     private final UriPatten uriPatten;
     private final Renderable layout;
-    private final Map<String, Renderable> fillZones;
+    private final Map<String, ? extends Renderable> fillZones;
 
-    public Page(UriPatten uriPatten, Renderable layout, Map<String, Renderable> fillZones) {
+    public Page(UriPatten uriPatten, Renderable layout, Map<String, ? extends Renderable> fillZones) {
         this.uriPatten = uriPatten;
         this.layout = layout;
         this.fillZones = fillZones;
@@ -28,7 +28,7 @@ public class Page {
             combined.put(entry.getKey(), entry.getValue());
         }
         // add fill zones
-        for (Map.Entry<String, Renderable> entry : fillZones.entrySet()) {
+        for (Map.Entry<String, ? extends Renderable> entry : fillZones.entrySet()) {
             combined.put(entry.getKey(), entry.getValue());
         }
         return layout.render(model, combined, fragments);
@@ -37,5 +37,10 @@ public class Page {
     @Override
     public String toString() {
         return "{\"uriPattern\": " + uriPatten.toString() + ", \"layout\": " + layout.toString() + "}";
+    }
+
+    @Override
+    public int compareTo(Page o) {
+        return this.getUriPatten().compareTo(o.getUriPatten());
     }
 }
