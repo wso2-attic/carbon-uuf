@@ -17,7 +17,6 @@ import java.util.Optional;
 
 public class HbsInitRenderable extends HbsRenderable {
     private final Map<String, HbsInitRenderable> fillingZone;
-    private final List<String> headJs;
     private final Optional<String> layout;
 
     private static final Handlebars HANDLEBARS = new Handlebars();
@@ -25,7 +24,6 @@ public class HbsInitRenderable extends HbsRenderable {
     static {
         HANDLEBARS.registerHelper("fillZone", FillZoneHelper.getInstance());
         HANDLEBARS.registerHelper("layout", LayoutHelper.getInstance());
-        HANDLEBARS.registerHelper("headerJs", ResourceHelper.getHeaderJsInstance());
         HANDLEBARS.registerHelperMissing((context, options) -> "");
     }
     
@@ -43,11 +41,6 @@ public class HbsInitRenderable extends HbsRenderable {
         fillingZone = (zones == null) ? Collections.emptyMap() : zones;
         layout = Optional.ofNullable(context.data(LayoutHelper.LAYOUT_KEY));
         List<String> headJsList = context.data(ResourceHelper.getHeaderJsInstance().getResourceKey());
-        headJs = (headJsList == null) ? Collections.emptyList() : headJsList;
-    }
-
-    public List<String> getHeadJs() {
-        return headJs;
     }
 
     public Map<String, HbsInitRenderable> getFillingZones() {
