@@ -59,9 +59,7 @@ public class MarkedWriter extends Writer {
 
     @Override
     public void write(final char[] buffer, final int off, final int len) throws IOException {
-        if (len > 0) {
-            currentBuffer.append(buffer, off, len);
-        }
+        currentBuffer.append(buffer, off, len);
     }
 
     @Override
@@ -71,8 +69,8 @@ public class MarkedWriter extends Writer {
     @Override
     public void close() throws IOException {
         currentBuffer = null;
-        buffers.clear();
-        markers.clear();
+        buffers = null;
+        markers = null;
     }
 
     public void addMarker(final String markerName) {
@@ -83,12 +81,11 @@ public class MarkedWriter extends Writer {
 
     public String toString(Map<String, String> markerValues) {
         StringBuilder tmpBuffer = new StringBuilder();
-        for (int i = 0; i < buffers.size() - 1; i++) {
-            tmpBuffer.append(buffers.get(i));
+        tmpBuffer.append(buffers.get(0));
+        for (int i = 0; i < markers.size(); i++) {
             String markerValue = markerValues.get(markers.get(i));
-            if (markerValue != null) {
-                tmpBuffer.append(markerValue);
-            }
+            tmpBuffer.append(markerValue);
+            tmpBuffer.append(buffers.get(i + 1));
         }
         return tmpBuffer.toString();
     }
