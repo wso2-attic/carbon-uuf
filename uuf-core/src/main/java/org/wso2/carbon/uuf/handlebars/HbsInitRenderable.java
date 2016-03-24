@@ -7,7 +7,7 @@ import com.github.jknack.handlebars.io.TemplateSource;
 import org.wso2.carbon.uuf.core.UUFException;
 import org.wso2.carbon.uuf.handlebars.helpers.init.FillZoneHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.init.LayoutHelper;
-import org.wso2.carbon.uuf.handlebars.helpers.runtime.ResourceHelper;
+import org.wso2.carbon.uuf.handlebars.helpers.init.ResourceHelper;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -15,8 +15,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class HbsPageRenderable extends HbsRenderable {
-    private final Map<String, HbsPageRenderable> fillingZone;
+public class HbsInitRenderable extends HbsRenderable {
+    private final Map<String, HbsInitRenderable> fillingZone;
     private final List<String> headJs;
     private final Optional<String> layout;
 
@@ -29,7 +29,7 @@ public class HbsPageRenderable extends HbsRenderable {
         HANDLEBARS.registerHelperMissing((context, options) -> "");
     }
     
-    public HbsPageRenderable(TemplateSource template, Optional<Executable> executable) {
+    public HbsInitRenderable(TemplateSource template, Optional<Executable> executable) {
         super(template, executable);
         Template compiledTemplate;
         Context context = Context.newContext(Collections.EMPTY_MAP);
@@ -39,7 +39,7 @@ public class HbsPageRenderable extends HbsRenderable {
         } catch (IOException e) {
             throw new UUFException("pages template completions error", e);
         }
-        Map<String, HbsPageRenderable> zones = context.data(FillZoneHelper.ZONES_KEY);
+        Map<String, HbsInitRenderable> zones = context.data(FillZoneHelper.ZONES_KEY);
         fillingZone = (zones == null) ? Collections.emptyMap() : zones;
         layout = Optional.ofNullable(context.data(LayoutHelper.LAYOUT_KEY));
         List<String> headJsList = context.data(ResourceHelper.getHeaderJsInstance().getResourceKey());
@@ -50,7 +50,7 @@ public class HbsPageRenderable extends HbsRenderable {
         return headJs;
     }
 
-    public Map<String, HbsPageRenderable> getFillingZones() {
+    public Map<String, HbsInitRenderable> getFillingZones() {
         return fillingZone;
     }
 

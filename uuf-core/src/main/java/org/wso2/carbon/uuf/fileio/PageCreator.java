@@ -2,12 +2,11 @@ package org.wso2.carbon.uuf.fileio;
 
 import com.github.jknack.handlebars.io.StringTemplateSource;
 import com.github.jknack.handlebars.io.TemplateSource;
-import com.sun.javafx.UnmodifiableArrayList;
 import org.wso2.carbon.uuf.core.Page;
 import org.wso2.carbon.uuf.core.Renderable;
 import org.wso2.carbon.uuf.core.UUFException;
 import org.wso2.carbon.uuf.core.UriPatten;
-import org.wso2.carbon.uuf.handlebars.HbsPageRenderable;
+import org.wso2.carbon.uuf.handlebars.HbsInitRenderable;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -31,13 +30,13 @@ class PageCreator {
             TemplateSource templateSource = new StringTemplateSource(
                     FileUtil.relativePath(templateAbsolutePath).toString(),
                     templateString);
-            HbsPageRenderable hbsRenderable = new HbsPageRenderable(
+            HbsInitRenderable hbsRenderable = new HbsInitRenderable(
                     templateSource,
                     FileUtil.createScriptIfExist(scriptPath));
 
             Optional<String> layoutName = hbsRenderable.getLayoutName();
             Renderable layout;
-            Map<String, HbsPageRenderable> fillingZones = hbsRenderable.getFillingZones();
+            Map<String, HbsInitRenderable> fillingZones = hbsRenderable.getFillingZones();
             if (layoutName.isPresent()) {
                 layout = layoutCreator.createLayout(
                         layoutName.get(),
@@ -55,7 +54,7 @@ class PageCreator {
     }
 
 
-    private UriPatten getUriPatten(Path pageDir, String name) throws IOException {
+    private UriPatten getUriPatten(Path pageDir, String name) {
         StringBuilder uri = new StringBuilder();
         for (int i = 2; i < pageDir.getNameCount() - 1; i++) {
             Path aPageDir = pageDir.getName(i);

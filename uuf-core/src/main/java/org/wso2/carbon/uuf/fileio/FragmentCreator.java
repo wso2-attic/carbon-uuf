@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Optional;
 
 import static org.wso2.carbon.uuf.fileio.FromArtifactAppCreator.ROOT_COMPONENT_NAME;
 
@@ -42,7 +41,7 @@ public class FragmentCreator {
             HbsRenderable hbsRenderable = new HbsRenderable(
                     templateSource,
                     FileUtil.createScriptIfExist(scriptPath));
-            return new Fragment(name, fragmentDir.toString(), hbsRenderable);
+            return null;//new Fragment(name, fragmentDir.toString(), hbsRenderable);
         } catch (IOException e) {
             throw new UUFException("Cannot create '" + name + "' fragment.");
         }

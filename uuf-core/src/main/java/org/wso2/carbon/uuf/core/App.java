@@ -1,17 +1,16 @@
 package org.wso2.carbon.uuf.core;
 
-import io.netty.handler.codec.http.HttpRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.core.Response;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class App {
     public static final String ROOT_COMPONENT_NAME = "root";
@@ -40,86 +39,64 @@ public class App {
         this.bindings = bindings;
         this.pages = pages;
         this.configuration = configuration;
-        components = null;
+        components = Collections.emptyMap();
         rootComponent = null;
     }
 
-    public App(String context, Set<Component> components, Map<String, String> configuration) {
-        if (context.isEmpty()) {
-            throw new IllegalArgumentException("App context cannot be empty.");
-        }
+    public App(String context, Set<Component> components) {
         if (!context.startsWith("/")) {
-            context = "/" + context;
+            throw new IllegalArgumentException("app context must start with a '/'");
         }
+
         this.context = context;
+        this.components = components.stream().collect(Collectors.toMap(Component::getContext, Function.identity()));
+        this.rootComponent = this.components.get("/");
 
-        this.components = new HashMap<>(components.size());
-        this.bindings = new HashMap<>();
-        Component rootComponent = null;
-        for (Component component : components) {
-            this.components.put(component.getContext(), component);
-            this.bindings.putAll(component.getBindings());
-            if (component.getName().equals(ROOT_COMPONENT_NAME)) {
-                rootComponent = component;
-            }
-        }
-        if (rootComponent == null) {
-            throw new UUFException("No root component found.");
-        }
-        this.rootComponent = rootComponent;
-        this.configuration = configuration;
+        //TODO: calculate base on the components
+        this.configuration = Collections.emptyMap();
+        this.bindings = Collections.emptyMap();
 
+        //TODO: remove
         fragments = null;
         pages = null;
     }
 
     public String renderPage(String uri) {
-        String pageUri = uri.substring(context.length());
         // First try to render the page with root component
-        Optional<String> output = rootComponent.renderPage(pageUri);
+        Optional<String> output = rootComponent.renderPage(uri);
         if (output.isPresent()) {
             return output.get();
         }
+
         // Since root components doesn't have the page, try with other components
-        String componentContext = pageUri.substring(0, pageUri.indexOf('/', 1));
-        Component component = components.get(componentContext);
-        if (component == null) {
-            throw new UUFException("Requested page '" + uri + "' does not exists.", Response.Status.NOT_FOUND);
-        }
-        output = component.renderPage(pageUri.substring(pageUri.indexOf('/', 1)));
-        if (output.isPresent()) {
-            return output.get();
-        } else {
-            throw new UUFException("Requested page '" + uri + "' does not exists.", Response.Status.NOT_FOUND);
-        }
-    }
-
-    public String renderPage(HttpRequest request) {
-        String pageUri = request.getUri().substring(context.length());
-        Optional<Page> servingPage = getPage(pageUri);
-        if (servingPage.isPresent()) {
-            Page page = servingPage.get();
-            if (log.isDebugEnabled()) {
-                log.debug("Page '" + page.toString() + "' is serving.");
-            }
-
-            Map<String, Object> model = new HashMap<>();
-            model.put("pageUri", pageUri);
-            model.put("config", configuration);
-
-            return page.serve(model, bindings, fragments);
-        } else {
-            throw new UUFException("Requested page '" + pageUri + "' does not exists.", Response.Status.NOT_FOUND);
-        }
-    }
-
-    public Optional<Page> getPage(String pageUri) {
-        for (Page p : pages) {
-            if (p.getUriPatten().match(pageUri)) {
-                return Optional.of(p);
+        int firstSlash = uri.indexOf('/', 1);
+        if (firstSlash > 0) {
+            String componentContext = uri.substring(0, firstSlash);
+            Component component = components.get(componentContext);
+            if (component != null) {
+                output = component.renderPage(uri.substring(firstSlash));
+                if (output.isPresent()) {
+                    return output.get();
+                }
             }
         }
-        return Optional.empty();
+        throw new UUFException("Requested page '" + uri + "' does not exists.", Response.Status.NOT_FOUND);
+    }
+
+    public boolean hasPage(String uri) {
+        if (rootComponent.hasPage(uri)) {
+            return true;
+        }
+
+        int firstSlash = uri.indexOf('/', 1);
+        if (firstSlash > 0) {
+            String componentContext = uri.substring(0, firstSlash);
+            Component component = components.get(componentContext);
+            if (component != null) {
+                return component.hasPage(uri.substring(firstSlash));
+            }
+        }
+        return false;
     }
 
     @Override
@@ -127,11 +104,7 @@ public class App {
         return "{\"context\": \"" + context + "\"}";
     }
 
-    public Collection<Fragment> getFragments() {
-        return fragments.values();
-    }
-
-    public List<Page> getPages() {
-        return Collections.unmodifiableList(pages);
+    public Map<String, Component> getComponents() {
+        return components;
     }
 }

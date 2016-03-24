@@ -24,11 +24,7 @@ public class HbsRenderable implements Renderable {
 
     public static final String BINDING_KEY = HbsRenderable.class.getName() + "#bindings";
     public static final String FRAGMENT_KEY = HbsRenderable.class.getName() + "#fragments";
-
-    private final Optional<Executable> executable;
-    private final Template compiledTemplate;
     private static final Logger log = LoggerFactory.getLogger(HbsRenderable.class);
-    private final String templatePath;
     private static final Handlebars HANDLEBARS = new Handlebars();
 
     static {
@@ -36,6 +32,10 @@ public class HbsRenderable implements Renderable {
         HANDLEBARS.registerHelper("includeFragment", IncludeFragmentHelper.INSTANCE);
         HANDLEBARS.registerHelperMissing(MissingHelper.INSTANCE);
     }
+
+    private final Optional<Executable> executable;
+    private final Template compiledTemplate;
+    private final String templatePath;
 
     public HbsRenderable(TemplateSource template, Optional<Executable> executable) {
         this.executable = executable;
@@ -57,6 +57,9 @@ public class HbsRenderable implements Renderable {
         if (executable.isPresent()) {
             //TODO: set context for executable
             Object jsModel = executable.get().execute(Collections.emptyMap());
+            if (log.isDebugEnabled()) {
+                log.debug("js ran produced output " + DebugUtil.safeJsonString(jsModel));
+            }
             if (jsModel instanceof Map) {
                 //noinspection unchecked
                 context.combine((Map<String, ?>) jsModel);
@@ -88,6 +91,7 @@ public class HbsRenderable implements Renderable {
 
     @Override
     public String toString() {
-        return "{\"path\": \"" + templatePath + "\"}";
+        return "{\"path\": \"" + templatePath + "\"" +
+                (executable.isPresent() ? ",\"js\": \"" + executable + "\"}" : "}");
     }
 }

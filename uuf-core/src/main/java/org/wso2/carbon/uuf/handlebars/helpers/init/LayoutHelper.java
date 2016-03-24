@@ -3,14 +3,14 @@ package org.wso2.carbon.uuf.handlebars.helpers.init;
 import com.github.jknack.handlebars.Helper;
 import com.github.jknack.handlebars.Options;
 import org.wso2.carbon.uuf.core.UUFException;
-import org.wso2.carbon.uuf.handlebars.HbsPageRenderable;
+import org.wso2.carbon.uuf.handlebars.HbsInitRenderable;
 
 import java.io.IOException;
 
 public class LayoutHelper implements Helper<String> {
 
-    public static final String LAYOUT_KEY = HbsPageRenderable.class.getName() + "#layout";
-    private static final LayoutHelper INSTANCE = new LayoutHelper();
+    public static final String LAYOUT_KEY = HbsInitRenderable.class.getName() + "#layout";
+    public static final LayoutHelper INSTANCE = new LayoutHelper();
 
     private LayoutHelper() {
     }

@@ -7,8 +7,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.core.App;
 import org.wso2.carbon.uuf.core.AppCreator;
+import org.wso2.carbon.uuf.core.Resolver;
 import org.wso2.carbon.uuf.core.UUFException;
-import org.wso2.carbon.uuf.fileio.FromArtifactAppCreator;
+import org.wso2.carbon.uuf.fileio.ArtifactResolver;
 import org.wso2.msf4j.MicroservicesRunner;
 import org.wso2.msf4j.util.SystemVariableUtil;
 
@@ -20,18 +21,27 @@ import java.net.URLConnection;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static org.wso2.carbon.uuf.core.Resolver.STATIC_RESOURCE_URI_PREFIX;
 
 public class UUFRegistry {
 
     private static final Logger log = LoggerFactory.getLogger(UUFRegistry.class);
     private final AppCreator appCreator;
-    private Optional<DebugAppender> debugAppender;
+    private final Optional<DebugAppender> debugAppender;
     private final Map<String, App> apps = new HashMap<>();
+    private Resolver resolver;
 
-    public UUFRegistry(AppCreator appCreator, Optional<DebugAppender> debugAppender) {
+    public UUFRegistry(AppCreator appCreator, Optional<DebugAppender> debugAppender, Resolver resolver) {
         this.appCreator = appCreator;
         this.debugAppender = debugAppender;
+        this.resolver = resolver;
     }
 
     public static Optional<DebugAppender> createDebugAppender() {
@@ -47,7 +57,9 @@ public class UUFRegistry {
 
     public static void main(String[] args) {
         List<Path> uufAppsPath = Collections.singletonList(FileSystems.getDefault().getPath("."));
-        UUFRegistry registry = new UUFRegistry(new FromArtifactAppCreator(uufAppsPath), createDebugAppender());
+        ArtifactResolver resolver = new ArtifactResolver(uufAppsPath);
+        UUFRegistry registry = new UUFRegistry(new AppCreator(resolver),
+                createDebugAppender(), resolver);
         new MicroservicesRunner().deploy(new UUFService(registry)).start();
     }
 
@@ -81,7 +93,7 @@ public class UUFRegistry {
         App app = apps.get(appName);
         try {
             if (isStaticResourceRequest(resourcePath)) {
-                Path resource = appCreator.resolve(appName, resourcePath);
+                Path resource = resolver.resolveStatic(appName, resourcePath);
                 if (Files.exists(resource) && Files.isRegularFile(resource)) {
                     //TODO: use non blocking mime map
                     return Response.ok(resource.toFile(), getMime(resourcePath));
@@ -95,10 +107,21 @@ public class UUFRegistry {
                     apps.put(appName, app);
                 }
                 if (resourcePath.equals("/debug/api/pages/")) {
-                    return Response.ok(app.getPages().toString());
+                    //TODO: fix issues when same page is in multiple components
+                    return Response.ok(app
+                            .getComponents()
+                            .entrySet()
+                            .stream()
+                            .flatMap(entry -> entry.getValue().getPages().stream())
+                            .collect(Collectors.toSet()));
                 }
                 if (resourcePath.startsWith("/debug/api/fragments/")) {
-                    return Response.ok(app.getFragments().toString());
+                    return Response.ok(app
+                            .getComponents()
+                            .entrySet()
+                            .stream()
+                            .flatMap(entry -> entry.getValue().getFragments().values().stream())
+                            .collect(Collectors.toSet()));
                 }
                 if (resourcePath.startsWith("/debug/logs")) {
                     if (debugAppender.isPresent()) {
@@ -121,7 +144,7 @@ public class UUFRegistry {
                         return Response.status(Response.Status.NOT_FOUND);
                     }
                 }
-                String page = app.renderPage(request);
+                String page = app.renderPage(uri.substring(appName.length() + 1));
                 return Response.ok(page).header("Content-Type", "text/html");
             }
             //TODO: Don't catch this Ex, move the logic below the 'instanceof' check
@@ -131,12 +154,13 @@ public class UUFRegistry {
             // if the tailing / is extra or a it is missing, send 301
             if (e.getStatus() == Response.Status.NOT_FOUND && app != null) {
                 if (uri.endsWith("/")) {
-                    String uriNoSlash = resourcePath.substring(0, uri.length() - 1);
-                    if (app.getPage(uriNoSlash).isPresent()) {
-                        return Response.status(301).header("Location", uriNoSlash);
+                    String uriWithoutSlash = resourcePath.substring(0, resourcePath.length() - 1);
+                    if (app.hasPage(uriWithoutSlash)) {
+                        return Response.status(301).header("Location", uriWithoutSlash);
                     }
                 } else {
-                    if (app.getPage(resourcePath + "/").isPresent()) {
+                    String uriWithSlash = resourcePath + "/";
+                    if (app.hasPage(uriWithSlash)) {
                         return Response.status(301).header("Location", uri + "/");
                     }
                 }
@@ -176,7 +200,7 @@ public class UUFRegistry {
     }
 
     private boolean isStaticResourceRequest(String resourcePath) {
-        return resourcePath.startsWith("/" + AppCreator.STATIC_RESOURCE_URI_PREFIX);
+        return resourcePath.startsWith("/" + STATIC_RESOURCE_URI_PREFIX);
     }
 
     private Response.ResponseBuilder sendError(String appName, Exception e, Response.Status status) {
