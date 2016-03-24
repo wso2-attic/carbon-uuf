@@ -16,15 +16,6 @@ import java.util.Optional;
 public class FillZoneHelper implements Helper<String> {
     public static final String ZONES_KEY = FillZoneHelper.class.getName() + "#zones";
 
-    private static final FillZoneHelper INSTANCE = new FillZoneHelper();
-
-    private FillZoneHelper() {
-    }
-
-    public static FillZoneHelper getInstance() {
-        return INSTANCE;
-    }
-
     @Override
     public CharSequence apply(String zoneName, Options options) throws IOException {
         Map<String, Renderable> zones = options.data(ZONES_KEY);

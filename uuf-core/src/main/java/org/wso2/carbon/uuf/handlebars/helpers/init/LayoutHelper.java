@@ -10,14 +10,6 @@ import java.io.IOException;
 public class LayoutHelper implements Helper<String> {
 
     public static final String LAYOUT_KEY = HbsInitRenderable.class.getName() + "#layout";
-    public static final LayoutHelper INSTANCE = new LayoutHelper();
-
-    private LayoutHelper() {
-    }
-
-    public static LayoutHelper getInstance() {
-        return INSTANCE;
-    }
 
     @Override
     public CharSequence apply(String layoutName, Options options) throws IOException {

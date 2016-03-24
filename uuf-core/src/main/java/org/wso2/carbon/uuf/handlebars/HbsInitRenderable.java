@@ -20,11 +20,11 @@ public class HbsInitRenderable extends HbsRenderable {
     private static final Handlebars HANDLEBARS = new Handlebars();
 
     static {
-        HANDLEBARS.registerHelper("fillZone", FillZoneHelper.getInstance());
-        HANDLEBARS.registerHelper("layout", LayoutHelper.getInstance());
+        HANDLEBARS.registerHelper("fillZone", new FillZoneHelper());
+        HANDLEBARS.registerHelper("layout", new LayoutHelper());
         HANDLEBARS.registerHelperMissing((context, options) -> "");
     }
-    
+
     public HbsInitRenderable(TemplateSource template, Optional<Executable> executable) {
         super(template, executable);
         Template compiledTemplate;
