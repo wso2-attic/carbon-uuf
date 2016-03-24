@@ -6,10 +6,11 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.core.App;
-import org.wso2.carbon.uuf.core.AppCreator;
 import org.wso2.carbon.uuf.core.Resolver;
 import org.wso2.carbon.uuf.core.UUFException;
+import org.wso2.carbon.uuf.core.create.AppCreator;
 import org.wso2.carbon.uuf.fileio.ArtifactResolver;
+import org.wso2.carbon.uuf.handlebars.HbsAppCreator;
 import org.wso2.msf4j.MicroservicesRunner;
 import org.wso2.msf4j.util.SystemVariableUtil;
 
@@ -58,7 +59,7 @@ public class UUFRegistry {
     public static void main(String[] args) {
         List<Path> uufAppsPath = Collections.singletonList(FileSystems.getDefault().getPath("."));
         ArtifactResolver resolver = new ArtifactResolver(uufAppsPath);
-        UUFRegistry registry = new UUFRegistry(new AppCreator(resolver),
+        UUFRegistry registry = new UUFRegistry(new HbsAppCreator(resolver),
                 createDebugAppender(), resolver);
         new MicroservicesRunner().deploy(new UUFService(registry)).start();
     }
