@@ -7,7 +7,7 @@ import com.github.jknack.handlebars.io.TemplateSource;
 import org.wso2.carbon.uuf.core.UUFException;
 import org.wso2.carbon.uuf.handlebars.helpers.init.FillZoneHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.init.LayoutHelper;
-import org.wso2.carbon.uuf.handlebars.helpers.init.ResourceHelper;
+import org.wso2.carbon.uuf.handlebars.helpers.runtime.ResourceHelper;
 
 import java.io.IOException;
 import java.util.Collections;
