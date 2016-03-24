@@ -8,6 +8,7 @@ import org.wso2.carbon.uuf.core.Component;
 import org.wso2.carbon.uuf.core.ComponentReference;
 import org.wso2.carbon.uuf.core.FileReference;
 import org.wso2.carbon.uuf.core.Fragment;
+import org.wso2.carbon.uuf.core.FragmentReference;
 import org.wso2.carbon.uuf.core.Page;
 import org.wso2.carbon.uuf.core.Renderable;
 import org.wso2.carbon.uuf.core.Resolver;
@@ -42,9 +43,8 @@ public class HbsAppCreator implements AppCreator {
             ComponentReference currentComponent,
             String appName) {
 
-        String relativePath = pageReference.getPathRelativeToPagesRoot();
-        String path = withoutHbsExtension("/" + relativePath);
-        //TODO: handle windows
+        String relativePath = pageReference.getPathPattern();
+        String path = withoutHbsExtension(relativePath);
         if (path.endsWith("/index")) {
             path = path.substring(0, path.length() - 5);
         }
@@ -76,9 +76,9 @@ public class HbsAppCreator implements AppCreator {
     private HbsInitRenderable createHbsInitRenderable(FileReference pageReference) {
         TemplateSource templateSource = createTemplateSource(pageReference);
         String jsName = withoutHbsExtension(pageReference.getName()) + ".js";
-        Optional<FileReference> jsReference = pageReference.getSibling(jsName);
+        Optional<FileReference> jsReference = pageReference.getSiblingIfExists(jsName);
         Optional<Executable> executable = jsReference.map(j ->
-                new JSExecutable(j.getContent(), Optional.of(j.getPathRelativeToApp())));
+                new JSExecutable(j.getContent(), Optional.of(j.getRelativePath())));
         return new HbsInitRenderable(
                 templateSource,
                 executable);
@@ -107,7 +107,7 @@ public class HbsAppCreator implements AppCreator {
                 Collections.emptyMap());
     }
 
-    private Fragment createFragment(FileReference dir) {
+    private Fragment createFragment(FragmentReference dir) {
         String name = dir.getName();
         return new Fragment(name, createHbsInitRenderable(dir.getChild(name + ".hbs")));
     }
@@ -115,7 +115,7 @@ public class HbsAppCreator implements AppCreator {
 
     private TemplateSource createTemplateSource(FileReference pageReference) {
         return new StringTemplateSource(
-                pageReference.getPathRelativeToApp(),
+                pageReference.getRelativePath(),
                 pageReference.getContent());
     }
 

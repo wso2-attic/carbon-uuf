@@ -6,14 +6,13 @@ public interface FileReference {
 
     String getName();
 
-    String getPathRelativeToPagesRoot();
+    String getPathPattern();
 
     String getContent();
 
-    String getPathRelativeToApp();
+    String getRelativePath();
 
-    Optional<FileReference> getSibling(String name);
+    Optional<FileReference> getSiblingIfExists(String name);
 
-    FileReference getChild(String s);
 }
 

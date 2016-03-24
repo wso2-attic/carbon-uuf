@@ -3,6 +3,7 @@ package org.wso2.carbon.uuf.fileio;
 import org.apache.commons.lang3.StringUtils;
 import org.wso2.carbon.uuf.core.ComponentReference;
 import org.wso2.carbon.uuf.core.FileReference;
+import org.wso2.carbon.uuf.core.FragmentReference;
 import org.wso2.carbon.uuf.core.Resolver;
 import org.wso2.carbon.uuf.core.UUFException;
 
@@ -78,12 +79,25 @@ public class ArtifactResolver implements Resolver {
         } else {
             fragmentPath = componentPath.resolve("fragments").resolve(fragmentUriPart);
         }
-        //{appName}/components/[{componentName}|ROOT]/[{fragmentName}|base]/public/{subResourcePath}
 
         return fragmentPath.resolve("public").resolve(subResourcePath);
     }
 
-    private FileReference createFileRef(Path path, Path component, Path app) {
+    private FragmentReference createFragmentReference(Path path, Path component, Path app) {
+        return new FragmentReference() {
+            @Override
+            public String getName() {
+                return path.getFileName().toString();
+            }
+
+            @Override
+            public FileReference getChild(String name) {
+                return createFileReference(path.resolve(name), component, app);
+            }
+        };
+    }
+
+    private FileReference createFileReference(Path path, Path component, Path app) {
         return new FileReference() {
             @Override
             public String getName() {
@@ -91,8 +105,13 @@ public class ArtifactResolver implements Resolver {
             }
 
             @Override
-            public String getPathRelativeToPagesRoot() {
-                return component.resolve("pages").relativize(path).toString();
+            public String getPathPattern() {
+                StringBuilder sb = new StringBuilder();
+                for (Path p : component.resolve("pages").relativize(path)) {
+                    sb.append('/');
+                    sb.append(p.toString());
+                }
+                return sb.toString();
             }
 
             @Override
@@ -105,24 +124,20 @@ public class ArtifactResolver implements Resolver {
             }
 
             @Override
-            public String getPathRelativeToApp() {
+            public String getRelativePath() {
                 return app.relativize(path).toString();
             }
 
             @Override
-            public Optional<FileReference> getSibling(String name) {
+            public Optional<FileReference> getSiblingIfExists(String name) {
                 Path sibling = path.resolveSibling(name);
                 if (Files.exists(sibling)) {
-                    return Optional.of(createFileRef(sibling, component, app));
+                    return Optional.of(createFileReference(sibling, component, app));
                 } else {
                     return Optional.empty();
                 }
             }
 
-            @Override
-            public FileReference getChild(String s) {
-                return createFileRef(path.resolve(s), component, app);
-            }
         };
     }
 
@@ -143,7 +158,7 @@ public class ArtifactResolver implements Resolver {
                 Path pages = component.resolve("pages");
                 if (Files.exists(pages)) {
                     try {
-                        return Files.walk(pages).map(path -> createFileRef(path, component, app));
+                        return Files.walk(pages).map(path -> createFileReference(path, component, app));
                     } catch (IOException e) {
                         throw new UUFException("Error while finding pages in " + component, e);
                     }
@@ -153,11 +168,11 @@ public class ArtifactResolver implements Resolver {
             }
 
             @Override
-            public Stream<FileReference> streamFragmentFiles() {
+            public Stream<FragmentReference> streamFragmentFiles() {
                 try {
                     Path fragments = component.resolve("fragments");
                     if (Files.exists(fragments)) {
-                        return Files.list(fragments).map(path -> createFileRef(path, component, app));
+                        return Files.list(fragments).map(path -> createFragmentReference(path, component, app));
                     } else {
                         return Stream.empty();
                     }
@@ -168,7 +183,7 @@ public class ArtifactResolver implements Resolver {
 
             @Override
             public FileReference resolveLayout(String layoutName) {
-                return createFileRef(component.resolve("layouts").resolve(layoutName), component, app);
+                return createFileReference(component.resolve("layouts").resolve(layoutName), component, app);
             }
 
 

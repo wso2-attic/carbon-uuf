@@ -5,7 +5,7 @@ import java.util.stream.Stream;
 public interface ComponentReference {
     Stream<FileReference> streamPageFiles();
 
-    Stream<FileReference> streamFragmentFiles();
+    Stream<FragmentReference> streamFragmentFiles();
 
     FileReference resolveLayout(String layoutName);
 
