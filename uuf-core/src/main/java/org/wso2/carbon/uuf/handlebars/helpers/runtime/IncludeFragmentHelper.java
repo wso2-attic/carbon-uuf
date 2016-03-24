@@ -36,11 +36,11 @@ public class IncludeFragmentHelper implements Helper<String> {
             }
 
             if (log.isDebugEnabled()) {
-                log.debug("Fragment " + fragment + " is called from " + options.fn);
+                log.debug("Fragment " + fragment + " is called from '" + options.fn.text() + "'.");
             }
             String content = fragment.render(fragmentContext, bindings, fragments).trim();
             return new Handlebars.SafeString(content);
         }
-        throw new UUFException("fragment '" + fragmentName + "' not available");
+        throw new UUFException("Fragment '" + fragmentName + "' does not exists.");
     }
 }
