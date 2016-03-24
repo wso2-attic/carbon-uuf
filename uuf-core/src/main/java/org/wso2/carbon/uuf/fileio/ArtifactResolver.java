@@ -1,11 +1,11 @@
 package org.wso2.carbon.uuf.fileio;
 
 import org.apache.commons.lang3.StringUtils;
-import org.wso2.carbon.uuf.core.ComponentReference;
-import org.wso2.carbon.uuf.core.FileReference;
-import org.wso2.carbon.uuf.core.FragmentReference;
 import org.wso2.carbon.uuf.core.Resolver;
 import org.wso2.carbon.uuf.core.UUFException;
+import org.wso2.carbon.uuf.core.create.ComponentReference;
+import org.wso2.carbon.uuf.core.create.FileReference;
+import org.wso2.carbon.uuf.core.create.FragmentReference;
 
 import javax.ws.rs.core.Response;
 import java.io.IOException;

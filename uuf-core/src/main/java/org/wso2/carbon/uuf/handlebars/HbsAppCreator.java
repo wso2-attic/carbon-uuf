@@ -3,16 +3,16 @@ package org.wso2.carbon.uuf.handlebars;
 import com.github.jknack.handlebars.io.StringTemplateSource;
 import com.github.jknack.handlebars.io.TemplateSource;
 import org.wso2.carbon.uuf.core.App;
-import org.wso2.carbon.uuf.core.AppCreator;
 import org.wso2.carbon.uuf.core.Component;
-import org.wso2.carbon.uuf.core.ComponentReference;
-import org.wso2.carbon.uuf.core.FileReference;
 import org.wso2.carbon.uuf.core.Fragment;
-import org.wso2.carbon.uuf.core.FragmentReference;
 import org.wso2.carbon.uuf.core.Page;
 import org.wso2.carbon.uuf.core.Renderable;
 import org.wso2.carbon.uuf.core.Resolver;
 import org.wso2.carbon.uuf.core.UriPatten;
+import org.wso2.carbon.uuf.core.create.AppCreator;
+import org.wso2.carbon.uuf.core.create.ComponentReference;
+import org.wso2.carbon.uuf.core.create.FileReference;
+import org.wso2.carbon.uuf.core.create.FragmentReference;
 
 import java.util.Collections;
 import java.util.Optional;
@@ -49,7 +49,9 @@ public class HbsAppCreator implements AppCreator {
             path = path.substring(0, path.length() - 5);
         }
         UriPatten uriPatten = new UriPatten(path);
-        HbsInitRenderable pageRenderable = createHbsInitRenderable(pageReference);
+        TemplateSource templateSource = createTemplateSource(pageReference);
+        Optional<Executable> executable = createSameNameJs(pageReference);
+        HbsInitRenderable pageRenderable = new HbsInitRenderable(templateSource, executable);
         Optional<String> layoutFullName = pageRenderable.getLayoutName();
         Renderable renderable = layoutFullName
                 .map(fullName -> {
@@ -73,15 +75,11 @@ public class HbsAppCreator implements AppCreator {
         return new Page(uriPatten, renderable, pageRenderable.getFillingZones());
     }
 
-    private HbsInitRenderable createHbsInitRenderable(FileReference pageReference) {
-        TemplateSource templateSource = createTemplateSource(pageReference);
+    private Optional<Executable> createSameNameJs(FileReference pageReference) {
         String jsName = withoutHbsExtension(pageReference.getName()) + ".js";
         Optional<FileReference> jsReference = pageReference.getSiblingIfExists(jsName);
-        Optional<Executable> executable = jsReference.map(j ->
+        return jsReference.map(j ->
                 new JSExecutable(j.getContent(), Optional.of(j.getRelativePath())));
-        return new HbsInitRenderable(
-                templateSource,
-                executable);
     }
 
     private Component createComponent(ComponentReference componentReference, String appName) {
@@ -109,7 +107,10 @@ public class HbsAppCreator implements AppCreator {
 
     private Fragment createFragment(FragmentReference dir) {
         String name = dir.getName();
-        return new Fragment(name, createHbsInitRenderable(dir.getChild(name + ".hbs")));
+        FileReference hbsFile = dir.getChild(name + ".hbs");
+        TemplateSource templateSource = createTemplateSource(hbsFile);
+        Optional<Executable> executable = createSameNameJs(hbsFile);
+        return new Fragment(name, new HbsRenderable(templateSource, executable));
     }
 
 
