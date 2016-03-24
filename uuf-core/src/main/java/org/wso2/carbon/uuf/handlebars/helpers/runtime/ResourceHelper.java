@@ -9,17 +9,31 @@ import java.util.List;
 
 public class ResourceHelper implements Helper<String> {
 
-    public static ResourceHelper JS_INSTANCE = new ResourceHelper("headJs");
+    private static ResourceHelper HEADER_CSS_INSTANCE = new ResourceHelper("headerCss");
+    private static ResourceHelper HEADER_JS_INSTANCE = new ResourceHelper("headerJs");
+    private static ResourceHelper FOOTER_JS_INSTANCE = new ResourceHelper("footerJs");
     private final String resourceKey;
 
     private ResourceHelper(String resourceType) {
         resourceKey = ResourceHelper.class.getName() + "#" + resourceType;
     }
 
+    public static ResourceHelper getHeaderCssInstance() {
+        return HEADER_CSS_INSTANCE;
+    }
+
+    public static ResourceHelper getHeaderJsInstance() {
+        return HEADER_JS_INSTANCE;
+    }
+
+    public static ResourceHelper getFooterJsInstance() {
+        return FOOTER_JS_INSTANCE;
+    }
+
     @Override
     public CharSequence apply(String uri, Options options) throws IOException {
-        if (uri.startsWith("/")) {
-            throw new IllegalArgumentException("URI fragment relative public URI should start with '/'");
+        if (!uri.startsWith("/")) {
+            throw new IllegalArgumentException("A relative public URI should start with '/'.");
         }
         List<String> resources = options.data(resourceKey);
         if (resources == null) {
