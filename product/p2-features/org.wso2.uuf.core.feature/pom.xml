@@ -33,34 +33,14 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.wso2.orbit.com.github.jknack</groupId>
-            <artifactId>handlebars</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.wso2.orbit.org.yaml</groupId>
-            <artifactId>snakeyaml</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.wso2.carbon.uuf</groupId>
             <artifactId>uuf-core</artifactId>
             <version>${uuf.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.antlr</groupId>
-            <artifactId>antlr4-runtime</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.wso2.carbon.uuf</groupId>
             <artifactId>nashorn-osgi-fragment</artifactId>
             <version>${nashorn-osgi-fragment.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
         </dependency>
     </dependencies>
 
