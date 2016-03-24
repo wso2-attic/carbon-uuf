@@ -25,7 +25,7 @@ public class HbsPageRenderable extends HbsRenderable {
     static {
         HANDLEBARS.registerHelper("fillZone", FillZoneHelper.getInstance());
         HANDLEBARS.registerHelper("layout", LayoutHelper.getInstance());
-        HANDLEBARS.registerHelper("headJs", ResourceHelper.JS_INSTANCE);
+        HANDLEBARS.registerHelper("headerJs", ResourceHelper.getHeaderJsInstance());
         HANDLEBARS.registerHelperMissing((context, options) -> "");
     }
     
@@ -42,7 +42,7 @@ public class HbsPageRenderable extends HbsRenderable {
         Map<String, HbsPageRenderable> zones = context.data(FillZoneHelper.ZONES_KEY);
         fillingZone = (zones == null) ? Collections.emptyMap() : zones;
         layout = Optional.ofNullable(context.data(LayoutHelper.LAYOUT_KEY));
-        List<String> headJsList = context.data(ResourceHelper.JS_INSTANCE.getResourceKey());
+        List<String> headJsList = context.data(ResourceHelper.getHeaderJsInstance().getResourceKey());
         headJs = (headJsList == null) ? Collections.emptyList() : headJsList;
     }
 
