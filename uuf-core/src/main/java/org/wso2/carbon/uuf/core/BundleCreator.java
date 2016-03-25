@@ -1,15 +1,17 @@
 package org.wso2.carbon.uuf.core;
 
 import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleException;
+import org.wso2.carbon.uuf.core.create.ComponentReference;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
 public interface BundleCreator {
 
-    Bundle createBundle(String name, String symbolicName, String version, Optional<List> exports,
-                        Optional<List> imports) throws IOException,BundleException;
+    Bundle createBundle(ComponentReference componentReference);
+
+    ClassLoader getBundleClassLoader(String locationKey);
+
+    String getBundleLocationKey(String name, String context);
 
 }

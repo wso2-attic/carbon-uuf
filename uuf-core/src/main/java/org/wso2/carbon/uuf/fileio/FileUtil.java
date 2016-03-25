@@ -69,13 +69,13 @@ class FileUtil {
     }
 
     public static Optional<Executable> createScriptIfExist(Path scriptPath) throws IOException {
-        if (scriptPath.toFile().exists()) {
-            String scriptSource = new String(Files.readAllBytes(scriptPath), StandardCharsets.UTF_8);
-            String path = relativePath(scriptPath).toString();
-            JSExecutable script = new JSExecutable(scriptSource, Optional.of(path));
-            return Optional.of(script);
-        } else {
+//        if (scriptPath.toFile().exists()) {
+//            String scriptSource = new String(Files.readAllBytes(scriptPath), StandardCharsets.UTF_8);
+//            String path = relativePath(scriptPath).toString();
+//            JSExecutable script = new JSExecutable(scriptSource, Optional.of(path));
+//            return Optional.of(script);
+//        } else {
             return Optional.empty();
-        }
+//        }
     }
 }

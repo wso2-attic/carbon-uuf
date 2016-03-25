@@ -191,6 +191,27 @@ public class ArtifactResolver implements Resolver {
             public String getName() {
                 return component.getFileName().toString();
             }
+
+            @Override
+            public String getContext() {
+                String name = this.getName();
+                return "/" + (name.equals("root") ? "" : getContextFormName(name));
+            }
+
+            private String getContextFormName(String name) {
+                int lastDot = name.lastIndexOf('.');
+                if (lastDot >= 0) {
+                    return name.substring(lastDot + 1);
+                } else {
+                    return name;
+                }
+            }
+
+            @Override
+            public String getVersion() {
+                //TODO: read this from component config
+                return "1.0.0";
+            }
         };
     }
 

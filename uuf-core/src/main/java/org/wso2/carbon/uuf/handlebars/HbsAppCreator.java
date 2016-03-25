@@ -2,31 +2,23 @@ package org.wso2.carbon.uuf.handlebars;
 
 import com.github.jknack.handlebars.io.StringTemplateSource;
 import com.github.jknack.handlebars.io.TemplateSource;
-import org.wso2.carbon.uuf.core.App;
-import org.wso2.carbon.uuf.core.Component;
-import org.wso2.carbon.uuf.core.Fragment;
-import org.wso2.carbon.uuf.core.Page;
-import org.wso2.carbon.uuf.core.Renderable;
-import org.wso2.carbon.uuf.core.Resolver;
-import org.wso2.carbon.uuf.core.UriPatten;
+import org.osgi.framework.BundleReference;
+import org.wso2.carbon.uuf.core.*;
 import org.wso2.carbon.uuf.core.create.AppCreator;
 import org.wso2.carbon.uuf.core.create.ComponentReference;
 import org.wso2.carbon.uuf.core.create.FileReference;
 import org.wso2.carbon.uuf.core.create.FragmentReference;
 
-import java.util.Collections;
-import java.util.Optional;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class HbsAppCreator implements AppCreator {
 
     private Resolver resolver;
-
-    public HbsAppCreator(Resolver resolver) {
+    private BundleCreator bundleCreator;
+    public HbsAppCreator(Resolver resolver, BundleCreator bundleCreator) {
         this.resolver = resolver;
+        this.bundleCreator = bundleCreator;
     }
 
 
@@ -50,7 +42,7 @@ public class HbsAppCreator implements AppCreator {
         }
         UriPatten uriPatten = new UriPatten(path);
         TemplateSource templateSource = createTemplateSource(pageReference);
-        Optional<Executable> executable = createSameNameJs(pageReference);
+        Optional<Executable> executable = createSameNameJs(pageReference, currentComponent);
         HbsInitRenderable pageRenderable = new HbsInitRenderable(templateSource, executable);
         Optional<String> layoutFullName = pageRenderable.getLayoutName();
         Renderable renderable = layoutFullName
@@ -75,14 +67,24 @@ public class HbsAppCreator implements AppCreator {
         return new Page(uriPatten, renderable, pageRenderable.getFillingZones());
     }
 
-    private Optional<Executable> createSameNameJs(FileReference pageReference) {
+    private Optional<Executable> createSameNameJs(FileReference pageReference, ComponentReference currentComponent) {
         String jsName = withoutHbsExtension(pageReference.getName()) + ".js";
         Optional<FileReference> jsReference = pageReference.getSiblingIfExists(jsName);
+        //TODO: need to get actual component here not the "root"
         return jsReference.map(j ->
-                new JSExecutable(j.getContent(), Optional.of(j.getRelativePath())));
+                new JSExecutable(j.getContent(), Optional.of(j.getRelativePath()), getBundleComponentClassLoader(currentComponent)));
     }
 
     private Component createComponent(ComponentReference componentReference, String appName) {
+        String name = componentReference.getName();
+        String version = componentReference.getVersion();
+        String context = componentReference.getContext();
+
+        if (this.getClass().getClassLoader() instanceof BundleReference) {
+            //if an OSGi classloader, creates a mapping bundle
+            bundleCreator.createBundle(componentReference);
+        }
+
         SortedSet<Page> pages = componentReference
                 .streamPageFiles()
                 .parallel()
@@ -92,24 +94,24 @@ public class HbsAppCreator implements AppCreator {
         Set<Fragment> fragments = componentReference
                 .streamFragmentFiles()
                 .parallel()
-                .map(this::createFragment)
+                .map(f->createFragment(f,componentReference))
                 .collect(Collectors.toSet());
 
-        String name = componentReference.getName();
         return new Component(
                 name,
-                "/" + (name.equals("root") ? "" : getContextFormName(name)),
+                context,
+                version,
                 pages,
                 fragments,
                 Collections.emptyMap(),
                 Collections.emptyMap());
     }
 
-    private Fragment createFragment(FragmentReference dir) {
+    private Fragment createFragment(FragmentReference dir, ComponentReference currentComponent) {
         String name = dir.getName();
         FileReference hbsFile = dir.getChild(name + ".hbs");
         TemplateSource templateSource = createTemplateSource(hbsFile);
-        Optional<Executable> executable = createSameNameJs(hbsFile);
+        Optional<Executable> executable = createSameNameJs(hbsFile, currentComponent);
         return new Fragment(name, new HbsRenderable(templateSource, executable));
     }
 
@@ -120,13 +122,14 @@ public class HbsAppCreator implements AppCreator {
                 pageReference.getContent());
     }
 
-    private String getContextFormName(String name) {
-        int lastDot = name.lastIndexOf('.');
-        if (lastDot >= 0) {
-            return name.substring(lastDot + 1);
-        } else {
-            return name;
+    private ClassLoader getBundleComponentClassLoader(ComponentReference compReference) {
+        ClassLoader classLoader = this.getClass().getClassLoader();
+        if (classLoader instanceof BundleReference) {
+            //if an OSGi classloader
+            String bundleLocKey = bundleCreator.getBundleLocationKey(compReference.getName(), compReference.getContext());
+            classLoader = bundleCreator.getBundleClassLoader(bundleLocKey);
         }
+        return classLoader;
     }
 
     private String withoutHbsExtension(String name) {
