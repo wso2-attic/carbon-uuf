@@ -7,15 +7,18 @@ import org.wso2.carbon.uuf.core.UUFException;
 
 import java.io.IOException;
 
+import static org.wso2.carbon.uuf.handlebars.HbsInitRenderable.HELPER_NAME_FILL_ZONE;
+import static org.wso2.carbon.uuf.handlebars.HbsInitRenderable.HELPER_NAME_LAYOUT;
+
 public class MissingHelper implements Helper {
 
-    private static final ImmutableSet<String> KEYWORDS = ImmutableSet.of("layout", "fillZone", "headCss");
+    private static final ImmutableSet<String> KEYWORDS = ImmutableSet.of(HELPER_NAME_LAYOUT, HELPER_NAME_FILL_ZONE);
 
     @Override
     public CharSequence apply(Object arg, Options options) throws IOException {
         if (KEYWORDS.contains(options.helperName)) {
             return "";
         }
-        throw new UUFException("Cannot evaluate the variable/helper '" + options.helperName + "' in '" + arg + "'.");
+        throw new UUFException("Cannot evaluate the variable/helper '" + options.helperName + "'.");
     }
 }
