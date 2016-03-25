@@ -9,6 +9,7 @@ import org.wso2.carbon.uuf.core.create.FragmentReference;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 public class ArtifactComponentReference implements ComponentReference {
@@ -87,5 +88,15 @@ public class ArtifactComponentReference implements ComponentReference {
     @Override
     public AppReference getApp() {
         return app;
+    }
+
+    @Override
+    public Optional<FileReference> getConfig() {
+        Path binding = path.resolve("config.yaml");
+        if (Files.exists(binding)) {
+            return Optional.of(new ArtifactFileReference(binding, this, app));
+        } else {
+            return Optional.empty();
+        }
     }
 }

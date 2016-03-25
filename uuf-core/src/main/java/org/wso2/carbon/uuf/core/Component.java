@@ -18,7 +18,7 @@ public class Component {
     private final String context;
     private final SortedSet<Page> pages;
     private final Map<String, Fragment> fragments;
-    private final Map<String, String> configuration;
+    private final Map<String, ?> configuration;
     private final Map<String, Renderable> bindings;
     private final String version;
 
@@ -27,7 +27,7 @@ public class Component {
                      String version,
                      SortedSet<Page> pages,
                      Set<Fragment> fragments,
-                     Map<String, String> componentConfig,
+                     Map<String, ?> componentConfig,
                      Map<String, String> bindingsConfig) {
 
         if (name.isEmpty()) {

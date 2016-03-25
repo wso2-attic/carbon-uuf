@@ -15,8 +15,10 @@ import org.wso2.carbon.uuf.core.create.ComponentReference;
 import org.wso2.carbon.uuf.core.create.FileReference;
 import org.wso2.carbon.uuf.core.create.FragmentReference;
 import org.wso2.carbon.uuf.core.create.Resolver;
+import org.yaml.snakeyaml.Yaml;
 
 import java.util.Collections;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.SortedSet;
@@ -109,6 +111,11 @@ public class HbsAppCreator implements AppCreator {
                 .parallel()
                 .map(this::createFragment)
                 .collect(Collectors.toSet());
+        @SuppressWarnings("unchecked")
+        Map<String, ?> config = componentReference
+                .getConfig()
+                .map(b -> (Map<String, ?>) new Yaml().loadAs(b.getContent(), Map.class))
+                .orElse(Collections.emptyMap());
 
         return new Component(
                 name,
@@ -116,7 +123,7 @@ public class HbsAppCreator implements AppCreator {
                 version,
                 pages,
                 fragments,
-                Collections.emptyMap(),
+                config,
                 Collections.emptyMap());
     }
 

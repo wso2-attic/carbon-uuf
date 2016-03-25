@@ -1,1 +1,7 @@
-productName : Pet Store
+uuf.productName : Pet Store
+elementsPerPage: 10
+lifecycle:
+    - state: adopted
+      show: false
+    - state: new
+      show: true

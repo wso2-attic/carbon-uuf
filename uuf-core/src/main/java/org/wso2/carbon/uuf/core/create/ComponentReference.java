@@ -1,5 +1,6 @@
 package org.wso2.carbon.uuf.core.create;
 
+import java.util.Optional;
 import java.util.stream.Stream;
 
 public interface ComponentReference {
@@ -16,5 +17,7 @@ public interface ComponentReference {
     String getVersion();
 
     AppReference getApp();
+
+    Optional<FileReference> getConfig();
 }
 
