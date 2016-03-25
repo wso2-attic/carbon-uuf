@@ -12,7 +12,7 @@ import org.wso2.carbon.uuf.core.create.AppCreator;
 import org.wso2.carbon.uuf.core.create.Resolver;
 import org.wso2.carbon.uuf.fileio.ArtifactResolver;
 import org.wso2.carbon.uuf.fileio.InMemoryBundleCreator;
-import org.wso2.carbon.uuf.handlebars.HbsAppCreator;
+import org.wso2.carbon.uuf.handlebars.HbsRenderableCreator;
 import org.wso2.msf4j.MicroservicesRunner;
 import org.wso2.msf4j.util.SystemVariableUtil;
 
@@ -62,8 +62,9 @@ public class UUFRegistry {
         List<Path> uufAppsPath = Collections.singletonList(FileSystems.getDefault().getPath("."));
         ArtifactResolver resolver = new ArtifactResolver(uufAppsPath);
         BundleCreator bundleCreator = new InMemoryBundleCreator();
-        UUFRegistry registry = new UUFRegistry(new HbsAppCreator(resolver, bundleCreator),
-                createDebugAppender(), resolver);
+        HbsRenderableCreator hbsCreator = new HbsRenderableCreator();
+        AppCreator appCreator = new AppCreator(resolver, ImmutableMap.of("hbs", hbsCreator, "js", hbsCreator), bundleCreator);
+        UUFRegistry registry = new UUFRegistry(appCreator, createDebugAppender(), resolver);
         new MicroservicesRunner().deploy(new UUFService(registry)).start();
     }
 

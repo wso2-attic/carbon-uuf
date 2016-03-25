@@ -72,4 +72,14 @@ public class ArtifactFileReference implements FileReference {
         return component.getApp();
     }
 
+    @Override
+    public String getExtension() {
+        String name = getName();
+        int lastDot = name.lastIndexOf('.');
+        if (lastDot >= 0) {
+            return name.substring(lastDot + 1);
+        }
+        return "";
+    }
+
 }

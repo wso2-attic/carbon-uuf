@@ -26,7 +26,10 @@ public class ArtifactComponentReference implements ComponentReference {
         Path pages = path.resolve("pages");
         if (Files.exists(pages)) {
             try {
-                return Files.walk(pages).map(path -> new ArtifactFileReference(path, this, app));
+                return Files
+                        .walk(pages)
+                        .filter(Files::isRegularFile)
+                        .map(path -> new ArtifactFileReference(path, this, app));
             } catch (IOException e) {
                 throw new UUFException("Error while finding pages in " + path, e);
             }

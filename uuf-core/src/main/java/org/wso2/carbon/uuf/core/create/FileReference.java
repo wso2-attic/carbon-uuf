@@ -17,5 +17,8 @@ public interface FileReference {
     ComponentReference getComponentReference();
 
     AppReference getAppReference();
+
+    String getExtension();
+
 }
 
