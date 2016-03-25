@@ -35,4 +35,9 @@ public class ArtifactAppReference implements AppReference {
         Path componentPath = path.resolve("components").resolve(name);
         return new ArtifactComponentReference(componentPath, this);
     }
+
+    @Override
+    public String getName() {
+        return path.getFileName().toString();
+    }
 }

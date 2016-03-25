@@ -8,5 +8,6 @@ public interface AppReference {
 
     ComponentReference getComponentReference(String name);
 
+    String getName();
 
 }
