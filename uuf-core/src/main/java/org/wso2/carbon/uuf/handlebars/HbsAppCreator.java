@@ -132,9 +132,6 @@ public class HbsAppCreator implements AppCreator {
         return classLoader;
     }
 
-
-
-
     private String withoutHbsExtension(String name) {
         return name.substring(0, name.length() - 4);
     }
