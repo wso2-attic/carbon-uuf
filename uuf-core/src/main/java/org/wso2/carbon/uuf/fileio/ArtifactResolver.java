@@ -29,24 +29,24 @@ public class ArtifactResolver implements Resolver {
      * <li>{appName}/components/[{componentName}|ROOT]/[{fragmentName}|base]/public/{subResourcePath}</li>
      * </ul>
      *
-     * @param appName      application name
-     * @param resourcePath resource uri
+     * @param appName application name
+     * @param resourceUri resource uri
      * @return resolved path
      */
     @Override
-    public Path resolveStatic(String appName, String resourcePath) {
+    public Path resolveStatic(String appName, String resourceUri) {
         Path appPath = resolveArtifactApp(appName).getPath();
-        String resourcePathParts[] = resourcePath.split("/");
+        String resourcePathParts[] = resourceUri.split("/");
 
         if (resourcePathParts.length < 5) {
-            throw new IllegalArgumentException("Invalid resourcePath! `" + resourcePath + "`");
+            throw new IllegalArgumentException("Invalid resourceUri! `" + resourceUri + "`");
         }
 
         String resourceUriPrefixPart = resourcePathParts[1];
         String componentUriPart = resourcePathParts[2];
         String fragmentUriPart = resourcePathParts[3];
-        int fourthSlash = StringUtils.ordinalIndexOf(resourcePath, "/", 4);
-        String subResourcePath = resourcePath.substring(fourthSlash + 1, resourcePath.length());
+        int fourthSlash = StringUtils.ordinalIndexOf(resourceUri, "/", 4);
+        String subResourcePath = resourceUri.substring(fourthSlash + 1, resourceUri.length());
 
         if (!resourceUriPrefixPart.equals(STATIC_RESOURCE_URI_PREFIX)) {
             throw new IllegalArgumentException("Resource path should starts with `/public`!");
