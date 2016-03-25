@@ -5,9 +5,12 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.wiring.BundleWiring;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.core.BundleCreator;
+import org.wso2.carbon.uuf.core.UUFException;
+import org.wso2.carbon.uuf.core.create.ComponentReference;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -23,18 +26,41 @@ import java.util.jar.Manifest;
 public class InMemoryBundleCreator implements BundleCreator {
 
     private static final Logger log = LoggerFactory.getLogger(InMemoryBundleCreator.class);
-    private static final String DUMMY_CLAZZ_PATH = "/bundle/create/DummyComponentBundle.claz";
+    private static final String DUMMY_CLASS_PATH = "/bundle/create/DummyComponentBundle.claz";
+    private static final String DUMMY_CLASS_NAME = "DummyComponentBundle.class";
 
-    public Bundle createBundle(String name, String symbolicName, String version, Optional<List> exports,
-                               Optional<List> imports) throws IOException, BundleException {
-        InputStream bundleInputStream = createBundleStream(name, symbolicName, version, exports, imports);
-        Bundle tBundle = FrameworkUtil.getBundle(InMemoryBundleCreator.class);
-        BundleContext bundleContext = tBundle.getBundleContext();
-        return bundleContext.installBundle("", bundleInputStream);
+    public Bundle createBundle(ComponentReference compReference) {
+        String name = getBundleName(compReference.getName(), compReference.getContext());
+        String symbolicName = compReference.getName();
+        String version = compReference.getVersion();
+        //TODO: handle bundle imports and exports
+        Optional<List<String>> exports = Optional.empty();
+        Optional<List<String>> imports = Optional.empty();
+        String locationKey = getBundleLocationKey(compReference.getName(), compReference.getContext());
+        try {
+            InputStream bundleInputStream = createBundleStream(name, symbolicName, version, exports, imports);
+            Bundle currentBundle = FrameworkUtil.getBundle(InMemoryBundleCreator.class);
+            BundleContext bundleContext = currentBundle.getBundleContext();
+            Bundle bundle = bundleContext.installBundle(locationKey, bundleInputStream);
+            bundle.start();
+            return bundle;
+        } catch (BundleException e) {
+            throw new UUFException("Error while installing the bundle of " + symbolicName, e);
+        } catch (IOException e) {
+            throw new UUFException("Error while creating the bundle of " + symbolicName, e);
+        }
+    }
+
+    public ClassLoader getBundleClassLoader(String locationKey) {
+        Bundle currentBundle = FrameworkUtil.getBundle(InMemoryBundleCreator.class);
+        BundleContext bundleContext = currentBundle.getBundleContext();
+        Bundle bundle = bundleContext.getBundle(locationKey);
+        BundleWiring bundleWiring = bundle.adapt(BundleWiring.class);
+        return bundleWiring.getClassLoader();
     }
 
     private InputStream createBundleStream(String name, String symbolicName, String version,
-                                           Optional<List> exports, Optional<List> imports)
+                                           Optional<List<String>> exports, Optional<List<String>> imports)
             throws IOException {
         Manifest bundleManifest = new Manifest();
         Attributes attributes = bundleManifest.getMainAttributes();
@@ -44,20 +70,28 @@ public class InMemoryBundleCreator implements BundleCreator {
         attributes.putValue("Bundle-SymbolicName", symbolicName);
         attributes.putValue("Bundle-Version", version);
 
-        ByteArrayOutputStream jarOutputStream = new ByteArrayOutputStream();
-        try (JarOutputStream target = new JarOutputStream(jarOutputStream, bundleManifest)) {
-            InputStream resource = InMemoryBundleCreator.class.getResourceAsStream(DUMMY_CLAZZ_PATH);
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        try (JarOutputStream target = new JarOutputStream(outputStream, bundleManifest)) {
+            InputStream resource = InMemoryBundleCreator.class.getResourceAsStream(DUMMY_CLASS_PATH);
             byte[] data = IOUtils.toByteArray(resource);
-            add("DummyComponentBundle.class", data, target);
+            addJarEntry(DUMMY_CLASS_NAME, data, target);
         }
-        return new ByteArrayInputStream(jarOutputStream.toByteArray());
+        return new ByteArrayInputStream(outputStream.toByteArray());
     }
 
-    private void add(String fileName, byte[] content, JarOutputStream target) throws IOException {
+    private void addJarEntry(String fileName, byte[] content, JarOutputStream target) throws IOException {
         JarEntry entry = new JarEntry(fileName.replace("\\", "/"));
         target.putNextEntry(entry);
         target.write(content);
         target.closeEntry();
+    }
+
+    public String getBundleName(String name, String context) {
+        return "UUF bundle for " + getBundleLocationKey(name, context);
+    }
+
+    public String getBundleLocationKey(String name, String context) {
+        return name.equals("root") ? name : name + " :: " + context.substring(1);
     }
 
 }

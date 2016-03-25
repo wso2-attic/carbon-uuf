@@ -11,5 +11,9 @@ public interface ComponentReference {
 
     String getName();
 
+    String getContext();
+
+    String getVersion();
+
 }
 

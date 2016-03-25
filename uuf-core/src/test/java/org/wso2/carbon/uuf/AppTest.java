@@ -50,6 +50,7 @@ public class AppTest {
         Component cmp1 = new Component(
                 "root",
                 "/",
+                "1.0.0",
                /*pages*/ Collections.emptySortedSet(),
                /*fragments*/ Collections.emptySet(),
                /*config*/ Collections.emptyMap(),
@@ -62,6 +63,7 @@ public class AppTest {
         Component cmp2 = new Component(
                 "test.component.orange",
                 "/orange",
+                "1.0.0",
                /*pages*/ Collections.emptySortedSet(),
                /*fragments*/ Collections.emptySet(),
                /*config*/ Collections.emptyMap(),

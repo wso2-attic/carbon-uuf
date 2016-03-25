@@ -53,7 +53,7 @@ public class HandlebarsRenderableTest {
 
     @Test
     public void testTemplateWithJsExecutable() {
-        JSExecutable script = new JSExecutable("function onRequest(){ return {name: \"Alice\"}; }", Optional.empty());
+        JSExecutable script = new JSExecutable("function onRequest(){ return {name: \"Alice\"}; }", Optional.empty(), HandlebarsRenderableTest.class.getClassLoader());
         HbsRenderable hbsRenderable = createHbsRenderable("Hello {{name}}! Have a good day.", script);
         String output = hbsRenderable.render(new Object(), ImmutableListMultimap.of(), Collections.emptyMap());
         Assert.assertEquals(output, "Hello Alice! Have a good day.");

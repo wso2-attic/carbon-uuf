@@ -20,9 +20,11 @@ public class Component {
     private final Map<String, Fragment> fragments;
     private final Map<String, String> configuration;
     private final Map<String, Renderable> bindings;
+    private final String version;
 
     public Component(String name,
                      String context,
+                     String version,
                      SortedSet<Page> pages,
                      Set<Fragment> fragments,
                      Map<String, String> componentConfig,
@@ -34,6 +36,7 @@ public class Component {
 
         this.name = name;
         this.context = context;
+        this.version = version;
         this.pages = pages;
         this.configuration = componentConfig;
         this.fragments = fragments.stream().collect(
@@ -81,6 +84,10 @@ public class Component {
 
     public String getName() {
         return name;
+    }
+
+    public String getVersion() {
+        return version;
     }
 
     public Set<Page> getPages() {

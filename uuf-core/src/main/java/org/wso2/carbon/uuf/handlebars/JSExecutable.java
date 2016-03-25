@@ -28,7 +28,7 @@ public class JSExecutable implements Executable {
     private final Invocable engine;
     private static final Logger log = LoggerFactory.getLogger(JSExecutable.class);
 
-    public JSExecutable(String scriptSource, Optional<String> scriptPath) {
+    public JSExecutable(String scriptSource, Optional<String> scriptPath, ClassLoader componentClassLoader) {
         this.scriptPath = scriptPath;
         if (scriptPath.isPresent()) {
             // Append script file name for debugging purposes
@@ -36,7 +36,7 @@ public class JSExecutable implements Executable {
         }
 
         try {
-            ScriptEngine engine = factory.getScriptEngine(new String[] { "-strict" }, getClassLoader());
+            ScriptEngine engine = factory.getScriptEngine(new String[] { "-strict" }, componentClassLoader);
             engine.put("MSSCaller", new MSSCaller());
             engine.eval("var callService = function(method,uri){return JSON.parse(MSSCaller(method,uri))}");
             engine.eval(scriptSource);
@@ -44,28 +44,6 @@ public class JSExecutable implements Executable {
         } catch (ScriptException e) {
             throw new UUFException("error evaluating javascript", e);
         }
-    }
-
-    private ClassLoader getClassLoader(){
-        ClassLoader classLoader = this.getClass().getClassLoader();
-        if (classLoader instanceof BundleReference) { //check if OSGi classloader
-            try {
-                List imports = new ArrayList<String>();
-                List exports = new ArrayList<String>();
-                BundleCreator bundleCreator = new InMemoryBundleCreator();
-                Bundle bundle = bundleCreator.createBundle("com.example", "com.example", "1.0.0",
-                        Optional.of(imports), Optional.of(exports));
-                bundle.start();
-                BundleWiring bundleWiring = bundle.adapt(BundleWiring.class);
-                //setting specific bundle class loader
-                classLoader = bundleWiring.getClassLoader();
-            } catch (BundleException e) {
-                log.error("Error occurred on installing bundle", e);
-            } catch (IOException e) {
-                log.error("Error occurred on creating bundle", e);
-            }
-        }
-        return classLoader;
     }
 
     private String getPath() {
