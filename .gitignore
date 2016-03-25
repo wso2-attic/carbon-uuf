@@ -2,6 +2,7 @@
 ## Java
 #################
 *.class
+*.claz
 
 # Package files
 *.jar
