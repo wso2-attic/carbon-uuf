@@ -17,11 +17,13 @@ public class HbsInitRenderable extends HbsRenderable {
     private final Map<String, HbsInitRenderable> fillingZone;
     private final Optional<String> layout;
 
+    public static final String HELPER_NAME_FILL_ZONE = "fillZone";
+    public static final String HELPER_NAME_LAYOUT = "layout";
     private static final Handlebars HANDLEBARS = new Handlebars();
 
     static {
-        HANDLEBARS.registerHelper("fillZone", new FillZoneHelper());
-        HANDLEBARS.registerHelper("layout", new LayoutHelper());
+        HANDLEBARS.registerHelper(HELPER_NAME_FILL_ZONE, new FillZoneHelper());
+        HANDLEBARS.registerHelper(HELPER_NAME_LAYOUT, new LayoutHelper());
         HANDLEBARS.registerHelperMissing((context, options) -> "");
     }
 
