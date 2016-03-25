@@ -11,6 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
 
+@Deprecated
 class LayoutCreator {
 
     private final Path componentsDir;

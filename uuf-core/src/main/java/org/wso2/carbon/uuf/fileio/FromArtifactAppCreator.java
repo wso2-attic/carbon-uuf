@@ -17,6 +17,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@Deprecated
 public class FromArtifactAppCreator {
 
     public static final String ROOT_COMPONENT_NAME = "root";

@@ -13,6 +13,7 @@ import java.nio.file.Path;
 
 import static org.wso2.carbon.uuf.fileio.FromArtifactAppCreator.ROOT_COMPONENT_NAME;
 
+@Deprecated
 public class FragmentCreator {
 
     public Fragment createFragment(Path fragmentDir) {

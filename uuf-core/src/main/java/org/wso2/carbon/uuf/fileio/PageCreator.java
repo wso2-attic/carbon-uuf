@@ -15,6 +15,7 @@ import java.nio.file.Path;
 import java.util.Map;
 import java.util.Optional;
 
+@Deprecated
 class PageCreator {
 
     Page createPage(Path templatePath, LayoutCreator layoutCreator, Path components) {
