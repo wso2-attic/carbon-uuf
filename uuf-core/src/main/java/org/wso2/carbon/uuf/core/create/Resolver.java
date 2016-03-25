@@ -1,7 +1,6 @@
 package org.wso2.carbon.uuf.core.create;
 
 import java.nio.file.Path;
-import java.util.stream.Stream;
 
 public interface Resolver {
 
@@ -10,8 +9,6 @@ public interface Resolver {
 
     Path resolveStatic(String appName, String resourcePath);
 
-    Stream<ComponentReference> resolveComponents(String appName);
-
-    ComponentReference resolveComponent(String appName, String name);
+    AppReference resolveApp(String appName);
 
 }

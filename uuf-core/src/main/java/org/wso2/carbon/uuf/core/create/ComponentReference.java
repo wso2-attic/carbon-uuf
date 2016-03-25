@@ -15,5 +15,6 @@ public interface ComponentReference {
 
     String getVersion();
 
+    AppReference getApp();
 }
 

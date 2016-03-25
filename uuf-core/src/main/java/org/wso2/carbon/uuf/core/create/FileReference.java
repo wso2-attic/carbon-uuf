@@ -14,5 +14,8 @@ public interface FileReference {
 
     Optional<FileReference> getSiblingIfExists(String name);
 
+    ComponentReference getComponentReference();
+
+    AppReference getAppReference();
 }
 

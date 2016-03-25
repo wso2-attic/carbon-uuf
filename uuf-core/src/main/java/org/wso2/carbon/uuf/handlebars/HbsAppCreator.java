@@ -3,20 +3,31 @@ package org.wso2.carbon.uuf.handlebars;
 import com.github.jknack.handlebars.io.StringTemplateSource;
 import com.github.jknack.handlebars.io.TemplateSource;
 import org.osgi.framework.BundleReference;
-import org.wso2.carbon.uuf.core.*;
+import org.wso2.carbon.uuf.core.App;
+import org.wso2.carbon.uuf.core.BundleCreator;
+import org.wso2.carbon.uuf.core.Component;
+import org.wso2.carbon.uuf.core.Fragment;
+import org.wso2.carbon.uuf.core.Page;
+import org.wso2.carbon.uuf.core.Renderable;
+import org.wso2.carbon.uuf.core.UriPatten;
 import org.wso2.carbon.uuf.core.create.AppCreator;
 import org.wso2.carbon.uuf.core.create.ComponentReference;
 import org.wso2.carbon.uuf.core.create.FileReference;
 import org.wso2.carbon.uuf.core.create.FragmentReference;
 import org.wso2.carbon.uuf.core.create.Resolver;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Optional;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 public class HbsAppCreator implements AppCreator {
 
     private Resolver resolver;
     private BundleCreator bundleCreator;
+
     public HbsAppCreator(Resolver resolver, BundleCreator bundleCreator) {
         this.resolver = resolver;
         this.bundleCreator = bundleCreator;
@@ -25,17 +36,15 @@ public class HbsAppCreator implements AppCreator {
 
     @Override
     public App createApp(String appName, String context) {
-        Set<Component> components = resolver.resolveComponents(appName)
-                .map((componentReference) -> createComponent(componentReference, appName))
+        Set<Component> components = resolver
+                .resolveApp(appName)
+                .streamComponents()
+                .map(this::createComponent)
                 .collect(Collectors.toSet());
         return new App(context, components);
     }
 
-    private Page createPage(
-            FileReference pageReference,
-            ComponentReference currentComponent,
-            String appName) {
-
+    private Page createPage(FileReference pageReference) {
         String relativePath = pageReference.getPathPattern();
         String path = withoutHbsExtension(relativePath);
         if (path.endsWith("/index")) {
@@ -43,40 +52,43 @@ public class HbsAppCreator implements AppCreator {
         }
         UriPatten uriPatten = new UriPatten(path);
         TemplateSource templateSource = createTemplateSource(pageReference);
-        Optional<Executable> executable = createSameNameJs(pageReference, currentComponent);
+        Optional<Executable> executable = createSameNameJs(pageReference);
         HbsInitRenderable pageRenderable = new HbsInitRenderable(templateSource, executable);
-        Optional<String> layoutFullName = pageRenderable.getLayoutName();
-        Renderable renderable = layoutFullName
-                .map(fullName -> {
-                    String layoutName;
-                    int lastDot = fullName.lastIndexOf('.');
-                    ComponentReference component;
-                    if (lastDot >= 0) {
-                        String componentName = fullName.substring(0, lastDot);
-                        component = resolver.resolveComponent(appName, componentName);
-                        layoutName = fullName.substring(lastDot + 1);
-                    } else {
-                        component = currentComponent;
-                        layoutName = fullName;
-                    }
-                    FileReference layoutReference = component.resolveLayout(layoutName + ".hbs");
-                    return new HbsRenderable(
-                            createTemplateSource(layoutReference),
-                            pageRenderable.getScript());
-                })
-                .orElse(pageRenderable);
+        Optional<String> layoutFullNameOpt = pageRenderable.getLayoutName();
+        Renderable renderable;
+        if (layoutFullNameOpt.isPresent()) {
+            String layoutFullName = layoutFullNameOpt.get();
+            String layoutName;
+            int lastDot = layoutFullName.lastIndexOf('.');
+            ComponentReference component;
+            if (lastDot >= 0) {
+                String componentName = layoutFullName.substring(0, lastDot);
+                component = pageReference.getAppReference()
+                        .getComponentReference(componentName);
+                layoutName = layoutFullName.substring(lastDot + 1);
+            } else {
+                component = pageReference.getComponentReference();
+                layoutName = layoutFullName;
+            }
+            FileReference layoutReference = component.resolveLayout(layoutName + ".hbs");
+            renderable = new HbsRenderable(
+                    createTemplateSource(layoutReference),
+                    pageRenderable.getScript());
+        } else {
+            renderable = pageRenderable;
+        }
         return new Page(uriPatten, renderable, pageRenderable.getFillingZones());
     }
 
-    private Optional<Executable> createSameNameJs(FileReference pageReference, ComponentReference currentComponent) {
+    private Optional<Executable> createSameNameJs(FileReference pageReference) {
         String jsName = withoutHbsExtension(pageReference.getName()) + ".js";
         Optional<FileReference> jsReference = pageReference.getSiblingIfExists(jsName);
         //TODO: need to get actual component here not the "root"
         return jsReference.map(j ->
-                new JSExecutable(j.getContent(), Optional.of(j.getRelativePath()), getBundleComponentClassLoader(currentComponent)));
+                new JSExecutable(j.getContent(), getBundleComponentClassLoader(pageReference.getComponentReference()), Optional.of(j.getRelativePath())));
     }
 
-    private Component createComponent(ComponentReference componentReference, String appName) {
+    private Component createComponent(ComponentReference componentReference) {
         String name = componentReference.getName();
         String version = componentReference.getVersion();
         String context = componentReference.getContext();
@@ -90,12 +102,12 @@ public class HbsAppCreator implements AppCreator {
                 .streamPageFiles()
                 .parallel()
                 .filter(p -> p.getName().endsWith(".hbs"))
-                .map(fileReference -> createPage(fileReference, componentReference, appName))
+                .map(this::createPage)
                 .collect(Collectors.toCollection(TreeSet::new));
         Set<Fragment> fragments = componentReference
                 .streamFragmentFiles()
                 .parallel()
-                .map(f->createFragment(f,componentReference))
+                .map(this::createFragment)
                 .collect(Collectors.toSet());
 
         return new Component(
@@ -108,11 +120,11 @@ public class HbsAppCreator implements AppCreator {
                 Collections.emptyMap());
     }
 
-    private Fragment createFragment(FragmentReference dir, ComponentReference currentComponent) {
-        String name = dir.getName();
-        FileReference hbsFile = dir.getChild(name + ".hbs");
+    private Fragment createFragment(FragmentReference fragmentReference) {
+        String name = fragmentReference.getName();
+        FileReference hbsFile = fragmentReference.getChild(name + ".hbs");
         TemplateSource templateSource = createTemplateSource(hbsFile);
-        Optional<Executable> executable = createSameNameJs(hbsFile, currentComponent);
+        Optional<Executable> executable = createSameNameJs(hbsFile);
         return new Fragment(name, new HbsRenderable(templateSource, executable));
     }
 
@@ -127,7 +139,8 @@ public class HbsAppCreator implements AppCreator {
         ClassLoader classLoader = this.getClass().getClassLoader();
         if (classLoader instanceof BundleReference) {
             //if an OSGi classloader
-            String bundleLocKey = bundleCreator.getBundleLocationKey(compReference.getName(), compReference.getContext());
+            String bundleLocKey = bundleCreator
+                    .getBundleLocationKey(compReference.getName(), compReference.getContext());
             classLoader = bundleCreator.getBundleClassLoader(bundleLocKey);
         }
         return classLoader;

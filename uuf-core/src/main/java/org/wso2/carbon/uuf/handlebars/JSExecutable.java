@@ -2,22 +2,13 @@ package org.wso2.carbon.uuf.handlebars;
 
 import jdk.nashorn.api.scripting.AbstractJSObject;
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
-import org.osgi.framework.*;
-import org.osgi.framework.wiring.BundleWiring;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.uuf.UUFService;
-import org.wso2.carbon.uuf.core.BundleCreator;
 import org.wso2.carbon.uuf.core.UUFException;
-import org.wso2.carbon.uuf.fileio.InMemoryBundleCreator;
 
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 @SuppressWarnings("PackageAccessibility")
@@ -28,7 +19,7 @@ public class JSExecutable implements Executable {
     private final Invocable engine;
     private static final Logger log = LoggerFactory.getLogger(JSExecutable.class);
 
-    public JSExecutable(String scriptSource, Optional<String> scriptPath, ClassLoader componentClassLoader) {
+    public JSExecutable(String scriptSource, ClassLoader componentClassLoader, Optional<String> scriptPath) {
         this.scriptPath = scriptPath;
         if (scriptPath.isPresent()) {
             // Append script file name for debugging purposes
