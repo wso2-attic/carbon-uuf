@@ -4,6 +4,7 @@ import com.github.jknack.handlebars.Context;
 import com.github.jknack.handlebars.Handlebars;
 import com.github.jknack.handlebars.Template;
 import com.github.jknack.handlebars.io.TemplateSource;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Multimap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,14 +12,17 @@ import org.wso2.carbon.uuf.DebugUtil;
 import org.wso2.carbon.uuf.core.Fragment;
 import org.wso2.carbon.uuf.core.Renderable;
 import org.wso2.carbon.uuf.core.UUFException;
+import org.wso2.carbon.uuf.handlebars.helpers.runtime.CssHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.DefineZoneHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.IncludeFragmentHelper;
+import org.wso2.carbon.uuf.handlebars.helpers.runtime.JsHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.MissingHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.PlaceholderHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.ResourceHelper;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -28,15 +32,27 @@ public class HbsRenderable implements Renderable {
     public static final String FRAGMENT_KEY = HbsRenderable.class.getName() + "#fragments";
     public static final String WRITER_KEY = HbsRenderable.class.getName() + "#writer";
     //
-
-    private static final Logger log = LoggerFactory.getLogger(HbsRenderable.class);
+    private static final String HELPER_NAME_DEFINE_ZONE = "defineZone";
+    private static final String HELPER_NAME_FRAGMENT = "includeFragment";
+    private static final String HELPER_NAME_PLACEHOLDER = "placeholder";
+    private static final String HELPER_NAME_HEADER_TITLE = "headerTitle";
+    private static final String HELPER_NAME_HEADER_CSS = "headerCss";
+    private static final String HELPER_NAME_HEADER_JS = "headerJs";
+    private static final String HELPER_NAME_HEADER_OTHER = "headerOther";
+    private static final String HELPER_NAME_FOOTER_JS = "footerJs";
+    //
     private static final Handlebars HANDLEBARS = new Handlebars();
+    private static final Map<String, ResourceHelper> RESOURCE_HELPERS;
+    private static final Logger log = LoggerFactory.getLogger(HbsRenderable.class);
 
     static {
-        HANDLEBARS.registerHelper("defineZone", new DefineZoneHelper());
-        HANDLEBARS.registerHelper("includeFragment", new IncludeFragmentHelper());
-        HANDLEBARS.registerHelper("headerJs", ResourceHelper.getHeaderJsInstance());
-        HANDLEBARS.registerHelper("placeholder", new PlaceholderHelper());
+        HANDLEBARS.registerHelper(HELPER_NAME_DEFINE_ZONE, new DefineZoneHelper());
+        HANDLEBARS.registerHelper(HELPER_NAME_FRAGMENT, new IncludeFragmentHelper());
+        HANDLEBARS.registerHelper(HELPER_NAME_PLACEHOLDER, new PlaceholderHelper());
+        RESOURCE_HELPERS = ImmutableMap.of(HELPER_NAME_HEADER_CSS, new CssHelper(HELPER_NAME_HEADER_CSS),
+                                           HELPER_NAME_HEADER_JS, new JsHelper(HELPER_NAME_HEADER_JS),
+                                           HELPER_NAME_FOOTER_JS, new JsHelper(HELPER_NAME_FOOTER_JS));
+        RESOURCE_HELPERS.forEach(HANDLEBARS::registerHelper);
         HANDLEBARS.registerHelperMissing(new MissingHelper());
     }
 
@@ -86,7 +102,15 @@ public class HbsRenderable implements Renderable {
         } catch (IOException e) {
             throw new UUFException("Handlebars rendering failed", e);
         }
-        return writer.toString(ResourceHelper.getAllResources(context));
+
+        Map<String, String> placeholderValuesMap = new HashMap<>();
+        for (Map.Entry<String, ResourceHelper> entry : RESOURCE_HELPERS.entrySet()) {
+            Optional<String> placeholderValue = entry.getValue().getResources(context);
+            if (placeholderValue.isPresent()) {
+                placeholderValuesMap.put(entry.getKey(), placeholderValue.get());
+            }
+        }
+        return writer.toString(placeholderValuesMap);
     }
 
     private Context objectToContext(Object candidateContext) {
