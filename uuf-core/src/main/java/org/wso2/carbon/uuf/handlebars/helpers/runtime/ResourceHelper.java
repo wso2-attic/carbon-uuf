@@ -6,31 +6,15 @@ import com.github.jknack.handlebars.Options;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 
-public class ResourceHelper implements Helper<String> {
+public abstract class ResourceHelper implements Helper<String> {
 
-    private static ResourceHelper HEADER_CSS_INSTANCE = new ResourceHelper("headerCss");
-    private static ResourceHelper HEADER_JS_INSTANCE = new ResourceHelper("headerJs");
-    private static ResourceHelper FOOTER_JS_INSTANCE = new ResourceHelper("footerJs");
-    private final String resourceKey;
+    private final String resourcesCategory;
 
-    private ResourceHelper(String resourceType) {
-        resourceKey = ResourceHelper.class.getName() + "#" + resourceType;
-    }
-
-    public static ResourceHelper getHeaderCssInstance() {
-        return HEADER_CSS_INSTANCE;
-    }
-
-    public static ResourceHelper getHeaderJsInstance() {
-        return HEADER_JS_INSTANCE;
-    }
-
-    public static ResourceHelper getFooterJsInstance() {
-        return FOOTER_JS_INSTANCE;
+    public ResourceHelper(String resourcesCategory) {
+        this.resourcesCategory = this.getClass().getName() + "#" + resourcesCategory;
     }
 
     @Override
@@ -38,25 +22,26 @@ public class ResourceHelper implements Helper<String> {
         if (!uri.startsWith("/")) {
             throw new IllegalArgumentException("A relative public URI should start with '/'.");
         }
-        List<String> resources = options.data(resourceKey);
+        List<String> resources = options.data(resourcesCategory);
         if (resources == null) {
             resources = new ArrayList<>();
-            options.data(resourceKey, resources);
+            options.data(resourcesCategory, resources);
         }
-        resources.add(uri);
+        resources.add(format(uri));
         return "";
     }
 
-    public static Map<String, String> getAllResources(Context context) {
-        String headerJsKey = ResourceHelper.class.getName() + "#headerJs";
-        List<String> headJsList = context.data(headerJsKey);
-        Map<String, String> rv = new HashMap<>();
-        rv.put("headerJs", ((headJsList == null || headJsList.isEmpty()) ? "" : headJsList.toString()));
-        return rv;
-    }
+    protected abstract String format(String uri);
 
-    private List<String> getResources(Context context) {
-        List<String> resourcesList = context.data(this.resourceKey);
-        return (resourcesList == null) ? new ArrayList<>(0) : resourcesList;
+    public Optional<String> getResources(Context context) {
+        List<String> resourcesList = context.data(this.resourcesCategory);
+        if (resourcesList == null || resourcesList.isEmpty()) {
+            return Optional.<String>empty();
+        }
+        StringBuilder tmpBuffer = new StringBuilder();
+        for (String item : resourcesList) {
+            tmpBuffer.append(item);
+        }
+        return Optional.of(tmpBuffer.toString());
     }
 }
