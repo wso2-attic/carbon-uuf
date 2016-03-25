@@ -25,21 +25,22 @@ public class IncludeFragmentHelper implements Helper<String> {
         Multimap<String, Renderable> bindings = options.data(BINDING_KEY);
         Map<String, Fragment> fragments = options.data(FRAGMENT_KEY);
         Fragment fragment = fragments.get(fragmentName);
-        if (fragment != null) {
-            Map<String, Object> fragmentArgs = options.hash;
-            Object fragmentContext;
-            if (fragmentArgs.isEmpty()) {
-                fragmentContext = options.context;
-            } else {
-                fragmentContext = fragmentArgs;
-            }
-
-            if (log.isDebugEnabled()) {
-                log.debug("Fragment " + fragment + " is called from '" + options.fn.text() + "'.");
-            }
-            String content = fragment.render(fragmentContext, bindings, fragments).trim();
-            return new Handlebars.SafeString(content);
+        if (fragment == null) {
+            throw new UUFException("Fragment '" + fragmentName + "' does not exists.");
         }
-        throw new UUFException("Fragment '" + fragmentName + "' does not exists.");
+
+        Map<String, Object> fragmentArgs = options.hash;
+        Object fragmentContext;
+        if (fragmentArgs.isEmpty()) {
+            fragmentContext = options.context;
+        } else {
+            fragmentContext = fragmentArgs;
+        }
+
+        if (log.isDebugEnabled()) {
+            log.debug("Fragment " + fragment + " is called from '" + options.fn.text() + "'.");
+        }
+        String content = fragment.render(fragmentContext, bindings, fragments).trim();
+        return new Handlebars.SafeString(content);
     }
 }
