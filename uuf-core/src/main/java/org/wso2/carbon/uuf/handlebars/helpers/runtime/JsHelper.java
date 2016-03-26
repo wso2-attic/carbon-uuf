@@ -8,6 +8,6 @@ public class JsHelper extends ResourceHelper {
 
     @Override
     protected String format(String uri) {
-        return uri;
+        return "<script src=\"" + uri + "\"></script>";
     }
 }
