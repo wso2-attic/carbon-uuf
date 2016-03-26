@@ -8,10 +8,10 @@ import java.util.Optional;
 
 public abstract class FillPlaceholderHelper implements Helper<String> {
 
-    private final String placeholderName;
+    protected final String placeholderName;
 
     public FillPlaceholderHelper(String placeholderName) {
-        this.placeholderName = placeholderName;
+        this.placeholderName = this.getClass().getName() + "#" + placeholderName;
     }
 
     public Optional<String> getValue(Context context) {

@@ -108,7 +108,7 @@ public class HbsRenderable implements Renderable {
     private Map<String, String> getPlaceholderValues(Context context) {
         Map<String, String> placeholderValuesMap = new HashMap<>();
         for (Map.Entry<String, ResourceHelper> entry : RESOURCE_HELPERS.entrySet()) {
-            Optional<String> placeholderValue = entry.getValue().getResources(context);
+            Optional<String> placeholderValue = entry.getValue().getValue(context);
             if (placeholderValue.isPresent()) {
                 placeholderValuesMap.put(entry.getKey(), placeholderValue.get());
             }

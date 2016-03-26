@@ -1,7 +1,5 @@
 package org.wso2.carbon.uuf.handlebars.helpers.runtime;
 
-import com.github.jknack.handlebars.Context;
-import com.github.jknack.handlebars.Helper;
 import com.github.jknack.handlebars.Options;
 import org.wso2.carbon.uuf.core.Fragment;
 
@@ -9,16 +7,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
-import java.util.Optional;
 
 import static org.wso2.carbon.uuf.handlebars.HbsRenderable.FRAGMENTS_STACK_KEY;
 
-public abstract class ResourceHelper implements Helper<String> {
-
-    private final String resourcesCategory;
+public abstract class ResourceHelper extends FillPlaceholderHelper {
 
     public ResourceHelper(String resourcesCategory) {
-        this.resourcesCategory = this.getClass().getName() + "#" + resourcesCategory;
+        super(resourcesCategory);
     }
 
     @Override
@@ -26,10 +21,10 @@ public abstract class ResourceHelper implements Helper<String> {
         if (!relativeUri.startsWith("/")) {
             throw new IllegalArgumentException("A relative URI should start with '/'.");
         }
-        List<String> resources = options.data(resourcesCategory);
+        List<String> resources = options.data(placeholderName);
         if (resources == null) {
             resources = new ArrayList<>();
-            options.data(resourcesCategory, resources);
+            options.data(placeholderName, resources);
         }
         Deque<Fragment> fragmentStack = options.data(FRAGMENTS_STACK_KEY);
         String publicUri;
@@ -40,21 +35,8 @@ public abstract class ResourceHelper implements Helper<String> {
         } else {
             publicUri = fragmentStack.peekLast().getResourceUriPrefix() + relativeUri;
         }
-        resources.add(format(publicUri));
+        resources.add(formatValue(publicUri));
         return "";
     }
 
-    protected abstract String format(String uri);
-
-    public Optional<String> getResources(Context context) {
-        List<String> resourcesList = context.data(this.resourcesCategory);
-        if (resourcesList == null || resourcesList.isEmpty()) {
-            return Optional.<String>empty();
-        }
-        StringBuilder tmpBuffer = new StringBuilder();
-        for (String item : resourcesList) {
-            tmpBuffer.append(item);
-        }
-        return Optional.of(tmpBuffer.toString());
-    }
 }
