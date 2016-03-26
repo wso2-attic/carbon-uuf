@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Optional;
 
 public class FillZoneHelper implements Helper<String> {
+    public static final String HELPER_NAME = "fillZone";
     public static final String ZONES_KEY = FillZoneHelper.class.getName() + "#zones";
 
     @Override

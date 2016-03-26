@@ -33,26 +33,17 @@ public class HbsRenderable implements Renderable {
     public static final String WRITER_KEY = HbsRenderable.class.getName() + "#writer";
     public static final String FRAGMENTS_STACK_KEY = HbsRenderable.class.getName() + "#fragments-stack";
     //
-    private static final String HELPER_NAME_DEFINE_ZONE = "defineZone";
-    private static final String HELPER_NAME_FRAGMENT = "includeFragment";
-    private static final String HELPER_NAME_PLACEHOLDER = "placeholder";
-    private static final String HELPER_NAME_HEADER_TITLE = "headerTitle";
-    private static final String HELPER_NAME_HEADER_CSS = "headerCss";
-    private static final String HELPER_NAME_HEADER_JS = "headerJs";
-    private static final String HELPER_NAME_HEADER_OTHER = "headerOther";
-    private static final String HELPER_NAME_FOOTER_JS = "footerJs";
-    //
     private static final Handlebars HANDLEBARS = new Handlebars();
     private static final Map<String, ResourceHelper> RESOURCE_HELPERS;
     private static final Logger log = LoggerFactory.getLogger(HbsRenderable.class);
 
     static {
-        HANDLEBARS.registerHelper(HELPER_NAME_DEFINE_ZONE, new DefineZoneHelper());
-        HANDLEBARS.registerHelper(HELPER_NAME_FRAGMENT, new IncludeFragmentHelper());
-        HANDLEBARS.registerHelper(HELPER_NAME_PLACEHOLDER, new PlaceholderHelper());
-        RESOURCE_HELPERS = ImmutableMap.of(HELPER_NAME_HEADER_CSS, new CssHelper(HELPER_NAME_HEADER_CSS),
-                                           HELPER_NAME_HEADER_JS, new JsHelper(HELPER_NAME_HEADER_JS),
-                                           HELPER_NAME_FOOTER_JS, new JsHelper(HELPER_NAME_FOOTER_JS));
+        HANDLEBARS.registerHelper(DefineZoneHelper.HELPER_NAME, new DefineZoneHelper());
+        HANDLEBARS.registerHelper(IncludeFragmentHelper.HELPER_NAME, new IncludeFragmentHelper());
+        HANDLEBARS.registerHelper(PlaceholderHelper.HELPER_NAME, new PlaceholderHelper());
+        RESOURCE_HELPERS = ImmutableMap.of(CssHelper.HELPER_NAME, new CssHelper(),
+                                           JsHelper.HELPER_NAME_HEADER, new JsHelper(JsHelper.HELPER_NAME_HEADER),
+                                           JsHelper.HELPER_NAME_FOOTER, new JsHelper(JsHelper.HELPER_NAME_FOOTER));
         RESOURCE_HELPERS.forEach(HANDLEBARS::registerHelper);
         HANDLEBARS.registerHelperMissing(new MissingHelper());
     }

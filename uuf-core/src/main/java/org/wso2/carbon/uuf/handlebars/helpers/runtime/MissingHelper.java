@@ -4,15 +4,16 @@ import com.github.jknack.handlebars.Helper;
 import com.github.jknack.handlebars.Options;
 import com.google.common.collect.ImmutableSet;
 import org.wso2.carbon.uuf.core.UUFException;
+import org.wso2.carbon.uuf.handlebars.helpers.init.FillZoneHelper;
+import org.wso2.carbon.uuf.handlebars.helpers.init.LayoutHelper;
 
 import java.io.IOException;
 
-import static org.wso2.carbon.uuf.handlebars.HbsInitRenderable.HELPER_NAME_FILL_ZONE;
-import static org.wso2.carbon.uuf.handlebars.HbsInitRenderable.HELPER_NAME_LAYOUT;
 
 public class MissingHelper implements Helper {
 
-    private static final ImmutableSet<String> KEYWORDS = ImmutableSet.of(HELPER_NAME_LAYOUT, HELPER_NAME_FILL_ZONE);
+    private static final ImmutableSet<String> KEYWORDS = ImmutableSet.of(LayoutHelper.HELPER_NAME,
+                                                                         FillZoneHelper.HELPER_NAME);
 
     @Override
     public CharSequence apply(Object arg, Options options) throws IOException {

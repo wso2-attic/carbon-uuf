@@ -9,6 +9,7 @@ import java.io.IOException;
 
 public class LayoutHelper implements Helper<String> {
 
+    public static final String HELPER_NAME = "layout";
     public static final String LAYOUT_KEY = HbsInitRenderable.class.getName() + "#layout";
 
     @Override

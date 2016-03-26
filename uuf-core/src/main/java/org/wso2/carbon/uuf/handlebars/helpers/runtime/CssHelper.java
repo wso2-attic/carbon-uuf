@@ -2,8 +2,10 @@ package org.wso2.carbon.uuf.handlebars.helpers.runtime;
 
 public class CssHelper extends ResourceHelper {
 
-    public CssHelper(String resourceType) {
-        super(resourceType);
+    public static final String HELPER_NAME = "css";
+
+    public CssHelper() {
+        super(HELPER_NAME);
     }
 
     @Override
