@@ -31,6 +31,7 @@ public class HbsRenderable implements Renderable {
     public static final String BINDING_KEY = HbsRenderable.class.getName() + "#bindings";
     public static final String FRAGMENT_KEY = HbsRenderable.class.getName() + "#fragments";
     public static final String WRITER_KEY = HbsRenderable.class.getName() + "#writer";
+    public static final String FRAGMENTS_STACK_KEY = HbsRenderable.class.getName() + "#fragments-stack";
     //
     private static final String HELPER_NAME_DEFINE_ZONE = "defineZone";
     private static final String HELPER_NAME_FRAGMENT = "includeFragment";

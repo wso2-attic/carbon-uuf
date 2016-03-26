@@ -11,9 +11,12 @@ import org.wso2.carbon.uuf.core.Renderable;
 import org.wso2.carbon.uuf.core.UUFException;
 
 import java.io.IOException;
+import java.util.Deque;
+import java.util.LinkedList;
 import java.util.Map;
 
 import static org.wso2.carbon.uuf.handlebars.HbsRenderable.BINDING_KEY;
+import static org.wso2.carbon.uuf.handlebars.HbsRenderable.FRAGMENTS_STACK_KEY;
 import static org.wso2.carbon.uuf.handlebars.HbsRenderable.FRAGMENT_KEY;
 
 public class IncludeFragmentHelper implements Helper<String> {
@@ -40,7 +43,14 @@ public class IncludeFragmentHelper implements Helper<String> {
         if (log.isDebugEnabled()) {
             log.debug("Fragment " + fragment + " is called from '" + options.fn.text() + "'.");
         }
+        Deque<Fragment> fragmentStack = options.data(FRAGMENTS_STACK_KEY);
+        if (fragmentStack == null) {
+            fragmentStack = new LinkedList<>();
+            options.data(FRAGMENTS_STACK_KEY, fragmentStack);
+        }
+        fragmentStack.push(fragment);
         String content = fragment.render(fragmentContext, bindings, fragments).trim();
+        fragmentStack.pop();
         return new Handlebars.SafeString(content);
     }
 }
