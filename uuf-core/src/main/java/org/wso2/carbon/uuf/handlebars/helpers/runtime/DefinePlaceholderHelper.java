@@ -7,7 +7,7 @@ import org.wso2.carbon.uuf.handlebars.PlaceholderWriter;
 
 import java.io.IOException;
 
-public class PlaceholderHelper implements Helper<String> {
+public class DefinePlaceholderHelper implements Helper<String> {
 
     public static final String HELPER_NAME = "placeholder";
 
