@@ -174,6 +174,7 @@ public class UUFRegistry {
         } catch (Exception e) {
             Response.Status status = Response.Status.INTERNAL_SERVER_ERROR;
             Throwable cause = e.getCause();
+            //TODO check this loop's logic
             while (cause != null) {
                 if (cause instanceof UUFException) {
                     status = ((UUFException) cause).getStatus();
