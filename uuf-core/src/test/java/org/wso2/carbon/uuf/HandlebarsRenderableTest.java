@@ -100,6 +100,7 @@ public class HandlebarsRenderableTest {
         HbsRenderable hbsRenderable = createHbsRenderable("<head>{{placeholder \"headerJs\"}}</head>" +
                                                                   "{{headerJs \"/my.js\"}}{{headerJs \"/ok.js\"}}");
         String output = hbsRenderable.render(new Object(), ImmutableListMultimap.of(), Collections.emptyMap());
-        Assert.assertEquals(output, "<head>/my.js/ok.js</head>");
+        Assert.assertEquals(output, "<head><script src=\"/public/component-name/base/my.js\"></script>" +
+                "<script src=\"/public/component-name/base/ok.js\"></script></head>");
     }
 }
