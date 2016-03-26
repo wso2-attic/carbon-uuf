@@ -10,7 +10,7 @@ public class JsHelper extends ResourceHelper {
     }
 
     @Override
-    protected String format(String uri) {
+    protected String formatValue(String uri) {
         return "<script src=\"" + uri + "\"></script>";
     }
 }
