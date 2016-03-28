@@ -13,12 +13,14 @@ import org.wso2.carbon.uuf.core.Fragment;
 import org.wso2.carbon.uuf.core.Renderable;
 import org.wso2.carbon.uuf.core.UUFException;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.CssHelper;
+import org.wso2.carbon.uuf.handlebars.helpers.runtime.DefinePlaceholderHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.DefineZoneHelper;
+import org.wso2.carbon.uuf.handlebars.helpers.runtime.FillPlaceholderHelper;
+import org.wso2.carbon.uuf.handlebars.helpers.runtime.HeaderOtherHelper;
+import org.wso2.carbon.uuf.handlebars.helpers.runtime.HeaderTitleHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.IncludeFragmentHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.JsHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.MissingHelper;
-import org.wso2.carbon.uuf.handlebars.helpers.runtime.DefinePlaceholderHelper;
-import org.wso2.carbon.uuf.handlebars.helpers.runtime.ResourceHelper;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -34,17 +36,19 @@ public class HbsRenderable implements Renderable {
     public static final String FRAGMENTS_STACK_KEY = HbsRenderable.class.getName() + "#fragments-stack";
     //
     private static final Handlebars HANDLEBARS = new Handlebars();
-    private static final Map<String, ResourceHelper> RESOURCE_HELPERS;
+    private static final Map<String, FillPlaceholderHelper> PLACEHOLDER_HELPERS;
     private static final Logger log = LoggerFactory.getLogger(HbsRenderable.class);
 
     static {
         HANDLEBARS.registerHelper(DefineZoneHelper.HELPER_NAME, new DefineZoneHelper());
         HANDLEBARS.registerHelper(IncludeFragmentHelper.HELPER_NAME, new IncludeFragmentHelper());
         HANDLEBARS.registerHelper(DefinePlaceholderHelper.HELPER_NAME, new DefinePlaceholderHelper());
-        RESOURCE_HELPERS = ImmutableMap.of(CssHelper.HELPER_NAME, new CssHelper(),
-                                           JsHelper.HELPER_NAME_HEADER, new JsHelper(JsHelper.HELPER_NAME_HEADER),
-                                           JsHelper.HELPER_NAME_FOOTER, new JsHelper(JsHelper.HELPER_NAME_FOOTER));
-        RESOURCE_HELPERS.forEach(HANDLEBARS::registerHelper);
+        PLACEHOLDER_HELPERS = ImmutableMap.of(HeaderTitleHelper.HELPER_NAME, new HeaderTitleHelper(),
+                                              HeaderOtherHelper.HELPER_NAME, new HeaderOtherHelper(),
+                                              CssHelper.HELPER_NAME, new CssHelper(),
+                                              JsHelper.HELPER_NAME_HEADER, new JsHelper(JsHelper.HELPER_NAME_HEADER),
+                                              JsHelper.HELPER_NAME_FOOTER, new JsHelper(JsHelper.HELPER_NAME_FOOTER));
+        PLACEHOLDER_HELPERS.forEach(HANDLEBARS::registerHelper);
         HANDLEBARS.registerHelperMissing(new MissingHelper());
     }
 
@@ -107,10 +111,10 @@ public class HbsRenderable implements Renderable {
 
     private Map<String, String> getPlaceholderValues(Context context) {
         Map<String, String> placeholderValuesMap = new HashMap<>();
-        for (Map.Entry<String, ResourceHelper> entry : RESOURCE_HELPERS.entrySet()) {
-            Optional<String> placeholderValue = entry.getValue().getValue(context);
+        for (Map.Entry<String, FillPlaceholderHelper> entry : PLACEHOLDER_HELPERS.entrySet()) {
+            Optional placeholderValue = entry.getValue().getPlaceholderValue(context);
             if (placeholderValue.isPresent()) {
-                placeholderValuesMap.put(entry.getKey(), placeholderValue.get());
+                placeholderValuesMap.put(entry.getKey(), placeholderValue.get().toString());
             }
         }
         return placeholderValuesMap;
