@@ -9,7 +9,7 @@ public class CssHelper extends ResourceHelper {
     }
 
     @Override
-    protected String formatValue(String uri) {
-        return "<link href=\"" + uri + "\" rel=\"stylesheet\" type=\"text/css\" />";
+    protected String formatResourceUri(String resourceUri) {
+        return "<link href=\"" + resourceUri + "\" rel=\"stylesheet\" type=\"text/css\" />";
     }
 }
