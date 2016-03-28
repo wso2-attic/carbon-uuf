@@ -82,4 +82,8 @@ public class ArtifactFileReference implements FileReference {
         return "";
     }
 
+    @Override
+    public String toString() {
+        return path.toString();
+    }
 }

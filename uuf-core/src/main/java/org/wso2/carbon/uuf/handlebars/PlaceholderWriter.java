@@ -93,9 +93,7 @@ public class PlaceholderWriter extends Writer {
     @Override
     public String toString() {
         StringBuilder tmpBuffer = new StringBuilder();
-        for (StringBuilder buffer : buffers) {
-            tmpBuffer.append(buffer);
-        }
+        buffers.forEach(tmpBuffer::append);
         return tmpBuffer.toString();
     }
 }

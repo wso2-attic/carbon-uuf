@@ -26,7 +26,11 @@ public class AppCreator {
     private Map<String, RenderableCreator> creators;
     private BundleCreator bundleCreator;
 
-    public AppCreator(Resolver resolver, Map<String, RenderableCreator> creators, BundleCreator bundleCreator) {
+    public AppCreator(
+            Resolver resolver,
+            Map<String, RenderableCreator> creators,
+            BundleCreator bundleCreator) {
+
         this.resolver = resolver;
         this.creators = creators;
         this.bundleCreator = bundleCreator;
@@ -51,7 +55,6 @@ public class AppCreator {
                 path = path.substring(0, path.length() - 5);
             }
             UriPatten uriPatten = new UriPatten(path);
-
             Optional<Pair<Renderable, Map<String, ? extends Renderable>>> o = creator.createRenderableWithBindings(pageReference, loader);
             return o.map(j -> new Page(uriPatten, j.getLeft(), j.getRight()));
         } else {
