@@ -2,8 +2,8 @@ package org.wso2.carbon.uuf.handlebars.helpers.init;
 
 import com.github.jknack.handlebars.Helper;
 import com.github.jknack.handlebars.Options;
-import org.wso2.carbon.uuf.core.UUFException;
 import org.wso2.carbon.uuf.handlebars.HbsInitRenderable;
+import org.wso2.carbon.uuf.core.UUFException;
 
 import java.io.IOException;
 

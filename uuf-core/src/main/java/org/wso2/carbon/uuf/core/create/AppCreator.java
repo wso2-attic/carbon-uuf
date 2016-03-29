@@ -10,6 +10,7 @@ import org.wso2.carbon.uuf.core.Page;
 import org.wso2.carbon.uuf.core.Renderable;
 import org.wso2.carbon.uuf.core.UUFException;
 import org.wso2.carbon.uuf.core.UriPatten;
+import org.wso2.carbon.uuf.internal.RenderableCreatorsRepository;
 import org.yaml.snakeyaml.Yaml;
 
 import java.util.Collections;
@@ -23,16 +24,13 @@ import java.util.stream.Collectors;
 public class AppCreator {
 
     private Resolver resolver;
-    private Map<String, RenderableCreator> creators;
     private BundleCreator bundleCreator;
 
     public AppCreator(
             Resolver resolver,
-            Map<String, RenderableCreator> creators,
             BundleCreator bundleCreator) {
 
         this.resolver = resolver;
-        this.creators = creators;
         this.bundleCreator = bundleCreator;
     }
 
@@ -48,7 +46,8 @@ public class AppCreator {
 
     private Optional<Page> createPage(FileReference pageReference, ClassLoader loader) {
         String relativePath = pageReference.getPathPattern();
-        RenderableCreator creator = creators.get(pageReference.getExtension());
+        String extension = pageReference.getExtension();
+        RenderableCreator creator = RenderableCreatorsRepository.getInstance().get(extension);
         if (creator != null) {
             String path = withoutExtension(relativePath);
             if (path.endsWith("/index")) {
@@ -57,11 +56,9 @@ public class AppCreator {
             UriPatten uriPatten = new UriPatten(path);
             Optional<Pair<Renderable, Map<String, ? extends Renderable>>> o = creator.createRenderableWithBindings(pageReference, loader);
             return o.map(j -> new Page(uriPatten, j.getLeft(), j.getRight()));
-        } else {
-            throw new UnsupportedOperationException();
         }
+        throw new UUFException("No creator for '" + extension + "'");
     }
-
 
     private Component createComponent(ComponentReference componentReference) {
         String name = componentReference.getName();
@@ -104,7 +101,7 @@ public class AppCreator {
 
     private Optional<Renderable> crateRenderable(FileReference fileReference, ClassLoader cl) {
         String extension = fileReference.getExtension();
-        RenderableCreator creator = creators.get(extension);
+        RenderableCreator creator = RenderableCreatorsRepository.getInstance().get(extension);
         if (creator != null) {
             return creator.createRenderable(fileReference, cl);
         }

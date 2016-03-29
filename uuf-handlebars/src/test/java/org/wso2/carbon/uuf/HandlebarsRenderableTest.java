@@ -66,7 +66,7 @@ public class HandlebarsRenderableTest {
         HbsRenderable fragmentRenderable = createHbsRenderable(fragmentContent);
         Fragment fragment = new Fragment("test-fragment", fragmentRenderable);
         String output = hbsRenderable.render(new Object(), ImmutableListMultimap.of(), ImmutableMap.of("test-fragment",
-                                                                                                       fragment));
+                fragment));
         Assert.assertEquals(output, fragmentContent);
     }
 
@@ -98,7 +98,7 @@ public class HandlebarsRenderableTest {
     @Test
     public void testHeaderJs() {
         HbsRenderable hbsRenderable = createHbsRenderable("<head>{{placeholder \"headerJs\"}}</head>" +
-                                                                  "{{headerJs \"/my.js\"}}{{headerJs \"/ok.js\"}}");
+                "{{headerJs \"/my.js\"}}{{headerJs \"/ok.js\"}}");
         String output = hbsRenderable.render(new Object(), ImmutableListMultimap.of(), Collections.emptyMap());
         Assert.assertEquals(output, "<head><script src=\"/public/component-name/base/my.js\"></script>" +
                 "<script src=\"/public/component-name/base/ok.js\"></script></head>");

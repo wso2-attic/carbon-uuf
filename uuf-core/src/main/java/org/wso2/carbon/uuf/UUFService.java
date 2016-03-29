@@ -16,8 +16,11 @@
 
 package org.wso2.carbon.uuf;
 
-import com.google.common.collect.ImmutableMap;
 import io.netty.handler.codec.http.HttpRequest;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceReference;
 import org.osgi.service.component.annotations.Component;
 import org.slf4j.MDC;
 import org.wso2.carbon.kernel.utils.Utils;
@@ -25,7 +28,8 @@ import org.wso2.carbon.uuf.core.BundleCreator;
 import org.wso2.carbon.uuf.core.create.AppCreator;
 import org.wso2.carbon.uuf.fileio.ArtifactResolver;
 import org.wso2.carbon.uuf.fileio.InMemoryBundleCreator;
-import org.wso2.carbon.uuf.handlebars.HbsRenderableCreator;
+import org.wso2.carbon.uuf.internal.RenderableCreatorServiceComponent;
+import org.wso2.carbon.uuf.internal.RenderableCreatorsRepository;
 import org.wso2.msf4j.Microservice;
 
 import javax.ws.rs.GET;
@@ -68,8 +72,7 @@ public class UUFService implements Microservice {
                 .list(Utils.getCarbonHome().resolve("deployment").resolve("uufapps"))
                 .collect(Collectors.toList()));
         BundleCreator bundleCreator = new InMemoryBundleCreator();
-        HbsRenderableCreator hbsCreator = new HbsRenderableCreator();
-        AppCreator appCreator = new AppCreator(resolver, ImmutableMap.of("hbs", hbsCreator, "js", hbsCreator), bundleCreator);
+        AppCreator appCreator = new AppCreator(resolver, bundleCreator);
         return new UUFRegistry(appCreator, Optional.empty(), resolver);
     }
 

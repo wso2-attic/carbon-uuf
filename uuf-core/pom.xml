@@ -18,16 +18,16 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>uuf-core</artifactId>
+    <artifactId>org.wso2.uuf.core</artifactId>
     <packaging>bundle</packaging>
     <version>1.0.0-SNAPSHOT</version>
-    <name>WSO2 Carbon - Unified UI Framework - Core</name>
+    <name>WSO2 UUF - Core</name>
     <url>https://github.com/wso2/carbon-uuf</url>
     <description>Unified Ui Framework for Composable Web Apps</description>
 
     <parent>
-        <groupId>org.wso2.carbon.uuf</groupId>
-        <artifactId>carbon-uuf</artifactId>
+        <groupId>org.wso2.uuf</groupId>
+        <artifactId>uuf-parent</artifactId>
         <version>1.0.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
@@ -35,16 +35,12 @@
     <dependencies>
         <!-- Dependencies for UUF -->
         <dependency>
-            <groupId>org.wso2.orbit.com.github.jknack</groupId>
-            <artifactId>handlebars</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.wso2.orbit.org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.antlr</groupId>
-            <artifactId>antlr4-runtime</artifactId>
+            <groupId>org.wso2.orbit.com.github.jknack</groupId>
+            <artifactId>handlebars</artifactId>
         </dependency>
         <!-- Dependencies for MSF4J -->
         <dependency>
@@ -123,8 +119,8 @@
                         <configuration>
                             <artifactItems>
                                 <artifactItem>
-                                    <groupId>org.wso2.carbon.uuf</groupId>
-                                    <artifactId>org.wso2.carbon.uuf.dummy.bundle</artifactId>
+                                    <groupId>org.wso2.uuf</groupId>
+                                    <artifactId>org.wso2.uuf.dummy.bundle</artifactId>
                                     <version>1.0.0-SNAPSHOT</version>
                                     <type>jar</type>
                                     <overWrite>true</overWrite>
@@ -148,8 +144,10 @@
                             <goal>rename</goal>
                         </goals>
                         <configuration>
-                            <sourceFile>src/main/resources/bundle/create/DummyComponentBundle.class</sourceFile>
-                            <destinationFile>src/main/resources/bundle/create/DummyComponentBundle.claz</destinationFile>
+                            <sourceFile>src/main/resources/bundle/create/DummyComponentBundle.class
+                            </sourceFile>
+                            <destinationFile>src/main/resources/bundle/create/DummyComponentBundle.claz
+                            </destinationFile>
                         </configuration>
                     </execution>
                 </executions>
@@ -158,24 +156,33 @@
     </build>
 
     <properties>
-        <private.package>org.wso2.carbon.uuf.*</private.package>
+        <private.package>org.wso2.carbon.uuf.internal</private.package>
         <import.package>
             org.osgi.framework;version="${osgi.framework.import.version.range}",
+            org.wso2.carbon.kernel.startupresolver.*;version="${carbon.kernel.version.range}",
             org.osgi.framework.wiring,
-            org.wso2.carbon.kernel.deployment.*;version="${carbon.kernel.version.range}",
             org.wso2.msf4j.*,
             javax.ws.rs.*,
             org.slf4j.*;version="${slf4j.version.range}",
             com.google.common.*;version="${guava.version.range}",
             io.netty.handler.*,
+            org.apache.commons.lang3.*,
+            com.github.jknack.handlebars.*,
             javax.script,
-            org.apache.commons.lang3,
             org.apache.commons.io,
             org.wso2.carbon.kernel.utils,
-            com.github.jknack.handlebars.*,
             org.yaml.snakeyaml,
             jdk.nashorn.api.scripting
         </import.package>
+        <export.package>
+            org.wso2.carbon.uuf.*;version="${uuf.version}",
+            org.wso2.carbon.uuf.core.create;version="${uuf.version}",
+            org.wso2.carbon.uuf.core;version="${uuf.version}"
+        </export.package>
+        <provide.capability>
+            osgi.service;effective:=active;
+            objectClass="org.wso2.carbon.uuf.internal.RenderableCreatorServiceRepository";
+        </provide.capability>
     </properties>
 
 </project>

@@ -25,22 +25,17 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>org.wso2.uuf.core.feature</artifactId>
+    <artifactId>org.wso2.uuf.handlebars.feature</artifactId>
     <packaging>carbon-feature</packaging>
-    <name>WSO2 UUF - Core - Feature</name>
+    <name>WSO2 UUF - Handlebars - Feature</name>
     <url>http://wso2.org</url>
-    <description>This feature contains the core bundles required by the UUF Core feature</description>
+    <description>This feature contains the handlebars feature</description>
 
     <dependencies>
         <dependency>
             <groupId>org.wso2.uuf</groupId>
-            <artifactId>org.wso2.uuf.core</artifactId>
+            <artifactId>org.wso2.uuf.handlebars</artifactId>
             <version>${uuf.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.wso2.uuf</groupId>
-            <artifactId>nashorn-osgi-fragment</artifactId>
-            <version>${nashorn-osgi-fragment.version}</version>
         </dependency>
     </dependencies>
 
@@ -71,20 +66,16 @@
                             </adviceFileContents>
                             <bundles>
                                 <bundle>
-                                    <symbolicName>org.wso2.uuf.core</symbolicName>
+                                    <symbolicName>org.wso2.uuf.handlebars</symbolicName>
                                     <version>${uuf.version}</version>
                                 </bundle>
                                 <bundle>
-                                    <symbolicName>snakeyaml</symbolicName>
-                                    <version>${org.wso2.orbit.org.yaml.version}</version>
+                                    <symbolicName>handlebars</symbolicName>
+                                    <version>${com.github.jknack.handlebars.version}</version>
                                 </bundle>
                                 <bundle>
-                                    <symbolicName>nashorn-osgi-fragment</symbolicName>
-                                    <version>${nashorn-osgi-fragment.version}</version>
-                                </bundle>
-                                <bundle>
-                                    <symbolicName>org.apache.commons.lang3</symbolicName>
-                                    <version>${org.apache.commons.commons-lang3.version}</version>
+                                    <symbolicName>org.antlr.antlr4-runtime-osgi</symbolicName>
+                                    <version>${antlr-version}</version>
                                 </bundle>
                                 <!-- Metrics Bundles - End -->
                             </bundles>

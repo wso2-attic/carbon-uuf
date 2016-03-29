@@ -4,9 +4,9 @@ import com.github.jknack.handlebars.Helper;
 import com.github.jknack.handlebars.Options;
 import com.github.jknack.handlebars.io.StringTemplateSource;
 import com.github.jknack.handlebars.io.TemplateSource;
+import org.wso2.carbon.uuf.handlebars.HbsInitRenderable;
 import org.wso2.carbon.uuf.core.Renderable;
 import org.wso2.carbon.uuf.core.UUFException;
-import org.wso2.carbon.uuf.handlebars.HbsInitRenderable;
 
 import java.io.IOException;
 import java.util.HashMap;

@@ -8,7 +8,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Multimap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.uuf.DebugUtil;
 import org.wso2.carbon.uuf.core.Fragment;
 import org.wso2.carbon.uuf.core.Renderable;
 import org.wso2.carbon.uuf.core.UUFException;
@@ -44,10 +43,10 @@ public class HbsRenderable implements Renderable {
         HANDLEBARS.registerHelper(IncludeFragmentHelper.HELPER_NAME, new IncludeFragmentHelper());
         HANDLEBARS.registerHelper(DefinePlaceholderHelper.HELPER_NAME, new DefinePlaceholderHelper());
         PLACEHOLDER_HELPERS = ImmutableMap.of(HeaderTitleHelper.HELPER_NAME, new HeaderTitleHelper(),
-                                              HeaderOtherHelper.HELPER_NAME, new HeaderOtherHelper(),
-                                              CssHelper.HELPER_NAME, new CssHelper(),
-                                              JsHelper.HELPER_NAME_HEADER, new JsHelper(JsHelper.HELPER_NAME_HEADER),
-                                              JsHelper.HELPER_NAME_FOOTER, new JsHelper(JsHelper.HELPER_NAME_FOOTER));
+                HeaderOtherHelper.HELPER_NAME, new HeaderOtherHelper(),
+                CssHelper.HELPER_NAME, new CssHelper(),
+                JsHelper.HELPER_NAME_HEADER, new JsHelper(JsHelper.HELPER_NAME_HEADER),
+                JsHelper.HELPER_NAME_FOOTER, new JsHelper(JsHelper.HELPER_NAME_FOOTER));
         PLACEHOLDER_HELPERS.forEach(HANDLEBARS::registerHelper);
         HANDLEBARS.registerHelperMissing(new MissingHelper());
     }

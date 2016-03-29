@@ -66,10 +66,10 @@ public class ArtifactComponentReference implements ComponentReference {
     @Override
     public String getContext() {
         String name = this.getName();
-        return "/" + (name.equals("root") ? "" : getContextFormName(name));
+        return "/" + (name.equals("root") ? "" : getContextFromName(name));
     }
 
-    private String getContextFormName(String name) {
+    private String getContextFromName(String name) {
         int lastDot = name.lastIndexOf('.');
         if (lastDot >= 0) {
             return name.substring(lastDot + 1);

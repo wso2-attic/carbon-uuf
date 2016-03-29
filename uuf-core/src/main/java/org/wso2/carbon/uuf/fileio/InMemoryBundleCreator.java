@@ -29,8 +29,14 @@ public class InMemoryBundleCreator implements BundleCreator {
     private static final String DUMMY_CLASS_PATH = "/bundle/create/DummyComponentBundle.claz";
     private static final String DUMMY_CLASS_NAME = "DummyComponentBundle.class";
 
+    /**
+     * Creates a new OSGi bundle. Created bundle is reusable across multiple UUF Apps.
+     * @param compReference component reference
+     * @return created OSGi bundle
+     * @see #getBundleClassLoader(String)
+     */
     public Bundle createBundle(ComponentReference compReference) {
-        String name = getBundleName(compReference.getName(), compReference.getContext());
+        String name = getBundleName(compReference.getApp().getName(), compReference.getName());
         String symbolicName = compReference.getName();
         String version = compReference.getVersion();
         //TODO: handle bundle imports and exports
@@ -51,6 +57,13 @@ public class InMemoryBundleCreator implements BundleCreator {
         }
     }
 
+    /**
+     * Returns OSGi Bundle Class Loader for a OSGi bundle given by location key.
+     * Use {@link #getBundleLocationKey(String, String)} to retrieve locationKey.
+     * @param locationKey location key
+     * @return OSGi bundle class loader
+     * @see #getBundleLocationKey(String, String)
+     */
     public ClassLoader getBundleClassLoader(String locationKey) {
         Bundle currentBundle = FrameworkUtil.getBundle(InMemoryBundleCreator.class);
         BundleContext bundleContext = currentBundle.getBundleContext();
@@ -86,12 +99,12 @@ public class InMemoryBundleCreator implements BundleCreator {
         target.closeEntry();
     }
 
-    public String getBundleName(String name, String context) {
-        return "UUF bundle for " + getBundleLocationKey(name, context);
+    public String getBundleName(String appName, String name) {
+        return "UUF bundle for " + getBundleLocationKey(appName, name);
     }
 
-    public String getBundleLocationKey(String name, String context) {
-        return name.equals("root") ? name : name + " :: " + context.substring(1);
+    public String getBundleLocationKey(String appName, String name) {
+        return name.equals("root") ? appName : name;
     }
 
 }

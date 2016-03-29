@@ -4,15 +4,22 @@ import com.github.jknack.handlebars.io.StringTemplateSource;
 import com.github.jknack.handlebars.io.TemplateSource;
 import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.tuple.Pair;
+import org.osgi.service.component.annotations.Component;
 import org.wso2.carbon.uuf.core.Renderable;
 import org.wso2.carbon.uuf.core.create.ComponentReference;
 import org.wso2.carbon.uuf.core.create.FileReference;
 import org.wso2.carbon.uuf.core.create.RenderableCreator;
+import org.wso2.msf4j.Microservice;
 
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+@Component(
+        name = "org.wso2.carbon.uuf.handlebars.HbsRenderableCreator",
+        service = RenderableCreator.class,
+        immediate = true
+)
 public class HbsRenderableCreator implements RenderableCreator {
 
     @Override
