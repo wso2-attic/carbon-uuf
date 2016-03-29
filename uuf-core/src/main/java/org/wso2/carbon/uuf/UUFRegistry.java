@@ -94,8 +94,8 @@ public class UUFRegistry {
         String resourcePath = uri.substring(firstSlash, uri.length());
 
         if (log.isDebugEnabled() && !resourcePath.startsWith("/debug/")) {
-            log.debug("request received " + request.getMethod() + " " + request.getUri() + " " + request
-                    .getProtocolVersion());
+            log.debug("request received " + request.getMethod() + " " + request.getUri() + " " +
+                              request.getProtocolVersion());
         }
 
         App app = apps.get(appName);
@@ -116,20 +116,14 @@ public class UUFRegistry {
                 }
                 if (resourcePath.equals("/debug/api/pages/")) {
                     //TODO: fix issues when same page is in multiple components
-                    return Response.ok(app
-                            .getComponents()
-                            .entrySet()
-                            .stream()
-                            .flatMap(entry -> entry.getValue().getPages().stream())
-                            .collect(Collectors.toSet()));
+                    return Response.ok(app.getComponents().entrySet().stream()
+                                               .flatMap(entry -> entry.getValue().getPages().stream())
+                                               .collect(Collectors.toSet()));
                 }
                 if (resourcePath.startsWith("/debug/api/fragments/")) {
-                    return Response.ok(app
-                            .getComponents()
-                            .entrySet()
-                            .stream()
-                            .flatMap(entry -> entry.getValue().getFragments().values().stream())
-                            .collect(Collectors.toSet()));
+                    return Response.ok(app.getComponents().entrySet().stream()
+                                               .flatMap(entry -> entry.getValue().getFragments().values().stream())
+                                               .collect(Collectors.toSet()));
                 }
                 if (resourcePath.startsWith("/debug/logs")) {
                     if (debugAppender.isPresent()) {
