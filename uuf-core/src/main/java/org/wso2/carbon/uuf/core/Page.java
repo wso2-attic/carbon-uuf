@@ -40,7 +40,7 @@ public class Page implements Comparable<Page> {
     }
 
     @Override
-    public int compareTo(Page o) {
-        return this.getUriPatten().compareTo(o.getUriPatten());
+    public int compareTo(Page otherPage) {
+        return this.getUriPatten().compareTo(otherPage.getUriPatten());
     }
 }
