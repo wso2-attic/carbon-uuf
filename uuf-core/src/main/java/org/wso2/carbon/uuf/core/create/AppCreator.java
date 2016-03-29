@@ -1,6 +1,5 @@
 package org.wso2.carbon.uuf.core.create;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.osgi.framework.BundleReference;
 import org.wso2.carbon.uuf.core.App;
 import org.wso2.carbon.uuf.core.BundleCreator;
@@ -26,14 +25,10 @@ public class AppCreator {
     private Resolver resolver;
     private BundleCreator bundleCreator;
 
-    public AppCreator(
-            Resolver resolver,
-            BundleCreator bundleCreator) {
-
+    public AppCreator(Resolver resolver, BundleCreator bundleCreator) {
         this.resolver = resolver;
         this.bundleCreator = bundleCreator;
     }
-
 
     public App createApp(String appName, String context) {
         Set<Component> components = resolver
@@ -48,16 +43,17 @@ public class AppCreator {
         String relativePath = pageReference.getPathPattern();
         String extension = pageReference.getExtension();
         RenderableCreator creator = RenderableCreatorsRepository.getInstance().get(extension);
-        if (creator != null) {
-            String path = withoutExtension(relativePath);
-            if (path.endsWith("/index")) {
-                path = path.substring(0, path.length() - 5);
-            }
-            UriPatten uriPatten = new UriPatten(path);
-            Optional<Pair<Renderable, Map<String, ? extends Renderable>>> o = creator.createRenderableWithBindings(pageReference, loader);
-            return o.map(j -> new Page(uriPatten, j.getLeft(), j.getRight()));
+        if (creator == null) {
+            throw new UUFException("No creator for '" + extension + "'");
         }
-        throw new UUFException("No creator for '" + extension + "'");
+        String path = withoutExtension(relativePath);
+        if (path.endsWith("/index")) {
+            path = path.substring(0, path.length() - 5); //TODO remove this magic number
+        }
+        UriPatten uriPatten = new UriPatten(path);
+        return creator.createRenderableWithBindings(pageReference, loader).map(
+                pair -> new Page(uriPatten, pair.getLeft(), pair.getRight())
+        );
     }
 
     private Component createComponent(ComponentReference componentReference) {
@@ -117,7 +113,7 @@ public class AppCreator {
                 .map(Optional::get)
                 .findFirst()
                 .orElseThrow(() ->
-                        new UUFException("Fragment has not renderable file " + fragmentReference));
+                                     new UUFException("Fragment has not renderable file " + fragmentReference));
         return new Fragment(name, renderable);
     }
 
