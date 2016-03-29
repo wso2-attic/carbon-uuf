@@ -23,9 +23,7 @@ public abstract class ResourceHelper extends FillPlaceholderHelper<List<String>>
         if (!relativeUri.startsWith("/")) {
             throw new IllegalArgumentException("A relative URI should start with '/'.");
         }
-        List<String> resources = getValue(options.context).orElseGet(
-                () -> setValue(options, new ArrayList<>())
-        );
+        List<String> resources = getValue(options).orElseGet(() -> setValue(options, new ArrayList<>()));
         Deque<Fragment> fragmentStack = options.data(FRAGMENTS_STACK_KEY);
         String publicUri;
         if ((fragmentStack == null) || fragmentStack.isEmpty()) {
