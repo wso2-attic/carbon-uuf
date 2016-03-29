@@ -9,7 +9,6 @@ import org.wso2.carbon.uuf.core.Renderable;
 import org.wso2.carbon.uuf.core.create.ComponentReference;
 import org.wso2.carbon.uuf.core.create.FileReference;
 import org.wso2.carbon.uuf.core.create.RenderableCreator;
-import org.wso2.msf4j.Microservice;
 
 import java.util.Map;
 import java.util.Optional;
