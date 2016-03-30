@@ -6,10 +6,10 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.wso2.carbon.uuf.core.Fragment;
 import org.wso2.carbon.uuf.core.Lookup;
-import org.wso2.carbon.uuf.core.Model;
 import org.wso2.carbon.uuf.core.Renderable;
 import org.wso2.carbon.uuf.handlebars.Executable;
 import org.wso2.carbon.uuf.handlebars.HbsRenderable;
+import org.wso2.carbon.uuf.model.Model;
 
 import java.util.Collections;
 import java.util.Map;

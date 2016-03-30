@@ -5,11 +5,10 @@ import com.github.jknack.handlebars.Helper;
 import com.github.jknack.handlebars.Options;
 import org.wso2.carbon.uuf.core.Lookup;
 import org.wso2.carbon.uuf.core.Renderable;
-import org.wso2.carbon.uuf.handlebars.ContextModel;
+import org.wso2.carbon.uuf.handlebars.model.ContextModel;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Map;
 
 import static org.wso2.carbon.uuf.handlebars.HbsRenderable.LOOKUP_KEY;
 import static org.wso2.carbon.uuf.handlebars.HbsRenderable.URI_KEY;

@@ -8,7 +8,6 @@ import com.google.common.collect.ImmutableMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.core.Lookup;
-import org.wso2.carbon.uuf.core.Model;
 import org.wso2.carbon.uuf.core.Renderable;
 import org.wso2.carbon.uuf.core.UUFException;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.CssHelper;
@@ -18,6 +17,8 @@ import org.wso2.carbon.uuf.handlebars.helpers.runtime.JsHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.MissingHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.PlaceholderHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.ResourceHelper;
+import org.wso2.carbon.uuf.handlebars.model.ContextModel;
+import org.wso2.carbon.uuf.model.Model;
 
 import java.io.IOException;
 import java.util.Collections;

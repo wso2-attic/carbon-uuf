@@ -7,9 +7,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.core.Fragment;
 import org.wso2.carbon.uuf.core.Lookup;
-import org.wso2.carbon.uuf.core.MapModel;
-import org.wso2.carbon.uuf.core.Model;
-import org.wso2.carbon.uuf.handlebars.ContextModel;
+import org.wso2.carbon.uuf.handlebars.model.ContextModel;
+import org.wso2.carbon.uuf.model.MapModel;
+import org.wso2.carbon.uuf.model.Model;
 
 import java.io.IOException;
 import java.util.Deque;

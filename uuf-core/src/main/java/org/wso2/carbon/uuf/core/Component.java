@@ -2,6 +2,7 @@ package org.wso2.carbon.uuf.core;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.uuf.model.MapModel;
 
 import java.util.HashMap;
 import java.util.HashSet;

@@ -1,9 +1,9 @@
-package org.wso2.carbon.uuf.core;
+package org.wso2.carbon.uuf.model;
 
 import java.util.Map;
 
 public class MapModel implements Model {
-    protected Map<String, Object> map;
+    private Map<String, Object> map;
 
     public MapModel(Map<String, Object> map) {
         this.map = map;

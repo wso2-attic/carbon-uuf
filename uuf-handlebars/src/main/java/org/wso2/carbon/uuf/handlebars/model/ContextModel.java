@@ -1,7 +1,7 @@
-package org.wso2.carbon.uuf.handlebars;
+package org.wso2.carbon.uuf.handlebars.model;
 
 import com.github.jknack.handlebars.Context;
-import org.wso2.carbon.uuf.core.Model;
+import org.wso2.carbon.uuf.model.Model;
 
 import java.util.Map;
 

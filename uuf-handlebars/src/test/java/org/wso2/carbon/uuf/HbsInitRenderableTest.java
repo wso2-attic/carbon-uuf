@@ -6,9 +6,9 @@ import com.github.jknack.handlebars.io.StringTemplateSource;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.wso2.carbon.uuf.core.Lookup;
-import org.wso2.carbon.uuf.core.Model;
 import org.wso2.carbon.uuf.core.Renderable;
 import org.wso2.carbon.uuf.handlebars.HbsInitRenderable;
+import org.wso2.carbon.uuf.model.Model;
 
 import java.util.Map;
 import java.util.Optional;

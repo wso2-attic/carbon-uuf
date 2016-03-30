@@ -1,5 +1,7 @@
 package org.wso2.carbon.uuf.core;
 
+import org.wso2.carbon.uuf.model.Model;
+
 public class Page implements Comparable<Page> {
 
     private final UriPatten uriPatten;
