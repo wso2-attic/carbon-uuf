@@ -2,46 +2,22 @@ package org.wso2.carbon.uuf;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import org.wso2.carbon.uuf.core.Fragment;
+import org.wso2.carbon.uuf.core.Lookup;
+import org.wso2.carbon.uuf.core.Model;
 import org.wso2.carbon.uuf.core.Page;
 import org.wso2.carbon.uuf.core.Renderable;
 import org.wso2.carbon.uuf.core.UriPatten;
 
-import java.util.Collections;
-import java.util.Map;
+import static org.mockito.Mockito.mock;
 
 public class PageTest {
-    private static final String TEST_PAGE_URI = "/page1";
-    private static final String TEST_PAGE_CONTENT = "Hello World!!!";
 
     @Test
     public void testRenderPage() throws Exception {
-        UriPatten testPageUriPattern = new UriPatten(TEST_PAGE_URI);
-        Renderable testPageLayout = (model, bindings, fragments) -> TEST_PAGE_CONTENT;
-        Map<String, Renderable> testFillZones = Collections.emptyMap();
-        Page testPage = new Page(testPageUriPattern, testPageLayout, testFillZones);
-        Map<String, Renderable> testBindings = Collections.emptyMap();
-        Map<String, Fragment> testFragments = Collections.emptyMap();
-
-        String output = testPage.serve(null, testBindings, testFragments);
-        Assert.assertEquals(output, TEST_PAGE_CONTENT, "Page renders without a model");
+        Renderable renderable = (uri, model, lookup) -> "Hello world!";
+        Page page = new Page(mock(UriPatten.class), renderable, mock(Lookup.class));
+        String output = page.serve("/url", mock(Model.class), mock(Lookup.class));
+        Assert.assertEquals(output, "Hello world!");
     }
 
-    @Test
-    public void testRenderPageWithModel() throws Exception {
-        UriPatten testPageUriPattern = new UriPatten(TEST_PAGE_URI);
-        Renderable testPageLayout = (model, bindings, fragments) -> TEST_PAGE_CONTENT;
-        Map<String, Renderable> testFillZones = Collections.emptyMap();
-        Page testPage = new Page(testPageUriPattern, testPageLayout, testFillZones);
-        Map<String, Renderable> testBindings = Collections.emptyMap();
-        Map<String, Fragment> testFragments = Collections.emptyMap();
-        //
-        String output = testPage.serve(null, testBindings, testFragments);
-        Assert.assertEquals(output, TEST_PAGE_CONTENT, "Page renders with a model");
-    }
-
-    @Test
-    public void bindingCombine(){
-
-    }
 }
