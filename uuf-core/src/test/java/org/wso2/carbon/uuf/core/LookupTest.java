@@ -29,11 +29,11 @@ public class LookupTest {
     @Test
     public void testChildFragment() throws Exception {
         Fragment childFragment = mock(Fragment.class);
-        when(childFragment.getName()).thenReturn("org.wso2.test.transitive.my-fragment");
+        when(childFragment.getName()).thenReturn("org.wso2.test.child.my-fragment");
 
         Component childComponent = mock(Component.class);
         Lookup childLookup = new Lookup(
-                "org.wso2.test.child",
+                "org.wso2.test.child.my-fragment",
    /*bindings*/ Collections.emptyMap(),
                 ImmutableSet.of(childFragment),
    /*children*/ Collections.emptySet());
@@ -45,7 +45,7 @@ public class LookupTest {
   /*fragments*/ Collections.emptySet(),
    /*children*/ Collections.singleton(childComponent));
 
-        Fragment fragment = lookup.lookupFragment("org.wso2.test.transitive.my-fragment");
+        Fragment fragment = lookup.lookupFragment("org.wso2.test.child.my-fragment");
         Assert.assertEquals(fragment, childFragment);
     }
 
