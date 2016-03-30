@@ -6,14 +6,9 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.core.App;
-import org.wso2.carbon.uuf.core.BundleCreator;
 import org.wso2.carbon.uuf.core.UUFException;
 import org.wso2.carbon.uuf.core.create.AppCreator;
-import org.wso2.carbon.uuf.core.create.RenderableCreator;
 import org.wso2.carbon.uuf.core.create.Resolver;
-import org.wso2.carbon.uuf.fileio.ArtifactResolver;
-import org.wso2.carbon.uuf.fileio.InMemoryBundleCreator;
-import org.wso2.msf4j.MicroservicesRunner;
 import org.wso2.msf4j.util.SystemVariableUtil;
 
 import javax.ws.rs.core.Response;
@@ -21,12 +16,9 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URLConnection;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -56,16 +48,6 @@ public class UUFRegistry {
         } else {
             return Optional.empty();
         }
-    }
-
-    public static void main(String[] args) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
-        List<Path> uufAppsPath = Collections.singletonList(FileSystems.getDefault().getPath("."));
-        ArtifactResolver resolver = new ArtifactResolver(uufAppsPath);
-        BundleCreator bundleCreator = new InMemoryBundleCreator();
-        RenderableCreator hbsCreator = (RenderableCreator) Class.forName("HbsRenderableCreator").newInstance();
-        AppCreator appCreator = new AppCreator(resolver, ImmutableMap.of("hbs", hbsCreator, "js", hbsCreator), bundleCreator);
-        UUFRegistry registry = new UUFRegistry(appCreator, createDebugAppender(), resolver);
-        new MicroservicesRunner().deploy(new UUFService(registry)).start();
     }
 
     public Response.ResponseBuilder serve(HttpRequest request) {
