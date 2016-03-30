@@ -19,7 +19,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class HandlebarsRenderableTest {
+public class HbsRenderableTest {
     private static HbsRenderable createHbsRenderable(String sourceStr) {
         StringTemplateSource stringTemplateSource = new StringTemplateSource("<test-source>", sourceStr);
         return new HbsRenderable(stringTemplateSource, Optional.empty());
