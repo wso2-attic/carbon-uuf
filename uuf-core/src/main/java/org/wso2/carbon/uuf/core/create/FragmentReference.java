@@ -9,4 +9,6 @@ public interface FragmentReference {
     FileReference getChild(String name);
 
     Stream<FileReference> streamChildren();
+
+    ComponentReference getComponentReference();
 }

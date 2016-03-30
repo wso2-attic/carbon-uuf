@@ -1,6 +1,7 @@
 package org.wso2.carbon.uuf.fileio;
 
 import org.wso2.carbon.uuf.core.UUFException;
+import org.wso2.carbon.uuf.core.create.ComponentReference;
 import org.wso2.carbon.uuf.core.create.FileReference;
 import org.wso2.carbon.uuf.core.create.FragmentReference;
 
@@ -40,6 +41,11 @@ public class ArtifactFragmentReference implements FragmentReference {
         } catch (IOException e) {
             throw new UUFException("Error while listing fragment children in " + path, e);
         }
+    }
+
+    @Override
+    public ComponentReference getComponentReference() {
+        return component;
     }
 
     @Override

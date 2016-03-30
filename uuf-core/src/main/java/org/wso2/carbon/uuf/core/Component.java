@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.SortedSet;
-import java.util.stream.Collectors;
 
 public class Component {
     private static final Logger log = LoggerFactory.getLogger(Component.class);
@@ -17,18 +16,14 @@ public class Component {
     private final String name;
     private final String context;
     private final SortedSet<Page> pages;
-    private final Map<String, Fragment> fragments;
-    private final Map<String, ?> configuration;
-    private final Map<String, Renderable> bindings;
     private final String version;
+    private final Lookup lookup;
 
     public Component(String name,
                      String context,
                      String version,
                      SortedSet<Page> pages,
-                     Set<Fragment> fragments,
-                     Map<String, ?> componentConfig,
-                     Map<String, String> bindingsConfig) {
+                     Lookup lookup) {
 
         if (name.isEmpty()) {
             throw new IllegalArgumentException("Component name cannot be empty.");
@@ -38,20 +33,7 @@ public class Component {
         this.context = context;
         this.version = version;
         this.pages = pages;
-        this.configuration = componentConfig;
-        this.fragments = fragments.stream().collect(
-                Collectors.toMap(Fragment::getName, fragment -> fragment));
-
-        this.bindings = new HashMap<>(bindingsConfig.size());
-        for (Map.Entry<String, String> entry : bindingsConfig.entrySet()) {
-            Fragment fragment = this.fragments.get(entry.getValue());
-            if (fragment == null) {
-                throw new UUFException("Fragment '" + entry.getValue()
-                        + "' does not exists in Component '" + name +
-                        "'. Hence cannot bind it to zone '" + entry.getKey() + "'.");
-            }
-            bindings.put(entry.getKey(), fragment.getRenderer());
-        }
+        this.lookup = lookup;
     }
 
     public String getContext() {
@@ -64,13 +46,15 @@ public class Component {
             log.debug("Component '" + name + "' is serving Page '" +
                     servingPage.get().toString() + "' for URI '" + pageUri + "'.");
         }
-        return servingPage.map(page -> page.serve(createModel(pageUri), bindings, fragments));
+        return servingPage.map(page -> {
+            MapModel model = new MapModel(createModel(pageUri));
+            return page.serve(pageUri, model, lookup);
+        });
     }
 
     private Map<String, Object> createModel(String pageUri) {
         Map<String, Object> model = new HashMap<>();
         model.put("pageUri", pageUri);
-        model.put("config", configuration);
         return model;
     }
 
@@ -95,7 +79,12 @@ public class Component {
         return new HashSet<>(pages);
     }
 
-    public Map<String, Fragment> getFragments() {
-        return fragments;
+    public Lookup getLookup() {
+        return lookup;
+    }
+
+    @Override
+    public String toString() {
+        return "{name:\"" + name + "\"}";
     }
 }

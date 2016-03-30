@@ -7,6 +7,7 @@ import org.wso2.carbon.uuf.core.create.ComponentReference;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.stream.Stream;
 
 public class ArtifactAppReference implements AppReference {
@@ -39,5 +40,14 @@ public class ArtifactAppReference implements AppReference {
     @Override
     public String getName() {
         return path.getFileName().toString();
+    }
+
+    @Override
+    public List<String> getDependencyTree() {
+        try {
+            return Files.readAllLines(path.resolve("components").resolve("dependency.tree"));
+        } catch (IOException e) {
+            throw new UUFException("Error while reading dependency.tree in " + path, e);
+        }
     }
 }

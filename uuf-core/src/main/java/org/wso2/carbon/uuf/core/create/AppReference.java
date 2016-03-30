@@ -1,5 +1,6 @@
 package org.wso2.carbon.uuf.core.create;
 
+import java.util.List;
 import java.util.stream.Stream;
 
 public interface AppReference {
@@ -10,4 +11,5 @@ public interface AppReference {
 
     String getName();
 
+    List<String> getDependencyTree();
 }

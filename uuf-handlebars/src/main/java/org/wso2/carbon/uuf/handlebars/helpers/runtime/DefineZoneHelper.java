@@ -3,15 +3,16 @@ package org.wso2.carbon.uuf.handlebars.helpers.runtime;
 import com.github.jknack.handlebars.Handlebars;
 import com.github.jknack.handlebars.Helper;
 import com.github.jknack.handlebars.Options;
-import com.google.common.collect.Multimap;
-import org.wso2.carbon.uuf.handlebars.HbsRenderable;
-import org.wso2.carbon.uuf.core.Fragment;
+import org.wso2.carbon.uuf.core.Lookup;
 import org.wso2.carbon.uuf.core.Renderable;
-import org.wso2.carbon.uuf.core.UUFException;
+import org.wso2.carbon.uuf.handlebars.ContextModel;
 
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
+
+import static org.wso2.carbon.uuf.handlebars.HbsRenderable.LOOKUP_KEY;
+import static org.wso2.carbon.uuf.handlebars.HbsRenderable.URI_KEY;
 
 public class DefineZoneHelper implements Helper<String> {
 
@@ -19,16 +20,12 @@ public class DefineZoneHelper implements Helper<String> {
 
     @Override
     public CharSequence apply(String zoneName, Options options) throws IOException {
-        //TODO: remove duplicate, IncludeFragmentHelper
-        Multimap<String, Renderable> bindings = options.data(HbsRenderable.BINDING_KEY);
-        Map<String, Fragment> fragments = options.data(HbsRenderable.FRAGMENT_KEY);
-        Collection<Renderable> renderables = bindings.get(zoneName);
-        if (renderables.isEmpty()) {
-            throw new UUFException("Zone '" + zoneName + "' does not have a binding.");
-        }
+        Lookup lookup = options.data(LOOKUP_KEY);
+        String uri = options.data(URI_KEY);
+        Collection<Renderable> renderables = lookup.lookupBinding(zoneName);
         StringBuilder buffer = new StringBuilder();
         for (Renderable renderable : renderables) {
-            String content = renderable.render(options.context, bindings, fragments).trim();
+            String content = renderable.render(uri, new ContextModel(options.context), lookup).trim();
             buffer.append(content);
         }
         return new Handlebars.SafeString(buffer.toString());

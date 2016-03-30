@@ -3,15 +3,17 @@ package org.wso2.carbon.uuf;
 import com.github.jknack.handlebars.HandlebarsError;
 import com.github.jknack.handlebars.HandlebarsException;
 import com.github.jknack.handlebars.io.StringTemplateSource;
-import com.google.common.collect.ImmutableMultimap;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import org.wso2.carbon.uuf.core.Lookup;
+import org.wso2.carbon.uuf.core.Model;
 import org.wso2.carbon.uuf.core.Renderable;
 import org.wso2.carbon.uuf.handlebars.HbsInitRenderable;
 
-import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
+
+import static org.mockito.Mockito.mock;
 
 public class HbsInitRenderableTest {
     private static HbsInitRenderable createHbsRenderable(String sourceStr) {
@@ -39,7 +41,7 @@ public class HbsInitRenderableTest {
         Renderable fillingZone = fillingZones.get("my-zone");
         Assert.assertNotNull(fillingZone, "zone's inner content must be available under name 'my-zone'");
         try {
-            fillingZone.render(new Object(), ImmutableMultimap.of(), Collections.emptyMap());
+            fillingZone.render("/url", mock(Model.class), mock(Lookup.class));
             Assert.fail("can't render with an empty map since 'a' var is expected.");
         } catch (HandlebarsException ex) {
             HandlebarsError error = ex.getError();

@@ -24,7 +24,11 @@ import java.net.URLConnection;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.wso2.carbon.uuf.core.create.Resolver.STATIC_RESOURCE_URI_PREFIX;
@@ -54,12 +58,12 @@ public class UUFRegistry {
         }
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
         List<Path> uufAppsPath = Collections.singletonList(FileSystems.getDefault().getPath("."));
         ArtifactResolver resolver = new ArtifactResolver(uufAppsPath);
         BundleCreator bundleCreator = new InMemoryBundleCreator();
-        Map<String, RenderableCreator> creators = new HashMap<>();
-        AppCreator appCreator = new AppCreator(resolver, bundleCreator, creators);
+        RenderableCreator hbsCreator = (RenderableCreator) Class.forName("HbsRenderableCreator").newInstance();
+        AppCreator appCreator = new AppCreator(resolver, ImmutableMap.of("hbs", hbsCreator, "js", hbsCreator), bundleCreator);
         UUFRegistry registry = new UUFRegistry(appCreator, createDebugAppender(), resolver);
         new MicroservicesRunner().deploy(new UUFService(registry)).start();
     }
@@ -87,8 +91,8 @@ public class UUFRegistry {
         String resourcePath = uri.substring(firstSlash, uri.length());
 
         if (log.isDebugEnabled() && !resourcePath.startsWith("/debug/")) {
-            log.debug("request received " + request.getMethod() + " " + request.getUri() + " " +
-                              request.getProtocolVersion());
+            log.debug("request received " + request.getMethod() + " " + request.getUri() + " " + request
+                    .getProtocolVersion());
         }
 
         App app = apps.get(appName);
@@ -109,15 +113,23 @@ public class UUFRegistry {
                 }
                 if (resourcePath.equals("/debug/api/pages/")) {
                     //TODO: fix issues when same page is in multiple components
-                    return Response.ok(app.getComponents().entrySet().stream()
-                                               .flatMap(entry -> entry.getValue().getPages().stream())
-                                               .collect(Collectors.toSet()));
+                    return Response.ok(app
+                            .getComponents()
+                            .entrySet()
+                            .stream()
+                            .flatMap(entry -> entry.getValue().getPages().stream())
+                            .collect(Collectors.toSet()));
                 }
-                if (resourcePath.startsWith("/debug/api/fragments/")) {
-                    return Response.ok(app.getComponents().entrySet().stream()
-                                               .flatMap(entry -> entry.getValue().getFragments().values().stream())
-                                               .collect(Collectors.toSet()));
-                }
+
+//TODO:fix
+//                if (resourcePath.startsWith("/debug/api/fragments/")) {
+//                    return Response.ok(app
+//                            .getComponents()
+//                            .entrySet()
+//                            .stream()
+//                            .flatMap(entry -> entry.getValue().getFragments().values().stream())
+//                            .collect(Collectors.toSet()));
+//                }
                 if (resourcePath.startsWith("/debug/logs")) {
                     if (debugAppender.isPresent()) {
                         return Response.ok(debugAppender.get().asJson(), "application/json");
@@ -165,6 +177,7 @@ public class UUFRegistry {
         } catch (Exception e) {
             Response.Status status = Response.Status.INTERNAL_SERVER_ERROR;
             Throwable cause = e.getCause();
+            //TODO check this loop's logic
             while (cause != null) {
                 if (cause instanceof UUFException) {
                     status = ((UUFException) cause).getStatus();

@@ -1,16 +1,11 @@
 package org.wso2.carbon.uuf.core;
 
-import com.google.common.collect.Multimap;
-
-import java.util.Map;
-
 public class Fragment {
 
     private final String name;
     private final String resourceUriPrefix;
     private final Renderable renderer;
 
-    @Deprecated
     public Fragment(String name, Renderable renderer) {
         //TODO remove this constructor
         this(name, ("/public/component-name/" + name), renderer);
@@ -34,8 +29,8 @@ public class Fragment {
         return renderer;
     }
 
-    public String render(Object model, Multimap<String, Renderable> bindings, Map<String, Fragment> fragments) {
-        return renderer.render(model, bindings, fragments);
+    public String render(String uri, Model model, Lookup lookup) {
+        return renderer.render(uri, model, lookup);
     }
 
     @Override

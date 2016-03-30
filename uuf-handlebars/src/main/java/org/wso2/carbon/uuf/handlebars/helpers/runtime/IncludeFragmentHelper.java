@@ -3,21 +3,22 @@ package org.wso2.carbon.uuf.handlebars.helpers.runtime;
 import com.github.jknack.handlebars.Handlebars;
 import com.github.jknack.handlebars.Helper;
 import com.github.jknack.handlebars.Options;
-import com.google.common.collect.Multimap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.core.Fragment;
-import org.wso2.carbon.uuf.core.Renderable;
-import org.wso2.carbon.uuf.core.UUFException;
+import org.wso2.carbon.uuf.core.Lookup;
+import org.wso2.carbon.uuf.core.MapModel;
+import org.wso2.carbon.uuf.core.Model;
+import org.wso2.carbon.uuf.handlebars.ContextModel;
 
 import java.io.IOException;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.Map;
 
-import static org.wso2.carbon.uuf.handlebars.HbsRenderable.BINDING_KEY;
 import static org.wso2.carbon.uuf.handlebars.HbsRenderable.FRAGMENTS_STACK_KEY;
-import static org.wso2.carbon.uuf.handlebars.HbsRenderable.FRAGMENT_KEY;
+import static org.wso2.carbon.uuf.handlebars.HbsRenderable.LOOKUP_KEY;
+import static org.wso2.carbon.uuf.handlebars.HbsRenderable.URI_KEY;
 
 public class IncludeFragmentHelper implements Helper<String> {
     public static final String HELPER_NAME = "includeFragment";
@@ -25,20 +26,16 @@ public class IncludeFragmentHelper implements Helper<String> {
 
     @Override
     public CharSequence apply(String fragmentName, Options options) throws IOException {
-        //TODO: remove duplicate, defineZone
-        Multimap<String, Renderable> bindings = options.data(BINDING_KEY);
-        Map<String, Fragment> fragments = options.data(FRAGMENT_KEY);
-        Fragment fragment = fragments.get(fragmentName);
-        if (fragment == null) {
-            throw new UUFException("Fragment '" + fragmentName + "' does not exists.");
-        }
+        Lookup lookup = options.data(LOOKUP_KEY);
+        String uri = options.data(URI_KEY);
+        Fragment fragment = lookup.lookupFragment(fragmentName);
 
         Map<String, Object> fragmentArgs = options.hash;
-        Object fragmentContext;
+        Model fragmentContext;
         if (fragmentArgs.isEmpty()) {
-            fragmentContext = options.context;
+            fragmentContext = new ContextModel(options.context);
         } else {
-            fragmentContext = fragmentArgs;
+            fragmentContext = new MapModel(fragmentArgs);
         }
 
         if (log.isDebugEnabled()) {
@@ -50,7 +47,7 @@ public class IncludeFragmentHelper implements Helper<String> {
             options.data(FRAGMENTS_STACK_KEY, fragmentStack);
         }
         fragmentStack.push(fragment);
-        String content = fragment.render(fragmentContext, bindings, fragments).trim();
+        String content = fragment.render(uri, fragmentContext, lookup).trim();
         fragmentStack.pop();
         return new Handlebars.SafeString(content);
     }

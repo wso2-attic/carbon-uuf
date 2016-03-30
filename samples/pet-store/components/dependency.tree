@@ -1,0 +1,3 @@
+org.wso2.samples:org.wso2.samples.uuf.petstore:jar:1.0.0-SNAPSHOT
++- org.wso2.carbon.uuf:org.wso2.carbon.uuf.base:zip:1.0.0-SNAPSHOT:compile
+\- org.wso2.is:org.wso2.is.uuf.basicauth:zip:1.0.0-SNAPSHOT:compile

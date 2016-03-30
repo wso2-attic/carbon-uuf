@@ -74,7 +74,7 @@ public class UUFService implements Microservice {
                     Files.list(Utils.getCarbonHome().resolve("deployment").resolve("uufapps"))
                             .collect(Collectors.toList()));
             BundleCreator bundleCreator = new InMemoryBundleCreator();
-            AppCreator appCreator = new AppCreator(resolver, bundleCreator, creators);
+            AppCreator appCreator = new AppCreator(resolver, creators, bundleCreator);
             return new UUFRegistry(appCreator, Optional.empty(), resolver);
         } catch (IOException e) {
             throw new UUFException("Error while reading deployment artifacts on 'uufapps' folder!");
