@@ -25,7 +25,6 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import static org.wso2.carbon.uuf.core.create.Resolver.STATIC_RESOURCE_URI_PREFIX;
@@ -88,8 +87,8 @@ public class UUFRegistry {
         String resourcePath = uri.substring(firstSlash, uri.length());
 
         if (log.isDebugEnabled() && !resourcePath.startsWith("/debug/")) {
-            log.debug("request received " + request.getMethod() + " " + request.getUri() + " " + request
-                    .getProtocolVersion());
+            log.debug("request received " + request.getMethod() + " " + request.getUri() + " " +
+                              request.getProtocolVersion());
         }
 
         App app = apps.get(appName);
@@ -111,13 +110,13 @@ public class UUFRegistry {
                 if (resourcePath.equals("/debug/api/pages/")) {
                     //TODO: fix issues when same page is in multiple components
                     return Response.ok(app.getComponents().entrySet().stream()
-                            .flatMap(entry -> entry.getValue().getPages().stream())
-                            .collect(Collectors.toSet()));
+                                               .flatMap(entry -> entry.getValue().getPages().stream())
+                                               .collect(Collectors.toSet()));
                 }
                 if (resourcePath.startsWith("/debug/api/fragments/")) {
                     return Response.ok(app.getComponents().entrySet().stream()
-                            .flatMap(entry -> entry.getValue().getFragments().values().stream())
-                            .collect(Collectors.toSet()));
+                                               .flatMap(entry -> entry.getValue().getFragments().values().stream())
+                                               .collect(Collectors.toSet()));
                 }
                 if (resourcePath.startsWith("/debug/logs")) {
                     if (debugAppender.isPresent()) {
@@ -130,10 +129,11 @@ public class UUFRegistry {
                     if (resourcePath.endsWith("/")) {
                         resourcePath = resourcePath + "index.html";
                     }
-                    InputStream resourceAsStream = this.getClass().getResourceAsStream(
-                            "/apps" + resourcePath);
+                    InputStream resourceAsStream = this.getClass().getResourceAsStream("/apps" + resourcePath);
                     if (resourceAsStream != null) {
-                        String debugContent = IOUtils.toString(resourceAsStream, "UTF-8");
+                        String debugContent = IOUtils.toString(
+                                resourceAsStream,
+                                "UTF-8");
                         return Response.ok(debugContent, getMime(resourcePath));
                     } else {
                         return Response.status(Response.Status.NOT_FOUND);
@@ -165,16 +165,15 @@ public class UUFRegistry {
         } catch (Exception e) {
             Response.Status status = Response.Status.INTERNAL_SERVER_ERROR;
             Throwable cause = e.getCause();
-            //TODO check this loop's logic
             while (cause != null) {
                 if (cause instanceof UUFException) {
                     status = ((UUFException) cause).getStatus();
                     break;
                 }
-                if (cause == e.getCause()) {
+                if (cause == cause.getCause()) {
                     break;
                 }
-                cause = e.getCause();
+                cause = cause.getCause();
             }
             return sendError(appName, e, status);
         }
