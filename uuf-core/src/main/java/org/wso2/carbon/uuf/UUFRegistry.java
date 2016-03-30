@@ -9,10 +9,10 @@ import org.wso2.carbon.uuf.core.App;
 import org.wso2.carbon.uuf.core.BundleCreator;
 import org.wso2.carbon.uuf.core.UUFException;
 import org.wso2.carbon.uuf.core.create.AppCreator;
+import org.wso2.carbon.uuf.core.create.RenderableCreator;
 import org.wso2.carbon.uuf.core.create.Resolver;
 import org.wso2.carbon.uuf.fileio.ArtifactResolver;
 import org.wso2.carbon.uuf.fileio.InMemoryBundleCreator;
-import org.wso2.carbon.uuf.internal.RenderableCreatorServiceComponent;
 import org.wso2.msf4j.MicroservicesRunner;
 import org.wso2.msf4j.util.SystemVariableUtil;
 
@@ -24,11 +24,8 @@ import java.net.URLConnection;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import static org.wso2.carbon.uuf.core.create.Resolver.STATIC_RESOURCE_URI_PREFIX;
@@ -62,13 +59,10 @@ public class UUFRegistry {
         List<Path> uufAppsPath = Collections.singletonList(FileSystems.getDefault().getPath("."));
         ArtifactResolver resolver = new ArtifactResolver(uufAppsPath);
         BundleCreator bundleCreator = new InMemoryBundleCreator();
-        AppCreator appCreator = new AppCreator(resolver, bundleCreator);
+        Map<String, RenderableCreator> creators = new HashMap<>();
+        AppCreator appCreator = new AppCreator(resolver, bundleCreator, creators);
         UUFRegistry registry = new UUFRegistry(appCreator, createDebugAppender(), resolver);
         new MicroservicesRunner().deploy(new UUFService(registry)).start();
-    }
-
-    private static RenderableCreatorServiceComponent getBundleService() {
-        return new RenderableCreatorServiceComponent();
     }
 
     public Response.ResponseBuilder serve(HttpRequest request) {
@@ -116,18 +110,12 @@ public class UUFRegistry {
                 }
                 if (resourcePath.equals("/debug/api/pages/")) {
                     //TODO: fix issues when same page is in multiple components
-                    return Response.ok(app
-                            .getComponents()
-                            .entrySet()
-                            .stream()
+                    return Response.ok(app.getComponents().entrySet().stream()
                             .flatMap(entry -> entry.getValue().getPages().stream())
                             .collect(Collectors.toSet()));
                 }
                 if (resourcePath.startsWith("/debug/api/fragments/")) {
-                    return Response.ok(app
-                            .getComponents()
-                            .entrySet()
-                            .stream()
+                    return Response.ok(app.getComponents().entrySet().stream()
                             .flatMap(entry -> entry.getValue().getFragments().values().stream())
                             .collect(Collectors.toSet()));
                 }
@@ -142,11 +130,10 @@ public class UUFRegistry {
                     if (resourcePath.endsWith("/")) {
                         resourcePath = resourcePath + "index.html";
                     }
-                    InputStream resourceAsStream = this.getClass().getResourceAsStream("/apps" + resourcePath);
+                    InputStream resourceAsStream = this.getClass().getResourceAsStream(
+                            "/apps" + resourcePath);
                     if (resourceAsStream != null) {
-                        String debugContent = IOUtils.toString(
-                                resourceAsStream,
-                                "UTF-8");
+                        String debugContent = IOUtils.toString(resourceAsStream, "UTF-8");
                         return Response.ok(debugContent, getMime(resourcePath));
                     } else {
                         return Response.status(Response.Status.NOT_FOUND);

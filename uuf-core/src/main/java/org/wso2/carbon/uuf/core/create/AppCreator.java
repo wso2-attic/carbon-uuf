@@ -10,7 +10,6 @@ import org.wso2.carbon.uuf.core.Page;
 import org.wso2.carbon.uuf.core.Renderable;
 import org.wso2.carbon.uuf.core.UUFException;
 import org.wso2.carbon.uuf.core.UriPatten;
-import org.wso2.carbon.uuf.internal.RenderableCreatorsRepository;
 import org.yaml.snakeyaml.Yaml;
 
 import java.util.Collections;
@@ -25,13 +24,16 @@ public class AppCreator {
 
     private Resolver resolver;
     private BundleCreator bundleCreator;
+    private Map<String, RenderableCreator> creators;
 
     public AppCreator(
             Resolver resolver,
-            BundleCreator bundleCreator) {
+            BundleCreator bundleCreator,
+            Map<String, RenderableCreator> renderableCreators) {
 
         this.resolver = resolver;
         this.bundleCreator = bundleCreator;
+        this.creators = renderableCreators;
     }
 
 
@@ -47,7 +49,7 @@ public class AppCreator {
     private Optional<Page> createPage(FileReference pageReference, ClassLoader loader) {
         String relativePath = pageReference.getPathPattern();
         String extension = pageReference.getExtension();
-        RenderableCreator creator = RenderableCreatorsRepository.getInstance().get(extension);
+        RenderableCreator creator = creators.get(extension);
         if (creator != null) {
             String path = withoutExtension(relativePath);
             if (path.endsWith("/index")) {
@@ -101,7 +103,7 @@ public class AppCreator {
 
     private Optional<Renderable> crateRenderable(FileReference fileReference, ClassLoader cl) {
         String extension = fileReference.getExtension();
-        RenderableCreator creator = RenderableCreatorsRepository.getInstance().get(extension);
+        RenderableCreator creator = creators.get(extension);
         if (creator != null) {
             return creator.createRenderable(fileReference, cl);
         }

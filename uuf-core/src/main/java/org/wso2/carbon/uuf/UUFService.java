@@ -17,19 +17,18 @@
 package org.wso2.carbon.uuf;
 
 import io.netty.handler.codec.http.HttpRequest;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.FrameworkUtil;
-import org.osgi.framework.ServiceReference;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.MDC;
 import org.wso2.carbon.kernel.utils.Utils;
 import org.wso2.carbon.uuf.core.BundleCreator;
+import org.wso2.carbon.uuf.core.UUFException;
 import org.wso2.carbon.uuf.core.create.AppCreator;
+import org.wso2.carbon.uuf.core.create.RenderableCreator;
 import org.wso2.carbon.uuf.fileio.ArtifactResolver;
 import org.wso2.carbon.uuf.fileio.InMemoryBundleCreator;
-import org.wso2.carbon.uuf.internal.RenderableCreatorServiceComponent;
-import org.wso2.carbon.uuf.internal.RenderableCreatorsRepository;
 import org.wso2.msf4j.Microservice;
 
 import javax.ws.rs.GET;
@@ -39,7 +38,9 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -49,13 +50,13 @@ import java.util.stream.Collectors;
 @Component(
         name = "org.wso2.carbon.uuf.UUFService",
         service = Microservice.class,
-        immediate = true
-)
+        immediate = true)
 @Path("/")
 public class UUFService implements Microservice {
 
-    private final UUFRegistry registry;
+    private UUFRegistry registry;
     private final AtomicInteger count = new AtomicInteger(0);
+    private static final Map<String, RenderableCreator> creators = new ConcurrentHashMap<>();
 
     public UUFService(UUFRegistry server) {
         this.registry = server;
@@ -64,21 +65,25 @@ public class UUFService implements Microservice {
     @SuppressWarnings("unused")
     public UUFService() throws IOException {
         // we need an empty constructor for running in OSGi mode.
-        this(getRegistry());
+        this(createRegistry());
     }
 
-    private static UUFRegistry getRegistry() throws IOException {
-        ArtifactResolver resolver = new ArtifactResolver(Files
-                .list(Utils.getCarbonHome().resolve("deployment").resolve("uufapps"))
-                .collect(Collectors.toList()));
-        BundleCreator bundleCreator = new InMemoryBundleCreator();
-        AppCreator appCreator = new AppCreator(resolver, bundleCreator);
-        return new UUFRegistry(appCreator, Optional.empty(), resolver);
+    private static UUFRegistry createRegistry() {
+        try {
+            ArtifactResolver resolver = new ArtifactResolver(
+                    Files.list(Utils.getCarbonHome().resolve("deployment").resolve("uufapps"))
+                            .collect(Collectors.toList()));
+            BundleCreator bundleCreator = new InMemoryBundleCreator();
+            AppCreator appCreator = new AppCreator(resolver, bundleCreator, creators);
+            return new UUFRegistry(appCreator, Optional.empty(), resolver);
+        } catch (IOException e) {
+            throw new UUFException("Error while reading deployment artifacts on 'uufapps' folder!");
+        }
     }
 
     @GET
     @Path(".*")
-    @Produces({"text/plain"})
+    @Produces({ "text/plain" })
     public Response get(@Context HttpRequest request) {
         try {
             MDC.put("uuf-request", String.valueOf(count.incrementAndGet()));
@@ -91,6 +96,33 @@ public class UUFService implements Microservice {
                 //ignore, just catching so ide wan't complain. MDC will never throw an IllegalArgumentException.
             }
         }
+    }
+
+    /**
+     * This bind method is invoked by OSGi framework whenever a new RenderableCreator is registered.
+     * @param renderableCreator registered renderable creator
+     */
+    @Reference(
+            name = "renderablecreater",
+            service = RenderableCreator.class,
+            cardinality = ReferenceCardinality.MULTIPLE,
+            policy = ReferencePolicy.DYNAMIC,
+            unbind = "unsetRenderableCreator")
+    @SuppressWarnings("unused")
+    protected void setRenderableCreator(RenderableCreator renderableCreator) {
+        renderableCreator.getSupportedFileExtensions().stream().forEach(
+                key -> creators.put(key, renderableCreator));
+        this.registry = createRegistry();
+    }
+
+    /**
+     * This bind method is invoked by OSGi framework whenever a RenderableCreator is left.
+     * @param renderableCreator unregistered renderable creator
+     */
+    @SuppressWarnings("unused")
+    protected void unsetRenderableCreator(RenderableCreator renderableCreator) {
+        renderableCreator.getSupportedFileExtensions().stream().forEach(creators::remove);
+        this.registry = createRegistry();
     }
 
 }
