@@ -1,6 +1,5 @@
 package org.wso2.carbon.uuf.core;
 
-import java.util.Collections;
 import java.util.Map;
 
 public class MapModel implements Model {
@@ -8,10 +7,6 @@ public class MapModel implements Model {
 
     public MapModel(Map<String, Object> map) {
         this.map = map;
-    }
-
-    public MapModel() {
-        this(Collections.emptyMap());
     }
 
     @Override
