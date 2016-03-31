@@ -8,10 +8,6 @@ import java.util.Optional;
 
 public interface BundleCreator {
 
-    Bundle createBundle(ComponentReference componentReference);
-
-    ClassLoader getBundleClassLoader(String locationKey);
-
-    String getBundleKey(String name, String context);
+    Bundle createBundleIfNotExists(ComponentReference componentReference);
 
 }

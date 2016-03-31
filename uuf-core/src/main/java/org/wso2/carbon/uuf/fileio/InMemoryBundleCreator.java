@@ -26,27 +26,36 @@ public class InMemoryBundleCreator implements BundleCreator {
     private static final String DUMMY_CLASS_NAME = "DummyComponentBundle.class";
 
     /**
-     * Creates a new OSGi bundle. Created bundle is reusable across multiple UUF Apps.
+     * If no bundle exists for provided component reference, It create and returns a new OSGi bundle.
+     * Or else it will return the existing bundle.
+     * Created bundle is reusable across multiple UUF Apps.
      * @param compReference component reference
      * @return created OSGi bundle
-     * @see #getBundleClassLoader(String)
      */
-    public Bundle createBundle(ComponentReference compReference) {
+    public Bundle createBundleIfNotExists(ComponentReference compReference) {
         String name = getBundleName(compReference.getApp().getName(), compReference.getName());
         String version = compReference.getVersion();
         String bundleKey = getBundleKey(compReference.getApp().getName(), compReference.getName());
-        try {
-            InputStream bundleInputStream = createBundleStream(name, bundleKey, version, getImports(compReference));
-            Bundle currentBundle = FrameworkUtil.getBundle(InMemoryBundleCreator.class);
-            BundleContext bundleContext = currentBundle.getBundleContext();
-            Bundle bundle = bundleContext.installBundle(bundleKey, bundleInputStream);
-            bundle.start();
-            return bundle;
-        } catch (BundleException e) {
-            throw new UUFException("Error while installing the bundle of " + bundleKey, e);
-        } catch (IOException e) {
-            throw new UUFException("Error while creating the bundle of " + bundleKey, e);
+        BundleContext bundleContext = getBundleContext();
+        Bundle bundle = bundleContext.getBundle(bundleKey);
+        if(bundle == null){
+            try {
+                InputStream bundleInputStream = createBundleStream(name, bundleKey, version, getImports(compReference));
+                bundle = bundleContext.installBundle(bundleKey, bundleInputStream);
+                bundle.start();
+                return bundle;
+            } catch (BundleException e) {
+                throw new UUFException("Error while installing the bundle of " + bundleKey, e);
+            } catch (IOException e) {
+                throw new UUFException("Error while creating the bundle of " + bundleKey, e);
+            }
         }
+        return bundle;
+    }
+
+    private BundleContext getBundleContext(){
+        Bundle currentBundle = FrameworkUtil.getBundle(InMemoryBundleCreator.class);
+        return currentBundle.getBundleContext();
     }
 
     private Optional<List<String>> getImports(ComponentReference componentReference) throws IOException{
@@ -65,21 +74,6 @@ public class InMemoryBundleCreator implements BundleCreator {
             Collections.addAll(imports, importList.split(","));
             return Optional.of(imports);
         }
-    }
-
-    /**
-     * Returns OSGi Bundle Class Loader for a OSGi bundle given by location key.
-     * Use {@link #getBundleKey(String, String)} to retrieve locationKey.
-     * @param locationKey location key
-     * @return OSGi bundle class loader
-     * @see #getBundleKey(String, String)
-     */
-    public ClassLoader getBundleClassLoader(String locationKey) {
-        Bundle currentBundle = FrameworkUtil.getBundle(InMemoryBundleCreator.class);
-        BundleContext bundleContext = currentBundle.getBundleContext();
-        Bundle bundle = bundleContext.getBundle(locationKey);
-        BundleWiring bundleWiring = bundle.adapt(BundleWiring.class);
-        return bundleWiring.getClassLoader();
     }
 
     private InputStream createBundleStream(String name, String symbolicName, String version, Optional<List<String>> imports)
@@ -112,11 +106,11 @@ public class InMemoryBundleCreator implements BundleCreator {
         target.closeEntry();
     }
 
-    public String getBundleName(String appName, String name) {
+    private String getBundleName(String appName, String name) {
         return "UUF bundle for " + getBundleKey(appName, name);
     }
 
-    public String getBundleKey(String appName, String name) {
+    private String getBundleKey(String appName, String name) {
         return name.equals("root") ? appName : name;
     }
 

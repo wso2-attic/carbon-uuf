@@ -1,7 +1,9 @@
 package org.wso2.carbon.uuf.core.create;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleReference;
+import org.osgi.framework.wiring.BundleWiring;
 import org.wso2.carbon.uuf.core.App;
 import org.wso2.carbon.uuf.core.BundleCreator;
 import org.wso2.carbon.uuf.core.Component;
@@ -135,16 +137,12 @@ public class AppCreator {
         String version = componentReference.getVersion();
         String context = componentReference.getContext();
 
-        if (this.getClass().getClassLoader() instanceof BundleReference) {
-            //if an OSGi classloader, creates a mapping bundle
-            bundleCreator.createBundle(componentReference);
-        }
-        ClassLoader loader = getBundleComponentClassLoader(componentReference);
+        final ClassLoader classLoader = getBundleComponentClassLoader(componentReference);
 
         Set<Fragment> fragments = componentReference
                 .streamFragmentFiles()
                 .parallel()
-                .map((fragmentReference) -> createFragment(fragmentReference, loader))
+                .map((fragmentReference) -> createFragment(fragmentReference, classLoader))
                 .collect(Collectors.toSet());
         @SuppressWarnings("unchecked")
         Map<String, ?> config = componentReference
@@ -160,7 +158,7 @@ public class AppCreator {
         SortedSet<Page> pages = componentReference
                 .streamPageFiles()
                 .parallel()
-                .map(pageReference -> createPage(pageReference, lookup, loader))
+                .map(pageReference -> createPage(pageReference, lookup, classLoader))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(Collectors.toCollection(TreeSet::new));
@@ -197,13 +195,13 @@ public class AppCreator {
     }
 
 
-    private ClassLoader getBundleComponentClassLoader(ComponentReference compReference) {
+    private ClassLoader getBundleComponentClassLoader(ComponentReference componentReference) {
         ClassLoader classLoader = this.getClass().getClassLoader();
         if (classLoader instanceof BundleReference) {
             //if an OSGi classloader
-            String bundleKey = bundleCreator.getBundleKey(compReference.getApp().getName(),
-                    compReference.getName());
-            classLoader = bundleCreator.getBundleClassLoader(bundleKey);
+            Bundle bundle = bundleCreator.createBundleIfNotExists(componentReference);
+            BundleWiring bundleWiring = bundle.adapt(BundleWiring.class);
+            return bundleWiring.getClassLoader();
         }
         return classLoader;
     }
