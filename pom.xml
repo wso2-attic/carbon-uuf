@@ -46,6 +46,7 @@
         <module>uuf-handlebars</module>
         <module>product/p2-features/org.wso2.uuf.core.feature</module>
         <module>product/p2-features/org.wso2.uuf.handlebars.feature</module>
+        <module>samples/sample4</module>
         <module>product</module>
         <module>uuf-fat-jar</module>
     </modules>
