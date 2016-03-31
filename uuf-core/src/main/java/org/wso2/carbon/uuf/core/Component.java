@@ -49,7 +49,7 @@ public class Component {
         }
         return servingPage.map(page -> {
             MapModel model = new MapModel(createModel(pageUri));
-            return page.serve(pageUri, model, lookup);
+            return page.serve(pageUri, model);
         });
     }
 
@@ -76,7 +76,6 @@ public class Component {
     }
 
     public Set<Page> getPages() {
-        //TODO: convert pages to a set
         return new HashSet<>(pages);
     }
 
