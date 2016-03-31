@@ -74,6 +74,19 @@
             </excludes>
         </fileSet>
 
+        <!-- Copy the unpacked samples -->
+        <fileSet>
+            <directory>${project.build.outputDirectory}/samples</directory>
+            <outputDirectory>deployment/uufapps</outputDirectory>
+            <excludes>
+                <exclude>**/target/**</exclude>
+                <exclude>**/*.iml</exclude>
+                <exclude>**/*.ipr</exclude>
+                <exclude>**/*.iwr</exclude>
+                <exclude>**/*.eclipse</exclude>
+            </excludes>
+        </fileSet>
+
         <!-- Copy the analytics setup -->
         <fileSet>
             <directory>../analytics/das-setup</directory>
