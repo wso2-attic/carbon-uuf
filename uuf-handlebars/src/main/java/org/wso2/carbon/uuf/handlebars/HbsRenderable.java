@@ -28,17 +28,17 @@ import java.util.Optional;
 
 public class HbsRenderable implements Renderable {
 
+    public static final String FRAGMENTS_STACK_KEY =
+            HbsRenderable.class.getName() + "#fragments-stack";
     public static final String LOOKUP_KEY = HbsRenderable.class.getName() + "#lookup";
     public static final String URI_KEY = HbsRenderable.class.getName() + "#uri";
     public static final String WRITER_KEY = HbsRenderable.class.getName() + "#writer";
-    public static final String FRAGMENTS_STACK_KEY = HbsRenderable.class.getName() + "#fragments-stack";
-    //
     private static final Handlebars HANDLEBARS = new Handlebars();
+    private static final Logger log = LoggerFactory.getLogger(HbsRenderable.class);
     private static final Map<String, ResourceHelper> RESOURCE_HELPERS = ImmutableMap.of(
             CssHelper.HELPER_NAME, new CssHelper(),
             JsHelper.HELPER_NAME_HEADER, new JsHelper(JsHelper.HELPER_NAME_HEADER),
             JsHelper.HELPER_NAME_FOOTER, new JsHelper(JsHelper.HELPER_NAME_FOOTER));
-    private static final Logger log = LoggerFactory.getLogger(HbsRenderable.class);
 
     static {
         HANDLEBARS.registerHelper(DefineZoneHelper.HELPER_NAME, new DefineZoneHelper());
@@ -93,7 +93,7 @@ public class HbsRenderable implements Renderable {
         try {
             compiledTemplate.apply(context, writer);
         } catch (IOException e) {
-            throw new UUFException("Handlebars rendering failed", e);
+            throw new UUFException("Error while wringing to in-memory writer", e);
         }
         return writer.toString(getPlaceholderValues(context));
     }
