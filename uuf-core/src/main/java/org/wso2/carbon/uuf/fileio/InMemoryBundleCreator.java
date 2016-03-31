@@ -51,16 +51,21 @@ public class InMemoryBundleCreator implements BundleCreator {
     }
 
     private Optional<List<String>> getImports(ComponentReference componentReference) throws IOException{
-        List<String> imports = new ArrayList<>();
         if (!componentReference.getOsgiImportsConfig().isPresent()) {
             return Optional.empty();
         }
         String content = componentReference.getOsgiImportsConfig().get().getContent();
         Properties osgiImportConfig = new Properties();
         osgiImportConfig.load(new StringReader(content));
-        String importList = ((String)osgiImportConfig.get("import.package")).replaceAll("\\r|\\n", "");
-        Collections.addAll(imports, importList.split(","));
-        return Optional.of(imports);
+        String importList = (String)osgiImportConfig.get("import.package");
+        if (importList == null) {
+            return Optional.empty();
+        } else {
+            importList = importList.replaceAll("\\r|\\n", "");
+            List<String> imports = new ArrayList<>();
+            Collections.addAll(imports, importList.split(","));
+            return Optional.of(imports);
+        }
     }
 
     /**
