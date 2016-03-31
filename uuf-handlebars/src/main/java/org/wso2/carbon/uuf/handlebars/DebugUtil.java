@@ -45,8 +45,8 @@ public class DebugUtil {
     public static String safeJsonString(Object obj) {
         try {
             return gson.toJson(obj);
-        } catch (Error error) {
-            log.debug("Un-serializable object detected " + obj, error);
+        } catch (Throwable e) {
+            log.debug("Un-serializable object detected " + obj, e);
             return "{\"__uuf_error__\":true}";
         }
     }
