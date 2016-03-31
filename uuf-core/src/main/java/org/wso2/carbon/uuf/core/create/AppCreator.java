@@ -3,7 +3,6 @@ package org.wso2.carbon.uuf.core.create;
 import org.apache.commons.lang3.tuple.Pair;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleReference;
-import org.osgi.framework.wiring.BundleWiring;
 import org.wso2.carbon.uuf.core.App;
 import org.wso2.carbon.uuf.core.BundleCreator;
 import org.wso2.carbon.uuf.core.Component;
@@ -42,7 +41,6 @@ public class AppCreator {
         this.bundleCreator = bundleCreator;
         this.creators = creators;
     }
-
 
     public App createApp(String appName, String context) {
         Set<Component> components = new HashSet<>();
@@ -131,7 +129,6 @@ public class AppCreator {
         return o.map(j -> new Page(uriPatten, j.getLeft(), lookup.combine(j.getRight())));
     }
 
-
     private Component createComponent(ComponentReference componentReference, Set<Component> children) {
         String name = componentReference.getName();
         String version = componentReference.getVersion();
@@ -194,7 +191,6 @@ public class AppCreator {
         return new Fragment(name, renderable);
     }
 
-
     private ClassLoader getClassLoader(ComponentReference componentReference) {
         ClassLoader classLoader = this.getClass().getClassLoader();
         if (classLoader instanceof BundleReference) {
@@ -206,8 +202,8 @@ public class AppCreator {
     }
 
     private String withoutExtension(String name) {
-        //TODO: fix for short ext
-        return name.substring(0, name.length() - 4);
+        int extensionIndex = name.lastIndexOf(".");
+        return (extensionIndex == -1) ? name : name.substring(0, extensionIndex);
     }
 }
 
