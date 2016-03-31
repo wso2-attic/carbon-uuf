@@ -24,7 +24,7 @@
     </formats>
     <fileSets>
         <fileSet>
-            <directory>${project.basedir}</directory>
+            <directory>${project.basedir}/src</directory>
             <outputDirectory>/${project.artifactId}</outputDirectory>
             <excludes>
                 <exclude>**/target/**</exclude>
