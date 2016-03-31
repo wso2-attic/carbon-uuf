@@ -37,8 +37,7 @@ public class InMemoryBundleCreator implements BundleCreator {
         String version = compReference.getVersion();
         String locationKey = getBundleLocationKey(compReference.getName(), compReference.getContext());
         try {
-            Optional<List<String>> imports = Optional.of(getImports(compReference));
-            InputStream bundleInputStream = createBundleStream(name, symbolicName, version, imports);
+            InputStream bundleInputStream = createBundleStream(name, symbolicName, version, getImports(compReference));
             Bundle currentBundle = FrameworkUtil.getBundle(InMemoryBundleCreator.class);
             BundleContext bundleContext = currentBundle.getBundleContext();
             Bundle bundle = bundleContext.installBundle(locationKey, bundleInputStream);
@@ -51,17 +50,17 @@ public class InMemoryBundleCreator implements BundleCreator {
         }
     }
 
-    private List<String> getImports(ComponentReference componentReference) throws IOException{
+    private Optional<List<String>> getImports(ComponentReference componentReference) throws IOException{
         List<String> imports = new ArrayList<>();
         if (!componentReference.getOsgiImportsConfig().isPresent()) {
-            return imports;
+            return Optional.empty();
         }
         String content = componentReference.getOsgiImportsConfig().get().getContent();
         Properties osgiImportConfig = new Properties();
         osgiImportConfig.load(new StringReader(content));
         String importList = ((String)osgiImportConfig.get("import.package")).replaceAll("\\r|\\n", "");
         Collections.addAll(imports, importList.split(","));
-        return imports;
+        return Optional.of(imports);
     }
 
     /**

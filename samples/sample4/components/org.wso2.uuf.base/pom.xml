@@ -40,7 +40,7 @@
                             <goal>write-project-properties</goal>
                         </goals>
                         <configuration>
-                            <outputFile>${project.build.outputDirectory}/conf/osgi-imports.properties</outputFile>
+                            <outputFile>${project.build.outputDirectory}/osgi-imports.properties</outputFile>
                         </configuration>
                     </execution>
                 </executions>

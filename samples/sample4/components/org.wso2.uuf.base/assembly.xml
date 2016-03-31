@@ -30,6 +30,10 @@
                 <exclude>**/target/**</exclude>
                 <exclude>**/pom.xml</exclude>
                 <exclude>**/assembly.xml</exclude>
+                <exclude>**/*.iml</exclude>
+                <exclude>**/*.ipr</exclude>
+                <exclude>**/*.iwr</exclude>
+                <exclude>**/*.eclipse</exclude>
             </excludes>
         </fileSet>
         <fileSet>
