@@ -12,12 +12,8 @@ import org.wso2.carbon.uuf.core.BundleCreator;
 import org.wso2.carbon.uuf.core.UUFException;
 import org.wso2.carbon.uuf.core.create.ComponentReference;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-import java.util.Optional;
+import java.io.*;
+import java.util.*;
 import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
@@ -39,12 +35,10 @@ public class InMemoryBundleCreator implements BundleCreator {
         String name = getBundleName(compReference.getApp().getName(), compReference.getName());
         String symbolicName = compReference.getName();
         String version = compReference.getVersion();
-        //TODO: handle bundle imports and exports
-        Optional<List<String>> exports = Optional.empty();
-        Optional<List<String>> imports = Optional.empty();
         String locationKey = getBundleLocationKey(compReference.getName(), compReference.getContext());
         try {
-            InputStream bundleInputStream = createBundleStream(name, symbolicName, version, exports, imports);
+            Optional<List<String>> imports = Optional.of(getImports(compReference));
+            InputStream bundleInputStream = createBundleStream(name, symbolicName, version, imports);
             Bundle currentBundle = FrameworkUtil.getBundle(InMemoryBundleCreator.class);
             BundleContext bundleContext = currentBundle.getBundleContext();
             Bundle bundle = bundleContext.installBundle(locationKey, bundleInputStream);
@@ -55,6 +49,19 @@ public class InMemoryBundleCreator implements BundleCreator {
         } catch (IOException e) {
             throw new UUFException("Error while creating the bundle of " + symbolicName, e);
         }
+    }
+
+    private List<String> getImports(ComponentReference componentReference) throws IOException{
+        List<String> imports = new ArrayList<>();
+        if (!componentReference.getOsgiImportsConfig().isPresent()) {
+            return imports;
+        }
+        String content = componentReference.getOsgiImportsConfig().get().getContent();
+        Properties osgiImportConfig = new Properties();
+        osgiImportConfig.load(new StringReader(content));
+        String importList = ((String)osgiImportConfig.get("import.package")).replaceAll("\\r|\\n", "");
+        Collections.addAll(imports, importList.split(","));
+        return imports;
     }
 
     /**
@@ -72,8 +79,7 @@ public class InMemoryBundleCreator implements BundleCreator {
         return bundleWiring.getClassLoader();
     }
 
-    private InputStream createBundleStream(String name, String symbolicName, String version,
-                                           Optional<List<String>> exports, Optional<List<String>> imports)
+    private InputStream createBundleStream(String name, String symbolicName, String version, Optional<List<String>> imports)
             throws IOException {
         Manifest bundleManifest = new Manifest();
         Attributes attributes = bundleManifest.getMainAttributes();
@@ -82,6 +88,10 @@ public class InMemoryBundleCreator implements BundleCreator {
         attributes.putValue("Bundle-Name", name);
         attributes.putValue("Bundle-SymbolicName", symbolicName);
         attributes.putValue("Bundle-Version", version);
+
+        if(imports.isPresent()) {
+            attributes.putValue("Import-Package", String.join(",", imports.get()));
+        }
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         try (JarOutputStream target = new JarOutputStream(outputStream, bundleManifest)) {

@@ -19,5 +19,7 @@ public interface ComponentReference {
     AppReference getApp();
 
     Optional<FileReference> getConfig();
+
+    Optional<FileReference> getOsgiImportsConfig();
 }
 

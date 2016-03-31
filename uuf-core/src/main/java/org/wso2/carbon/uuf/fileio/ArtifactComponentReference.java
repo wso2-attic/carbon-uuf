@@ -102,4 +102,14 @@ public class ArtifactComponentReference implements ComponentReference {
             return Optional.empty();
         }
     }
+
+    @Override
+    public Optional<FileReference> getOsgiImportsConfig() {
+        Path binding = path.resolve("osgi-imports.properties");
+        if (Files.exists(binding)) {
+            return Optional.of(new ArtifactFileReference(binding, this, app));
+        } else {
+            return Optional.empty();
+        }
+    }
 }
