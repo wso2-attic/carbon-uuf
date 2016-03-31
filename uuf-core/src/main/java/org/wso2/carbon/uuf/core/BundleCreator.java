@@ -12,6 +12,6 @@ public interface BundleCreator {
 
     ClassLoader getBundleClassLoader(String locationKey);
 
-    String getBundleLocationKey(String name, String context);
+    String getBundleKey(String name, String context);
 
 }

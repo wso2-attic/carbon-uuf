@@ -201,9 +201,9 @@ public class AppCreator {
         ClassLoader classLoader = this.getClass().getClassLoader();
         if (classLoader instanceof BundleReference) {
             //if an OSGi classloader
-            String bundleLocKey = bundleCreator
-                    .getBundleLocationKey(compReference.getName(), compReference.getContext());
-            classLoader = bundleCreator.getBundleClassLoader(bundleLocKey);
+            String bundleKey = bundleCreator.getBundleKey(compReference.getApp().getName(),
+                    compReference.getName());
+            classLoader = bundleCreator.getBundleClassLoader(bundleKey);
         }
         return classLoader;
     }

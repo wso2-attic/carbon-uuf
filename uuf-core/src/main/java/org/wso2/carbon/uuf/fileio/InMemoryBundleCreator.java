@@ -33,20 +33,19 @@ public class InMemoryBundleCreator implements BundleCreator {
      */
     public Bundle createBundle(ComponentReference compReference) {
         String name = getBundleName(compReference.getApp().getName(), compReference.getName());
-        String symbolicName = compReference.getName();
         String version = compReference.getVersion();
-        String locationKey = getBundleLocationKey(compReference.getName(), compReference.getContext());
+        String bundleKey = getBundleKey(compReference.getApp().getName(), compReference.getName());
         try {
-            InputStream bundleInputStream = createBundleStream(name, symbolicName, version, getImports(compReference));
+            InputStream bundleInputStream = createBundleStream(name, bundleKey, version, getImports(compReference));
             Bundle currentBundle = FrameworkUtil.getBundle(InMemoryBundleCreator.class);
             BundleContext bundleContext = currentBundle.getBundleContext();
-            Bundle bundle = bundleContext.installBundle(locationKey, bundleInputStream);
+            Bundle bundle = bundleContext.installBundle(bundleKey, bundleInputStream);
             bundle.start();
             return bundle;
         } catch (BundleException e) {
-            throw new UUFException("Error while installing the bundle of " + symbolicName, e);
+            throw new UUFException("Error while installing the bundle of " + bundleKey, e);
         } catch (IOException e) {
-            throw new UUFException("Error while creating the bundle of " + symbolicName, e);
+            throw new UUFException("Error while creating the bundle of " + bundleKey, e);
         }
     }
 
@@ -70,10 +69,10 @@ public class InMemoryBundleCreator implements BundleCreator {
 
     /**
      * Returns OSGi Bundle Class Loader for a OSGi bundle given by location key.
-     * Use {@link #getBundleLocationKey(String, String)} to retrieve locationKey.
+     * Use {@link #getBundleKey(String, String)} to retrieve locationKey.
      * @param locationKey location key
      * @return OSGi bundle class loader
-     * @see #getBundleLocationKey(String, String)
+     * @see #getBundleKey(String, String)
      */
     public ClassLoader getBundleClassLoader(String locationKey) {
         Bundle currentBundle = FrameworkUtil.getBundle(InMemoryBundleCreator.class);
@@ -114,10 +113,10 @@ public class InMemoryBundleCreator implements BundleCreator {
     }
 
     public String getBundleName(String appName, String name) {
-        return "UUF bundle for " + getBundleLocationKey(appName, name);
+        return "UUF bundle for " + getBundleKey(appName, name);
     }
 
-    public String getBundleLocationKey(String appName, String name) {
+    public String getBundleKey(String appName, String name) {
         return name.equals("root") ? appName : name;
     }
 
