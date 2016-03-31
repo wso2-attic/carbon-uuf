@@ -98,14 +98,6 @@ public class HbsRenderable implements Renderable {
         return writer.toString(getPlaceholderValues(context));
     }
 
-    private Context objectToContext(Object candidateContext) {
-        if (candidateContext instanceof Context) {
-            return (Context) candidateContext;
-        } else {
-            return Context.newContext(candidateContext);
-        }
-    }
-
     private Map<String, String> getPlaceholderValues(Context context) {
         Map<String, String> placeholderValuesMap = new HashMap<>();
         for (Map.Entry<String, ResourceHelper> entry : RESOURCE_HELPERS.entrySet()) {
