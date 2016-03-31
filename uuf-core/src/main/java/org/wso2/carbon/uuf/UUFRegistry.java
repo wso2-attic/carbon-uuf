@@ -1,27 +1,18 @@
 package org.wso2.carbon.uuf;
 
-import com.google.common.collect.ImmutableMap;
-import io.netty.handler.codec.http.HttpRequest;
-import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.wso2.carbon.uuf.core.App;
-import org.wso2.carbon.uuf.core.UUFException;
-import org.wso2.carbon.uuf.core.create.AppCreator;
-import org.wso2.carbon.uuf.core.create.Resolver;
-import org.wso2.msf4j.util.SystemVariableUtil;
+import io.netty.handler.codec.http.*;
+import org.apache.commons.io.*;
+import org.slf4j.*;
+import org.wso2.carbon.uuf.core.*;
+import org.wso2.carbon.uuf.core.create.*;
+import org.wso2.msf4j.util.*;
 
-import javax.ws.rs.core.Response;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.net.URLConnection;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import javax.ws.rs.core.*;
+import java.io.*;
+import java.net.*;
+import java.nio.file.*;
+import java.util.*;
+import java.util.stream.*;
 
 import static org.wso2.carbon.uuf.core.create.Resolver.STATIC_RESOURCE_URI_PREFIX;
 
@@ -32,6 +23,7 @@ public class UUFRegistry {
     private final Optional<DebugAppender> debugAppender;
     private final Map<String, App> apps = new HashMap<>();
     private Resolver resolver;
+    private FileNameMap fileNameMap;
 
     public UUFRegistry(AppCreator appCreator, Optional<DebugAppender> debugAppender, Resolver resolver) {
         this.appCreator = appCreator;
@@ -175,19 +167,11 @@ public class UUFRegistry {
     }
 
     private String getMime(String resourcePath) {
-        if (resourcePath.endsWith("/")) {
-            return "text/html";
-        }
-        //TODO: getFileNameMap() is a synchronized method, find a better approach
-        String mime = URLConnection.guessContentTypeFromName(resourcePath);
-        if (mime == null) {
-            int i = resourcePath.lastIndexOf('.');
-            if (i >= 0) {
-                ImmutableMap<String, String> map = ImmutableMap.of("css", "text/css");
-                return map.get(resourcePath.substring(i + 1));
-            }
-        }
-        return mime;
+        int extensionIndex = resourcePath.lastIndexOf(".");
+        String extension = (extensionIndex == -1) ? resourcePath : resourcePath.substring(extensionIndex + 1,
+                resourcePath.length());
+        Optional<String> mime = MimeMapper.getMimeType(extension);
+        return (mime.isPresent()) ? mime.get() : "text/html";
     }
 
     private boolean isStaticResourceRequest(String resourcePath) {
