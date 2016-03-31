@@ -53,6 +53,16 @@ public class InMemoryBundleCreator implements BundleCreator {
         return bundle;
     }
 
+    /**
+     * Returns class loader of this bundle.
+     * @param bundle
+     * @return
+     */
+    public ClassLoader getComponentBundleClassLoader(Bundle bundle){
+        BundleWiring bundleWiring = bundle.adapt(BundleWiring.class);
+        return bundleWiring.getClassLoader();
+    }
+
     private BundleContext getBundleContext(){
         Bundle currentBundle = FrameworkUtil.getBundle(InMemoryBundleCreator.class);
         return currentBundle.getBundleContext();

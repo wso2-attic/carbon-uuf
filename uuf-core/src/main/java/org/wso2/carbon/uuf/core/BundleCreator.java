@@ -10,4 +10,5 @@ public interface BundleCreator {
 
     Bundle createBundleIfNotExists(ComponentReference componentReference);
 
+    ClassLoader getComponentBundleClassLoader(Bundle bundle);
 }

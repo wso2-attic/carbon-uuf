@@ -137,7 +137,7 @@ public class AppCreator {
         String version = componentReference.getVersion();
         String context = componentReference.getContext();
 
-        final ClassLoader classLoader = getBundleComponentClassLoader(componentReference);
+        final ClassLoader classLoader = getClassLoader(componentReference);
 
         Set<Fragment> fragments = componentReference
                 .streamFragmentFiles()
@@ -195,13 +195,12 @@ public class AppCreator {
     }
 
 
-    private ClassLoader getBundleComponentClassLoader(ComponentReference componentReference) {
+    private ClassLoader getClassLoader(ComponentReference componentReference) {
         ClassLoader classLoader = this.getClass().getClassLoader();
         if (classLoader instanceof BundleReference) {
             //if an OSGi classloader
             Bundle bundle = bundleCreator.createBundleIfNotExists(componentReference);
-            BundleWiring bundleWiring = bundle.adapt(BundleWiring.class);
-            return bundleWiring.getClassLoader();
+            classLoader = bundleCreator.getComponentBundleClassLoader(bundle);
         }
         return classLoader;
     }
