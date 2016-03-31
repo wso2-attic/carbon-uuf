@@ -18,7 +18,7 @@ public class Page implements Comparable<Page> {
         return uriPatten;
     }
 
-    public String serve(String uri, Model model, Lookup lookup) {
+    public String serve(String uri, Model model) {
         return layout.render(uri, model, this.lookup);
     }
 

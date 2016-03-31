@@ -6,8 +6,11 @@ import org.wso2.carbon.uuf.fileio.*;
 import org.wso2.carbon.uuf.handlebars.*;
 import org.wso2.msf4j.*;
 
-import java.nio.file.*;
-import java.util.*;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 public class Main {
 
@@ -24,7 +27,7 @@ public class Main {
         RenderableCreator hbsCreator = new HbsRenderableCreator();
         AppCreator appCreator = new AppCreator(resolver, ImmutableMap.of("hbs", hbsCreator, "js", hbsCreator),
                 classLoaderCreator);
-        UUFRegistry registry = new UUFRegistry(appCreator, Optional.empty(), resolver);
+        UUFRegistry registry = new UUFRegistry(appCreator, Optional.of(new DebugAppender()), resolver);
         new MicroservicesRunner().deploy(new UUFService(registry)).start();
     }
 
