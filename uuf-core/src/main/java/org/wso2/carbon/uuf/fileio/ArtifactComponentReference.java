@@ -66,7 +66,7 @@ public class ArtifactComponentReference implements ComponentReference {
     @Override
     public String getContext() {
         String name = this.getName();
-        return "/" + (name.equals("root") ? "" : getContextFromName(name));
+        return "/" + getContextFromName(name);
     }
 
     private String getContextFromName(String name) {

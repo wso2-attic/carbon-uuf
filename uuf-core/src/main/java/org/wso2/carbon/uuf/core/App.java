@@ -19,7 +19,7 @@ public class App {
 
         this.context = context;
         this.components = components.stream().collect(Collectors.toMap(Component::getContext, Function.identity()));
-        this.rootComponent = this.components.get("/");
+        this.rootComponent = this.components.get("/root");
     }
 
     public String renderPage(String uriUpToContext, String uriAfterContext) {

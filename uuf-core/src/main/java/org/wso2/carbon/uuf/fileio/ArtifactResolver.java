@@ -6,6 +6,8 @@ import org.wso2.carbon.uuf.core.create.AppReference;
 import org.wso2.carbon.uuf.core.create.Resolver;
 
 import javax.ws.rs.core.Response;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
@@ -52,7 +54,23 @@ public class ArtifactResolver implements Resolver {
             throw new IllegalArgumentException("Resource path should starts with `/public`!");
         }
 
-        Path componentPath = appPath.resolve("components").resolve(componentUriPart);
+        //TODO: remove hack
+        // ******** HACK ********
+        Path components = appPath.resolve("components");
+        Path componentPath;
+        try {
+            componentPath = Files
+                    .list(components)
+                    .filter(p -> p.getFileName().toString().endsWith(componentUriPart))
+                    .findFirst()
+                    .orElse(components.resolve(componentUriPart));
+        } catch (IOException e) {
+            throw new UUFException("error while listing components", e);
+        }
+//        Path componentPath = appPath.resolve("components").resolve(componentUriPart);
+        // **********************
+
+
         Path fragmentPath;
         if (fragmentUriPart.equals(STATIC_RESOURCE_URI_BASE_PREFIX)) {
             fragmentPath = componentPath;
