@@ -20,33 +20,19 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.wso2.uuf.sample</groupId>
-    <artifactId>org.wso2.uuf.sample.pets-store</artifactId>
+    <groupId>org.wso2.store</groupId>
+    <artifactId>org.wso2.store.ui.store-common</artifactId>
     <version>1.0.0-SNAPSHOT</version>
 
-    <name>WSO2 UUF Sample - Pets Store App</name>
+    <name>WSO2 UUF Identity - Basic Auth Component</name>
     <url>http://wso2.org</url>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.wso2.uuf</groupId>
-            <artifactId>org.wso2.uuf.base</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-            <type>zip</type>
-        </dependency>
-        <dependency>
-            <groupId>org.wso2.is</groupId>
-            <artifactId>org.wso2.is.uuf.basicauth</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-            <type>zip</type>
-        </dependency>
-        <dependency>
-            <groupId>org.wso2.store</groupId>
-            <artifactId>org.wso2.store.ui.store-common</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-            <type>zip</type>
-        </dependency>
-    </dependencies>
+    <properties>
+        <import.package>
+            org.wso2.msf4j,
+            org.wso2.carbon.uuf
+        </import.package>
+    </properties>
 
     <build>
         <plugins>
@@ -62,33 +48,6 @@
                         </goals>
                         <configuration>
                             <outputFile>${project.build.outputDirectory}/osgi-imports.properties</outputFile>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>unpack-components</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>unpack-dependencies</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.directory}/uuf-components/</outputDirectory>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>create-dependency.tree</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>tree</goal>
-                        </goals>
-                        <configuration>
-                            <outputFile>${project.build.directory}/uuf-components/dependency.tree</outputFile>
-                            <verbose>true</verbose>
                         </configuration>
                     </execution>
                 </executions>

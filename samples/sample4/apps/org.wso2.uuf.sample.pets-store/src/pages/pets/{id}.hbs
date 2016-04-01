@@ -1,9 +1,17 @@
 {{layout "org.wso2.uuf.base.main"}}
 
 {{#fillZone "content"}}
-    <h2>pet info</h2>
-    <br/>
-    {{includeFragment "thumbnail"}}
-    <br/>
-    name = {{name}}
+    {{css "/css/pet-store.css"}}
+    <div class="col-md-8">
+        <h2>Pet Info</h2>
+        <br/>
+        {{includeFragment "thumbnail"}}
+        <br/>
+        <div class="pet-info">
+            name : {{name}}
+        </div>
+    </div>
+    <div class="col-md-4">
+        {{includeFragment "org.wso2.store.ui.store-common.tags"}}
+    </div>
 {{/fillZone}}

@@ -1,4 +1,4 @@
 //noinspection JSUnusedGlobalSymbols
 var onRequest = function () {
-    return {"name": "snowball"};
+    return {"name": "snowball","tags":['white','short-hair']};
 };
