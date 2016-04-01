@@ -36,6 +36,7 @@ public class PlaceholderWriterTest {
         placeholderValues.put("p2", "Placeholder two,");
         placeholderValues.put("p3", "Placeholder three");
         String output = placeholderWriter.toString(placeholderValues);
+        output = output.replaceAll("<!--.*-->\n", "");
         String expectedOutput = "Placeholder zero,First line.\nSecond line.\nPlaceholder one,Placeholder two," +
                 "Third line.\nForth line.\nPlaceholder three";
         Assert.assertEquals(output, expectedOutput);
