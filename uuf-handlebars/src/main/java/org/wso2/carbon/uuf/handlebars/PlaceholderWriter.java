@@ -80,14 +80,25 @@ public class PlaceholderWriter extends Writer {
     }
 
     public String toString(Map<String, String> placeholderValues) {
-        StringBuilder tmpBuffer = new StringBuilder();
-        tmpBuffer.append(buffers.get(0));
+        StringBuilder out = new StringBuilder();
+        out.append(buffers.get(0));
         for (int i = 0; i < placeholders.size(); i++) {
-            String placeholderValue = placeholderValues.get(placeholders.get(i));
-            tmpBuffer.append(placeholderValue);
-            tmpBuffer.append(buffers.get(i + 1));
+            String key = placeholders.get(i);
+            String placeholderValue;
+            if (key != null) {
+                out.append("<!-- start ");
+                out.append(key);
+                out.append(" -->");
+                if ((placeholderValue = placeholderValues.get(key)) != null) {
+                    out.append(placeholderValue);
+                }
+                out.append("<!-- end ");
+                out.append(key);
+                out.append(" -->");
+            }
+            out.append(buffers.get(i + 1));
         }
-        return tmpBuffer.toString();
+        return out.toString();
     }
 
     @Override
