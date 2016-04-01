@@ -23,12 +23,11 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.MDC;
 import org.wso2.carbon.kernel.utils.Utils;
-import org.wso2.carbon.uuf.core.BundleCreator;
 import org.wso2.carbon.uuf.core.UUFException;
 import org.wso2.carbon.uuf.core.create.AppCreator;
 import org.wso2.carbon.uuf.core.create.RenderableCreator;
 import org.wso2.carbon.uuf.fileio.ArtifactResolver;
-import org.wso2.carbon.uuf.fileio.InMemoryBundleCreator;
+import org.wso2.carbon.uuf.fileio.BundleClassLoaderCreator;
 import org.wso2.msf4j.Microservice;
 
 import javax.ws.rs.GET;
@@ -73,8 +72,7 @@ public class UUFService implements Microservice {
             ArtifactResolver resolver = new ArtifactResolver(
                     Files.list(Utils.getCarbonHome().resolve("deployment").resolve("uufapps"))
                             .collect(Collectors.toList()));
-            BundleCreator bundleCreator = new InMemoryBundleCreator();
-            AppCreator appCreator = new AppCreator(resolver, creators, bundleCreator);
+            AppCreator appCreator = new AppCreator(resolver, creators, new BundleClassLoaderCreator());
             return new UUFRegistry(appCreator, Optional.empty(), resolver);
         } catch (IOException e) {
             throw new UUFException("Error while reading deployment artifacts on 'uufapps' folder!");

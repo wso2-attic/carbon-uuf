@@ -1,44 +1,27 @@
 package org.wso2.carbon.uuf.core.create;
 
-import org.apache.commons.lang3.tuple.Pair;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleReference;
-import org.wso2.carbon.uuf.core.App;
-import org.wso2.carbon.uuf.core.BundleCreator;
-import org.wso2.carbon.uuf.core.Component;
-import org.wso2.carbon.uuf.core.Fragment;
-import org.wso2.carbon.uuf.core.Lookup;
-import org.wso2.carbon.uuf.core.Page;
-import org.wso2.carbon.uuf.core.Renderable;
-import org.wso2.carbon.uuf.core.UUFException;
-import org.wso2.carbon.uuf.core.UriPatten;
-import org.yaml.snakeyaml.Yaml;
+import org.apache.commons.lang3.tuple.*;
+import org.osgi.framework.*;
+import org.wso2.carbon.uuf.core.*;
+import org.yaml.snakeyaml.*;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
-import java.util.stream.Collectors;
+import java.util.*;
+import java.util.stream.*;
 
 public class AppCreator {
 
     private Resolver resolver;
     private Map<String, RenderableCreator> creators;
-    private BundleCreator bundleCreator;
+    private ClassLoaderCreator classLoaderCreator;
 
     public AppCreator(
             Resolver resolver,
             Map<String, RenderableCreator> creators,
-            BundleCreator bundleCreator) {
+            ClassLoaderCreator classLoaderCreator) {
 
         this.resolver = resolver;
         this.creators = creators;
-        this.bundleCreator = bundleCreator;
+        this.classLoaderCreator = classLoaderCreator;
         this.creators = creators;
     }
 
@@ -134,7 +117,7 @@ public class AppCreator {
         String version = componentReference.getVersion();
         String context = componentReference.getContext();
 
-        final ClassLoader classLoader = getClassLoader(componentReference);
+        final ClassLoader classLoader = classLoaderCreator.getClassLoader(componentReference);
 
         Set<Fragment> fragments = componentReference
                 .streamFragmentFiles()
@@ -185,20 +168,8 @@ public class AppCreator {
                 .map(f -> crateRenderable(f, cl))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .findFirst()
-                .orElseThrow(() ->
-                                     new UUFException("Fragment has not renderable file " + fragmentReference));
+                .findFirst().orElseThrow(() -> new UUFException("Fragment '" + fragmentReference + "' does not have a renderable file."));
         return new Fragment(name, renderable);
-    }
-
-    private ClassLoader getClassLoader(ComponentReference componentReference) {
-        ClassLoader classLoader = this.getClass().getClassLoader();
-        if (classLoader instanceof BundleReference) {
-            //if an OSGi classloader
-            Bundle bundle = bundleCreator.createBundleIfNotExists(componentReference);
-            classLoader = bundleCreator.getComponentBundleClassLoader(bundle);
-        }
-        return classLoader;
     }
 
     private String withoutExtension(String name) {

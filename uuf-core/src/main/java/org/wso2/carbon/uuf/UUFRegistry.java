@@ -74,7 +74,6 @@ public class UUFRegistry {
             if (isStaticResourceRequest(resourcePath)) {
                 Path resource = resolver.resolveStatic(appName, resourcePath);
                 if (Files.exists(resource) && Files.isRegularFile(resource)) {
-                    //TODO: use non blocking mime map
                     return Response.ok(resource.toFile(), getMime(resourcePath));
                 } else {
                     return Response.status(Response.Status.NOT_FOUND).entity(

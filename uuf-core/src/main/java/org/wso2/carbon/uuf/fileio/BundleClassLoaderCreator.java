@@ -8,7 +8,7 @@ import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.wiring.BundleWiring;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.uuf.core.BundleCreator;
+import org.wso2.carbon.uuf.core.ClassLoaderCreator;
 import org.wso2.carbon.uuf.core.UUFException;
 import org.wso2.carbon.uuf.core.create.ComponentReference;
 
@@ -19,9 +19,9 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
 
-public class InMemoryBundleCreator implements BundleCreator {
+public class BundleClassLoaderCreator implements ClassLoaderCreator {
 
-    private static final Logger log = LoggerFactory.getLogger(InMemoryBundleCreator.class);
+    private static final Logger log = LoggerFactory.getLogger(BundleClassLoaderCreator.class);
     private static final String DUMMY_CLASS_PATH = "/bundle/create/DummyComponentBundle.claz";
     private static final String DUMMY_CLASS_NAME = "DummyComponentBundle.class";
 
@@ -32,7 +32,7 @@ public class InMemoryBundleCreator implements BundleCreator {
      * @param compReference component reference
      * @return created OSGi bundle
      */
-    public Bundle createBundleIfNotExists(ComponentReference compReference) {
+    private Bundle createBundleIfNotExists(ComponentReference compReference) {
         String name = getBundleName(compReference.getApp().getName(), compReference.getName());
         String version = compReference.getVersion();
         String bundleKey = getBundleKey(compReference.getApp().getName(), compReference.getName());
@@ -54,17 +54,19 @@ public class InMemoryBundleCreator implements BundleCreator {
     }
 
     /**
-     * Returns class loader of this bundle.
-     * @param bundle
+     * Returns class loader of this component reference.
+     * @param componentReference
      * @return
      */
-    public ClassLoader getComponentBundleClassLoader(Bundle bundle){
+    @Override
+    public ClassLoader getClassLoader(ComponentReference componentReference){
+        Bundle bundle = createBundleIfNotExists(componentReference);
         BundleWiring bundleWiring = bundle.adapt(BundleWiring.class);
         return bundleWiring.getClassLoader();
     }
 
     private BundleContext getBundleContext(){
-        Bundle currentBundle = FrameworkUtil.getBundle(InMemoryBundleCreator.class);
+        Bundle currentBundle = FrameworkUtil.getBundle(BundleClassLoaderCreator.class);
         return currentBundle.getBundleContext();
     }
 
@@ -102,7 +104,7 @@ public class InMemoryBundleCreator implements BundleCreator {
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         try (JarOutputStream target = new JarOutputStream(outputStream, bundleManifest)) {
-            InputStream resource = InMemoryBundleCreator.class.getResourceAsStream(DUMMY_CLASS_PATH);
+            InputStream resource = BundleClassLoaderCreator.class.getResourceAsStream(DUMMY_CLASS_PATH);
             byte[] data = IOUtils.toByteArray(resource);
             addJarEntry(DUMMY_CLASS_NAME, data, target);
         }

@@ -6,9 +6,7 @@ import org.wso2.carbon.uuf.core.create.ComponentReference;
 import java.util.List;
 import java.util.Optional;
 
-public interface BundleCreator {
+public interface ClassLoaderCreator {
 
-    Bundle createBundleIfNotExists(ComponentReference componentReference);
-
-    ClassLoader getComponentBundleClassLoader(Bundle bundle);
+    ClassLoader getClassLoader(ComponentReference compReference);
 }
