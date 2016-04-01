@@ -573,6 +573,10 @@ header .brand h1 {
 header .auth {
   margin: 0 -15px;
 }
+
+header a {
+  color: #ffffff;
+}
 header .dropdown {
   display: inline-block;
   color: #ffffff;
