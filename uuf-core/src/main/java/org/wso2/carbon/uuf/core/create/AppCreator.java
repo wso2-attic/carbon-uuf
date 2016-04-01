@@ -1,12 +1,27 @@
 package org.wso2.carbon.uuf.core.create;
 
-import org.apache.commons.lang3.tuple.*;
-import org.osgi.framework.*;
-import org.wso2.carbon.uuf.core.*;
-import org.yaml.snakeyaml.*;
+import org.apache.commons.lang3.tuple.Pair;
+import org.wso2.carbon.uuf.core.App;
+import org.wso2.carbon.uuf.core.ClassLoaderCreator;
+import org.wso2.carbon.uuf.core.Component;
+import org.wso2.carbon.uuf.core.Fragment;
+import org.wso2.carbon.uuf.core.Lookup;
+import org.wso2.carbon.uuf.core.Page;
+import org.wso2.carbon.uuf.core.Renderable;
+import org.wso2.carbon.uuf.core.UUFException;
+import org.wso2.carbon.uuf.core.UriPatten;
+import org.yaml.snakeyaml.Yaml;
 
-import java.util.*;
-import java.util.stream.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 public class AppCreator {
 
@@ -136,7 +151,7 @@ public class AppCreator {
                 .getConfig()
                 .map(b -> (Map<String, String>) new Yaml().loadAs(b.getContent(), Map.class))
                 .orElse(Collections.emptyMap());
-        Lookup lookup = new Lookup(name, Collections.emptyMap(), fragments, children);
+        Lookup lookup = new Lookup(name, context, Collections.emptyMap(), fragments, children);
         SortedSet<Page> pages = componentReference
                 .streamPageFiles()
                 .parallel()
@@ -163,15 +178,20 @@ public class AppCreator {
     }
 
     private Fragment createFragment(FragmentReference fragmentReference, ClassLoader cl) {
-        String component = fragmentReference.getComponentReference().getName();
-        String name = component + '.' + fragmentReference.getName();
+        ComponentReference component = fragmentReference.getComponentReference();
+        String componentName = component.getName();
+        String name = componentName + '.' + fragmentReference.getName();
+        String componentContext = component.getContext().equals("/") ? '/' + component.getName() : component.getContext();
+        String context = componentContext + '/' + fragmentReference.getName();
         Renderable renderable = fragmentReference
                 .streamChildren()
                 .map(f -> crateRenderable(f, cl))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .findFirst().orElseThrow(() -> new UUFException("Fragment '" + fragmentReference + "' does not have a renderable file."));
-        return new Fragment(name, renderable, context);
+                .findFirst()
+                .orElseThrow(() -> new UUFException(
+                        "Fragment has not renderable file " + fragmentReference));
+        return new Fragment(name, context, renderable);
     }
 
     private String withoutExtension(String name) {
