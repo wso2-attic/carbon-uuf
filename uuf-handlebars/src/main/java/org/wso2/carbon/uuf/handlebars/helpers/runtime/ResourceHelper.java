@@ -1,6 +1,7 @@
 package org.wso2.carbon.uuf.handlebars.helpers.runtime;
 
 import com.github.jknack.handlebars.Context;
+import com.github.jknack.handlebars.Handlebars;
 import com.github.jknack.handlebars.Options;
 import org.wso2.carbon.uuf.core.Fragment;
 
@@ -10,9 +11,13 @@ import java.util.Deque;
 import java.util.List;
 import java.util.Optional;
 
+import static org.wso2.carbon.uuf.handlebars.HbsRenderable.COMPONENT_NAME_KEY;
 import static org.wso2.carbon.uuf.handlebars.HbsRenderable.FRAGMENTS_STACK_KEY;
+import static org.wso2.carbon.uuf.handlebars.HbsRenderable.URI_KEY;
 
 public abstract class ResourceHelper extends FillPlaceholderHelper<List<String>> {
+
+    private static final Handlebars.SafeString EMPTY_STRING = new Handlebars.SafeString("");
 
     public ResourceHelper(String resourcesCategory) {
         super(resourcesCategory);
@@ -25,16 +30,18 @@ public abstract class ResourceHelper extends FillPlaceholderHelper<List<String>>
         }
         List<String> resources = getValue(options).orElseGet(() -> setValue(options, new ArrayList<>()));
         Deque<Fragment> fragmentStack = options.data(FRAGMENTS_STACK_KEY);
+        String uriUpToContext = options.data(URI_KEY);
+        String component = options.data(COMPONENT_NAME_KEY);
         String publicUri;
         if ((fragmentStack == null) || fragmentStack.isEmpty()) {
             // this resource is adding in a page or layout
             //TODO get component's public URI
-            publicUri = "/public/component-name/base" + relativeUri;
+            publicUri = uriUpToContext + "/public" + component + "/base" + relativeUri;
         } else {
-            publicUri = fragmentStack.peekLast().getResourceUriPrefix() + relativeUri;
+            publicUri = uriUpToContext + "/public" + fragmentStack.peekLast().getPublicContext() + relativeUri;
         }
         resources.add(formatResourceUri(publicUri));
-        return "";
+        return EMPTY_STRING;
     }
 
     @Override

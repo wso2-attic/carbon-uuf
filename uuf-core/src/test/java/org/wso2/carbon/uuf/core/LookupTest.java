@@ -18,6 +18,7 @@ public class LookupTest {
 
         Lookup lookup = new Lookup(
                 "org.wso2.test",
+                "/test",
    /*bindings*/ Collections.emptyMap(),
                 ImmutableSet.of(myFragment),
    /*children*/ Collections.emptySet());
@@ -33,7 +34,8 @@ public class LookupTest {
 
         Component childComponent = mock(Component.class);
         Lookup childLookup = new Lookup(
-                "org.wso2.test.child.my-fragment",
+                "org.wso2.test.child",
+                "/child",
    /*bindings*/ Collections.emptyMap(),
                 ImmutableSet.of(childFragment),
    /*children*/ Collections.emptySet());
@@ -41,6 +43,7 @@ public class LookupTest {
 
         Lookup lookup = new Lookup(
                 "org.wso2.test.parent",
+                "/parent",
    /*bindings*/ Collections.emptyMap(),
   /*fragments*/ Collections.emptySet(),
    /*children*/ Collections.singleton(childComponent));
@@ -55,6 +58,7 @@ public class LookupTest {
         when(myFragment.getName()).thenReturn("org.other.yourFragment");
         Lookup lookup = new Lookup(
                 "org.wso2.test",
+                "/test",
    /*bindings*/ Collections.emptyMap(),
                 ImmutableSet.of(myFragment),
    /*children*/ Collections.emptySet());

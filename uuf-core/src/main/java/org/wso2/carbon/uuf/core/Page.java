@@ -18,8 +18,8 @@ public class Page implements Comparable<Page> {
         return uriPatten;
     }
 
-    public String serve(String uri, Model model) {
-        return layout.render(uri, model, this.lookup);
+    public String serve(String uriUpToContext, Model model) {
+        return layout.render(uriUpToContext, model, this.lookup);
     }
 
     @Override

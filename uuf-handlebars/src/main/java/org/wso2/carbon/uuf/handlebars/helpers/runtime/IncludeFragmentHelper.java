@@ -46,9 +46,13 @@ public class IncludeFragmentHelper implements Helper<String> {
             fragmentStack = new LinkedList<>();
             options.data(FRAGMENTS_STACK_KEY, fragmentStack);
         }
-        fragmentStack.push(fragment);
-        String content = fragment.render(uri, fragmentContext, lookup).trim();
-        fragmentStack.pop();
+        String content;
+        try {
+            fragmentStack.push(fragment);
+            content = fragment.render(uri, fragmentContext, lookup).trim();
+        } finally {
+            fragmentStack.pop();
+        }
         return new Handlebars.SafeString(content);
     }
 }

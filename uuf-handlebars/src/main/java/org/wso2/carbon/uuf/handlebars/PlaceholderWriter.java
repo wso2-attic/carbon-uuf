@@ -67,7 +67,7 @@ public class PlaceholderWriter extends Writer {
     }
 
     @Override
-    public void close() throws IOException {
+    public void close() {
         currentBuffer = null;
         buffers = null;
         placeholders = null;
@@ -88,13 +88,13 @@ public class PlaceholderWriter extends Writer {
             if (key != null) {
                 out.append("<!-- start ");
                 out.append(key);
-                out.append(" -->");
+                out.append(" -->\n");
                 if ((placeholderValue = placeholderValues.get(key)) != null) {
                     out.append(placeholderValue);
                 }
                 out.append("<!-- end ");
                 out.append(key);
-                out.append(" -->");
+                out.append(" -->\n");
             }
             out.append(buffers.get(i + 1));
         }

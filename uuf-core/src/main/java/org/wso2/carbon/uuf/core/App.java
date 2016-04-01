@@ -22,26 +22,26 @@ public class App {
         this.rootComponent = this.components.get("/");
     }
 
-    public String renderPage(String uri) {
+    public String renderPage(String uriUpToContext, String uriAfterContext) {
         // First try to render the page with root component
-        Optional<String> output = rootComponent.renderPage(uri);
+        Optional<String> output = rootComponent.renderPage(uriUpToContext, uriAfterContext);
         if (output.isPresent()) {
             return output.get();
         }
 
         // Since root components doesn't have the page, try with other components
-        int firstSlash = uri.indexOf('/', 1);
+        int firstSlash = uriAfterContext.indexOf('/', 1);
         if (firstSlash > 0) {
-            String componentContext = uri.substring(0, firstSlash);
+            String componentContext = uriAfterContext.substring(0, firstSlash);
             Component component = components.get(componentContext);
             if (component != null) {
-                output = component.renderPage(uri.substring(firstSlash));
+                output = component.renderPage(uriUpToContext, uriAfterContext.substring(firstSlash));
                 if (output.isPresent()) {
                     return output.get();
                 }
             }
         }
-        throw new UUFException("Requested page '" + uri + "' does not exists.", Response.Status.NOT_FOUND);
+        throw new UUFException("Requested page '" + uriAfterContext + "' does not exists.", Response.Status.NOT_FOUND);
     }
 
     public boolean hasPage(String uri) {

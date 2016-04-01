@@ -85,7 +85,7 @@ public class HbsRenderableTest {
         Lookup lookup = mock(Lookup.class);
         Renderable renderable = mock(Renderable.class);
         when(renderable.render(any(), any(), any())).thenReturn("fragment content");
-        when(lookup.lookupBinding("test-zone")).thenReturn(Collections.singleton(renderable));
+        when(lookup.lookupBinding("test-zone")).thenReturn(Collections.singleton(new Fragment("f", "/j", renderable)));
         String output = hbsRenderable.render("/url", mock(Model.class), lookup);
         Assert.assertEquals(output, "X fragment content Y");
     }

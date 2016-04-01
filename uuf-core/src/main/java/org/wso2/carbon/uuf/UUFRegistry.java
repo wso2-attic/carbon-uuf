@@ -43,6 +43,8 @@ public class UUFRegistry {
     }
 
     public Response.ResponseBuilder serve(HttpRequest request) {
+        String hostHeader = request.headers().get("Host");
+        String host = "//" + (hostHeader != null ? hostHeader : "localhost");
         String uri = request.getUri().replaceAll("/+", "/");
         if (!uri.startsWith("/")) {
             uri = "/" + uri;
@@ -62,6 +64,7 @@ public class UUFRegistry {
         }
 
         String appName = uri.substring(1, firstSlash);
+        String appContext = '/' + appName;
         String resourcePath = uri.substring(firstSlash, uri.length());
 
         if (log.isDebugEnabled() && !resourcePath.startsWith("/debug/")) {
@@ -81,7 +84,7 @@ public class UUFRegistry {
                 }
             } else {
                 if (app == null || debugAppender.isPresent()) {
-                    app = appCreator.createApp(appName, "/" + appName);
+                    app = appCreator.createApp(appName, appContext);
                     apps.put(appName, app);
                 }
                 if (resourcePath.equals("/debug/api/pages/")) {
@@ -124,7 +127,7 @@ public class UUFRegistry {
                         return Response.status(Response.Status.NOT_FOUND);
                     }
                 }
-                String page = app.renderPage(uri.substring(appName.length() + 1));
+                String page = app.renderPage(appContext, uri.substring(appContext.length()));
                 return Response.ok(page).header("Content-Type", "text/html");
             }
             //TODO: Don't catch this Ex, move the logic below the 'instanceof' check
@@ -136,12 +139,12 @@ public class UUFRegistry {
                 if (uri.endsWith("/")) {
                     String uriWithoutSlash = resourcePath.substring(0, resourcePath.length() - 1);
                     if (app.hasPage(uriWithoutSlash)) {
-                        return Response.status(301).header("Location", uriWithoutSlash);
+                        return Response.status(301).header("Location", host + uriWithoutSlash);
                     }
                 } else {
                     String uriWithSlash = resourcePath + "/";
                     if (app.hasPage(uriWithSlash)) {
-                        return Response.status(301).header("Location", uri + "/");
+                        return Response.status(301).header("Location", host + uri + "/");
                     }
                 }
             }

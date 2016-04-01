@@ -8,23 +8,27 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class Lookup {
-    private final Map<String, Renderable> bindings;
+    private final Map<String, Fragment> bindings;
     private final Map<String, Fragment> fragments;
     private final String componentName;
+    private final String context;
 
-    private Lookup(String componentName, Map<String, Renderable> bindings, Map<String, Fragment> fragments) {
+    private Lookup(String componentName, String context, Map<String, Fragment> bindings, Map<String, Fragment> fragments) {
         this.bindings = bindings;
         this.fragments = fragments;
         this.componentName = componentName;
+        this.context = context;
     }
 
     public Lookup(
             String componentName,
+            String context,
             Map<String, String> bindings,
             Set<Fragment> localFragments,
             Set<Component> children) {
 
         this.componentName = componentName;
+        this.context = context;
         this.fragments = localFragments
                 .stream()
                 .collect(Collectors.toMap(f -> validate(f.getName()), Function.identity()));
@@ -37,7 +41,7 @@ public class Lookup {
                 .stream()
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
-                        p -> findRenderer(p.getValue(), componentName, this.fragments)));
+                        p -> this.fragments.get(qualify(p.getValue()))));
         for (Component child : children) {
             Lookup lookup = child.getLookup();
             this.fragments.putAll(lookup.fragments);
@@ -53,34 +57,25 @@ public class Lookup {
         }
     }
 
-    private Renderable findRenderer(
-            String name,
-            String componentName,
-            Map<String, Fragment> childFragments) {
-        String qualifiedName = qualify(name);
-        Fragment fragment = childFragments.get(qualifiedName);
-        return fragment.getRenderer();
-    }
-
     private String qualify(String name) {
         return name.indexOf('.') >= 0 ? name : componentName + '.' + name;
     }
 
     public Lookup combine(Map<String, ? extends Renderable> pageLookup) {
-        Map<String, Renderable> bindings = pageLookup
+        Map<String, Fragment> bindings = pageLookup
                 .entrySet()
                 .stream()
                 .collect(Collectors.toMap(
                         en -> qualify(en.getKey()),
-                        Map.Entry::getValue));
+                        en -> new Fragment(en.getKey(), "manuy", en.getValue())));
         bindings.putAll(this.bindings);
-        return new Lookup(this.componentName, bindings, this.fragments);
+        return new Lookup(this.componentName, this.context, bindings, this.fragments);
     }
 
-    public Collection<Renderable> lookupBinding(String zoneName) {
-        Renderable renderable = bindings.get(qualify(zoneName));
-        if (renderable != null) {
-            return Collections.singleton(renderable);
+    public Collection<Fragment> lookupBinding(String zoneName) {
+        Fragment fragment = bindings.get(qualify(zoneName));
+        if (fragment != null) {
+            return Collections.singleton(fragment);
         }
 
         throw new UUFException("Zone '" + zoneName + "' does not have a binding.");
@@ -93,5 +88,9 @@ public class Lookup {
         } else {
             throw new UUFException("Fragment '" + fragmentName + "' does not exists.");
         }
+    }
+
+    public String getContext() {
+        return context;
     }
 }

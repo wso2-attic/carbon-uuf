@@ -25,6 +25,7 @@ public class AppCreator {
         this.creators = creators;
     }
 
+
     public App createApp(String appName, String context) {
         Set<Component> components = new HashSet<>();
 
@@ -112,6 +113,7 @@ public class AppCreator {
         return o.map(j -> new Page(uriPatten, j.getLeft(), lookup.combine(j.getRight())));
     }
 
+
     private Component createComponent(ComponentReference componentReference, Set<Component> children) {
         String name = componentReference.getName();
         String version = componentReference.getVersion();
@@ -169,7 +171,7 @@ public class AppCreator {
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .findFirst().orElseThrow(() -> new UUFException("Fragment '" + fragmentReference + "' does not have a renderable file."));
-        return new Fragment(name, renderable);
+        return new Fragment(name, renderable, context);
     }
 
     private String withoutExtension(String name) {

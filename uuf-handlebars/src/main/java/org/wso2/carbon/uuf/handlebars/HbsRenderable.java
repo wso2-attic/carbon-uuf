@@ -32,6 +32,7 @@ public class HbsRenderable implements Renderable {
             HbsRenderable.class.getName() + "#fragments-stack";
     public static final String LOOKUP_KEY = HbsRenderable.class.getName() + "#lookup";
     public static final String URI_KEY = HbsRenderable.class.getName() + "#uri";
+    public static final String COMPONENT_NAME_KEY = HbsRenderable.class.getName() + "#comp-name";
     public static final String WRITER_KEY = HbsRenderable.class.getName() + "#writer";
     private static final Handlebars HANDLEBARS = new Handlebars();
     private static final Logger log = LoggerFactory.getLogger(HbsRenderable.class);
@@ -67,7 +68,7 @@ public class HbsRenderable implements Renderable {
     }
 
     @Override
-    public String render(String uri, Model model, Lookup lookup) {
+    public String render(String uriUpToContext, Model model, Lookup lookup) {
         if (executable.isPresent()) {
             //TODO: set context for executable
             Object jsOutput = executable.get().execute(Collections.emptyMap());
@@ -84,7 +85,8 @@ public class HbsRenderable implements Renderable {
         ContextModel contextModel = ContextModel.from(model);
         Context context = contextModel.getContext();
         context.data(LOOKUP_KEY, lookup);
-        context.data(URI_KEY, uri);
+        context.data(URI_KEY, uriUpToContext);
+        context.data(COMPONENT_NAME_KEY, lookup.getContext());
         if (log.isDebugEnabled()) {
             log.debug("Template " + this + " was applied with context " + DebugUtil.safeJsonString(context));
         }
@@ -95,7 +97,9 @@ public class HbsRenderable implements Renderable {
         } catch (IOException e) {
             throw new UUFException("Error while wringing to in-memory writer", e);
         }
-        return writer.toString(getPlaceholderValues(context));
+        String out = writer.toString(getPlaceholderValues(context));
+        writer.close();
+        return out;
     }
 
     private Map<String, String> getPlaceholderValues(Context context) {

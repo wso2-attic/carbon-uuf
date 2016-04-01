@@ -41,15 +41,15 @@ public class Component {
         return context;
     }
 
-    public Optional<String> renderPage(String pageUri) {
+    public Optional<String> renderPage(String uriUpToContext, String pageUri) {
         Optional<Page> servingPage = getPage(pageUri);
         if (log.isDebugEnabled() && servingPage.isPresent()) {
             log.debug("Component '" + name + "' is serving Page '" +
                     servingPage.get().toString() + "' for URI '" + pageUri + "'.");
         }
         return servingPage.map(page -> {
-            MapModel model = new MapModel(createModel(pageUri));
-            return page.serve(pageUri, model);
+            MapModel model = new MapModel(createModel(uriUpToContext + '/' + pageUri));
+            return page.serve(uriUpToContext, model);
         });
     }
 

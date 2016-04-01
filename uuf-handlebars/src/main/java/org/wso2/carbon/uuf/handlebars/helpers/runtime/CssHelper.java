@@ -10,6 +10,6 @@ public class CssHelper extends ResourceHelper {
 
     @Override
     protected String formatResourceUri(String resourceUri) {
-        return "<link href=\"" + resourceUri + "\" rel=\"stylesheet\" type=\"text/css\" />";
+        return "<link href=\"" + resourceUri + "\" rel=\"stylesheet\" type=\"text/css\" />\n";
     }
 }
