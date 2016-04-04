@@ -42,6 +42,10 @@
             <groupId>org.wso2.orbit.com.github.jknack</groupId>
             <artifactId>handlebars</artifactId>
         </dependency>
+        <dependency>
+            <groupId>javax.cache</groupId>
+            <artifactId>cache-api</artifactId>
+        </dependency>
         <!-- Dependencies for MSF4J -->
         <dependency>
             <groupId>org.wso2.eclipse.osgi</groupId>
@@ -176,7 +180,8 @@
             org.apache.commons.io,
             org.wso2.carbon.kernel.utils,
             org.yaml.snakeyaml,
-            jdk.nashorn.api.scripting
+            jdk.nashorn.api.scripting,
+            javax.cache.*
         </import.package>
         <export.package>
             org.wso2.carbon.uuf.*;version="${uuf.version}",

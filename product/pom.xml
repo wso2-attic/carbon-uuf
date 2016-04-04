@@ -53,6 +53,12 @@
             <type>zip</type>
         </dependency>
         <dependency>
+            <groupId>org.wso2.carbon.caching</groupId>
+            <artifactId>org.wso2.carbon.caching.feature</artifactId>
+            <version>${carbon.cache.version}</version>
+            <type>zip</type>
+        </dependency>
+        <dependency>
             <groupId>org.wso2.msf4j</groupId>
             <artifactId>org.wso2.msf4j.feature</artifactId>
             <version>${msf4j.version}</version>
@@ -155,6 +161,10 @@
                                     <version>${carbon.kernel.version}</version>
                                 </feature>
                                 <feature>
+                                    <id>org.wso2.carbon.caching.feature</id>
+                                    <version>${carbon.cache.version}</version>
+                                </feature>
+                                <feature>
                                     <id>org.wso2.msf4j.feature</id>
                                     <version>${msf4j.version}</version>
                                 </feature>
@@ -221,6 +231,10 @@
                                 <feature>
                                     <id>org.wso2.carbon.core.runtime.feature.group</id>
                                     <version>${carbon.kernel.version}</version>
+                                </feature>
+                                <feature>
+                                    <id>org.wso2.carbon.caching.feature.group</id>
+                                    <version>${carbon.cache.version}</version>
                                 </feature>
                                 <feature>
                                     <id>org.wso2.msf4j.feature.group</id>
