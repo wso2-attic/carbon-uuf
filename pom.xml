@@ -297,7 +297,7 @@
         <wso2.maven.compiler.target>1.8</wso2.maven.compiler.target>
 
         <!-- can't run tests from intellij without this -->
-        <maven-resources/>
+        <include.resource/>
     </properties>
 
 </project>
