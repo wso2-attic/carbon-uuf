@@ -159,6 +159,16 @@
                 <version>${gson.version}</version>
             </dependency>
             <dependency>
+                <groupId>javax.cache</groupId>
+                <artifactId>cache-api</artifactId>
+                <version>${javax.cache-api.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.caching</groupId>
+                <artifactId>org.wso2.carbon.caching</artifactId>
+                <version>${carbon.cache.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.testng</groupId>
                 <artifactId>testng</artifactId>
                 <scope>test</scope>
@@ -259,6 +269,7 @@
         <carbon.kernel.version>5.0.0</carbon.kernel.version>
         <carbon.kernel.version.range>[5.0,6)</carbon.kernel.version.range>
         <carbon.feature.plugin.version>2.0.0</carbon.feature.plugin.version>
+        <carbon.cache.version>1.0.0-m1</carbon.cache.version>
         <maven.bundle.plugin.version>2.5.0</maven.bundle.plugin.version>
 
         <!-- Dependencies for UUF -->
@@ -269,6 +280,7 @@
         <handlebars-version>4.0.3</handlebars-version>
         <antlr-version>4.5.1-1</antlr-version>
         <org.apache.commons.commons-lang3.version>3.1</org.apache.commons.commons-lang3.version>
+        <javax.cache-api.version>1.0.0</javax.cache-api.version>
 
         <!-- Dependencies for MSF4J -->
         <pax.logging.api.version>1.8.4</pax.logging.api.version>
