@@ -16,10 +16,13 @@
 
 package org.wso2.carbon.uuf.core;
 
-import org.slf4j.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Optional;
+import java.util.Properties;
 
 /**
  * This class lazily loads the mime-map.properties file
@@ -32,16 +35,18 @@ public class MimeMapper {
 
     private static void loadMimeMap() throws IOException {
         mimeMap = new Properties();
-        InputStream inputStream = MimeMapper.class.getClassLoader().getResourceAsStream(
-                "mime-map.properties");
-        if (inputStream != null) {
-            mimeMap.load(inputStream);
-            try {
-                inputStream.close();
-            } catch (IOException e) {
-                log.warn("Could not close input stream", e);
-            }
+        String mimePropertyName = "mime-map.properties";
+        InputStream inputStream = MimeMapper.class.getClassLoader().getResourceAsStream(mimePropertyName);
+        if (inputStream == null) {
+            throw new IOException("Could not locate `" + mimePropertyName + "`");
         }
+        mimeMap.load(inputStream);
+        try {
+            inputStream.close();
+        } catch (IOException e) {
+            log.warn("Could not close input stream", e);
+        }
+
     }
 
     public static Optional<String> getMimeType(String extension) {
