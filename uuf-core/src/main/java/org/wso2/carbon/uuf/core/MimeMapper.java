@@ -57,11 +57,7 @@ public class MimeMapper {
         } catch (IOException e) {
             return Optional.empty();
         }
-        String mimeType = mimeMap.getProperty(extension);
-        if (mimeType == null) {
-            Optional.empty();
-        }
-        return Optional.of(mimeType);
+        return Optional.ofNullable(mimeMap.getProperty(extension));
     }
 
 }
