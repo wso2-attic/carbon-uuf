@@ -1,18 +1,33 @@
 package org.wso2.carbon.uuf;
 
-import io.netty.handler.codec.http.*;
-import org.apache.commons.io.*;
-import org.slf4j.*;
-import org.wso2.carbon.uuf.core.*;
-import org.wso2.carbon.uuf.core.create.*;
-import org.wso2.msf4j.util.*;
+import io.netty.handler.codec.http.HttpRequest;
+import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.wso2.carbon.uuf.core.App;
+import org.wso2.carbon.uuf.core.MimeMapper;
+import org.wso2.carbon.uuf.core.UUFException;
+import org.wso2.carbon.uuf.core.create.AppCreator;
+import org.wso2.carbon.uuf.core.create.Resolver;
+import org.wso2.msf4j.util.SystemVariableUtil;
 
-import javax.ws.rs.core.*;
-import java.io.*;
-import java.net.*;
-import java.nio.file.*;
-import java.util.*;
-import java.util.stream.*;
+import javax.ws.rs.core.Response;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.net.FileNameMap;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.TimeZone;
+import java.util.stream.Collectors;
 
 import static org.wso2.carbon.uuf.core.create.Resolver.STATIC_RESOURCE_URI_PREFIX;
 
@@ -24,6 +39,7 @@ public class UUFRegistry {
     private final Map<String, App> apps = new HashMap<>();
     private Resolver resolver;
     private FileNameMap fileNameMap;
+    private static final String CACHE_HEADER_DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss zzz";
 
     public UUFRegistry(AppCreator appCreator, Optional<DebugAppender> debugAppender, Resolver resolver) {
         this.appCreator = appCreator;
@@ -77,7 +93,7 @@ public class UUFRegistry {
             if (isStaticResourceRequest(resourcePath)) {
                 Path resource = resolver.resolveStatic(appName, resourcePath);
                 if (Files.exists(resource) && Files.isRegularFile(resource)) {
-                    return Response.ok(resource.toFile(), getMime(resourcePath));
+                    return getCachedResponseBuilder(resource, request);
                 } else {
                     return Response.status(Response.Status.NOT_FOUND).entity(
                             "Requested resource '" + uri + "' does not exists at '" + resource + "'");
@@ -174,6 +190,40 @@ public class UUFRegistry {
                 resourcePath.length());
         Optional<String> mime = MimeMapper.getMimeType(extension);
         return (mime.isPresent()) ? mime.get() : "text/html";
+    }
+
+    private Response.ResponseBuilder getCachedResponseBuilder(Path resource, HttpRequest request) throws IOException{
+        Optional<Date> ifModDate = getIfModifiedSinceDate(request);
+        BasicFileAttributes attrs = Files.readAttributes(resource, BasicFileAttributes.class);
+        Date resourceModDate = new Date(attrs.lastModifiedTime().toMillis());
+        if (ifModDate.isPresent() && (!ifModDate.get().after(resourceModDate))) {//!after = before || equal
+            return Response.notModified();
+        }
+        return setCacheHeaders(resourceModDate, Response.ok(resource.toFile(), getMime(resource.toString())));
+    }
+
+    private Optional<Date> getIfModifiedSinceDate(HttpRequest request) {
+        String httpDateStr = request.headers().get("If-Modified-Since");
+        if(httpDateStr == null){
+            return Optional.empty();
+        }
+        SimpleDateFormat df = new SimpleDateFormat(CACHE_HEADER_DATE_FORMAT);
+        df.setTimeZone(TimeZone.getTimeZone("GMT"));
+        try {
+            return Optional.of(df.parse(httpDateStr));
+        } catch (ParseException e) {
+            return Optional.empty();
+        }
+    }
+
+    private Response.ResponseBuilder setCacheHeaders(Date lastModDate, Response.ResponseBuilder builder) {
+        //currently MSF4J does not implement cacheControl.
+        //hence cache control headers are set manually'
+        SimpleDateFormat df = new SimpleDateFormat(CACHE_HEADER_DATE_FORMAT);
+        df.setTimeZone(TimeZone.getTimeZone("GMT"));
+        builder.header("Last-Modified", df.format(lastModDate));
+        builder.header("Cache-Control", "public,max-age=2592000");
+        return builder;
     }
 
     private boolean isStaticResourceRequest(String resourcePath) {
