@@ -16,6 +16,7 @@ import org.wso2.carbon.uuf.handlebars.helpers.runtime.IncludeFragmentHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.JsHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.MissingHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.PlaceholderHelper;
+import org.wso2.carbon.uuf.handlebars.helpers.runtime.PublicHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.ResourceHelper;
 import org.wso2.carbon.uuf.handlebars.model.ContextModel;
 import org.wso2.carbon.uuf.model.Model;
@@ -45,6 +46,7 @@ public class HbsRenderable implements Renderable {
         HANDLEBARS.registerHelper(DefineZoneHelper.HELPER_NAME, new DefineZoneHelper());
         HANDLEBARS.registerHelper(IncludeFragmentHelper.HELPER_NAME, new IncludeFragmentHelper());
         HANDLEBARS.registerHelper(PlaceholderHelper.HELPER_NAME, new PlaceholderHelper());
+        HANDLEBARS.registerHelper(PublicHelper.HELPER_NAME, new PublicHelper());
         RESOURCE_HELPERS.forEach(HANDLEBARS::registerHelper);
         HANDLEBARS.registerHelperMissing(new MissingHelper());
     }

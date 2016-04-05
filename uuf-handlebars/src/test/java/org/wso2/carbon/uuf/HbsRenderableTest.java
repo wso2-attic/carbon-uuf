@@ -39,6 +39,16 @@ public class HbsRenderableTest {
     }
 
     @Test
+    public void testPublicHelper() {
+        final String templateContent = "{{public \"/url\"}}";
+        HbsRenderable hbsRenderable = createHbsRenderable(templateContent);
+        Lookup lookup = mock(Lookup.class);
+        when(lookup.getContext()).thenReturn("/myapp");
+        String output = hbsRenderable.render("/url", mock(Model.class), lookup);
+        Assert.assertEquals(output, "/url/public/myapp/base/url");
+    }
+
+    @Test
     public void testTemplateWithModel() {
         HbsRenderable hbsRenderable = createHbsRenderable("Hello {{name}}! Have a good day.");
         Model model = mock(Model.class);
