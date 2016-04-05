@@ -21,14 +21,12 @@ public class ArtifactResolver implements Resolver {
     /**
      * This method resolves static routing request uris. URI types categorized into;
      * <ul>
-     * <li>root_resource_uri: /public/root/base/{subResourceUri}</li>
-     * <li>root_fragment_uri: /public/root/{fragmentName}/{subResourceUri}</li>
      * <li>component_resource_uri: /public/{componentName}/base/{subResourceUri}</li>
      * <li>fragment_resource_uri: /public/{componentName}/{fragmentName}/{subResourceUri}</li>
      * </ul>
      * These path types are mapped into following file paths on the file system;
      * <ul>
-     * <li>{appName}/components/[{componentName}|ROOT]/[{fragmentName}|base]/public/{subResourcePath}</li>
+     * <li>{appName}/components/{componentName}/[{fragmentName}|base]/public/{subResourcePath}</li>
      * </ul>
      *
      * @param appName application name
