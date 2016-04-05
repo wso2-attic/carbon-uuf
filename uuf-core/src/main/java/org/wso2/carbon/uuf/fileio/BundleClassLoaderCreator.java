@@ -12,8 +12,16 @@ import org.wso2.carbon.uuf.core.ClassLoaderCreator;
 import org.wso2.carbon.uuf.core.UUFException;
 import org.wso2.carbon.uuf.core.create.ComponentReference;
 
-import java.io.*;
-import java.util.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.Properties;
 import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
@@ -105,6 +113,9 @@ public class BundleClassLoaderCreator implements ClassLoaderCreator {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         try (JarOutputStream target = new JarOutputStream(outputStream, bundleManifest)) {
             InputStream resource = BundleClassLoaderCreator.class.getResourceAsStream(DUMMY_CLASS_PATH);
+            if(resource == null){
+                throw new IOException("Could not locate `" + DUMMY_CLASS_PATH + "` !");
+            }
             byte[] data = IOUtils.toByteArray(resource);
             addJarEntry(DUMMY_CLASS_NAME, data, target);
         }
