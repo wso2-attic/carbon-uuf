@@ -3,7 +3,9 @@ package org.wso2.carbon.uuf.core;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.model.MapModel;
+import org.wso2.carbon.uuf.model.Model;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -18,8 +20,26 @@ public class Component {
     private final String context;
     private final SortedSet<Page> pages;
     private final String version;
+    private final StaticLookup staticLookup;
+    @Deprecated
     private final Lookup lookup;
 
+    public Component(String name, String version, String context, SortedSet<Page> pages, StaticLookup staticLookup) {
+        if (name.isEmpty()) {
+            throw new IllegalArgumentException("Component name cannot be empty.");
+        }
+        this.name = name;
+        this.version = version;
+        if (!context.startsWith("/")) {
+            throw new IllegalArgumentException("Component context must start with a '/'.");
+        }
+        this.context = context;
+        this.pages = pages;
+        this.staticLookup = staticLookup;
+        this.lookup = null;
+    }
+
+    @Deprecated
     public Component(String name,
                      String context,
                      String version,
@@ -35,17 +55,34 @@ public class Component {
         this.version = version;
         this.pages = pages;
         this.lookup = lookup;
+        this.staticLookup = null;
     }
 
     public String getContext() {
         return context;
     }
 
+    public Optional<String> renderPage(String pageUri, DynamicLookup dynamicLookup) {
+        Optional<Page> servingPage = getPage(pageUri);
+        if (!servingPage.isPresent()) {
+            return Optional.<String>empty();
+        }
+
+        Page page = servingPage.get();
+        if (log.isDebugEnabled()) {
+            log.debug("Component '" + name + "' is serving Page '" + page + "' for URI '" + pageUri + "'.");
+        }
+
+        Model model = new MapModel(Collections.emptyMap());
+        return Optional.of(page.render(model, staticLookup, dynamicLookup, null));
+    }
+
+    @Deprecated
     public Optional<String> renderPage(String uriUpToContext, String pageUri) {
         Optional<Page> servingPage = getPage(pageUri);
         if (log.isDebugEnabled() && servingPage.isPresent()) {
             log.debug("Component '" + name + "' is serving Page '" +
-                    servingPage.get().toString() + "' for URI '" + pageUri + "'.");
+                              servingPage.get().toString() + "' for URI '" + pageUri + "'.");
         }
         return servingPage.map(page -> {
             MapModel model = new MapModel(createModel(uriUpToContext + '/' + pageUri));
@@ -85,6 +122,6 @@ public class Component {
 
     @Override
     public String toString() {
-        return "{name:\"" + name + "\"}";
+        return "{\"name\":\"" + name + "\", \"version\":\"" + version + "\", \"context\": \"" + context + "\"}";
     }
 }
