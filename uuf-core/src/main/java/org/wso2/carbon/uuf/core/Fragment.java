@@ -5,17 +5,12 @@ import org.wso2.carbon.uuf.model.Model;
 public class Fragment {
 
     private final String name;
-    private final String context;
+    private final String publicUriPrefix;
     private final Renderable renderer;
 
-//    public Fragment(String name, Renderable renderer) {
-        //TODO remove this constructor
-//        this(name, ("/public/component-name/" + name), renderer);
-//    }
-
-    public Fragment(String name, String publicContext, Renderable renderer) {
+    public Fragment(String name, String publicUriPrefix, Renderable renderer) {
         this.name = name;
-        this.context = publicContext;
+        this.publicUriPrefix = publicUriPrefix;
         this.renderer = renderer;
     }
 
@@ -23,20 +18,33 @@ public class Fragment {
         return name;
     }
 
+    public String getPublicUriPrefix() {
+        return publicUriPrefix;
+    }
+
     public Renderable getRenderer() {
         return renderer;
     }
 
+    public String render(Model model, StaticLookup staticLookup, DynamicLookup dynamicLookup, UUFCaller uufCaller) {
+        dynamicLookup.getFragmentsStack().push(this);
+        String output = renderer.render(model, staticLookup, dynamicLookup, uufCaller);
+        dynamicLookup.getFragmentsStack().pop();
+        return output;
+    }
+
+    @Deprecated
     public String render(String uri, Model model, Lookup lookup) {
-        return renderer.render(uri, model, lookup);
+        return "";
     }
 
     @Override
     public String toString() {
-        return "{\"name\": \"" + name + "\", \"renderer\": " + renderer.toString() + "}";
+        return "{\"name\": \"" + name + "\", \"publicUriPrefix\": \"" + publicUriPrefix + "\"}";
     }
 
+    @Deprecated
     public String getPublicContext() {
-        return context;
+        return publicUriPrefix;
     }
 }
