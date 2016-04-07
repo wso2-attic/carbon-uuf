@@ -6,18 +6,18 @@ public class Page implements Comparable<Page> {
 
     private final UriPatten uriPatten;
     private final Renderable renderer;
-    private final String publicUriPrefix;
+    private final String publicUriInfix;
 
     @Deprecated
     public Page(UriPatten uriPatten, Renderable layout, Lookup lookup) {
         this.uriPatten = uriPatten;
         this.renderer = layout;
-        this.publicUriPrefix = null;
+        this.publicUriInfix = null;
     }
 
-    public Page(UriPatten uriPatten, String publicUriPrefix, Renderable renderer) {
+    public Page(UriPatten uriPatten, String publicUriInfix, Renderable renderer) {
         this.uriPatten = uriPatten;
-        this.publicUriPrefix = publicUriPrefix;
+        this.publicUriInfix = publicUriInfix;
         this.renderer = renderer;
     }
 
@@ -25,8 +25,8 @@ public class Page implements Comparable<Page> {
         return uriPatten;
     }
 
-    public String getPublicUriPrefix() {
-        return publicUriPrefix;
+    public String getPublicUriInfix() {
+        return publicUriInfix;
     }
 
     public String render(Model model, StaticLookup staticLookup, RequestLookup requestLookup, API api) {
@@ -43,7 +43,7 @@ public class Page implements Comparable<Page> {
 
     @Override
     public String toString() {
-        return "{\"uriPattern\": \"" + uriPatten.toString() + "\", \"publicUriPrefix\": \"" + publicUriPrefix + "\"}";
+        return "{\"uriPattern\": \"" + uriPatten.toString() + "\", \"publicUriPrefix\": \"" + publicUriInfix + "\"}";
     }
 
     @Override

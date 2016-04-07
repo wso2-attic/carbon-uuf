@@ -5,12 +5,12 @@ import org.wso2.carbon.uuf.model.Model;
 public class Fragment {
 
     private final String name;
-    private final String publicUriPrefix;
+    private final String publicUriInfix;
     private final Renderable renderer;
 
-    public Fragment(String name, String publicUriPrefix, Renderable renderer) {
+    public Fragment(String name, String publicUriInfix, Renderable renderer) {
         this.name = name;
-        this.publicUriPrefix = publicUriPrefix;
+        this.publicUriInfix = publicUriInfix;
         this.renderer = renderer;
     }
 
@@ -18,8 +18,8 @@ public class Fragment {
         return name;
     }
 
-    public String getPublicUriPrefix() {
-        return publicUriPrefix;
+    public String getPublicUriInfix() {
+        return publicUriInfix;
     }
 
     public Renderable getRenderer() {
@@ -40,11 +40,11 @@ public class Fragment {
 
     @Override
     public String toString() {
-        return "{\"name\": \"" + name + "\", \"publicUriPrefix\": \"" + publicUriPrefix + "\"}";
+        return "{\"name\": \"" + name + "\", \"publicUriInfix\": \"" + publicUriInfix + "\"}";
     }
 
     @Deprecated
     public String getPublicContext() {
-        return publicUriPrefix;
+        return publicUriInfix;
     }
 }
