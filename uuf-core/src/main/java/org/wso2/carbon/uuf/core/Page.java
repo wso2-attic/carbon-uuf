@@ -29,7 +29,7 @@ public class Page implements Comparable<Page> {
         return publicUriPrefix;
     }
 
-    public String render(Model model, StaticLookup staticLookup, DynamicLookup dynamicLookup, UUFCaller uufCaller) {
+    public String render(Model model, StaticLookup staticLookup, DynamicLookup dynamicLookup, API uufCaller) {
         dynamicLookup.getPagesStack().push(this);
         String output = renderer.render(model, staticLookup, dynamicLookup, uufCaller);
         dynamicLookup.getPagesStack().pop();

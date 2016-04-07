@@ -26,7 +26,7 @@ public class Fragment {
         return renderer;
     }
 
-    public String render(Model model, StaticLookup staticLookup, DynamicLookup dynamicLookup, UUFCaller uufCaller) {
+    public String render(Model model, StaticLookup staticLookup, DynamicLookup dynamicLookup, API uufCaller) {
         dynamicLookup.getFragmentsStack().push(this);
         String output = renderer.render(model, staticLookup, dynamicLookup, uufCaller);
         dynamicLookup.getFragmentsStack().pop();
