@@ -26,10 +26,10 @@ public class Fragment {
         return renderer;
     }
 
-    public String render(Model model, StaticLookup staticLookup, DynamicLookup dynamicLookup, API uufCaller) {
-        dynamicLookup.getFragmentsStack().push(this);
-        String output = renderer.render(model, staticLookup, dynamicLookup, uufCaller);
-        dynamicLookup.getFragmentsStack().pop();
+    public String render(Model model, StaticLookup staticLookup, RequestLookup requestLookup, API uufCaller) {
+        requestLookup.getFragmentsStack().push(this);
+        String output = renderer.render(model, staticLookup, requestLookup, uufCaller);
+        requestLookup.getFragmentsStack().pop();
         return output;
     }
 

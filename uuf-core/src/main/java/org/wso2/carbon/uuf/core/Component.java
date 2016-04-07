@@ -62,7 +62,7 @@ public class Component {
         return context;
     }
 
-    public Optional<String> renderPage(String pageUri, DynamicLookup dynamicLookup) {
+    public Optional<String> renderPage(String pageUri, RequestLookup requestLookup) {
         Optional<Page> servingPage = getPage(pageUri);
         if (!servingPage.isPresent()) {
             return Optional.<String>empty();
@@ -74,7 +74,7 @@ public class Component {
         }
 
         Model model = new MapModel(Collections.emptyMap());
-        return Optional.of(page.render(model, staticLookup, dynamicLookup, null));
+        return Optional.of(page.render(model, staticLookup, requestLookup, null));
     }
 
     @Deprecated

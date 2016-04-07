@@ -40,9 +40,9 @@ public class App {
         this.sessionRegistry = null;
     }
 
-    public String renderPage(String uriWithoutContext, DynamicLookup dynamicLookup) {
+    public String renderPage(String uriWithoutContext, RequestLookup requestLookup) {
         // First try to render the page with root component
-        Optional<String> output = rootComponent.renderPage(uriWithoutContext, dynamicLookup);
+        Optional<String> output = rootComponent.renderPage(uriWithoutContext, requestLookup);
         if (output.isPresent()) {
             return output.get();
         }
@@ -52,7 +52,7 @@ public class App {
             if (uriWithoutContext.startsWith(entry.getKey())) {
                 Component component = entry.getValue();
                 String pageUri = uriWithoutContext.substring(component.getContext().length());
-                output = component.renderPage(pageUri, dynamicLookup);
+                output = component.renderPage(pageUri, requestLookup);
                 if (output.isPresent()) {
                     return output.get();
                 }

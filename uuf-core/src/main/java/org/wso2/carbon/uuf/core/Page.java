@@ -29,10 +29,10 @@ public class Page implements Comparable<Page> {
         return publicUriPrefix;
     }
 
-    public String render(Model model, StaticLookup staticLookup, DynamicLookup dynamicLookup, API uufCaller) {
-        dynamicLookup.getPagesStack().push(this);
-        String output = renderer.render(model, staticLookup, dynamicLookup, uufCaller);
-        dynamicLookup.getPagesStack().pop();
+    public String render(Model model, StaticLookup staticLookup, RequestLookup requestLookup, API uufCaller) {
+        requestLookup.getPagesStack().push(this);
+        String output = renderer.render(model, staticLookup, requestLookup, uufCaller);
+        requestLookup.getPagesStack().pop();
         return output;
     }
 

@@ -6,13 +6,13 @@ import io.netty.handler.codec.http.HttpResponse;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
-public class DynamicLookup {
+public class RequestLookup {
     private final HttpRequest request;
     private final HttpResponse response;
     private final Deque<Page> pagesStack;
     private final Deque<Fragment> fragmentsStack;
 
-    public DynamicLookup(HttpRequest request, HttpResponse response) {
+    public RequestLookup(HttpRequest request, HttpResponse response) {
         this.request = request;
         this.response = response;
         this.pagesStack = new ArrayDeque<>();
