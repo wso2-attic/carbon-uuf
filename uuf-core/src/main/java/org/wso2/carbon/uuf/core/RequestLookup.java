@@ -1,37 +1,38 @@
 package org.wso2.carbon.uuf.core;
 
 import io.netty.handler.codec.http.HttpRequest;
-import io.netty.handler.codec.http.HttpResponse;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
 
 public class RequestLookup {
+    private final String appContext;
     private final HttpRequest request;
-    private final HttpResponse response;
-    private final Deque<Page> pagesStack;
-    private final Deque<Fragment> fragmentsStack;
+    private final Deque<String> publicUriStack;
 
-    public RequestLookup(HttpRequest request, HttpResponse response) {
+    public RequestLookup(String appContext, HttpRequest request) {
+        this.appContext = appContext;
         this.request = request;
-        this.response = response;
-        this.pagesStack = new ArrayDeque<>();
-        this.fragmentsStack = new ArrayDeque<>();
+        this.publicUriStack = new ArrayDeque<>();
     }
 
     public HttpRequest getRequest() {
         return request;
     }
 
-    public HttpResponse getResponse() {
-        return response;
+    public String getAppContext() {
+        return appContext;
     }
 
-    public Deque<Page> getPagesStack() {
-        return pagesStack;
+    public void pushToPublicUriStack(String publicUri) {
+        publicUriStack.push(publicUri);
     }
 
-    public Deque<Fragment> getFragmentsStack() {
-        return fragmentsStack;
+    public String popPublicUriStack() {
+        return publicUriStack.pop();
+    }
+
+    public String getPublicUri() {
+        return publicUriStack.peekLast();
     }
 }
