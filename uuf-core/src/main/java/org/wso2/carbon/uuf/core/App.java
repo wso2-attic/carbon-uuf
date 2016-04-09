@@ -40,7 +40,8 @@ public class App {
         this.sessionRegistry = null;
     }
 
-    public String renderPage(String uriWithoutContext, RequestLookup requestLookup) {
+    public String renderPage(String uri, RequestLookup requestLookup) {
+        String uriWithoutContext = uri.substring(requestLookup.getAppContext().length());
         // First try to render the page with root component
         Optional<String> output = rootComponent.renderPage(uriWithoutContext, requestLookup);
         if (output.isPresent()) {
@@ -59,8 +60,7 @@ public class App {
                 break;
             }
         }
-        throw new UUFException("Requested page '" + uriWithoutContext + "' does not exists.",
-                               Response.Status.NOT_FOUND);
+        throw new UUFException("Requested page '" + uri + "' does not exists.", Response.Status.NOT_FOUND);
     }
 
     @Deprecated
