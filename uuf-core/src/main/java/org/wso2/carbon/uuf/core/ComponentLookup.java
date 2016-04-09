@@ -17,7 +17,13 @@ public class ComponentLookup {
     public ComponentLookup(String componentName, String componentContext, Set<Fragment> fragments,
                            SetMultimap<String, ? extends Renderable> bindings,
                            Set<Component> childComponents) {
-        this.componentName = componentName + ".";
+        if (componentName.isEmpty()) {
+            throw new IllegalArgumentException("Component name cannot be empty.");
+        }
+        this.componentName = componentName + "."; // Dot is concatenated early.
+        if (!componentContext.startsWith("/")) {
+            throw new IllegalArgumentException("Context of a component must start with a '/'.");
+        }
         this.componentContext = componentContext;
 
         this.fragments = fragments.stream().collect(Collectors.toMap(f -> getFullyQualifiedName(f.getName()), f -> f));
@@ -34,7 +40,8 @@ public class ComponentLookup {
     }
 
     private String getFullyQualifiedName(String name) {
-        return componentName + name;
+        // <component-name>.<binding/fragment-name>
+        return componentName + name; // Dot is already concatenated in the constructor
     }
 
     public Optional<Set<? extends Renderable>> getBindings(String zoneName) {
