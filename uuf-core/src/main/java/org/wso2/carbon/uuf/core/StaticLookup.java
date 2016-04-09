@@ -1,28 +1,50 @@
 package org.wso2.carbon.uuf.core;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.SetMultimap;
+
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class StaticLookup {
-    private final Map<String, ? extends Renderable> bindings;
+    private final String componentName;
+    private final String componentContext;
+    private final SetMultimap<String, Renderable> bindings;
     private final Map<String, Fragment> fragments;
-    private final Map<String, Object> configurations;
 
-    public StaticLookup(Map<String, ? extends Renderable> bindings,
-                        Map<String, Fragment> fragments, Map<String, Object> configurations) {
-        this.bindings = bindings;
-        this.fragments = fragments;
-        this.configurations = configurations;
+    public StaticLookup(String componentName, String componentContext, Set<Fragment> fragments,
+                        SetMultimap<String, ? extends Renderable> bindings,
+                        Set<Component> childComponents) {
+        this.componentName = componentName + ".";
+        this.componentContext = componentContext;
+
+        this.fragments = fragments.stream().collect(Collectors.toMap(f -> getFullyQualifiedName(f.getName()), f -> f));
+        this.bindings = HashMultimap.create();
+        for (Map.Entry<String, ? extends Renderable> entry : bindings.entries()) {
+            this.bindings.put(getFullyQualifiedName(entry.getKey()), entry.getValue());
+        }
+
+        for (Component childComponent : childComponents) {
+            StaticLookup childComponentStaticLookup = childComponent.getStaticLookup();
+            this.fragments.putAll(childComponentStaticLookup.fragments);
+            this.bindings.putAll(childComponentStaticLookup.bindings);
+        }
     }
 
-    public Map<String, ? extends Renderable> getBindings() {
-        return bindings;
+    private String getFullyQualifiedName(String name) {
+        return componentName + name;
     }
 
-    public Map<String, Fragment> getFragments() {
-        return fragments;
+    public Optional<Set<? extends Renderable>> getBindings(String zoneName) {
+        if (zoneName.indexOf('.') == -1) {
+            zoneName = getFullyQualifiedName(zoneName);
+        }
+        return Optional.ofNullable(bindings.get(zoneName));
     }
 
-    public Map<String, Object> getConfigurations() {
-        return configurations;
+    public Optional<Fragment> getFragment(String fragmentName) {
+        return Optional.ofNullable(fragments.get(fragmentName));
     }
 }
