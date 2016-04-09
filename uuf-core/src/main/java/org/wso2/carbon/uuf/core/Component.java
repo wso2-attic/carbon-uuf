@@ -20,11 +20,16 @@ public class Component {
     private final String context;
     private final SortedSet<Page> pages;
     private final String version;
-    private final StaticLookup staticLookup;
+
+    ComponentLookup getComponentLookup() {
+        return componentLookup;
+    }
+
+    private final ComponentLookup componentLookup;
     @Deprecated
     private final Lookup lookup;
 
-    public Component(String name, String version, String context, SortedSet<Page> pages, StaticLookup staticLookup) {
+    public Component(String name, String version, String context, SortedSet<Page> pages, ComponentLookup componentLookup) {
         if (name.isEmpty()) {
             throw new IllegalArgumentException("Component name cannot be empty.");
         }
@@ -35,7 +40,7 @@ public class Component {
         }
         this.context = context;
         this.pages = pages;
-        this.staticLookup = staticLookup;
+        this.componentLookup = componentLookup;
         this.lookup = null;
     }
 
@@ -55,7 +60,7 @@ public class Component {
         this.version = version;
         this.pages = pages;
         this.lookup = lookup;
-        this.staticLookup = null;
+        this.componentLookup = null;
     }
 
     public String getContext() {
@@ -74,7 +79,7 @@ public class Component {
         }
 
         Model model = new MapModel(Collections.emptyMap());
-        return Optional.of(page.render(model, staticLookup, requestLookup, null));
+        return Optional.of(page.render(model, componentLookup, requestLookup, null));
     }
 
     @Deprecated
@@ -116,6 +121,7 @@ public class Component {
         return new HashSet<>(pages);
     }
 
+    @Deprecated
     public Lookup getLookup() {
         return lookup;
     }
