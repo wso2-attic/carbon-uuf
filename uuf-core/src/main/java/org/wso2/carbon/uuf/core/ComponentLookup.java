@@ -8,15 +8,15 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class StaticLookup {
+public class ComponentLookup {
     private final String componentName;
     private final String componentContext;
     private final SetMultimap<String, Renderable> bindings;
     private final Map<String, Fragment> fragments;
 
-    public StaticLookup(String componentName, String componentContext, Set<Fragment> fragments,
-                        SetMultimap<String, ? extends Renderable> bindings,
-                        Set<Component> childComponents) {
+    public ComponentLookup(String componentName, String componentContext, Set<Fragment> fragments,
+                           SetMultimap<String, ? extends Renderable> bindings,
+                           Set<Component> childComponents) {
         this.componentName = componentName + ".";
         this.componentContext = componentContext;
 
@@ -27,9 +27,9 @@ public class StaticLookup {
         }
 
         for (Component childComponent : childComponents) {
-            StaticLookup childComponentStaticLookup = childComponent.getStaticLookup();
-            this.fragments.putAll(childComponentStaticLookup.fragments);
-            this.bindings.putAll(childComponentStaticLookup.bindings);
+            ComponentLookup childComponentLookup = childComponent.getComponentLookup();
+            this.fragments.putAll(childComponentLookup.fragments);
+            this.bindings.putAll(childComponentLookup.bindings);
         }
     }
 
