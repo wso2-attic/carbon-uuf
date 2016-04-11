@@ -191,10 +191,6 @@
         <include.resource>
             src/main/resources
         </include.resource>
-        <provide.capability>
-            osgi.service;effective:=active;
-            objectClass="org.wso2.carbon.uuf.internal.RenderableCreatorServiceRepository";
-        </provide.capability>
     </properties>
 
 </project>
