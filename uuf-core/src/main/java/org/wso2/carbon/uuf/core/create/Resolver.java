@@ -10,5 +10,4 @@ public interface Resolver {
     Path resolveStatic(String appName, String resourcePath);
 
     AppReference resolveApp(String appName);
-
 }
