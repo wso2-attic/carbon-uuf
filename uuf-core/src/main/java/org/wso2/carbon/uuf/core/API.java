@@ -1,6 +1,13 @@
 package org.wso2.carbon.uuf.core;
 
+import org.wso2.carbon.uuf.core.auth.SessionRegistry;
+
 public class API {
+    private final SessionRegistry sessionRegistry;
+
+    public API(SessionRegistry sessionRegistry) {
+        this.sessionRegistry = sessionRegistry;
+    }
 
     public void callOSGiService() {
         throw new UnsupportedOperationException("To be implemented");
