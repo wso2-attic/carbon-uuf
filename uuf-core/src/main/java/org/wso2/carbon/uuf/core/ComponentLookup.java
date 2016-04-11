@@ -15,12 +15,12 @@ public class ComponentLookup {
     private final String componentName;
     private final String fullyQualifiedNamePrefix;
     private final String componentContext;
-    private final Map<String, String> childComponentsContexts;
+    private final Map<String, String> dependenciesContexts;
     private final SetMultimap<String, Renderable> bindings;
     private final Map<String, Fragment> fragments;
 
     public ComponentLookup(String componentName, String componentContext, Set<Fragment> fragments,
-                           SetMultimap<String, ? extends Renderable> bindings, Set<Component> childComponents) {
+                           SetMultimap<String, ? extends Renderable> bindings, Set<Component> dependencies) {
         if (componentName.isEmpty()) {
             throw new IllegalArgumentException("Component name cannot be empty.");
         }
@@ -30,7 +30,7 @@ public class ComponentLookup {
             throw new IllegalArgumentException("Context of a component must start with a '/'.");
         }
         this.componentContext = componentContext;
-        this.childComponentsContexts = new HashMap<>();
+        this.dependenciesContexts = new HashMap<>();
 
         this.fragments = fragments.stream().collect(Collectors.toMap(f -> getFullyQualifiedName(f.getName()), f -> f));
         this.bindings = HashMultimap.create();
@@ -38,12 +38,12 @@ public class ComponentLookup {
             this.bindings.put(getFullyQualifiedName(entry.getKey()), entry.getValue());
         }
 
-        for (Component childComponent : childComponents) {
-            ComponentLookup childComponentLookup = childComponent.getLookup();
-            this.childComponentsContexts.put(childComponentLookup.componentName, childComponentLookup.componentContext);
-            this.childComponentsContexts.putAll(childComponentLookup.childComponentsContexts);
-            this.fragments.putAll(childComponentLookup.fragments);
-            this.bindings.putAll(childComponentLookup.bindings);
+        for (Component dependency : dependencies) {
+            ComponentLookup dependencyLookup = dependency.getLookup();
+            this.dependenciesContexts.put(dependencyLookup.componentName, dependencyLookup.componentContext);
+            this.dependenciesContexts.putAll(dependencyLookup.dependenciesContexts);
+            this.fragments.putAll(dependencyLookup.fragments);
+            this.bindings.putAll(dependencyLookup.bindings);
         }
     }
 
@@ -80,8 +80,8 @@ public class ComponentLookup {
         if (lastDotIndex == -1) {
             return PUBLIC_URI_CONTEXT + componentContext + "/" + fragmentName;
         } else {
-            String childComponentName = fragmentName.substring(0, lastDotIndex);
-            return PUBLIC_URI_CONTEXT + childComponentsContexts.get(childComponentName);
+            String dependencyName = fragmentName.substring(0, lastDotIndex);
+            return PUBLIC_URI_CONTEXT + dependenciesContexts.get(dependencyName);
         }
     }
 }
