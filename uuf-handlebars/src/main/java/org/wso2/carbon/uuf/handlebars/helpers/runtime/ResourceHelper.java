@@ -3,17 +3,14 @@ package org.wso2.carbon.uuf.handlebars.helpers.runtime;
 import com.github.jknack.handlebars.Context;
 import com.github.jknack.handlebars.Handlebars;
 import com.github.jknack.handlebars.Options;
-import org.wso2.carbon.uuf.core.Fragment;
+import org.wso2.carbon.uuf.core.RequestLookup;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Deque;
 import java.util.List;
 import java.util.Optional;
 
-import static org.wso2.carbon.uuf.handlebars.HbsRenderable.COMPONENT_NAME_KEY;
-import static org.wso2.carbon.uuf.handlebars.HbsRenderable.FRAGMENTS_STACK_KEY;
-import static org.wso2.carbon.uuf.handlebars.HbsRenderable.URI_KEY;
+import static org.wso2.carbon.uuf.handlebars.HbsRenderable.DATA_KEY_REQUEST_LOOKUP;
 
 public abstract class ResourceHelper extends FillPlaceholderHelper<List<String>> {
 
@@ -28,19 +25,10 @@ public abstract class ResourceHelper extends FillPlaceholderHelper<List<String>>
         if (!relativeUri.startsWith("/")) {
             throw new IllegalArgumentException("Public resource URI should start with '/'.");
         }
+
+        RequestLookup requestLookup = options.data(DATA_KEY_REQUEST_LOOKUP);
         List<String> resources = getValue(options).orElseGet(() -> setValue(options, new ArrayList<>()));
-        Deque<Fragment> fragmentStack = options.data(FRAGMENTS_STACK_KEY);
-        String uriUpToContext = options.data(URI_KEY);
-        String component = options.data(COMPONENT_NAME_KEY);
-        String publicUri;
-        if ((fragmentStack == null) || fragmentStack.isEmpty()) {
-            // this resource is adding in a page or layout
-            //TODO get component's public URI
-            publicUri = uriUpToContext + "/public" + component + "/base" + relativeUri;
-        } else {
-            publicUri = uriUpToContext + "/public" + fragmentStack.peekLast().getPublicContext() + relativeUri;
-        }
-        resources.add(formatResourceUri(publicUri));
+        resources.add(formatResourceUri(requestLookup.getPublicUri() + relativeUri));
         return EMPTY_STRING;
     }
 
