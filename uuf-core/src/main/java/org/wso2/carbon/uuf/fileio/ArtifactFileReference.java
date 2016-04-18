@@ -29,6 +29,16 @@ public class ArtifactFileReference implements FileReference {
     }
 
     @Override
+    public String getExtension() {
+        String name = getName();
+        int lastDot = name.lastIndexOf('.');
+        if (lastDot >= 0) {
+            return name.substring(lastDot + 1);
+        }
+        return "";
+    }
+
+    @Deprecated
     public String getPathPattern() {
         StringBuilder sb = new StringBuilder();
         for (Path p : component.getPath().resolve("pages").relativize(path)) {
@@ -53,7 +63,7 @@ public class ArtifactFileReference implements FileReference {
     }
 
     @Override
-    public Optional<FileReference> getSiblingIfExists(String name) {
+    public Optional<FileReference> getSibling(String name) {
         Path sibling = path.resolveSibling(name);
         if (Files.exists(sibling)) {
             return Optional.of(new ArtifactFileReference(sibling, component, app));
@@ -72,15 +82,7 @@ public class ArtifactFileReference implements FileReference {
         return component.getApp();
     }
 
-    @Override
-    public String getExtension() {
-        String name = getName();
-        int lastDot = name.lastIndexOf('.');
-        if (lastDot >= 0) {
-            return name.substring(lastDot + 1);
-        }
-        return "";
-    }
+
 
     @Override
     public String toString() {
