@@ -6,19 +6,17 @@ public interface FileReference {
 
     String getName();
 
-    String getPathPattern();
+    String getExtension();
 
     String getContent();
 
     String getRelativePath();
 
-    Optional<FileReference> getSiblingIfExists(String name);
+    Optional<FileReference> getSibling(String name);
 
+    @Deprecated
     ComponentReference getComponentReference();
 
+    @Deprecated
     AppReference getAppReference();
-
-    String getExtension();
-
 }
-
