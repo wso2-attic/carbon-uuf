@@ -97,5 +97,4 @@ public class ArtifactResolver implements Resolver {
                 Response.Status.NOT_FOUND);
 
     }
-
 }
