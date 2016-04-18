@@ -19,7 +19,9 @@ public class UriPatten implements Comparable<UriPatten> {
             throw new IllegalArgumentException("URI patten must start with a '/'");
         }
         String escaped = Arrays.stream(WILDCARD.split(patten)).map(Pattern::quote).collect(Collectors.joining("\\w+"));
-        if (patten.endsWith("}")) {
+        if (escaped.endsWith("/index")) {
+            escaped = escaped.substring(0, escaped.length() - 5);
+        } else if (patten.endsWith("}")) {
             escaped = escaped + "\\w+";
         }
         this.patten = Pattern.compile(escaped);
