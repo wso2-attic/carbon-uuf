@@ -1,0 +1,7 @@
+uuf.productName : Devices Store
+elementsPerPage: 10
+lifecycle:
+    - state: adopted
+      show: false
+    - state: new
+      show: true

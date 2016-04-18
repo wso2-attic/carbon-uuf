@@ -27,6 +27,12 @@
     <name>WSO2 UUF Sample - Pets Store App</name>
     <url>http://wso2.org</url>
 
+    <properties>
+        <import.package>
+            org.wso2.carbon.*
+        </import.package>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.wso2.uuf</groupId>
@@ -51,70 +57,16 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>properties-maven-plugin</artifactId>
-                <version>1.0.0</version>
+                <groupId>org.wso2.carbon.maven</groupId>
+                <artifactId>maven-uuf-plugin</artifactId>
+                <version>1.0.0-SNAPSHOT</version>
                 <executions>
                     <execution>
+                        <id>create</id>
                         <phase>package</phase>
                         <goals>
-                            <goal>write-project-properties</goal>
+                            <goal>create-application</goal>
                         </goals>
-                        <configuration>
-                            <outputFile>${project.build.outputDirectory}/osgi-imports.properties</outputFile>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>unpack-components</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>unpack-dependencies</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.directory}/uuf-components/</outputDirectory>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>create-dependency.tree</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>tree</goal>
-                        </goals>
-                        <configuration>
-                            <outputFile>${project.build.directory}/uuf-components/dependency.tree</outputFile>
-                            <verbose>true</verbose>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <configuration>
-                    <descriptor>assembly.xml</descriptor>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>make-assembly</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <artifactId>maven-jar-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>default-jar</id>
-                        <phase>none</phase>
                     </execution>
                 </executions>
             </plugin>
