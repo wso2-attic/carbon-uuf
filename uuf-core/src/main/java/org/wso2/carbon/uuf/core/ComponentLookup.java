@@ -32,10 +32,10 @@ public class ComponentLookup {
         this.componentContext = componentContext;
         this.dependenciesContexts = new HashMap<>();
 
-        this.fragments = fragments.stream().collect(Collectors.toMap(f -> getFullyQualifiedName(f.getName()), f -> f));
+        this.fragments = fragments.stream().collect(Collectors.toMap(f -> fullyQualifiedName(f.getName()), f -> f));
         this.bindings = HashMultimap.create();
         for (Map.Entry<String, ? extends Renderable> entry : bindings.entries()) {
-            this.bindings.put(getFullyQualifiedName(entry.getKey()), entry.getValue());
+            this.bindings.put(fullyQualifiedName(entry.getKey()), entry.getValue());
         }
 
         for (Component dependency : dependencies) {
@@ -47,12 +47,12 @@ public class ComponentLookup {
         }
     }
 
-    private String getFullyQualifiedName(String name) {
+    private String fullyQualifiedName(String name) {
         return fullyQualifiedNamePrefix + name; // <component-name>.<binding/fragment-name>
     }
 
-    private String computeFullyQualifiedName(String name) {
-        return (name.indexOf('.') == -1) ? getFullyQualifiedName(name) : name;
+    private String getFullyQualifiedName(String name) {
+        return (name.indexOf('.') == -1) ? fullyQualifiedName(name) : name;
     }
 
     public String getComponentName() {
@@ -63,24 +63,28 @@ public class ComponentLookup {
         return componentContext;
     }
 
-    public Optional<Set<? extends Renderable>> getBindings(String zoneName) {
-        return Optional.ofNullable(bindings.get(computeFullyQualifiedName(zoneName)));
+    public Set<? extends Renderable> getBindings(String zoneName) {
+        return bindings.get(getFullyQualifiedName(zoneName));
     }
 
     public Optional<Fragment> getFragment(String fragmentName) {
-        return Optional.ofNullable(fragments.get(computeFullyQualifiedName(fragmentName)));
+        return Optional.ofNullable(fragments.get(getFullyQualifiedName(fragmentName)));
     }
 
-    public String getPublicUriInfix() {
+    Map<String, Fragment> getFragments() {
+        return fragments;
+    }
+
+    String getPublicUriInfix(Page page) {
         return PUBLIC_URI_CONTEXT + componentContext + "/base";
     }
 
-    public String getPublicUriInfixOf(String fragmentName) {
-        int lastDotIndex = fragmentName.lastIndexOf('.');
+    String getPublicUriInfix(Fragment fragment) {
+        int lastDotIndex = fragment.getName().lastIndexOf('.');
         if (lastDotIndex == -1) {
-            return PUBLIC_URI_CONTEXT + componentContext + "/" + fragmentName;
+            return PUBLIC_URI_CONTEXT + componentContext + "/" + fragment.getName();
         } else {
-            String dependencyName = fragmentName.substring(0, lastDotIndex);
+            String dependencyName = fragment.getName().substring(0, lastDotIndex);
             return PUBLIC_URI_CONTEXT + dependenciesContexts.get(dependencyName);
         }
     }
