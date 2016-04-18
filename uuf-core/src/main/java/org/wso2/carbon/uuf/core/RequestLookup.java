@@ -24,11 +24,11 @@ public class RequestLookup {
         return appContext;
     }
 
-    public void pushToPublicUriStack(String publicUri) {
+    void pushToPublicUriStack(String publicUri) {
         publicUriStack.push(publicUri);
     }
 
-    public String popPublicUriStack() {
+    String popPublicUriStack() {
         return publicUriStack.pop();
     }
 
