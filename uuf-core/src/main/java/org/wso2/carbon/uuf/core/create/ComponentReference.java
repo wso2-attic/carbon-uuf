@@ -1,25 +1,22 @@
 package org.wso2.carbon.uuf.core.create;
 
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Stream;
 
 public interface ComponentReference {
-    Stream<FileReference> streamPageFiles();
 
-    Stream<FragmentReference> streamFragmentFiles();
+    String getSimpleName();
 
-    FileReference resolveLayout(String layoutName);
+    Stream<PageReference> getPages(Set<String> supportedExtensions);
 
-    String getName();
+    Stream<FragmentReference> getFragments(Set<String> supportedExtensions);
 
-    String getContext();
+    Optional<FileReference> getBindingsConfig();
 
-    String getVersion();
-
-    AppReference getApp();
-
-    Optional<FileReference> getConfig();
+    Optional<FileReference> getConfigurations();
 
     Optional<FileReference> getOsgiImportsConfig();
-}
 
+    FileReference resolveLayout(String layoutName);
+}
