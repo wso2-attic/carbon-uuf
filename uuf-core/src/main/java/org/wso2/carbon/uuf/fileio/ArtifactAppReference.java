@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.stream.Stream;
 
 public class ArtifactAppReference implements AppReference {
     private Path path;
@@ -19,16 +18,6 @@ public class ArtifactAppReference implements AppReference {
 
     Path getPath() {
         return path;
-    }
-
-    @Override
-    public Stream<ComponentReference> streamComponents() {
-        try {
-            Path components = path.resolve("components");
-            return Files.list(components).map(c -> new ArtifactComponentReference(c, this));
-        } catch (IOException e) {
-            throw new UUFException("Error while resolving components in " + path, e);
-        }
     }
 
     @Override
@@ -43,7 +32,7 @@ public class ArtifactAppReference implements AppReference {
     }
 
     @Override
-    public List<String> getDependencyTree() {
+    public List<String> getDependencies() {
         try {
             return Files.readAllLines(path.resolve("components").resolve("dependency.tree"));
         } catch (IOException e) {
