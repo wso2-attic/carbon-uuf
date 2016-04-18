@@ -14,8 +14,6 @@ import java.util.Map;
 import java.util.Optional;
 
 public class HbsInitRenderable extends HbsRenderable {
-    private final Map<String, HbsInitRenderable> fillingZone;
-    private final Optional<String> layout;
 
     private static final Handlebars HANDLEBARS = new Handlebars();
 
@@ -24,6 +22,9 @@ public class HbsInitRenderable extends HbsRenderable {
         HANDLEBARS.registerHelper(LayoutHelper.HELPER_NAME, new LayoutHelper());
         HANDLEBARS.registerHelperMissing((context, options) -> "");
     }
+
+    private final Map<String, HbsInitRenderable> fillingZone;
+    private final Optional<String> layout;
 
     public HbsInitRenderable(TemplateSource template, Optional<Executable> executable) {
         super(template, executable);
