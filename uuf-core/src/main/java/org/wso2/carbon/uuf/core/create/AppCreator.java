@@ -101,9 +101,11 @@ public class AppCreator {
                 componentVersion = componentNameAndVersion.getRight();
                 componentContext = getComponentContext(componentName);
             }
-            ComponentReference componentReference = appReference.getComponentReference(componentName);
+            ComponentReference componentReference = appReference.getComponentReference(getSimpleName(componentName));
+            ClassLoader componentClassLoader = classLoaderProvider.getClassLoader(appReference.getName(), componentName,
+                                                                                  componentVersion, componentReference);
             Component component = createComponent(componentName, componentVersion, componentContext, componentReference,
-                                                  componentDependencies);
+                                                  componentDependencies, componentClassLoader);
 
             componentSiblings.add(component);
             components.add(component);
@@ -113,8 +115,8 @@ public class AppCreator {
     }
 
     private Component createComponent(String componentName, String componentVersion, String componentContext,
-                                      ComponentReference componentReference, Set<Component> dependencies) {
-        final ClassLoader classLoader = classLoaderProvider.getClassLoader(componentReference);
+                                      ComponentReference componentReference, Set<Component> dependencies,
+                                      ClassLoader classLoader) {
 
         Map<String, Fragment> fragments = componentReference
                 .getFragments(supportedExtensions)
@@ -134,7 +136,7 @@ public class AppCreator {
             // Yaml.loadAs() throws an Exception
             throw new MalformedConfigurationException(
                     "Bindings configuration '" + componentReference.getBindingsConfig().get().getRelativePath() +
-                            "' of component '" + componentReference.getSimpleName() + "' is malformed.", e);
+                            "' of component '" + getSimpleName(componentName) + "' is malformed.", e);
         }
 
         Map<String, ?> configurations;
@@ -150,7 +152,7 @@ public class AppCreator {
             // Yaml.loadAs() throws an Exception
             throw new MalformedConfigurationException(
                     "Configuration '" + componentReference.getConfigurations().get().getRelativePath() +
-                            "' of component '" + componentReference.getSimpleName() + "' is malformed.", e);
+                            "' of component '" + getSimpleName(componentName) + "' is malformed.", e);
         }
 
         SortedSet<Page> pages = componentReference
@@ -248,6 +250,10 @@ public class AppCreator {
     }
 
     private String getComponentContext(String componentName) {
+        return "/" + getSimpleName(componentName);
+    }
+
+    private String getSimpleName(String componentName) {
         int lastDot = componentName.lastIndexOf('.');
         if (lastDot >= 0) {
             return componentName.substring(lastDot + 1);
