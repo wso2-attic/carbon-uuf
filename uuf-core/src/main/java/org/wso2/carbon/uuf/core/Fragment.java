@@ -29,11 +29,6 @@ public class Fragment {
         return output;
     }
 
-    @Deprecated
-    public String render(String uri, Model model, Lookup lookup) {
-        return "";
-    }
-
     @Override
     public String toString() {
         return "{\"name\": \"" + name + "\", \"renderer\": \"" + renderer + "\"}";
