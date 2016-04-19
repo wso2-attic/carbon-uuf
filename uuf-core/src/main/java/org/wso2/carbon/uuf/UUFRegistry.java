@@ -100,7 +100,7 @@ public class UUFRegistry {
                 }
             } else {
                 if (app == null || debugAppender.isPresent()) {
-                    app = appCreator.createApp(appName, appContext);
+                    app = appCreator.createApp(appContext, resolver.resolveApp(appName));
                     apps.put(appName, app);
                 }
                 if (resourcePath.equals("/debug/api/pages/")) {

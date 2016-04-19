@@ -22,8 +22,6 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.MDC;
-import org.wso2.carbon.kernel.utils.Utils;
-import org.wso2.carbon.uuf.core.UUFException;
 import org.wso2.carbon.uuf.core.create.AppCreator;
 import org.wso2.carbon.uuf.core.create.RenderableCreator;
 import org.wso2.carbon.uuf.fileio.ArtifactResolver;
@@ -35,13 +33,10 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 /**
  * UUF Main Service.
@@ -62,21 +57,15 @@ public class UUFService implements Microservice {
     }
 
     @SuppressWarnings("unused")
-    public UUFService() throws IOException {
+    public UUFService() {
         // we need an empty constructor for running in OSGi mode.
         this(createRegistry());
     }
 
     private static UUFRegistry createRegistry() {
-        try {
-            ArtifactResolver resolver = new ArtifactResolver(
-                    Files.list(Utils.getCarbonHome().resolve("deployment").resolve("uufapps"))
-                            .collect(Collectors.toList()));
-            AppCreator appCreator = new AppCreator(resolver, creators, new BundleClassLoaderProvider());
-            return new UUFRegistry(appCreator, Optional.empty(), resolver);
-        } catch (IOException e) {
-            throw new UUFException("Error while reading deployment artifacts on 'uufapps' folder!");
-        }
+        ArtifactResolver resolver = new ArtifactResolver();
+        AppCreator appCreator = new AppCreator(creators, new BundleClassLoaderProvider());
+        return new UUFRegistry(appCreator, Optional.empty(), resolver);
     }
 
     @GET
