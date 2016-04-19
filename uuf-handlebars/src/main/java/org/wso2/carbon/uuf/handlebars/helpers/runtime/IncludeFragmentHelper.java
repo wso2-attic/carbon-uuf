@@ -8,24 +8,18 @@ import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.core.API;
 import org.wso2.carbon.uuf.core.ComponentLookup;
 import org.wso2.carbon.uuf.core.Fragment;
-import org.wso2.carbon.uuf.core.Lookup;
 import org.wso2.carbon.uuf.core.RequestLookup;
 import org.wso2.carbon.uuf.handlebars.model.ContextModel;
 import org.wso2.carbon.uuf.model.MapModel;
 import org.wso2.carbon.uuf.model.Model;
 
 import java.io.IOException;
-import java.util.Deque;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.Optional;
 
 import static org.wso2.carbon.uuf.handlebars.HbsRenderable.DATA_KEY_API;
 import static org.wso2.carbon.uuf.handlebars.HbsRenderable.DATA_KEY_LOOKUP;
 import static org.wso2.carbon.uuf.handlebars.HbsRenderable.DATA_KEY_REQUEST_LOOKUP;
-import static org.wso2.carbon.uuf.handlebars.HbsRenderable.FRAGMENTS_STACK_KEY;
-import static org.wso2.carbon.uuf.handlebars.HbsRenderable.LOOKUP_KEY;
-import static org.wso2.carbon.uuf.handlebars.HbsRenderable.URI_KEY;
 
 public class IncludeFragmentHelper implements Helper<String> {
     public static final String HELPER_NAME = "includeFragment";
