@@ -12,12 +12,6 @@ public class Fragment {
         this.renderer = renderer;
     }
 
-    @Deprecated
-    public Fragment(String name, String publicUriInfix, Renderable renderer) {
-        this.name = name;
-        this.renderer = renderer;
-    }
-
     public String getName() {
         return name;
     }
@@ -29,17 +23,12 @@ public class Fragment {
         return output;
     }
 
+    public Renderable getRenderer() {
+        return renderer;
+    }
+
     @Override
     public String toString() {
         return "{\"name\": \"" + name + "\", \"renderer\": \"" + renderer + "\"}";
-    }
-
-    @Deprecated
-    public String getPublicContext() {
-        return "";
-    }
-
-    public Renderable getRenderer() {
-        return renderer;
     }
 }
