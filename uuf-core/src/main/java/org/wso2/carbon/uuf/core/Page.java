@@ -7,12 +7,6 @@ public class Page implements Comparable<Page> {
     private final UriPatten uriPatten;
     private final Renderable renderer;
 
-    @Deprecated
-    public Page(UriPatten uriPatten, Renderable layout, Lookup lookup) {
-        this.uriPatten = uriPatten;
-        this.renderer = layout;
-    }
-
     public Page(UriPatten uriPatten, Renderable renderer) {
         this.uriPatten = uriPatten;
         this.renderer = renderer;
@@ -27,11 +21,6 @@ public class Page implements Comparable<Page> {
         String output = renderer.render(model, componentLookup, requestLookup, api);
         requestLookup.popPublicUriStack();
         return output;
-    }
-
-    @Deprecated
-    public String serve(String uriUpToContext, Model model) {
-        return "";
     }
 
     @Override
