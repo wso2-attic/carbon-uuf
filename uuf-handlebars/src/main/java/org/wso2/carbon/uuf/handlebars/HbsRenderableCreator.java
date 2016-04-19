@@ -8,6 +8,8 @@ import org.osgi.service.component.annotations.Component;
 import org.wso2.carbon.uuf.core.Renderable;
 import org.wso2.carbon.uuf.core.create.ComponentReference;
 import org.wso2.carbon.uuf.core.create.FileReference;
+import org.wso2.carbon.uuf.core.create.FragmentReference;
+import org.wso2.carbon.uuf.core.create.PageReference;
 import org.wso2.carbon.uuf.core.create.RenderableCreator;
 
 import java.util.Map;
@@ -21,28 +23,22 @@ import java.util.Set;
 )
 public class HbsRenderableCreator implements RenderableCreator {
 
-    @Override
-    public Optional<Renderable> createRenderable(FileReference fileReference, ClassLoader cl) {
-        if (fileReference.getExtension().equals("js")) {
-            //JS alone can't be rendered
-            return Optional.empty();
-        }
+    private static final String EXTENSION_HANDLEBARS = ".hbs";
+    private static final String EXTENSION_JAVASCRIPT = ".js";
+    private static final Set<String> SUPPORTED_FILE_EXTENSIONS = ImmutableSet.of("hbs");
 
-        TemplateSource templateSource = createTemplateSource(fileReference);
-        Optional<Executable> executable = createSameNameJs(fileReference, cl);
-        return Optional.of(new HbsRenderable(templateSource, executable));
+    @Override
+    public Renderable createFragmentRenderable(FragmentReference fragmentReference, ClassLoader classLoader) {
+        TemplateSource templateSource = createTemplateSource(fragmentReference.getRenderingFile());
+        Optional<Executable> executable = createSameNameJs(fragmentReference.getRenderingFile(), classLoader);
+        return new HbsRenderable(templateSource, executable);
     }
 
     @Override
-    public Optional<Pair<Renderable, Map<String, ? extends Renderable>>> createRenderableWithBindings
-            (FileReference pageReference, ClassLoader loader) {
-        if (pageReference.getExtension().equals("js")) {
-            //JS alone can't be rendered
-            return Optional.empty();
-        }
-
-        TemplateSource templateSource = createTemplateSource(pageReference);
-        Optional<Executable> executable = createSameNameJs(pageReference, loader);
+    public Pair<Renderable, Map<String, ? extends Renderable>> createPageRenderables(PageReference pageReference,
+                                                                                     ClassLoader classLoader) {
+        TemplateSource templateSource = createTemplateSource(pageReference.getRenderingFile());
+        Optional<Executable> executable = createSameNameJs(pageReference.getRenderingFile(), classLoader);
         HbsInitRenderable pageRenderable = new HbsInitRenderable(templateSource, executable);
         Optional<String> layoutFullNameOpt = pageRenderable.getLayoutName();
         Renderable renderable;
@@ -53,44 +49,36 @@ public class HbsRenderableCreator implements RenderableCreator {
             ComponentReference component;
             if (lastDot >= 0) {
                 String componentName = layoutFullName.substring(0, lastDot);
-                component = pageReference.getAppReference()
-                        .getComponentReference(componentName);
+                component = pageReference.getAppReference().getComponentReference(componentName);
                 layoutName = layoutFullName.substring(lastDot + 1);
             } else {
                 component = pageReference.getComponentReference();
                 layoutName = layoutFullName;
             }
-            FileReference layoutReference = component.resolveLayout(layoutName + ".hbs");
-            renderable = new HbsRenderable(
-                    createTemplateSource(layoutReference),
-                    pageRenderable.getScript());
+            FileReference layoutReference = component.resolveLayout(layoutName + EXTENSION_HANDLEBARS);
+            renderable = new HbsRenderable(createTemplateSource(layoutReference), pageRenderable.getScript());
         } else {
             renderable = pageRenderable;
         }
-        return Optional.of(Pair.of(renderable, pageRenderable.getFillingZones()));
+        return Pair.of(renderable, pageRenderable.getFillingZones());
     }
 
     @Override
     public Set<String> getSupportedFileExtensions() {
-        return ImmutableSet.of("js", "hbs");
+        return SUPPORTED_FILE_EXTENSIONS;
     }
 
     private TemplateSource createTemplateSource(FileReference pageReference) {
-        return new StringTemplateSource(
-                pageReference.getRelativePath(),
-                pageReference.getContent());
+        return new StringTemplateSource(pageReference.getRelativePath(), pageReference.getContent());
     }
 
     private Optional<Executable> createSameNameJs(FileReference pageReference, ClassLoader loader) {
-        String jsName = withoutExtension(pageReference.getName()) + ".js";
-        Optional<FileReference> jsReference = pageReference.getSiblingIfExists(jsName);
-        return jsReference.map(j ->
-                new JSExecutable(j.getContent(), loader, Optional.of(j.getRelativePath())));
+        String jsName = withoutExtension(pageReference.getName()) + EXTENSION_JAVASCRIPT;
+        Optional<FileReference> jsReference = pageReference.getSibling(jsName);
+        return jsReference.map(j -> new JSExecutable(j.getContent(), loader, Optional.of(j.getRelativePath())));
     }
 
-
     private String withoutExtension(String name) {
-        //TODO: fix for short ext
-        return name.substring(0, name.length() - 4);
+        return name.substring(0, (name.length() - EXTENSION_HANDLEBARS.length()));
     }
 }
