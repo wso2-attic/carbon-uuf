@@ -16,11 +16,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-@Component(
-        name = "org.wso2.carbon.uuf.handlebars.HbsRenderableCreator",
-        service = RenderableCreator.class,
-        immediate = true
-)
+@Component(name = "org.wso2.carbon.uuf.handlebars.HbsRenderableCreator",
+           service = RenderableCreator.class,
+           immediate = true)
 public class HbsRenderableCreator implements RenderableCreator {
 
     private static final String EXTENSION_HANDLEBARS = ".hbs";
@@ -80,5 +78,16 @@ public class HbsRenderableCreator implements RenderableCreator {
 
     private String withoutExtension(String name) {
         return name.substring(0, (name.length() - EXTENSION_HANDLEBARS.length()));
+    }
+
+    @Override
+    public int hashCode() {
+        return getSupportedFileExtensions().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return (obj != null) && (obj instanceof RenderableCreator) &&
+                this.getSupportedFileExtensions().equals(((RenderableCreator) obj).getSupportedFileExtensions());
     }
 }

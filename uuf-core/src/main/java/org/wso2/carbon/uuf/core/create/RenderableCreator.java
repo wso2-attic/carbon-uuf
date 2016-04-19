@@ -13,4 +13,8 @@ public interface RenderableCreator {
 
     Pair<Renderable, Map<String, ? extends Renderable>> createPageRenderables(PageReference pageReference,
                                                                               ClassLoader classLoader);
+
+    int hashCode();
+
+    boolean equals(Object obj);
 }
