@@ -14,7 +14,7 @@ public class PageTest {
 
     @Test
     public void testRenderPage() throws Exception {
-        Renderable renderable = (uri, model, lookup) -> "Hello world!";
+        Renderable renderable = (model, componentLookup, requestLookup, api) -> "Hello world!";
         Page page = new Page(mock(UriPatten.class), renderable, mock(Lookup.class));
         String output = page.serve("/url", mock(Model.class));
         Assert.assertEquals(output, "Hello world!");

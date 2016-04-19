@@ -13,10 +13,4 @@ public interface FileReference {
     String getRelativePath();
 
     Optional<FileReference> getSibling(String name);
-
-    @Deprecated
-    ComponentReference getComponentReference();
-
-    @Deprecated
-    AppReference getAppReference();
 }
