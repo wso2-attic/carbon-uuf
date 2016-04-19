@@ -1,12 +1,18 @@
 package org.wso2.carbon.uuf.core;
 
-import org.osgi.framework.Bundle;
 import org.wso2.carbon.uuf.core.create.ComponentReference;
-
-import java.util.List;
-import java.util.Optional;
 
 public interface ClassLoaderProvider {
 
-    ClassLoader getClassLoader(ComponentReference compReference);
+    /**
+     * Returns class loader of the given component.
+     *
+     * @param appName            application name
+     * @param componentName      full component name
+     * @param componentVersion   component version
+     * @param componentReference component reference
+     * @return class loader for specified component
+     */
+    ClassLoader getClassLoader(String appName, String componentName, String componentVersion,
+                               ComponentReference componentReference);
 }

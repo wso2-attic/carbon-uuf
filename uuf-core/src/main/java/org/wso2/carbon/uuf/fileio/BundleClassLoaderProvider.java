@@ -6,9 +6,8 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.wiring.BundleWiring;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.core.ClassLoaderProvider;
+import org.wso2.carbon.uuf.core.Component;
 import org.wso2.carbon.uuf.core.UUFException;
 import org.wso2.carbon.uuf.core.create.ComponentReference;
 
@@ -29,63 +28,56 @@ import java.util.jar.Manifest;
 
 public class BundleClassLoaderProvider implements ClassLoaderProvider {
 
-    private static final Logger log = LoggerFactory.getLogger(BundleClassLoaderProvider.class);
     private static final String DUMMY_CLASS_PATH = "/bundle/create/DummyComponentBundle.claz";
     private static final String DUMMY_CLASS_NAME = "DummyComponentBundle.class";
 
-    /**
-     * Returns class loader of this component reference.
-     * @param componentReference
-     * @return
-     */
     @Override
-    public ClassLoader getClassLoader(ComponentReference componentReference){
-        Bundle bundle = createBundleIfNotExists(componentReference);
+    public ClassLoader getClassLoader(String appName, String componentName, String componentVersion,
+                                      ComponentReference componentReference) {
+        Bundle bundle = createBundleIfNotExists(appName, componentName, componentVersion, componentReference);
         BundleWiring bundleWiring = bundle.adapt(BundleWiring.class);
         return bundleWiring.getClassLoader();
     }
 
     /**
-     * If no bundle exists for provided component reference, It create and returns a new OSGi bundle.
-     * Or else it will return the existing bundle.
-     * Created bundle is reusable across multiple UUF Apps.
-     * @param compReference component reference
+     * If no bundle exists for provided component reference, It create and returns a new OSGi bundle. Or else it will
+     * return the existing bundle. Created bundle is reusable across multiple UUF Apps.
+     *
      * @return created OSGi bundle
      */
-    private Bundle createBundleIfNotExists(ComponentReference compReference) {
-        String name = getBundleName(compReference.getApp().getName(), compReference.getName());
-        String version = compReference.getVersion();
-        String bundleKey = getBundleKey(compReference.getApp().getName(), compReference.getName());
-        BundleContext bundleContext = getBundleContext();
+    private Bundle createBundleIfNotExists(String appName, String componentName, String componentVersion,
+                                           ComponentReference componentReference) {
+        String bundleKey = getBundleKey(appName, componentName);
+        BundleContext bundleContext = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
         Bundle bundle = bundleContext.getBundle(bundleKey);
-        if(bundle == null){
-            try {
-                InputStream bundleInputStream = createBundleStream(name, bundleKey, version, getImports(compReference));
-                bundle = bundleContext.installBundle(bundleKey, bundleInputStream);
-                bundle.start();
-                return bundle;
-            } catch (BundleException e) {
-                throw new UUFException("Error while installing the bundle of " + bundleKey, e);
-            } catch (IOException e) {
-                throw new UUFException("Error while creating the bundle of " + bundleKey, e);
-            }
+        if (bundle != null) {
+            return bundle;
         }
-        return bundle;
+
+        String bundleName = getBundleName(appName, componentName);
+        try {
+            InputStream bundleInputStream = createBundleStream(bundleName, bundleKey, componentVersion,
+                                                               getImports(componentReference));
+            bundle = bundleContext.installBundle(bundleKey, bundleInputStream);
+            bundle.start();
+            return bundle;
+        } catch (IOException e) {
+            throw new UUFException("Error while creating the OSGi bundle for component '" + componentName + "-" +
+                                           componentVersion + "' in app '" + appName + "'.", e);
+        } catch (BundleException e) {
+            throw new UUFException("Error while installing the OSGi bundle of component '" + componentName + "-" +
+                                           componentVersion + "' in app '" + appName + "'.", e);
+        }
     }
 
-    private BundleContext getBundleContext(){
-        Bundle currentBundle = FrameworkUtil.getBundle(BundleClassLoaderProvider.class);
-        return currentBundle.getBundleContext();
-    }
-
-    private Optional<List<String>> getImports(ComponentReference componentReference) throws IOException{
+    private Optional<List<String>> getImports(ComponentReference componentReference) throws IOException {
         if (!componentReference.getOsgiImportsConfig().isPresent()) {
             return Optional.empty();
         }
         String content = componentReference.getOsgiImportsConfig().get().getContent();
         Properties osgiImportConfig = new Properties();
         osgiImportConfig.load(new StringReader(content));
-        String importList = (String)osgiImportConfig.get("import.package");
+        String importList = osgiImportConfig.getProperty("import.package");
         if (importList == null) {
             return Optional.empty();
         } else {
@@ -96,7 +88,8 @@ public class BundleClassLoaderProvider implements ClassLoaderProvider {
         }
     }
 
-    private InputStream createBundleStream(String name, String symbolicName, String version, Optional<List<String>> imports)
+    private InputStream createBundleStream(String name, String symbolicName, String version,
+                                           Optional<List<String>> imports)
             throws IOException {
         Manifest bundleManifest = new Manifest();
         Attributes attributes = bundleManifest.getMainAttributes();
@@ -106,19 +99,21 @@ public class BundleClassLoaderProvider implements ClassLoaderProvider {
         attributes.putValue("Bundle-SymbolicName", symbolicName);
         attributes.putValue("Bundle-Version", version);
 
-        if(imports.isPresent()) {
+        if (imports.isPresent()) {
             attributes.putValue("Import-Package", String.join(",", imports.get()));
         }
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         try (JarOutputStream target = new JarOutputStream(outputStream, bundleManifest)) {
             InputStream resource = BundleClassLoaderProvider.class.getResourceAsStream(DUMMY_CLASS_PATH);
-            if(resource == null){
-                throw new IOException("Could not locate `" + DUMMY_CLASS_PATH + "` !");
+            if (resource == null) {
+                throw new IOException(
+                        "Could not locate dummy class '" + DUMMY_CLASS_NAME + "' in path '" + DUMMY_CLASS_PATH + "'.");
             }
             byte[] data = IOUtils.toByteArray(resource);
             addJarEntry(DUMMY_CLASS_NAME, data, target);
         }
+        //TODO: write 'catch' block for above 'try' block
         return new ByteArrayInputStream(outputStream.toByteArray());
     }
 
@@ -129,12 +124,12 @@ public class BundleClassLoaderProvider implements ClassLoaderProvider {
         target.closeEntry();
     }
 
-    private String getBundleName(String appName, String name) {
-        return "UUF bundle for " + getBundleKey(appName, name);
+    private String getBundleKey(String appName, String componentName) {
+        return Component.ROOT_COMPONENT_NAME.equals(componentName) ? (appName + "-" + componentName) : componentName;
     }
 
-    private String getBundleKey(String appName, String name) {
-        return name.equals("root") ? appName : name;
+    private String getBundleName(String appName, String componentName) {
+        return "UUF bundle for " + getBundleKey(appName, componentName);
     }
 
 }
