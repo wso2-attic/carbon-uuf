@@ -18,14 +18,11 @@ package org.wso2.carbon.uuf.handlebars.helpers.runtime;
 
 import com.github.jknack.handlebars.Helper;
 import com.github.jknack.handlebars.Options;
-import org.wso2.carbon.uuf.core.Fragment;
+import org.wso2.carbon.uuf.core.RequestLookup;
 
 import java.io.IOException;
-import java.util.Deque;
 
-import static org.wso2.carbon.uuf.handlebars.HbsRenderable.COMPONENT_NAME_KEY;
-import static org.wso2.carbon.uuf.handlebars.HbsRenderable.FRAGMENTS_STACK_KEY;
-import static org.wso2.carbon.uuf.handlebars.HbsRenderable.URI_KEY;
+import static org.wso2.carbon.uuf.handlebars.HbsRenderable.DATA_KEY_REQUEST_LOOKUP;
 
 public class PublicHelper implements Helper<String> {
 
@@ -36,17 +33,8 @@ public class PublicHelper implements Helper<String> {
         if (!relativeUri.startsWith("/")) {
             throw new IllegalArgumentException("Public resource URI should start with '/'.");
         }
-        Deque<Fragment> fragmentStack = options.data(FRAGMENTS_STACK_KEY);
-        String uriUpToContext = options.data(URI_KEY);
-        String component = options.data(COMPONENT_NAME_KEY);
-        String publicUri;
-        if ((fragmentStack == null) || fragmentStack.isEmpty()) {
-            // this resource is adding in a page or layout
-            publicUri = uriUpToContext + "/public" + component + "/base" + relativeUri;
-        } else {
-            publicUri = uriUpToContext + "/public" + fragmentStack.peekLast().getPublicContext()
-                    + relativeUri;
-        }
-        return publicUri;
+
+        RequestLookup requestLookup = options.data(DATA_KEY_REQUEST_LOOKUP);
+        return requestLookup.getPublicUri() + relativeUri;
     }
 }
