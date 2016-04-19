@@ -1,8 +1,15 @@
 package org.wso2.carbon.uuf.core;
 
+import org.apache.commons.lang3.StringUtils;
 import org.wso2.carbon.uuf.core.auth.SessionRegistry;
+import org.wso2.carbon.uuf.core.create.AppReference;
+import org.wso2.carbon.uuf.fileio.ArtifactAppReference;
 
 import javax.ws.rs.core.Response;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -11,6 +18,8 @@ import java.util.stream.Collectors;
 public class App {
     @Deprecated
     private static final String ROOT_COMPONENT_CONTEXT = "/root";
+    private static final String STATIC_RESOURCE_URI_BASE_PREFIX = "base";
+    private static final String STATIC_RESOURCE_URI_PREFIX = "public";
     private final String context;
     private final Map<String, Component> components;
     private final Component rootComponent;

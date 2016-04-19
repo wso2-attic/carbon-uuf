@@ -26,6 +26,7 @@ import org.wso2.carbon.uuf.core.create.AppCreator;
 import org.wso2.carbon.uuf.core.create.RenderableCreator;
 import org.wso2.carbon.uuf.fileio.ArtifactResolver;
 import org.wso2.carbon.uuf.fileio.BundleClassLoaderProvider;
+import org.wso2.carbon.uuf.fileio.StaticResolver;
 import org.wso2.msf4j.Microservice;
 
 import javax.ws.rs.GET;
@@ -63,9 +64,10 @@ public class UUFService implements Microservice {
     }
 
     private static UUFRegistry createRegistry() {
-        ArtifactResolver resolver = new ArtifactResolver();
+        ArtifactResolver appResolver = new ArtifactResolver();
+        StaticResolver staticResolver = new StaticResolver();
         AppCreator appCreator = new AppCreator(creators, new BundleClassLoaderProvider());
-        return new UUFRegistry(appCreator, Optional.empty(), resolver);
+        return new UUFRegistry(appCreator, Optional.empty(), appResolver, staticResolver);
     }
 
     @GET
