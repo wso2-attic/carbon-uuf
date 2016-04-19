@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class ComponentLookup {
+    @Deprecated
     private static final String PUBLIC_URI_CONTEXT = "/public";
 
     private final String componentName;
@@ -55,11 +56,11 @@ public class ComponentLookup {
         return (name.indexOf('.') == -1) ? fullyQualifiedName(name) : name;
     }
 
-    public String getComponentName() {
+    String getComponentName() {
         return componentName;
     }
 
-    public String getComponentContext() {
+    String getComponentContext() {
         return componentContext;
     }
 
