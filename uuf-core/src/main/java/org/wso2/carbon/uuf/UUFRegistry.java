@@ -8,28 +8,21 @@ import org.wso2.carbon.uuf.core.App;
 import org.wso2.carbon.uuf.core.MimeMapper;
 import org.wso2.carbon.uuf.core.UUFException;
 import org.wso2.carbon.uuf.core.create.AppCreator;
-import org.wso2.carbon.uuf.core.create.Resolver;
+import org.wso2.carbon.uuf.core.create.AppResolver;
+import org.wso2.carbon.uuf.fileio.StaticResolver;
 import org.wso2.msf4j.util.SystemVariableUtil;
 
 import javax.ws.rs.core.Response;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.FileNameMap;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.TimeZone;
 import java.util.stream.Collectors;
-
-import static org.wso2.carbon.uuf.core.create.Resolver.STATIC_RESOURCE_URI_PREFIX;
 
 public class UUFRegistry {
 
@@ -37,14 +30,16 @@ public class UUFRegistry {
     private final AppCreator appCreator;
     private final Optional<DebugAppender> debugAppender;
     private final Map<String, App> apps = new HashMap<>();
-    private Resolver resolver;
+    private final StaticResolver staticResolver;
+    private AppResolver appResolver;
     private FileNameMap fileNameMap;
-    private static final String CACHE_HEADER_DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss zzz";
 
-    public UUFRegistry(AppCreator appCreator, Optional<DebugAppender> debugAppender, Resolver resolver) {
+    public UUFRegistry(AppCreator appCreator, Optional<DebugAppender> debugAppender, AppResolver appResolver,
+                       StaticResolver staticResolver) {
         this.appCreator = appCreator;
         this.debugAppender = debugAppender;
-        this.resolver = resolver;
+        this.appResolver = appResolver;
+        this.staticResolver = staticResolver;
     }
 
     public static Optional<DebugAppender> createDebugAppender() {
@@ -90,38 +85,31 @@ public class UUFRegistry {
 
         App app = apps.get(appName);
         try {
-            if (isStaticResourceRequest(resourcePath)) {
-                Path resource = resolver.resolveStatic(appName, resourcePath);
-                if (Files.exists(resource) && Files.isRegularFile(resource)) {
-                    return getCachedResponseBuilder(resource, request);
-                } else {
-                    return Response.status(Response.Status.NOT_FOUND).entity(
-                            "Requested resource '" + uri + "' does not exists at '" + resource + "'");
-                }
+            if (StaticResolver.isStaticResourceRequest(resourcePath)) {
+                // {@link #App} is unaware of static path resolving. Hence static file serving can easily ported
+                // into a separate server.
+                return staticResolver.createResponse(appName, resourcePath, request);
             } else {
                 if (app == null || debugAppender.isPresent()) {
-                    app = appCreator.createApp(appContext, resolver.resolveApp(appName));
+                    app = appCreator.createApp(appContext, appResolver.resolve(appName));
                     apps.put(appName, app);
                 }
                 if (resourcePath.equals("/debug/api/pages/")) {
                     //TODO: fix issues when same page is in multiple components
-                    return Response.ok(app
-                            .getComponents()
-                            .entrySet()
-                            .stream()
+                    return Response.ok(app.getComponents().entrySet().stream()
                             .flatMap(entry -> entry.getValue().getPages().stream())
                             .collect(Collectors.toSet()));
                 }
 
-//TODO:fix
-//                if (resourcePath.startsWith("/debug/api/fragments/")) {
-//                    return Response.ok(app
-//                            .getComponents()
-//                            .entrySet()
-//                            .stream()
-//                            .flatMap(entry -> entry.getValue().getFragments().values().stream())
-//                            .collect(Collectors.toSet()));
-//                }
+                //TODO:fix debug
+                //                if (resourcePath.startsWith("/debug/api/fragments/")) {
+                //                    return Response.ok(app
+                //                            .getComponents()
+                //                            .entrySet()
+                //                            .stream()
+                //                            .flatMap(entry -> entry.getValue().getFragments().values().stream())
+                //                            .collect(Collectors.toSet()));
+                //                }
                 if (resourcePath.startsWith("/debug/logs")) {
                     if (debugAppender.isPresent()) {
                         return Response.ok(debugAppender.get().asJson(), "application/json");
@@ -133,11 +121,10 @@ public class UUFRegistry {
                     if (resourcePath.endsWith("/")) {
                         resourcePath = resourcePath + "index.html";
                     }
-                    InputStream resourceAsStream = this.getClass().getResourceAsStream("/apps" + resourcePath);
+                    InputStream resourceAsStream = this.getClass().getResourceAsStream(
+                            "/apps" + resourcePath);
                     if (resourceAsStream != null) {
-                        String debugContent = IOUtils.toString(
-                                resourceAsStream,
-                                "UTF-8");
+                        String debugContent = IOUtils.toString(resourceAsStream, "UTF-8");
                         return Response.ok(debugContent, getMime(resourcePath));
                     } else {
                         return Response.status(Response.Status.NOT_FOUND);
@@ -190,44 +177,6 @@ public class UUFRegistry {
                 resourcePath.length());
         Optional<String> mime = MimeMapper.getMimeType(extension);
         return (mime.isPresent()) ? mime.get() : "text/html";
-    }
-
-    private Response.ResponseBuilder getCachedResponseBuilder(Path resource, HttpRequest request) throws IOException{
-        Optional<Date> ifModDate = getIfModifiedSinceDate(request);
-        BasicFileAttributes attrs = Files.readAttributes(resource, BasicFileAttributes.class);
-        Date resourceModDate = new Date(attrs.lastModifiedTime().toMillis());
-        if (ifModDate.isPresent() && (!ifModDate.get().after(resourceModDate))) {//!after = before || equal
-            return Response.notModified();
-        }
-        return setCacheHeaders(resourceModDate, Response.ok(resource.toFile(), getMime(resource.toString())));
-    }
-
-    private Optional<Date> getIfModifiedSinceDate(HttpRequest request) {
-        String httpDateStr = request.headers().get("If-Modified-Since");
-        if(httpDateStr == null){
-            return Optional.empty();
-        }
-        SimpleDateFormat df = new SimpleDateFormat(CACHE_HEADER_DATE_FORMAT);
-        df.setTimeZone(TimeZone.getTimeZone("GMT"));
-        try {
-            return Optional.of(df.parse(httpDateStr));
-        } catch (ParseException e) {
-            return Optional.empty();
-        }
-    }
-
-    private Response.ResponseBuilder setCacheHeaders(Date lastModDate, Response.ResponseBuilder builder) {
-        //currently MSF4J does not implement cacheControl.
-        //hence cache control headers are set manually'
-        SimpleDateFormat df = new SimpleDateFormat(CACHE_HEADER_DATE_FORMAT);
-        df.setTimeZone(TimeZone.getTimeZone("GMT"));
-        builder.header("Last-Modified", df.format(lastModDate));
-        builder.header("Cache-Control", "public,max-age=2592000");
-        return builder;
-    }
-
-    private boolean isStaticResourceRequest(String resourcePath) {
-        return resourcePath.startsWith("/" + STATIC_RESOURCE_URI_PREFIX);
     }
 
     private Response.ResponseBuilder sendError(String appName, Exception e, Response.Status status) {

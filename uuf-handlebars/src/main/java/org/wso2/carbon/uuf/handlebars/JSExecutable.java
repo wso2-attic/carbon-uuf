@@ -58,6 +58,7 @@ public class JSExecutable implements Executable {
         return "{path:'" + getPath() + "'}";
     }
 
+    @Deprecated
     private class MSSCaller extends AbstractJSObject {
         @Override
         public Object call(Object jsThis, Object... args) {

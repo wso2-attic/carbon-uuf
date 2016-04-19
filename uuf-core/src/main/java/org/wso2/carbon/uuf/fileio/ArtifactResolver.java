@@ -4,7 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.wso2.carbon.kernel.utils.Utils;
 import org.wso2.carbon.uuf.core.UUFException;
 import org.wso2.carbon.uuf.core.create.AppReference;
-import org.wso2.carbon.uuf.core.create.Resolver;
+import org.wso2.carbon.uuf.core.create.AppResolver;
 
 import javax.ws.rs.core.Response;
 import java.io.IOException;
@@ -13,7 +13,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ArtifactResolver implements Resolver {
+public class ArtifactResolver implements AppResolver {
     private final List<Path> paths;
 
     /**
@@ -29,79 +29,17 @@ public class ArtifactResolver implements Resolver {
 
     private List<Path> getAllApplications(Path root) {
         try {
-            return Files.list(root).filter(path -> Files.isDirectory(path)).collect(Collectors.toList());
+            return Files.list(root).filter(Files::isDirectory).collect(Collectors.toList());
         } catch (IOException e) {
             throw new UUFException(
                     "Error while reading deployment artifacts on '" + root.toString() + "' folder!");
         }
     }
 
-    /**
-     * This method resolves static routing request uris. URI types categorized into;
-     * <ul>
-     * <li>component_resource_uri: /public/{componentName}/base/{subResourceUri}</li>
-     * <li>fragment_resource_uri: /public/{componentName}/{fragmentName}/{subResourceUri}</li>
-     * </ul>
-     * These path types are mapped into following file paths on the file system;
-     * <ul>
-     * <li>{appName}/components/{componentName}/[{fragmentName}|base]/public/{subResourcePath}</li>
-     * </ul>
-     *
-     * @param appName application name
-     * @param resourceUri resource uri
-     * @return resolved path
-     */
     @Override
-    public Path resolveStatic(String appName, String resourceUri) {
-        Path appPath = resolveArtifactApp(appName).getPath();
-        String resourcePathParts[] = resourceUri.split("/");
-
-        if (resourcePathParts.length < 5) {
-            throw new IllegalArgumentException("Invalid resourceUri! `" + resourceUri + "`");
-        }
-
-        String resourceUriPrefixPart = resourcePathParts[1];
-        String componentUriPart = resourcePathParts[2];
-        String fragmentUriPart = resourcePathParts[3];
-        int fourthSlash = StringUtils.ordinalIndexOf(resourceUri, "/", 4);
-        String subResourcePath = resourceUri.substring(fourthSlash + 1, resourceUri.length());
-
-        if (!resourceUriPrefixPart.equals(STATIC_RESOURCE_URI_PREFIX)) {
-            throw new IllegalArgumentException("Resource path should starts with `/public`!");
-        }
-
-        //TODO: remove hack
-        // ******** HACK ********
-        Path components = appPath.resolve("components");
-        Path componentPath;
-        try {
-            componentPath = Files
-                    .list(components)
-                    .filter(p -> p.getFileName().toString().endsWith(componentUriPart))
-                    .findFirst()
-                    .orElse(components.resolve(componentUriPart));
-        } catch (IOException e) {
-            throw new UUFException("error while listing components", e);
-        }
-//        Path componentPath = appPath.resolve("components").resolve(componentUriPart);
-        // **********************
-
-
-        Path fragmentPath;
-        if (fragmentUriPart.equals(STATIC_RESOURCE_URI_BASE_PREFIX)) {
-            fragmentPath = componentPath;
-        } else {
-            fragmentPath = componentPath.resolve("fragments").resolve(fragmentUriPart);
-        }
-
-        return fragmentPath.resolve("public").resolve(subResourcePath);
-    }
-
-    @Override
-    public AppReference resolveApp(String name) {
+    public AppReference resolve(String name) {
         return resolveArtifactApp(name);
     }
-
 
     private ArtifactAppReference resolveArtifactApp(String name) {
         // app list mush be <white-space> and comma separated. <white-space> in app names not allowed
