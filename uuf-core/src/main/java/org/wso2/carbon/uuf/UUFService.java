@@ -34,45 +34,46 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
-import java.util.Map;
+import java.util.HashSet;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * UUF Main Service.
  */
-@Component(
-        name = "org.wso2.carbon.uuf.UUFService",
-        service = Microservice.class,
-        immediate = true)
+@Component(name = "org.wso2.carbon.uuf.UUFService",
+           service = Microservice.class,
+           immediate = true)
 @Path("/")
 public class UUFService implements Microservice {
 
+    private static final Set<RenderableCreator> RENDERABLE_CREATORS = new HashSet<>();
+
     private UUFRegistry registry;
     private final AtomicInteger count = new AtomicInteger(0);
-    private static final Map<String, RenderableCreator> creators = new ConcurrentHashMap<>();
-
-    public UUFService(UUFRegistry server) {
-        this.registry = server;
-    }
 
     @SuppressWarnings("unused")
     public UUFService() {
-        // we need an empty constructor for running in OSGi mode.
+        // We need an empty constructor for running in OSGi mode.
         this(createRegistry());
+    }
+
+    public UUFService(UUFRegistry server) {
+        // Used in the fat-jar mode.
+        this.registry = server;
     }
 
     private static UUFRegistry createRegistry() {
         ArtifactResolver appResolver = new ArtifactResolver();
         StaticResolver staticResolver = new StaticResolver();
-        AppCreator appCreator = new AppCreator(creators, new BundleClassLoaderProvider());
+        AppCreator appCreator = new AppCreator(RENDERABLE_CREATORS, new BundleClassLoaderProvider());
         return new UUFRegistry(appCreator, Optional.empty(), appResolver, staticResolver);
     }
 
     @GET
     @Path(".*")
-    @Produces({ "text/plain" })
+    @Produces({"text/plain"})
     public Response get(@Context HttpRequest request) {
         try {
             MDC.put("uuf-request", String.valueOf(count.incrementAndGet()));
@@ -89,28 +90,32 @@ public class UUFService implements Microservice {
 
     /**
      * This bind method is invoked by OSGi framework whenever a new RenderableCreator is registered.
+     *
      * @param renderableCreator registered renderable creator
      */
-    @Reference(
-            name = "renderablecreater",
-            service = RenderableCreator.class,
-            cardinality = ReferenceCardinality.MULTIPLE,
-            policy = ReferencePolicy.DYNAMIC,
-            unbind = "unsetRenderableCreator")
+    @Reference(name = "renderablecreater",
+               service = RenderableCreator.class,
+               cardinality = ReferenceCardinality.MULTIPLE,
+               policy = ReferencePolicy.DYNAMIC,
+               unbind = "unsetRenderableCreator")
     @SuppressWarnings("unused")
     protected void setRenderableCreator(RenderableCreator renderableCreator) {
-        renderableCreator.getSupportedFileExtensions().stream().forEach(
-                key -> creators.put(key, renderableCreator));
+        if (!RENDERABLE_CREATORS.add(renderableCreator)) {
+            throw new IllegalArgumentException(
+                    "A RenderableCreator for '" + renderableCreator.getSupportedFileExtensions() +
+                            "' extensions is already registered");
+        }
         this.registry = createRegistry();
     }
 
     /**
      * This bind method is invoked by OSGi framework whenever a RenderableCreator is left.
+     *
      * @param renderableCreator unregistered renderable creator
      */
     @SuppressWarnings("unused")
     protected void unsetRenderableCreator(RenderableCreator renderableCreator) {
-        renderableCreator.getSupportedFileExtensions().stream().forEach(creators::remove);
+        RENDERABLE_CREATORS.remove(renderableCreator);
         this.registry = createRegistry();
     }
 
