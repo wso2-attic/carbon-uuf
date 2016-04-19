@@ -5,17 +5,16 @@ import com.github.jknack.handlebars.HandlebarsException;
 import com.github.jknack.handlebars.io.StringTemplateSource;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import org.wso2.carbon.uuf.core.Lookup;
 import org.wso2.carbon.uuf.core.Renderable;
 import org.wso2.carbon.uuf.handlebars.HbsInitRenderable;
-import org.wso2.carbon.uuf.model.Model;
 
 import java.util.Map;
 import java.util.Optional;
 
-import static org.mockito.Mockito.mock;
+import static org.mockito.Matchers.any;
 
 public class HbsInitRenderableTest {
+
     private static HbsInitRenderable createHbsRenderable(String sourceStr) {
         StringTemplateSource stringTemplateSource = new StringTemplateSource("<test-source>", sourceStr);
         return new HbsInitRenderable(stringTemplateSource, Optional.empty());
@@ -41,7 +40,7 @@ public class HbsInitRenderableTest {
         Renderable fillingZone = fillingZones.get("my-zone");
         Assert.assertNotNull(fillingZone, "zone's inner content must be available under name 'my-zone'");
         try {
-            fillingZone.render("/url", mock(Model.class), mock(Lookup.class));
+            fillingZone.render(any(), any(), any(), any());
             Assert.fail("can't render with an empty map since 'a' var is expected.");
         } catch (HandlebarsException ex) {
             HandlebarsError error = ex.getError();

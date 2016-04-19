@@ -2,17 +2,17 @@ package org.wso2.carbon.uuf;
 
 import com.github.jknack.handlebars.io.StringTemplateSource;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import org.wso2.carbon.uuf.core.ComponentLookup;
 import org.wso2.carbon.uuf.core.Fragment;
-import org.wso2.carbon.uuf.core.Lookup;
 import org.wso2.carbon.uuf.core.Renderable;
+import org.wso2.carbon.uuf.core.RequestLookup;
 import org.wso2.carbon.uuf.handlebars.Executable;
 import org.wso2.carbon.uuf.handlebars.HbsRenderable;
 import org.wso2.carbon.uuf.model.Model;
 
-import java.util.Collections;
-import java.util.Map;
 import java.util.Optional;
 
 import static org.mockito.Matchers.any;
@@ -20,6 +20,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class HbsRenderableTest {
+
     private static HbsRenderable createHbsRenderable(String sourceStr) {
         StringTemplateSource stringTemplateSource = new StringTemplateSource("<test-source>", sourceStr);
         return new HbsRenderable(stringTemplateSource, Optional.empty());
@@ -34,18 +35,9 @@ public class HbsRenderableTest {
     public void testTemplate() {
         final String templateContent = "A Plain Handlebars template.";
         HbsRenderable hbsRenderable = createHbsRenderable(templateContent);
-        String output = hbsRenderable.render("/url", mock(Model.class), mock(Lookup.class));
-        Assert.assertEquals(output, templateContent);
-    }
 
-    @Test
-    public void testPublicHelper() {
-        final String templateContent = "{{public \"/url\"}}";
-        HbsRenderable hbsRenderable = createHbsRenderable(templateContent);
-        Lookup lookup = mock(Lookup.class);
-        when(lookup.getContext()).thenReturn("/myapp");
-        String output = hbsRenderable.render("/url", mock(Model.class), lookup);
-        Assert.assertEquals(output, "/url/public/myapp/base/url");
+        String output = hbsRenderable.render(any(), any(), any(), any());
+        Assert.assertEquals(output, templateContent);
     }
 
     @Test
@@ -53,50 +45,54 @@ public class HbsRenderableTest {
         HbsRenderable hbsRenderable = createHbsRenderable("Hello {{name}}! Have a good day.");
         Model model = mock(Model.class);
         when(model.toMap()).thenReturn(ImmutableMap.of("name", "Alice"));
-        String output = hbsRenderable.render("/url", model, mock(Lookup.class));
+
+        String output = hbsRenderable.render(model, any(), any(), any());
         Assert.assertEquals(output, "Hello Alice! Have a good day.");
     }
 
     @Test
     public void testTemplateWithExecutable() {
         Executable executable = context -> ImmutableMap.of("name", "Alice");
-        Model emptyModel = new Model() {
-            private Map<String, Object> map = Collections.emptyMap();
-
-            @Override
-            public void combine(Map<String, Object> other) {
-                map = other;
-            }
-
-            @Override
-            public Map<String, Object> toMap() {
-                return map;
-            }
-        };
+        Model model = mock(Model.class);
+        when(model.toMap()).thenReturn(ImmutableMap.of("name", "Alice"));
         HbsRenderable hbsRenderable = createHbsRenderable("Hello {{name}}! Have a good day.", executable);
-        String output = hbsRenderable.render("/url", emptyModel, mock(Lookup.class));
+
+        String output = hbsRenderable.render(model, any(), any(), any());
         Assert.assertEquals(output, "Hello Alice! Have a good day.");
     }
 
     @Test
     public void testFragmentInclude() {
         HbsRenderable hbsRenderable = createHbsRenderable("X {{includeFragment \"test-fragment\"}} Y");
-        Lookup lookup = mock(Lookup.class);
+        ComponentLookup lookup = mock(ComponentLookup.class);
         Fragment fragment = mock(Fragment.class);
-        when(fragment.render(any(), any(), any())).thenReturn("fragment content");
-        when(lookup.lookupFragment("test-fragment")).thenReturn(fragment);
-        String output = hbsRenderable.render("/url", mock(Model.class), lookup);
+        when(fragment.render(any(), any(), any(), any())).thenReturn("fragment content");
+        when(lookup.getFragment("test-fragment")).thenReturn(Optional.of(fragment));
+
+        String output = hbsRenderable.render(any(), lookup, any(), any());
         Assert.assertEquals(output, "X fragment content Y");
     }
 
     @Test
     public void testFragmentBind() {
         HbsRenderable hbsRenderable = createHbsRenderable("X {{defineZone \"test-zone\"}} Y");
-        Lookup lookup = mock(Lookup.class);
-        Renderable renderable = mock(Renderable.class);
-        when(renderable.render(any(), any(), any())).thenReturn("fragment content");
-        when(lookup.lookupBinding("test-zone")).thenReturn(Collections.singleton(new Fragment("f", "/j", renderable)));
-        String output = hbsRenderable.render("/url", mock(Model.class), lookup);
-        Assert.assertEquals(output, "X fragment content Y");
+        ComponentLookup lookup = mock(ComponentLookup.class);
+        Renderable zoneRenderable = mock(Renderable.class);
+        when(zoneRenderable.render(any(), any(), any(), any())).thenReturn("zone content");
+        when(lookup.getBindings("test-zone")).thenReturn(ImmutableSet.of(zoneRenderable));
+
+        String output = hbsRenderable.render(any(), lookup, any(), any());
+        Assert.assertEquals(output, "X zone content Y");
+    }
+
+    @Test
+    public void testPublicHelper() {
+        final String templateContent = "{{public \"/relative/path\"}}";
+        HbsRenderable hbsRenderable = createHbsRenderable(templateContent);
+        RequestLookup requestLookup = mock(RequestLookup.class);
+        when(requestLookup.getPublicUri()).thenReturn("/myapp/public/mycomponent/base");
+
+        String output = hbsRenderable.render(any(), any(), requestLookup, any());
+        Assert.assertEquals(output, "/myapp/public/mycomponent/base/relative/path");
     }
 }
