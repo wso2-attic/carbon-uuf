@@ -1,103 +1,84 @@
 package org.wso2.carbon.uuf.fileio;
 
 import org.wso2.carbon.uuf.core.UUFException;
-import org.wso2.carbon.uuf.core.create.AppReference;
 import org.wso2.carbon.uuf.core.create.ComponentReference;
 import org.wso2.carbon.uuf.core.create.FileReference;
 import org.wso2.carbon.uuf.core.create.FragmentReference;
+import org.wso2.carbon.uuf.core.create.PageReference;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Stream;
 
 public class ArtifactComponentReference implements ComponentReference {
     private Path path;
-    private ArtifactAppReference app;
+    private ArtifactAppReference appReference;
 
-    public ArtifactComponentReference(Path path, ArtifactAppReference app) {
+    public ArtifactComponentReference(Path path, ArtifactAppReference appReference) {
         this.path = path;
-        this.app = app;
+        this.appReference = appReference;
     }
 
     @Override
-    public Stream<FileReference> streamPageFiles() {
-        Path pages = path.resolve("pages");
-        if (Files.exists(pages)) {
-            try {
-                return Files
-                        .walk(pages)
-                        .filter(Files::isRegularFile)
-                        .map(path -> new ArtifactFileReference(path, this, app));
-            } catch (IOException e) {
-                throw new UUFException("Error while finding pages in " + path, e);
-            }
-        } else {
-            return Stream.empty();
-        }
-    }
-
-    @Override
-    public Stream<FragmentReference> streamFragmentFiles() {
-        try {
-            Path fragments = path.resolve("fragments");
-            if (Files.exists(fragments)) {
-                return Files.list(fragments).map(path -> new ArtifactFragmentReference(path, this, app));
-            } else {
-                return Stream.empty();
-            }
-        } catch (IOException e) {
-            throw new UUFException("Error while listing fragments in " + path, e);
-        }
-    }
-
-    @Override
-    public FileReference resolveLayout(String layoutName) {
-        return new ArtifactFileReference(path.resolve("layouts").resolve(layoutName), this, app);
-    }
-
-
-    @Override
-    public String getName() {
+    public String getSimpleName() {
         return path.getFileName().toString();
     }
 
     @Override
-    public String getContext() {
-        String name = this.getName();
-        return "/" + getContextFromName(name);
+    public Stream<PageReference> getPages(Set<String> supportedExtensions) {
+        Path pages = path.resolve("pages");
+        if (!Files.exists(pages)) {
+            return Stream.<PageReference>empty();
+        }
+        try {
+            return Files
+                    .walk(pages)
+                    .filter(path -> Files.isRegularFile(path) &&
+                            supportedExtensions.contains(getExtension(path.getFileName().toString())))
+                    .map(path -> new ArtifactPageReference(path, this, appReference));
+        } catch (IOException e) {
+            throw new UUFException("Error while listing pages in '" + path + "'.", e);
+        }
     }
 
-    private String getContextFromName(String name) {
-        int lastDot = name.lastIndexOf('.');
-        if (lastDot >= 0) {
-            return name.substring(lastDot + 1);
-        } else {
-            return name;
+    private String getExtension(String fileName) {
+        int lastDotIndex = fileName.lastIndexOf('.');
+        return (lastDotIndex == -1) ? "" : fileName.substring(lastDotIndex + 1);
+    }
+
+    @Override
+    public Stream<FragmentReference> getFragments(Set<String> supportedExtensions) {
+        Path fragments = path.resolve("fragments");
+        if (!Files.exists(fragments)) {
+            return Stream.<FragmentReference>empty();
+        }
+        try {
+            return Files.list(fragments)
+                    .filter(Files::isDirectory)
+                    .map(path -> new ArtifactFragmentReference(path, this, supportedExtensions));
+        } catch (IOException e) {
+            throw new UUFException("Error while listing fragments in '" + path + "'.", e);
         }
     }
 
     @Override
-    public String getVersion() {
-        //TODO: read this from path config
-        return "1.0.0";
-    }
-
-    Path getPath() {
-        return path;
-    }
-
-    @Override
-    public AppReference getApp() {
-        return app;
+    public Optional<FileReference> getBindingsConfig() {
+        Path bindingsConfiguration = path.resolve("bindings.yaml");
+        if (Files.exists(bindingsConfiguration)) {
+            return Optional.of(new ArtifactFileReference(bindingsConfiguration, this));
+        } else {
+            return Optional.empty();
+        }
     }
 
     @Override
-    public Optional<FileReference> getConfig() {
-        Path binding = path.resolve("config.yaml");
-        if (Files.exists(binding)) {
-            return Optional.of(new ArtifactFileReference(binding, this, app));
+    public Optional<FileReference> getConfigurations() {
+        Path configuration = path.resolve("config.yaml");
+        if (Files.exists(configuration)) {
+            return Optional.of(new ArtifactFileReference(configuration, this));
         } else {
             return Optional.empty();
         }
@@ -107,9 +88,22 @@ public class ArtifactComponentReference implements ComponentReference {
     public Optional<FileReference> getOsgiImportsConfig() {
         Path binding = path.resolve("osgi-imports.properties");
         if (Files.exists(binding)) {
-            return Optional.of(new ArtifactFileReference(binding, this, app));
+            return Optional.of(new ArtifactFileReference(binding, this));
         } else {
             return Optional.empty();
         }
+    }
+
+    @Override
+    public FileReference resolveLayout(String layoutName) {
+        return new ArtifactFileReference(path.resolve("layouts").resolve(layoutName), this);
+    }
+
+    Path getPath() {
+        return path;
+    }
+
+    ArtifactAppReference getAppReference() {
+        return appReference;
     }
 }
