@@ -56,7 +56,7 @@ public class ComponentLookup {
         return (name.indexOf('.') == -1) ? fullyQualifiedName(name) : name;
     }
 
-    String getComponentName() {
+    public String getComponentName() {
         return componentName;
     }
 
