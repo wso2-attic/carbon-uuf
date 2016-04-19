@@ -2,7 +2,7 @@ package org.wso2.carbon.uuf.core.create;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.wso2.carbon.uuf.core.App;
-import org.wso2.carbon.uuf.core.ClassLoaderCreator;
+import org.wso2.carbon.uuf.core.ClassLoaderProvider;
 import org.wso2.carbon.uuf.core.Component;
 import org.wso2.carbon.uuf.core.Fragment;
 import org.wso2.carbon.uuf.core.Lookup;
@@ -27,16 +27,16 @@ public class AppCreator {
 
     private Resolver resolver;
     private Map<String, RenderableCreator> creators;
-    private ClassLoaderCreator classLoaderCreator;
+    private ClassLoaderProvider classLoaderProvider;
 
     public AppCreator(
             Resolver resolver,
             Map<String, RenderableCreator> creators,
-            ClassLoaderCreator classLoaderCreator) {
+            ClassLoaderProvider classLoaderProvider) {
 
         this.resolver = resolver;
         this.creators = creators;
-        this.classLoaderCreator = classLoaderCreator;
+        this.classLoaderProvider = classLoaderProvider;
         this.creators = creators;
     }
 
@@ -134,7 +134,7 @@ public class AppCreator {
         String version = componentReference.getVersion();
         String context = componentReference.getContext();
 
-        final ClassLoader classLoader = classLoaderCreator.getClassLoader(componentReference);
+        final ClassLoader classLoader = classLoaderProvider.getClassLoader(componentReference);
 
         Set<Fragment> fragments = componentReference
                 .streamFragmentFiles()

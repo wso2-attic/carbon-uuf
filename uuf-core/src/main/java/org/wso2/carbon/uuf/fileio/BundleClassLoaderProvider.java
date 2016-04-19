@@ -8,7 +8,7 @@ import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.wiring.BundleWiring;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.uuf.core.ClassLoaderCreator;
+import org.wso2.carbon.uuf.core.ClassLoaderProvider;
 import org.wso2.carbon.uuf.core.UUFException;
 import org.wso2.carbon.uuf.core.create.ComponentReference;
 
@@ -27,11 +27,23 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
 
-public class BundleClassLoaderCreator implements ClassLoaderCreator {
+public class BundleClassLoaderProvider implements ClassLoaderProvider {
 
-    private static final Logger log = LoggerFactory.getLogger(BundleClassLoaderCreator.class);
+    private static final Logger log = LoggerFactory.getLogger(BundleClassLoaderProvider.class);
     private static final String DUMMY_CLASS_PATH = "/bundle/create/DummyComponentBundle.claz";
     private static final String DUMMY_CLASS_NAME = "DummyComponentBundle.class";
+
+    /**
+     * Returns class loader of this component reference.
+     * @param componentReference
+     * @return
+     */
+    @Override
+    public ClassLoader getClassLoader(ComponentReference componentReference){
+        Bundle bundle = createBundleIfNotExists(componentReference);
+        BundleWiring bundleWiring = bundle.adapt(BundleWiring.class);
+        return bundleWiring.getClassLoader();
+    }
 
     /**
      * If no bundle exists for provided component reference, It create and returns a new OSGi bundle.
@@ -61,20 +73,8 @@ public class BundleClassLoaderCreator implements ClassLoaderCreator {
         return bundle;
     }
 
-    /**
-     * Returns class loader of this component reference.
-     * @param componentReference
-     * @return
-     */
-    @Override
-    public ClassLoader getClassLoader(ComponentReference componentReference){
-        Bundle bundle = createBundleIfNotExists(componentReference);
-        BundleWiring bundleWiring = bundle.adapt(BundleWiring.class);
-        return bundleWiring.getClassLoader();
-    }
-
     private BundleContext getBundleContext(){
-        Bundle currentBundle = FrameworkUtil.getBundle(BundleClassLoaderCreator.class);
+        Bundle currentBundle = FrameworkUtil.getBundle(BundleClassLoaderProvider.class);
         return currentBundle.getBundleContext();
     }
 
@@ -112,7 +112,7 @@ public class BundleClassLoaderCreator implements ClassLoaderCreator {
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         try (JarOutputStream target = new JarOutputStream(outputStream, bundleManifest)) {
-            InputStream resource = BundleClassLoaderCreator.class.getResourceAsStream(DUMMY_CLASS_PATH);
+            InputStream resource = BundleClassLoaderProvider.class.getResourceAsStream(DUMMY_CLASS_PATH);
             if(resource == null){
                 throw new IOException("Could not locate `" + DUMMY_CLASS_PATH + "` !");
             }

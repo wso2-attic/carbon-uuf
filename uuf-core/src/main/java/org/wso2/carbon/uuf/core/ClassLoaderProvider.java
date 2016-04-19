@@ -6,7 +6,7 @@ import org.wso2.carbon.uuf.core.create.ComponentReference;
 import java.util.List;
 import java.util.Optional;
 
-public interface ClassLoaderCreator {
+public interface ClassLoaderProvider {
 
     ClassLoader getClassLoader(ComponentReference compReference);
 }

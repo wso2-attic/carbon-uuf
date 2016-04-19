@@ -17,7 +17,7 @@ public class Main {
     public static void main(String[] args) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
         List<Path> uufAppsPath = Collections.singletonList(FileSystems.getDefault().getPath("."));
         ArtifactResolver resolver = new ArtifactResolver(uufAppsPath);
-        ClassLoaderCreator classLoaderCreator = new ClassLoaderCreator() {
+        ClassLoaderProvider classLoaderCreator = new ClassLoaderProvider() {
 
             @Override
             public ClassLoader getClassLoader(ComponentReference compReference) {
