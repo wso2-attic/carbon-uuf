@@ -48,18 +48,6 @@ public class Component {
         return lookup;
     }
 
-    @Deprecated
-    public Component(String name,
-                     String context,
-                     String version,
-                     SortedSet<Page> pages,
-                     Lookup lookup) {
-        this.name = name;
-        this.version = version;
-        this.pages = pages;
-        this.lookup = null;
-    }
-
     public Optional<String> renderPage(String pageUri, RequestLookup requestLookup, API api) {
         Optional<Page> servingPage = getPage(pageUri);
         if (!servingPage.isPresent()) {
