@@ -15,8 +15,8 @@ import java.util.Optional;
 public class Main {
 
     public static void main(String[] args) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
-        List<Path> uufAppsPath = Collections.singletonList(FileSystems.getDefault().getPath("."));
-        ArtifactResolver resolver = new ArtifactResolver(uufAppsPath);
+        ArtifactResolver appResolver = new ArtifactResolver(FileSystems.getDefault().getPath("."));
+        StaticResolver staticResolver = new StaticResolver(FileSystems.getDefault().getPath("."));
         ClassLoaderProvider classLoaderCreator = new ClassLoaderProvider() {
 
             @Override
@@ -25,9 +25,8 @@ public class Main {
             }
         };
         RenderableCreator hbsCreator = new HbsRenderableCreator();
-        AppCreator appCreator = new AppCreator(resolver, ImmutableMap.of("hbs", hbsCreator, "js", hbsCreator),
-                classLoaderCreator);
-        UUFRegistry registry = new UUFRegistry(appCreator, Optional.of(new DebugAppender()), resolver);
+        AppCreator appCreator = new AppCreator(ImmutableSet.of(hbsCreator), classLoaderCreator);
+        UUFRegistry registry = new UUFRegistry(appCreator, Optional.of(new DebugAppender()), appResolver, staticResolver);
         new MicroservicesRunner().deploy(new UUFService(registry)).start();
     }
 
