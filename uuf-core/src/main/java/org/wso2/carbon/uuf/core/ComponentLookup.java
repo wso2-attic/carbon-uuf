@@ -63,7 +63,7 @@ public class ComponentLookup {
         return componentContext;
     }
 
-    public Set<? extends Renderable> getBindings(String zoneName) {
+    public Set<Renderable> getBindings(String zoneName) {
         return bindings.get(getFullyQualifiedName(zoneName));
     }
 
