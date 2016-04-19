@@ -70,11 +70,6 @@ public class App {
                                Response.Status.NOT_FOUND);
     }
 
-    @Deprecated
-    public String renderPage(String uriUpToContext, String uriAfterContext) {
-        return "";
-    }
-
     public boolean hasPage(String uri) {
         if (rootComponent.hasPage(uri)) {
             return true;

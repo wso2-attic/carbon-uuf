@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.core.App;
 import org.wso2.carbon.uuf.core.MimeMapper;
+import org.wso2.carbon.uuf.core.RequestLookup;
 import org.wso2.carbon.uuf.core.UUFException;
 import org.wso2.carbon.uuf.core.create.AppCreator;
 import org.wso2.carbon.uuf.core.create.AppResolver;
@@ -130,7 +131,7 @@ public class UUFRegistry {
                         return Response.status(Response.Status.NOT_FOUND);
                     }
                 }
-                String page = app.renderPage(appContext, uri.substring(appContext.length()));
+                String page = app.renderPage(uri.substring(appContext.length()), new RequestLookup(appName, request));
                 return Response.ok(page).header("Content-Type", "text/html");
             }
             //TODO: Don't catch this Ex, move the logic below the 'instanceof' check
