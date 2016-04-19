@@ -36,10 +36,13 @@ public class AppCreator {
     private final Set<String> supportedExtensions;
     private final ClassLoaderProvider classLoaderProvider;
 
-    public AppCreator(Map<String, RenderableCreator> renderableCreators, ClassLoaderProvider classLoaderProvider) {
-        this.renderableCreators = renderableCreators;
+    public AppCreator(Set<RenderableCreator> renderableCreators, ClassLoaderProvider classLoaderProvider) {
+        this.renderableCreators = new HashMap<>();
         this.supportedExtensions = new HashSet<>();
-        for (RenderableCreator renderableCreator : renderableCreators.values()) {
+        for (RenderableCreator renderableCreator : renderableCreators) {
+            for (String extension : renderableCreator.getSupportedFileExtensions()) {
+                this.renderableCreators.put(extension, renderableCreator);
+            }
             supportedExtensions.addAll(renderableCreator.getSupportedFileExtensions());
         }
         this.classLoaderProvider = classLoaderProvider;
