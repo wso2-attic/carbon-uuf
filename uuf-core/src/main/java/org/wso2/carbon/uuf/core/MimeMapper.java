@@ -25,22 +25,21 @@ import java.util.Optional;
 import java.util.Properties;
 
 /**
- * This class lazily loads the mime-map.properties file
- * and maps file extension to mime type using the file.
+ * This class lazily loads the mime-map.properties file and maps file extension to mime type using the file.
  */
 public class MimeMapper {
 
-    private static Properties mimeMap = null;
+    private static Properties MIME_MAP = null;
     private static final Logger log = LoggerFactory.getLogger(MimeMapper.class);
 
     private static void loadMimeMap() throws IOException {
-        mimeMap = new Properties();
+        MIME_MAP = new Properties();
         String mimePropertyName = "mime-map.properties";
         InputStream inputStream = MimeMapper.class.getClassLoader().getResourceAsStream(mimePropertyName);
         if (inputStream == null) {
             throw new IOException("Could not locate `" + mimePropertyName + "`");
         }
-        mimeMap.load(inputStream);
+        MIME_MAP.load(inputStream);
         try {
             inputStream.close();
         } catch (IOException e) {
@@ -50,14 +49,14 @@ public class MimeMapper {
     }
 
     public static Optional<String> getMimeType(String extension) {
+        //TODO: fix concurrency issue here
         try {
-            if (mimeMap == null) {
+            if (MIME_MAP == null) {
                 loadMimeMap();
             }
         } catch (IOException e) {
             return Optional.empty();
         }
-        return Optional.ofNullable(mimeMap.getProperty(extension));
+        return Optional.ofNullable(MIME_MAP.getProperty(extension));
     }
-
 }
