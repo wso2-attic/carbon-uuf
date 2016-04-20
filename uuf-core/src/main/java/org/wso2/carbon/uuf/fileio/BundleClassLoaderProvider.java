@@ -55,6 +55,7 @@ public class BundleClassLoaderProvider implements ClassLoaderProvider {
         }
 
         String bundleName = getBundleName(appName, componentName);
+        componentVersion = processSnapshotVersion(componentVersion);
         try {
             InputStream bundleInputStream = createBundleStream(bundleName, bundleKey, componentVersion,
                                                                getImports(componentReference));
@@ -68,6 +69,11 @@ public class BundleClassLoaderProvider implements ClassLoaderProvider {
             throw new UUFException("Error while installing the OSGi bundle of component '" + componentName + "-" +
                                            componentVersion + "' in app '" + appName + "'.", e);
         }
+    }
+
+    private String processSnapshotVersion(String version){
+        version = version.replace("-SNAPSHOT", ".SNAPSHOT");
+        return version;
     }
 
     private Optional<List<String>> getImports(ComponentReference componentReference) throws IOException {
