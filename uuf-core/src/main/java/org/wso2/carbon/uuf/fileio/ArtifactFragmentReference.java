@@ -13,7 +13,6 @@ public class ArtifactFragmentReference implements FragmentReference {
     private final ArtifactComponentReference componentReference;
     private final Set<String> supportedExtensions;
 
-
     public ArtifactFragmentReference(Path path, ArtifactComponentReference componentReference,
                                      Set<String> supportedExtensions) {
         this.path = path;

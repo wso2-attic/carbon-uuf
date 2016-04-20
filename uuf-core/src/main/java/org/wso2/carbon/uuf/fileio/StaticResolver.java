@@ -20,6 +20,8 @@ import io.netty.handler.codec.http.HttpRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.wso2.carbon.kernel.utils.Utils;
 import org.wso2.carbon.uuf.core.MimeMapper;
+import org.wso2.carbon.uuf.core.create.ComponentReference;
+import org.wso2.carbon.uuf.core.create.FragmentReference;
 
 import javax.ws.rs.core.Response;
 import java.io.IOException;
@@ -35,7 +37,6 @@ import java.util.TimeZone;
 public class StaticResolver {
 
     private final Path uufHome;
-    public static final String STATIC_RESOURCE_URI_PREFIX = "public";
     public static final String STATIC_RESOURCE_URI_BASE_PREFIX = "base";
     private static final String CACHE_HEADER_DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss zzz";
 
@@ -48,10 +49,6 @@ public class StaticResolver {
 
     public StaticResolver(Path uufHome) {
         this.uufHome = uufHome;
-    }
-
-    public static boolean isStaticResourceRequest(String resourcePath) {
-        return resourcePath.startsWith("/" + STATIC_RESOURCE_URI_PREFIX);
     }
 
     /**
@@ -85,23 +82,18 @@ public class StaticResolver {
         if (resourcePathParts.length < 5) {
             throw new IllegalArgumentException("Invalid resourceUri! `" + uri + "`");
         }
-        String resourceUriPrefixPart = resourcePathParts[1];
-        String componentUriPart = resourcePathParts[2];
-        String fragmentUriPart = resourcePathParts[3];
+        String componentUriPart = resourcePathParts[0];
+        String fragmentUriPart = resourcePathParts[1];
         int fourthSlash = StringUtils.ordinalIndexOf(uri, "/", 4);
         String subResourcePath = uri.substring(fourthSlash + 1, uri.length());
-
-        if (!resourceUriPrefixPart.equals(STATIC_RESOURCE_URI_PREFIX)) {
-            throw new IllegalArgumentException("Resource path should starts with `/public`!");
-        }
         Path componentPath = uufHome.resolve(appName).resolve(componentUriPart);
         Path fragmentPath;
-        if (fragmentUriPart.equals(STATIC_RESOURCE_URI_BASE_PREFIX)) {
+        if (fragmentUriPart.equals("base")) {
             fragmentPath = componentPath;
         } else {
-            fragmentPath = componentPath.resolve("fragments").resolve(fragmentUriPart);
+            fragmentPath = componentPath.resolve(ComponentReference.FRAGMENTS_DIR_NAME).resolve(fragmentUriPart);
         }
-        return fragmentPath.resolve("public").resolve(subResourcePath);
+        return fragmentPath.resolve(FragmentReference.PUBLIC_DIR_NAME).resolve(subResourcePath);
     }
 
     private Response.ResponseBuilder getResponseBuilder(Path resource, HttpRequest request) {

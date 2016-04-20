@@ -46,7 +46,7 @@ public class ArtifactComponentReference implements ComponentReference {
 
     @Override
     public Stream<FragmentReference> getFragments(Set<String> supportedExtensions) {
-        Path fragments = path.resolve("fragments");
+        Path fragments = path.resolve(FRAGMENTS_DIR_NAME);
         if (!Files.exists(fragments)) {
             return Stream.<FragmentReference>empty();
         }
