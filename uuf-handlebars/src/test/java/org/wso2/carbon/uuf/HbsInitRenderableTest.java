@@ -7,11 +7,11 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.wso2.carbon.uuf.core.Renderable;
 import org.wso2.carbon.uuf.handlebars.HbsInitRenderable;
+import org.wso2.carbon.uuf.model.MapModel;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
-
-import static org.mockito.Matchers.any;
 
 public class HbsInitRenderableTest {
 
@@ -40,7 +40,7 @@ public class HbsInitRenderableTest {
         Renderable fillingZone = fillingZones.get("my-zone");
         Assert.assertNotNull(fillingZone, "zone's inner content must be available under name 'my-zone'");
         try {
-            fillingZone.render(any(), any(), any(), any());
+            fillingZone.render(new MapModel(Collections.emptyMap()), null, null, null);
             Assert.fail("can't render with an empty map since 'a' var is expected.");
         } catch (HandlebarsException ex) {
             HandlebarsError error = ex.getError();
