@@ -23,11 +23,6 @@ public class ArtifactComponentReference implements ComponentReference {
     }
 
     @Override
-    public String getSimpleName() {
-        return path.getFileName().toString();
-    }
-
-    @Override
     public Stream<PageReference> getPages(Set<String> supportedExtensions) {
         Path pages = path.resolve("pages");
         if (!Files.exists(pages)) {

@@ -6,8 +6,6 @@ import java.util.stream.Stream;
 
 public interface ComponentReference {
 
-    String getSimpleName();
-
     Stream<PageReference> getPages(Set<String> supportedExtensions);
 
     Stream<FragmentReference> getFragments(Set<String> supportedExtensions);

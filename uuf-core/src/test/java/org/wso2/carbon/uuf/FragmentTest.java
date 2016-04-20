@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableSetMultimap;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.wso2.carbon.uuf.core.ComponentLookup;
-import org.wso2.carbon.uuf.core.Page;
+import org.wso2.carbon.uuf.core.Fragment;
 import org.wso2.carbon.uuf.core.Renderable;
 import org.wso2.carbon.uuf.core.RequestLookup;
 
@@ -12,18 +12,18 @@ import java.util.Collections;
 
 import static org.mockito.Matchers.any;
 
-public class PageTest {
+public class FragmentTest {
 
     @Test
-    public void testRenderPage() throws Exception {
-        final String content = "Hello world from a page!";
+    public void testRenderFragment() {
+        final String content = "Hello world from a fragment!";
         Renderable renderable = (model, componentLookup, requestLookup, api) -> content;
         ComponentLookup lookup = new ComponentLookup("componentName", "/componentContext", Collections.emptySet(),
                                                      ImmutableSetMultimap.of(), Collections.emptySet());
         RequestLookup requestLookup = new RequestLookup("/appContext", any());
-        Page page = new Page(any(), renderable);
+        Fragment fragment = new Fragment("fragmentName", renderable);
 
-        String output = page.render(any(), lookup, requestLookup, any());
+        String output = fragment.render(any(), lookup, requestLookup, any());
         Assert.assertEquals(output, content);
     }
 }

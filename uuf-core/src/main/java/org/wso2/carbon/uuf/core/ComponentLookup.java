@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class ComponentLookup {
+    @Deprecated
     private static final String PUBLIC_URI_CONTEXT = "/public";
 
     private final String componentName;
@@ -59,7 +60,7 @@ public class ComponentLookup {
         return componentName;
     }
 
-    public String getComponentContext() {
+    String getComponentContext() {
         return componentContext;
     }
 

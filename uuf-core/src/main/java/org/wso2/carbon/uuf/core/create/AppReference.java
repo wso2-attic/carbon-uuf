@@ -6,7 +6,7 @@ public interface AppReference {
 
     String getName();
 
-    ComponentReference getComponentReference(String name);
+    ComponentReference getComponentReference(String componentSimpleName);
 
     List<String> getDependencies();
 }

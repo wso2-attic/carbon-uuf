@@ -41,6 +41,7 @@ public class HbsRenderableCreator implements RenderableCreator {
         Optional<String> layoutFullNameOpt = pageRenderable.getLayoutName();
         Renderable renderable;
         if (layoutFullNameOpt.isPresent()) {
+            //TODO: fix layout name resolving logic to search only on dependencies of the component
             String layoutFullName = layoutFullNameOpt.get();
             String layoutName;
             int lastDot = layoutFullName.lastIndexOf('.');

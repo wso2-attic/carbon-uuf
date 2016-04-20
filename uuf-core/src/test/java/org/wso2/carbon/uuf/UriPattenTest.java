@@ -20,7 +20,7 @@ public class UriPattenTest {
                 {"/{a}/b", "/{a}/{b}"},
                 {"/a/{b}", "/{a}/{b}"},
                 {"/ab", "/a{x}"},
-                {"/ab", "/{x}b"},
+                {"/ab", "/{x}b"}
         };
     }
 
@@ -29,9 +29,14 @@ public class UriPattenTest {
         return new Object[][]{
                 {"/", "/"},
                 {"/a", "/a"},
-                {"/{a}", "/b"},
+                {"/a-b", "/a-b"},
+                {"/{a}", "/x"},
+//                {"/{a}", "/x-y"},
                 {"/{a}b", "/xb"},
-                {"/x{a}o/y{b}o", "/xpo/ypo"},
+                {"/a/{b}", "/a/x"},
+                {"/a{b}c/d{e}f", "/axc/dyf"},
+                {"/a/{b}/c", "/a/x/c"},
+                {"/a/b/{c}/d", "/a/b/x/d"}
         };
     }
 
@@ -84,5 +89,4 @@ public class UriPattenTest {
             }
         }
     }
-
 }

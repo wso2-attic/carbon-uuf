@@ -21,8 +21,8 @@ public class ArtifactAppReference implements AppReference {
     }
 
     @Override
-    public ComponentReference getComponentReference(String name) {
-        Path componentPath = path.resolve("components").resolve(name);
+    public ComponentReference getComponentReference(String componentSimpleName) {
+        Path componentPath = path.resolve("components").resolve(componentSimpleName);
         return new ArtifactComponentReference(componentPath, this);
     }
 

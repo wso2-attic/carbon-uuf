@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.model.MapModel;
 import org.wso2.carbon.uuf.model.Model;
 
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
@@ -60,7 +60,7 @@ public class Component {
                               pageUri + "'.");
         }
 
-        Model model = new MapModel(Collections.emptyMap());
+        Model model = new MapModel(new HashMap<>());
         return Optional.of(page.render(model, lookup, requestLookup, api));
     }
 
