@@ -20,6 +20,7 @@ import io.netty.handler.codec.http.HttpRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.wso2.carbon.kernel.utils.Utils;
 import org.wso2.carbon.uuf.core.MimeMapper;
+import org.wso2.carbon.uuf.core.create.AppReference;
 import org.wso2.carbon.uuf.core.create.ComponentReference;
 import org.wso2.carbon.uuf.core.create.FragmentReference;
 
@@ -73,7 +74,7 @@ public class StaticResolver {
             return getResponseBuilder(resource, request);
         } else {
             return Response.status(Response.Status.NOT_FOUND).entity(
-                    "Requested resource '" + uri + "' does not exists at '" + resource + "'");
+                    "Requested resource '" + uri + "' does not exists at '/" + uufHome.relativize(resource) + "'");
         }
     }
 
@@ -82,16 +83,16 @@ public class StaticResolver {
         if (resourcePathParts.length < 5) {
             throw new IllegalArgumentException("Invalid resourceUri! `" + uri + "`");
         }
-        String componentUriPart = resourcePathParts[0];
-        String fragmentUriPart = resourcePathParts[1];
+        String componentName = resourcePathParts[2];
+        String fragmentName = resourcePathParts[3];
         int fourthSlash = StringUtils.ordinalIndexOf(uri, "/", 4);
         String subResourcePath = uri.substring(fourthSlash + 1, uri.length());
-        Path componentPath = uufHome.resolve(appName).resolve(componentUriPart);
+        Path componentPath = uufHome.resolve(appName).resolve(AppReference.COMPONENTS_DIR_NAME).resolve(componentName);
         Path fragmentPath;
-        if (fragmentUriPart.equals("base")) {
+        if (fragmentName.equals("base")) {
             fragmentPath = componentPath;
         } else {
-            fragmentPath = componentPath.resolve(ComponentReference.FRAGMENTS_DIR_NAME).resolve(fragmentUriPart);
+            fragmentPath = componentPath.resolve(ComponentReference.FRAGMENTS_DIR_NAME).resolve(fragmentName);
         }
         return fragmentPath.resolve(FragmentReference.PUBLIC_DIR_NAME).resolve(subResourcePath);
     }
