@@ -9,7 +9,64 @@ import static java.lang.Integer.signum;
 
 public class UriPattenTest {
     @DataProvider
-    public Object[][] pattenProvider() {
+    public Object[][] invalidUriPatterns() {
+        return new Object[][]{
+                {"", "URI pattern cannot be empty."},
+                {"a", "URI patten must start with a '/'."},
+                {"/{", "at index 1"},
+                {"/{a", "at index 1"},
+                {"/{{abc", "at index 2"},
+                {"/}", "at index 1"},
+                {"/a}", "at index 2"},
+                {"/a}}", "at index 2"},
+                {"/{a}{", "at index 4"},
+                {"/{a}}", "at index 4"},
+                {"/{ab{c}}", "at index 4"},
+                {"/{+a}}", "at index 5"},
+                {"/{+a}{", "at index 5"},
+                {"/{+ab{c}}", "at index 5"},
+                {"/{+a}/", "at index 5"}
+        };
+    }
+
+    @DataProvider
+    public Object[][] matchingUriPatterns() {
+        return new Object[][]{
+                {"/", "/"},
+                {"/a", "/a"},
+                {"/-._~?#[]@!$&'()+,;=", "/-._~?#[]@!$&'()+,;="},
+                {"/{x}", "/a"},
+                {"/{x}", "/-._~?#[]@!$&'()+,;="},
+                {"/a{x}", "/ab"},
+                {"/{x}b", "/ab"},
+                {"/a/{x}", "/a/b"},
+                {"/a{x}c/d{y}f", "/abc/def"},
+                {"/{+x}", "/a"},
+                {"/{+x}", "/-._~?#[]@!$&'()+,;="},
+                {"/{+x}", "/a/"},
+                {"/{+x}", "/a/b/c"},
+                {"/a/{x}/{+y}", "/a/b/c/d"},
+                {"/a/{x}/c/de{+y}", "/a/b/c/def/g/"}
+        };
+    }
+
+    @DataProvider
+    public Object[][] unmatchingUriPatterns() {
+        return new Object[][]{
+                {"/", "/a"},
+                {"/a", "/abc"},
+                {"/a/", "/a"},
+                {"/{x}", "/a/b"},
+                {"/{x}/", "/a/b"},
+                {"/a/b/{x}", "/a/b/c/d"},
+                {"/a{+x}", "/A/b"},
+                {"/a/{+x}", "/A/b"},
+                {"/a/b{+x}", "/a/Bc/d"},
+        };
+    }
+
+    @DataProvider
+    public Object[][] orderedUriPatterns() {
         return new Object[][]{
                 {"/a", "/{a}"},
                 {"/a/b", "/{a}/b"},
@@ -19,28 +76,31 @@ public class UriPattenTest {
                 {"/a/b/", "/{a}/{b}/"},
                 {"/{a}/b", "/{a}/{b}"},
                 {"/a/{b}", "/{a}/{b}"},
-                {"/ab", "/a{x}"},
-                {"/ab", "/{x}b"}
+                {"/ab", "/a{b}"},
+                {"/ab", "/{a}b"}
         };
     }
 
-    @DataProvider
-    public Object[][] uriProvider() {
-        return new Object[][]{
-                {"/", "/"},
-                {"/a", "/a"},
-                {"/a-b", "/a-b"},
-                {"/{a}", "/x"},
-//                {"/{a}", "/x-y"},
-                {"/{a}b", "/xb"},
-                {"/a/{b}", "/a/x"},
-                {"/a{b}c/d{e}f", "/axc/dyf"},
-                {"/a/{b}/c", "/a/x/c"},
-                {"/a/b/{c}/d", "/a/b/x/d"}
-        };
+    @Test(dataProvider = "invalidUriPatterns")
+    public void testInvalidUriPatterns(String uriPattern, String message) {
+        try {
+            new UriPatten(uriPattern);
+        } catch (IllegalArgumentException e) {
+            Assert.assertTrue(e.getMessage().contains(message));
+        }
     }
 
-    @Test(dataProvider = "pattenProvider")
+    @Test(dataProvider = "matchingUriPatterns")
+    public void testMatching(String uriPattern, String uri) {
+        Assert.assertTrue(new UriPatten(uriPattern).matches(uri));
+    }
+
+    @Test(dataProvider = "unmatchingUriPatterns")
+    public void testUnmatching(String uriPattern, String uri) {
+        Assert.assertFalse(new UriPatten(uriPattern).matches(uri));
+    }
+
+    @Test(dataProvider = "orderedUriPatterns")
     public void testOrdering(String a, String b) throws Exception {
         UriPatten aPatten = new UriPatten(a);
         UriPatten bPatten = new UriPatten(b);
@@ -48,11 +108,6 @@ public class UriPattenTest {
         int j = bPatten.compareTo(aPatten);
         Assert.assertTrue(i < 0, a + " should be more specific than " + b);
         Assert.assertTrue(j > 0, a + " should be more specific than " + b);
-    }
-
-    @Test(dataProvider = "uriProvider")
-    public void testMatching(String a, String b) throws Exception {
-        Assert.assertTrue(new UriPatten(a).match(b));
     }
 
     @Test
