@@ -4,13 +4,14 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.wso2.carbon.uuf.handlebars.PlaceholderWriter;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 public class PlaceholderWriterTest {
 
     @Test
-    public void testWithoutPlaceholders() throws Exception {
+    public void testWithoutPlaceholders() throws IOException {
         PlaceholderWriter placeholderWriter = new PlaceholderWriter();
         placeholderWriter.write("First line.\n");
         placeholderWriter.write("Second line.\n");
@@ -20,7 +21,7 @@ public class PlaceholderWriterTest {
     }
 
     @Test
-    public void testWithPlaceholders() throws Exception {
+    public void testWithPlaceholders() throws IOException {
         PlaceholderWriter placeholderWriter = new PlaceholderWriter();
         placeholderWriter.addPlaceholder("p0");
         placeholderWriter.write("First line.\n");

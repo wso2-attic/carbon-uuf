@@ -15,7 +15,7 @@ import static org.mockito.Matchers.any;
 public class PageTest {
 
     @Test
-    public void testRenderPage() throws Exception {
+    public void testRenderPage() {
         final String content = "Hello world from a page!";
         Renderable renderable = (model, componentLookup, requestLookup, api) -> content;
         ComponentLookup lookup = new ComponentLookup("componentName", "/componentContext", Collections.emptySet(),
