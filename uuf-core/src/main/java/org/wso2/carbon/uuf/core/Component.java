@@ -65,7 +65,7 @@ public class Component {
     }
 
     private Optional<Page> getPage(String pageUri) {
-        return pages.stream().filter(page -> page.getUriPatten().match(pageUri)).findFirst();
+        return pages.stream().filter(page -> page.getUriPatten().matches(pageUri)).findFirst();
     }
 
     @Deprecated
