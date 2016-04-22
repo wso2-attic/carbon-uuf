@@ -36,7 +36,8 @@ import java.util.TimeZone;
 
 public class StaticResolver {
 
-    private static final String DIR_NAME_COMPONENT_RESOURCES = "base";
+    public static final String STATIC_RESOURCE_URI_PREFIX = "/public";
+    public static final String DIR_NAME_COMPONENT_RESOURCES = "base";
     private static final String DIR_NAME_FRAGMENT_RESOURCES = "public";
     private static final String CACHE_HEADER_DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss zzz";
 

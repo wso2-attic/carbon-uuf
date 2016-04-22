@@ -9,9 +9,10 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static org.wso2.carbon.uuf.fileio.StaticResolver.DIR_NAME_COMPONENT_RESOURCES;
+import static org.wso2.carbon.uuf.fileio.StaticResolver.STATIC_RESOURCE_URI_PREFIX;
+
 public class ComponentLookup {
-    @Deprecated
-    private static final String PUBLIC_URI_CONTEXT = "/public";
 
     private final String componentName;
     private final String fullyQualifiedNamePrefix;
@@ -77,16 +78,16 @@ public class ComponentLookup {
     }
 
     String getPublicUriInfix(Page page) {
-        return PUBLIC_URI_CONTEXT + componentContext + "/base";
+        return STATIC_RESOURCE_URI_PREFIX + componentContext + "/" + DIR_NAME_COMPONENT_RESOURCES;
     }
 
     String getPublicUriInfix(Fragment fragment) {
         int lastDotIndex = fragment.getName().lastIndexOf('.');
         if (lastDotIndex == -1) {
-            return PUBLIC_URI_CONTEXT + componentContext + "/" + fragment.getName();
+            return STATIC_RESOURCE_URI_PREFIX + componentContext + "/" + fragment.getName();
         } else {
             String dependencyName = fragment.getName().substring(0, lastDotIndex);
-            return PUBLIC_URI_CONTEXT + dependenciesContexts.get(dependencyName);
+            return STATIC_RESOURCE_URI_PREFIX + dependenciesContexts.get(dependencyName);
         }
     }
 }
