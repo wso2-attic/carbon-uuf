@@ -4,7 +4,8 @@ import java.util.List;
 
 public interface AppReference {
 
-    String COMPONENTS_DIR_NAME = "components";
+    String DIR_NAME_COMPONENTS = "components";
+    String FILE_NAME_DEPENDENCY_TREE = "dependency.tree";
 
     String getName();
 

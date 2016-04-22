@@ -22,7 +22,7 @@ public class ArtifactAppReference implements AppReference {
 
     @Override
     public ComponentReference getComponentReference(String componentSimpleName) {
-        Path componentPath = path.resolve("components").resolve(componentSimpleName);
+        Path componentPath = path.resolve(DIR_NAME_COMPONENTS).resolve(componentSimpleName);
         return new ArtifactComponentReference(componentPath, this);
     }
 
@@ -33,10 +33,12 @@ public class ArtifactAppReference implements AppReference {
 
     @Override
     public List<String> getDependencies() {
+        Path dependencyTreeFile = path.resolve(DIR_NAME_COMPONENTS).resolve(FILE_NAME_DEPENDENCY_TREE);
         try {
-            return Files.readAllLines(path.resolve("components").resolve("dependency.tree"));
+            return Files.readAllLines(dependencyTreeFile);
         } catch (IOException e) {
-            throw new UUFException("Error while reading dependency.tree in " + path, e);
+            throw new UUFException(
+                    "An error occurred while reading dependencies from file '" + dependencyTreeFile + "'.", e);
         }
     }
 }

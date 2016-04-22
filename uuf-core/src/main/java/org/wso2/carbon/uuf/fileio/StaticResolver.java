@@ -87,12 +87,12 @@ public class StaticResolver {
         String fragmentName = resourcePathParts[3];
         int fourthSlash = StringUtils.ordinalIndexOf(uri, "/", 4);
         String subResourcePath = uri.substring(fourthSlash + 1, uri.length());
-        Path componentPath = uufHome.resolve(appName).resolve(AppReference.COMPONENTS_DIR_NAME).resolve(componentName);
+        Path componentPath = uufHome.resolve(appName).resolve(AppReference.DIR_NAME_COMPONENTS).resolve(componentName);
         Path fragmentPath;
         if (fragmentName.equals("base")) {
             fragmentPath = componentPath;
         } else {
-            fragmentPath = componentPath.resolve(ComponentReference.FRAGMENTS_DIR_NAME).resolve(fragmentName);
+            fragmentPath = componentPath.resolve(ComponentReference.DIR_NAME_FRAGMENTS).resolve(fragmentName);
         }
         return fragmentPath.resolve(FragmentReference.PUBLIC_DIR_NAME).resolve(subResourcePath);
     }
