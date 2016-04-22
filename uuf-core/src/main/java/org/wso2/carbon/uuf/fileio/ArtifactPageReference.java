@@ -23,7 +23,8 @@ public class ArtifactPageReference implements PageReference {
     @Override
     public String getPathPattern() {
         StringBuilder sb = new StringBuilder();
-        for (Path path : componentReference.getPath().resolve("pages").relativize(this.path)) {
+        Path pagesDirectory = componentReference.getPath().resolve(ComponentReference.DIR_NAME_PAGES);
+        for (Path path : pagesDirectory.relativize(this.path)) {
             sb.append('/').append(path.toString());
         }
         return sb.toString();

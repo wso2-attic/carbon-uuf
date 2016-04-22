@@ -24,7 +24,7 @@ public class ArtifactComponentReference implements ComponentReference {
 
     @Override
     public Stream<PageReference> getPages(Set<String> supportedExtensions) {
-        Path pages = path.resolve("pages");
+        Path pages = path.resolve(DIR_NAME_PAGES);
         if (!Files.exists(pages)) {
             return Stream.<PageReference>empty();
         }
@@ -35,7 +35,7 @@ public class ArtifactComponentReference implements ComponentReference {
                             supportedExtensions.contains(getExtension(path.getFileName().toString())))
                     .map(path -> new ArtifactPageReference(path, this, appReference));
         } catch (IOException e) {
-            throw new UUFException("Error while listing pages in '" + path + "'.", e);
+            throw new UUFException("An error occurred while listing pages in '" + path + "'.", e);
         }
     }
 
@@ -46,7 +46,7 @@ public class ArtifactComponentReference implements ComponentReference {
 
     @Override
     public Stream<FragmentReference> getFragments(Set<String> supportedExtensions) {
-        Path fragments = path.resolve(FRAGMENTS_DIR_NAME);
+        Path fragments = path.resolve(DIR_NAME_FRAGMENTS);
         if (!Files.exists(fragments)) {
             return Stream.<FragmentReference>empty();
         }
@@ -55,13 +55,13 @@ public class ArtifactComponentReference implements ComponentReference {
                     .filter(Files::isDirectory)
                     .map(path -> new ArtifactFragmentReference(path, this, supportedExtensions));
         } catch (IOException e) {
-            throw new UUFException("Error while listing fragments in '" + path + "'.", e);
+            throw new UUFException("An error occurred while listing fragments in '" + path + "'.", e);
         }
     }
 
     @Override
     public Optional<FileReference> getBindingsConfig() {
-        Path bindingsConfiguration = path.resolve("bindings.yaml");
+        Path bindingsConfiguration = path.resolve(FILE_NAME_BINDINGS);
         if (Files.exists(bindingsConfiguration)) {
             return Optional.of(new ArtifactFileReference(bindingsConfiguration, this));
         } else {
@@ -71,7 +71,7 @@ public class ArtifactComponentReference implements ComponentReference {
 
     @Override
     public Optional<FileReference> getConfigurations() {
-        Path configuration = path.resolve("config.yaml");
+        Path configuration = path.resolve(FILE_NAME_CONFIGURATIONS);
         if (Files.exists(configuration)) {
             return Optional.of(new ArtifactFileReference(configuration, this));
         } else {
@@ -81,7 +81,7 @@ public class ArtifactComponentReference implements ComponentReference {
 
     @Override
     public Optional<FileReference> getOsgiImportsConfig() {
-        Path binding = path.resolve("osgi-imports.properties");
+        Path binding = path.resolve(FILE_NAME_OSGI_IMPORTS);
         if (Files.exists(binding)) {
             return Optional.of(new ArtifactFileReference(binding, this));
         } else {
@@ -91,7 +91,7 @@ public class ArtifactComponentReference implements ComponentReference {
 
     @Override
     public FileReference resolveLayout(String layoutName) {
-        return new ArtifactFileReference(path.resolve("layouts").resolve(layoutName), this);
+        return new ArtifactFileReference(path.resolve(DIR_NAME_LAYOUTS).resolve(layoutName), this);
     }
 
     Path getPath() {
