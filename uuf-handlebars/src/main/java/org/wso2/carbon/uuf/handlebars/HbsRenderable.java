@@ -7,10 +7,10 @@ import com.github.jknack.handlebars.io.TemplateSource;
 import com.google.common.collect.ImmutableMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.uuf.core.RequestLookup;
-import org.wso2.carbon.uuf.core.Renderable;
-import org.wso2.carbon.uuf.core.ComponentLookup;
 import org.wso2.carbon.uuf.core.API;
+import org.wso2.carbon.uuf.core.ComponentLookup;
+import org.wso2.carbon.uuf.core.Renderable;
+import org.wso2.carbon.uuf.core.RequestLookup;
 import org.wso2.carbon.uuf.core.UUFException;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.CssHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.DefineZoneHelper;
@@ -34,8 +34,7 @@ public class HbsRenderable implements Renderable {
     public static final String DATA_KEY_LOOKUP = HbsRenderable.class.getName() + "#lookup";
     public static final String DATA_KEY_REQUEST_LOOKUP = HbsRenderable.class.getName() + "#request-lookup";
     public static final String DATA_KEY_API = HbsRenderable.class.getName() + "#api";
-    //
-    public static final String WRITER_KEY = HbsRenderable.class.getName() + "#writer";
+    public static final String DATA_KEY_CURRENT_WRITER = HbsRenderable.class.getName() + "#writer";
     //
     private static final Handlebars HANDLEBARS = new Handlebars();
     private static final Logger log = LoggerFactory.getLogger(HbsRenderable.class);
@@ -97,7 +96,7 @@ public class HbsRenderable implements Renderable {
             log.debug("Template " + this + " was applied with context " + DebugUtil.safeJsonString(context));
         }
         PlaceholderWriter writer = new PlaceholderWriter();
-        context.data(WRITER_KEY, writer);
+        context.data(DATA_KEY_CURRENT_WRITER, writer);
         try {
             compiledTemplate.apply(context, writer);
         } catch (IOException e) {

@@ -13,7 +13,7 @@ public class PlaceholderHelper implements Helper<String> {
 
     @Override
     public CharSequence apply(String placeholderName, Options options) throws IOException {
-        PlaceholderWriter writer = options.data(HbsRenderable.WRITER_KEY);
+        PlaceholderWriter writer = options.data(HbsRenderable.DATA_KEY_CURRENT_WRITER);
         writer.addPlaceholder(placeholderName);
         return "";
     }
