@@ -15,6 +15,8 @@ import java.util.Optional;
 
 public class HbsInitRenderable extends HbsRenderable {
 
+    public static final String DATA_KEY_ZONES = HbsInitRenderable.class.getName() + "#zones";
+    public static final String DATA_KEY_CURRENT_LAYOUT = HbsInitRenderable.class.getName() + "#layout";
     private static final Handlebars HANDLEBARS = new Handlebars();
 
     static {
@@ -29,16 +31,16 @@ public class HbsInitRenderable extends HbsRenderable {
     public HbsInitRenderable(TemplateSource template, Optional<Executable> executable) {
         super(template, executable);
         Template compiledTemplate;
-        Context context = Context.newContext(Collections.EMPTY_MAP);
+        Context context = Context.newContext(Collections.emptyMap());
         try {
             compiledTemplate = HANDLEBARS.compile(template);
             compiledTemplate.apply(context);
         } catch (IOException e) {
             throw new UUFException("pages template completions error", e);
         }
-        Map<String, HbsInitRenderable> zones = context.data(FillZoneHelper.ZONES_KEY);
+        Map<String, HbsInitRenderable> zones = context.data(DATA_KEY_ZONES);
         fillingZone = (zones == null) ? Collections.emptyMap() : zones;
-        layout = Optional.ofNullable(context.data(LayoutHelper.LAYOUT_KEY));
+        layout = Optional.ofNullable(context.data(DATA_KEY_CURRENT_LAYOUT));
     }
 
     public Map<String, HbsInitRenderable> getFillingZones() {
