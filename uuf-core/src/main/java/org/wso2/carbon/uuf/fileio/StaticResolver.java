@@ -22,7 +22,6 @@ import org.wso2.carbon.kernel.utils.Utils;
 import org.wso2.carbon.uuf.core.MimeMapper;
 import org.wso2.carbon.uuf.core.create.AppReference;
 import org.wso2.carbon.uuf.core.create.ComponentReference;
-import org.wso2.carbon.uuf.core.create.FragmentReference;
 
 import javax.ws.rs.core.Response;
 import java.io.IOException;
@@ -37,9 +36,11 @@ import java.util.TimeZone;
 
 public class StaticResolver {
 
-    private final Path uufHome;
-    public static final String STATIC_RESOURCE_URI_BASE_PREFIX = "base";
+    private static final String DIR_NAME_COMPONENT_RESOURCES = "base";
+    private static final String DIR_NAME_FRAGMENT_RESOURCES = "public";
     private static final String CACHE_HEADER_DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss zzz";
+
+    private final Path uufHome;
 
     /**
      * This constructor will assume uufHome as $PRODUCT_HOME/deployment/uufapps
@@ -64,7 +65,7 @@ public class StaticResolver {
      * </ul>
      *
      * @param appName Application Name
-     * @param uri Static Resource Uri
+     * @param uri     Static Resource Uri
      * @param request Static Resource Request
      * @return Response Builder
      */
@@ -74,27 +75,28 @@ public class StaticResolver {
             return getResponseBuilder(resource, request);
         } else {
             return Response.status(Response.Status.NOT_FOUND).entity(
-                    "Requested resource '" + uri + "' does not exists at '/" + uufHome.relativize(resource) + "'");
+                    "Requested resource '" + uri + "' does not exists at '/" + uufHome.relativize(resource) + "'.");
         }
     }
 
     private Path resolveUri(String appName, String uri) {
         String resourcePathParts[] = uri.split("/");
         if (resourcePathParts.length < 5) {
-            throw new IllegalArgumentException("Invalid resourceUri! `" + uri + "`");
+            throw new IllegalArgumentException("Resource URI '" + uri + "' is invalid.");
         }
+
         String componentName = resourcePathParts[2];
         String fragmentName = resourcePathParts[3];
         int fourthSlash = StringUtils.ordinalIndexOf(uri, "/", 4);
         String subResourcePath = uri.substring(fourthSlash + 1, uri.length());
         Path componentPath = uufHome.resolve(appName).resolve(AppReference.DIR_NAME_COMPONENTS).resolve(componentName);
         Path fragmentPath;
-        if (fragmentName.equals("base")) {
+        if (fragmentName.equals(DIR_NAME_COMPONENT_RESOURCES)) {
             fragmentPath = componentPath;
         } else {
             fragmentPath = componentPath.resolve(ComponentReference.DIR_NAME_FRAGMENTS).resolve(fragmentName);
         }
-        return fragmentPath.resolve(FragmentReference.PUBLIC_DIR_NAME).resolve(subResourcePath);
+        return fragmentPath.resolve(DIR_NAME_FRAGMENT_RESOURCES).resolve(subResourcePath);
     }
 
     private Response.ResponseBuilder getResponseBuilder(Path resource, HttpRequest request) {
@@ -128,7 +130,7 @@ public class StaticResolver {
     private String getMime(String resourcePath) {
         int extensionIndex = resourcePath.lastIndexOf(".");
         String extension = (extensionIndex == -1) ? resourcePath : resourcePath.substring(extensionIndex + 1,
-                resourcePath.length());
+                                                                                          resourcePath.length());
         Optional<String> mime = MimeMapper.getMimeType(extension);
         return (mime.isPresent()) ? mime.get() : "text/html";
     }
