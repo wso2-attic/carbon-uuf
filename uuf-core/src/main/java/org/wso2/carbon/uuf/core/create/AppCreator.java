@@ -241,12 +241,16 @@ public class AppCreator {
     }
 
     private Pair<String, String> getComponentNameAndVersion(String dependencyLine) {
-        int firstColon = dependencyLine.indexOf(':');
-        int secondColon = dependencyLine.indexOf(':', firstColon + 1);
-        int thirdColon = dependencyLine.indexOf(':', secondColon + 1);
-        int forthColon = dependencyLine.indexOf(':', thirdColon + 1);
-        return Pair.of(dependencyLine.substring(firstColon + 1, secondColon),
-                       dependencyLine.substring(thirdColon + 1, forthColon));
+        // FORMAT: <group ID>:<artifact ID>:<artifact type>:<artifact version><":compile" or end of line>
+        String[] parts = dependencyLine.split(":");
+        if ((parts.length != 4) && (parts.length != 5)) {
+            throw new MalformedConfigurationException(
+                    "Dependency line '" + dependencyLine + "' is incorrect. It must be in '" +
+                            "<group ID>:<artifact ID>:<artifact type>:<artifact version><\":compile\" or end of line>" +
+                            "' format.");
+        }
+        // component name = <artifact ID> (2nd part), component version = <artifact version> (4th part)
+        return Pair.of(parts[1], parts[3]);
     }
 
     private String getComponentContext(String componentName) {
@@ -271,4 +275,3 @@ public class AppCreator {
         return renderableCreator;
     }
 }
-
