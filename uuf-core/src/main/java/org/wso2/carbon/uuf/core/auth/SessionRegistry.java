@@ -16,7 +16,7 @@ public class SessionRegistry implements Closeable {
         MutableConfiguration<String, Session> config = new MutableConfiguration<>();
         config.setTypes(String.class, Session.class);
         config.setStoreByValue(true);
-        // TODO read session expire time from a config
+        // TODO: read session expire time from a config
         config.setExpiryPolicyFactory(AccessedExpiryPolicy.factoryOf(Duration.TWENTY_MINUTES));
         String cacheName = this.getClass().getName() + "-sessions_cache";
         cache = Caching.getCachingProvider().getCacheManager().createCache(cacheName, config);
