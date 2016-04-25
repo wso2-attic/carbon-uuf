@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -25,6 +26,11 @@ public class UriPatten implements Comparable<UriPatten> {
 
     public UriPatten(String uriPattern) {
         Pair<Boolean, List<String>> analyseResult = analyse(uriPattern);
+        // URI pattern cleanup
+        if (uriPattern.endsWith("/index")) {
+            String tmp = uriPattern.substring(0, (uriPattern.length() - 6));
+            uriPattern = (tmp.isEmpty()) ? "/" : tmp;
+        }
         this.patternString = uriPattern;
         boolean hasPlusMarkedVariable = analyseResult.getLeft();
         this.variableNames = analyseResult.getRight();
@@ -32,9 +38,7 @@ public class UriPatten implements Comparable<UriPatten> {
         String patternRegex = URI_VARIABLE_PATTERN.splitAsStream(uriPattern)
                 .map(Pattern::quote)
                 .collect(Collectors.joining(URI_VARIABLE_REGEX));
-        if (patternRegex.endsWith("/index")) {
-            patternRegex = patternRegex.substring(0, (patternRegex.length() - 5));
-        } else if (uriPattern.charAt(uriPattern.length() - 1) == '}') {
+        if (uriPattern.charAt(uriPattern.length() - 1) == '}') {
             patternRegex += (hasPlusMarkedVariable) ? PLUS_MARKED_URI_VARIABLE_REGEX : URI_VARIABLE_REGEX;
         }
         pattern = Pattern.compile(patternRegex);
@@ -95,17 +99,19 @@ public class UriPatten implements Comparable<UriPatten> {
         return pattern.matcher(uri).matches();
     }
 
-    public Map<String, String> match(String uri) {
-        Map<String, String> result = new HashMap<>(variableNames.size());
+    public Optional<Map<String, String>> match(String uri) {
         Matcher matcher = this.pattern.matcher(uri);
         if (matcher.find()) {
+            Map<String, String> result = new HashMap<>(variableNames.size());
             for (int i = 1; i <= matcher.groupCount(); i++) {
                 String name = variableNames.get(i - 1);
                 String value = matcher.group(i);
                 result.put(name, value);
             }
+            return Optional.of(result);
+        } else {
+            return Optional.<Map<String, String>>empty();
         }
-        return result;
     }
 
     @Override

@@ -46,7 +46,10 @@ public class UriPattenTest {
                 {"/{+x}", "/a/"},
                 {"/{+x}", "/a/b/c"},
                 {"/a/{x}/{+y}", "/a/b/c/d"},
-                {"/a/{x}/c/de{+y}", "/a/b/c/def/g/"}
+                {"/a/{x}/c/de{+y}", "/a/b/c/def/g/"},
+                {"/index", "/"},
+                {"/a/index", "/a"},
+                {"/a/{x}/index", "/a/b"}
         };
     }
 
@@ -62,6 +65,9 @@ public class UriPattenTest {
                 {"/a{+x}", "/A/b"},
                 {"/a/{+x}", "/A/b"},
                 {"/a/b{+x}", "/a/Bc/d"},
+                {"/index", "/index"},
+                {"/a/index", "/a/index"},
+                {"/a/{x}/index", "/a/b/index"}
         };
     }
 
