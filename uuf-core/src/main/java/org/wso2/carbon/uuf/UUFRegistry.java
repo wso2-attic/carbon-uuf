@@ -55,7 +55,7 @@ public class UUFRegistry {
 
     public Response.ResponseBuilder serve(HttpRequest request) {
         String hostHeader = request.headers().get("Host");
-        String host = "//" + (hostHeader != null ? hostHeader : "localhost");
+        String host = "//" + ((hostHeader == null) ? "localhost" : hostHeader);
         String uri = request.getUri().replaceAll("/+", "/");
         if (!uri.startsWith("/")) {
             uri = "/" + uri;
@@ -75,30 +75,32 @@ public class UUFRegistry {
         }
 
         String appName = uri.substring(1, firstSlash);
-        String appContext = '/' + appName;
-        String resourcePath = uri.substring(firstSlash, uri.length());
+        String appContext = uri.substring(0, firstSlash);
+        String uriWithoutAppContext = uri.substring(firstSlash, uri.length());
 
-        if (log.isDebugEnabled() && !resourcePath.startsWith("/debug/")) {
-            log.debug("request received " + request.getMethod() + " " + request.getUri() + " " + request
-                    .getProtocolVersion());
+        if (log.isDebugEnabled() && !uriWithoutAppContext.startsWith("/debug/")) {
+            log.debug("request received " + request.getMethod() + " " + request.getUri() + " " +
+                              request.getProtocolVersion());
         }
 
         App app = apps.get(appName);
         try {
-            if (resourcePath.startsWith("/public/")) {
-                // {@link #App} is unaware of static path resolving. Hence static file serving can easily ported
-                // into a separate server.
-                return staticResolver.createResponse(appName, resourcePath.substring("/public".length()), request);
-            } else if (resourcePath.startsWith("/debug/")) {
-                return renderDebug(app, resourcePath);
+            if (StaticResolver.isStaticResourceUri(uriWithoutAppContext)) {
+                // App class is unaware of static path resolving. Hence static file serving can easily ported into a
+                // separate server.
+                return staticResolver.createResponse(appName, uriWithoutAppContext, request);
             } else {
                 if (app == null || debugAppender.isPresent()) {
                     app = appCreator.createApp(appContext, appResolver.resolve(appName));
                     apps.put(appName, app);
                 }
-                String page = app.renderPage(uri.substring(appContext.length()),
-                        new RequestLookup(appName, request));
-                return Response.ok(page).header("Content-Type", "text/html");
+                if (uriWithoutAppContext.startsWith("/debug/")) {
+                    return renderDebug(app, uriWithoutAppContext);
+                } else {
+                    String page = app.renderPage(uri.substring(appContext.length()),
+                                                 new RequestLookup(appContext, request));
+                    return Response.ok(page).header("Content-Type", "text/html");
+                }
             }
             //TODO: Don't catch this Ex, move the logic below the 'instanceof' check
         } catch (UUFException e) {
@@ -107,12 +109,12 @@ public class UUFRegistry {
             // if the tailing / is extra or a it is missing, send 301
             if (e.getStatus() == Response.Status.NOT_FOUND && app != null) {
                 if (uri.endsWith("/")) {
-                    String uriWithoutSlash = resourcePath.substring(0, resourcePath.length() - 1);
+                    String uriWithoutSlash = uriWithoutAppContext.substring(0, uriWithoutAppContext.length() - 1);
                     if (app.hasPage(uriWithoutSlash)) {
                         return Response.status(301).header("Location", host + uriWithoutSlash);
                     }
                 } else {
-                    String uriWithSlash = resourcePath + "/";
+                    String uriWithSlash = uriWithoutAppContext + "/";
                     if (app.hasPage(uriWithSlash)) {
                         return Response.status(301).header("Location", host + uri + "/");
                     }
@@ -138,17 +140,17 @@ public class UUFRegistry {
         }
     }
 
-    private Response.ResponseBuilder renderDebug(App app, String resourcePath){
+    private Response.ResponseBuilder renderDebug(App app, String resourcePath) {
         if (resourcePath.equals("/debug/api/pages/")) {
             //TODO: fix issues when same page is in multiple components
             return Response.ok(app.getComponents().entrySet().stream()
-                    .flatMap(entry -> entry.getValue().getPages().stream())
-                    .collect(Collectors.toSet()));
+                                       .flatMap(entry -> entry.getValue().getPages().stream())
+                                       .collect(Collectors.toSet()));
         }
         if (resourcePath.startsWith("/debug/api/fragments/")) {
             return Response.ok(app.getComponents().entrySet().stream()
-                    .flatMap(entry -> entry.getValue().getFragments().values().stream())
-                    .collect(Collectors.toSet()));
+                                       .flatMap(entry -> entry.getValue().getFragments().values().stream())
+                                       .collect(Collectors.toSet()));
         }
         if (resourcePath.startsWith("/debug/logs")) {
             if (debugAppender.isPresent()) {
@@ -178,12 +180,13 @@ public class UUFRegistry {
     private String getMime(String resourcePath) {
         int extensionIndex = resourcePath.lastIndexOf(".");
         String extension = (extensionIndex == -1) ? resourcePath : resourcePath.substring(extensionIndex + 1,
-                resourcePath.length());
+                                                                                          resourcePath.length());
         Optional<String> mime = MimeMapper.getMimeType(extension);
         return (mime.isPresent()) ? mime.get() : "text/html";
     }
 
     private Response.ResponseBuilder sendError(String appName, Exception e, Response.Status status) {
+        // FIXME: 4/22/16 Don't put the stacktrace in the error message
         log.error("error while serving context '" + appName + "'", e);
 
         StringWriter sw = new StringWriter();
