@@ -65,12 +65,13 @@ public class StaticResolver {
      * <li>$UUF_HOME/{appName}/components/{componentName}/[{fragmentName}|base]/public/{subResourcePath}</li>
      * </ul>
      *
-     * @param appName Application Name
-     * @param uri     Static Resource Uri
-     * @param request Static Resource Request
+     * @param appName              Application Name
+     * @param uriWithoutAppContext Static Resource Uri
+     * @param request              Static Resource Request
      * @return Response Builder
      */
-    public Response.ResponseBuilder createResponse(String appName, String uri, HttpRequest request) {
+    public Response.ResponseBuilder createResponse(String appName, String uriWithoutAppContext, HttpRequest request) {
+        String uri = uriWithoutAppContext.substring(STATIC_RESOURCE_URI_PREFIX.length());
         Path resource = resolveUri(appName, uri);
         if (Files.exists(resource) && Files.isRegularFile(resource)) {
             return getResponseBuilder(resource, request);
@@ -143,5 +144,9 @@ public class StaticResolver {
         builder.header("Last-Modified", df.format(lastModDate));
         builder.header("Cache-Control", "public,max-age=2592000");
         return builder;
+    }
+
+    public static boolean isStaticResourceUri(String uri) {
+        return uri.startsWith(STATIC_RESOURCE_URI_PREFIX);
     }
 }
