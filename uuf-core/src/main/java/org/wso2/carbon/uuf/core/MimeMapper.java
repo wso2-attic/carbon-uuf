@@ -29,33 +29,36 @@ import java.util.Properties;
  */
 public class MimeMapper {
 
-    private static Properties MIME_MAP = null;
+    private static volatile Properties MIME_MAP = null;
     private static final Logger log = LoggerFactory.getLogger(MimeMapper.class);
 
-    private static void loadMimeMap() throws IOException {
-        MIME_MAP = new Properties();
-        String mimePropertyName = "mime-map.properties";
-        InputStream inputStream = MimeMapper.class.getClassLoader().getResourceAsStream(mimePropertyName);
+    private static Properties loadMimeMap() {
+        Properties mimeMap = new Properties();
+        String mimePropertyFileName = "mime-map.properties";
+        InputStream inputStream = MimeMapper.class.getClassLoader().getResourceAsStream(mimePropertyFileName);
         if (inputStream == null) {
-            throw new IOException("Could not locate `" + mimePropertyName + "`");
+            throw new UUFException("Could not locate `" + mimePropertyFileName + "`");
         }
-        MIME_MAP.load(inputStream);
+        try {
+            mimeMap.load(inputStream);
+        } catch (IOException e) {
+            throw new UUFException("Error while reading `" + mimePropertyFileName + "`");
+        }
         try {
             inputStream.close();
         } catch (IOException e) {
-            log.warn("Could not close input stream", e);
+            log.warn("Could not close input stream of resource '" + mimePropertyFileName + "'.", e);
         }
-
+        return mimeMap;
     }
 
     public static Optional<String> getMimeType(String extension) {
-        //TODO: fix concurrency issue here
-        try {
-            if (MIME_MAP == null) {
-                loadMimeMap();
+        if (MIME_MAP == null) {
+            synchronized (MimeMapper.class) {//retrieves class level lock since only getMimeType() is public
+                if (MIME_MAP == null) {
+                    MIME_MAP = loadMimeMap();
+                }
             }
-        } catch (IOException e) {
-            return Optional.empty();
         }
         return Optional.ofNullable(MIME_MAP.getProperty(extension));
     }
