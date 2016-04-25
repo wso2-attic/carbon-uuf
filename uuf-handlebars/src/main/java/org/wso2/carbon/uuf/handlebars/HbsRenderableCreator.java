@@ -48,7 +48,7 @@ public class HbsRenderableCreator implements RenderableCreator {
             ComponentReference component;
             if (lastDot >= 0) {
                 String componentName = layoutFullName.substring(0, lastDot);
-                component = pageReference.getAppReference().getComponentReference(componentName);
+                component = pageReference.getAppReference().getComponentReference(getSimpleName(componentName));
                 layoutName = layoutFullName.substring(lastDot + 1);
             } else {
                 component = pageReference.getComponentReference();
@@ -79,6 +79,15 @@ public class HbsRenderableCreator implements RenderableCreator {
 
     private String withoutExtension(String name) {
         return name.substring(0, (name.length() - EXTENSION_HANDLEBARS.length()));
+    }
+
+    private String getSimpleName(String componentName) {
+        int lastDot = componentName.lastIndexOf('.');
+        if (lastDot >= 0) {
+            return componentName.substring(lastDot + 1);
+        } else {
+            return componentName;
+        }
     }
 
     @Override
