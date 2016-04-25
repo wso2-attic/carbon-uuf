@@ -28,8 +28,10 @@ public class HbsInitRenderableTest {
             Map<String, HbsInitRenderable> fillingZones = renderable.getFillingZones();
             Assert.assertEquals(fillingZones.size(), 1); //should never hit, to create rid of unused warning
             Assert.fail("fill zone inside fill zone is not valid.");
-        } catch (HandlebarsException e) {
-            Assert.assertTrue(e.getMessage().contains("not valid"));
+        } catch (HandlebarsException ex) {
+            HandlebarsError error = ex.getError();
+            Assert.assertEquals(error.line, 2, "error is in the 2nd line");
+            Assert.assertEquals(error.column, 3, "error is in the 3rd column");
         }
     }
 
@@ -44,8 +46,8 @@ public class HbsInitRenderableTest {
             Assert.fail("can't render with an empty map since 'a' var is expected.");
         } catch (HandlebarsException ex) {
             HandlebarsError error = ex.getError();
-            Assert.assertEquals(error.line, 3, "error is in the 3nd line");
-            Assert.assertEquals(error.column, 27, "error is in the 26th column");
+            Assert.assertEquals(error.line, 3, "error is in the 3rd line");
+            Assert.assertEquals(error.column, 27, "error is in the 27th column");
         }
     }
 }
