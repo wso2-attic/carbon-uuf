@@ -81,6 +81,16 @@ public class ComponentLookup {
         return STATIC_RESOURCE_URI_PREFIX + componentContext + "/" + DIR_NAME_COMPONENT_RESOURCES;
     }
 
+    String getPublicUriInfix(Layout layout) {
+        int lastDotIndex = layout.getName().lastIndexOf('.');
+        if (lastDotIndex == -1) {
+            return STATIC_RESOURCE_URI_PREFIX + componentContext + "/" + layout.getName();
+        } else {
+            String dependencyName = layout.getName().substring(0, lastDotIndex);
+            return STATIC_RESOURCE_URI_PREFIX + dependenciesContexts.get(dependencyName);
+        }
+    }
+
     String getPublicUriInfix(Fragment fragment) {
         int lastDotIndex = fragment.getName().lastIndexOf('.');
         if (lastDotIndex == -1) {

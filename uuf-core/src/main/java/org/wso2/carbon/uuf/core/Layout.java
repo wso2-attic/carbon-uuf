@@ -1,9 +1,5 @@
 package org.wso2.carbon.uuf.core;
 
-import org.wso2.carbon.uuf.model.MapModel;
-
-import java.util.Collections;
-
 public class Layout {
     private final String name;
     private final Renderable renderer;
@@ -17,9 +13,9 @@ public class Layout {
         return name;
     }
 
-    public String render(ComponentLookup componentLookup, RequestLookup requestLookup, API api) {
-        //requestLookup.pushToPublicUriStack(requestLookup.getAppContext() + componentLookup.getPublicUriInfix(this));
-        String output = renderer.render(new MapModel(Collections.emptyMap()), componentLookup, requestLookup, api);
+    public String render(ComponentLookup componentLookup, RequestLookup requestLookup) {
+        requestLookup.pushToPublicUriStack(requestLookup.getAppContext() + componentLookup.getPublicUriInfix(this));
+        String output = renderer.render(null, componentLookup, requestLookup, null);
         requestLookup.popPublicUriStack();
         return output;
     }
