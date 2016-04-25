@@ -19,6 +19,7 @@ package org.wso2.carbon.uuf.core;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.core.exception.MalformedConfigurationException;
+import org.wso2.carbon.uuf.core.exception.UUFException;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,7 +27,7 @@ import java.util.Optional;
 import java.util.Properties;
 
 /**
- * This class lazily loads the mime-map.properties file and maps file extension to mime type using the file.
+ * This class lazily loads the 'mime-map.properties' file and maps file extension to mime type using the file.
  */
 public class MimeMapper {
 
@@ -38,26 +39,29 @@ public class MimeMapper {
         String mimePropertyFileName = "mime-map.properties";
         InputStream inputStream = MimeMapper.class.getClassLoader().getResourceAsStream(mimePropertyFileName);
         if (inputStream == null) {
-            throw new UUFException("Could not locate '" + mimePropertyFileName + "'");
+            throw new UUFException("Cannot find MIME types property file '" + mimePropertyFileName + "'");
         }
         try {
             mimeMap.load(inputStream);
         } catch (IllegalArgumentException e) {
-            throw new MalformedConfigurationException("Mime Types configuration '" + mimePropertyFileName + "' is invalid.", e);
+            throw new MalformedConfigurationException(
+                    "MIME types property file is '" + mimePropertyFileName + "' is invalid.", e);
         } catch (IOException e) {
-            throw new UUFException("Error while reading '" + mimePropertyFileName + "'", e);
+            throw new UUFException("Cannot read MIME types property file '" + mimePropertyFileName + "'.", e);
         }
         try {
             inputStream.close();
         } catch (IOException e) {
-            log.warn("Could not close input stream of resource '" + mimePropertyFileName + "'.", e);
+            log.warn("Could not close input stream of MIME types property file '" + mimePropertyFileName + "'.", e);
         }
         return mimeMap;
     }
 
     public static Optional<String> getMimeType(String extension) {
         if (MIME_MAP == null) {
-            synchronized (MimeMapper.class) {//retrieves class level lock since only getMimeType() is public
+            // Here, class object 'MimeMapper.class' is used as the synchronization lock
+            // because 'getMimeType()' is the only is public method.
+            synchronized (MimeMapper.class) {
                 if (MIME_MAP == null) {
                     MIME_MAP = loadMimeMap();
                 }
