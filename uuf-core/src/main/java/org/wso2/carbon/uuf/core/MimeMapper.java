@@ -18,6 +18,7 @@ package org.wso2.carbon.uuf.core;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.uuf.core.exception.MalformedConfigurationException;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,12 +38,14 @@ public class MimeMapper {
         String mimePropertyFileName = "mime-map.properties";
         InputStream inputStream = MimeMapper.class.getClassLoader().getResourceAsStream(mimePropertyFileName);
         if (inputStream == null) {
-            throw new UUFException("Could not locate `" + mimePropertyFileName + "`");
+            throw new UUFException("Could not locate '" + mimePropertyFileName + "'");
         }
         try {
             mimeMap.load(inputStream);
+        } catch (IllegalArgumentException e) {
+            throw new MalformedConfigurationException("Mime Types configuration '" + mimePropertyFileName + "' is invalid.", e);
         } catch (IOException e) {
-            throw new UUFException("Error while reading `" + mimePropertyFileName + "`", e);
+            throw new UUFException("Error while reading '" + mimePropertyFileName + "'", e);
         }
         try {
             inputStream.close();
