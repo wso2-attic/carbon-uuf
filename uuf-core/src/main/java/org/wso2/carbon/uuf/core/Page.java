@@ -36,7 +36,7 @@ public class Page implements Comparable<Page> {
 
     @Override
     public String toString() {
-        return "{\"uriPattern\": \"" + uriPatten.toString() + "\", \"renderer\": \"" + renderer + "\"}";
+        return "{\"uriPattern\": " + uriPatten + ", \"renderer\": " + renderer + "}";
     }
 
     @Override
