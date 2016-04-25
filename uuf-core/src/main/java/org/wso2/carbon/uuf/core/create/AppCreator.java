@@ -111,7 +111,7 @@ public class AppCreator {
             components.add(component);
             previousLevel = currentLevel;
         }
-        return new App(context, components, new SessionRegistry());
+        return new App(context, components, new SessionRegistry(appReference.getName()));
     }
 
     private Component createComponent(String componentName, String componentVersion, String componentContext,
