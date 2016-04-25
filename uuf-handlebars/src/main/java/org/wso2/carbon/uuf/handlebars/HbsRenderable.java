@@ -11,7 +11,7 @@ import org.wso2.carbon.uuf.core.API;
 import org.wso2.carbon.uuf.core.ComponentLookup;
 import org.wso2.carbon.uuf.core.Renderable;
 import org.wso2.carbon.uuf.core.RequestLookup;
-import org.wso2.carbon.uuf.core.UUFException;
+import org.wso2.carbon.uuf.core.exception.UUFException;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.CssHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.DefineZoneHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.IncludeFragmentHelper;

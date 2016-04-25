@@ -8,7 +8,7 @@ import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.wiring.BundleWiring;
 import org.wso2.carbon.uuf.core.ClassLoaderProvider;
 import org.wso2.carbon.uuf.core.Component;
-import org.wso2.carbon.uuf.core.UUFException;
+import org.wso2.carbon.uuf.core.exception.UUFException;
 import org.wso2.carbon.uuf.core.create.ComponentReference;
 
 import java.io.ByteArrayInputStream;

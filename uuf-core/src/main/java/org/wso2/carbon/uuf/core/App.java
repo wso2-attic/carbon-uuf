@@ -1,6 +1,7 @@
 package org.wso2.carbon.uuf.core;
 
 import org.wso2.carbon.uuf.core.auth.SessionRegistry;
+import org.wso2.carbon.uuf.core.exception.UUFException;
 
 import javax.ws.rs.core.Response;
 import java.util.Map;

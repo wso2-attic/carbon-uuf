@@ -4,7 +4,7 @@ import jdk.nashorn.api.scripting.AbstractJSObject;
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.uuf.core.UUFException;
+import org.wso2.carbon.uuf.core.exception.UUFException;
 
 import javax.script.Invocable;
 import javax.script.ScriptEngine;

@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.core.App;
 import org.wso2.carbon.uuf.core.MimeMapper;
 import org.wso2.carbon.uuf.core.RequestLookup;
-import org.wso2.carbon.uuf.core.UUFException;
+import org.wso2.carbon.uuf.core.exception.UUFException;
 import org.wso2.carbon.uuf.core.create.AppCreator;
 import org.wso2.carbon.uuf.core.create.AppResolver;
 import org.wso2.carbon.uuf.fileio.StaticResolver;

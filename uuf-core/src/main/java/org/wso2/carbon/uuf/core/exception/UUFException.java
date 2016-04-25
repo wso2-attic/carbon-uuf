@@ -1,4 +1,4 @@
-package org.wso2.carbon.uuf.core;
+package org.wso2.carbon.uuf.core.exception;
 
 import javax.ws.rs.core.Response;
 

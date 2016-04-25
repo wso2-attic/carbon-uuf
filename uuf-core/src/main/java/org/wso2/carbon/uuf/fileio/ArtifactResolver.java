@@ -1,8 +1,7 @@
 package org.wso2.carbon.uuf.fileio;
 
-import org.apache.commons.lang3.StringUtils;
 import org.wso2.carbon.kernel.utils.Utils;
-import org.wso2.carbon.uuf.core.UUFException;
+import org.wso2.carbon.uuf.core.exception.UUFException;
 import org.wso2.carbon.uuf.core.create.AppReference;
 import org.wso2.carbon.uuf.core.create.AppResolver;
 

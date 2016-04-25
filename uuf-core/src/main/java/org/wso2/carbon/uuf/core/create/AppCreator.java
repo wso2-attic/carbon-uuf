@@ -10,7 +10,7 @@ import org.wso2.carbon.uuf.core.ComponentLookup;
 import org.wso2.carbon.uuf.core.Fragment;
 import org.wso2.carbon.uuf.core.Page;
 import org.wso2.carbon.uuf.core.Renderable;
-import org.wso2.carbon.uuf.core.UUFException;
+import org.wso2.carbon.uuf.core.exception.UUFException;
 import org.wso2.carbon.uuf.core.UriPatten;
 import org.wso2.carbon.uuf.core.auth.SessionRegistry;
 import org.wso2.carbon.uuf.core.exception.InvalidTypeException;
