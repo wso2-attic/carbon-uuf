@@ -42,7 +42,7 @@ public class MimeMapper {
         try {
             mimeMap.load(inputStream);
         } catch (IOException e) {
-            throw new UUFException("Error while reading `" + mimePropertyFileName + "`");
+            throw new UUFException("Error while reading `" + mimePropertyFileName + "`", e);
         }
         try {
             inputStream.close();
