@@ -29,6 +29,6 @@ public class Fragment {
 
     @Override
     public String toString() {
-        return "{\"name\": \"" + name + "\", \"renderer\": \"" + renderer + "\"}";
+        return "{\"name\": \"" + name + "\", \"renderer\": " + renderer + "}";
     }
 }
