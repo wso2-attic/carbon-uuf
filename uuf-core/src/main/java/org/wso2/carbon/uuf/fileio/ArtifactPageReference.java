@@ -1,5 +1,6 @@
 package org.wso2.carbon.uuf.fileio;
 
+import org.apache.commons.io.FilenameUtils;
 import org.wso2.carbon.uuf.core.create.AppReference;
 import org.wso2.carbon.uuf.core.create.ComponentReference;
 import org.wso2.carbon.uuf.core.create.FileReference;
@@ -23,9 +24,9 @@ public class ArtifactPageReference implements PageReference {
     @Override
     public String getPathPattern() {
         StringBuilder sb = new StringBuilder();
-        Path pagesDirectory = componentReference.getPath().resolve(ComponentReference.DIR_NAME_PAGES);
-        for (Path path : pagesDirectory.relativize(this.path)) {
-            sb.append('/').append(path.toString());
+        Path pagesDirectory = componentReference.getPath().resolve(ComponentReference.DIR_NAME_PAGES).relativize(path);
+        for (Path path : pagesDirectory) {
+            sb.append('/').append(FilenameUtils.removeExtension(path.toString()));
         }
         return sb.toString();
     }
