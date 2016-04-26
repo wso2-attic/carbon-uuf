@@ -15,6 +15,8 @@ public interface ComponentReference {
 
     Stream<PageReference> getPages(Set<String> supportedExtensions);
 
+    Stream<LayoutReference> getLayouts(Set<String> supportedExtensions);
+
     Stream<FragmentReference> getFragments(Set<String> supportedExtensions);
 
     Optional<FileReference> getBindingsConfig();
@@ -23,5 +25,6 @@ public interface ComponentReference {
 
     Optional<FileReference> getOsgiImportsConfig();
 
+    @Deprecated
     FileReference resolveLayout(String layoutName);
 }
