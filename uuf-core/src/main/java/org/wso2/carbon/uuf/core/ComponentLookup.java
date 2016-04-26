@@ -18,10 +18,11 @@ public class ComponentLookup {
     private final String fullyQualifiedNamePrefix;
     private final String componentContext;
     private final Map<String, String> dependenciesContexts;
+    private final Map<String, Layout> layouts;
     private final SetMultimap<String, Fragment> bindings;
     private final Map<String, Fragment> fragments;
 
-    public ComponentLookup(String componentName, String componentContext, Set<Fragment> fragments,
+    public ComponentLookup(String componentName, String componentContext, Set<Layout> layouts, Set<Fragment> fragments,
                            SetMultimap<String, Fragment> bindings, Set<Component> dependencies) {
         if (componentName.isEmpty()) {
             throw new IllegalArgumentException("Component name cannot be empty.");
@@ -34,6 +35,8 @@ public class ComponentLookup {
         this.componentContext = componentContext;
         this.dependenciesContexts = new HashMap<>();
 
+        this.layouts = layouts.stream().collect(Collectors.toMap(l -> fullyQualifiedName(l.getName()), l -> l));
+
         this.fragments = fragments.stream().collect(Collectors.toMap(f -> fullyQualifiedName(f.getName()), f -> f));
         this.bindings = HashMultimap.create();
         for (Map.Entry<String, Fragment> entry : bindings.entries()) {
@@ -44,6 +47,7 @@ public class ComponentLookup {
             ComponentLookup dependencyLookup = dependency.getLookup();
             this.dependenciesContexts.put(dependencyLookup.componentName, dependencyLookup.componentContext);
             this.dependenciesContexts.putAll(dependencyLookup.dependenciesContexts);
+            this.layouts.putAll(dependencyLookup.layouts);
             this.fragments.putAll(dependencyLookup.fragments);
             this.bindings.putAll(dependencyLookup.bindings);
         }
@@ -63,6 +67,10 @@ public class ComponentLookup {
 
     String getComponentContext() {
         return componentContext;
+    }
+
+    public Optional<Layout> getLayout(String layoutName) {
+        return Optional.ofNullable(layouts.get(getFullyQualifiedName(layoutName)));
     }
 
     public Set<Fragment> getBindings(String zoneName) {
