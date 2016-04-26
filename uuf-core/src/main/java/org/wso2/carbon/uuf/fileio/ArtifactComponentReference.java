@@ -1,5 +1,6 @@
 package org.wso2.carbon.uuf.fileio;
 
+import org.wso2.carbon.uuf.core.create.LayoutReference;
 import org.wso2.carbon.uuf.core.exception.UUFException;
 import org.wso2.carbon.uuf.core.create.ComponentReference;
 import org.wso2.carbon.uuf.core.create.FileReference;
@@ -39,6 +40,23 @@ public class ArtifactComponentReference implements ComponentReference {
         }
     }
 
+    @Override
+    public Stream<LayoutReference> getLayouts(Set<String> supportedExtensions) {
+        Path layouts = path.resolve(DIR_NAME_LAYOUTS);
+        if (!Files.exists(layouts)) {
+            return Stream.<LayoutReference>empty();
+        }
+        try {
+            return Files
+                    .list(layouts)
+                    .filter(path -> Files.isRegularFile(path) &&
+                            supportedExtensions.contains(getExtension(path.getFileName().toString())))
+                    .map(path -> new ArtifactLayoutReference(path, this));
+        } catch (IOException e) {
+            throw new UUFException("An error occurred while listing layouts in '" + path + "'.", e);
+        }
+    }
+
     private String getExtension(String fileName) {
         int lastDotIndex = fileName.lastIndexOf('.');
         return (lastDotIndex == -1) ? "" : fileName.substring(lastDotIndex + 1);
@@ -51,7 +69,8 @@ public class ArtifactComponentReference implements ComponentReference {
             return Stream.<FragmentReference>empty();
         }
         try {
-            return Files.list(fragments)
+            return Files
+                    .list(fragments)
                     .filter(Files::isDirectory)
                     .map(path -> new ArtifactFragmentReference(path, this, supportedExtensions));
         } catch (IOException e) {
