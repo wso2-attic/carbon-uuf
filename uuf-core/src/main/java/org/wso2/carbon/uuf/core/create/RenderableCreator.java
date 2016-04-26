@@ -13,6 +13,8 @@ public interface RenderableCreator {
 
     Pair<Renderable, Optional<String>> createPageRenderable(PageReference pageReference, ClassLoader classLoader);
 
+    Renderable createLayoutRenderable(LayoutReference layoutReference);
+
     int hashCode();
 
     boolean equals(Object obj);

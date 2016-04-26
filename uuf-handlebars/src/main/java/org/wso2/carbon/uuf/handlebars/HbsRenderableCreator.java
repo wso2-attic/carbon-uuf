@@ -8,6 +8,7 @@ import org.osgi.service.component.annotations.Component;
 import org.wso2.carbon.uuf.core.Renderable;
 import org.wso2.carbon.uuf.core.create.FileReference;
 import org.wso2.carbon.uuf.core.create.FragmentReference;
+import org.wso2.carbon.uuf.core.create.LayoutReference;
 import org.wso2.carbon.uuf.core.create.PageReference;
 import org.wso2.carbon.uuf.core.create.RenderableCreator;
 
@@ -38,6 +39,12 @@ public class HbsRenderableCreator implements RenderableCreator {
         Optional<String> layoutName = new HbsInitRenderable(templateSource, Optional.empty()).getLayoutName();
         Renderable pageRenderable = new HbsRenderable(templateSource, executable);
         return Pair.of(pageRenderable, layoutName);
+    }
+
+    @Override
+    public Renderable createLayoutRenderable(LayoutReference layoutReference) {
+        TemplateSource templateSource = createTemplateSource(layoutReference.getRenderingFile());
+        return new HbsRenderable(templateSource, Optional.empty());
     }
 
     @Override
