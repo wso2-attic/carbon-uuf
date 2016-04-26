@@ -36,11 +36,11 @@ public class HbsRenderable implements Renderable {
     public static final String DATA_KEY_API = HbsRenderable.class.getName() + "#api";
     //
     private static final Handlebars HANDLEBARS = new Handlebars();
-    private static final Logger log = LoggerFactory.getLogger(HbsRenderable.class);
     private static final Map<String, ResourceHelper> RESOURCE_HELPERS = ImmutableMap.of(
             CssHelper.HELPER_NAME, new CssHelper(),
             JsHelper.HELPER_NAME_HEADER, new JsHelper(JsHelper.HELPER_NAME_HEADER),
             JsHelper.HELPER_NAME_FOOTER, new JsHelper(JsHelper.HELPER_NAME_FOOTER));
+    private static final Logger log = LoggerFactory.getLogger(HbsRenderable.class);
 
     static {
         HANDLEBARS.registerHelper(DefineZoneHelper.HELPER_NAME, new DefineZoneHelper());
@@ -51,9 +51,9 @@ public class HbsRenderable implements Renderable {
         HANDLEBARS.registerHelperMissing(new MissingHelper());
     }
 
-    private final Optional<Executable> executable;
     private final Template compiledTemplate;
     private final String templatePath;
+    private final Optional<Executable> executable;
 
     public HbsRenderable(TemplateSource template) {
         this(template, Optional.<Executable>empty());
@@ -69,12 +69,8 @@ public class HbsRenderable implements Renderable {
         try {
             this.compiledTemplate = HANDLEBARS.compile(template);
         } catch (IOException e) {
-            throw new UUFException("pages template completions error", e);
+            throw new UUFException("Cannot compile Handlebars template '" + templatePath + "'.", e);
         }
-    }
-
-    public Optional<Executable> getScript() {
-        return executable;
     }
 
     @Override
@@ -100,12 +96,13 @@ public class HbsRenderable implements Renderable {
         context.data(DATA_KEY_REQUEST_LOOKUP, requestLookup);
         context.data(DATA_KEY_API, api);
         if (log.isDebugEnabled()) {
-            log.debug("Template " + this + " was applied with context " + DebugUtil.safeJsonString(context));
+            log.debug("Template \"" + this + "\" was applied with context " + DebugUtil.safeJsonString(context));
         }
         try {
             return compiledTemplate.apply(context);
         } catch (IOException e) {
-            throw new UUFException("Error while wringing to in-memory writer", e);
+            throw new UUFException(
+                    "An error occurred when rendering the compiled Handlebars template '" + templatePath + "'.", e);
         }
     }
 
@@ -122,7 +119,6 @@ public class HbsRenderable implements Renderable {
 
     @Override
     public String toString() {
-        return "{\"path\": \"" + templatePath + "\"" +
-                (executable.isPresent() ? ",\"js\": \"" + executable + "\"}" : "}");
+        return "{\"path\": \"" + templatePath + "\"" + (executable.isPresent() ? ", \"js\": " + executable + "}" : "}");
     }
 }
