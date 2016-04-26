@@ -34,7 +34,6 @@ public class HbsRenderable implements Renderable {
     public static final String DATA_KEY_LOOKUP = HbsRenderable.class.getName() + "#lookup";
     public static final String DATA_KEY_REQUEST_LOOKUP = HbsRenderable.class.getName() + "#request-lookup";
     public static final String DATA_KEY_API = HbsRenderable.class.getName() + "#api";
-    public static final String DATA_KEY_CURRENT_WRITER = HbsRenderable.class.getName() + "#writer";
     //
     private static final Handlebars HANDLEBARS = new Handlebars();
     private static final Logger log = LoggerFactory.getLogger(HbsRenderable.class);
@@ -103,16 +102,11 @@ public class HbsRenderable implements Renderable {
         if (log.isDebugEnabled()) {
             log.debug("Template " + this + " was applied with context " + DebugUtil.safeJsonString(context));
         }
-        PlaceholderWriter writer = new PlaceholderWriter();
-        context.data(DATA_KEY_CURRENT_WRITER, writer);
         try {
-            compiledTemplate.apply(context, writer);
+            return compiledTemplate.apply(context);
         } catch (IOException e) {
             throw new UUFException("Error while wringing to in-memory writer", e);
         }
-        String out = writer.toString(getPlaceholderValues(context));
-        writer.close();
-        return out;
     }
 
     private Map<String, String> getPlaceholderValues(Context context) {
