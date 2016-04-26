@@ -9,13 +9,14 @@ import org.wso2.carbon.uuf.core.ClassLoaderProvider;
 import org.wso2.carbon.uuf.core.Component;
 import org.wso2.carbon.uuf.core.ComponentLookup;
 import org.wso2.carbon.uuf.core.Fragment;
+import org.wso2.carbon.uuf.core.Layout;
 import org.wso2.carbon.uuf.core.Page;
 import org.wso2.carbon.uuf.core.Renderable;
-import org.wso2.carbon.uuf.core.exception.UUFException;
 import org.wso2.carbon.uuf.core.UriPatten;
 import org.wso2.carbon.uuf.core.auth.SessionRegistry;
 import org.wso2.carbon.uuf.core.exception.InvalidTypeException;
 import org.wso2.carbon.uuf.core.exception.MalformedConfigurationException;
+import org.wso2.carbon.uuf.core.exception.UUFException;
 import org.yaml.snakeyaml.Yaml;
 
 import java.util.ArrayList;
@@ -120,6 +121,12 @@ public class AppCreator {
                                       ComponentReference componentReference, Set<Component> dependencies,
                                       ClassLoader classLoader) {
 
+        Set<Layout> layouts = componentReference
+                .getLayouts(supportedExtensions)
+                .parallel()
+                .map(this::createLayout)
+                .collect(Collectors.toSet());
+
         Map<String, Fragment> fragments = componentReference
                 .getFragments(supportedExtensions)
                 .parallel()
@@ -157,15 +164,21 @@ public class AppCreator {
                             "' of component '" + getSimpleName(componentName) + "' is malformed.", e);
         }
 
+        ComponentLookup lookup = new ComponentLookup(componentName, componentContext, layouts,
+                                                     new HashSet<>(fragments.values()), bindings, dependencies);
         SortedSet<Page> pages = componentReference
                 .getPages(supportedExtensions)
                 .parallel()
-                .map(pageReference -> createPage(pageReference, classLoader))
+                .map(pageReference -> createPage(pageReference, classLoader, lookup))
                 .collect(Collectors.toCollection(TreeSet::new));
 
-        ComponentLookup lookup = new ComponentLookup(componentName, componentContext, new HashSet<>(fragments.values()),
-                                                     bindings, dependencies);
         return new Component(componentName, componentVersion, pages, lookup);
+    }
+
+    private Layout createLayout(LayoutReference layoutReference) {
+        RenderableCreator renderableCreator = getRenderableCreator(layoutReference.getRenderingFile());
+        Renderable renderer = renderableCreator.createLayoutRenderable(layoutReference);
+        return new Layout(layoutReference.getName(), renderer);
     }
 
     private Fragment createFragment(FragmentReference fragmentReference, ClassLoader classLoader) {
@@ -228,13 +241,26 @@ public class AppCreator {
         return bindings;
     }
 
-    private Page createPage(PageReference pageReference, ClassLoader classLoader) {
+    private Page createPage(PageReference pageReference, ClassLoader classLoader, ComponentLookup lookup) {
         RenderableCreator renderableCreator = getRenderableCreator(pageReference.getRenderingFile());
         Pair<Renderable, Optional<String>> pr = renderableCreator.createPageRenderable(pageReference, classLoader);
-
-        //TODO resolve layout name
         UriPatten uriPatten = new UriPatten(pageReference.getPathPattern());
-        return new Page(uriPatten, pr.getKey());
+        if (pr.getRight().isPresent()) {
+            // This page has a layout.
+            String layoutName = pr.getRight().get();
+            Optional<Layout> layout = lookup.getLayout(layoutName);
+            if (layout.isPresent()) {
+                return new Page(uriPatten, pr.getLeft(), layout.get());
+            } else {
+                throw new IllegalArgumentException("Layout '" + layoutName + "' mentioned in page '" +
+                                                           pageReference.getRenderingFile().getRelativePath() +
+                                                           "' does not exists in component '" +
+                                                           lookup.getComponentName() + "' or its dependencies.");
+            }
+        } else {
+            // This page does not have a layout.
+            return new Page(uriPatten, pr.getLeft());
+        }
     }
 
     private Pair<String, String> getComponentNameAndVersion(String dependencyLine) {
