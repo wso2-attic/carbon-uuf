@@ -5,7 +5,7 @@ import com.github.jknack.handlebars.Helper;
 import com.github.jknack.handlebars.Options;
 import org.wso2.carbon.uuf.core.API;
 import org.wso2.carbon.uuf.core.ComponentLookup;
-import org.wso2.carbon.uuf.core.Renderable;
+import org.wso2.carbon.uuf.core.Fragment;
 import org.wso2.carbon.uuf.core.RequestLookup;
 import org.wso2.carbon.uuf.handlebars.model.ContextModel;
 
@@ -23,7 +23,7 @@ public class DefineZoneHelper implements Helper<String> {
     @Override
     public CharSequence apply(String zoneName, Options options) throws IOException {
         ComponentLookup lookup = options.data(DATA_KEY_LOOKUP);
-        Set<? extends Renderable> bindings = lookup.getBindings(zoneName);
+        Set<Fragment> bindings = lookup.getBindings(zoneName);
         if (bindings.isEmpty()) {
             return "";
         }
@@ -31,8 +31,8 @@ public class DefineZoneHelper implements Helper<String> {
         RequestLookup requestLookup = options.data(DATA_KEY_REQUEST_LOOKUP);
         API api = options.data(DATA_KEY_API);
         StringBuilder buffer = new StringBuilder();
-        for (Renderable renderable : bindings) {
-            buffer.append(renderable.render(new ContextModel(options.context), lookup, requestLookup, api));
+        for (Fragment fragment : bindings) {
+            buffer.append(fragment.render(new ContextModel(options.context), lookup, requestLookup, api));
         }
         return new Handlebars.SafeString(buffer.toString());
     }

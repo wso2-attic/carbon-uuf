@@ -18,11 +18,11 @@ public class ComponentLookup {
     private final String fullyQualifiedNamePrefix;
     private final String componentContext;
     private final Map<String, String> dependenciesContexts;
-    private final SetMultimap<String, Renderable> bindings;
+    private final SetMultimap<String, Fragment> bindings;
     private final Map<String, Fragment> fragments;
 
     public ComponentLookup(String componentName, String componentContext, Set<Fragment> fragments,
-                           SetMultimap<String, ? extends Renderable> bindings, Set<Component> dependencies) {
+                           SetMultimap<String, Fragment> bindings, Set<Component> dependencies) {
         if (componentName.isEmpty()) {
             throw new IllegalArgumentException("Component name cannot be empty.");
         }
@@ -36,7 +36,7 @@ public class ComponentLookup {
 
         this.fragments = fragments.stream().collect(Collectors.toMap(f -> fullyQualifiedName(f.getName()), f -> f));
         this.bindings = HashMultimap.create();
-        for (Map.Entry<String, ? extends Renderable> entry : bindings.entries()) {
+        for (Map.Entry<String, Fragment> entry : bindings.entries()) {
             this.bindings.put(fullyQualifiedName(entry.getKey()), entry.getValue());
         }
 
@@ -65,7 +65,7 @@ public class ComponentLookup {
         return componentContext;
     }
 
-    public Set<Renderable> getBindings(String zoneName) {
+    public Set<Fragment> getBindings(String zoneName) {
         return bindings.get(getFullyQualifiedName(zoneName));
     }
 

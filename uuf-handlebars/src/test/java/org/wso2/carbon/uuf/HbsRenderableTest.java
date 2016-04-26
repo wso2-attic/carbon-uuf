@@ -7,7 +7,6 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.wso2.carbon.uuf.core.ComponentLookup;
 import org.wso2.carbon.uuf.core.Fragment;
-import org.wso2.carbon.uuf.core.Renderable;
 import org.wso2.carbon.uuf.core.RequestLookup;
 import org.wso2.carbon.uuf.handlebars.Executable;
 import org.wso2.carbon.uuf.handlebars.HbsRenderable;
@@ -85,12 +84,12 @@ public class HbsRenderableTest {
     public void testFragmentBind() {
         HbsRenderable hbsRenderable = createHbsRenderable("X {{defineZone \"test-zone\"}} Y");
         ComponentLookup lookup = mock(ComponentLookup.class);
-        Renderable zoneRenderable = mock(Renderable.class);
-        when(zoneRenderable.render(any(), any(), any(), any())).thenReturn("zone content");
-        when(lookup.getBindings("test-zone")).thenReturn(ImmutableSet.of(zoneRenderable));
+        Fragment pushedFragment = mock(Fragment.class);
+        when(pushedFragment.render(any(), any(), any(), any())).thenReturn("fragment content");
+        when(lookup.getBindings("test-zone")).thenReturn(ImmutableSet.of(pushedFragment));
 
         String output = hbsRenderable.render(createEmptyModel(), lookup, null, null);
-        Assert.assertEquals(output, "X zone content Y");
+        Assert.assertEquals(output, "X fragment content Y");
     }
 
     @Test

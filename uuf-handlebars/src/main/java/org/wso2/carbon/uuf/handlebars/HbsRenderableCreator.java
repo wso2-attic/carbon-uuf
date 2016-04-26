@@ -6,13 +6,11 @@ import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.tuple.Pair;
 import org.osgi.service.component.annotations.Component;
 import org.wso2.carbon.uuf.core.Renderable;
-import org.wso2.carbon.uuf.core.create.ComponentReference;
 import org.wso2.carbon.uuf.core.create.FileReference;
 import org.wso2.carbon.uuf.core.create.FragmentReference;
 import org.wso2.carbon.uuf.core.create.PageReference;
 import org.wso2.carbon.uuf.core.create.RenderableCreator;
 
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -33,33 +31,13 @@ public class HbsRenderableCreator implements RenderableCreator {
     }
 
     @Override
-    public Pair<Renderable, Map<String, ? extends Renderable>> createPageRenderables(PageReference pageReference,
-                                                                                     ClassLoader classLoader) {
+    public Pair<Renderable, Optional<String>> createPageRenderable(PageReference pageReference,
+                                                                   ClassLoader classLoader) {
         TemplateSource templateSource = createTemplateSource(pageReference.getRenderingFile());
         Optional<Executable> executable = createSameNameJs(pageReference.getRenderingFile(), classLoader);
-        HbsInitRenderable pageRenderable = new HbsInitRenderable(templateSource, executable);
-        Optional<String> layoutFullNameOpt = pageRenderable.getLayoutName();
-        Renderable renderable;
-        if (layoutFullNameOpt.isPresent()) {
-            //TODO: fix layout name resolving logic to search only on dependencies of the component
-            String layoutFullName = layoutFullNameOpt.get();
-            String layoutName;
-            int lastDot = layoutFullName.lastIndexOf('.');
-            ComponentReference component;
-            if (lastDot >= 0) {
-                String componentName = layoutFullName.substring(0, lastDot);
-                component = pageReference.getAppReference().getComponentReference(getSimpleName(componentName));
-                layoutName = layoutFullName.substring(lastDot + 1);
-            } else {
-                component = pageReference.getComponentReference();
-                layoutName = layoutFullName;
-            }
-            FileReference layoutReference = component.resolveLayout(layoutName + EXTENSION_HANDLEBARS);
-            renderable = new HbsRenderable(createTemplateSource(layoutReference), pageRenderable.getScript());
-        } else {
-            renderable = pageRenderable;
-        }
-        return Pair.of(renderable, pageRenderable.getFillingZones());
+        Optional<String> layoutName = new HbsInitRenderable(templateSource, Optional.empty()).getLayoutName();
+        Renderable pageRenderable = new HbsRenderable(templateSource, executable);
+        return Pair.of(pageRenderable, layoutName);
     }
 
     @Override

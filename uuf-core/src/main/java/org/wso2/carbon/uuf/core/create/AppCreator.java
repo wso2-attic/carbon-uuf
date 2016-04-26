@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -125,7 +126,7 @@ public class AppCreator {
                 .map((fragmentReference) -> createFragment(fragmentReference, classLoader))
                 .collect(Collectors.toMap(Fragment::getName, fragment -> fragment));
 
-        SetMultimap<String, Renderable> bindings;
+        SetMultimap<String, Fragment> bindings;
         try {
             @SuppressWarnings("unchecked")
             Map<Object, Object> bindingsConfig = componentReference
@@ -159,7 +160,7 @@ public class AppCreator {
         SortedSet<Page> pages = componentReference
                 .getPages(supportedExtensions)
                 .parallel()
-                .map(pageReference -> createPage(pageReference, classLoader, bindings))
+                .map(pageReference -> createPage(pageReference, classLoader))
                 .collect(Collectors.toCollection(TreeSet::new));
 
         ComponentLookup lookup = new ComponentLookup(componentName, componentContext, new HashSet<>(fragments.values()),
@@ -173,10 +174,9 @@ public class AppCreator {
         return new Fragment(fragmentReference.getName(), renderer);
     }
 
-    private SetMultimap<String, Renderable> createBindings(Map<Object, Object> bindingsConfig,
-                                                           Map<String, Fragment> fragments,
-                                                           Set<Component> dependencies) {
-        SetMultimap<String, Renderable> bindings = HashMultimap.create();
+    private SetMultimap<String, Fragment> createBindings(Map<Object, Object> bindingsConfig,
+                                                         Map<String, Fragment> fragments, Set<Component> dependencies) {
+        SetMultimap<String, Fragment> bindings = HashMultimap.create();
         if (bindingsConfig.isEmpty()) {
             return bindings;
         }
@@ -200,7 +200,7 @@ public class AppCreator {
                     throw new IllegalArgumentException(
                             "Fragment '" + fragmentName + "' does not exists in this component or its dependencies.");
                 } else {
-                    bindings.put(zoneName, fragment.getRenderer());
+                    bindings.put(zoneName, fragment);
                 }
             } else if (entry.getValue() instanceof ArrayList) {
                 ArrayList fragmentsNames = (ArrayList) entry.getValue();
@@ -215,7 +215,7 @@ public class AppCreator {
                         throw new IllegalArgumentException("Fragment '" + fragmentName + "' does not exists in this " +
                                                                    "component or its dependencies.");
                     } else {
-                        bindings.put(zoneName, fragment.getRenderer());
+                        bindings.put(zoneName, fragment);
                     }
                 }
             } else {
@@ -228,15 +228,11 @@ public class AppCreator {
         return bindings;
     }
 
-    private Page createPage(PageReference pageReference, ClassLoader classLoader,
-                            SetMultimap<String, Renderable> bindings) {
+    private Page createPage(PageReference pageReference, ClassLoader classLoader) {
         RenderableCreator renderableCreator = getRenderableCreator(pageReference.getRenderingFile());
-        Pair<Renderable, Map<String, ? extends Renderable>> pr = renderableCreator.createPageRenderables(pageReference,
-                                                                                                         classLoader);
-        Map<String, ? extends Renderable> bindingsFromPage = pr.getValue();
-        for (Map.Entry<String, ? extends Renderable> entry : bindingsFromPage.entrySet()) {
-            bindings.put(entry.getKey(), entry.getValue());
-        }
+        Pair<Renderable, Optional<String>> pr = renderableCreator.createPageRenderable(pageReference, classLoader);
+
+        //TODO resolve layout name
         UriPatten uriPatten = new UriPatten(pageReference.getPathPattern());
         return new Page(uriPatten, pr.getKey());
     }
