@@ -56,6 +56,14 @@ public class HbsRenderable implements Renderable {
     private final Template compiledTemplate;
     private final String templatePath;
 
+    public HbsRenderable(TemplateSource template) {
+        this(template, Optional.<Executable>empty());
+    }
+
+    public HbsRenderable(TemplateSource template, Executable executable) {
+        this(template, Optional.of(executable));
+    }
+
     public HbsRenderable(TemplateSource template, Optional<Executable> executable) {
         this.executable = executable;
         this.templatePath = template.filename();
