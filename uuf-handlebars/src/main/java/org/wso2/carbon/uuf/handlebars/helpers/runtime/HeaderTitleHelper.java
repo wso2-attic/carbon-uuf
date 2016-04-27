@@ -2,6 +2,7 @@ package org.wso2.carbon.uuf.handlebars.helpers.runtime;
 
 import com.github.jknack.handlebars.Context;
 import com.github.jknack.handlebars.Options;
+import org.wso2.carbon.uuf.handlebars.helpers.FillPlaceholderHelper;
 
 import java.io.IOException;
 import java.util.Optional;
