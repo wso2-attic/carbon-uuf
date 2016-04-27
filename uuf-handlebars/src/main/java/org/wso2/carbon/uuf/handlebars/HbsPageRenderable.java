@@ -8,13 +8,11 @@ import org.wso2.carbon.uuf.core.API;
 import org.wso2.carbon.uuf.core.ComponentLookup;
 import org.wso2.carbon.uuf.core.RequestLookup;
 import org.wso2.carbon.uuf.core.exception.UUFException;
-import org.wso2.carbon.uuf.handlebars.helpers.ResourceHelper;
 import org.wso2.carbon.uuf.handlebars.model.ContextModel;
 import org.wso2.carbon.uuf.model.Model;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -75,20 +73,9 @@ public class HbsPageRenderable extends HbsRenderable {
         } catch (IOException e) {
             throw new UUFException("An error occurred when writing to the in-memory PlaceholderWriter.", e);
         }
-        String out = writer.toString(getPlaceholderValues(context));
+        String out = writer.toString(requestLookup.getPlaceholderContents());
         writer.close();
         return out;
-    }
-
-    private Map<String, String> getPlaceholderValues(Context context) {
-        Map<String, String> placeholderValuesMap = new HashMap<>();
-        for (Map.Entry<String, ResourceHelper> entry : RESOURCE_HELPERS.entrySet()) {
-            Optional<String> placeholderValue = entry.getValue().getPlaceholderValue(context);
-            if (placeholderValue.isPresent()) {
-                placeholderValuesMap.put(entry.getKey(), placeholderValue.get());
-            }
-        }
-        return placeholderValuesMap;
     }
 
     @Override
