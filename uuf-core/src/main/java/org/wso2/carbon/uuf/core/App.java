@@ -48,7 +48,7 @@ public class App {
             }
         }
         throw new UUFException("Requested page '" + uriWithoutContext + "' does not exists.",
-                               Response.Status.NOT_FOUND);
+                Response.Status.NOT_FOUND);
     }
 
     public boolean hasPage(String uri) {

@@ -50,6 +50,10 @@
             <groupId>org.wso2.carbon.caching</groupId>
             <artifactId>org.wso2.carbon.caching</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.jndi</groupId>
+            <artifactId>org.wso2.carbon.jndi</artifactId>
+        </dependency>
         <!-- Dependencies for MSF4J -->
         <dependency>
             <groupId>org.wso2.eclipse.osgi</groupId>
@@ -172,9 +176,11 @@
         <import.package>
             org.osgi.framework;version="${osgi.framework.import.version.range}",
             org.wso2.carbon.kernel.startupresolver.*;version="${carbon.kernel.version.range}",
+            org.osgi.service.jndi;version="1.0.0",
             org.osgi.framework.wiring,
             org.wso2.msf4j.*,
             javax.ws.rs.*,
+            javax.naming,
             org.slf4j.*;version="${slf4j.version.range}",
             com.google.common.*;version="${guava.version.range}",
             io.netty.handler.*,

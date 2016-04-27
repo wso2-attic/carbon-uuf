@@ -179,6 +179,11 @@
                 <artifactId>commons-io</artifactId>
                 <version>${commons-io.wso2.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.jndi</groupId>
+                <artifactId>org.wso2.carbon.jndi</artifactId>
+                <version>${org.wso2.carbon.jndi.version}</version>
+            </dependency>
             <!--TODO: manage-->
             <dependency>
                 <groupId>org.mockito</groupId>
@@ -281,6 +286,7 @@
         <antlr-version>4.5.1-1</antlr-version>
         <org.apache.commons.commons-lang3.version>3.1</org.apache.commons.commons-lang3.version>
         <javax.cache-api.version>1.0.0</javax.cache-api.version>
+        <org.wso2.carbon.jndi.version>1.0.0-SNAPSHOT</org.wso2.carbon.jndi.version>
 
         <!-- Dependencies for MSF4J -->
         <pax.logging.api.version>1.8.4</pax.logging.api.version>
