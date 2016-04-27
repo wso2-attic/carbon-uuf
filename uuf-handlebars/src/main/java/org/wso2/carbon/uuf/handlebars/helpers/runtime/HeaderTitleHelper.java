@@ -12,7 +12,7 @@ import static org.wso2.carbon.uuf.handlebars.HbsRenderable.DATA_KEY_REQUEST_LOOK
 public class HeaderTitleHelper extends FillPlaceholderHelper {
     public static final String HELPER_NAME = "headerTitle";
 
-    protected HeaderTitleHelper() {
+    public HeaderTitleHelper() {
         super(HELPER_NAME);
     }
 

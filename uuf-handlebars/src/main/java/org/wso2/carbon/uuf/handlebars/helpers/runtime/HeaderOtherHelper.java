@@ -12,7 +12,7 @@ public class HeaderOtherHelper extends FillPlaceholderHelper {
 
     public static final String HELPER_NAME = "headerOther";
 
-    protected HeaderOtherHelper() {
+    public HeaderOtherHelper() {
         super(HELPER_NAME);
     }
 

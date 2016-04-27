@@ -6,14 +6,16 @@ import com.github.jknack.handlebars.io.TemplateSource;
 import com.google.common.collect.ImmutableMap;
 import org.wso2.carbon.uuf.core.Renderable;
 import org.wso2.carbon.uuf.core.exception.UUFException;
+import org.wso2.carbon.uuf.handlebars.helpers.FillPlaceholderHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.CssHelper;
+import org.wso2.carbon.uuf.handlebars.helpers.runtime.DefinePlaceholderHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.DefineZoneHelper;
+import org.wso2.carbon.uuf.handlebars.helpers.runtime.HeaderOtherHelper;
+import org.wso2.carbon.uuf.handlebars.helpers.runtime.HeaderTitleHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.IncludeFragmentHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.JsHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.MissingHelper;
-import org.wso2.carbon.uuf.handlebars.helpers.runtime.PlaceholderHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.PublicHelper;
-import org.wso2.carbon.uuf.handlebars.helpers.ResourceHelper;
 
 import java.io.IOException;
 import java.util.Map;
@@ -26,15 +28,17 @@ public abstract class HbsRenderable implements Renderable {
     public static final String DATA_KEY_CURRENT_WRITER = HbsRenderable.class.getName() + "#writer";
     //
     protected static final Handlebars HANDLEBARS = new Handlebars();
-    protected static final Map<String, ResourceHelper> RESOURCE_HELPERS = ImmutableMap.of(
+    protected static final Map<String, FillPlaceholderHelper> RESOURCE_HELPERS = ImmutableMap.of(
             CssHelper.HELPER_NAME, new CssHelper(),
             JsHelper.HELPER_NAME_HEADER, new JsHelper(JsHelper.HELPER_NAME_HEADER),
-            JsHelper.HELPER_NAME_FOOTER, new JsHelper(JsHelper.HELPER_NAME_FOOTER));
+            JsHelper.HELPER_NAME_FOOTER, new JsHelper(JsHelper.HELPER_NAME_FOOTER),
+            HeaderTitleHelper.HELPER_NAME, new HeaderTitleHelper(),
+            HeaderOtherHelper.HELPER_NAME, new HeaderOtherHelper());
 
     static {
         HANDLEBARS.registerHelper(DefineZoneHelper.HELPER_NAME, new DefineZoneHelper());
         HANDLEBARS.registerHelper(IncludeFragmentHelper.HELPER_NAME, new IncludeFragmentHelper());
-        HANDLEBARS.registerHelper(PlaceholderHelper.HELPER_NAME, new PlaceholderHelper());
+        HANDLEBARS.registerHelper(DefinePlaceholderHelper.HELPER_NAME, new DefinePlaceholderHelper());
         HANDLEBARS.registerHelper(PublicHelper.HELPER_NAME, new PublicHelper());
         RESOURCE_HELPERS.forEach(HANDLEBARS::registerHelper);
         HANDLEBARS.registerHelperMissing(new MissingHelper());
