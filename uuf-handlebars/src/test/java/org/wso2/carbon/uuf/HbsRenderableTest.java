@@ -9,6 +9,7 @@ import org.wso2.carbon.uuf.core.ComponentLookup;
 import org.wso2.carbon.uuf.core.Fragment;
 import org.wso2.carbon.uuf.core.RequestLookup;
 import org.wso2.carbon.uuf.handlebars.Executable;
+import org.wso2.carbon.uuf.handlebars.HbsFragmentRenderable;
 import org.wso2.carbon.uuf.handlebars.HbsRenderable;
 import org.wso2.carbon.uuf.model.MapModel;
 import org.wso2.carbon.uuf.model.Model;
@@ -25,12 +26,12 @@ public class HbsRenderableTest {
 
     private static HbsRenderable createHbsRenderable(String sourceStr) {
         StringTemplateSource stringTemplateSource = new StringTemplateSource("<test-source>", sourceStr);
-        return new HbsRenderable(stringTemplateSource, Optional.empty());
+        return new HbsFragmentRenderable(stringTemplateSource);
     }
 
     private static HbsRenderable createHbsRenderable(String sourceStr, Executable executable) {
         StringTemplateSource stringTemplateSource = new StringTemplateSource("<test-source>", sourceStr);
-        return new HbsRenderable(stringTemplateSource, Optional.of(executable));
+        return new HbsFragmentRenderable(stringTemplateSource, executable);
     }
 
     private static Model createEmptyModel() {
