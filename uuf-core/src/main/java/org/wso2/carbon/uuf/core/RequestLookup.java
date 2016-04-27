@@ -43,7 +43,7 @@ public class RequestLookup {
         return publicUriStack.peekLast();
     }
 
-    public void addToPLaceholder(String placeholderName, String content) {
+    public void addToPlaceholder(String placeholderName, String content) {
         StringBuilder buffer = placeholderBuffers.get(placeholderName);
         if (buffer == null) {
             buffer = new StringBuilder(content);
@@ -56,6 +56,14 @@ public class RequestLookup {
     public Optional<String> getPlaceholderContent(String placeholderName) {
         StringBuilder buffer = placeholderBuffers.get(placeholderName);
         return (buffer == null) ? Optional.<String>empty() : Optional.of(buffer.toString());
+    }
+
+    public Map<String, String> getPlaceholderContents() {
+        Map<String, String> placeholderContents = new HashMap<>(placeholderBuffers.size());
+        for (Map.Entry<String, StringBuilder> entry : placeholderBuffers.entrySet()) {
+            placeholderContents.put(entry.getKey(), entry.getValue().toString());
+        }
+        return placeholderContents;
     }
 
     public void putToZone(String zoneName, String content) {
