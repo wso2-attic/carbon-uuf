@@ -10,9 +10,9 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.Optional;
 
-public class HbsInitRenderable {
+public class HbsPagePreprocessor {
 
-    public static final String DATA_KEY_CURRENT_LAYOUT = HbsInitRenderable.class.getName() + "#layout";
+    public static final String DATA_KEY_CURRENT_LAYOUT = HbsPagePreprocessor.class.getName() + "#layout";
     private static final Handlebars HANDLEBARS = new Handlebars();
 
     static {
@@ -22,7 +22,7 @@ public class HbsInitRenderable {
 
     private final Optional<String> layout;
 
-    public HbsInitRenderable(TemplateSource template) {
+    public HbsPagePreprocessor(TemplateSource template) {
         String templatePath = template.filename();
         Context context = Context.newContext(Collections.emptyMap());
         try {

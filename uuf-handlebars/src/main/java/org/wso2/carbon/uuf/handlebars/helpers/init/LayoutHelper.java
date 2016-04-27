@@ -6,7 +6,7 @@ import org.wso2.carbon.uuf.core.exception.UUFException;
 
 import java.io.IOException;
 
-import static org.wso2.carbon.uuf.handlebars.HbsInitRenderable.DATA_KEY_CURRENT_LAYOUT;
+import static org.wso2.carbon.uuf.handlebars.HbsPagePreprocessor.DATA_KEY_CURRENT_LAYOUT;
 
 public class LayoutHelper implements Helper<String> {
 

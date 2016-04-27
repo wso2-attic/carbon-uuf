@@ -6,26 +6,26 @@ import com.github.jknack.handlebars.io.StringTemplateSource;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.wso2.carbon.uuf.core.Renderable;
-import org.wso2.carbon.uuf.handlebars.HbsInitRenderable;
+import org.wso2.carbon.uuf.handlebars.HbsPagePreprocessor;
 import org.wso2.carbon.uuf.model.MapModel;
 
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 
-public class HbsInitRenderableTest {
+public class HbsPagePreprocessorTest {
 
-    private static HbsInitRenderable createHbsRenderable(String sourceStr) {
+    private static HbsPagePreprocessor createHbsRenderable(String sourceStr) {
         StringTemplateSource stringTemplateSource = new StringTemplateSource("<test-source>", sourceStr);
-        return new HbsInitRenderable(stringTemplateSource, Optional.empty());
+        return new HbsPagePreprocessor(stringTemplateSource, Optional.empty());
     }
 
     @Test
     public void testNoZonesInZones() {
         String content = "\n{{#fillZone \"myZone\"}}\n{{#fillZone \"innerZone\"}}{{/fillZone}}{{/fillZone}}";
         try {
-            HbsInitRenderable renderable = createHbsRenderable(content);
-            Map<String, HbsInitRenderable> fillingZones = renderable.getFillingZones();
+            HbsPagePreprocessor renderable = createHbsRenderable(content);
+            Map<String, HbsPagePreprocessor> fillingZones = renderable.getFillingZones();
             Assert.assertEquals(fillingZones.size(), 1); //should never hit, to create rid of unused warning
             Assert.fail("fill zone inside fill zone is not valid.");
         } catch (HandlebarsException ex) {
@@ -37,8 +37,8 @@ public class HbsInitRenderableTest {
 
     @Test
     public void testFillingZonesLineNumbers() {
-        HbsInitRenderable renderable = createHbsRenderable("\nfilling\n*{{#fillZone \"my-zone\"}} {{a}}{{/fillZone}}");
-        Map<String, HbsInitRenderable> fillingZones = renderable.getFillingZones();
+        HbsPagePreprocessor renderable = createHbsRenderable("\nfilling\n*{{#fillZone \"my-zone\"}} {{a}}{{/fillZone}}");
+        Map<String, HbsPagePreprocessor> fillingZones = renderable.getFillingZones();
         Renderable fillingZone = fillingZones.get("my-zone");
         Assert.assertNotNull(fillingZone, "zone's inner content must be available under name 'my-zone'");
         try {

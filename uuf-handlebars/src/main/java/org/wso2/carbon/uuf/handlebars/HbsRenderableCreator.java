@@ -40,7 +40,7 @@ public class HbsRenderableCreator implements RenderableCreator {
                                                                    ClassLoader classLoader) {
         TemplateSource templateSource = createTemplateSource(pageReference.getRenderingFile());
         Optional<Executable> executable = createSameNameJs(pageReference.getRenderingFile(), classLoader);
-        Optional<String> layoutName = new HbsInitRenderable(templateSource).getLayoutName();
+        Optional<String> layoutName = new HbsPagePreprocessor(templateSource).getLayoutName();
         if (executable.isPresent()) {
             return Pair.of(new HbsPageRenderable(templateSource, executable.get()), layoutName);
         } else {
