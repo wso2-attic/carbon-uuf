@@ -25,7 +25,6 @@ import org.wso2.carbon.uuf.model.Model;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -51,8 +50,8 @@ public class HbsRenderable implements Renderable {
         HANDLEBARS.registerHelperMissing(new MissingHelper());
     }
 
-    private final Template compiledTemplate;
-    private final String templatePath;
+    protected final Template compiledTemplate;
+    protected final String templatePath;
     private final Optional<Executable> executable;
 
     public HbsRenderable(TemplateSource template) {
@@ -104,17 +103,6 @@ public class HbsRenderable implements Renderable {
             throw new UUFException(
                     "An error occurred when rendering the compiled Handlebars template '" + templatePath + "'.", e);
         }
-    }
-
-    private Map<String, String> getPlaceholderValues(Context context) {
-        Map<String, String> placeholderValuesMap = new HashMap<>();
-        for (Map.Entry<String, ResourceHelper> entry : RESOURCE_HELPERS.entrySet()) {
-            Optional<String> placeholderValue = entry.getValue().getPlaceholderValue(context);
-            if (placeholderValue.isPresent()) {
-                placeholderValuesMap.put(entry.getKey(), placeholderValue.get());
-            }
-        }
-        return placeholderValuesMap;
     }
 
     @Override
