@@ -28,7 +28,11 @@ public class HbsRenderableCreator implements RenderableCreator {
     public Renderable createFragmentRenderable(FragmentReference fragmentReference, ClassLoader classLoader) {
         TemplateSource templateSource = createTemplateSource(fragmentReference.getRenderingFile());
         Optional<Executable> executable = createSameNameJs(fragmentReference.getRenderingFile(), classLoader);
-        return new HbsRenderable(templateSource, executable);
+        if (executable.isPresent()) {
+            return new HbsFragmentRenderable(templateSource, executable.get());
+        } else {
+            return new HbsFragmentRenderable(templateSource);
+        }
     }
 
     @Override
@@ -36,15 +40,18 @@ public class HbsRenderableCreator implements RenderableCreator {
                                                                    ClassLoader classLoader) {
         TemplateSource templateSource = createTemplateSource(pageReference.getRenderingFile());
         Optional<Executable> executable = createSameNameJs(pageReference.getRenderingFile(), classLoader);
-        Optional<String> layoutName = new HbsInitRenderable(templateSource, Optional.empty()).getLayoutName();
-        Renderable pageRenderable = new HbsRenderable(templateSource, executable);
-        return Pair.of(pageRenderable, layoutName);
+        Optional<String> layoutName = new HbsInitRenderable(templateSource).getLayoutName();
+        if (executable.isPresent()) {
+            return Pair.of(new HbsPageRenderable(templateSource, executable.get()), layoutName);
+        } else {
+            return Pair.of(new HbsPageRenderable(templateSource), layoutName);
+        }
     }
 
     @Override
     public Renderable createLayoutRenderable(LayoutReference layoutReference) {
         TemplateSource templateSource = createTemplateSource(layoutReference.getRenderingFile());
-        return new HbsRenderable(templateSource, Optional.empty());
+        return new HbsLayoutRenderable(templateSource);
     }
 
     @Override
@@ -64,15 +71,6 @@ public class HbsRenderableCreator implements RenderableCreator {
 
     private String withoutExtension(String name) {
         return name.substring(0, (name.length() - EXTENSION_HANDLEBARS.length()));
-    }
-
-    private String getSimpleName(String componentName) {
-        int lastDot = componentName.lastIndexOf('.');
-        if (lastDot >= 0) {
-            return componentName.substring(lastDot + 1);
-        } else {
-            return componentName;
-        }
     }
 
     @Override
