@@ -42,7 +42,7 @@ public class HbsFragmentRenderable extends HbsRenderable {
     public String render(Model model, ComponentLookup componentLookup, RequestLookup requestLookup, API api) {
         if (executable.isPresent()) {
             //TODO: set context for executable
-            Object jsOutput = executable.get().execute(Collections.emptyMap());
+            Object jsOutput = executable.get().execute(Collections.emptyMap(), api);
             if (log.isDebugEnabled()) {
                 log.debug("js ran produced output " + DebugUtil.safeJsonString(jsOutput));
             }
