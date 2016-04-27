@@ -1,29 +1,29 @@
 package org.wso2.carbon.uuf.handlebars.helpers.runtime;
 
-import com.github.jknack.handlebars.Context;
 import com.github.jknack.handlebars.Options;
+import org.wso2.carbon.uuf.core.RequestLookup;
 import org.wso2.carbon.uuf.handlebars.helpers.FillPlaceholderHelper;
 
 import java.io.IOException;
 import java.util.Optional;
 
-public class HeaderTitleHelper extends FillPlaceholderHelper<String> {
+import static org.wso2.carbon.uuf.handlebars.HbsRenderable.DATA_KEY_REQUEST_LOOKUP;
+
+public class HeaderTitleHelper extends FillPlaceholderHelper {
     public static final String HELPER_NAME = "headerTitle";
 
-    public HeaderTitleHelper() {
+    protected HeaderTitleHelper() {
         super(HELPER_NAME);
     }
 
     public CharSequence apply(String title, Options options) throws IOException {
-        if (getValue(options).isPresent()) {
-            throw new IllegalStateException("Page header title is already set.");
+        RequestLookup requestLookup = options.data(DATA_KEY_REQUEST_LOOKUP);
+        Optional<String> currentTitle = requestLookup.getPlaceholderContent(placeholderName);
+        if (currentTitle.isPresent()) {
+            throw new IllegalStateException(
+                    "Cannot set header title. It is already set to '" + currentTitle.get() + "'.");
         }
-        setValue(options, title);
+        requestLookup.addToPlaceholder(HELPER_NAME, title);
         return "";
-    }
-
-    @Override
-    public Optional<String> getPlaceholderValue(Context handlebarsContext) {
-        return getValue(handlebarsContext);
     }
 }
