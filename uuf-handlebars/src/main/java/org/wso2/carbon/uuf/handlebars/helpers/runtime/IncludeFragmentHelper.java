@@ -22,6 +22,7 @@ import static org.wso2.carbon.uuf.handlebars.HbsRenderable.DATA_KEY_LOOKUP;
 import static org.wso2.carbon.uuf.handlebars.HbsRenderable.DATA_KEY_REQUEST_LOOKUP;
 
 public class IncludeFragmentHelper implements Helper<String> {
+
     public static final String HELPER_NAME = "includeFragment";
     private static final Logger log = LoggerFactory.getLogger(IncludeFragmentHelper.class);
 
@@ -46,7 +47,7 @@ public class IncludeFragmentHelper implements Helper<String> {
         API api = options.data(DATA_KEY_API);
 
         if (log.isDebugEnabled()) {
-            log.debug("Fragment " + fragment + " is called from '" + options.fn.text() + "'.");
+            log.debug("Fragment \"" + fragment + "\" is called from '" + options.fn.text() + "'.");
         }
         String content = fragment.render(model, lookup, requestLookup, api);
         return new Handlebars.SafeString(content);
