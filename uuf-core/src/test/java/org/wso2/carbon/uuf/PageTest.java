@@ -19,7 +19,8 @@ public class PageTest {
         final String content = "Hello world from a page!";
         Renderable renderable = (model, componentLookup, requestLookup, api) -> content;
         ComponentLookup lookup = new ComponentLookup("componentName", "/componentContext", Collections.emptySet(),
-                                                     ImmutableSetMultimap.of(), Collections.emptySet());
+                                                     Collections.emptySet(), ImmutableSetMultimap.of(),
+                                                     Collections.emptySet());
         RequestLookup requestLookup = new RequestLookup("/appContext", any());
         Page page = new Page(any(), renderable);
 

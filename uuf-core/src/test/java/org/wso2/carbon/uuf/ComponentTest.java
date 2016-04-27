@@ -20,6 +20,11 @@ import static org.mockito.Matchers.anyString;
 
 public class ComponentTest {
 
+    private static ComponentLookup createComponentLookup(String componentName) {
+        return new ComponentLookup(componentName, "/componentContext", Collections.emptySet(), Collections.emptySet(),
+                                   ImmutableSetMultimap.of(), Collections.emptySet());
+    }
+
     private static Page createPage(String uriPattern, String content) {
         return new Page(new UriPatten(uriPattern), null) {
             @Override
@@ -33,8 +38,7 @@ public class ComponentTest {
     public void testRenderExistingPage() {
         Page p1 = createPage("/test/page/one", "Hello world from test page one!");
         Page p2 = createPage("/test/page/two", "Hello world from test page two!");
-        ComponentLookup lookup = new ComponentLookup("componentName", "/componentContext", Collections.emptySet(),
-                                                     ImmutableSetMultimap.of(), Collections.emptySet());
+        ComponentLookup lookup = createComponentLookup("componentName");
         Component component = new Component("componentName", anyString(), ImmutableSortedSet.of(p1, p2), lookup);
 
         Optional<String> output = component.renderPage("/test/page/one", any(), any());
@@ -45,8 +49,7 @@ public class ComponentTest {
     public void testRenderExistingPageWithWildcard() {
         Page p1 = createPage("/test/page/{wildcard}/one", "Hello world from test page one!");
         Page p2 = createPage("/test/page/no-wildcard/two", "Hello world from test page two!");
-        ComponentLookup lookup = new ComponentLookup("componentName", "/componentContext", Collections.emptySet(),
-                                                     ImmutableSetMultimap.of(), Collections.emptySet());
+        ComponentLookup lookup = createComponentLookup("componentName");
         Component component = new Component("componentName", anyString(), ImmutableSortedSet.of(p1, p2), lookup);
 
         //TODO: fix bug in URiPattern class, if there is a '-' in the wildcard value then matching returns false.
@@ -58,8 +61,7 @@ public class ComponentTest {
     public void testRenderNonExistingPage() {
         Page p1 = createPage("/test/page/one", anyString());
         Page p2 = createPage("/test/page/two", anyString());
-        ComponentLookup lookup = new ComponentLookup("componentName", "/componentContext", Collections.emptySet(),
-                                                     ImmutableSetMultimap.of(), Collections.emptySet());
+        ComponentLookup lookup = createComponentLookup("componentName");
         Component component = new Component("componentName", anyString(), ImmutableSortedSet.of(p1, p2), lookup);
 
         Optional<String> output = component.renderPage("/test/page/three", any(), any());
