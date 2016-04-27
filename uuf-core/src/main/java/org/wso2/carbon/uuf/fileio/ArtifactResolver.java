@@ -1,6 +1,7 @@
 package org.wso2.carbon.uuf.fileio;
 
 import org.wso2.carbon.kernel.utils.Utils;
+import org.wso2.carbon.uuf.core.exception.PageNotFoundException;
 import org.wso2.carbon.uuf.core.exception.UUFException;
 import org.wso2.carbon.uuf.core.create.AppReference;
 import org.wso2.carbon.uuf.core.create.AppResolver;
@@ -48,8 +49,7 @@ public class ArtifactResolver implements AppResolver {
                 return new ArtifactAppReference(path);
             }
         }
-        throw new UUFException("app by the name '" + name + "' is not found!",
-                Response.Status.NOT_FOUND);
+        throw new PageNotFoundException("App by the name '" + name + "' is not found!");
 
     }
 }

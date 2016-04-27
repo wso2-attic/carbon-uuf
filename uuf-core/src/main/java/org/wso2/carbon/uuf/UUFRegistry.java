@@ -7,9 +7,11 @@ import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.core.App;
 import org.wso2.carbon.uuf.core.MimeMapper;
 import org.wso2.carbon.uuf.core.RequestLookup;
-import org.wso2.carbon.uuf.core.exception.UUFException;
 import org.wso2.carbon.uuf.core.create.AppCreator;
 import org.wso2.carbon.uuf.core.create.AppResolver;
+import org.wso2.carbon.uuf.core.exception.PageNotFoundException;
+import org.wso2.carbon.uuf.core.exception.PageRedirectException;
+import org.wso2.carbon.uuf.core.exception.UUFException;
 import org.wso2.carbon.uuf.fileio.StaticResolver;
 import org.wso2.msf4j.util.SystemVariableUtil;
 
@@ -98,16 +100,14 @@ public class UUFRegistry {
                     return renderDebug(app, uriWithoutAppContext);
                 } else {
                     String page = app.renderPage(uri.substring(appContext.length()),
-                                                 new RequestLookup(appContext, request));
+                            new RequestLookup(appContext, request));
                     return Response.ok(page).header("Content-Type", "text/html");
                 }
             }
-            //TODO: Don't catch this Ex, move the logic below the 'instanceof' check
-        } catch (UUFException e) {
-
+        } catch (PageNotFoundException e){
             // https://googlewebmastercentral.blogspot.com/2010/04/to-slash-or-not-to-slash.html
             // if the tailing / is extra or a it is missing, send 301
-            if (e.getStatus() == Response.Status.NOT_FOUND && app != null) {
+            if (app != null) {
                 if (uri.endsWith("/")) {
                     String uriWithoutSlash = uriWithoutAppContext.substring(0, uriWithoutAppContext.length() - 1);
                     if (app.hasPage(uriWithoutSlash)) {
@@ -120,15 +120,19 @@ public class UUFRegistry {
                     }
                 }
             }
-
-            return sendError(appName, e, e.getStatus());
+            return createErrorResponse(appName, e, e.getHttpStatusCode());
+        } catch (PageRedirectException e) {
+            return createErrorResponse(appName, e, e.getHttpStatusCode()).header("Location", e.getRedirectUrl());
         } catch (Exception e) {
-            Response.Status status = Response.Status.INTERNAL_SERVER_ERROR;
+            int httpStatusCode = 500;
             Throwable cause = e.getCause();
             //TODO check this loop's logic
             while (cause != null) {
+                if (cause instanceof PageNotFoundException) {
+                    httpStatusCode = ((PageNotFoundException) cause).getHttpStatusCode();
+                    break;
+                }
                 if (cause instanceof UUFException) {
-                    status = ((UUFException) cause).getStatus();
                     break;
                 }
                 if (cause == cause.getCause()) {
@@ -136,7 +140,7 @@ public class UUFRegistry {
                 }
                 cause = cause.getCause();
             }
-            return sendError(appName, e, status);
+            return createErrorResponse(appName, e, httpStatusCode);
         }
     }
 
@@ -185,13 +189,9 @@ public class UUFRegistry {
         return (mime.isPresent()) ? mime.get() : "text/html";
     }
 
-    private Response.ResponseBuilder sendError(String appName, Exception e, Response.Status status) {
-        // FIXME: 4/22/16 Don't put the stacktrace in the error message
-        log.error("error while serving context '" + appName + "'", e);
-
-        StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(sw);
-        e.printStackTrace(pw);
-        return Response.status(status).entity(sw.toString()).header("Content-Type", "text/plain");
+    private Response.ResponseBuilder createErrorResponse(String appName, Exception e, int httpStatusCode) {
+        String errorMessage = "Error while serving context /'" + appName + "'.";
+        log.error(errorMessage, e);
+        return Response.status(httpStatusCode).entity(errorMessage).header("Content-Type", "text/plain");
     }
 }

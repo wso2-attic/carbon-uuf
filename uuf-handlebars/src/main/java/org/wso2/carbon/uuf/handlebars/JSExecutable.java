@@ -4,6 +4,7 @@ import jdk.nashorn.api.scripting.AbstractJSObject;
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.uuf.core.API;
 import org.wso2.carbon.uuf.core.exception.UUFException;
 
 import javax.script.Invocable;
@@ -16,7 +17,7 @@ public class JSExecutable implements Executable {
 
     private static final NashornScriptEngineFactory factory = new NashornScriptEngineFactory();
     private final Optional<String> scriptPath;
-    private final Invocable engine;
+    private final ScriptEngine engine;
     private static final Logger log = LoggerFactory.getLogger(JSExecutable.class);
 
     public JSExecutable(String scriptSource, ClassLoader componentClassLoader, Optional<String> scriptPath) {
@@ -28,10 +29,9 @@ public class JSExecutable implements Executable {
 
         try {
             ScriptEngine engine = factory.getScriptEngine(new String[] { "-strict" }, componentClassLoader);
-            engine.put("MSSCaller", new MSSCaller());
-            engine.eval("var callService = function(method,uri){return JSON.parse(MSSCaller(method,uri))}");
+            engine.eval("var callOSGiService = function(className, methodName, args){return API.callOSGiService(className, methodName, args)}");
             engine.eval(scriptSource);
-            this.engine = (Invocable) engine;
+            this.engine = engine;
         } catch (ScriptException e) {
             throw new UUFException("error evaluating javascript", e);
         }
@@ -41,10 +41,11 @@ public class JSExecutable implements Executable {
         return scriptPath.orElse("\"<in-memory-script>\"");
     }
 
-    public Object execute(Object context) {
+    public Object execute(Object context, API api) {
         Object rv;
         try {
-            rv = engine.invokeFunction("onRequest", context);
+            engine.put("API", api);
+            rv = ((Invocable)engine).invokeFunction("onRequest", context);
         } catch (ScriptException e) {
             throw new UUFException("error while executing script " + getPath(), e);
         } catch (NoSuchMethodException e) {

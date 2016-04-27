@@ -1,6 +1,7 @@
 package org.wso2.carbon.uuf.core;
 
 import org.wso2.carbon.uuf.core.auth.SessionRegistry;
+import org.wso2.carbon.uuf.core.exception.PageNotFoundException;
 import org.wso2.carbon.uuf.core.exception.UUFException;
 
 import javax.ws.rs.core.Response;
@@ -14,7 +15,6 @@ public class App {
     private final Map<String, Component> components;
     private final Component rootComponent;
     private final SessionRegistry sessionRegistry;
-    private final API api;
 
     public App(String context, Set<Component> components, SessionRegistry sessionRegistry) {
         if (!context.startsWith("/")) {
@@ -25,17 +25,17 @@ public class App {
         this.components = components.stream().collect(Collectors.toMap(Component::getContext, cmp -> cmp));
         this.rootComponent = this.components.get(Component.ROOT_COMPONENT_CONTEXT);
         this.sessionRegistry = sessionRegistry;
-        this.api = new API(sessionRegistry);
     }
 
     public String renderPage(String uriWithoutContext, RequestLookup requestLookup) {
-        // First try to render the page with root component
+        API api = new API(sessionRegistry);
+        // First try to render the page with root component.
         Optional<String> output = rootComponent.renderPage(uriWithoutContext, requestLookup, api);
         if (output.isPresent()) {
             return output.get();
         }
 
-        // Since root components doesn't have the page, try with other components
+        // Since root components doesn't have the page, try with other components.
         for (Map.Entry<String, Component> entry : components.entrySet()) {
             if (uriWithoutContext.startsWith(entry.getKey())) {
                 Component component = entry.getValue();
@@ -47,8 +47,7 @@ public class App {
                 break;
             }
         }
-        throw new UUFException("Requested page '" + uriWithoutContext + "' does not exists.",
-                Response.Status.NOT_FOUND);
+        throw new PageNotFoundException("Requested page '" + uriWithoutContext + "' does not exists.");
     }
 
     public boolean hasPage(String uri) {

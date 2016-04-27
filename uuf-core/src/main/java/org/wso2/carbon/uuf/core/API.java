@@ -2,6 +2,8 @@ package org.wso2.carbon.uuf.core;
 
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.wso2.carbon.uuf.core.auth.SessionRegistry;
+import org.wso2.carbon.uuf.core.exception.HTTPErrorException;
+import org.wso2.carbon.uuf.core.exception.PageRedirectException;
 import org.wso2.carbon.uuf.core.exception.UUFException;
 
 import javax.naming.Binding;
@@ -59,26 +61,6 @@ public class API {
     }
 
     /**
-     * Returns the highest ranked OSGi service for the given service class name.
-     * @param serviceClassName
-     * @return best matched OSGi service
-     */
-    public Object getOSGiService(String serviceClassName) {
-        try {
-            Context context = new InitialContext();
-            Object serviceInstance = context.lookup("osgi:service/" + serviceClassName);
-            if (serviceInstance == null) {
-                throw new IllegalArgumentException("Cannot find any OSGi service registered with the name '" +
-                        serviceClassName + "'.");
-            }
-            return serviceInstance;
-        } catch (NamingException e) {
-            throw new UUFException("Cannot create the initial context when calling OSGi service '" +
-                    serviceClassName + "'.");
-        }
-    }
-
-    /**
      * Returns a map of service implementation class names and instances of all OSGi services for the given
      * service class name.
      * @param serviceClassName
@@ -109,11 +91,11 @@ public class API {
     }
 
     public void sendError(int status, String message) {
-        throw new UnsupportedOperationException("To be implemented");
+        throw new HTTPErrorException(status, message);
     }
 
-    public void sendRedirect(String url) {
-        throw new UnsupportedOperationException("To be implemented");
+    public void sendRedirect(String redirectUrl) {
+        throw new PageRedirectException(redirectUrl);
     }
 
     public void setTheme(String name) {
