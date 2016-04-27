@@ -1,5 +1,7 @@
 package org.wso2.carbon.uuf.handlebars.helpers.runtime;
 
+import org.wso2.carbon.uuf.handlebars.helpers.ResourceHelper;
+
 public class CssHelper extends ResourceHelper {
 
     public static final String HELPER_NAME = "css";

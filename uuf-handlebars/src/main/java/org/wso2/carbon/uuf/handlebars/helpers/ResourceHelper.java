@@ -1,4 +1,4 @@
-package org.wso2.carbon.uuf.handlebars.helpers.runtime;
+package org.wso2.carbon.uuf.handlebars.helpers;
 
 import com.github.jknack.handlebars.Context;
 import com.github.jknack.handlebars.Handlebars;

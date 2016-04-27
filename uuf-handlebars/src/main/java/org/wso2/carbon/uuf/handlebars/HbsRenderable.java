@@ -13,7 +13,7 @@ import org.wso2.carbon.uuf.handlebars.helpers.runtime.JsHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.MissingHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.PlaceholderHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.PublicHelper;
-import org.wso2.carbon.uuf.handlebars.helpers.runtime.ResourceHelper;
+import org.wso2.carbon.uuf.handlebars.helpers.ResourceHelper;
 
 import java.io.IOException;
 import java.util.Map;
