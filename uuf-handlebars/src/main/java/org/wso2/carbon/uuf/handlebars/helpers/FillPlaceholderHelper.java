@@ -1,39 +1,16 @@
 package org.wso2.carbon.uuf.handlebars.helpers;
 
-import com.github.jknack.handlebars.Context;
 import com.github.jknack.handlebars.Helper;
-import com.github.jknack.handlebars.Options;
 
-import java.util.Optional;
+public abstract class FillPlaceholderHelper implements Helper<String> {
 
-/**
- * @param <T> placeholder value type
- */
-public abstract class FillPlaceholderHelper<T> implements Helper<String> {
+    protected final String placeholderName;
 
-    private final String placeholderName;
-
-    public FillPlaceholderHelper(String placeholderName) {
-        this.placeholderName = this.getClass().getName() + "#" + placeholderName;
+    protected FillPlaceholderHelper(String placeholderName) {
+        this.placeholderName = placeholderName;
     }
 
-    public abstract Optional<String> getPlaceholderValue(Context handlebarsContext);
-
-    protected Optional<T> getValue(Options handlebarsHelperOptions) {
-        return Optional.ofNullable(handlebarsHelperOptions.data(this.placeholderName));
-    }
-
-    protected Optional<T> getValue(Context handlebarsContext) {
-        return Optional.ofNullable(handlebarsContext.data(this.placeholderName));
-    }
-
-    /**
-     * @param handlebarsHelperOptions options of a Handlebars helper
-     * @param value                   value to be set
-     * @return set value
-     */
-    protected T setValue(Options handlebarsHelperOptions, T value) {
-        handlebarsHelperOptions.data(placeholderName, value);
-        return value;
+    public String getPlaceholderName() {
+        return placeholderName;
     }
 }
