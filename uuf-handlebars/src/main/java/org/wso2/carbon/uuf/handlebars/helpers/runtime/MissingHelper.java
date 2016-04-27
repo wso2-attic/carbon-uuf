@@ -4,7 +4,6 @@ import com.github.jknack.handlebars.Helper;
 import com.github.jknack.handlebars.Options;
 import com.google.common.collect.ImmutableSet;
 import org.wso2.carbon.uuf.core.exception.UUFException;
-import org.wso2.carbon.uuf.handlebars.helpers.init.FillZoneHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.init.LayoutHelper;
 
 import java.io.IOException;
