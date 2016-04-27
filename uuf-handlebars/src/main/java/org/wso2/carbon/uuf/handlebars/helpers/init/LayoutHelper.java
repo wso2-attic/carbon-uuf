@@ -19,7 +19,6 @@ public class LayoutHelper implements Helper<String> {
             throw new UUFException("Cannot set layout '" + layoutName + "' to this page because layout '" +
                                            currentLayout + "' is already set.");
         }
-        // TODO: 4/22/16 Validate 'layoutName'
         options.data(DATA_KEY_CURRENT_LAYOUT, layoutName);
         return "";
     }
