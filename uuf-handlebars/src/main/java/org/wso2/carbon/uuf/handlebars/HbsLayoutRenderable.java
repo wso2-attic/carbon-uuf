@@ -23,13 +23,17 @@ public class HbsLayoutRenderable extends HbsRenderable {
         context.data(DATA_KEY_LOOKUP, componentLookup);
         context.data(DATA_KEY_REQUEST_LOOKUP, requestLookup);
         context.data(DATA_KEY_API, api);
-
+        PlaceholderWriter writer = new PlaceholderWriter();
+        context.data(DATA_KEY_CURRENT_WRITER, writer);
         try {
-            return compiledTemplate.apply(context);
+            compiledTemplate.apply(context, writer);
         } catch (IOException e) {
             throw new UUFException("An error occurred when rendering the compiled Handlebars template of layout '" +
                                            templatePath + "'.", e);
         }
+        String out = writer.toString(requestLookup.getPlaceholderContents());
+        writer.close();
+        return out;
     }
 
     @Override
