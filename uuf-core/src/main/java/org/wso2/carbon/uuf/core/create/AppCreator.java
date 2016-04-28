@@ -55,13 +55,13 @@ public class AppCreator {
         int indent = 0;
         for (int i = 0; i < line.length(); i++) {
             char c = line.charAt(i);
-            if (c == '+' || c == ' ' || c == '\\' || c == '-') {
+            if (c == '+' || c == ' ' || c == '\\' || c == '|') {
                 indent++;
             } else {
                 break;
             }
         }
-        return indent / 3;
+        return indent/2;
     }
 
     public App createApp(String context, AppReference appReference) {
