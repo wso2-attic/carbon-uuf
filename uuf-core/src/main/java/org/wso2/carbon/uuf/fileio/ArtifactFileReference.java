@@ -46,6 +46,15 @@ public class ArtifactFileReference implements FileReference {
     }
 
     @Override
+    public String getAbsolutePath() {
+        try {
+            return path.toRealPath().toString();
+        } catch (IOException e) {
+            return path.toAbsolutePath().toString();
+        }
+    }
+
+    @Override
     public Optional<FileReference> getSibling(String name) {
         Path sibling = path.resolveSibling(name);
         return Files.exists(sibling) ? Optional.of(new ArtifactFileReference(sibling, componentReference)) :

@@ -12,5 +12,7 @@ public interface FileReference {
 
     String getRelativePath();
 
+    String getAbsolutePath();
+
     Optional<FileReference> getSibling(String name);
 }
