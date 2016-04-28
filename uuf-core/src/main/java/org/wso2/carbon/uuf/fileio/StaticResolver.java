@@ -87,9 +87,9 @@ public class StaticResolver {
             throw new IllegalArgumentException("Resource URI '" + uri + "' is invalid.");
         }
 
-        String componentName = resourcePathParts[2];
-        String fragmentName = resourcePathParts[3];
-        int fourthSlash = StringUtils.ordinalIndexOf(uri, "/", 4);
+        String componentName = resourcePathParts[1];
+        String fragmentName = resourcePathParts[2];
+        int fourthSlash = StringUtils.ordinalIndexOf(uri, "/", 3);
         String subResourcePath = uri.substring(fourthSlash + 1, uri.length());
         Path componentPath = uufHome.resolve(appName).resolve(AppReference.DIR_NAME_COMPONENTS).resolve(componentName);
         Path fragmentPath;
