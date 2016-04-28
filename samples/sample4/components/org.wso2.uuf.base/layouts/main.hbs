@@ -8,23 +8,22 @@
     {{css "/css/theme.css" }}
     <title>WSO2 Template</title>
 
-{{placeholder 'headerJs'}}
-{{placeholder 'css'}}
+    {{placeholder 'headerJs'}}
+    {{placeholder 'css'}}
 </head>
 <body>
 
 <header class="header header-default">
     <div class="container-fluid">
         <div class="pull-left brand float-remove-xs text-center-xs">
-            <a href="/">
-                <img src="{{public "/images/logo.png"}}"
-                     class="logo"/>
+            <a href="{{@app.context}}/">
+                <img src="{{public "/images/logo.png"}}" class="logo" />
                 <h1>Unified UI Template App</h1>
             </a>
         </div>
         <div class="pull-right auth float-remove-xs text-center-xs">
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="/pet-store/basicauth/login">Login</a></li>
+                <li><a href="{{@app.context}}/basicauth/login">Login</a></li>
             </ul>
         </div>
     </div>
