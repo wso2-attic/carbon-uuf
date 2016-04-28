@@ -22,7 +22,7 @@ public class FragmentTest {
                                                      Collections.emptySet(), ImmutableSetMultimap.of(),
                                                      Collections.emptySet());
         RequestLookup requestLookup = new RequestLookup("/appContext", any());
-        Fragment fragment = new Fragment("fragmentName", renderable);
+        Fragment fragment = new Fragment("componentName.fragmentName", renderable);
 
         String output = fragment.render(any(), lookup, requestLookup, any());
         Assert.assertEquals(output, content);
