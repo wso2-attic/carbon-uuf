@@ -44,6 +44,7 @@ public class HbsPageRenderableTest {
         RequestLookup requestLookup = mock(RequestLookup.class);
         when(requestLookup.getZoneContent(anyString())).thenReturn(Optional.<String>empty());
         when(requestLookup.getPlaceholderContents()).thenReturn(Collections.<String, String>emptyMap());
+        when(requestLookup.getAppContext()).thenReturn("/myapp");
         return requestLookup;
     }
 
@@ -54,15 +55,6 @@ public class HbsPageRenderableTest {
 
         String output = pageRenderable.render(createEmptyModel(), null, createEmptyRequestLookup(), null);
         Assert.assertEquals(output, templateContent);
-    }
-
-    @Test
-    public void testTemplateWithModel() {
-        HbsPageRenderable pageRenderable = createPageRenderable("Hello {{name}}! Have a good day.");
-        Model model = new MapModel(ImmutableMap.of("name", "Alice"));
-
-        String output = pageRenderable.render(model, null, createEmptyRequestLookup(), null);
-        Assert.assertEquals(output, "Hello Alice! Have a good day.");
     }
 
     @Test
@@ -104,7 +96,7 @@ public class HbsPageRenderableTest {
         HbsPageRenderable pageRenderable = createPageRenderable("X {{defineZone \"test-zone\"}} Y");
         ComponentLookup lookup = mock(ComponentLookup.class);
         when(lookup.getBindings(anyString())).thenReturn(Collections.emptySet());
-        RequestLookup requestLookup = mock(RequestLookup.class);
+        RequestLookup requestLookup = createEmptyRequestLookup();
         when(requestLookup.getZoneContent("test-zone")).thenReturn(Optional.of("zone content"));
 
         String output = pageRenderable.render(createEmptyModel(), lookup, requestLookup, null);
@@ -115,7 +107,7 @@ public class HbsPageRenderableTest {
     public void testPublicHelper() {
         final String templateContent = "{{public \"/relative/path\"}}";
         HbsPageRenderable pageRenderable = createPageRenderable(templateContent);
-        RequestLookup requestLookup = mock(RequestLookup.class);
+        RequestLookup requestLookup = createEmptyRequestLookup();
         when(requestLookup.getPublicUri()).thenReturn("/myapp/public/mycomponent/base");
 
         String output = pageRenderable.render(createEmptyModel(), null, requestLookup, null);
