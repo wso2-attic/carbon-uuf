@@ -66,7 +66,7 @@ public class HbsRenderableCreator implements RenderableCreator {
     private Optional<Executable> createSameNameJs(FileReference pageReference, ClassLoader loader) {
         String jsName = withoutExtension(pageReference.getName()) + EXTENSION_JAVASCRIPT;
         Optional<FileReference> jsReference = pageReference.getSibling(jsName);
-        return jsReference.map(j -> new JSExecutable(j.getContent(), loader, Optional.of(j.getRelativePath())));
+        return jsReference.map(fr -> new JSExecutable(fr.getContent(), loader, Optional.of(fr.getAbsolutePath())));
     }
 
     private String withoutExtension(String name) {
