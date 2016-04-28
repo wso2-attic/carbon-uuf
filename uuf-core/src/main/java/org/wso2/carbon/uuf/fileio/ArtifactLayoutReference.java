@@ -1,5 +1,6 @@
 package org.wso2.carbon.uuf.fileio;
 
+import org.apache.commons.io.FilenameUtils;
 import org.wso2.carbon.uuf.core.create.FileReference;
 import org.wso2.carbon.uuf.core.create.LayoutReference;
 
@@ -16,7 +17,7 @@ public class ArtifactLayoutReference implements LayoutReference {
 
     @Override
     public String getName() {
-        return path.getFileName().toString();
+        return FilenameUtils.removeExtension(path.getFileName().toString());
     }
 
     @Override
