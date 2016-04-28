@@ -1,39 +1,25 @@
 package org.wso2.carbon.uuf.handlebars.model;
 
 import com.github.jknack.handlebars.Context;
-import org.wso2.carbon.uuf.model.Model;
+import org.wso2.carbon.uuf.model.MapModel;
 
+import java.util.HashMap;
 import java.util.Map;
 
+public class ContextModel extends MapModel {
 
-public class ContextModel implements Model {
-    private Context context;
-
+    private Context parentContext;
 
     public ContextModel(Context context) {
-        this.context = context;
+        this(context, new HashMap<>());
     }
 
-    public static ContextModel from(Model model) {
-        if (model instanceof ContextModel) {
-            return (ContextModel) model;
-        } else {
-            Context context = Context.newContext(model.toMap());
-            return new ContextModel(context);
-        }
+    public ContextModel(Context parentContext, Map<String, Object> map) {
+        super(map);
+        this.parentContext = parentContext;
     }
 
-    public Context getContext() {
-        return context;
-    }
-
-    @Override
-    public void combine(Map<String, Object> other) {
-
-    }
-
-    @Override
-    public Map<String, Object> toMap() {
-        throw new UnsupportedOperationException();
+    public Context getParentContext() {
+        return parentContext;
     }
 }
