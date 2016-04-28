@@ -9,7 +9,6 @@ import org.wso2.carbon.uuf.core.exception.UUFException;
 import org.wso2.carbon.uuf.model.Model;
 
 import java.io.IOException;
-import java.util.Collections;
 
 public class HbsLayoutRenderable extends HbsRenderable {
 
@@ -19,7 +18,7 @@ public class HbsLayoutRenderable extends HbsRenderable {
 
     @Override
     public String render(Model model, ComponentLookup componentLookup, RequestLookup requestLookup, API api) {
-        Context context = Context.newContext(Collections.emptyMap());
+        Context context = Context.newContext(getHbsModel(requestLookup));
         context.data(DATA_KEY_LOOKUP, componentLookup);
         context.data(DATA_KEY_REQUEST_LOOKUP, requestLookup);
         context.data(DATA_KEY_API, api);
