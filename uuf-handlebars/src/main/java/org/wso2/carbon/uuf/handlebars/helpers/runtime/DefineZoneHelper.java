@@ -23,17 +23,18 @@ public class DefineZoneHelper implements Helper<String> {
     @Override
     public CharSequence apply(String zoneName, Options options) throws IOException {
         ComponentLookup lookup = options.data(DATA_KEY_LOOKUP);
+        RequestLookup requestLookup = options.data(DATA_KEY_REQUEST_LOOKUP);
+        StringBuilder buffer = new StringBuilder();
+
         Set<Fragment> bindings = lookup.getBindings(zoneName);
-        if (bindings.isEmpty()) {
-            return "";
+        if(!bindings.isEmpty()){
+            API api = options.data(DATA_KEY_API);
+            for (Fragment fragment : bindings) {
+                buffer.append(fragment.render(new ContextModel(options.context), lookup, requestLookup, api));
+            }
         }
 
-        RequestLookup requestLookup = options.data(DATA_KEY_REQUEST_LOOKUP);
-        API api = options.data(DATA_KEY_API);
-        StringBuilder buffer = new StringBuilder();
-        for (Fragment fragment : bindings) {
-            buffer.append(fragment.render(new ContextModel(options.context), lookup, requestLookup, api));
-        }
+        requestLookup.getZoneContent(zoneName).ifPresent(buffer::append);
         return new Handlebars.SafeString(buffer.toString());
     }
 }
