@@ -5,6 +5,7 @@ import com.github.jknack.handlebars.Template;
 import com.github.jknack.handlebars.io.TemplateSource;
 import com.google.common.collect.ImmutableMap;
 import org.wso2.carbon.uuf.core.Renderable;
+import org.wso2.carbon.uuf.core.RequestLookup;
 import org.wso2.carbon.uuf.core.exception.UUFException;
 import org.wso2.carbon.uuf.handlebars.helpers.FillPlaceholderHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.CssHelper;
@@ -19,6 +20,8 @@ import org.wso2.carbon.uuf.handlebars.helpers.runtime.MissingHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.PublicHelper;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 public abstract class HbsRenderable implements Renderable {
@@ -56,5 +59,13 @@ public abstract class HbsRenderable implements Renderable {
         } catch (IOException e) {
             throw new UUFException("Cannot compile Handlebars template '" + templatePath + "'.", e);
         }
+    }
+
+    protected Map<String, Object> getHbsModel(RequestLookup requestLookup) {
+        Map<String, Object> context = new HashMap<>();
+        context.put("@uriParams", requestLookup.getUriParams());
+        context.put("@app",
+                    ImmutableMap.of("context", requestLookup.getAppContext(), "config", Collections.emptyMap()));
+        return context;
     }
 }
