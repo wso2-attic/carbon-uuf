@@ -1,4 +1,4 @@
 //noinspection JSUnusedGlobalSymbols
-var onRequest = function () {
-    return {"name": "snowball","tags":['white','short-hair']};
+var onRequest = function (context) {
+    return {"name": context.uriParams.id, "tags": ['white', 'short-hair']};
 };
