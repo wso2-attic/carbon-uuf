@@ -9,8 +9,10 @@ import java.util.Map;
 import java.util.Optional;
 
 public class RequestLookup {
+
     private final String appContext;
     private final HttpRequest request;
+    private Map<String, String> uriParams;
     private final Deque<String> publicUriStack;
     private final Map<String, StringBuilder> placeholderBuffers;
     private final Map<String, String> zoneContents;
@@ -23,12 +25,20 @@ public class RequestLookup {
         this.zoneContents = new HashMap<>();
     }
 
+    public String getAppContext() {
+        return appContext;
+    }
+
     public HttpRequest getRequest() {
         return request;
     }
 
-    public String getAppContext() {
-        return appContext;
+    public Map<String, String> getUriParams() {
+        return uriParams;
+    }
+
+    void setUriParams(Map<String, String> uriParams) {
+        this.uriParams = uriParams;
     }
 
     void pushToPublicUriStack(String publicUri) {
