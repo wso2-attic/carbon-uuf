@@ -32,11 +32,11 @@ public class RequestLookup {
     }
 
     void pushToPublicUriStack(String publicUri) {
-        publicUriStack.push(publicUri);
+        publicUriStack.addLast(publicUri);
     }
 
     String popPublicUriStack() {
-        return publicUriStack.pop();
+        return publicUriStack.removeLast();
     }
 
     public String getPublicUri() {
