@@ -10,11 +10,9 @@ import org.wso2.carbon.uuf.core.ComponentLookup;
 import org.wso2.carbon.uuf.core.Fragment;
 import org.wso2.carbon.uuf.core.RequestLookup;
 import org.wso2.carbon.uuf.handlebars.model.ContextModel;
-import org.wso2.carbon.uuf.model.MapModel;
 import org.wso2.carbon.uuf.model.Model;
 
 import java.io.IOException;
-import java.util.Map;
 import java.util.Optional;
 
 import static org.wso2.carbon.uuf.handlebars.HbsRenderable.DATA_KEY_API;
@@ -29,27 +27,20 @@ public class IncludeFragmentHelper implements Helper<String> {
     @Override
     public CharSequence apply(String fragmentName, Options options) throws IOException {
         ComponentLookup lookup = options.data(DATA_KEY_LOOKUP);
-        Optional<Fragment> renderingFragment = lookup.getFragment(fragmentName);
-        if (!renderingFragment.isPresent()) {
+        Optional<Fragment> fragment = lookup.getFragment(fragmentName);
+        if (!fragment.isPresent()) {
             throw new IllegalArgumentException("Fragment '" + fragmentName + "' does not exists in Component '" +
                                                        lookup.getComponentName() + "' or in its dependencies.");
         }
 
-        Fragment fragment = renderingFragment.get();
-        Map<String, Object> fragmentArgs = options.hash;
-        Model model;
-        if (fragmentArgs.isEmpty()) {
-            model = new ContextModel(options.context);
-        } else {
-            model = new MapModel(fragmentArgs);
+        if (log.isDebugEnabled()) {
+            log.debug("Fragment \"" + fragment.get() + "\" is called from '" + options.fn.text() + "'.");
         }
+
+        Model model = new ContextModel(options.context, options.hash);
         RequestLookup requestLookup = options.data(DATA_KEY_REQUEST_LOOKUP);
         API api = options.data(DATA_KEY_API);
-
-        if (log.isDebugEnabled()) {
-            log.debug("Fragment \"" + fragment + "\" is called from '" + options.fn.text() + "'.");
-        }
-        String content = fragment.render(model, lookup, requestLookup, api);
+        String content = fragment.get().render(model, lookup, requestLookup, api);
         return new Handlebars.SafeString(content);
     }
 }
