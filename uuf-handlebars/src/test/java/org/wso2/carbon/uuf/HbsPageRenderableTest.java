@@ -10,6 +10,7 @@ import org.wso2.carbon.uuf.core.Fragment;
 import org.wso2.carbon.uuf.core.RequestLookup;
 import org.wso2.carbon.uuf.handlebars.Executable;
 import org.wso2.carbon.uuf.handlebars.HbsFragmentRenderable;
+import org.wso2.carbon.uuf.handlebars.HbsPageRenderable;
 import org.wso2.carbon.uuf.handlebars.HbsRenderable;
 import org.wso2.carbon.uuf.model.MapModel;
 import org.wso2.carbon.uuf.model.Model;
@@ -22,11 +23,11 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class HbsRenderableTest {
+public class HbsPageRenderableTest {
 
     private static HbsRenderable createHbsRenderable(String sourceStr) {
         StringTemplateSource stringTemplateSource = new StringTemplateSource("<test-source>", sourceStr);
-        return new HbsFragmentRenderable(stringTemplateSource);
+        return new HbsPageRenderable(stringTemplateSource);
     }
 
     private static HbsRenderable createHbsRenderable(String sourceStr, Executable executable) {
@@ -43,6 +44,7 @@ public class HbsRenderableTest {
     @Test
     public void testTemplate() {
         final String templateContent = "A Plain Handlebars template.";
+
         HbsRenderable hbsRenderable = createHbsRenderable(templateContent);
 
         String output = hbsRenderable.render(createEmptyModel(), null, null, null);
@@ -83,6 +85,20 @@ public class HbsRenderableTest {
 
     @Test
     public void testFragmentBind() {
+        HbsRenderable hbsRenderable = createHbsRenderable("X {{defineZone \"test-zone\"}} Y");
+        ComponentLookup lookup = mock(ComponentLookup.class);
+        Fragment pushedFragment = mock(Fragment.class);
+        when(pushedFragment.render(any(), any(), any(), any())).thenReturn("fragment content");
+        when(lookup.getBindings("test-zone")).thenReturn(ImmutableSet.of(pushedFragment));
+        RequestLookup requestLookup = mock(RequestLookup.class);
+        when(requestLookup.getZoneContent("test-zone")).thenReturn(Optional.<String>empty());
+
+        String output = hbsRenderable.render(createEmptyModel(), lookup, requestLookup, null);
+        Assert.assertEquals(output, "X fragment content Y");
+    }
+
+    @Test
+    public void testzone() {
         HbsRenderable hbsRenderable = createHbsRenderable("X {{defineZone \"test-zone\"}} Y");
         ComponentLookup lookup = mock(ComponentLookup.class);
         Fragment pushedFragment = mock(Fragment.class);
