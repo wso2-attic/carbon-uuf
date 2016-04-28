@@ -12,50 +12,42 @@ import org.wso2.carbon.uuf.handlebars.model.ContextModel;
 import org.wso2.carbon.uuf.model.Model;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.Map;
-import java.util.Optional;
 
-public class HbsFragmentRenderable extends HbsRenderable {
-    private static final Logger log = LoggerFactory.getLogger(HbsRenderable.class);
+public class HbsFragmentRenderable extends HbsPageRenderable {
 
-    private final Optional<Executable> executable;
+    private static final Logger log = LoggerFactory.getLogger(HbsFragmentRenderable.class);
 
     public HbsFragmentRenderable(TemplateSource template) {
-        this(template, Optional.<Executable>empty());
+        super(template);
     }
 
     public HbsFragmentRenderable(TemplateSource template, Executable executable) {
-        this(template, Optional.of(executable));
-    }
-
-    private HbsFragmentRenderable(TemplateSource template, Optional<Executable> executable) {
-        super(template);
-        this.executable = executable;
-    }
-
-    public Optional<Executable> getScript() {
-        return executable;
+        super(template, executable);
     }
 
     @Override
     public String render(Model model, ComponentLookup componentLookup, RequestLookup requestLookup, API api) {
+        Context context;
         if (executable.isPresent()) {
-            //TODO: set context for executable
-            Object jsOutput = executable.get().execute(Collections.emptyMap(), api);
+            Object executableOutput = executable.get().execute(getExecutableContext(model, requestLookup), api);
             if (log.isDebugEnabled()) {
-                log.debug("js ran produced output " + DebugUtil.safeJsonString(jsOutput));
+                log.debug("Executable output \"" + DebugUtil.safeJsonString(executableOutput) + "\".");
             }
-            if (jsOutput instanceof Map) {
-                //noinspection unchecked
-                model.combine((Map<String, Object>) jsOutput);
+            if (model instanceof ContextModel) {
+                context = Context.newContext(((ContextModel) model).getParentContext(), executableOutput);
             } else {
-                //TODO: is this necessary?
-                throw new UnsupportedOperationException();
+                context = Context.newContext(executableOutput);
+            }
+            context.combine(getHbsModel(model, requestLookup));
+        } else {
+            Map<String, Object> hbsModel = getHbsModel(model, requestLookup);
+            if (model instanceof ContextModel) {
+                context = Context.newContext(((ContextModel) model).getParentContext(), hbsModel);
+            } else {
+                context = Context.newContext(hbsModel);
             }
         }
-        ContextModel contextModel = ContextModel.from(model);
-        Context context = contextModel.getContext();
 
         context.data(DATA_KEY_LOOKUP, componentLookup);
         context.data(DATA_KEY_REQUEST_LOOKUP, requestLookup);
@@ -69,6 +61,18 @@ public class HbsFragmentRenderable extends HbsRenderable {
         } catch (IOException e) {
             throw new UUFException("An error occurred when writing to the in-memory PlaceholderWriter.", e);
         }
+    }
+
+    private Map<String, Object> getExecutableContext(Model model, RequestLookup requestLookup) {
+        Map<String, Object> context = getExecutableContext(requestLookup);
+        context.put("params", model.toMap());
+        return context;
+    }
+
+    private Map<String, Object> getHbsModel(Model model, RequestLookup requestLookup) {
+        Map<String, Object> context = getHbsModel(requestLookup);
+        context.put("@params", model.toMap());
+        return context;
     }
 
     @Override
