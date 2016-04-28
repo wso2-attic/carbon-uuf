@@ -20,7 +20,7 @@ public abstract class ResourceHelper extends FillPlaceholderHelper {
         }
 
         RequestLookup requestLookup = options.data(DATA_KEY_REQUEST_LOOKUP);
-        requestLookup.putToZone(placeholderName, formatResourceUri(requestLookup.getPublicUri() + relativeUri));
+        requestLookup.addToPlaceholder(placeholderName, formatResourceUri(requestLookup.getPublicUri() + relativeUri));
         return "";
     }
 
