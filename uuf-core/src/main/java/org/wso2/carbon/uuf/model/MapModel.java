@@ -3,6 +3,7 @@ package org.wso2.carbon.uuf.model;
 import java.util.Map;
 
 public class MapModel implements Model {
+
     private Map<String, Object> map;
 
     public MapModel(Map<String, Object> map) {
@@ -18,5 +19,4 @@ public class MapModel implements Model {
     public Map<String, Object> toMap() {
         return map;
     }
-
 }
