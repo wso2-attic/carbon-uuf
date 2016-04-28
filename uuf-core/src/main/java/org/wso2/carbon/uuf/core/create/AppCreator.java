@@ -3,7 +3,6 @@ package org.wso2.carbon.uuf.core.create;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
 import org.apache.commons.lang3.tuple.Pair;
-import org.osgi.service.jndi.JNDIContextManager;
 import org.wso2.carbon.uuf.core.App;
 import org.wso2.carbon.uuf.core.ClassLoaderProvider;
 import org.wso2.carbon.uuf.core.Component;
@@ -61,7 +60,7 @@ public class AppCreator {
                 break;
             }
         }
-        return indent/2;
+        return  (indent == 1)? indent: (indent / 2);
     }
 
     public App createApp(String context, AppReference appReference) {
