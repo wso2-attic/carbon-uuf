@@ -32,6 +32,9 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
+import static org.wso2.carbon.uuf.core.NameUtils.getFullyQualifiedName;
+import static org.wso2.carbon.uuf.core.NameUtils.getSimpleName;
+
 public class AppCreator {
 
     private final Map<String, RenderableCreator> renderableCreators;
@@ -60,7 +63,7 @@ public class AppCreator {
                 break;
             }
         }
-        return  (indent == 1)? indent: (indent / 2);
+        return (indent == 1) ? indent : (indent / 2);
     }
 
     public App createApp(String context, AppReference appReference) {
@@ -92,18 +95,20 @@ public class AppCreator {
                 }
             }
 
-            String componentName, componentVersion, componentContext;
+            String componentName, componentSimpleName, componentVersion, componentContext;
             if (i == 0) {
                 componentName = Component.ROOT_COMPONENT_NAME;
+                componentSimpleName = componentName;
                 componentVersion = getComponentNameAndVersion(line).getRight();
                 componentContext = Component.ROOT_COMPONENT_CONTEXT;
             } else {
                 Pair<String, String> componentNameAndVersion = getComponentNameAndVersion(line);
                 componentName = componentNameAndVersion.getLeft();
+                componentSimpleName = getSimpleName(componentName);
                 componentVersion = componentNameAndVersion.getRight();
                 componentContext = getComponentContext(componentName);
             }
-            ComponentReference componentReference = appReference.getComponentReference(getSimpleName(componentName));
+            ComponentReference componentReference = appReference.getComponentReference(componentSimpleName);
             ClassLoader componentClassLoader = classLoaderProvider.getClassLoader(appReference.getName(), componentName,
                                                                                   componentVersion, componentReference);
             Component component = createComponent(componentName, componentVersion, componentContext, componentReference,
@@ -123,13 +128,13 @@ public class AppCreator {
         Set<Layout> layouts = componentReference
                 .getLayouts(supportedExtensions)
                 .parallel()
-                .map(this::createLayout)
+                .map(layoutReference -> createLayout(componentName, layoutReference))
                 .collect(Collectors.toSet());
 
         Map<String, Fragment> fragments = componentReference
                 .getFragments(supportedExtensions)
                 .parallel()
-                .map((fragmentReference) -> createFragment(fragmentReference, classLoader))
+                .map((fragmentReference) -> createFragment(componentName, fragmentReference, classLoader))
                 .collect(Collectors.toMap(Fragment::getName, fragment -> fragment));
 
         SetMultimap<String, Fragment> bindings;
@@ -174,16 +179,17 @@ public class AppCreator {
         return new Component(componentName, componentVersion, pages, lookup);
     }
 
-    private Layout createLayout(LayoutReference layoutReference) {
+    private Layout createLayout(String componentName, LayoutReference layoutReference) {
         RenderableCreator renderableCreator = getRenderableCreator(layoutReference.getRenderingFile());
         Renderable renderer = renderableCreator.createLayoutRenderable(layoutReference);
-        return new Layout(layoutReference.getName(), renderer);
+        return new Layout(getFullyQualifiedName(componentName, layoutReference.getName()), renderer);
     }
 
-    private Fragment createFragment(FragmentReference fragmentReference, ClassLoader classLoader) {
+    private Fragment createFragment(String componentName, FragmentReference fragmentReference,
+                                    ClassLoader classLoader) {
         RenderableCreator renderableCreator = getRenderableCreator(fragmentReference.getRenderingFile());
         Renderable renderer = renderableCreator.createFragmentRenderable(fragmentReference, classLoader);
-        return new Fragment(fragmentReference.getName(), renderer);
+        return new Fragment(getFullyQualifiedName(componentName, fragmentReference.getName()), renderer);
     }
 
     private SetMultimap<String, Fragment> createBindings(Map<Object, Object> bindingsConfig,
@@ -277,15 +283,6 @@ public class AppCreator {
 
     private String getComponentContext(String componentName) {
         return "/" + getSimpleName(componentName);
-    }
-
-    private String getSimpleName(String componentName) {
-        int lastDot = componentName.lastIndexOf('.');
-        if (lastDot >= 0) {
-            return componentName.substring(lastDot + 1);
-        } else {
-            return componentName;
-        }
     }
 
     private RenderableCreator getRenderableCreator(FileReference fileReference) {
