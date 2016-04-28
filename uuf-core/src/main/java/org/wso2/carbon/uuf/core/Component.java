@@ -1,5 +1,7 @@
 package org.wso2.carbon.uuf.core;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.model.MapModel;
@@ -81,5 +83,36 @@ public class Component {
     @Override
     public String toString() {
         return "{\"name\":\"" + name + "\", \"version\": \"" + version + "\", \"context\": \"" + getContext() + "\"}";
+    }
+
+    /**
+     * Returns a hash code value for the object. This method is supported for the benefit of hash tables such
+     * as those provided by {@link java.util.HashMap}.
+     * This assumes name, version and context is immutable (http://stackoverflow.com/a/27609/1560536).
+     * @return a hash code value for this object.
+     */
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(name).append(version).append(getContext()).toHashCode();
+    }
+
+    /**
+     * Indicates whether some other object is "equal to" this one.
+     * @param obj the reference object with which to compare.
+     * @return {@code true} if this object is the same as the obj argument; {@code false} otherwise.
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Component))
+            return false;
+        if (obj == this)
+            return true;
+
+        Component comp = (Component) obj;
+        return new EqualsBuilder().
+                append(name, comp.name).
+                append(version, comp.version).
+                append(getContext(), comp.getContext()).
+                isEquals();
     }
 }
