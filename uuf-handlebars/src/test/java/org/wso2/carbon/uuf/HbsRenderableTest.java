@@ -5,11 +5,9 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import org.wso2.carbon.uuf.core.API;
 import org.wso2.carbon.uuf.core.ComponentLookup;
 import org.wso2.carbon.uuf.core.Fragment;
 import org.wso2.carbon.uuf.core.RequestLookup;
-import org.wso2.carbon.uuf.core.auth.SessionRegistry;
 import org.wso2.carbon.uuf.handlebars.Executable;
 import org.wso2.carbon.uuf.handlebars.HbsFragmentRenderable;
 import org.wso2.carbon.uuf.handlebars.HbsRenderable;
@@ -62,7 +60,7 @@ public class HbsRenderableTest {
 
     @Test
     public void testTemplateWithExecutable() {
-        Executable executable = (context,api) -> ImmutableMap.of("name", "Alice");
+        Executable executable = (context, api) -> ImmutableMap.of("name", "Alice");
         HbsRenderable hbsRenderable = createHbsRenderable("Hello {{name}}! Have a good day.", executable);
         Model model = new MapModel(new HashMap<>());
 
