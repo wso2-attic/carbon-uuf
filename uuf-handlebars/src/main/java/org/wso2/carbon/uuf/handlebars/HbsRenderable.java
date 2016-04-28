@@ -10,6 +10,7 @@ import org.wso2.carbon.uuf.handlebars.helpers.FillPlaceholderHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.CssHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.DefinePlaceholderHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.DefineZoneHelper;
+import org.wso2.carbon.uuf.handlebars.helpers.runtime.FillZoneHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.HeaderOtherHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.HeaderTitleHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.IncludeFragmentHelper;
@@ -27,8 +28,8 @@ public abstract class HbsRenderable implements Renderable {
     public static final String DATA_KEY_API = HbsRenderable.class.getName() + "#api";
     public static final String DATA_KEY_CURRENT_WRITER = HbsRenderable.class.getName() + "#writer";
     //
-    protected static final Handlebars HANDLEBARS = new Handlebars();
-    protected static final Map<String, FillPlaceholderHelper> RESOURCE_HELPERS = ImmutableMap.of(
+    private static final Handlebars HANDLEBARS = new Handlebars();
+    private static final Map<String, FillPlaceholderHelper> PLACEHOLDER_HELPERS = ImmutableMap.of(
             CssHelper.HELPER_NAME, new CssHelper(),
             JsHelper.HELPER_NAME_HEADER, new JsHelper(JsHelper.HELPER_NAME_HEADER),
             JsHelper.HELPER_NAME_FOOTER, new JsHelper(JsHelper.HELPER_NAME_FOOTER),
@@ -37,10 +38,11 @@ public abstract class HbsRenderable implements Renderable {
 
     static {
         HANDLEBARS.registerHelper(DefineZoneHelper.HELPER_NAME, new DefineZoneHelper());
+        HANDLEBARS.registerHelper(FillZoneHelper.HELPER_NAME, new FillZoneHelper());
         HANDLEBARS.registerHelper(IncludeFragmentHelper.HELPER_NAME, new IncludeFragmentHelper());
         HANDLEBARS.registerHelper(DefinePlaceholderHelper.HELPER_NAME, new DefinePlaceholderHelper());
+        PLACEHOLDER_HELPERS.forEach(HANDLEBARS::registerHelper);
         HANDLEBARS.registerHelper(PublicHelper.HELPER_NAME, new PublicHelper());
-        RESOURCE_HELPERS.forEach(HANDLEBARS::registerHelper);
         HANDLEBARS.registerHelperMissing(new MissingHelper());
     }
 
