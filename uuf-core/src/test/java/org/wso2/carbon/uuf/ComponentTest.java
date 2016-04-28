@@ -20,11 +20,6 @@ import static org.mockito.Matchers.anyString;
 
 public class ComponentTest {
 
-    private static ComponentLookup createComponentLookup(String componentName) {
-        return new ComponentLookup(componentName, "/componentContext", Collections.emptySet(), Collections.emptySet(),
-                                   ImmutableSetMultimap.of(), Collections.emptySet());
-    }
-
     private static Page createPage(String uriPattern, String content) {
         return new Page(new UriPatten(uriPattern), null) {
             @Override
@@ -34,14 +29,24 @@ public class ComponentTest {
         };
     }
 
+    private static ComponentLookup createComponentLookup(String componentName) {
+        return new ComponentLookup(componentName, "/componentContext", Collections.emptySet(), Collections.emptySet(),
+                                   ImmutableSetMultimap.of(), Collections.emptySet());
+    }
+
+    private static RequestLookup createRequestLookup() {
+        return new RequestLookup("/appContext", any());
+    }
+
     @Test
     public void testRenderExistingPage() {
         Page p1 = createPage("/test/page/one", "Hello world from test page one!");
         Page p2 = createPage("/test/page/two", "Hello world from test page two!");
         ComponentLookup lookup = createComponentLookup("componentName");
         Component component = new Component("componentName", anyString(), ImmutableSortedSet.of(p1, p2), lookup);
+        new RequestLookup("/", null);
 
-        Optional<String> output = component.renderPage("/test/page/one", any(), any());
+        Optional<String> output = component.renderPage("/test/page/one", createRequestLookup(), any());
         Assert.assertEquals(output.get(), "Hello world from test page one!");
     }
 
@@ -53,8 +58,8 @@ public class ComponentTest {
         Component component = new Component("componentName", anyString(), ImmutableSortedSet.of(p1, p2), lookup);
 
         //TODO: fix bug in URiPattern class, if there is a '-' in the wildcard value then matching returns false.
-        Optional<String> output = component.renderPage("/test/page/wildcard-value/one", any(), any());
-        //Assert.assertEquals(output.get(), "Hello world from test page one!");
+        Optional<String> output = component.renderPage("/test/page/wildcard-value/one", createRequestLookup(), any());
+        Assert.assertEquals(output.get(), "Hello world from test page one!");
     }
 
     @Test
@@ -64,7 +69,7 @@ public class ComponentTest {
         ComponentLookup lookup = createComponentLookup("componentName");
         Component component = new Component("componentName", anyString(), ImmutableSortedSet.of(p1, p2), lookup);
 
-        Optional<String> output = component.renderPage("/test/page/three", any(), any());
+        Optional<String> output = component.renderPage("/test/page/three", createRequestLookup(), any());
         Assert.assertFalse(output.isPresent());
     }
 }
