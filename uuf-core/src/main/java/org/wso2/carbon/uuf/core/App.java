@@ -2,15 +2,14 @@ package org.wso2.carbon.uuf.core;
 
 import org.wso2.carbon.uuf.core.auth.SessionRegistry;
 import org.wso2.carbon.uuf.core.exception.PageNotFoundException;
-import org.wso2.carbon.uuf.core.exception.UUFException;
 
-import javax.ws.rs.core.Response;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 public class App {
+
     private final String context;
     private final Map<String, Component> components;
     private final Component rootComponent;

@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.SortedSet;
 
 public class Component {
+
     public static final String ROOT_COMPONENT_NAME = "root";
     public static final String ROOT_COMPONENT_CONTEXT = "/root";
     private static final Logger log = LoggerFactory.getLogger(Component.class);

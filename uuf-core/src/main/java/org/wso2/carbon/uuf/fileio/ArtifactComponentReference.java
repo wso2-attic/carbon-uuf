@@ -1,11 +1,11 @@
 package org.wso2.carbon.uuf.fileio;
 
-import org.wso2.carbon.uuf.core.create.LayoutReference;
-import org.wso2.carbon.uuf.core.exception.UUFException;
 import org.wso2.carbon.uuf.core.create.ComponentReference;
 import org.wso2.carbon.uuf.core.create.FileReference;
 import org.wso2.carbon.uuf.core.create.FragmentReference;
+import org.wso2.carbon.uuf.core.create.LayoutReference;
 import org.wso2.carbon.uuf.core.create.PageReference;
+import org.wso2.carbon.uuf.core.exception.UUFException;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -15,6 +15,7 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 public class ArtifactComponentReference implements ComponentReference {
+
     private Path path;
     private ArtifactAppReference appReference;
 
@@ -34,7 +35,7 @@ public class ArtifactComponentReference implements ComponentReference {
                     .walk(pages)
                     .filter(path -> Files.isRegularFile(path) &&
                             supportedExtensions.contains(getExtension(path.getFileName().toString())))
-                    .map(path -> new ArtifactPageReference(path, this, appReference));
+                    .map(path -> new ArtifactPageReference(path, this));
         } catch (IOException e) {
             throw new UUFException("An error occurred while listing pages in '" + path + "'.", e);
         }
@@ -108,16 +109,7 @@ public class ArtifactComponentReference implements ComponentReference {
         }
     }
 
-    @Override
-    public FileReference resolveLayout(String layoutName) {
-        return new ArtifactFileReference(path.resolve(DIR_NAME_LAYOUTS).resolve(layoutName), this);
-    }
-
     Path getPath() {
         return path;
-    }
-
-    ArtifactAppReference getAppReference() {
-        return appReference;
     }
 }

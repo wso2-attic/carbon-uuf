@@ -1,8 +1,8 @@
 package org.wso2.carbon.uuf.fileio;
 
-import org.wso2.carbon.uuf.core.exception.UUFException;
 import org.wso2.carbon.uuf.core.create.AppReference;
 import org.wso2.carbon.uuf.core.create.ComponentReference;
+import org.wso2.carbon.uuf.core.exception.UUFException;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -10,6 +10,7 @@ import java.nio.file.Path;
 import java.util.List;
 
 public class ArtifactAppReference implements AppReference {
+
     private Path path;
 
     public ArtifactAppReference(Path path) {

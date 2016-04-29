@@ -1,7 +1,7 @@
 package org.wso2.carbon.uuf.fileio;
 
-import org.wso2.carbon.uuf.core.exception.UUFException;
 import org.wso2.carbon.uuf.core.create.FileReference;
+import org.wso2.carbon.uuf.core.exception.UUFException;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
