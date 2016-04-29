@@ -18,9 +18,6 @@ import org.wso2.msf4j.util.SystemVariableUtil;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.net.FileNameMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -29,12 +26,12 @@ import java.util.stream.Collectors;
 public class UUFRegistry {
 
     private static final Logger log = LoggerFactory.getLogger(UUFRegistry.class);
+
     private final AppCreator appCreator;
     private final Optional<DebugAppender> debugAppender;
     private final Map<String, App> apps = new HashMap<>();
     private final StaticResolver staticResolver;
     private AppResolver appResolver;
-    private FileNameMap fileNameMap;
 
     public UUFRegistry(AppCreator appCreator, Optional<DebugAppender> debugAppender, AppResolver appResolver,
                        StaticResolver staticResolver) {
@@ -100,11 +97,11 @@ public class UUFRegistry {
                     return renderDebug(app, uriWithoutAppContext);
                 } else {
                     String page = app.renderPage(uri.substring(appContext.length()),
-                            new RequestLookup(appContext, request));
+                                                 new RequestLookup(appContext, request));
                     return Response.ok(page).header("Content-Type", "text/html");
                 }
             }
-        } catch (PageNotFoundException e){
+        } catch (PageNotFoundException e) {
             // https://googlewebmastercentral.blogspot.com/2010/04/to-slash-or-not-to-slash.html
             // if the tailing / is extra or a it is missing, send 301
             if (app != null) {
