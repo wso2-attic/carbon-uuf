@@ -46,7 +46,7 @@
         <plugins>
             <plugin>
                 <groupId>org.wso2.carbon.maven</groupId>
-                <artifactId>maven-uuf-plugin</artifactId>
+                <artifactId>carbon-uuf-maven-plugin</artifactId>
                 <version>1.0.0-SNAPSHOT</version>
                 <executions>
                     <execution>
