@@ -1,3 +1,19 @@
+/*
+ *  Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 package org.wso2.carbon.uuf.fileio;
 
 import org.apache.commons.io.IOUtils;
@@ -8,8 +24,8 @@ import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.wiring.BundleWiring;
 import org.wso2.carbon.uuf.core.ClassLoaderProvider;
 import org.wso2.carbon.uuf.core.Component;
-import org.wso2.carbon.uuf.core.exception.UUFException;
 import org.wso2.carbon.uuf.core.create.ComponentReference;
+import org.wso2.carbon.uuf.core.exception.UUFException;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -71,7 +87,7 @@ public class BundleClassLoaderProvider implements ClassLoaderProvider {
         }
     }
 
-    private String processSnapshotVersion(String version){
+    private String processSnapshotVersion(String version) {
         version = version.replace("-SNAPSHOT", ".SNAPSHOT");
         return version;
     }
@@ -137,5 +153,4 @@ public class BundleClassLoaderProvider implements ClassLoaderProvider {
     private String getBundleName(String appName, String componentName) {
         return "UUF bundle for " + getBundleKey(appName, componentName);
     }
-
 }
