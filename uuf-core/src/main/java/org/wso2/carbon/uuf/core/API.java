@@ -14,6 +14,8 @@ import javax.naming.NamingException;
 import java.util.HashMap;
 import java.util.Map;
 
+// TODO remove this SuppressWarnings
+@SuppressWarnings("PackageAccessibility")
 public class API {
 
     private final SessionRegistry sessionRegistry;
@@ -24,45 +26,45 @@ public class API {
 
     /**
      * Returns the result of the method invocation of the best matched OSGi service.
-     * @param serviceClassName service class name
+     *
+     * @param serviceClassName  service class name
      * @param serviceMethodName method name
-     * @param args method arguments
+     * @param args              method arguments
      * @return
      */
     public Object callOSGiService(String serviceClassName, String serviceMethodName, Object... args) {
-        Object serviceInstance = null;
+        Object serviceInstance;
         try {
-            Class<?> serviceClass = Class.forName(serviceClassName);
-            Context context = new InitialContext();
-            serviceInstance = context.lookup("osgi:service/" + serviceClassName);
+            serviceInstance = (new InitialContext()).lookup("osgi:service/" + serviceClassName);
             if (serviceInstance == null) {
-                throw new IllegalArgumentException("Cannot find any OSGi service registered with the name '" +
-                        serviceClassName + "'");
+                throw new IllegalArgumentException(
+                        "Cannot find any OSGi service registered with the name '" + serviceClassName + "'.");
             }
-            //If the underlying method is static, then the specified obj argument is ignored.
-            return MethodUtils.invokeMethod(serviceInstance, serviceMethodName, args);
-        } catch (ClassNotFoundException e) {
-            throw new IllegalArgumentException("Cannot find OSGi service class '" + serviceClassName + "'.");
         } catch (NamingException e) {
             throw new UUFException(
-                    "Cannot create the initial context when calling OSGi service '" + serviceClassName
-                            + "'.");
+                    "Cannot create the initial context when calling OSGi service '" + serviceClassName + "'.");
+        }
+
+        try {
+            //If the underlying method is static, then the specified 'object' argument is ignored.
+            return MethodUtils.invokeMethod(serviceInstance, serviceMethodName, args);
         } catch (NoSuchMethodException e) {
-            throw new IllegalArgumentException("Cannot find any method with the signature '" +
-                    serviceMethodName + "(" + getParametersTypesStr(args) + ")' on OSGi service '" +
-                    serviceInstance.getClass().getName() + "' with service class '" + serviceClassName +
-                    "'.");
+            throw new IllegalArgumentException(
+                    "Cannot find any method with the signature '" + serviceMethodName + "(" +
+                            getParametersTypesStr(args) + ")' on OSGi service '" +
+                            serviceInstance.getClass().getName() + "' with service class '" + serviceClassName + "'.");
         } catch (Exception e) {
-            throw new UUFException("Invoking method '" + serviceMethodName + "(" +
-                    getParametersTypesStr(args) + ")' on OSGi service '" +
-                    serviceInstance.getClass().getName() + "' with service class '" + serviceClassName +
-                    "' failed.", e);
+            throw new UUFException(
+                    "Invoking method '" + serviceMethodName + "(" + getParametersTypesStr(args) +
+                            ")' on OSGi service '" + serviceInstance.getClass().getName() + "' with service class '" +
+                            serviceClassName + "' failed.", e);
         }
     }
 
     /**
-     * Returns a map of service implementation class names and instances of all OSGi services for the given
-     * service class name.
+     * Returns a map of service implementation class names and instances of all OSGi services for the given service
+     * class name.
+     *
      * @param serviceClassName
      * @return a map of implementation class and instances
      */
@@ -78,7 +80,7 @@ public class API {
             return services;
         } catch (NamingException e) {
             throw new UUFException("Cannot create the initial context when calling OSGi service '" +
-                    serviceClassName + "'.");
+                                           serviceClassName + "'.");
         }
     }
 
