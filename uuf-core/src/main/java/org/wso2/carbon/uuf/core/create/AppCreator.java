@@ -152,14 +152,13 @@ public class AppCreator {
                             "' of component '" + getSimpleName(componentName) + "' is malformed.", e);
         }
 
-        Map<String, ?> configurations;
+        Map<String, Object> configurations;
         try {
             @SuppressWarnings("unchecked")
-            Map rawConfigurations = componentReference
+            Map<String, Object> rawConfigurations = componentReference
                     .getConfigurations()
                     .map(fileReference -> new Yaml().loadAs(fileReference.getContent(), Map.class))
                     .orElse(Collections.emptyMap());
-            // TODO: make sure that this configurations object is a Map<String, Object>
             configurations = rawConfigurations;
         } catch (Exception e) {
             // Yaml.loadAs() throws an Exception
