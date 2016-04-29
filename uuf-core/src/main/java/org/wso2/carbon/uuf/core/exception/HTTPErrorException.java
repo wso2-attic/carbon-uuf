@@ -20,16 +20,12 @@ public class HTTPErrorException extends UUFException {
 
     private final int httpStatusCode;
 
-    public HTTPErrorException(int httpStatusCode, String message) {
-        this(httpStatusCode, message, (Throwable) null);
-    }
-
-    public HTTPErrorException(int httpStatusCode, Throwable cause) {
-        super(cause);
+    public HTTPErrorException(int httpStatusCode) {
         this.httpStatusCode = httpStatusCode;
     }
 
-    public HTTPErrorException(int httpStatusCode) {
+    public HTTPErrorException(int httpStatusCode, String message) {
+        super(message);
         this.httpStatusCode = httpStatusCode;
     }
 

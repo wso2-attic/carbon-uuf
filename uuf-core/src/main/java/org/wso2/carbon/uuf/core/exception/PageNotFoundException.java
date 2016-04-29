@@ -20,11 +20,11 @@ public class PageNotFoundException extends HTTPErrorException {
 
     private static final int HTTP_STATUS_NOT_FOUND = 404;
 
-    public PageNotFoundException(String message, Throwable cause) {
-        super(HTTP_STATUS_NOT_FOUND, message, cause);
-    }
-
     public PageNotFoundException(String message) {
         super(HTTP_STATUS_NOT_FOUND, message);
+    }
+
+    public PageNotFoundException(String message, Throwable cause) {
+        super(HTTP_STATUS_NOT_FOUND, message, cause);
     }
 }

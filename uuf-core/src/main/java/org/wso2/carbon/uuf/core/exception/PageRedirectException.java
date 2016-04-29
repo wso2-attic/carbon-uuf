@@ -21,18 +21,13 @@ public class PageRedirectException extends HTTPErrorException {
     private static final int HTTP_STATUS_FOUND = 302;
     private final String redirectUrl;
 
-    public PageRedirectException(String message, String redirectUrl, Throwable cause) {
-        super(HTTP_STATUS_FOUND, message, cause);
+    public PageRedirectException(String redirectUrl) {
+        super(HTTP_STATUS_FOUND, "Redirecting to '" + redirectUrl + "'.");
         this.redirectUrl = redirectUrl;
     }
 
     public PageRedirectException(String redirectUrl, Throwable cause) {
-        super(HTTP_STATUS_FOUND, cause);
-        this.redirectUrl = redirectUrl;
-    }
-
-    public PageRedirectException(String redirectUrl) {
-        super(HTTP_STATUS_FOUND);
+        super(HTTP_STATUS_FOUND, "Redirecting to '" + redirectUrl + "'.", cause);
         this.redirectUrl = redirectUrl;
     }
 

@@ -21,15 +21,15 @@ public class UUFException extends RuntimeException {
     public UUFException() {
     }
 
+    public UUFException(String message) {
+        super(message);
+    }
+
     public UUFException(Throwable cause) {
         super(cause);
     }
 
     public UUFException(String message, Throwable cause) {
         super(message, cause);
-    }
-
-    public UUFException(String message) {
-        super(message);
     }
 }

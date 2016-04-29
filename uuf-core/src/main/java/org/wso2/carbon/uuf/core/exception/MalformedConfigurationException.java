@@ -16,7 +16,8 @@
 
 package org.wso2.carbon.uuf.core.exception;
 
-public class MalformedConfigurationException extends RuntimeException {
+public class MalformedConfigurationException extends UUFException {
+
     public MalformedConfigurationException() {
     }
 
@@ -24,16 +25,11 @@ public class MalformedConfigurationException extends RuntimeException {
         super(message);
     }
 
-    public MalformedConfigurationException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
     public MalformedConfigurationException(Throwable cause) {
         super(cause);
     }
 
-    public MalformedConfigurationException(String message, Throwable cause, boolean enableSuppression,
-                                           boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
+    public MalformedConfigurationException(String message, Throwable cause) {
+        super(message, cause);
     }
 }
