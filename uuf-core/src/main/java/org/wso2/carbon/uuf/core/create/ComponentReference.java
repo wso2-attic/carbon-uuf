@@ -24,7 +24,4 @@ public interface ComponentReference {
     Optional<FileReference> getConfigurations();
 
     Optional<FileReference> getOsgiImportsConfig();
-
-    @Deprecated
-    FileReference resolveLayout(String layoutName);
 }
