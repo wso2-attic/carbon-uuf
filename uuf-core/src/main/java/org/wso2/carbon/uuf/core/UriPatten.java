@@ -115,6 +115,11 @@ public class UriPatten implements Comparable<UriPatten> {
     }
 
     @Override
+    public int hashCode() {
+        return patternString.hashCode() + (31 * pattern.pattern().hashCode());
+    }
+
+    @Override
     public int compareTo(UriPatten otherUriPattern) {
         if (otherUriPattern == null) {
             return 1;
@@ -134,6 +139,11 @@ public class UriPatten implements Comparable<UriPatten> {
         } else {
             return b.length - a.length;
         }
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return (obj != null) && (!(obj instanceof UriPatten)) && (this.compareTo((UriPatten) obj) == 0);
     }
 
     @Override
