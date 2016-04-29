@@ -11,6 +11,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class Session implements Serializable{
 
     private static final SessionIdGenerator sessionIdGenerator = new SessionIdGenerator();
+
     private final String sessionId;
     private final User user;
 
