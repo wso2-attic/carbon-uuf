@@ -1,6 +1,9 @@
 package org.wso2.carbon.uuf.core.auth;
 
-public class User {
+import java.io.Serializable;
+
+public class User implements Serializable {
+
     private final String username;
 
     public User(String username) {
