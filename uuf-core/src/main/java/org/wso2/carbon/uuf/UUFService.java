@@ -21,7 +21,6 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
-import org.osgi.service.jndi.JNDIContextManager;
 import org.slf4j.MDC;
 import org.wso2.carbon.uuf.core.create.AppCreator;
 import org.wso2.carbon.uuf.core.create.RenderableCreator;
@@ -53,7 +52,6 @@ public class UUFService implements Microservice {
 
     private UUFRegistry registry;
     private final AtomicInteger count = new AtomicInteger(0);
-    private JNDIContextManager jndiContextManager;
 
     @SuppressWarnings("unused")
     public UUFService() {
