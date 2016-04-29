@@ -11,7 +11,7 @@ import java.util.List;
 
 public class ArtifactAppReference implements AppReference {
 
-    private Path path;
+    private final Path path;
 
     public ArtifactAppReference(Path path) {
         this.path = path;
@@ -24,7 +24,7 @@ public class ArtifactAppReference implements AppReference {
     @Override
     public ComponentReference getComponentReference(String componentSimpleName) {
         Path componentPath = path.resolve(DIR_NAME_COMPONENTS).resolve(componentSimpleName);
-        return new ArtifactComponentReference(componentPath, this);
+        return new ArtifactComponentReference(componentPath);
     }
 
     @Override

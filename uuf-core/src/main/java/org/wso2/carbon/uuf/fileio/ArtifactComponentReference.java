@@ -16,12 +16,10 @@ import java.util.stream.Stream;
 
 public class ArtifactComponentReference implements ComponentReference {
 
-    private Path path;
-    private ArtifactAppReference appReference;
+    private final Path path;
 
-    public ArtifactComponentReference(Path path, ArtifactAppReference appReference) {
+    public ArtifactComponentReference(Path path) {
         this.path = path;
-        this.appReference = appReference;
     }
 
     @Override
