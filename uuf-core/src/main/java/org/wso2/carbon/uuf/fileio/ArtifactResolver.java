@@ -1,12 +1,11 @@
 package org.wso2.carbon.uuf.fileio;
 
 import org.wso2.carbon.kernel.utils.Utils;
-import org.wso2.carbon.uuf.core.exception.PageNotFoundException;
-import org.wso2.carbon.uuf.core.exception.UUFException;
 import org.wso2.carbon.uuf.core.create.AppReference;
 import org.wso2.carbon.uuf.core.create.AppResolver;
+import org.wso2.carbon.uuf.core.exception.PageNotFoundException;
+import org.wso2.carbon.uuf.core.exception.UUFException;
 
-import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -14,6 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class ArtifactResolver implements AppResolver {
+
     private final List<Path> paths;
 
     /**
@@ -37,19 +37,14 @@ public class ArtifactResolver implements AppResolver {
     }
 
     @Override
-    public AppReference resolve(String name) {
-        return resolveArtifactApp(name);
-    }
-
-    private ArtifactAppReference resolveArtifactApp(String name) {
+    public AppReference resolve(String appName) {
         // app list mush be <white-space> and comma separated. <white-space> in app names not allowed
         for (Path uufAppPath : paths) {
-            Path path = uufAppPath.toAbsolutePath().normalize();
-            if (name.equals(path.getFileName().toString())) {
-                return new ArtifactAppReference(path);
+            Path directoryName = uufAppPath.toAbsolutePath().normalize().getFileName();
+            if ((directoryName != null) && directoryName.toString().equals(appName)) {
+                return new ArtifactAppReference(directoryName);
             }
         }
-        throw new PageNotFoundException("App by the name '" + name + "' is not found!");
-
+        throw new PageNotFoundException("Cannot find an app with name '" + appName + "'.");
     }
 }

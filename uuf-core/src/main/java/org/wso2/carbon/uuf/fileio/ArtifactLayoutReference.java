@@ -7,6 +7,7 @@ import org.wso2.carbon.uuf.core.create.LayoutReference;
 import java.nio.file.Path;
 
 public class ArtifactLayoutReference implements LayoutReference {
+
     private final Path path;
     private final ArtifactComponentReference componentReference;
 
@@ -17,7 +18,8 @@ public class ArtifactLayoutReference implements LayoutReference {
 
     @Override
     public String getName() {
-        return FilenameUtils.removeExtension(path.getFileName().toString());
+        Path fileName = path.getFileName();
+        return (fileName == null) ? "" : FilenameUtils.removeExtension(fileName.toString());
     }
 
     @Override

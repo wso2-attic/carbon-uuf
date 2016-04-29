@@ -28,7 +28,8 @@ public class ArtifactAppReference implements AppReference {
 
     @Override
     public String getName() {
-        return path.getFileName().toString();
+        Path fileName = path.getFileName();
+        return (fileName == null) ? "" : fileName.toString();
     }
 
     @Override

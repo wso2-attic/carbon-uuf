@@ -21,7 +21,8 @@ public class ArtifactFileReference implements FileReference {
 
     @Override
     public String getName() {
-        return path.getFileName().toString();
+        Path fileName = path.getFileName();
+        return (fileName == null) ? "" : fileName.toString();
     }
 
     @Override
