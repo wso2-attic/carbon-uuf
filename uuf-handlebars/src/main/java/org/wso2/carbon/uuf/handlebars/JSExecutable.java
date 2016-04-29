@@ -9,6 +9,7 @@ import javax.script.ScriptException;
 import java.util.Map;
 import java.util.Optional;
 
+// TODO remove this SuppressWarnings
 @SuppressWarnings("PackageAccessibility")
 public class JSExecutable implements Executable {
 
