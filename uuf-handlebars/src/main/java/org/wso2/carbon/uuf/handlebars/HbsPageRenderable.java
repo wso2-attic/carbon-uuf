@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.core.API;
 import org.wso2.carbon.uuf.core.ComponentLookup;
 import org.wso2.carbon.uuf.core.RequestLookup;
+import org.wso2.carbon.uuf.core.exception.InvalidTypeException;
 import org.wso2.carbon.uuf.core.exception.UUFException;
 import org.wso2.carbon.uuf.model.Model;
 
@@ -40,7 +41,7 @@ public class HbsPageRenderable extends HbsRenderable {
     public String render(Model model, ComponentLookup componentLookup, RequestLookup requestLookup, API api) {
         Context context;
         if (executable.isPresent()) {
-            Object executableOutput = executable.get().execute(getExecutableContext(requestLookup), api);
+            Object executableOutput = executeExecutable(getExecutableContext(requestLookup), api);
             if (log.isDebugEnabled()) {
                 log.debug("Executable output \"" + DebugUtil.safeJsonString(executableOutput) + "\".");
             }
@@ -66,6 +67,20 @@ public class HbsPageRenderable extends HbsRenderable {
         String out = writer.toString(requestLookup.getPlaceholderContents());
         writer.close();
         return out;
+    }
+
+    protected Map executeExecutable(Object context, API api) {
+        Object executableOutput = executable.get().execute(context, api);
+        if (executableOutput == null) {
+            return Collections.emptyMap();
+        }
+        if ((executableOutput instanceof Map)) {
+            return (Map) executableOutput;
+        } else {
+            throw new InvalidTypeException(
+                    "Expected a Map as the output from executing the executable '" + executable.get() +
+                            "'. Instead found '" + executableOutput.getClass().getName() + "'");
+        }
     }
 
     protected Map<String, Object> getExecutableContext(RequestLookup requestLookup) {

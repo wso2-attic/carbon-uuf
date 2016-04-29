@@ -30,7 +30,7 @@ public class HbsFragmentRenderable extends HbsPageRenderable {
     public String render(Model model, ComponentLookup componentLookup, RequestLookup requestLookup, API api) {
         Context context;
         if (executable.isPresent()) {
-            Object executableOutput = executable.get().execute(getExecutableContext(model, requestLookup), api);
+            Object executableOutput = executeExecutable(getExecutableContext(model, requestLookup), api);
             if (log.isDebugEnabled()) {
                 log.debug("Executable output \"" + DebugUtil.safeJsonString(executableOutput) + "\".");
             }
