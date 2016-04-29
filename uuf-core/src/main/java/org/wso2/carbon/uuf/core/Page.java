@@ -35,12 +35,22 @@ public class Page implements Comparable<Page> {
     }
 
     @Override
-    public String toString() {
-        return "{\"uriPattern\": " + uriPatten + ", \"renderer\": " + renderer + ", \"layout\": " + layout.get() + "}";
+    public int hashCode() {
+        return uriPatten.hashCode() + (31 * renderer.hashCode()) + (layout.isPresent() ? (31 * layout.hashCode()) : 0);
     }
 
     @Override
     public int compareTo(Page otherPage) {
-        return this.getUriPatten().compareTo(otherPage.getUriPatten());
+        return (otherPage == null) ? 1 : this.getUriPatten().compareTo(otherPage.getUriPatten());
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return (obj != null) && (!(obj instanceof Page)) && (this.compareTo((Page) obj) == 0);
+    }
+
+    @Override
+    public String toString() {
+        return "{\"uriPattern\": " + uriPatten + ", \"renderer\": " + renderer + ", \"layout\": " + layout.get() + "}";
     }
 }
