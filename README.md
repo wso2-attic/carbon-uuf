@@ -1,28 +1,39 @@
-How to run
-==========
+# Unified UI Framework
 
-1. checkout carbon-uuf and build
-2. go to `product/target` and unzip wso2uuf-1.0.0-SNAPSHOT.zip
-3. go to wso2uuf-1.0.0-SNAPSHOT/bin
-4. run ./carbon.sh
-5. visit http://localhost:8080/pet-store/ and http://localhost:8080/pet-store/pets/snowball
+## Building From Source
 
-Developer Guide
-===============
+You need to build following dependencies before building 'Carbon UUF'.
 
-Pure Package
-------------
+- Build 'JCache 1.0 for WSO2 Carbon'
+  1. Clone [carbon-caching](https://github.com/wso2/carbon-caching) repository.<br/>`git clone https://github.com/wso2/carbon-caching.git`
+  2. Checkout *v1.0.0-m1* tag.<br/>`git checkout v1.0.0-m1`
+  3. Build and install using Maven.<br/> `mvn clean install`
+- Build 'Carbon JNDI'
+  1. Clone [carbon-jndi](https://github.com/wso2/carbon-jndi) repository.<br/>`git clone https://github.com/wso2/carbon-jndi.git`
+  2. Checkout *v1.0.0-m1* tag.<br/>`git checkout v1.0.0-m1`
+  3. Build and install using Maven.<br/> `mvn clean install`
+- Build 'Carbon UUF Maven Plugin' (for [samples](samples/sample4))
+  1. Clone [carbon-uuf-maven-plugin](https://github.com/wso2/carbon-uuf-maven-plugin) repository.<br/>`git clone https://github.com/wso2/carbon-uuf-maven-plugin.git`
+  2. Checkout *v1.0.0-m1* tag.<br/>`git checkout v1.0.0-m1`
+  3. Build and install using Maven.<br/> `mvn clean install`
 
-Pure package is a java package in which
-  * No IO/DB is being done
-  * Classes are immutable
-  * Each function's output depends only on its input (and some immutable class local variables)
+Then clone this repository (`git clone https://github.com/wso2/carbon-uuf.git`) and use Maven to build (`mvn clean install`). Built artifact can be found in `product/target/wso2uuf-1.0.0-SNAPSHOT.zip` path.
 
-Advantages
-  * Trivially unit testable/ mockable
-  * Concurrently callable
-  * Easy to reason about
+## How to run ?
 
-In this project we have maintained `wso2.carbon.uuf.core` and `org.wso2.carbon.uuf.handlebars` packages as pure packages.
+1. Extract `wso2uuf-1.0.0-SNAPSHOT.zip` archive.
+2. Go to `wso2uuf-1.0.0-SNAPSHOT/bin` direcotry.
+4. Run `./carbon.sh` to start the Carbon server.
+5. Visit [http://localhost:8080/pet-store/](http://localhost:8080/pet-store/) to access the pets store sample.
 
+## Contributing to Carbon Maven UUF Plugin Project
 
+Pull requests are highly encouraged and we recommend you to create a GitHub issue to discuss the issue or feature that you are contributing to.  
+
+## License
+
+Carbon UUF is available under the Apache 2.0 License.
+
+## Copyright
+
+Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
