@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 
 public class ArtifactResolver implements AppResolver {
 
-    private final List<Path> paths;
+    private final List<Path> directories;
 
     /**
      * This constructor will assume uufHome as $PRODUCT_HOME/deployment/uufapps
@@ -40,25 +40,28 @@ public class ArtifactResolver implements AppResolver {
     }
 
     public ArtifactResolver(Path uufHome) {
-        paths = getAllApplications(uufHome);
+        directories = getAllApplications(uufHome);
     }
 
     private List<Path> getAllApplications(Path root) {
         try {
-            return Files.list(root).filter(Files::isDirectory).collect(Collectors.toList());
+            return Files.list(root)
+                    .filter(Files::isDirectory)
+                    .map(path -> path.normalize().toAbsolutePath())
+                    .collect(Collectors.toList());
         } catch (IOException e) {
             throw new UUFException(
-                    "Error while reading deployment artifacts on '" + root.toString() + "' folder!");
+                    "An error occurred when reading deployment artifacts from '" + root.toString() + "'.");
         }
     }
 
     @Override
     public AppReference resolve(String appName) {
         // app list mush be <white-space> and comma separated. <white-space> in app names not allowed
-        for (Path uufAppPath : paths) {
-            Path directoryName = uufAppPath.toAbsolutePath().normalize().getFileName();
+        for (Path directory : directories) {
+            Path directoryName = directory.getFileName();
             if ((directoryName != null) && directoryName.toString().equals(appName)) {
-                return new ArtifactAppReference(directoryName);
+                return new ArtifactAppReference(directory);
             }
         }
         throw new PageNotFoundException("Cannot find an app with name '" + appName + "'.");
