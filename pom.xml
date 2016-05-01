@@ -99,11 +99,6 @@
                 <version>${equinox.osgi.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.wso2.msf4j</groupId>
-                <artifactId>msf4j-core</artifactId>
-                <version>${msf4j.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.osgi</groupId>
                 <artifactId>org.osgi.core</artifactId>
                 <version>${osgi.api.version}</version>
@@ -117,6 +112,12 @@
                 <groupId>javax.ws.rs</groupId>
                 <artifactId>javax.ws.rs-api</artifactId>
                 <version>${rs-api.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.wso2.msf4j</groupId>
+                <artifactId>msf4j-core</artifactId>
+                <version>${msf4j.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.netty</groupId>
@@ -182,7 +183,7 @@
             <dependency>
                 <groupId>org.wso2.carbon.jndi</groupId>
                 <artifactId>org.wso2.carbon.jndi</artifactId>
-                <version>${org.wso2.carbon.jndi.version}</version>
+                <version>${carbon.jndi.version}</version>
             </dependency>
             <!--TODO: manage-->
             <dependency>
@@ -271,22 +272,21 @@
     <properties>
         <uuf.version>1.0.0-SNAPSHOT</uuf.version>
 
+        <maven.bundle.plugin.version>2.5.0</maven.bundle.plugin.version>
         <carbon.kernel.version>5.0.0</carbon.kernel.version>
         <carbon.kernel.version.range>[5.0,6)</carbon.kernel.version.range>
         <carbon.feature.plugin.version>2.0.0</carbon.feature.plugin.version>
         <carbon.cache.version>1.0.0-m1</carbon.cache.version>
-        <maven.bundle.plugin.version>2.5.0</maven.bundle.plugin.version>
+        <carbon.jndi.version>1.0.0-m1</carbon.jndi.version>
 
         <!-- Dependencies for UUF -->
         <com.github.jknack.handlebars.version>4.0.3.wso2v1</com.github.jknack.handlebars.version>
+        <antlr-version>4.5.1-1</antlr-version>
+        <org.apache.commons.commons-lang3.version>3.1</org.apache.commons.commons-lang3.version>
         <org.wso2.orbit.org.yaml.version>1.16.0.wso2v1</org.wso2.orbit.org.yaml.version>
         <osgi.framework.import.version.range>[1.8.0, 2.0.0)</osgi.framework.import.version.range>
         <osgi.api.version>6.0.0</osgi.api.version>
-        <handlebars-version>4.0.3</handlebars-version>
-        <antlr-version>4.5.1-1</antlr-version>
-        <org.apache.commons.commons-lang3.version>3.1</org.apache.commons.commons-lang3.version>
         <javax.cache-api.version>1.0.0</javax.cache-api.version>
-        <org.wso2.carbon.jndi.version>1.0.0-SNAPSHOT</org.wso2.carbon.jndi.version>
 
         <!-- Dependencies for MSF4J -->
         <pax.logging.api.version>1.8.4</pax.logging.api.version>

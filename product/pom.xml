@@ -14,6 +14,7 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
+
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
@@ -79,7 +80,7 @@
         <dependency>
             <groupId>org.wso2.carbon.jndi</groupId>
             <artifactId>org.wso2.carbon.jndi.feature</artifactId>
-            <version>${org.wso2.carbon.jndi.version}</version>
+            <version>${carbon.jndi.version}</version>
             <type>zip</type>
         </dependency>
     </dependencies>
@@ -184,7 +185,7 @@
                                 </feature>
                                 <feature>
                                     <id>org.wso2.carbon.jndi.feature</id>
-                                    <version>${org.wso2.carbon.jndi.version}</version>
+                                    <version>${carbon.jndi.version}</version>
                                 </feature>
                             </features>
                         </configuration>
@@ -260,7 +261,7 @@
                                 </feature>
                                 <feature>
                                     <id>org.wso2.carbon.jndi.feature.group</id>
-                                    <version>${org.wso2.carbon.jndi.version}</version>
+                                    <version>${carbon.jndi.version}</version>
                                 </feature>
                             </features>
                         </configuration>
