@@ -25,7 +25,6 @@ import org.wso2.carbon.uuf.model.MapModel;
 import org.wso2.carbon.uuf.model.Model;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -122,17 +121,13 @@ public class App {
     private Model createModel(HttpRequest httpRequest) {
         QueryStringDecoder decoder = new QueryStringDecoder(httpRequest.getUri());
         Map<String, List<String>> parameters = decoder.parameters();
-        Iterator<Map.Entry<String, List<String>>> paramsIterator = parameters.entrySet().iterator();
-        HashMap<String, Object> queryParams = new HashMap<>();
-        while (paramsIterator.hasNext()) {
-            Map.Entry<String, List<String>> currentParam = paramsIterator.next();
-            List<String> paramValues = currentParam.getValue();
-            Object newParamValue = (paramValues.size() == 1) ? paramValues.get(0) : paramValues;
-            queryParams.put(currentParam.getKey(), newParamValue);
-        }
-        HashMap<String, Object> context = new HashMap<>();
-        context.put("queryParams", queryParams);
-        return new MapModel(context);
+        Map<String, Object> queryParams = parameters.entrySet().parallelStream()
+                .collect(Collectors.toMap(Map.Entry::getKey,
+                                          entry -> {
+                                              List<String> value = entry.getValue();
+                                              return (value.size() > 1) ? value : value.get(0);
+                                          }));
+        return new MapModel(queryParams);
     }
 
     public boolean hasPage(String uri) {
