@@ -44,6 +44,11 @@ public class JSExecutable implements Executable {
 
         NashornScriptEngine engine = (NashornScriptEngine) SCRIPT_ENGINE_FACTORY.getScriptEngine(SCRIPT_ENGINE_ARGS,
                                                                                                  componentClassLoader);
+        engine.put("callOSGiService", (FunctionCallOSGiService) API::callOSGiService);
+        engine.put("getOSGiServices", (FunctionGetOSGiServices) API::getOSGiServices);
+        engine.put("callMicroService", (FunctionCallMicroService) API::callMicroService);
+        engine.put("sendError", (FunctionSendError) API::sendError);
+        engine.put("sendRedirect", (FunctionSendRedirect) API::sendRedirect);
         try {
             engine.eval(scriptSource);
             this.engine = engine;
@@ -57,12 +62,7 @@ public class JSExecutable implements Executable {
     }
 
     public Object execute(Object context, API api) {
-        engine.put("callOSGiService", (FunctionCallOSGiService) api::callOSGiService);
-        engine.put("getOSGiServices", (FunctionGetOSGiServices) api::getOSGiServices);
-        engine.put("callMicroService", (FunctionCallMicroService) api::callMicroService);
         engine.put("createSession", (FunctionCreateSession) api::createSession);
-        engine.put("sendError", (FunctionSendError) api::sendError);
-        engine.put("sendRedirect", (FunctionSendRedirect) api::sendRedirect);
         engine.put("setTheme", (FunctionSetTheme) api::setTheme);
         try {
             return engine.invokeFunction("onRequest", context);

@@ -48,7 +48,7 @@ public class API {
      * @param args              method arguments
      * @return
      */
-    public Object callOSGiService(String serviceClassName, String serviceMethodName, Object... args) {
+    public static Object callOSGiService(String serviceClassName, String serviceMethodName, Object... args) {
         Object serviceInstance;
         try {
             serviceInstance = (new InitialContext()).lookup("osgi:service/" + serviceClassName);
@@ -84,7 +84,7 @@ public class API {
      * @param serviceClassName
      * @return a map of implementation class and instances
      */
-    public Map<String, Object> getOSGiServices(String serviceClassName) {
+    public static Map<String, Object> getOSGiServices(String serviceClassName) {
         try {
             Context context = new InitialContext();
             NamingEnumeration<Binding> enumeration = context.listBindings("osgi:service/" + serviceClassName);
@@ -100,20 +100,20 @@ public class API {
         }
     }
 
-    public void callMicroService() {
+    public static void callMicroService() {
         throw new UnsupportedOperationException("To be implemented");
+    }
+
+    public static void sendError(int status, String message) {
+        throw new HTTPErrorException(status, message);
+    }
+
+    public static void sendRedirect(String redirectUrl) {
+        throw new PageRedirectException(redirectUrl);
     }
 
     public void createSession() {
         throw new UnsupportedOperationException("To be implemented");
-    }
-
-    public void sendError(int status, String message) {
-        throw new HTTPErrorException(status, message);
-    }
-
-    public void sendRedirect(String redirectUrl) {
-        throw new PageRedirectException(redirectUrl);
     }
 
     public void setTheme(String name) {
