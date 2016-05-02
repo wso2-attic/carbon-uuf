@@ -17,8 +17,12 @@
 package org.wso2.carbon.uuf.core;
 
 import org.wso2.carbon.uuf.core.auth.SessionRegistry;
+import org.wso2.carbon.uuf.core.exception.FragmentNotFoundException;
 import org.wso2.carbon.uuf.core.exception.PageNotFoundException;
+import org.wso2.carbon.uuf.model.MapModel;
+import org.wso2.carbon.uuf.model.Model;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -30,6 +34,7 @@ public class App {
     private final Map<String, Component> components;
     private final Component rootComponent;
     private final SessionRegistry sessionRegistry;
+    private static final String FRAGMENTS_URI_PREFIX="/fragments/";
 
     public App(String context, Set<Component> components, SessionRegistry sessionRegistry) {
         if (!context.startsWith("/")) {
@@ -63,6 +68,44 @@ public class App {
             }
         }
         throw new PageNotFoundException("Requested page '" + uriWithoutContext + "' does not exists.");
+    }
+
+    /**
+     * Returns rendered output of this fragment uri. This method intended to use for serving AJAX requests.
+     * @param uriWithoutAppContext fragment uri
+     * @param requestLookup request lookup
+     * @return rendered output
+     */
+    public String renderFragment(String uriWithoutAppContext, RequestLookup requestLookup) {
+        API api = new API(sessionRegistry);
+        String fragmentName = uriWithoutAppContext.substring(FRAGMENTS_URI_PREFIX.length());
+        if(!NameUtils.isFullyQualifiedName(fragmentName)){
+            fragmentName = NameUtils.getFullyQualifiedName(Component.ROOT_COMPONENT_NAME, fragmentName);
+        }
+
+        // First try to render the fragment with root component.
+        ComponentLookup componentLookup = rootComponent.getLookup();
+        Optional<Fragment> fragment = rootComponent.getLookup().getFragment(fragmentName);
+        if (fragment.isPresent()) {
+            String output = fragment.get().render(new MapModel(new HashMap<String, Object>()), componentLookup, requestLookup, api);
+            return output;
+        }
+
+        // Since root components doesn't have the fragment, try with other components.
+        String componentName = NameUtils.getComponentName(fragmentName);
+        for (Map.Entry<String, Component> entry : components.entrySet()) {
+            if (componentName.startsWith(entry.getKey())) {
+                Component component = entry.getValue();
+                componentLookup = component.getLookup();
+                fragment = componentLookup.getFragment(fragmentName);
+                if (fragment.isPresent()) {
+                    String output = fragment.get().render(new MapModel(new HashMap<String, Object>()), componentLookup, requestLookup, api);
+                    return output;
+                }
+                break;
+            }
+        }
+        throw new FragmentNotFoundException("Requested fragment '" + uriWithoutAppContext + "' does not exists.");
     }
 
     public boolean hasPage(String uri) {

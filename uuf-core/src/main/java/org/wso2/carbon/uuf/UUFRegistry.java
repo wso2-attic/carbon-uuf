@@ -25,6 +25,7 @@ import org.wso2.carbon.uuf.core.MimeMapper;
 import org.wso2.carbon.uuf.core.RequestLookup;
 import org.wso2.carbon.uuf.core.create.AppCreator;
 import org.wso2.carbon.uuf.core.create.AppResolver;
+import org.wso2.carbon.uuf.core.exception.FragmentNotFoundException;
 import org.wso2.carbon.uuf.core.exception.PageNotFoundException;
 import org.wso2.carbon.uuf.core.exception.PageRedirectException;
 import org.wso2.carbon.uuf.core.exception.UUFException;
@@ -111,13 +112,17 @@ public class UUFRegistry {
                 }
                 if (uriWithoutAppContext.startsWith("/debug/")) {
                     return renderDebug(app, uriWithoutAppContext);
-                } else {
+                } else if(uriWithoutAppContext.startsWith("/fragments/")){
+                    String fragment = app.renderFragment(uri.substring(appContext.length()),
+                                                        new RequestLookup(appContext, request));
+                    return Response.ok(fragment).header("Content-Type", "text/html");
+                }else {
                     String page = app.renderPage(uri.substring(appContext.length()),
                                                  new RequestLookup(appContext, request));
                     return Response.ok(page).header("Content-Type", "text/html");
                 }
             }
-        } catch (PageNotFoundException e) {
+        } catch (PageNotFoundException | FragmentNotFoundException e) {
             // https://googlewebmastercentral.blogspot.com/2010/04/to-slash-or-not-to-slash.html
             // if the tailing / is extra or a it is missing, send 301
             if (app != null) {
@@ -133,9 +138,9 @@ public class UUFRegistry {
                     }
                 }
             }
-            return createErrorResponse(appName, e, e.getHttpStatusCode());
+            return createErrorResponse(appName, e.getMessage(), e, e.getHttpStatusCode());
         } catch (PageRedirectException e) {
-            return createErrorResponse(appName, e, e.getHttpStatusCode()).header("Location", e.getRedirectUrl());
+            return createErrorResponse(appName, e.getMessage(), e, e.getHttpStatusCode()).header("Location", e.getRedirectUrl());
         } catch (Exception e) {
             int httpStatusCode = 500;
             Throwable cause = e.getCause();
@@ -204,6 +209,10 @@ public class UUFRegistry {
 
     private Response.ResponseBuilder createErrorResponse(String appName, Exception e, int httpStatusCode) {
         String errorMessage = "Error while serving context /'" + appName + "'.";
+        return createErrorResponse(appName, errorMessage, e, httpStatusCode);
+    }
+
+    private Response.ResponseBuilder createErrorResponse(String appName, String errorMessage, Exception e, int httpStatusCode) {
         log.error(errorMessage, e);
         return Response.status(httpStatusCode).entity(errorMessage).header("Content-Type", "text/plain");
     }
