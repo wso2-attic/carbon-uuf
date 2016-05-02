@@ -42,9 +42,9 @@ public class Fragment {
         return simpleName;
     }
 
-    public String render(Model model, ComponentLookup componentLookup, RequestLookup requestLookup, API api) {
-        requestLookup.pushToPublicUriStack(requestLookup.getAppContext() + componentLookup.getPublicUriInfix(this));
-        String output = renderer.render(model, componentLookup, requestLookup, api);
+    public String render(Model model, ComponentLookup lookup, RequestLookup requestLookup, API api) {
+        requestLookup.pushToPublicUriStack(requestLookup.getAppContext() + lookup.getPublicUriInfix(this));
+        String output = renderer.render(model, lookup, requestLookup, api);
         requestLookup.popPublicUriStack();
         return output;
     }

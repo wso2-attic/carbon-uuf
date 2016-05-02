@@ -39,7 +39,7 @@ public class ComponentTest {
     private static Page createPage(String uriPattern, String content) {
         return new Page(new UriPatten(uriPattern), null) {
             @Override
-            public String render(Model model, ComponentLookup componentLookup, RequestLookup requestLookup, API api) {
+            public String render(Model model, ComponentLookup lookup, RequestLookup requestLookup, API api) {
                 return content;
             }
         };

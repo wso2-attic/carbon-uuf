@@ -40,12 +40,12 @@ public class Page implements Comparable<Page> {
         return uriPatten;
     }
 
-    public String render(Model model, ComponentLookup componentLookup, RequestLookup requestLookup, API api) {
-        requestLookup.pushToPublicUriStack(requestLookup.getAppContext() + componentLookup.getPublicUriInfix(this));
-        String output = renderer.render(model, componentLookup, requestLookup, api);
+    public String render(Model model, ComponentLookup lookup, RequestLookup requestLookup, API api) {
+        requestLookup.pushToPublicUriStack(requestLookup.getAppContext() + lookup.getPublicUriInfix(this));
+        String output = renderer.render(model, lookup, requestLookup, api);
         requestLookup.popPublicUriStack();
         if (layout.isPresent()) {
-            output = layout.get().render(componentLookup, requestLookup);
+            output = layout.get().render(lookup, requestLookup);
         }
         return output;
     }

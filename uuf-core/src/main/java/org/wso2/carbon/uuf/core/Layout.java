@@ -40,9 +40,9 @@ public class Layout {
         return simpleName;
     }
 
-    public String render(ComponentLookup componentLookup, RequestLookup requestLookup) {
-        requestLookup.pushToPublicUriStack(requestLookup.getAppContext() + componentLookup.getPublicUriInfix(this));
-        String output = renderer.render(null, componentLookup, requestLookup, null);
+    public String render(ComponentLookup lookup, RequestLookup requestLookup) {
+        requestLookup.pushToPublicUriStack(requestLookup.getAppContext() + lookup.getPublicUriInfix(this));
+        String output = renderer.render(null, lookup, requestLookup, null);
         requestLookup.popPublicUriStack();
         return output;
     }
