@@ -20,7 +20,6 @@ import org.wso2.carbon.uuf.core.auth.SessionRegistry;
 import org.wso2.carbon.uuf.core.exception.FragmentNotFoundException;
 import org.wso2.carbon.uuf.core.exception.PageNotFoundException;
 import org.wso2.carbon.uuf.model.MapModel;
-import org.wso2.carbon.uuf.model.Model;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -83,7 +82,7 @@ public class App {
     public String renderFragment(String uriWithoutAppContext, RequestLookup requestLookup) {
         API api = new API(sessionRegistry);
         String fragmentName = uriWithoutAppContext.substring(FRAGMENTS_URI_PREFIX.length());
-        if(!NameUtils.isFullyQualifiedName(fragmentName)){
+        if (!NameUtils.isFullyQualifiedName(fragmentName)) {
             fragmentName = NameUtils.getFullyQualifiedName(Component.ROOT_COMPONENT_NAME, fragmentName);
         }
 
@@ -91,7 +90,8 @@ public class App {
         ComponentLookup componentLookup = rootComponent.getLookup();
         Optional<Fragment> fragment = rootComponent.getLookup().getFragment(fragmentName);
         if (fragment.isPresent()) {
-            String output = fragment.get().render(new MapModel(new HashMap<String, Object>()), componentLookup, requestLookup, api);
+            String output = fragment.get().render(new MapModel(new HashMap<String, Object>()), componentLookup,
+                                                  requestLookup, api);
             return output;
         }
 
@@ -103,7 +103,8 @@ public class App {
                 componentLookup = component.getLookup();
                 fragment = componentLookup.getFragment(fragmentName);
                 if (fragment.isPresent()) {
-                    String output = fragment.get().render(new MapModel(new HashMap<String, Object>()), componentLookup, requestLookup, api);
+                    String output = fragment.get().render(new MapModel(new HashMap<String, Object>()), componentLookup,
+                                                          requestLookup, api);
                     return output;
                 }
                 break;
