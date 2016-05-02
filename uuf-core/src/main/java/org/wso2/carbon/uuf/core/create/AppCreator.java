@@ -127,6 +127,7 @@ public class AppCreator {
             ComponentReference componentReference = appReference.getComponentReference(componentSimpleName);
             ClassLoader componentClassLoader = classLoaderProvider.getClassLoader(appReference.getName(), componentName,
                                                                                   componentVersion, componentReference);
+            // TODO: 5/3/16 check whether this component is already created
             Component component = createComponent(componentName, componentVersion, componentContext, componentReference,
                                                   componentDependencies, componentClassLoader);
 
