@@ -122,13 +122,13 @@ public class App {
     private Model createModel(HttpRequest httpRequest) {
         QueryStringDecoder decoder = new QueryStringDecoder(httpRequest.getUri());
         Map<String, List<String>> parameters = decoder.parameters();
-        Iterator<String> paramsIterator = parameters.keySet().iterator();
+        Iterator<Map.Entry<String, List<String>>> paramsIterator = parameters.entrySet().iterator();
         HashMap<String, Object> uriParams = new HashMap<>();
         while (paramsIterator.hasNext()) {
-            String currentParam = paramsIterator.next();
-            List<String> paramValues = parameters.get(currentParam);
+            Map.Entry<String, List<String>> currentParam = paramsIterator.next();
+            List<String> paramValues = currentParam.getValue();
             Object newParamValue = (paramValues.size() == 1) ? paramValues.get(0) : paramValues;
-            uriParams.put(currentParam, newParamValue);
+            uriParams.put(currentParam.getKey(), newParamValue);
         }
         HashMap<String, Object> context = new HashMap<>();
         context.put("uriParams", uriParams);
