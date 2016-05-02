@@ -123,15 +123,15 @@ public class App {
         QueryStringDecoder decoder = new QueryStringDecoder(httpRequest.getUri());
         Map<String, List<String>> parameters = decoder.parameters();
         Iterator<Map.Entry<String, List<String>>> paramsIterator = parameters.entrySet().iterator();
-        HashMap<String, Object> uriParams = new HashMap<>();
+        HashMap<String, Object> queryParams = new HashMap<>();
         while (paramsIterator.hasNext()) {
             Map.Entry<String, List<String>> currentParam = paramsIterator.next();
             List<String> paramValues = currentParam.getValue();
             Object newParamValue = (paramValues.size() == 1) ? paramValues.get(0) : paramValues;
-            uriParams.put(currentParam.getKey(), newParamValue);
+            queryParams.put(currentParam.getKey(), newParamValue);
         }
         HashMap<String, Object> context = new HashMap<>();
-        context.put("uriParams", uriParams);
+        context.put("queryParams", queryParams);
         return new MapModel(context);
     }
 
