@@ -73,7 +73,6 @@ public class ComponentTest {
         ComponentLookup lookup = createComponentLookup("componentName");
         Component component = new Component("componentName", anyString(), ImmutableSortedSet.of(p1, p2), lookup);
 
-        //TODO: fix bug in URiPattern class, if there is a '-' in the wildcard value then matching returns false.
         Optional<String> output = component.renderPage("/test/page/wildcard-value/one", createRequestLookup(), any());
         Assert.assertEquals(output.get(), "Hello world from test page one!");
     }
