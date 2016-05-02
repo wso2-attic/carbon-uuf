@@ -78,8 +78,7 @@ public class Component {
         }
 
         if (log.isDebugEnabled()) {
-            log.debug("Component '" + lookup.getComponentName() + "' is serving Page '" + servingPage + "' for URI '" +
-                              pageUri + "'.");
+            log.debug("Component '" + name + "' is serving Page '" + servingPage + "' for URI '" + pageUri + "'.");
         }
 
         return Optional.of(servingPage.render(null, lookup, requestLookup, api));
