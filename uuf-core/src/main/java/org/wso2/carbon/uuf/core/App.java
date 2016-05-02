@@ -70,6 +70,10 @@ public class App {
         throw new PageNotFoundException("Requested page '" + uriWithoutContext + "' does not exists.");
     }
 
+    public static boolean isFragmentsUri(String uriWithoutContext){
+        return uriWithoutContext.startsWith(FRAGMENTS_URI_PREFIX);
+    }
+
     /**
      * Returns rendered output of this fragment uri. This method intended to use for serving AJAX requests.
      * @param uriWithoutAppContext fragment uri

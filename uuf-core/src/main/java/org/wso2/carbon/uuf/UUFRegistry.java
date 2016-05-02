@@ -112,7 +112,7 @@ public class UUFRegistry {
                 }
                 if (uriWithoutAppContext.startsWith("/debug/")) {
                     return renderDebug(app, uriWithoutAppContext);
-                } else if(uriWithoutAppContext.startsWith("/fragments/")){
+                } else if(App.isFragmentsUri(uriWithoutAppContext)){
                     String fragment = app.renderFragment(uri.substring(appContext.length()),
                                                         new RequestLookup(appContext, request));
                     return Response.ok(fragment).header("Content-Type", "text/html");
