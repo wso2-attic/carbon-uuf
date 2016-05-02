@@ -33,7 +33,7 @@ public class App {
     private final Map<String, Component> components;
     private final Component rootComponent;
     private final SessionRegistry sessionRegistry;
-    private static final String FRAGMENTS_URI_PREFIX="/fragments/";
+    private static final String FRAGMENTS_URI_PREFIX = "/fragments/";
 
     public App(String context, Set<Component> components, SessionRegistry sessionRegistry) {
         if (!context.startsWith("/")) {
@@ -69,14 +69,15 @@ public class App {
         throw new PageNotFoundException("Requested page '" + uriWithoutContext + "' does not exists.");
     }
 
-    public static boolean isFragmentsUri(String uriWithoutContext){
+    public static boolean isFragmentsUri(String uriWithoutContext) {
         return uriWithoutContext.startsWith(FRAGMENTS_URI_PREFIX);
     }
 
     /**
      * Returns rendered output of this fragment uri. This method intended to use for serving AJAX requests.
+     *
      * @param uriWithoutAppContext fragment uri
-     * @param requestLookup request lookup
+     * @param requestLookup        request lookup
      * @return rendered output
      */
     public String renderFragment(String uriWithoutAppContext, RequestLookup requestLookup) {
@@ -90,9 +91,8 @@ public class App {
         ComponentLookup componentLookup = rootComponent.getLookup();
         Optional<Fragment> fragment = rootComponent.getLookup().getFragment(fragmentName);
         if (fragment.isPresent()) {
-            String output = fragment.get().render(new MapModel(new HashMap<String, Object>()), componentLookup,
-                                                  requestLookup, api);
-            return output;
+            // TODO: 5/2/16 pass Request query params via Model
+            return fragment.get().render(new MapModel(new HashMap<>()), componentLookup, requestLookup, api);
         }
 
         // Since root components doesn't have the fragment, try with other components.
@@ -103,9 +103,8 @@ public class App {
                 componentLookup = component.getLookup();
                 fragment = componentLookup.getFragment(fragmentName);
                 if (fragment.isPresent()) {
-                    String output = fragment.get().render(new MapModel(new HashMap<String, Object>()), componentLookup,
-                                                          requestLookup, api);
-                    return output;
+                    // TODO: 5/2/16 pass Request query params via Model
+                    return fragment.get().render(new MapModel(new HashMap<>()), componentLookup, requestLookup, api);
                 }
                 break;
             }
