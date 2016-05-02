@@ -43,4 +43,8 @@ public class NameUtils {
     public static boolean isFullyQualifiedName(String name) {
         return (name.lastIndexOf('.') != -1);
     }
+
+    public static boolean isSimpleName(String name) {
+        return (name.lastIndexOf('.') == -1);
+    }
 }
