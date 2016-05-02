@@ -16,12 +16,17 @@
 
 package org.wso2.carbon.uuf.core;
 
+import io.netty.handler.codec.http.HttpRequest;
+import io.netty.handler.codec.http.QueryStringDecoder;
 import org.wso2.carbon.uuf.core.auth.SessionRegistry;
 import org.wso2.carbon.uuf.core.exception.FragmentNotFoundException;
 import org.wso2.carbon.uuf.core.exception.PageNotFoundException;
 import org.wso2.carbon.uuf.model.MapModel;
+import org.wso2.carbon.uuf.model.Model;
 
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -82,17 +87,20 @@ public class App {
      */
     public String renderFragment(String uriWithoutAppContext, RequestLookup requestLookup) {
         API api = new API(sessionRegistry);
-        String fragmentName = uriWithoutAppContext.substring(FRAGMENTS_URI_PREFIX.length());
+        int queryParamsPos = uriWithoutAppContext.indexOf("?");
+        String fragmentName = (queryParamsPos > -1) ?
+                uriWithoutAppContext.substring(FRAGMENTS_URI_PREFIX.length(), queryParamsPos) :
+                uriWithoutAppContext.substring(FRAGMENTS_URI_PREFIX.length());
         if (!NameUtils.isFullyQualifiedName(fragmentName)) {
             fragmentName = NameUtils.getFullyQualifiedName(Component.ROOT_COMPONENT_NAME, fragmentName);
         }
 
+        Model model = createModel(requestLookup.getRequest());
         // First try to render the fragment with root component.
         ComponentLookup componentLookup = rootComponent.getLookup();
         Optional<Fragment> fragment = rootComponent.getLookup().getFragment(fragmentName);
         if (fragment.isPresent()) {
-            // TODO: 5/2/16 pass Request query params via Model
-            return fragment.get().render(new MapModel(new HashMap<>()), componentLookup, requestLookup, api);
+            return fragment.get().render(model, componentLookup, requestLookup, api);
         }
 
         // Since root components doesn't have the fragment, try with other components.
@@ -103,13 +111,28 @@ public class App {
                 componentLookup = component.getLookup();
                 fragment = componentLookup.getFragment(fragmentName);
                 if (fragment.isPresent()) {
-                    // TODO: 5/2/16 pass Request query params via Model
                     return fragment.get().render(new MapModel(new HashMap<>()), componentLookup, requestLookup, api);
                 }
                 break;
             }
         }
         throw new FragmentNotFoundException("Requested fragment '" + uriWithoutAppContext + "' does not exists.");
+    }
+
+    private Model createModel(HttpRequest httpRequest) {
+        QueryStringDecoder decoder = new QueryStringDecoder(httpRequest.getUri());
+        Map<String, List<String>> parameters = decoder.parameters();
+        Iterator<String> paramsIterator = parameters.keySet().iterator();
+        HashMap<String, Object> uriParams = new HashMap<>();
+        while (paramsIterator.hasNext()) {
+            String currentParam = paramsIterator.next();
+            List<String> paramValues = parameters.get(currentParam);
+            Object newParamValue = (paramValues.size() == 1) ? paramValues.get(0) : paramValues;
+            uriParams.put(currentParam, newParamValue);
+        }
+        HashMap<String, Object> context = new HashMap<>();
+        context.put("uriParams", uriParams);
+        return new MapModel(context);
     }
 
     public boolean hasPage(String uri) {

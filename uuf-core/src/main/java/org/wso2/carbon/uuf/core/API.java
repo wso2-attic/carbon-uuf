@@ -81,7 +81,7 @@ public class API {
      * Returns a map of service implementation class names and instances of all OSGi services for the given service
      * class name.
      *
-     * @param serviceClassName
+     * @param serviceClassName service class name
      * @return a map of implementation class and instances
      */
     public static Map<String, Object> getOSGiServices(String serviceClassName) {
