@@ -1,0 +1,5 @@
+{{#if @params.queryParams.q}}
+    hello {{{@params.queryParams.q}}}!
+{{else}}
+    Query parameter 'q' not found, Try with '{{{@app.context}}}/fragments/ajax?q=your-name'!
+{{/if}}

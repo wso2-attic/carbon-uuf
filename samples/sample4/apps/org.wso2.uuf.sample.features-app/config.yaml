@@ -1,0 +1,7 @@
+uuf.productName : Features App
+elementsPerPage: 10
+lifecycle:
+    - state: adopted
+      show: false
+    - state: new
+      show: true
