@@ -50,6 +50,16 @@ public class Layout {
     }
 
     @Override
+    public int hashCode() {
+        return name.hashCode() + (31 * renderer.hashCode());
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return (obj != null) && (obj instanceof Layout) && (this.name.equals(((Layout) obj).name));
+    }
+
+    @Override
     public String toString() {
         return "{\"name\": \"" + name + "\", \"renderer\": " + renderer + "}";
     }

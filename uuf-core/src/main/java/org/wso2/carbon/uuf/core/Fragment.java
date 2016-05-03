@@ -52,6 +52,16 @@ public class Fragment {
     }
 
     @Override
+    public int hashCode() {
+        return name.hashCode() + (31 * renderer.hashCode());
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return (obj != null) && (obj instanceof Fragment) && (this.name.equals(((Fragment) obj).name));
+    }
+
+    @Override
     public String toString() {
         return "{\"name\": \"" + name + "\", \"renderer\": " + renderer + "}";
     }
