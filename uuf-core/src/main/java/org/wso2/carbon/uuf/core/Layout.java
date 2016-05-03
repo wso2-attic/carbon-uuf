@@ -41,9 +41,11 @@ public class Layout {
     }
 
     public String render(ComponentLookup lookup, RequestLookup requestLookup) {
+        lookup.in(this);
         requestLookup.pushToPublicUriStack(requestLookup.getAppContext() + lookup.getPublicUriInfix(this));
         String output = renderer.render(null, lookup, requestLookup, null);
         requestLookup.popPublicUriStack();
+        lookup.out();
         return output;
     }
 

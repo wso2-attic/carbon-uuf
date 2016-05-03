@@ -43,9 +43,11 @@ public class Fragment {
     }
 
     public String render(Model model, ComponentLookup lookup, RequestLookup requestLookup, API api) {
+        lookup.in(this);
         requestLookup.pushToPublicUriStack(requestLookup.getAppContext() + lookup.getPublicUriInfix(this));
         String output = renderer.render(model, lookup, requestLookup, api);
         requestLookup.popPublicUriStack();
+        lookup.out();
         return output;
     }
 
