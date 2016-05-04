@@ -19,11 +19,15 @@ package org.wso2.carbon.uuf.handlebars;
 import jdk.nashorn.api.scripting.NashornScriptEngine;
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
 import org.wso2.carbon.uuf.core.API;
+import org.wso2.carbon.uuf.core.RequestLookup;
+import org.wso2.carbon.uuf.core.auth.Session;
 import org.wso2.carbon.uuf.core.exception.UUFException;
 
 import javax.script.ScriptException;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 // TODO remove this SuppressWarnings
 @SuppressWarnings("PackageAccessibility")
@@ -63,6 +67,7 @@ public class JSExecutable implements Executable {
 
     public Object execute(Object context, API api) {
         engine.put("createSession", (FunctionCreateSession) api::createSession);
+        engine.put("getSession", (FunctionGetSession) api::getSession);
         engine.put("setTheme", (FunctionSetTheme) api::setTheme);
         try {
             return engine.invokeFunction("onRequest", context);
@@ -81,43 +86,49 @@ public class JSExecutable implements Executable {
     }
 
     @FunctionalInterface
-    private interface FunctionCallOSGiService {
+    public interface FunctionCallOSGiService {
         @SuppressWarnings("unused")
         Object call(String serviceClassName, String serviceMethodName, Object... args);
     }
 
     @FunctionalInterface
-    private interface FunctionGetOSGiServices {
+    public interface FunctionGetOSGiServices {
         @SuppressWarnings("unused")
         Map<String, Object> call(String serviceClassName);
     }
 
     @FunctionalInterface
-    private interface FunctionCallMicroService {
+    public interface FunctionCallMicroService {
         @SuppressWarnings("unused")
         void call();
     }
 
     @FunctionalInterface
-    private interface FunctionCreateSession {
+    public interface FunctionCreateSession {
         @SuppressWarnings("unused")
-        void call();
+        Session call(String userName);
     }
 
     @FunctionalInterface
-    private interface FunctionSendError {
+    public interface FunctionGetSession {
+        @SuppressWarnings("unused")
+        Session call();
+    }
+
+    @FunctionalInterface
+    public interface FunctionSendError {
         @SuppressWarnings("unused")
         void call(int status, String message);
     }
 
     @FunctionalInterface
-    private interface FunctionSendRedirect {
+    public interface FunctionSendRedirect {
         @SuppressWarnings("unused")
         void call(String redirectUrl);
     }
 
     @FunctionalInterface
-    private interface FunctionSetTheme {
+    public interface FunctionSetTheme {
         @SuppressWarnings("unused")
         void call(String name);
     }

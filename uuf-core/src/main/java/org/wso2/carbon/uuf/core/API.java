@@ -16,8 +16,14 @@
 
 package org.wso2.carbon.uuf.core;
 
+import io.netty.handler.codec.http.cookie.ClientCookieDecoder;
+import io.netty.handler.codec.http.cookie.Cookie;
+import io.netty.handler.codec.http.cookie.DefaultCookie;
+import io.netty.handler.codec.http.cookie.ServerCookieEncoder;
 import org.apache.commons.lang3.reflect.MethodUtils;
+import org.wso2.carbon.uuf.core.auth.Session;
 import org.wso2.carbon.uuf.core.auth.SessionRegistry;
+import org.wso2.carbon.uuf.core.auth.User;
 import org.wso2.carbon.uuf.core.exception.HTTPErrorException;
 import org.wso2.carbon.uuf.core.exception.PageRedirectException;
 import org.wso2.carbon.uuf.core.exception.UUFException;
@@ -29,15 +35,21 @@ import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+
+import static io.netty.handler.codec.http.HttpHeaders.Names.COOKIE;
+import static io.netty.handler.codec.http.HttpHeaders.Names.SET_COOKIE;
 
 // TODO remove this SuppressWarnings
 @SuppressWarnings("PackageAccessibility")
 public class API {
 
     private final SessionRegistry sessionRegistry;
+    private final RequestLookup requestLookup;
 
-    public API(SessionRegistry sessionRegistry) {
+    public API(SessionRegistry sessionRegistry, RequestLookup requestLookup) {
         this.sessionRegistry = sessionRegistry;
+        this.requestLookup = requestLookup;
     }
 
     /**
@@ -112,8 +124,30 @@ public class API {
         throw new PageRedirectException(redirectUrl);
     }
 
-    public void createSession() {
-        throw new UnsupportedOperationException("To be implemented");
+    public Session createSession(String userName) {
+        Session session = new Session(new User(userName));
+        sessionRegistry.addSession(session);
+        Cookie cookie = new DefaultCookie(SessionRegistry.SESSION_COOKIE_NAME, session.getSessionId());
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+        // setting cookie.setSecure(true) will send "Upgrade-Insecure-Requests" -> "1" header
+        // for when accessing http instead https
+        // cookie.setSecure(true);
+        requestLookup.setResponseHeader(SET_COOKIE, ServerCookieEncoder.STRICT.encode(cookie));
+        return session;
+    }
+
+    public Session getSession() {
+        String cookieHeader = requestLookup.getRequest().headers().get(COOKIE);
+        String[] cookiesParts = cookieHeader.split(";");
+        for (String cookiePart : cookiesParts) {
+            if (cookiePart.trim().startsWith(SessionRegistry.SESSION_COOKIE_NAME)) {
+                Cookie cookie = ClientCookieDecoder.STRICT.decode(cookiePart);
+                Optional<Session> session = sessionRegistry.getSession(cookie.value());
+                return (session.isPresent()) ? session.get() : null;
+            }
+        }
+        return null;
     }
 
     public void setTheme(String name) {

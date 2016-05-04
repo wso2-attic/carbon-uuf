@@ -16,6 +16,7 @@
 
 package org.wso2.carbon.uuf;
 
+import io.netty.handler.codec.http.cookie.ClientCookieEncoder;
 import io.netty.handler.codec.http.HttpRequest;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -38,7 +39,7 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
-
+import static io.netty.handler.codec.http.HttpHeaders.Names.SET_COOKIE;
 /**
  * UUF Main Service.
  */

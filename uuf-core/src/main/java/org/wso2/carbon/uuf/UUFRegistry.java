@@ -113,13 +113,20 @@ public class UUFRegistry {
                 if (uriWithoutAppContext.startsWith("/debug/")) {
                     return renderDebug(app, uriWithoutAppContext);
                 } else if(App.isFragmentsUri(uriWithoutAppContext)){
-                    String fragment = app.renderFragment(uri.substring(appContext.length()),
+                    RequestLookup requestLookup = new RequestLookup(appContext, request);
+                    String fragmentResult = app.renderFragment(uri.substring(appContext.length()),
                                                         new RequestLookup(appContext, request));
-                    return Response.ok(fragment).header("Content-Type", "text/html");
+                    Response.ResponseBuilder responseBuilder = ifExistsAddResponseHeaders(Response.ok(fragmentResult),
+                                                                                          requestLookup
+                                                                                                  .getResponseHeaders());
+                    return responseBuilder.header("Content-Type", "text/html");
                 }else {
-                    String page = app.renderPage(uri.substring(appContext.length()),
-                                                 new RequestLookup(appContext, request));
-                    return Response.ok(page).header("Content-Type", "text/html");
+                    RequestLookup requestLookup = new RequestLookup(appContext, request);
+                    String pageResult = app.renderPage(uri.substring(appContext.length()), requestLookup);
+                    Response.ResponseBuilder responseBuilder = ifExistsAddResponseHeaders(Response.ok(pageResult),
+                                                                                          requestLookup
+                                                                                                  .getResponseHeaders());
+                    return responseBuilder.header("Content-Type", "text/html");
                 }
             }
         } catch (PageNotFoundException | FragmentNotFoundException e) {
@@ -215,5 +222,15 @@ public class UUFRegistry {
     private Response.ResponseBuilder createErrorResponse(String appName, String errorMessage, Exception e, int httpStatusCode) {
         log.error(errorMessage, e);
         return Response.status(httpStatusCode).entity(errorMessage).header("Content-Type", "text/plain");
+    }
+
+    private Response.ResponseBuilder ifExistsAddResponseHeaders(Response.ResponseBuilder responseBuilder,
+                                                                Optional<Map<String, String>> responseHeaders) {
+        if (responseHeaders.isPresent()) {
+            Map<String, String> headers = responseHeaders.get();
+            headers.entrySet().stream().forEach(
+                    entry -> responseBuilder.header(entry.getKey(), entry.getValue()));
+        }
+        return responseBuilder;
     }
 }

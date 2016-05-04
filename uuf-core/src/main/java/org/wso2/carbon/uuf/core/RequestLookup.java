@@ -32,6 +32,7 @@ public class RequestLookup {
     private final Deque<String> publicUriStack;
     private final Map<String, StringBuilder> placeholderBuffers;
     private final Map<String, String> zoneContents;
+    private Map<String, String> responseHeaders = new HashMap<>();
 
     public RequestLookup(String appContext, HttpRequest request) {
         this.appContext = appContext;
@@ -103,5 +104,23 @@ public class RequestLookup {
 
     public Optional<String> getZoneContent(String zoneName) {
         return Optional.ofNullable(zoneContents.get(zoneName));
+    }
+
+    /**
+     * Returns Optional Map of HTTP response headers name and value pairs.
+     * @return Optional Headers Map
+     */
+    public Optional<Map<String, String>> getResponseHeaders(){
+        return (responseHeaders.isEmpty())? Optional.empty() : Optional.of(responseHeaders);
+    }
+
+    /**
+     * Sets a HTTP response header
+     * Access level is package protected since only 'org.wso2.carbon.uuf.core' can access.
+     * @param name
+     * @param value
+     */
+    void setResponseHeader(String name, String value){
+        responseHeaders.put(name, value);
     }
 }
