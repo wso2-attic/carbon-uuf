@@ -46,7 +46,8 @@ public class HbsFragmentRenderable extends HbsPageRenderable {
     public String render(Model model, ComponentLookup componentLookup, RequestLookup requestLookup, API api) {
         Context context;
         if (executable.isPresent()) {
-            Object executableOutput = executeExecutable(getExecutableContext(model, requestLookup), api);
+            Object executableOutput = executeExecutable(getExecutableContext(model, componentLookup, requestLookup),
+                                                        api);
             if (log.isDebugEnabled()) {
                 log.debug("Executable output \"" + DebugUtil.safeJsonString(executableOutput) + "\".");
             }
@@ -55,9 +56,9 @@ public class HbsFragmentRenderable extends HbsPageRenderable {
             } else {
                 context = Context.newContext(executableOutput);
             }
-            context.combine(getHbsModel(model, requestLookup));
+            context.combine(getHbsModel(model, componentLookup, requestLookup));
         } else {
-            Map<String, Object> hbsModel = getHbsModel(model, requestLookup);
+            Map<String, Object> hbsModel = getHbsModel(model, componentLookup, requestLookup);
             if (model instanceof ContextModel) {
                 context = Context.newContext(((ContextModel) model).getParentContext(), hbsModel);
             } else {
@@ -79,14 +80,14 @@ public class HbsFragmentRenderable extends HbsPageRenderable {
         }
     }
 
-    private Map<String, Object> getExecutableContext(Model model, RequestLookup requestLookup) {
-        Map<String, Object> context = getExecutableContext(requestLookup);
+    private Map<String, Object> getExecutableContext(Model model, ComponentLookup lookup, RequestLookup requestLookup) {
+        Map<String, Object> context = getExecutableContext(lookup, requestLookup);
         context.put("params", model.toMap());
         return context;
     }
 
-    private Map<String, Object> getHbsModel(Model model, RequestLookup requestLookup) {
-        Map<String, Object> context = getHbsModel(requestLookup);
+    private Map<String, Object> getHbsModel(Model model, ComponentLookup lookup, RequestLookup requestLookup) {
+        Map<String, Object> context = getHbsModel(lookup, requestLookup);
         context.put("@params", model.toMap());
         return context;
     }

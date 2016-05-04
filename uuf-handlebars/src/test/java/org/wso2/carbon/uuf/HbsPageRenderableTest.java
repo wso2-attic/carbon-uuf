@@ -50,13 +50,19 @@ public class HbsPageRenderableTest {
         return new HbsPageRenderable(stringTemplateSource, executable);
     }
 
-    private static Model createEmptyModel() {
+    private static Model createModel() {
         Model model = mock(Model.class);
         when(model.toMap()).thenReturn(Collections.emptyMap());
         return model;
     }
 
-    private static RequestLookup createEmptyRequestLookup() {
+    private static ComponentLookup createLookup() {
+        ComponentLookup lookup = mock(ComponentLookup.class);
+        when(lookup.getConfigurations()).thenReturn(Collections.emptyMap());
+        return lookup;
+    }
+
+    private static RequestLookup createRequestLookup() {
         RequestLookup requestLookup = mock(RequestLookup.class);
         when(requestLookup.getZoneContent(anyString())).thenReturn(Optional.<String>empty());
         when(requestLookup.getPlaceholderContents()).thenReturn(Collections.<String, String>emptyMap());
@@ -69,7 +75,7 @@ public class HbsPageRenderableTest {
         final String templateContent = "A Plain Handlebars template.";
         HbsPageRenderable pageRenderable = createPageRenderable(templateContent);
 
-        String output = pageRenderable.render(createEmptyModel(), null, createEmptyRequestLookup(), null);
+        String output = pageRenderable.render(createModel(), createLookup(), createRequestLookup(), null);
         Assert.assertEquals(output, templateContent);
     }
 
@@ -79,7 +85,7 @@ public class HbsPageRenderableTest {
         HbsPageRenderable pageRenderable = createPageRenderable("Hello {{name}}! Have a good day.", executable);
         Model model = new MapModel(new HashMap<>());
 
-        String output = pageRenderable.render(model, null, createEmptyRequestLookup(), null);
+        String output = pageRenderable.render(model, createLookup(), createRequestLookup(), null);
         Assert.assertEquals(output, "Hello Alice! Have a good day.");
     }
 
@@ -88,34 +94,34 @@ public class HbsPageRenderableTest {
         HbsPageRenderable pageRenderable = createPageRenderable("X {{includeFragment \"test-fragment\"}} Y");
         Fragment fragment = mock(Fragment.class);
         when(fragment.render(any(), any(), any(), any())).thenReturn("fragment content");
-        ComponentLookup lookup = mock(ComponentLookup.class);
+        ComponentLookup lookup = createLookup();
         when(lookup.getFragment("test-fragment")).thenReturn(Optional.of(fragment));
 
-        String output = pageRenderable.render(createEmptyModel(), lookup, createEmptyRequestLookup(), null);
+        String output = pageRenderable.render(createModel(), lookup, createRequestLookup(), null);
         Assert.assertEquals(output, "X fragment content Y");
     }
 
     @Test
     public void testFragmentBinding() {
         HbsPageRenderable pageRenderable = createPageRenderable("X {{defineZone \"test-zone\"}} Y");
-        ComponentLookup lookup = mock(ComponentLookup.class);
+        ComponentLookup lookup = createLookup();
         Fragment pushedFragment = mock(Fragment.class);
         when(pushedFragment.render(any(), any(), any(), any())).thenReturn("fragment content");
         when(lookup.getBindings("test-zone")).thenReturn(ImmutableSet.of(pushedFragment));
 
-        String output = pageRenderable.render(createEmptyModel(), lookup, createEmptyRequestLookup(), null);
+        String output = pageRenderable.render(createModel(), lookup, createRequestLookup(), null);
         Assert.assertEquals(output, "X fragment content Y");
     }
 
     @Test
     public void testZone() {
         HbsPageRenderable pageRenderable = createPageRenderable("X {{defineZone \"test-zone\"}} Y");
-        ComponentLookup lookup = mock(ComponentLookup.class);
+        ComponentLookup lookup = createLookup();
         when(lookup.getBindings(anyString())).thenReturn(Collections.emptySet());
-        RequestLookup requestLookup = createEmptyRequestLookup();
+        RequestLookup requestLookup = createRequestLookup();
         when(requestLookup.getZoneContent("test-zone")).thenReturn(Optional.of("zone content"));
 
-        String output = pageRenderable.render(createEmptyModel(), lookup, requestLookup, null);
+        String output = pageRenderable.render(createModel(), lookup, requestLookup, null);
         Assert.assertEquals(output, "X zone content Y");
     }
 
@@ -123,10 +129,10 @@ public class HbsPageRenderableTest {
     public void testPublicHelper() {
         final String templateContent = "{{public \"/relative/path\"}}";
         HbsPageRenderable pageRenderable = createPageRenderable(templateContent);
-        RequestLookup requestLookup = createEmptyRequestLookup();
+        RequestLookup requestLookup = createRequestLookup();
         when(requestLookup.getPublicUri()).thenReturn("/myapp/public/mycomponent/base");
 
-        String output = pageRenderable.render(createEmptyModel(), null, requestLookup, null);
+        String output = pageRenderable.render(createModel(), createLookup(), requestLookup, null);
         Assert.assertEquals(output, "/myapp/public/mycomponent/base/relative/path");
     }
 }

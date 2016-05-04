@@ -20,6 +20,7 @@ import com.github.jknack.handlebars.Handlebars;
 import com.github.jknack.handlebars.Template;
 import com.github.jknack.handlebars.io.TemplateSource;
 import com.google.common.collect.ImmutableMap;
+import org.wso2.carbon.uuf.core.ComponentLookup;
 import org.wso2.carbon.uuf.core.Renderable;
 import org.wso2.carbon.uuf.core.RequestLookup;
 import org.wso2.carbon.uuf.core.exception.UUFException;
@@ -36,7 +37,6 @@ import org.wso2.carbon.uuf.handlebars.helpers.runtime.MissingHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.PublicHelper;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -77,11 +77,11 @@ public abstract class HbsRenderable implements Renderable {
         }
     }
 
-    protected Map<String, Object> getHbsModel(RequestLookup requestLookup) {
+    protected Map<String, Object> getHbsModel(ComponentLookup lookup, RequestLookup requestLookup) {
         Map<String, Object> context = new HashMap<>();
         context.put("@uriParams", requestLookup.getUriParams());
         context.put("@app",
-                    ImmutableMap.of("context", requestLookup.getAppContext(), "config", Collections.emptyMap()));
+                    ImmutableMap.of("context", requestLookup.getAppContext(), "config", lookup.getConfigurations()));
         return context;
     }
 }

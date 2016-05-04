@@ -57,13 +57,13 @@ public class HbsPageRenderable extends HbsRenderable {
     public String render(Model model, ComponentLookup componentLookup, RequestLookup requestLookup, API api) {
         Context context;
         if (executable.isPresent()) {
-            Object executableOutput = executeExecutable(getExecutableContext(requestLookup), api);
+            Object executableOutput = executeExecutable(getExecutableContext(componentLookup, requestLookup), api);
             if (log.isDebugEnabled()) {
                 log.debug("Executable output \"" + DebugUtil.safeJsonString(executableOutput) + "\".");
             }
-            context = Context.newContext(executableOutput).combine(getHbsModel(requestLookup));
+            context = Context.newContext(executableOutput).combine(getHbsModel(componentLookup, requestLookup));
         } else {
-            context = Context.newContext(getHbsModel(requestLookup));
+            context = Context.newContext(getHbsModel(componentLookup, requestLookup));
         }
 
         context.data(DATA_KEY_LOOKUP, componentLookup);
@@ -99,11 +99,12 @@ public class HbsPageRenderable extends HbsRenderable {
         }
     }
 
-    protected Map<String, Object> getExecutableContext(RequestLookup requestLookup) {
+    protected Map<String, Object> getExecutableContext(ComponentLookup lookup, RequestLookup requestLookup) {
         Map<String, Object> context = new HashMap<>();
         context.put("request", requestLookup.getRequest());
         context.put("uriParams", requestLookup.getUriParams());
-        context.put("app", ImmutableMap.of("context", requestLookup.getAppContext(), "config", Collections.emptyMap()));
+        context.put("app",
+                    ImmutableMap.of("context", requestLookup.getAppContext(), "config", lookup.getConfigurations()));
         return context;
     }
 
