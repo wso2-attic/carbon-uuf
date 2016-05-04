@@ -45,7 +45,7 @@ public class ComponentTest {
         };
     }
 
-    private static ComponentLookup createComponentLookup(String componentName) {
+    private static ComponentLookup createLookup(String componentName) {
         return new ComponentLookup(componentName, "/componentContext", Collections.emptySet(), Collections.emptySet(),
                                    ImmutableSetMultimap.of(), Collections.emptyMap(), Collections.emptySet());
     }
@@ -58,9 +58,8 @@ public class ComponentTest {
     public void testRenderExistingPage() {
         Page p1 = createPage("/test/page/one", "Hello world from test page one!");
         Page p2 = createPage("/test/page/two", "Hello world from test page two!");
-        ComponentLookup lookup = createComponentLookup("componentName");
+        ComponentLookup lookup = createLookup("componentName");
         Component component = new Component("componentName", anyString(), ImmutableSortedSet.of(p1, p2), lookup);
-        new RequestLookup("/", null);
 
         Optional<String> output = component.renderPage("/test/page/one", createRequestLookup(), any());
         Assert.assertEquals(output.get(), "Hello world from test page one!");
@@ -70,7 +69,7 @@ public class ComponentTest {
     public void testRenderExistingPageWithWildcard() {
         Page p1 = createPage("/test/page/{wildcard}/one", "Hello world from test page one!");
         Page p2 = createPage("/test/page/no-wildcard/two", "Hello world from test page two!");
-        ComponentLookup lookup = createComponentLookup("componentName");
+        ComponentLookup lookup = createLookup("componentName");
         Component component = new Component("componentName", anyString(), ImmutableSortedSet.of(p1, p2), lookup);
 
         Optional<String> output = component.renderPage("/test/page/wildcard-value/one", createRequestLookup(), any());
@@ -81,7 +80,7 @@ public class ComponentTest {
     public void testRenderNonExistingPage() {
         Page p1 = createPage("/test/page/one", anyString());
         Page p2 = createPage("/test/page/two", anyString());
-        ComponentLookup lookup = createComponentLookup("componentName");
+        ComponentLookup lookup = createLookup("componentName");
         Component component = new Component("componentName", anyString(), ImmutableSortedSet.of(p1, p2), lookup);
 
         Optional<String> output = component.renderPage("/test/page/three", createRequestLookup(), any());
