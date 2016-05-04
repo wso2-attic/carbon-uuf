@@ -36,7 +36,7 @@ import java.util.TimeZone;
 
 public class StaticResolver {
 
-    public static final String STATIC_RESOURCE_URI_PREFIX = "/public";
+    public static final String COMPONENT_STATIC_RESOURCES_URI_PREFIX = "/public/components";
     public static final String DIR_NAME_COMPONENT_RESOURCES = "base";
     private static final String DIR_NAME_FRAGMENT_RESOURCES = "public";
     private static final String CACHE_HEADER_DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss zzz";
@@ -71,7 +71,7 @@ public class StaticResolver {
      * @return Response Builder
      */
     public Response.ResponseBuilder createResponse(String appName, String uriWithoutAppContext, HttpRequest request) {
-        String uri = uriWithoutAppContext.substring(STATIC_RESOURCE_URI_PREFIX.length());
+        String uri = uriWithoutAppContext.substring(COMPONENT_STATIC_RESOURCES_URI_PREFIX.length());
         Path resource = resolveUri(appName, uri);
         if (Files.exists(resource) && Files.isRegularFile(resource)) {
             return getResponseBuilder(resource, request);
@@ -147,6 +147,6 @@ public class StaticResolver {
     }
 
     public static boolean isStaticResourceUri(String uri) {
-        return uri.startsWith(STATIC_RESOURCE_URI_PREFIX);
+        return uri.startsWith(COMPONENT_STATIC_RESOURCES_URI_PREFIX);
     }
 }
