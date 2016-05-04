@@ -19,15 +19,12 @@ package org.wso2.carbon.uuf.handlebars;
 import jdk.nashorn.api.scripting.NashornScriptEngine;
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
 import org.wso2.carbon.uuf.core.API;
-import org.wso2.carbon.uuf.core.RequestLookup;
 import org.wso2.carbon.uuf.core.auth.Session;
 import org.wso2.carbon.uuf.core.exception.UUFException;
 
 import javax.script.ScriptException;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Consumer;
 
 // TODO remove this SuppressWarnings
 @SuppressWarnings("PackageAccessibility")
@@ -48,11 +45,11 @@ public class JSExecutable implements Executable {
 
         NashornScriptEngine engine = (NashornScriptEngine) SCRIPT_ENGINE_FACTORY.getScriptEngine(SCRIPT_ENGINE_ARGS,
                                                                                                  componentClassLoader);
-        engine.put("callOSGiService", (FunctionCallOSGiService) API::callOSGiService);
-        engine.put("getOSGiServices", (FunctionGetOSGiServices) API::getOSGiServices);
-        engine.put("callMicroService", (FunctionCallMicroService) API::callMicroService);
-        engine.put("sendError", (FunctionSendError) API::sendError);
-        engine.put("sendRedirect", (FunctionSendRedirect) API::sendRedirect);
+        engine.put("callOSGiService", (JSFunction.CallOSGiService) API::callOSGiService);
+        engine.put("getOSGiServices", (JSFunction.GetOSGiServices) API::getOSGiServices);
+        engine.put("callMicroService", (JSFunction.CallMicroService) API::callMicroService);
+        engine.put("sendError", (JSFunction.SendError) API::sendError);
+        engine.put("sendRedirect", (JSFunction.SendRedirect) API::sendRedirect);
         try {
             engine.eval(scriptSource);
             this.engine = engine;
@@ -66,9 +63,9 @@ public class JSExecutable implements Executable {
     }
 
     public Object execute(Object context, API api) {
-        engine.put("createSession", (FunctionCreateSession) api::createSession);
-        engine.put("getSession", (FunctionGetSession) api::getSession);
-        engine.put("setTheme", (FunctionSetTheme) api::setTheme);
+        engine.put("createSession", (JSFunction.CreateSession) api::createSession);
+        engine.put("getSession", (JSFunction.GetSession) api::getSession);
+        engine.put("setTheme", (JSFunction.SetTheme) api::setTheme);
         try {
             return engine.invokeFunction("onRequest", context);
         } catch (ScriptException e) {
@@ -85,51 +82,62 @@ public class JSExecutable implements Executable {
         return "{\"path\": \"" + getPath() + "\"}";
     }
 
-    @FunctionalInterface
-    public interface FunctionCallOSGiService {
-        @SuppressWarnings("unused")
-        Object call(String serviceClassName, String serviceMethodName, Object... args);
-    }
+    static private class JSFunction {
 
-    @FunctionalInterface
-    public interface FunctionGetOSGiServices {
-        @SuppressWarnings("unused")
-        Map<String, Object> call(String serviceClassName);
-    }
+        @FunctionalInterface
+        protected interface CallOSGiService {
 
-    @FunctionalInterface
-    public interface FunctionCallMicroService {
-        @SuppressWarnings("unused")
-        void call();
-    }
+            @SuppressWarnings("unused")
+            Object call(String serviceClassName, String serviceMethodName, Object... args);
+        }
 
-    @FunctionalInterface
-    public interface FunctionCreateSession {
-        @SuppressWarnings("unused")
-        Session call(String userName);
-    }
+        @FunctionalInterface
+        public interface GetOSGiServices {
 
-    @FunctionalInterface
-    public interface FunctionGetSession {
-        @SuppressWarnings("unused")
-        Session call();
-    }
+            @SuppressWarnings("unused")
+            Map<String, Object> call(String serviceClassName);
+        }
 
-    @FunctionalInterface
-    public interface FunctionSendError {
-        @SuppressWarnings("unused")
-        void call(int status, String message);
-    }
+        @FunctionalInterface
+        public interface CallMicroService {
 
-    @FunctionalInterface
-    public interface FunctionSendRedirect {
-        @SuppressWarnings("unused")
-        void call(String redirectUrl);
-    }
+            @SuppressWarnings("unused")
+            void call();
+        }
 
-    @FunctionalInterface
-    public interface FunctionSetTheme {
-        @SuppressWarnings("unused")
-        void call(String name);
+        @FunctionalInterface
+        public interface CreateSession {
+
+            @SuppressWarnings("unused")
+            Session call(String userName);
+        }
+
+        @FunctionalInterface
+        public interface GetSession {
+
+            @SuppressWarnings("unused")
+            Session call();
+        }
+
+        @FunctionalInterface
+        public interface SendError {
+
+            @SuppressWarnings("unused")
+            void call(int status, String message);
+        }
+
+        @FunctionalInterface
+        public interface SendRedirect {
+
+            @SuppressWarnings("unused")
+            void call(String redirectUrl);
+        }
+
+        @FunctionalInterface
+        public interface SetTheme {
+
+            @SuppressWarnings("unused")
+            void call(String name);
+        }
     }
 }
