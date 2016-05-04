@@ -40,7 +40,6 @@
     </scm>
 
     <modules>
-        <module>dummy-osgi-bundle</module>
         <module>nashorn-osgi-fragment</module>
         <module>uuf-core</module>
         <module>uuf-handlebars</module>
@@ -112,6 +111,11 @@
                 <groupId>javax.ws.rs</groupId>
                 <artifactId>javax.ws.rs-api</artifactId>
                 <version>${rs-api.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.ow2.asm</groupId>
+                <artifactId>asm</artifactId>
+                <version>${org.objectweb.asm.version}</version>
             </dependency>
 
             <dependency>
@@ -287,6 +291,7 @@
         <osgi.framework.import.version.range>[1.8.0, 2.0.0)</osgi.framework.import.version.range>
         <osgi.api.version>6.0.0</osgi.api.version>
         <javax.cache-api.version>1.0.0</javax.cache-api.version>
+        <org.objectweb.asm.version>5.1</org.objectweb.asm.version>
 
         <!-- Dependencies for MSF4J -->
         <pax.logging.api.version>1.8.4</pax.logging.api.version>

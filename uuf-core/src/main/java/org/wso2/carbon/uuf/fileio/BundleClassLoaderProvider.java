@@ -17,6 +17,8 @@
 package org.wso2.carbon.uuf.fileio;
 
 import org.apache.commons.io.IOUtils;
+import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.Opcodes;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
@@ -42,10 +44,21 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
 
+import org.objectweb.asm.*;
+
 public class BundleClassLoaderProvider implements ClassLoaderProvider {
 
     private static final String DUMMY_CLASS_PATH = "/bundle/create/DummyComponentBundle.claz";
     private static final String DUMMY_CLASS_NAME = "DummyComponentBundle.class";
+    private static byte[] dummyBundleClassByteCodes;
+
+    public BundleClassLoaderProvider() {
+        try {
+            dummyBundleClassByteCodes = DummyBundleClass.dump();
+        } catch (Exception e) {
+            throw new UUFException("Cannot create the dummy class for OSGi bundle creation.");
+        }
+    }
 
     @Override
     public ClassLoader getClassLoader(String appName, String componentName, String componentVersion,
@@ -127,13 +140,10 @@ public class BundleClassLoaderProvider implements ClassLoaderProvider {
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         try (JarOutputStream target = new JarOutputStream(outputStream, bundleManifest)) {
-            InputStream resource = BundleClassLoaderProvider.class.getResourceAsStream(DUMMY_CLASS_PATH);
-            if (resource == null) {
-                throw new IOException(
-                        "Could not locate dummy class '" + DUMMY_CLASS_NAME + "' in path '" + DUMMY_CLASS_PATH + "'.");
-            }
-            byte[] data = IOUtils.toByteArray(resource);
-            addJarEntry(DUMMY_CLASS_NAME, data, target);
+            //you need at least one java class file for osgi bundle
+            addJarEntry(DUMMY_CLASS_NAME, dummyBundleClassByteCodes, target);
+        } catch (Exception e) {
+            throw new UUFException("Dummy class creation failed for ");
         }
         //TODO: write 'catch' block for above 'try' block
         return new ByteArrayInputStream(outputStream.toByteArray());
@@ -153,4 +163,54 @@ public class BundleClassLoaderProvider implements ClassLoaderProvider {
     private String getBundleName(String appName, String componentName) {
         return "UUF bundle for " + getBundleKey(appName, componentName);
     }
+
+    /**
+     * This class intends to use as dummy class for the OSGi bundle.
+     * Auto-generated using ASM plugin.
+     */
+    private static class DummyBundleClass implements Opcodes {
+
+        public static byte[] dump() throws Exception {
+
+            ClassWriter cw = new ClassWriter(0);
+            MethodVisitor mv;
+
+            cw.visit(52, ACC_PUBLIC + ACC_SUPER, "DummyBundleClass", null, "java/lang/Object", null);
+
+            cw.visitSource("DummyBundleClass.java", null);
+
+            {
+                mv = cw.visitMethod(ACC_PUBLIC, "<init>", "()V", null, null);
+                mv.visitCode();
+                Label l0 = new Label();
+                mv.visitLabel(l0);
+                mv.visitLineNumber(1, l0);
+                mv.visitVarInsn(ALOAD, 0);
+                mv.visitMethodInsn(INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false);
+                mv.visitInsn(RETURN);
+                Label l1 = new Label();
+                mv.visitLabel(l1);
+                mv.visitLocalVariable("this", "LDummyBundleClass;", null, l0, l1, 0);
+                mv.visitMaxs(1, 1);
+                mv.visitEnd();
+            }
+            {
+                mv = cw.visitMethod(ACC_PUBLIC + ACC_STATIC, "main", "([Ljava/lang/String;)V", null, null);
+                mv.visitCode();
+                Label l0 = new Label();
+                mv.visitLabel(l0);
+                mv.visitLineNumber(4, l0);
+                mv.visitInsn(RETURN);
+                Label l1 = new Label();
+                mv.visitLabel(l1);
+                mv.visitLocalVariable("args", "[Ljava/lang/String;", null, l0, l1, 0);
+                mv.visitMaxs(0, 1);
+                mv.visitEnd();
+            }
+            cw.visitEnd();
+
+            return cw.toByteArray();
+        }
+    }
+
 }
