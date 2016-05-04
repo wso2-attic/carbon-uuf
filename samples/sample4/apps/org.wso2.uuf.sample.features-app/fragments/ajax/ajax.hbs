@@ -1,5 +1,5 @@
 {{#if @params.name}}
     hello {{{@params.name}}}!
 {{else}}
-    Query parameter 'q' not found, Try with '{{{@app.context}}}/fragments/ajax?name=alice'.
+    Query parameter 'name' not found, Try with '{{{@app.context}}}/fragments/ajax?name=alice'.
 {{/if}}
