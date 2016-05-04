@@ -175,7 +175,7 @@ public class AppCreator {
             Map<String, Object> rawConfigurations = componentReference
                     .getConfigurations()
                     .map(fileReference -> new Yaml().loadAs(fileReference.getContent(), Map.class))
-                    .orElse(Collections.emptyMap());
+                    .orElse(new HashMap<>(0));
             configurations = rawConfigurations;
         } catch (Exception e) {
             // Yaml.loadAs() throws an Exception
@@ -185,7 +185,8 @@ public class AppCreator {
         }
 
         ComponentLookup lookup = new ComponentLookup(componentName, componentContext, layouts,
-                                                     new HashSet<>(fragments.values()), bindings, dependencies);
+                                                     new HashSet<>(fragments.values()), bindings, configurations,
+                                                     dependencies);
         SortedSet<Page> pages = componentReference
                 .getPages(supportedExtensions)
                 .parallel()

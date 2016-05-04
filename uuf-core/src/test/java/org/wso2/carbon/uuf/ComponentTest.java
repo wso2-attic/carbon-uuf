@@ -47,7 +47,7 @@ public class ComponentTest {
 
     private static ComponentLookup createComponentLookup(String componentName) {
         return new ComponentLookup(componentName, "/componentContext", Collections.emptySet(), Collections.emptySet(),
-                                   ImmutableSetMultimap.of(), Collections.emptySet());
+                                   ImmutableSetMultimap.of(), Collections.emptyMap(), Collections.emptySet());
     }
 
     private static RequestLookup createRequestLookup() {

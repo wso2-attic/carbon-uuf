@@ -42,9 +42,11 @@ public class ComponentLookup {
     private final Map<String, String> allPublicUriPrefixes;
     private final Map<String, ComponentLookup> immediateDependenciesLookups;
     private final Deque<String> componentsStack;
+    private final Map<String, Object> allConfigurations;
 
     public ComponentLookup(String componentName, String componentContext, Set<Layout> layouts, Set<Fragment> fragments,
-                           SetMultimap<String, Fragment> bindings, Set<Component> dependencies) {
+                           SetMultimap<String, Fragment> bindings, Map<String, Object> configurations,
+                           Set<Component> dependencies) {
         if (componentName.isEmpty()) {
             throw new IllegalArgumentException("Component name cannot be empty.");
         }
@@ -60,6 +62,7 @@ public class ComponentLookup {
         for (Map.Entry<String, Fragment> entry : bindings.entries()) {
             this.allBindings.put(getFullyQualifiedName(componentName, entry.getKey()), entry.getValue());
         }
+        this.allConfigurations = new HashMap<>();
         this.allPublicUriPrefixes = new HashMap<>();
         this.allPublicUriPrefixes.put(this.componentName, getPublicUriPrefix(this.componentContext));
 
@@ -72,11 +75,13 @@ public class ComponentLookup {
             this.allLayouts.putAll(dependencyLookup.allLayouts);
             this.allFragments.putAll(dependencyLookup.allFragments);
             this.allBindings.putAll(dependencyLookup.allBindings);
+            this.allConfigurations.putAll(dependencyLookup.allConfigurations);
             this.allPublicUriPrefixes.put(dependencyComponentName,
                                           getPublicUriPrefix(dependencyLookup.componentContext));
             this.allPublicUriPrefixes.putAll(dependencyLookup.allPublicUriPrefixes);
         }
 
+        this.allConfigurations.putAll(configurations);
         this.componentsStack = new ArrayDeque<>(0);
     }
 
@@ -138,6 +143,10 @@ public class ComponentLookup {
 
     Map<String, Fragment> getFragments() {
         return allFragments;
+    }
+
+    public Map<String, Object> getConfigurations() {
+        return allConfigurations;
     }
 
     String getPublicUriInfix(Page page) {
