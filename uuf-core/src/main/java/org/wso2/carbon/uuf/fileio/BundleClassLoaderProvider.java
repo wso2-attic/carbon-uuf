@@ -16,8 +16,9 @@
 
 package org.wso2.carbon.uuf.fileio;
 
-import org.apache.commons.io.IOUtils;
 import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.Label;
+import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -44,15 +45,13 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
 
-import org.objectweb.asm.*;
-
 public class BundleClassLoaderProvider implements ClassLoaderProvider {
 
     private static final String DUMMY_CLASS_PATH = "/bundle/create/DummyComponentBundle.claz";
     private static final String DUMMY_CLASS_NAME = "DummyComponentBundle.class";
     private static byte[] dummyBundleClassByteCodes;
 
-    public BundleClassLoaderProvider() {
+    static {
         try {
             dummyBundleClassByteCodes = DummyBundleClass.dump();
         } catch (Exception e) {
@@ -142,10 +141,7 @@ public class BundleClassLoaderProvider implements ClassLoaderProvider {
         try (JarOutputStream target = new JarOutputStream(outputStream, bundleManifest)) {
             //you need at least one java class file for osgi bundle
             addJarEntry(DUMMY_CLASS_NAME, dummyBundleClassByteCodes, target);
-        } catch (Exception e) {
-            throw new UUFException("Dummy class creation failed for ");
         }
-        //TODO: write 'catch' block for above 'try' block
         return new ByteArrayInputStream(outputStream.toByteArray());
     }
 
