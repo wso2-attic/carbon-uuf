@@ -79,11 +79,11 @@ public class API {
         } catch (NoSuchMethodException e) {
             throw new IllegalArgumentException(
                     "Cannot find any method with the signature '" + serviceMethodName + "(" +
-                            getParametersTypesStr(args) + ")' on OSGi service '" +
+                            convertToString(args) + ")' on OSGi service '" +
                             serviceInstance.getClass().getName() + "' with service class '" + serviceClassName + "'.");
         } catch (Exception e) {
             throw new UUFException(
-                    "Invoking method '" + serviceMethodName + "(" + getParametersTypesStr(args) +
+                    "Invoking method '" + serviceMethodName + "(" + convertToString(args) +
                             ")' on OSGi service '" + serviceInstance.getClass().getName() + "' with service class '" +
                             serviceClassName + "' failed.", e);
         }
@@ -154,7 +154,7 @@ public class API {
         throw new UnsupportedOperationException("To be implemented");
     }
 
-    private static String getParametersTypesStr(Object[] args) {
+    private static String convertToString(Object[] args) {
         if (args == null) {
             return "";
         }
