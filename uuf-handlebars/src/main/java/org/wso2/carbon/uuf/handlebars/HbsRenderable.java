@@ -29,10 +29,11 @@ import org.wso2.carbon.uuf.handlebars.helpers.runtime.CssHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.DefinePlaceholderHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.DefineZoneHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.FillZoneHelper;
+import org.wso2.carbon.uuf.handlebars.helpers.runtime.FooterJsHelper;
+import org.wso2.carbon.uuf.handlebars.helpers.runtime.HeaderJsHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.HeaderOtherHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.HeaderTitleHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.IncludeFragmentHelper;
-import org.wso2.carbon.uuf.handlebars.helpers.runtime.JsHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.MissingHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.PublicHelper;
 
@@ -50,8 +51,8 @@ public abstract class HbsRenderable implements Renderable {
     private static final Handlebars HANDLEBARS = new Handlebars();
     private static final Map<String, FillPlaceholderHelper> PLACEHOLDER_HELPERS = ImmutableMap.of(
             CssHelper.HELPER_NAME, new CssHelper(),
-            JsHelper.HELPER_NAME_HEADER, new JsHelper(JsHelper.HELPER_NAME_HEADER),
-            JsHelper.HELPER_NAME_FOOTER, new JsHelper(JsHelper.HELPER_NAME_FOOTER),
+            HeaderJsHelper.HELPER_NAME, new HeaderJsHelper(),
+            FooterJsHelper.HELPER_NAME, new FooterJsHelper(),
             HeaderTitleHelper.HELPER_NAME, new HeaderTitleHelper(),
             HeaderOtherHelper.HELPER_NAME, new HeaderOtherHelper());
 
