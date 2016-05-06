@@ -20,6 +20,7 @@ import io.netty.handler.codec.http.HttpRequest;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -30,7 +31,7 @@ public class RequestLookup {
     private final HttpRequest request;
     private Map<String, String> uriParams;
     private final Deque<String> publicUriStack;
-    private final Map<String, StringBuilder> placeholderBuffers;
+    private final EnumMap<Placeholder, StringBuilder> placeholderBuffers;
     private final Map<String, String> zoneContents;
     private Map<String, String> responseHeaders = new HashMap<>();
 
@@ -38,7 +39,7 @@ public class RequestLookup {
         this.appContext = appContext;
         this.request = request;
         this.publicUriStack = new ArrayDeque<>();
-        this.placeholderBuffers = new HashMap<>();
+        this.placeholderBuffers = new EnumMap<>(Placeholder.class);
         this.zoneContents = new HashMap<>();
     }
 
@@ -70,25 +71,25 @@ public class RequestLookup {
         return publicUriStack.peekLast();
     }
 
-    public void addToPlaceholder(String placeholderName, String content) {
-        StringBuilder buffer = placeholderBuffers.get(placeholderName);
+    public void addToPlaceholder(Placeholder placeholder, String content) {
+        StringBuilder buffer = placeholderBuffers.get(placeholder);
         if (buffer == null) {
             buffer = new StringBuilder(content);
-            placeholderBuffers.put(placeholderName, buffer);
+            placeholderBuffers.put(placeholder, buffer);
         } else {
             buffer.append(content);
         }
     }
 
-    public Optional<String> getPlaceholderContent(String placeholderName) {
-        StringBuilder buffer = placeholderBuffers.get(placeholderName);
+    public Optional<String> getPlaceholderContent(Placeholder placeholder) {
+        StringBuilder buffer = placeholderBuffers.get(placeholder);
         return (buffer == null) ? Optional.<String>empty() : Optional.of(buffer.toString());
     }
 
     public Map<String, String> getPlaceholderContents() {
         Map<String, String> placeholderContents = new HashMap<>(placeholderBuffers.size());
-        for (Map.Entry<String, StringBuilder> entry : placeholderBuffers.entrySet()) {
-            placeholderContents.put(entry.getKey(), entry.getValue().toString());
+        for (Map.Entry<Placeholder, StringBuilder> entry : placeholderBuffers.entrySet()) {
+            placeholderContents.put(entry.getKey().toString(), entry.getValue().toString());
         }
         return placeholderContents;
     }
