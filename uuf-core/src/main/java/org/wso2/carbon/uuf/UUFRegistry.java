@@ -112,20 +112,18 @@ public class UUFRegistry {
                 }
                 if (uriWithoutAppContext.startsWith("/debug/")) {
                     return renderDebug(app, uriWithoutAppContext);
-                } else if(App.isFragmentsUri(uriWithoutAppContext)){
+                } else if (App.isFragmentsUri(uriWithoutAppContext)) {
                     RequestLookup requestLookup = new RequestLookup(appContext, request);
                     String fragmentResult = app.renderFragment(uri.substring(appContext.length()),
-                                                        new RequestLookup(appContext, request));
-                    Response.ResponseBuilder responseBuilder = ifExistsAddResponseHeaders(Response.ok(fragmentResult),
-                                                                                          requestLookup
-                                                                                                  .getResponseHeaders());
+                                                               new RequestLookup(appContext, request));
+                    Response.ResponseBuilder responseBuilder = addResponseHeaders(Response.ok(fragmentResult),
+                                                                                  requestLookup.getResponseHeaders());
                     return responseBuilder.header("Content-Type", "text/html");
-                }else {
+                } else {
                     RequestLookup requestLookup = new RequestLookup(appContext, request);
                     String pageResult = app.renderPage(uri.substring(appContext.length()), requestLookup);
-                    Response.ResponseBuilder responseBuilder = ifExistsAddResponseHeaders(Response.ok(pageResult),
-                                                                                          requestLookup
-                                                                                                  .getResponseHeaders());
+                    Response.ResponseBuilder responseBuilder = addResponseHeaders(Response.ok(pageResult),
+                                                                                  requestLookup.getResponseHeaders());
                     return responseBuilder.header("Content-Type", "text/html");
                 }
             }
@@ -147,7 +145,8 @@ public class UUFRegistry {
             }
             return createErrorResponse(appName, e.getMessage(), e, e.getHttpStatusCode());
         } catch (PageRedirectException e) {
-            return createErrorResponse(appName, e.getMessage(), e, e.getHttpStatusCode()).header("Location", e.getRedirectUrl());
+            return createErrorResponse(appName, e.getMessage(), e, e.getHttpStatusCode()).header("Location",
+                                                                                                 e.getRedirectUrl());
         } catch (Exception e) {
             int httpStatusCode = 500;
             Throwable cause = e.getCause();
@@ -219,15 +218,17 @@ public class UUFRegistry {
         return createErrorResponse(appName, errorMessage, e, httpStatusCode);
     }
 
-    private Response.ResponseBuilder createErrorResponse(String appName, String errorMessage, Exception e, int httpStatusCode) {
+    private Response.ResponseBuilder createErrorResponse(String appName, String errorMessage, Exception e,
+                                                         int httpStatusCode) {
         log.error(errorMessage, e);
         return Response.status(httpStatusCode).entity(errorMessage).header("Content-Type", "text/plain");
     }
 
-    private Response.ResponseBuilder ifExistsAddResponseHeaders(Response.ResponseBuilder responseBuilder,
-                                                                Map<String, String> responseHeaders) {
-        responseHeaders.entrySet().stream().forEach(
-                    entry -> responseBuilder.header(entry.getKey(), entry.getValue()));
+    private Response.ResponseBuilder addResponseHeaders(Response.ResponseBuilder responseBuilder,
+                                                        Map<String, String> responseHeaders) {
+        for (Map.Entry<String, String> entry : responseHeaders.entrySet()) {
+            responseBuilder.header(entry.getKey(), entry.getValue());
+        }
         return responseBuilder;
     }
 }
