@@ -17,16 +17,33 @@
 package org.wso2.carbon.uuf.handlebars.helpers;
 
 import com.github.jknack.handlebars.Helper;
+import com.github.jknack.handlebars.Options;
+import org.wso2.carbon.uuf.core.Placeholder;
+import org.wso2.carbon.uuf.core.RequestLookup;
+
+import java.util.Optional;
+
+import static org.wso2.carbon.uuf.handlebars.HbsRenderable.DATA_KEY_REQUEST_LOOKUP;
 
 public abstract class FillPlaceholderHelper implements Helper<String> {
 
-    protected final String placeholderName;
+    private final Placeholder placeholder;
 
-    protected FillPlaceholderHelper(String placeholderName) {
-        this.placeholderName = placeholderName;
+    protected FillPlaceholderHelper(Placeholder placeholder) {
+        this.placeholder = placeholder;
     }
 
-    public String getPlaceholderName() {
-        return placeholderName;
+    public Placeholder getPlaceholder() {
+        return placeholder;
+    }
+
+    protected void addToPlaceholder(String value, Options handlebarsOptions) {
+        RequestLookup requestLookup = handlebarsOptions.data(DATA_KEY_REQUEST_LOOKUP);
+        requestLookup.addToPlaceholder(placeholder, value);
+    }
+
+    protected Optional<String> getPlaceholderValue(Options handlebarsOptions) {
+        RequestLookup requestLookup = handlebarsOptions.data(DATA_KEY_REQUEST_LOOKUP);
+        return requestLookup.getPlaceholderContent(placeholder);
     }
 }
