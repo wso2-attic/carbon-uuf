@@ -106,17 +106,13 @@ public class RequestLookup {
         return Optional.ofNullable(zoneContents.get(zoneName));
     }
 
-    /**
-     * Returns Optional Map of HTTP response headers name and value pairs.
-     * @return Optional Headers Map
-     */
-    public Optional<Map<String, String>> getResponseHeaders(){
-        return (responseHeaders.isEmpty())? Optional.empty() : Optional.of(responseHeaders);
+    public Map<String, String> getResponseHeaders() {
+        return responseHeaders;
     }
 
     /**
-     * Sets a HTTP response header
-     * Access level is package protected since only 'org.wso2.carbon.uuf.core' can access.
+     * Sets a HTTP response header Access level is package protected since only 'org.wso2.carbon.uuf.core' can access.
+     *
      * @param name
      * @param value
      */

@@ -225,12 +225,9 @@ public class UUFRegistry {
     }
 
     private Response.ResponseBuilder ifExistsAddResponseHeaders(Response.ResponseBuilder responseBuilder,
-                                                                Optional<Map<String, String>> responseHeaders) {
-        if (responseHeaders.isPresent()) {
-            Map<String, String> headers = responseHeaders.get();
-            headers.entrySet().stream().forEach(
+                                                                Map<String, String> responseHeaders) {
+        responseHeaders.entrySet().stream().forEach(
                     entry -> responseBuilder.header(entry.getKey(), entry.getValue()));
-        }
         return responseBuilder;
     }
 }
