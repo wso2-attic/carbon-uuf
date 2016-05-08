@@ -22,7 +22,7 @@ import org.wso2.carbon.uuf.handlebars.helpers.FillPlaceholderHelper;
 
 import java.io.IOException;
 
-public class HeadOtherHelper extends FillPlaceholderHelper {
+public class HeadOtherHelper extends FillPlaceholderHelper<Object> {
 
     public static final String HELPER_NAME = "headOther";
 
@@ -31,7 +31,7 @@ public class HeadOtherHelper extends FillPlaceholderHelper {
     }
 
     @Override
-    public CharSequence apply(String s, Options options) throws IOException {
+    public CharSequence apply(Object arg, Options options) throws IOException {
         addToPlaceholder(options.fn().toString(), options);
         return "";
     }

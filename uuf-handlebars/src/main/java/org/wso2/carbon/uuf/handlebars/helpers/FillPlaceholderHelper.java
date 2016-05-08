@@ -25,7 +25,7 @@ import java.util.Optional;
 
 import static org.wso2.carbon.uuf.handlebars.HbsRenderable.DATA_KEY_REQUEST_LOOKUP;
 
-public abstract class FillPlaceholderHelper implements Helper<String> {
+public abstract class FillPlaceholderHelper<T> implements Helper<T> {
 
     private final Placeholder placeholder;
 

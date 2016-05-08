@@ -25,7 +25,7 @@ import java.io.IOException;
 
 import static org.wso2.carbon.uuf.handlebars.HbsRenderable.DATA_KEY_REQUEST_LOOKUP;
 
-public class HeadJsHelper extends FillPlaceholderHelper {
+public class HeadJsHelper extends FillPlaceholderHelper<String> {
 
     public static final String HELPER_NAME = "headJs";
 

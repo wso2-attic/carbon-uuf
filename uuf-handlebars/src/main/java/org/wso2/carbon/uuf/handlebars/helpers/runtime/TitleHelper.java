@@ -23,7 +23,7 @@ import org.wso2.carbon.uuf.handlebars.helpers.FillPlaceholderHelper;
 import java.io.IOException;
 import java.util.Optional;
 
-public class TitleHelper extends FillPlaceholderHelper {
+public class TitleHelper extends FillPlaceholderHelper<String> {
 
     public static final String HELPER_NAME = "title";
 
