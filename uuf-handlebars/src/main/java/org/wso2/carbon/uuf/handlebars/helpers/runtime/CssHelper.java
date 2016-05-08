@@ -34,13 +34,18 @@ public class CssHelper extends FillPlaceholderHelper {
     }
 
     @Override
-    public CharSequence apply(String relativeUri, Options options) throws IOException {
+    public CharSequence apply(String relativePath, Options options) throws IOException {
         RequestLookup requestLookup = options.data(DATA_KEY_REQUEST_LOOKUP);
-        addToPlaceholder(formatResourceUri(requestLookup.getPublicUri() + relativeUri), options);
-        return "";
-    }
+        StringBuilder buffer = new StringBuilder("<link href=\"")
+                .append(requestLookup.getPublicUri())
+                .append('/')
+                .append(relativePath);
+        for (Object param : options.params) {
+            buffer.append(param);
+        }
+        buffer.append("\" rel=\"stylesheet\" type=\"text/css\" />\n");
 
-    protected String formatResourceUri(String resourceUri) {
-        return "<link href=\"" + resourceUri + "\" rel=\"stylesheet\" type=\"text/css\" />\n";
+        addToPlaceholder(buffer.toString(), options);
+        return "";
     }
 }
