@@ -20,7 +20,7 @@ import org.wso2.carbon.uuf.core.Placeholder;
 
 public class FooterJsHelper extends HeaderJsHelper {
 
-    public static final String HELPER_NAME = "footerJs";
+    public static final String HELPER_NAME = "js";
 
     public FooterJsHelper() {
         super(Placeholder.BODY_JS);

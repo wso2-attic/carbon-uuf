@@ -27,7 +27,7 @@ import static org.wso2.carbon.uuf.handlebars.HbsRenderable.DATA_KEY_REQUEST_LOOK
 
 public class HeaderJsHelper extends FillPlaceholderHelper {
 
-    public static final String HELPER_NAME = "headerJs";
+    public static final String HELPER_NAME = "headJs";
 
     public HeaderJsHelper() {
         this(Placeholder.HEAD_JS);

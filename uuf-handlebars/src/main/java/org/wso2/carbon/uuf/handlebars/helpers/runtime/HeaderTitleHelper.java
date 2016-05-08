@@ -24,7 +24,8 @@ import java.io.IOException;
 import java.util.Optional;
 
 public class HeaderTitleHelper extends FillPlaceholderHelper {
-    public static final String HELPER_NAME = "headerTitle";
+
+    public static final String HELPER_NAME = "title";
 
     public HeaderTitleHelper() {
         super(Placeholder.TITLE);

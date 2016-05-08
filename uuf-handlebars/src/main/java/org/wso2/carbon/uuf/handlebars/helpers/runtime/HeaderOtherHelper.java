@@ -24,7 +24,7 @@ import java.io.IOException;
 
 public class HeaderOtherHelper extends FillPlaceholderHelper {
 
-    public static final String HELPER_NAME = "headerOther";
+    public static final String HELPER_NAME = "headOther";
 
     public HeaderOtherHelper() {
         super(Placeholder.HEAD_OTHER);

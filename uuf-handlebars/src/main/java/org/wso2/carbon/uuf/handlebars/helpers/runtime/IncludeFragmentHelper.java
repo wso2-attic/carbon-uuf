@@ -37,7 +37,7 @@ import static org.wso2.carbon.uuf.handlebars.HbsRenderable.DATA_KEY_REQUEST_LOOK
 
 public class IncludeFragmentHelper implements Helper<String> {
 
-    public static final String HELPER_NAME = "includeFragment";
+    public static final String HELPER_NAME = "fragment";
     private static final Logger log = LoggerFactory.getLogger(IncludeFragmentHelper.class);
 
     @Override
