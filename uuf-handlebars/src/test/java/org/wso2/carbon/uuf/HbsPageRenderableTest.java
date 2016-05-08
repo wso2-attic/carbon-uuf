@@ -91,7 +91,7 @@ public class HbsPageRenderableTest {
 
     @Test
     public void testFragmentInclude() {
-        HbsPageRenderable pageRenderable = createPageRenderable("X {{includeFragment \"test-fragment\"}} Y");
+        HbsPageRenderable pageRenderable = createPageRenderable("X {{fragment \"test-fragment\"}} Y");
         Fragment fragment = mock(Fragment.class);
         when(fragment.render(any(), any(), any(), any())).thenReturn("fragment content");
         ComponentLookup lookup = createLookup();
@@ -123,16 +123,5 @@ public class HbsPageRenderableTest {
 
         String output = pageRenderable.render(createModel(), lookup, requestLookup, null);
         Assert.assertEquals(output, "X zone content Y");
-    }
-
-    @Test
-    public void testPublicHelper() {
-        final String templateContent = "{{public \"/relative/path\"}}";
-        HbsPageRenderable pageRenderable = createPageRenderable(templateContent);
-        RequestLookup requestLookup = createRequestLookup();
-        when(requestLookup.getPublicUri()).thenReturn("/myapp/public/mycomponent/base");
-
-        String output = pageRenderable.render(createModel(), createLookup(), requestLookup, null);
-        Assert.assertEquals(output, "/myapp/public/mycomponent/base/relative/path");
     }
 }
