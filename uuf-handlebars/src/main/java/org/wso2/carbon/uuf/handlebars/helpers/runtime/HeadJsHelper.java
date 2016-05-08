@@ -25,15 +25,15 @@ import java.io.IOException;
 
 import static org.wso2.carbon.uuf.handlebars.HbsRenderable.DATA_KEY_REQUEST_LOOKUP;
 
-public class HeaderJsHelper extends FillPlaceholderHelper {
+public class HeadJsHelper extends FillPlaceholderHelper {
 
     public static final String HELPER_NAME = "headJs";
 
-    public HeaderJsHelper() {
+    public HeadJsHelper() {
         this(Placeholder.HEAD_JS);
     }
 
-    protected HeaderJsHelper(Placeholder placeholder) {
+    protected HeadJsHelper(Placeholder placeholder) {
         super(placeholder);
     }
 

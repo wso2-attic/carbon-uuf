@@ -35,10 +35,10 @@ import static org.wso2.carbon.uuf.handlebars.HbsRenderable.DATA_KEY_API;
 import static org.wso2.carbon.uuf.handlebars.HbsRenderable.DATA_KEY_LOOKUP;
 import static org.wso2.carbon.uuf.handlebars.HbsRenderable.DATA_KEY_REQUEST_LOOKUP;
 
-public class IncludeFragmentHelper implements Helper<String> {
+public class FragmentHelper implements Helper<String> {
 
     public static final String HELPER_NAME = "fragment";
-    private static final Logger log = LoggerFactory.getLogger(IncludeFragmentHelper.class);
+    private static final Logger log = LoggerFactory.getLogger(FragmentHelper.class);
 
     @Override
     public CharSequence apply(String fragmentName, Options options) throws IOException {

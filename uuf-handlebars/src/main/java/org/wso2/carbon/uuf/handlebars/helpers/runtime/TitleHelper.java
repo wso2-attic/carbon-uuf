@@ -23,11 +23,11 @@ import org.wso2.carbon.uuf.handlebars.helpers.FillPlaceholderHelper;
 import java.io.IOException;
 import java.util.Optional;
 
-public class HeaderTitleHelper extends FillPlaceholderHelper {
+public class TitleHelper extends FillPlaceholderHelper {
 
     public static final String HELPER_NAME = "title";
 
-    public HeaderTitleHelper() {
+    public TitleHelper() {
         super(Placeholder.TITLE);
     }
 
@@ -35,7 +35,7 @@ public class HeaderTitleHelper extends FillPlaceholderHelper {
         Optional<String> currentTitle = getPlaceholderValue(options);
         if (currentTitle.isPresent()) {
             throw new IllegalStateException(
-                    "Cannot set header title. It is already set to '" + currentTitle.get() + "'.");
+                    "Cannot set page title. It is already set to '" + currentTitle.get() + "'.");
         } else {
             StringBuilder buffer = new StringBuilder(title);
             for (Object param : options.params) {

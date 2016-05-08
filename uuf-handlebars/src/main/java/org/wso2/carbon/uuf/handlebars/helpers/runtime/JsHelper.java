@@ -16,23 +16,13 @@
 
 package org.wso2.carbon.uuf.handlebars.helpers.runtime;
 
-import com.github.jknack.handlebars.Options;
 import org.wso2.carbon.uuf.core.Placeholder;
-import org.wso2.carbon.uuf.handlebars.helpers.FillPlaceholderHelper;
 
-import java.io.IOException;
+public class JsHelper extends HeadJsHelper {
 
-public class HeaderOtherHelper extends FillPlaceholderHelper {
+    public static final String HELPER_NAME = "js";
 
-    public static final String HELPER_NAME = "headOther";
-
-    public HeaderOtherHelper() {
-        super(Placeholder.HEAD_OTHER);
-    }
-
-    @Override
-    public CharSequence apply(String s, Options options) throws IOException {
-        addToPlaceholder(options.fn().toString(), options);
-        return "";
+    public JsHelper() {
+        super(Placeholder.BODY_JS);
     }
 }

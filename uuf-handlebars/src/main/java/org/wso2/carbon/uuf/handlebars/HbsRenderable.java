@@ -29,11 +29,11 @@ import org.wso2.carbon.uuf.handlebars.helpers.runtime.CssHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.DefinePlaceholderHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.DefineZoneHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.FillZoneHelper;
-import org.wso2.carbon.uuf.handlebars.helpers.runtime.FooterJsHelper;
-import org.wso2.carbon.uuf.handlebars.helpers.runtime.HeaderJsHelper;
-import org.wso2.carbon.uuf.handlebars.helpers.runtime.HeaderOtherHelper;
-import org.wso2.carbon.uuf.handlebars.helpers.runtime.HeaderTitleHelper;
-import org.wso2.carbon.uuf.handlebars.helpers.runtime.IncludeFragmentHelper;
+import org.wso2.carbon.uuf.handlebars.helpers.runtime.JsHelper;
+import org.wso2.carbon.uuf.handlebars.helpers.runtime.HeadJsHelper;
+import org.wso2.carbon.uuf.handlebars.helpers.runtime.HeadOtherHelper;
+import org.wso2.carbon.uuf.handlebars.helpers.runtime.TitleHelper;
+import org.wso2.carbon.uuf.handlebars.helpers.runtime.FragmentHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.MissingHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.PublicHelper;
 
@@ -51,15 +51,15 @@ public abstract class HbsRenderable implements Renderable {
     private static final Handlebars HANDLEBARS = new Handlebars();
     private static final Map<String, FillPlaceholderHelper> PLACEHOLDER_HELPERS = ImmutableMap.of(
             CssHelper.HELPER_NAME, new CssHelper(),
-            HeaderJsHelper.HELPER_NAME, new HeaderJsHelper(),
-            FooterJsHelper.HELPER_NAME, new FooterJsHelper(),
-            HeaderTitleHelper.HELPER_NAME, new HeaderTitleHelper(),
-            HeaderOtherHelper.HELPER_NAME, new HeaderOtherHelper());
+            HeadJsHelper.HELPER_NAME, new HeadJsHelper(),
+            JsHelper.HELPER_NAME, new JsHelper(),
+            TitleHelper.HELPER_NAME, new TitleHelper(),
+            HeadOtherHelper.HELPER_NAME, new HeadOtherHelper());
 
     static {
         HANDLEBARS.registerHelper(DefineZoneHelper.HELPER_NAME, new DefineZoneHelper());
         HANDLEBARS.registerHelper(FillZoneHelper.HELPER_NAME, new FillZoneHelper());
-        HANDLEBARS.registerHelper(IncludeFragmentHelper.HELPER_NAME, new IncludeFragmentHelper());
+        HANDLEBARS.registerHelper(FragmentHelper.HELPER_NAME, new FragmentHelper());
         HANDLEBARS.registerHelper(DefinePlaceholderHelper.HELPER_NAME, new DefinePlaceholderHelper());
         PLACEHOLDER_HELPERS.forEach(HANDLEBARS::registerHelper);
         HANDLEBARS.registerHelper(PublicHelper.HELPER_NAME, new PublicHelper());
