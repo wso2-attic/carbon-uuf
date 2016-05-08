@@ -25,23 +25,23 @@ import static org.wso2.carbon.uuf.fileio.StaticResolver.THEMES_STATIC_RESOURCES_
 public class Theme {
 
     private final String name;
-    private final List<String> cssUriSuffixes;
-    private final List<String> headJsUriSuffixes;
-    private final List<String> bodyJsUriSuffixes;
+    private final List<String> cssTagSuffixes;
+    private final List<String> headJsTagSuffixes;
+    private final List<String> bodyJsTagSuffixes;
 
     public Theme(String name, List<String> cssRelativePaths, List<String> headJsRelativePaths,
                  List<String> bodyJsRelativePaths) {
         this.name = name;
 
-        String uriPrefix = THEMES_STATIC_RESOURCES_URI_PREFIX + name + "/" + DIR_NAME_COMPONENT_RESOURCES;
-        this.cssUriSuffixes = cssRelativePaths.stream()
-                .map(relativePath -> uriPrefix + relativePath + " rel=\"stylesheet\" type=\"text/css\" />")
+        String uriPrefix = THEMES_STATIC_RESOURCES_URI_PREFIX + name + "/" + DIR_NAME_COMPONENT_RESOURCES + "/";
+        this.cssTagSuffixes = cssRelativePaths.stream()
+                .map(relativePath -> uriPrefix + relativePath + "\" rel=\"stylesheet\" type=\"text/css\" />")
                 .collect(Collectors.toList());
-        this.headJsUriSuffixes = headJsRelativePaths.stream()
-                .map(relativePath -> uriPrefix + relativePath + " type=\"text/javascript\"></script>")
+        this.headJsTagSuffixes = headJsRelativePaths.stream()
+                .map(relativePath -> uriPrefix + relativePath + "\" type=\"text/javascript\"></script>")
                 .collect(Collectors.toList());
-        this.bodyJsUriSuffixes = bodyJsRelativePaths.stream()
-                .map(relativePath -> uriPrefix + relativePath + " type=\"text/javascript\"></script>")
+        this.bodyJsTagSuffixes = bodyJsRelativePaths.stream()
+                .map(relativePath -> uriPrefix + relativePath + "\" type=\"text/javascript\"></script>")
                 .collect(Collectors.toList());
     }
 
@@ -51,14 +51,14 @@ public class Theme {
 
     public void render(RequestLookup requestLookup) {
         String appContext = requestLookup.getAppContext();
-        for (String cssUriSuffix : cssUriSuffixes) {
-            requestLookup.addToPlaceholder(Placeholder.CSS, "<link href=\"" + appContext + cssUriSuffix);
+        for (String cssTagSuffix : cssTagSuffixes) {
+            requestLookup.addToPlaceholder(Placeholder.CSS, "<link href=\"" + appContext + cssTagSuffix);
         }
-        for (String headJsUriSuffix : headJsUriSuffixes) {
-            requestLookup.addToPlaceholder(Placeholder.HEAD_JS, "<script src=\"" + appContext + headJsUriSuffix);
+        for (String headJsTagSuffix : headJsTagSuffixes) {
+            requestLookup.addToPlaceholder(Placeholder.HEAD_JS, "<script src=\"" + appContext + headJsTagSuffix);
         }
-        for (String bodyJsUriSuffix : bodyJsUriSuffixes) {
-            requestLookup.addToPlaceholder(Placeholder.BODY_JS, "<script src=\"" + appContext + bodyJsUriSuffix);
+        for (String bodyJsTagSuffix : bodyJsTagSuffixes) {
+            requestLookup.addToPlaceholder(Placeholder.BODY_JS, "<script src=\"" + appContext + bodyJsTagSuffix);
         }
     }
 
