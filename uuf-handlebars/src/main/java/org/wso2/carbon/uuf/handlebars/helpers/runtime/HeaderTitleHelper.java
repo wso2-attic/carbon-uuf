@@ -36,7 +36,11 @@ public class HeaderTitleHelper extends FillPlaceholderHelper {
             throw new IllegalStateException(
                     "Cannot set header title. It is already set to '" + currentTitle.get() + "'.");
         } else {
-            addToPlaceholder(title, options);
+            StringBuilder buffer = new StringBuilder(title);
+            for (Object param : options.params) {
+                buffer.append(param);
+            }
+            addToPlaceholder(buffer.toString(), options);
             return "";
         }
     }
