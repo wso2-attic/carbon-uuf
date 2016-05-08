@@ -17,5 +17,6 @@
 package org.wso2.carbon.uuf.core;
 
 public enum Placeholder {
-    FAVICON, TITLE, CSS, HEAD_JS, HEAD_OTHER, BODY_JS;
+
+    FAVICON, TITLE, CSS, HEAD_JS, HEAD_OTHER, BODY_JS
 }
