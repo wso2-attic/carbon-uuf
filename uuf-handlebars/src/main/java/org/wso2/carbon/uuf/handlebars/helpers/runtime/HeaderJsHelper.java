@@ -30,17 +30,37 @@ public class HeaderJsHelper extends FillPlaceholderHelper {
     public static final String HELPER_NAME = "headerJs";
 
     public HeaderJsHelper() {
-        super(Placeholder.HEAD_JS);
+        this(Placeholder.HEAD_JS);
+    }
+
+    protected HeaderJsHelper(Placeholder placeholder) {
+        super(placeholder);
     }
 
     @Override
-    public CharSequence apply(String relativeUri, Options options) throws IOException {
+    public CharSequence apply(String relativePath, Options options) throws IOException {
         RequestLookup requestLookup = options.data(DATA_KEY_REQUEST_LOOKUP);
-        addToPlaceholder(formatResourceUri(requestLookup.getPublicUri() + relativeUri), options);
-        return "";
-    }
+        StringBuilder buffer = new StringBuilder("<script src=\"")
+                .append(requestLookup.getPublicUri())
+                .append('/')
+                .append(relativePath);
+        for (Object param : options.params) {
+            buffer.append(param);
+        }
+        buffer.append("\"");
+        // See http://www.w3schools.com/tags/att_script_async.asp
+        Object async = options.hash.get("async");
+        if ((async != null) && ((Boolean) async)) {
+            buffer.append(" async");
+        }
+        // See http://www.w3schools.com/tags/att_script_defer.asp
+        Object defer = options.hash.get("defer");
+        if ((defer != null) && ((Boolean) defer)) {
+            buffer.append(" defer");
+        }
+        buffer.append(" type=\"text/javascript\"></script>\n");
 
-    protected String formatResourceUri(String resourceUri) {
-        return "<script src=\"" + resourceUri + "\"></script>\n";
+        addToPlaceholder(buffer.toString(), options);
+        return "";
     }
 }
