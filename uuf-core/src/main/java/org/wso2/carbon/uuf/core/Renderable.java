@@ -20,5 +20,5 @@ import org.wso2.carbon.uuf.model.Model;
 
 public interface Renderable {
 
-    String render(Model model, ComponentLookup componentLookup, RequestLookup requestLookup, API api);
+    String render(Model model, ComponentLookup lookup, RequestLookup requestLookup, API api);
 }

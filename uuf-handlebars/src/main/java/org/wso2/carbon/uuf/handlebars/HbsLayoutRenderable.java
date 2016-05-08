@@ -33,9 +33,9 @@ public class HbsLayoutRenderable extends HbsRenderable {
     }
 
     @Override
-    public String render(Model model, ComponentLookup componentLookup, RequestLookup requestLookup, API api) {
-        Context context = Context.newContext(getHbsModel(componentLookup, requestLookup));
-        context.data(DATA_KEY_LOOKUP, componentLookup);
+    public String render(Model model, ComponentLookup lookup, RequestLookup requestLookup, API api) {
+        Context context = Context.newContext(getHbsModel(lookup, requestLookup));
+        context.data(DATA_KEY_LOOKUP, lookup);
         context.data(DATA_KEY_REQUEST_LOOKUP, requestLookup);
         context.data(DATA_KEY_API, api);
         PlaceholderWriter writer = new PlaceholderWriter();

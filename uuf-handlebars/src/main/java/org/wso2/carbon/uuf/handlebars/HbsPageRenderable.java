@@ -54,19 +54,19 @@ public class HbsPageRenderable extends HbsRenderable {
     }
 
     @Override
-    public String render(Model model, ComponentLookup componentLookup, RequestLookup requestLookup, API api) {
+    public String render(Model model, ComponentLookup lookup, RequestLookup requestLookup, API api) {
         Context context;
         if (executable.isPresent()) {
-            Object executableOutput = executeExecutable(getExecutableContext(componentLookup, requestLookup), api);
+            Object executableOutput = executeExecutable(getExecutableContext(lookup, requestLookup), api);
             if (log.isDebugEnabled()) {
                 log.debug("Executable output \"" + DebugUtil.safeJsonString(executableOutput) + "\".");
             }
-            context = Context.newContext(executableOutput).combine(getHbsModel(componentLookup, requestLookup));
+            context = Context.newContext(executableOutput).combine(getHbsModel(lookup, requestLookup));
         } else {
-            context = Context.newContext(getHbsModel(componentLookup, requestLookup));
+            context = Context.newContext(getHbsModel(lookup, requestLookup));
         }
 
-        context.data(DATA_KEY_LOOKUP, componentLookup);
+        context.data(DATA_KEY_LOOKUP, lookup);
         context.data(DATA_KEY_REQUEST_LOOKUP, requestLookup);
         context.data(DATA_KEY_API, api);
         if (log.isDebugEnabled()) {

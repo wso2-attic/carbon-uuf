@@ -43,10 +43,10 @@ public class HbsFragmentRenderable extends HbsPageRenderable {
     }
 
     @Override
-    public String render(Model model, ComponentLookup componentLookup, RequestLookup requestLookup, API api) {
+    public String render(Model model, ComponentLookup lookup, RequestLookup requestLookup, API api) {
         Context context;
         if (executable.isPresent()) {
-            Object executableOutput = executeExecutable(getExecutableContext(model, componentLookup, requestLookup),
+            Object executableOutput = executeExecutable(getExecutableContext(model, lookup, requestLookup),
                                                         api);
             if (log.isDebugEnabled()) {
                 log.debug("Executable output \"" + DebugUtil.safeJsonString(executableOutput) + "\".");
@@ -56,9 +56,9 @@ public class HbsFragmentRenderable extends HbsPageRenderable {
             } else {
                 context = Context.newContext(executableOutput);
             }
-            context.combine(getHbsModel(model, componentLookup, requestLookup));
+            context.combine(getHbsModel(model, lookup, requestLookup));
         } else {
-            Map<String, Object> hbsModel = getHbsModel(model, componentLookup, requestLookup);
+            Map<String, Object> hbsModel = getHbsModel(model, lookup, requestLookup);
             if (model instanceof ContextModel) {
                 context = Context.newContext(((ContextModel) model).getParentContext(), hbsModel);
             } else {
@@ -66,7 +66,7 @@ public class HbsFragmentRenderable extends HbsPageRenderable {
             }
         }
 
-        context.data(DATA_KEY_LOOKUP, componentLookup);
+        context.data(DATA_KEY_LOOKUP, lookup);
         context.data(DATA_KEY_REQUEST_LOOKUP, requestLookup);
         context.data(DATA_KEY_API, api);
         if (log.isDebugEnabled()) {
