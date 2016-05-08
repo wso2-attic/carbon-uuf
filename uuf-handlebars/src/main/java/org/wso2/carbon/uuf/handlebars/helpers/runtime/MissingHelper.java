@@ -19,21 +19,20 @@ package org.wso2.carbon.uuf.handlebars.helpers.runtime;
 import com.github.jknack.handlebars.Helper;
 import com.github.jknack.handlebars.Options;
 import com.google.common.collect.ImmutableSet;
-import org.wso2.carbon.uuf.core.exception.UUFException;
 import org.wso2.carbon.uuf.handlebars.helpers.init.LayoutHelper;
 
 import java.io.IOException;
+import java.util.Set;
 
-public class MissingHelper implements Helper {
+public class MissingHelper implements Helper<Object> {
 
-    private static final ImmutableSet<String> KEYWORDS = ImmutableSet.of(LayoutHelper.HELPER_NAME,
-                                                                         FillZoneHelper.HELPER_NAME);
+    private static final Set<String> INIT_HELPERS_NAMES = ImmutableSet.of(LayoutHelper.HELPER_NAME);
 
     @Override
     public CharSequence apply(Object arg, Options options) throws IOException {
-        if (KEYWORDS.contains(options.helperName)) {
+        if (INIT_HELPERS_NAMES.contains(options.helperName)) {
             return "";
         }
-        throw new UUFException("Cannot evaluate the variable/helper '" + options.helperName + "'.");
+        throw new IllegalArgumentException("Cannot evaluate the variable/helper '" + options.helperName + "'.");
     }
 }
