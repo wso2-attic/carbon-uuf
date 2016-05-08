@@ -30,11 +30,11 @@ public class PublicHelper implements Helper<String> {
 
     @Override
     public CharSequence apply(String relativeUri, Options options) throws IOException {
-        if (!relativeUri.startsWith("/")) {
-            throw new IllegalArgumentException("Public resource URI should start with '/'.");
-        }
-
         RequestLookup requestLookup = options.data(DATA_KEY_REQUEST_LOOKUP);
-        return requestLookup.getPublicUri() + relativeUri;
+        StringBuilder buffer = new StringBuilder(requestLookup.getPublicUri()).append('/').append(relativeUri);
+        for (Object param : options.params) {
+            buffer.append(param);
+        }
+        return buffer.toString();
     }
 }
