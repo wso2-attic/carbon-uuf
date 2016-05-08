@@ -16,10 +16,16 @@
 
 package org.wso2.carbon.uuf.handlebars.helpers.runtime;
 
+import com.github.jknack.handlebars.Options;
 import org.wso2.carbon.uuf.core.Placeholder;
-import org.wso2.carbon.uuf.handlebars.helpers.ResourceHelper;
+import org.wso2.carbon.uuf.core.RequestLookup;
+import org.wso2.carbon.uuf.handlebars.helpers.FillPlaceholderHelper;
 
-public class CssHelper extends ResourceHelper {
+import java.io.IOException;
+
+import static org.wso2.carbon.uuf.handlebars.HbsRenderable.DATA_KEY_REQUEST_LOOKUP;
+
+public class CssHelper extends FillPlaceholderHelper {
 
     public static final String HELPER_NAME = "css";
 
@@ -28,6 +34,12 @@ public class CssHelper extends ResourceHelper {
     }
 
     @Override
+    public CharSequence apply(String relativeUri, Options options) throws IOException {
+        RequestLookup requestLookup = options.data(DATA_KEY_REQUEST_LOOKUP);
+        addToPlaceholder(formatResourceUri(requestLookup.getPublicUri() + relativeUri), options);
+        return "";
+    }
+
     protected String formatResourceUri(String resourceUri) {
         return "<link href=\"" + resourceUri + "\" rel=\"stylesheet\" type=\"text/css\" />\n";
     }
