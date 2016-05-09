@@ -28,11 +28,11 @@ import java.util.Optional;
 public class ArtifactFileReference implements FileReference {
 
     private final Path path;
-    private final ArtifactComponentReference componentReference;
+    private final ArtifactAppReference appReference;
 
-    ArtifactFileReference(Path path, ArtifactComponentReference componentReference) {
+    public ArtifactFileReference(Path path, ArtifactAppReference appReference) {
         this.path = path;
-        this.componentReference = componentReference;
+        this.appReference = appReference;
     }
 
     @Override
@@ -59,7 +59,7 @@ public class ArtifactFileReference implements FileReference {
 
     @Override
     public String getRelativePath() {
-        return componentReference.getPath().relativize(path).toString();
+        return appReference.getPath().relativize(path).toString();
     }
 
     @Override
@@ -74,7 +74,7 @@ public class ArtifactFileReference implements FileReference {
     @Override
     public Optional<FileReference> getSibling(String name) {
         Path sibling = path.resolveSibling(name);
-        return Files.exists(sibling) ? Optional.of(new ArtifactFileReference(sibling, componentReference)) :
+        return Files.exists(sibling) ? Optional.of(new ArtifactFileReference(sibling, appReference)) :
                 Optional.<FileReference>empty();
     }
 }
