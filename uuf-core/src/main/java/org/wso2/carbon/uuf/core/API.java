@@ -74,18 +74,17 @@ public class API {
         }
 
         try {
-            //If the underlying method is static, then the specified 'object' argument is ignored.
             return MethodUtils.invokeMethod(serviceInstance, serviceMethodName, args);
         } catch (NoSuchMethodException e) {
             throw new IllegalArgumentException(
-                    "Cannot find any method with the signature '" + serviceMethodName + "(" +
-                            convertToString(args) + ")' on OSGi service '" +
-                            serviceInstance.getClass().getName() + "' with service class '" + serviceClassName + "'.");
+                    "Cannot find any method with the signature '" + serviceMethodName + "(" + joinClassNames(args) +
+                            ")' in OSGi service '" + serviceInstance.getClass().getName() + "' with service class '" +
+                            serviceClassName + "'.");
         } catch (Exception e) {
             throw new UUFException(
-                    "Invoking method '" + serviceMethodName + "(" + convertToString(args) +
-                            ")' on OSGi service '" + serviceInstance.getClass().getName() + "' with service class '" +
-                            serviceClassName + "' failed.", e);
+                    "Invoking method '" + serviceMethodName + "(" + joinClassNames(args) + ")' on OSGi service '" +
+                            serviceInstance.getClass().getName() + "' with service class '" + serviceClassName +
+                            "' failed.", e);
         }
     }
 
@@ -154,14 +153,17 @@ public class API {
         throw new UnsupportedOperationException("To be implemented");
     }
 
-    private static String convertToString(Object[] args) {
+    private static String joinClassNames(Object[] args) {
         if (args == null) {
+            return "null";
+        }
+        if (args.length == 0) {
             return "";
         }
-        StringBuilder signature = new StringBuilder();
+        StringBuilder buffer = new StringBuilder();
         for (Object arg : args) {
-            signature.append(arg.getClass().getName());
+            buffer.append(arg.getClass().getName()).append(',');
         }
-        return signature.toString();
+        return buffer.deleteCharAt(buffer.length() - 1).toString();
     }
 }
