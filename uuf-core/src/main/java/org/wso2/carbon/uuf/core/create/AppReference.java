@@ -17,15 +17,19 @@
 package org.wso2.carbon.uuf.core.create;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 public interface AppReference {
 
     String DIR_NAME_COMPONENTS = "components";
+    String DIR_NAME_THEMES = "themes";
     String FILE_NAME_DEPENDENCY_TREE = "dependency.tree";
 
     String getName();
 
     ComponentReference getComponentReference(String componentSimpleName);
+
+    Stream<ThemeReference> getThemeReferences();
 
     List<String> getDependencies();
 }

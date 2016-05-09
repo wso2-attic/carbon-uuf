@@ -18,12 +18,14 @@ package org.wso2.carbon.uuf.fileio;
 
 import org.wso2.carbon.uuf.core.create.AppReference;
 import org.wso2.carbon.uuf.core.create.ComponentReference;
+import org.wso2.carbon.uuf.core.create.ThemeReference;
 import org.wso2.carbon.uuf.core.exception.UUFException;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class ArtifactAppReference implements AppReference {
 
@@ -33,20 +35,32 @@ public class ArtifactAppReference implements AppReference {
         this.path = path;
     }
 
-    Path getPath() {
-        return path;
+    @Override
+    public String getName() {
+        Path fileName = path.getFileName();
+        return (fileName == null) ? "" : fileName.toString();
     }
 
     @Override
     public ComponentReference getComponentReference(String componentSimpleName) {
         Path componentPath = path.resolve(DIR_NAME_COMPONENTS).resolve(componentSimpleName);
-        return new ArtifactComponentReference(componentPath);
+        return new ArtifactComponentReference(componentPath, this);
     }
 
     @Override
-    public String getName() {
-        Path fileName = path.getFileName();
-        return (fileName == null) ? "" : fileName.toString();
+    public Stream<ThemeReference> getThemeReferences() {
+        Path themes = path.resolve(DIR_NAME_THEMES);
+        if (!Files.exists(themes)) {
+            return Stream.<ThemeReference>empty();
+        }
+        try {
+            return Files
+                    .list(themes)
+                    .filter(Files::isDirectory)
+                    .map(theme -> new ArtifactThemeReference(theme, this));
+        } catch (IOException e) {
+            throw new UUFException("An error occurred while listing themes in '" + themes + "'.", e);
+        }
     }
 
     @Override
@@ -58,5 +72,9 @@ public class ArtifactAppReference implements AppReference {
             throw new UUFException(
                     "An error occurred while reading dependencies from file '" + dependencyTreeFile + "'.", e);
         }
+    }
+
+    Path getPath() {
+        return path;
     }
 }
