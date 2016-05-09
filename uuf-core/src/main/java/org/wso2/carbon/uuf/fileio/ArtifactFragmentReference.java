@@ -49,7 +49,7 @@ public class ArtifactFragmentReference implements FragmentReference {
         for (String extension : supportedExtensions) {
             Path renderingFilePath = path.resolve(fragmentName + "." + extension);
             if (Files.isRegularFile(renderingFilePath)) {
-                return new ArtifactFileReference(renderingFilePath, componentReference);
+                return new ArtifactFileReference(renderingFilePath, componentReference.getAppReference());
             }
         }
         throw new UUFException("Fragment '" + fragmentName + "' of component '" + componentReference.getPath() +
