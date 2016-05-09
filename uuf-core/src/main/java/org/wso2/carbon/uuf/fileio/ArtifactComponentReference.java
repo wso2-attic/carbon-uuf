@@ -33,9 +33,11 @@ import java.util.stream.Stream;
 public class ArtifactComponentReference implements ComponentReference {
 
     private final Path path;
+    private final ArtifactAppReference appReference;
 
-    public ArtifactComponentReference(Path path) {
+    public ArtifactComponentReference(Path path, ArtifactAppReference appReference) {
         this.path = path;
+        this.appReference = appReference;
     }
 
     @Override
@@ -97,7 +99,7 @@ public class ArtifactComponentReference implements ComponentReference {
     public Optional<FileReference> getBindingsConfig() {
         Path bindingsConfiguration = path.resolve(FILE_NAME_BINDINGS);
         if (Files.exists(bindingsConfiguration)) {
-            return Optional.of(new ArtifactFileReference(bindingsConfiguration, this));
+            return Optional.of(new ArtifactFileReference(bindingsConfiguration, appReference));
         } else {
             return Optional.empty();
         }
@@ -107,7 +109,7 @@ public class ArtifactComponentReference implements ComponentReference {
     public Optional<FileReference> getConfigurations() {
         Path configuration = path.resolve(FILE_NAME_CONFIGURATIONS);
         if (Files.exists(configuration)) {
-            return Optional.of(new ArtifactFileReference(configuration, this));
+            return Optional.of(new ArtifactFileReference(configuration, appReference));
         } else {
             return Optional.empty();
         }
@@ -117,7 +119,7 @@ public class ArtifactComponentReference implements ComponentReference {
     public Optional<FileReference> getOsgiImportsConfig() {
         Path binding = path.resolve(FILE_NAME_OSGI_IMPORTS);
         if (Files.exists(binding)) {
-            return Optional.of(new ArtifactFileReference(binding, this));
+            return Optional.of(new ArtifactFileReference(binding, appReference));
         } else {
             return Optional.empty();
         }
@@ -125,5 +127,9 @@ public class ArtifactComponentReference implements ComponentReference {
 
     Path getPath() {
         return path;
+    }
+
+    ArtifactAppReference getAppReference() {
+        return appReference;
     }
 }
