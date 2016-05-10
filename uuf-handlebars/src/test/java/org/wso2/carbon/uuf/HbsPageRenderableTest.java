@@ -21,11 +21,11 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import org.wso2.carbon.uuf.core.ComponentLookup;
 import org.wso2.carbon.uuf.api.Configuration;
+import org.wso2.carbon.uuf.api.model.MapModel;
+import org.wso2.carbon.uuf.core.ComponentLookup;
 import org.wso2.carbon.uuf.core.Fragment;
 import org.wso2.carbon.uuf.core.RequestLookup;
-import org.wso2.carbon.uuf.exception.MalformedConfigurationException;
 import org.wso2.carbon.uuf.handlebars.Executable;
 import org.wso2.carbon.uuf.handlebars.HbsPageRenderable;
 import org.wso2.carbon.uuf.spi.model.Model;
@@ -84,7 +84,7 @@ public class HbsPageRenderableTest {
     public void testTemplateWithExecutable() {
         Executable executable = (context, api) -> ImmutableMap.of("name", "Alice");
         HbsPageRenderable pageRenderable = createPageRenderable("Hello {{name}}! Have a good day.", executable);
-        Model model = new MalformedConfigurationException.MapModel(new HashMap<>());
+        Model model = new MapModel(new HashMap<>());
 
         String output = pageRenderable.render(model, createLookup(), createRequestLookup(), null);
         Assert.assertEquals(output, "Hello Alice! Have a good day.");
