@@ -18,7 +18,7 @@ package org.wso2.carbon.uuf.handlebars.helpers;
 
 import com.github.jknack.handlebars.Helper;
 import com.github.jknack.handlebars.Options;
-import org.wso2.carbon.uuf.core.Placeholder;
+import org.wso2.carbon.uuf.api.Placeholder;
 import org.wso2.carbon.uuf.core.RequestLookup;
 
 import java.util.Optional;

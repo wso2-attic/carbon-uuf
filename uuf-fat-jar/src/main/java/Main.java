@@ -15,14 +15,14 @@
  */
 
 import com.google.common.collect.ImmutableSet;
-import org.wso2.carbon.uuf.DebugAppender;
-import org.wso2.carbon.uuf.UUFRegistry;
-import org.wso2.carbon.uuf.UUFService;
-import org.wso2.carbon.uuf.core.ClassLoaderProvider;
-import org.wso2.carbon.uuf.core.create.AppCreator;
-import org.wso2.carbon.uuf.core.create.RenderableCreator;
-import org.wso2.carbon.uuf.fileio.ArtifactResolver;
-import org.wso2.carbon.uuf.fileio.StaticResolver;
+import org.wso2.carbon.uuf.internal.DebugAppender;
+import org.wso2.carbon.uuf.internal.UUFRegistry;
+import org.wso2.carbon.uuf.internal.UUFService;
+import org.wso2.carbon.uuf.internal.core.create.ClassLoaderProvider;
+import org.wso2.carbon.uuf.internal.core.create.AppCreator;
+import org.wso2.carbon.uuf.spi.RenderableCreator;
+import org.wso2.carbon.uuf.internal.io.ArtifactResolver;
+import org.wso2.carbon.uuf.internal.io.StaticResolver;
 import org.wso2.carbon.uuf.handlebars.HbsRenderableCreator;
 import org.wso2.msf4j.MicroservicesRunner;
 

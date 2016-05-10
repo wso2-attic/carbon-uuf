@@ -16,7 +16,7 @@
 
 package org.wso2.carbon.uuf.handlebars.helpers.runtime;
 
-import org.wso2.carbon.uuf.core.Placeholder;
+import org.wso2.carbon.uuf.api.Placeholder;
 
 public class JsHelper extends HeadJsHelper {
 

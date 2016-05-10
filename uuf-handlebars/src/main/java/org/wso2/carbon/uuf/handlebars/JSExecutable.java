@@ -19,7 +19,7 @@ package org.wso2.carbon.uuf.handlebars;
 import jdk.nashorn.api.scripting.NashornScriptEngine;
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
 import org.wso2.carbon.uuf.core.API;
-import org.wso2.carbon.uuf.core.auth.Session;
+import org.wso2.carbon.uuf.api.auth.Session;
 import org.wso2.carbon.uuf.core.exception.UUFException;
 
 import javax.script.ScriptException;

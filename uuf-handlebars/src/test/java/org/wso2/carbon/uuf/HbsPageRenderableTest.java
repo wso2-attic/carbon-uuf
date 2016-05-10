@@ -22,13 +22,13 @@ import com.google.common.collect.ImmutableSet;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.wso2.carbon.uuf.core.ComponentLookup;
-import org.wso2.carbon.uuf.core.Configuration;
+import org.wso2.carbon.uuf.api.Configuration;
 import org.wso2.carbon.uuf.core.Fragment;
 import org.wso2.carbon.uuf.core.RequestLookup;
 import org.wso2.carbon.uuf.handlebars.Executable;
 import org.wso2.carbon.uuf.handlebars.HbsPageRenderable;
-import org.wso2.carbon.uuf.model.MapModel;
-import org.wso2.carbon.uuf.model.Model;
+import org.wso2.carbon.uuf.handlebars.model.MapModel;
+import org.wso2.carbon.uuf.spi.model.Model;
 
 import java.util.Collections;
 import java.util.HashMap;

@@ -16,6 +16,9 @@
 
 package org.wso2.carbon.uuf.core;
 
+import org.wso2.carbon.uuf.internal.util.NameUtils;
+import org.wso2.carbon.uuf.spi.Renderable;
+
 public class Layout {
 
     private final String name;

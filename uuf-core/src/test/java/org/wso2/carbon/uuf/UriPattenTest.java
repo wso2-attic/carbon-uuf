@@ -19,7 +19,7 @@ package org.wso2.carbon.uuf;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-import org.wso2.carbon.uuf.core.UriPatten;
+import org.wso2.carbon.uuf.internal.core.UriPatten;
 
 import static java.lang.Integer.signum;
 

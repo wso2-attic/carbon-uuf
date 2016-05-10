@@ -21,7 +21,7 @@ import com.github.jknack.handlebars.Template;
 import com.github.jknack.handlebars.io.TemplateSource;
 import com.google.common.collect.ImmutableMap;
 import org.wso2.carbon.uuf.core.ComponentLookup;
-import org.wso2.carbon.uuf.core.Renderable;
+import org.wso2.carbon.uuf.spi.Renderable;
 import org.wso2.carbon.uuf.core.RequestLookup;
 import org.wso2.carbon.uuf.core.exception.UUFException;
 import org.wso2.carbon.uuf.handlebars.helpers.FillPlaceholderHelper;

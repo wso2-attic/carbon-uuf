@@ -25,8 +25,8 @@ import org.wso2.carbon.uuf.core.Component;
 import org.wso2.carbon.uuf.core.ComponentLookup;
 import org.wso2.carbon.uuf.core.Page;
 import org.wso2.carbon.uuf.core.RequestLookup;
-import org.wso2.carbon.uuf.core.UriPatten;
-import org.wso2.carbon.uuf.model.Model;
+import org.wso2.carbon.uuf.internal.core.UriPatten;
+import org.wso2.carbon.uuf.spi.model.Model;
 
 import java.util.Collections;
 import java.util.Optional;

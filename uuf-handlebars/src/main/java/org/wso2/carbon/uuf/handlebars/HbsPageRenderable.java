@@ -26,7 +26,7 @@ import org.wso2.carbon.uuf.core.ComponentLookup;
 import org.wso2.carbon.uuf.core.RequestLookup;
 import org.wso2.carbon.uuf.core.exception.InvalidTypeException;
 import org.wso2.carbon.uuf.core.exception.UUFException;
-import org.wso2.carbon.uuf.model.Model;
+import org.wso2.carbon.uuf.spi.model.Model;
 
 import java.io.IOException;
 import java.util.Collections;

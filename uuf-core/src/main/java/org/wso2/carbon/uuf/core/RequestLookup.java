@@ -16,7 +16,8 @@
 
 package org.wso2.carbon.uuf.core;
 
-import org.wso2.carbon.uuf.fileio.HttpRequest;
+import org.wso2.carbon.uuf.api.HttpRequest;
+import org.wso2.carbon.uuf.api.Placeholder;
 
 import java.util.ArrayDeque;
 import java.util.Deque;

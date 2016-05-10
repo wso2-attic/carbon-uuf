@@ -16,7 +16,9 @@
 
 package org.wso2.carbon.uuf.core;
 
-import org.wso2.carbon.uuf.model.Model;
+import org.wso2.carbon.uuf.internal.core.UriPatten;
+import org.wso2.carbon.uuf.spi.model.Model;
+import org.wso2.carbon.uuf.spi.Renderable;
 
 import java.util.Optional;
 

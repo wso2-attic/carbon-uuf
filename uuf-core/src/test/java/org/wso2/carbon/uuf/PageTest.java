@@ -21,7 +21,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.wso2.carbon.uuf.core.ComponentLookup;
 import org.wso2.carbon.uuf.core.Page;
-import org.wso2.carbon.uuf.core.Renderable;
+import org.wso2.carbon.uuf.spi.Renderable;
 import org.wso2.carbon.uuf.core.RequestLookup;
 
 import java.util.Collections;
