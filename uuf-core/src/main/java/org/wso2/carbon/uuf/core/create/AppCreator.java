@@ -23,6 +23,7 @@ import org.wso2.carbon.uuf.core.App;
 import org.wso2.carbon.uuf.core.ClassLoaderProvider;
 import org.wso2.carbon.uuf.core.Component;
 import org.wso2.carbon.uuf.core.ComponentLookup;
+import org.wso2.carbon.uuf.core.Configuration;
 import org.wso2.carbon.uuf.core.Fragment;
 import org.wso2.carbon.uuf.core.Layout;
 import org.wso2.carbon.uuf.core.Page;
@@ -183,14 +184,14 @@ public class AppCreator {
                             "' of component '" + getSimpleName(componentName) + "' is malformed.", e);
         }
 
-        Map<String, Object> configurations;
+        Configuration configurations;
         try {
             @SuppressWarnings("unchecked")
             Map<String, Object> rawConfigurations = componentReference
                     .getConfigurations()
                     .map(fileReference -> new Yaml().loadAs(fileReference.getContent(), Map.class))
                     .orElse(new HashMap<>(0));
-            configurations = rawConfigurations;
+            configurations = new Configuration(rawConfigurations);
         } catch (Exception e) {
             // Yaml.loadAs() throws an Exception
             throw new MalformedConfigurationException(
