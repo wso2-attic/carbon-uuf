@@ -149,18 +149,6 @@ public class ComponentLookup {
         return allConfigurations;
     }
 
-    String getPublicUriInfix(Page page) {
-        return allPublicUriPrefixes.get(getCurrentComponentName()) + DIR_NAME_COMPONENT_RESOURCES;
-    }
-
-    String getPublicUriInfix(Layout layout) {
-        return allPublicUriPrefixes.get(getCurrentComponentName()) + DIR_NAME_COMPONENT_RESOURCES;
-    }
-
-    String getPublicUriInfix(Fragment fragment) {
-        return allPublicUriPrefixes.get(getCurrentComponentName()) + fragment.getSimpleName();
-    }
-
     void in(Page page) {
         componentsStack.addLast(this.componentName);
     }
@@ -179,6 +167,18 @@ public class ComponentLookup {
 
     String out() {
         return componentsStack.removeLast();
+    }
+
+    String getPublicUriInfix(Page page) {
+        return allPublicUriPrefixes.get(getCurrentComponentName()) + DIR_NAME_COMPONENT_RESOURCES;
+    }
+
+    String getPublicUriInfix(Layout layout) {
+        return allPublicUriPrefixes.get(getCurrentComponentName()) + DIR_NAME_COMPONENT_RESOURCES;
+    }
+
+    String getPublicUriInfix(Fragment fragment) {
+        return allPublicUriPrefixes.get(getCurrentComponentName()) + fragment.getSimpleName();
     }
 
     @Override
