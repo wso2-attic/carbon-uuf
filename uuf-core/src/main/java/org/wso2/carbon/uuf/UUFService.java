@@ -30,6 +30,7 @@ import org.wso2.carbon.uuf.fileio.StaticResolver;
 import org.wso2.msf4j.Microservice;
 
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
@@ -75,9 +76,20 @@ public class UUFService implements Microservice {
     @Path(".*")
     @Produces({"text/plain"})
     public Response get(@Context io.netty.handler.codec.http.HttpRequest request) {
+        return execute(new HttpRequest(request));
+    }
+
+    @POST
+    @Path(".*")
+    @Produces({"text/plain"})
+    public Response post(@Context io.netty.handler.codec.http.HttpRequest request) {
+        return execute(new HttpRequest(request));
+    }
+
+    private Response execute(HttpRequest request){
         try {
             MDC.put("uuf-request", String.valueOf(count.incrementAndGet()));
-            Response.ResponseBuilder response = registry.serve(new HttpRequest(request));
+            Response.ResponseBuilder response = registry.serve(request);
             return response.build();
         } finally {
             try {
