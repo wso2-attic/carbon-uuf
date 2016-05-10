@@ -74,7 +74,7 @@ public class UUFRegistry {
 
     public Response.ResponseBuilder serve(HttpRequest request) {
         if (log.isDebugEnabled() && !RequestUtil.isDebugUri(request)) {
-            log.debug("request received " + request.getMethod() + " " + request.getRequestURI() + " " +
+            log.debug("request received " + request.getMethod() + " " + request.getRequestUri() + " " +
                     request.getProtocol());
         }
         String appName = request.getUriComponents().getAppName();
@@ -114,7 +114,7 @@ public class UUFRegistry {
             // https://googlewebmastercentral.blogspot.com/2010/04/to-slash-or-not-to-slash.html
             // if the tailing / is extra or a it is missing, send 301
             if (app != null) {
-                if (request.getRequestURI().endsWith("/")) {
+                if (request.getRequestUri().endsWith("/")) {
                     String uriWithoutSlash = uriWithoutAppContext.substring(0, uriWithoutAppContext.length() - 1);
                     if (app.hasPage(uriWithoutSlash)) {
                         return Response.status(301).header(HttpHeaders.LOCATION, request.getHostName() + uriWithoutSlash);
@@ -122,7 +122,7 @@ public class UUFRegistry {
                 } else {
                     String uriWithSlash = uriWithoutAppContext + "/";
                     if (app.hasPage(uriWithSlash)) {
-                        return Response.status(301).header(HttpHeaders.LOCATION, request.getHostName() + request.getRequestURI() + "/");
+                        return Response.status(301).header(HttpHeaders.LOCATION, request.getHostName() + request.getRequestUri() + "/");
                     }
                 }
             }

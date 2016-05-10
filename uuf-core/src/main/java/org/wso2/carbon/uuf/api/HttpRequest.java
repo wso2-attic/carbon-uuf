@@ -153,7 +153,7 @@ public class HttpRequest {
      *
      * @return request uri
      */
-    public String getRequestURI() {
+    public String getRequestUri() {
         String uri = requestURI.replaceAll("/+", "/");
         if (!uri.startsWith("/")) {
             uri = "/" + uri;
@@ -166,7 +166,7 @@ public class HttpRequest {
      *
      * @return request url
      */
-    public String getRequestURL() {
+    public String getRequestUrl() {
         throw new UnsupportedOperationException();
     }
 
@@ -236,7 +236,7 @@ public class HttpRequest {
     }
 
     public URIComponents getUriComponents() {
-        String uri = getRequestURI();
+        String uri = getRequestUri();
         int firstSlash = uri.indexOf('/', 1);
 
         if (firstSlash < 0) {
