@@ -22,6 +22,8 @@ import org.wso2.carbon.uuf.core.exception.MalformedConfigurationException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 public class Configuration extends HashMap<String, Object> {
 
@@ -130,6 +132,51 @@ public class Configuration extends HashMap<String, Object> {
 
     @Override
     public Object putIfAbsent(String key, Object value) {
+        throw new UnsupportedOperationException("Cannot change Configuration.");
+    }
+
+    @Override
+    public Object remove(Object key) {
+        throw new UnsupportedOperationException("Cannot change Configuration.");
+    }
+
+    @Override
+    public boolean remove(Object key, Object value) {
+        throw new UnsupportedOperationException("Cannot change Configuration.");
+    }
+
+    @Override
+    public Object replace(String key, Object value) {
+        throw new UnsupportedOperationException("Cannot change Configuration.");
+    }
+
+    @Override
+    public boolean replace(String key, Object oldValue, Object newValue) {
+        throw new UnsupportedOperationException("Cannot change Configuration.");
+    }
+
+    @Override
+    public void replaceAll(BiFunction<? super String, ? super Object, ?> function) {
+        throw new UnsupportedOperationException("Cannot change Configuration.");
+    }
+
+    @Override
+    public Object compute(String key, BiFunction<? super String, ? super Object, ?> remappingFunction) {
+        throw new UnsupportedOperationException("Cannot change Configuration.");
+    }
+
+    @Override
+    public Object computeIfPresent(String key, BiFunction<? super String, ? super Object, ?> remappingFunction) {
+        throw new UnsupportedOperationException("Cannot change Configuration.");
+    }
+
+    @Override
+    public Object computeIfAbsent(String key, Function<? super String, ?> mappingFunction) {
+        return super.computeIfAbsent(key, mappingFunction);
+    }
+
+    @Override
+    public Object merge(String key, Object value, BiFunction<? super Object, ? super Object, ?> remappingFunction) {
         throw new UnsupportedOperationException("Cannot change Configuration.");
     }
 
