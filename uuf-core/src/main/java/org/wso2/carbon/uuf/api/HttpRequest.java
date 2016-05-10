@@ -17,8 +17,8 @@
 package org.wso2.carbon.uuf.api;
 
 import io.netty.handler.codec.http.QueryStringDecoder;
-import org.wso2.carbon.uuf.core.exception.PageNotFoundException;
-import org.wso2.carbon.uuf.core.exception.PageRedirectException;
+import org.wso2.carbon.uuf.exception.PageNotFoundException;
+import org.wso2.carbon.uuf.exception.PageRedirectException;
 
 import javax.ws.rs.core.HttpHeaders;
 import java.io.InputStream;

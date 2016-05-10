@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.wso2.carbon.uuf.handlebars.model;
+package org.wso2.carbon.uuf.api.model;
 
 import org.wso2.carbon.uuf.spi.model.Model;
 

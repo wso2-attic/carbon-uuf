@@ -17,11 +17,12 @@
 package org.wso2.carbon.uuf.handlebars.model;
 
 import com.github.jknack.handlebars.Context;
+import org.wso2.carbon.uuf.exception.MalformedConfigurationException;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class ContextModel extends MapModel {
+public class ContextModel extends MalformedConfigurationException.MapModel {
 
     private Context parentContext;
 

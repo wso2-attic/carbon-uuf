@@ -149,9 +149,7 @@
         </import.package>
         <export.package>
             org.wso2.carbon.uuf.*;version="${uuf.version}",
-            org.wso2.carbon.uuf.model;version="${uuf.version}",
-            org.wso2.carbon.uuf.core.create;version="${uuf.version}",
-            org.wso2.carbon.uuf.core;version="${uuf.version}"
+            !org.wso2.carbon.uuf.internal;version="${uuf.version}",
         </export.package>
         <include.resource>
             src/main/resources

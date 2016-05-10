@@ -17,13 +17,13 @@
 package org.wso2.carbon.uuf.core;
 
 import io.netty.handler.codec.http.QueryStringDecoder;
+import org.wso2.carbon.uuf.api.model.MapModel;
 import org.wso2.carbon.uuf.internal.UUFRegistry;
 import org.wso2.carbon.uuf.internal.core.auth.SessionRegistry;
-import org.wso2.carbon.uuf.core.exception.FragmentNotFoundException;
-import org.wso2.carbon.uuf.core.exception.PageNotFoundException;
+import org.wso2.carbon.uuf.exception.FragmentNotFoundException;
+import org.wso2.carbon.uuf.exception.PageNotFoundException;
 import org.wso2.carbon.uuf.api.HttpRequest;
 import org.wso2.carbon.uuf.internal.util.NameUtils;
-import org.wso2.carbon.uuf.model.MapModel;
 import org.wso2.carbon.uuf.spi.model.Model;
 
 import java.util.HashMap;

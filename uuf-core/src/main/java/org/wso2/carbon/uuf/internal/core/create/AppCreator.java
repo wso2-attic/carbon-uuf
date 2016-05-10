@@ -35,9 +35,9 @@ import org.wso2.carbon.uuf.reference.PageReference;
 import org.wso2.carbon.uuf.spi.Renderable;
 import org.wso2.carbon.uuf.internal.core.UriPatten;
 import org.wso2.carbon.uuf.internal.core.auth.SessionRegistry;
-import org.wso2.carbon.uuf.core.exception.InvalidTypeException;
-import org.wso2.carbon.uuf.core.exception.MalformedConfigurationException;
-import org.wso2.carbon.uuf.core.exception.UUFException;
+import org.wso2.carbon.uuf.exception.InvalidTypeException;
+import org.wso2.carbon.uuf.exception.MalformedConfigurationException;
+import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.spi.RenderableCreator;
 import org.yaml.snakeyaml.Yaml;
 

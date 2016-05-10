@@ -16,6 +16,10 @@
 
 package org.wso2.carbon.uuf.exception;
 
+import org.wso2.carbon.uuf.spi.model.Model;
+
+import java.util.Map;
+
 public class MalformedConfigurationException extends UUFException {
 
     public MalformedConfigurationException() {
