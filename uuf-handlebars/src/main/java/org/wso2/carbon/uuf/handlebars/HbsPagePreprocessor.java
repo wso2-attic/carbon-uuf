@@ -19,7 +19,7 @@ package org.wso2.carbon.uuf.handlebars;
 import com.github.jknack.handlebars.Context;
 import com.github.jknack.handlebars.Handlebars;
 import com.github.jknack.handlebars.io.TemplateSource;
-import org.wso2.carbon.uuf.core.exception.UUFException;
+import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.handlebars.helpers.init.LayoutHelper;
 
 import java.io.IOException;

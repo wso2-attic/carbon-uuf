@@ -23,7 +23,7 @@ import com.google.common.collect.ImmutableMap;
 import org.wso2.carbon.uuf.core.ComponentLookup;
 import org.wso2.carbon.uuf.spi.Renderable;
 import org.wso2.carbon.uuf.core.RequestLookup;
-import org.wso2.carbon.uuf.core.exception.UUFException;
+import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.handlebars.helpers.FillPlaceholderHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.CssHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.DefinePlaceholderHelper;

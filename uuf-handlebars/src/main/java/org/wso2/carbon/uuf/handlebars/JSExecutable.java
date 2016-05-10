@@ -20,7 +20,7 @@ import jdk.nashorn.api.scripting.NashornScriptEngine;
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
 import org.wso2.carbon.uuf.core.API;
 import org.wso2.carbon.uuf.api.auth.Session;
-import org.wso2.carbon.uuf.core.exception.UUFException;
+import org.wso2.carbon.uuf.exception.UUFException;
 
 import javax.script.ScriptException;
 import java.util.Map;
