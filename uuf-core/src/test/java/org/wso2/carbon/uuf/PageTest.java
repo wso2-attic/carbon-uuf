@@ -19,10 +19,11 @@ package org.wso2.carbon.uuf;
 import com.google.common.collect.ImmutableSetMultimap;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import org.wso2.carbon.uuf.api.Configuration;
 import org.wso2.carbon.uuf.core.ComponentLookup;
 import org.wso2.carbon.uuf.core.Page;
-import org.wso2.carbon.uuf.spi.Renderable;
 import org.wso2.carbon.uuf.core.RequestLookup;
+import org.wso2.carbon.uuf.spi.Renderable;
 
 import java.util.Collections;
 
@@ -36,7 +37,7 @@ public class PageTest {
         Renderable renderable = (model, componentLookup, requestLookup, api) -> content;
         ComponentLookup lookup = new ComponentLookup("componentName", "/componentContext", Collections.emptySet(),
                                                      Collections.emptySet(), ImmutableSetMultimap.of(),
-                                                     Collections.emptyMap(), Collections.emptySet());
+                                                     Configuration.emptyConfiguration(), Collections.emptySet());
         RequestLookup requestLookup = new RequestLookup("/appContext", any());
         Page page = new Page(any(), renderable);
 

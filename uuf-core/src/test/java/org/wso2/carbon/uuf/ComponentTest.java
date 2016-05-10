@@ -20,6 +20,7 @@ import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.ImmutableSortedSet;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import org.wso2.carbon.uuf.api.Configuration;
 import org.wso2.carbon.uuf.core.API;
 import org.wso2.carbon.uuf.core.Component;
 import org.wso2.carbon.uuf.core.ComponentLookup;
@@ -47,7 +48,8 @@ public class ComponentTest {
 
     private static ComponentLookup createLookup(String componentName) {
         return new ComponentLookup(componentName, "/componentContext", Collections.emptySet(), Collections.emptySet(),
-                                   ImmutableSetMultimap.of(), Collections.emptyMap(), Collections.emptySet());
+                                   ImmutableSetMultimap.of(), Configuration.emptyConfiguration(),
+                                   Collections.emptySet());
     }
 
     private static RequestLookup createRequestLookup() {
