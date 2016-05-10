@@ -22,12 +22,11 @@ import com.github.jknack.handlebars.io.StringTemplateSource;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.wso2.carbon.uuf.core.ComponentLookup;
+import org.wso2.carbon.uuf.core.Configuration;
 import org.wso2.carbon.uuf.core.Placeholder;
 import org.wso2.carbon.uuf.core.RequestLookup;
 import org.wso2.carbon.uuf.handlebars.HbsPageRenderable;
 import org.wso2.carbon.uuf.handlebars.HbsRenderable;
-
-import java.util.Collections;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -42,7 +41,7 @@ public class HbsHelperTest {
 
     private static ComponentLookup createLookup() {
         ComponentLookup lookup = mock(ComponentLookup.class);
-        when(lookup.getConfigurations()).thenReturn(Collections.emptyMap());
+        when(lookup.getConfigurations()).thenReturn(Configuration.emptyConfiguration());
         return lookup;
     }
 

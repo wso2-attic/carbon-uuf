@@ -22,6 +22,7 @@ import com.google.common.collect.ImmutableSet;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.wso2.carbon.uuf.core.ComponentLookup;
+import org.wso2.carbon.uuf.core.Configuration;
 import org.wso2.carbon.uuf.core.Fragment;
 import org.wso2.carbon.uuf.core.RequestLookup;
 import org.wso2.carbon.uuf.handlebars.Executable;
@@ -58,7 +59,7 @@ public class HbsPageRenderableTest {
 
     private static ComponentLookup createLookup() {
         ComponentLookup lookup = mock(ComponentLookup.class);
-        when(lookup.getConfigurations()).thenReturn(Collections.emptyMap());
+        when(lookup.getConfigurations()).thenReturn(Configuration.emptyConfiguration());
         return lookup;
     }
 
