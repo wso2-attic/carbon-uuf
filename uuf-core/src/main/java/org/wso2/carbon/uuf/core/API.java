@@ -33,12 +33,10 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
+import javax.ws.rs.core.HttpHeaders;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-
-import static io.netty.handler.codec.http.HttpHeaders.Names.COOKIE;
-import static io.netty.handler.codec.http.HttpHeaders.Names.SET_COOKIE;
 
 // TODO remove this SuppressWarnings
 @SuppressWarnings("PackageAccessibility")
@@ -107,11 +105,12 @@ public class API {
             return services;
         } catch (NamingException e) {
             throw new UUFException("Cannot create the initial context when calling OSGi service '" +
-                                           serviceClassName + "'.");
+                    serviceClassName + "'.");
         }
     }
 
     public static void callMicroService() {
+        // this need to switch network call or osgi call accordingly
         throw new UnsupportedOperationException("To be implemented");
     }
 
@@ -123,6 +122,12 @@ public class API {
         throw new PageRedirectException(redirectUrl);
     }
 
+    /**
+     * Creates a new session and returns created session.
+     *
+     * @param userName user name
+     * @return {@link Session}
+     */
     public Session createSession(String userName) {
         Session session = new Session(new User(userName));
         sessionRegistry.addSession(session);
@@ -132,25 +137,64 @@ public class API {
         // setting cookie.setSecure(true) will send "Upgrade-Insecure-Requests" -> "1" header
         // for when accessing http instead https
         // cookie.setSecure(true);
-        requestLookup.setResponseHeader(SET_COOKIE, ServerCookieEncoder.STRICT.encode(cookie));
+        requestLookup.setResponseHeader(HttpHeaders.SET_COOKIE, ServerCookieEncoder.STRICT.encode(cookie));
         return session;
     }
 
+    /**
+     * Returns the session object. If not found returns {@code null}.
+     *
+     * @return {@link Session} object
+     */
     public Session getSession() {
-        String cookieHeader = requestLookup.getRequest().headers().get(COOKIE);
-        String[] cookiesParts = cookieHeader.split(";");
-        for (String cookiePart : cookiesParts) {
-            if (cookiePart.trim().startsWith(SessionRegistry.SESSION_COOKIE_NAME)) {
-                Cookie cookie = ClientCookieDecoder.STRICT.decode(cookiePart);
-                Optional<Session> session = sessionRegistry.getSession(cookie.value());
-                return (session.isPresent()) ? session.get() : null;
-            }
+        String cookieHeader = requestLookup.getRequest().getHeaders().get(HttpHeaders.COOKIE);
+        Optional<Cookie> cookie = readCookie(cookieHeader, SessionRegistry.SESSION_COOKIE_NAME);
+        if (cookie.isPresent()) {
+            Optional<Session> session = sessionRegistry.getSession(cookie.get().value());
+            return (session.isPresent()) ? session.get() : null;
         }
         return null;
     }
 
+    /**
+     * Sets the theme.
+     *
+     * @param name theme name
+     * @throws IllegalArgumentException when name is null or empty
+     */
     public void setTheme(String name) {
-        throw new UnsupportedOperationException("To be implemented");
+        if (name == null || name.isEmpty()) {
+            throw new IllegalArgumentException("Cannot set the theme, 'theme-name' can not be empty.");
+        }
+        Cookie cookie = new DefaultCookie("uuf-theme", name);
+        cookie.setHttpOnly(true);
+        //TODO: may be we can have multiple themes based on paths
+        cookie.setPath("/");
+        requestLookup.setResponseHeader(HttpHeaders.SET_COOKIE, ServerCookieEncoder.STRICT.encode(cookie));
+    }
+
+    /**
+     * Returns the theme name. If not found returns {@code null}
+     *
+     * @return theme name
+     */
+    public String getTheme() {
+        String cookieHeader = requestLookup.getRequest().getHeaders().get(HttpHeaders.COOKIE);
+        Optional<Cookie> cookie = readCookie(cookieHeader, "uuf-theme");
+        if (cookie.isPresent()) {
+            return cookie.get().value();
+        }
+        return null;
+    }
+
+    private Optional<Cookie> readCookie(String header, String name) {
+        String[] cookiesParts = header.split(";");
+        for (String cookiePart : cookiesParts) {
+            if (cookiePart.trim().startsWith(name)) {
+                return Optional.of(ClientCookieDecoder.STRICT.decode(cookiePart));
+            }
+        }
+        return Optional.empty();
     }
 
     private static String joinClassNames(Object[] args) {
