@@ -16,8 +16,6 @@
 
 package org.wso2.carbon.uuf;
 
-import io.netty.handler.codec.http.cookie.ClientCookieEncoder;
-import io.netty.handler.codec.http.HttpRequest;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
@@ -27,6 +25,7 @@ import org.wso2.carbon.uuf.core.create.AppCreator;
 import org.wso2.carbon.uuf.core.create.RenderableCreator;
 import org.wso2.carbon.uuf.fileio.ArtifactResolver;
 import org.wso2.carbon.uuf.fileio.BundleClassLoaderProvider;
+import org.wso2.carbon.uuf.fileio.HttpRequest;
 import org.wso2.carbon.uuf.fileio.StaticResolver;
 import org.wso2.msf4j.Microservice;
 
@@ -39,13 +38,13 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
-import static io.netty.handler.codec.http.HttpHeaders.Names.SET_COOKIE;
+
 /**
  * UUF Main Service.
  */
 @Component(name = "org.wso2.carbon.uuf.UUFService",
-           service = Microservice.class,
-           immediate = true)
+        service = Microservice.class,
+        immediate = true)
 @Path("/")
 public class UUFService implements Microservice {
 
@@ -75,10 +74,10 @@ public class UUFService implements Microservice {
     @GET
     @Path(".*")
     @Produces({"text/plain"})
-    public Response get(@Context HttpRequest request) {
+    public Response get(@Context io.netty.handler.codec.http.HttpRequest request) {
         try {
             MDC.put("uuf-request", String.valueOf(count.incrementAndGet()));
-            Response.ResponseBuilder response = registry.serve(request);
+            Response.ResponseBuilder response = registry.serve(new HttpRequest(request));
             return response.build();
         } finally {
             try {
@@ -95,10 +94,10 @@ public class UUFService implements Microservice {
      * @param renderableCreator registered renderable creator
      */
     @Reference(name = "renderablecreater",
-               service = RenderableCreator.class,
-               cardinality = ReferenceCardinality.MULTIPLE,
-               policy = ReferencePolicy.DYNAMIC,
-               unbind = "unsetRenderableCreator")
+            service = RenderableCreator.class,
+            cardinality = ReferenceCardinality.MULTIPLE,
+            policy = ReferencePolicy.DYNAMIC,
+            unbind = "unsetRenderableCreator")
     @SuppressWarnings("unused")
     protected void setRenderableCreator(RenderableCreator renderableCreator) {
         if (!RENDERABLE_CREATORS.add(renderableCreator)) {

@@ -16,7 +16,7 @@
 
 package org.wso2.carbon.uuf.core;
 
-import io.netty.handler.codec.http.HttpRequest;
+import org.wso2.carbon.uuf.fileio.HttpRequest;
 
 import java.util.ArrayDeque;
 import java.util.Deque;

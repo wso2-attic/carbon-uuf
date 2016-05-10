@@ -16,11 +16,12 @@
 
 package org.wso2.carbon.uuf.core;
 
-import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.QueryStringDecoder;
+import org.wso2.carbon.uuf.UUFRegistry;
 import org.wso2.carbon.uuf.core.auth.SessionRegistry;
 import org.wso2.carbon.uuf.core.exception.FragmentNotFoundException;
 import org.wso2.carbon.uuf.core.exception.PageNotFoundException;
+import org.wso2.carbon.uuf.fileio.HttpRequest;
 import org.wso2.carbon.uuf.model.MapModel;
 import org.wso2.carbon.uuf.model.Model;
 
@@ -37,7 +38,6 @@ public class App {
     private final Map<String, Component> components;
     private final Component rootComponent;
     private final SessionRegistry sessionRegistry;
-    private static final String FRAGMENTS_URI_PREFIX = "/fragments/";
 
     public App(String context, Set<Component> components, SessionRegistry sessionRegistry) {
         if (!context.startsWith("/")) {
@@ -73,10 +73,6 @@ public class App {
         throw new PageNotFoundException("Requested page '" + uriWithoutContext + "' does not exists.");
     }
 
-    public static boolean isFragmentsUri(String uriWithoutContext) {
-        return uriWithoutContext.startsWith(FRAGMENTS_URI_PREFIX);
-    }
-
     /**
      * Returns rendered output of this fragment uri. This method intended to use for serving AJAX requests.
      *
@@ -88,8 +84,8 @@ public class App {
         API api = new API(sessionRegistry, requestLookup);
         int queryParamsPos = uriWithoutAppContext.indexOf("?");
         String fragmentName = (queryParamsPos > -1) ?
-                uriWithoutAppContext.substring(FRAGMENTS_URI_PREFIX.length(), queryParamsPos) :
-                uriWithoutAppContext.substring(FRAGMENTS_URI_PREFIX.length());
+                uriWithoutAppContext.substring(UUFRegistry.FRAGMENTS_URI_PREFIX.length(), queryParamsPos) :
+                uriWithoutAppContext.substring(UUFRegistry.FRAGMENTS_URI_PREFIX.length());
         if (!NameUtils.isFullyQualifiedName(fragmentName)) {
             fragmentName = NameUtils.getFullyQualifiedName(Component.ROOT_COMPONENT_NAME, fragmentName);
         }
@@ -119,7 +115,7 @@ public class App {
     }
 
     private Model createModel(HttpRequest httpRequest) {
-        QueryStringDecoder decoder = new QueryStringDecoder(httpRequest.getUri());
+        QueryStringDecoder decoder = new QueryStringDecoder(httpRequest.getRequestURI());
         Map<String, List<String>> parameters = decoder.parameters();
         Map<String, Object> queryParams = parameters.entrySet().parallelStream()
                 .collect(Collectors.toMap(Map.Entry::getKey,

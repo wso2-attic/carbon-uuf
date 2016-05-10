@@ -16,7 +16,6 @@
 
 package org.wso2.carbon.uuf;
 
-import io.netty.handler.codec.http.HttpRequest;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,9 +28,11 @@ import org.wso2.carbon.uuf.core.exception.FragmentNotFoundException;
 import org.wso2.carbon.uuf.core.exception.PageNotFoundException;
 import org.wso2.carbon.uuf.core.exception.PageRedirectException;
 import org.wso2.carbon.uuf.core.exception.UUFException;
+import org.wso2.carbon.uuf.fileio.HttpRequest;
 import org.wso2.carbon.uuf.fileio.StaticResolver;
 import org.wso2.msf4j.util.SystemVariableUtil;
 
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.io.InputStream;
@@ -49,6 +50,7 @@ public class UUFRegistry {
     private final Map<String, App> apps = new HashMap<>();
     private final StaticResolver staticResolver;
     private AppResolver appResolver;
+    public static final String FRAGMENTS_URI_PREFIX = "/fragments/";
 
     public UUFRegistry(AppCreator appCreator, Optional<DebugAppender> debugAppender, AppResolver appResolver,
                        StaticResolver staticResolver) {
@@ -70,9 +72,9 @@ public class UUFRegistry {
     }
 
     public Response.ResponseBuilder serve(HttpRequest request) {
-        String hostHeader = request.headers().get("Host");
+        String hostHeader = request.getHeaders().get(HttpHeaders.HOST);
         String host = "//" + ((hostHeader == null) ? "localhost" : hostHeader);
-        String uri = request.getUri().replaceAll("/+", "/");
+        String uri = request.getRequestURI().replaceAll("/+", "/");
         if (!uri.startsWith("/")) {
             uri = "/" + uri;
         }
@@ -87,7 +89,7 @@ public class UUFRegistry {
 
             // eg: url = http://example.com/app and uri = /app
             // since we don't support ROOT app, this must be a mis-type
-            return Response.status(301).entity("").header("Location", uri + "/");
+            return Response.status(301).entity("").header(HttpHeaders.LOCATION, uri + "/");
         }
 
         String appName = uri.substring(1, firstSlash);
@@ -95,8 +97,8 @@ public class UUFRegistry {
         String uriWithoutAppContext = uri.substring(firstSlash, uri.length());
 
         if (log.isDebugEnabled() && !uriWithoutAppContext.startsWith("/debug/")) {
-            log.debug("request received " + request.getMethod() + " " + request.getUri() + " " +
-                              request.getProtocolVersion());
+            log.debug("request received " + request.getMethod() + " " + request.getRequestURI() + " " +
+                    request.getProtocol());
         }
 
         App app = apps.get(appName);
@@ -112,19 +114,21 @@ public class UUFRegistry {
                 }
                 if (uriWithoutAppContext.startsWith("/debug/")) {
                     return renderDebug(app, uriWithoutAppContext);
-                } else if (App.isFragmentsUri(uriWithoutAppContext)) {
+                } else if (isFragmentsUri(uriWithoutAppContext)) {
                     RequestLookup requestLookup = new RequestLookup(appContext, request);
                     String fragmentResult = app.renderFragment(uri.substring(appContext.length()),
-                                                               new RequestLookup(appContext, request));
-                    Response.ResponseBuilder responseBuilder = addResponseHeaders(Response.ok(fragmentResult),
-                                                                                  requestLookup.getResponseHeaders());
-                    return responseBuilder.header("Content-Type", "text/html");
+                            new RequestLookup(appContext, request));
+                    Response.ResponseBuilder responseBuilder = ifExistsAddResponseHeaders(Response.ok(fragmentResult),
+                            requestLookup
+                                    .getResponseHeaders());
+                    return responseBuilder.header(HttpHeaders.CONTENT_TYPE, "text/html");
                 } else {
                     RequestLookup requestLookup = new RequestLookup(appContext, request);
                     String pageResult = app.renderPage(uri.substring(appContext.length()), requestLookup);
-                    Response.ResponseBuilder responseBuilder = addResponseHeaders(Response.ok(pageResult),
-                                                                                  requestLookup.getResponseHeaders());
-                    return responseBuilder.header("Content-Type", "text/html");
+                    Response.ResponseBuilder responseBuilder = ifExistsAddResponseHeaders(Response.ok(pageResult),
+                            requestLookup
+                                    .getResponseHeaders());
+                    return responseBuilder.header(HttpHeaders.CONTENT_TYPE, "text/html");
                 }
             }
         } catch (PageNotFoundException | FragmentNotFoundException e) {
@@ -134,19 +138,18 @@ public class UUFRegistry {
                 if (uri.endsWith("/")) {
                     String uriWithoutSlash = uriWithoutAppContext.substring(0, uriWithoutAppContext.length() - 1);
                     if (app.hasPage(uriWithoutSlash)) {
-                        return Response.status(301).header("Location", host + uriWithoutSlash);
+                        return Response.status(301).header(HttpHeaders.LOCATION, host + uriWithoutSlash);
                     }
                 } else {
                     String uriWithSlash = uriWithoutAppContext + "/";
                     if (app.hasPage(uriWithSlash)) {
-                        return Response.status(301).header("Location", host + uri + "/");
+                        return Response.status(301).header(HttpHeaders.LOCATION, host + uri + "/");
                     }
                 }
             }
             return createErrorResponse(appName, e.getMessage(), e, e.getHttpStatusCode());
         } catch (PageRedirectException e) {
-            return createErrorResponse(appName, e.getMessage(), e, e.getHttpStatusCode()).header("Location",
-                                                                                                 e.getRedirectUrl());
+            return createErrorResponse(appName, e.getMessage(), e, e.getHttpStatusCode()).header("Location", e.getRedirectUrl());
         } catch (Exception e) {
             int httpStatusCode = 500;
             Throwable cause = e.getCause();
@@ -172,13 +175,13 @@ public class UUFRegistry {
         if (resourcePath.equals("/debug/api/pages/")) {
             //TODO: fix issues when same page is in multiple components
             return Response.ok(app.getComponents().entrySet().stream()
-                                       .flatMap(entry -> entry.getValue().getPages().stream())
-                                       .collect(Collectors.toSet()));
+                    .flatMap(entry -> entry.getValue().getPages().stream())
+                    .collect(Collectors.toSet()));
         }
         if (resourcePath.startsWith("/debug/api/fragments/")) {
             return Response.ok(app.getComponents().entrySet().stream()
-                                       .flatMap(entry -> entry.getValue().getFragments().values().stream())
-                                       .collect(Collectors.toSet()));
+                    .flatMap(entry -> entry.getValue().getFragments().values().stream())
+                    .collect(Collectors.toSet()));
         }
         if (resourcePath.startsWith("/debug/logs")) {
             if (debugAppender.isPresent()) {
@@ -205,10 +208,14 @@ public class UUFRegistry {
         throw new UUFException("Unknown debug request");
     }
 
+    public static boolean isFragmentsUri(String uriWithoutContext) {
+        return uriWithoutContext.startsWith(FRAGMENTS_URI_PREFIX);
+    }
+
     private String getMime(String resourcePath) {
         int extensionIndex = resourcePath.lastIndexOf(".");
         String extension = (extensionIndex == -1) ? resourcePath : resourcePath.substring(extensionIndex + 1,
-                                                                                          resourcePath.length());
+                resourcePath.length());
         Optional<String> mime = MimeMapper.getMimeType(extension);
         return (mime.isPresent()) ? mime.get() : "text/html";
     }
@@ -218,17 +225,15 @@ public class UUFRegistry {
         return createErrorResponse(appName, errorMessage, e, httpStatusCode);
     }
 
-    private Response.ResponseBuilder createErrorResponse(String appName, String errorMessage, Exception e,
-                                                         int httpStatusCode) {
+    private Response.ResponseBuilder createErrorResponse(String appName, String errorMessage, Exception e, int httpStatusCode) {
         log.error(errorMessage, e);
-        return Response.status(httpStatusCode).entity(errorMessage).header("Content-Type", "text/plain");
+        return Response.status(httpStatusCode).entity(errorMessage).header(HttpHeaders.CONTENT_TYPE, "text/plain");
     }
 
-    private Response.ResponseBuilder addResponseHeaders(Response.ResponseBuilder responseBuilder,
-                                                        Map<String, String> responseHeaders) {
-        for (Map.Entry<String, String> entry : responseHeaders.entrySet()) {
-            responseBuilder.header(entry.getKey(), entry.getValue());
-        }
+    private Response.ResponseBuilder ifExistsAddResponseHeaders(Response.ResponseBuilder responseBuilder,
+                                                                Map<String, String> headers) {
+        headers.entrySet().stream().forEach(
+                entry -> responseBuilder.header(entry.getKey(), entry.getValue()));
         return responseBuilder;
     }
 }

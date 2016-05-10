@@ -16,7 +16,6 @@
 
 package org.wso2.carbon.uuf.fileio;
 
-import io.netty.handler.codec.http.HttpRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.wso2.carbon.kernel.utils.Utils;
 import org.wso2.carbon.uuf.core.MimeMapper;
@@ -117,7 +116,7 @@ public class StaticResolver {
     }
 
     private Optional<Date> getIfModifiedSinceDate(HttpRequest request) {
-        String httpDateStr = request.headers().get("If-Modified-Since");
+        String httpDateStr = request.getHeaders().get("If-Modified-Since");
         if (httpDateStr == null) {
             return Optional.empty();
         }
