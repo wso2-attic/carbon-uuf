@@ -24,7 +24,7 @@ import org.apache.commons.lang3.reflect.MethodUtils;
 import org.wso2.carbon.uuf.api.auth.Session;
 import org.wso2.carbon.uuf.internal.core.auth.SessionRegistry;
 import org.wso2.carbon.uuf.api.auth.User;
-import org.wso2.carbon.uuf.exception.HTTPErrorException;
+import org.wso2.carbon.uuf.exception.HttpErrorException;
 import org.wso2.carbon.uuf.exception.PageRedirectException;
 import org.wso2.carbon.uuf.exception.UUFException;
 
@@ -115,7 +115,7 @@ public class API {
     }
 
     public static void sendError(int status, String message) {
-        throw new HTTPErrorException(status, message);
+        throw new HttpErrorException(status, message);
     }
 
     public static void sendRedirect(String redirectUrl) {

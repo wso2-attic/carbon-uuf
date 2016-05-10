@@ -16,20 +16,20 @@
 
 package org.wso2.carbon.uuf.exception;
 
-public class HTTPErrorException extends UUFException {
+public class HttpErrorException extends UUFException {
 
     private final int httpStatusCode;
 
-    public HTTPErrorException(int httpStatusCode) {
+    public HttpErrorException(int httpStatusCode) {
         this.httpStatusCode = httpStatusCode;
     }
 
-    public HTTPErrorException(int httpStatusCode, String message) {
+    public HttpErrorException(int httpStatusCode, String message) {
         super(message);
         this.httpStatusCode = httpStatusCode;
     }
 
-    public HTTPErrorException(int httpStatusCode, String message, Throwable cause) {
+    public HttpErrorException(int httpStatusCode, String message, Throwable cause) {
         super(message, cause);
         this.httpStatusCode = httpStatusCode;
     }

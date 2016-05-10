@@ -16,7 +16,7 @@
 
 package org.wso2.carbon.uuf.exception;
 
-public class FragmentNotFoundException extends HTTPErrorException {
+public class FragmentNotFoundException extends HttpErrorException {
 
     private static final int HTTP_STATUS_NOT_FOUND = 404;
 

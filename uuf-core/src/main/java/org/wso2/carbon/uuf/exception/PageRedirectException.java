@@ -16,7 +16,7 @@
 
 package org.wso2.carbon.uuf.exception;
 
-public class PageRedirectException extends HTTPErrorException {
+public class PageRedirectException extends HttpErrorException {
 
     private static final int HTTP_STATUS_FOUND = 302;
     private final String redirectUrl;
