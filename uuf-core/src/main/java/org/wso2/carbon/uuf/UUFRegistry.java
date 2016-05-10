@@ -29,6 +29,7 @@ import org.wso2.carbon.uuf.core.exception.PageNotFoundException;
 import org.wso2.carbon.uuf.core.exception.PageRedirectException;
 import org.wso2.carbon.uuf.core.exception.UUFException;
 import org.wso2.carbon.uuf.fileio.HttpRequest;
+import org.wso2.carbon.uuf.fileio.RequestUtil;
 import org.wso2.carbon.uuf.fileio.StaticResolver;
 import org.wso2.msf4j.util.SystemVariableUtil;
 
@@ -72,38 +73,16 @@ public class UUFRegistry {
     }
 
     public Response.ResponseBuilder serve(HttpRequest request) {
-        String hostHeader = request.getHeaders().get(HttpHeaders.HOST);
-        String host = "//" + ((hostHeader == null) ? "localhost" : hostHeader);
-        String uri = request.getRequestURI().replaceAll("/+", "/");
-        if (!uri.startsWith("/")) {
-            uri = "/" + uri;
-        }
-
-        int firstSlash = uri.indexOf('/', 1);
-
-        if (firstSlash < 0) {
-            if (uri.equals("/favicon.ico")) {
-                //TODO: send a favicon, cacheable favicon avoids frequent requests for it.
-                return Response.status(404).entity("");
-            }
-
-            // eg: url = http://example.com/app and uri = /app
-            // since we don't support ROOT app, this must be a mis-type
-            return Response.status(301).entity("").header(HttpHeaders.LOCATION, uri + "/");
-        }
-
-        String appName = uri.substring(1, firstSlash);
-        String appContext = uri.substring(0, firstSlash);
-        String uriWithoutAppContext = uri.substring(firstSlash, uri.length());
-
-        if (log.isDebugEnabled() && !uriWithoutAppContext.startsWith("/debug/")) {
+        if (log.isDebugEnabled() && !RequestUtil.isDebugUri(request)) {
             log.debug("request received " + request.getMethod() + " " + request.getRequestURI() + " " +
                     request.getProtocol());
         }
-
+        String appName = request.getUriComponents().getAppName();
+        String appContext = request.getUriComponents().getAppContext();
+        String uriWithoutAppContext = request.getUriComponents().getUriWithoutAppContext();
         App app = apps.get(appName);
         try {
-            if (StaticResolver.isStaticResourceUri(uriWithoutAppContext)) {
+            if (RequestUtil.isStaticResourceUri(request)) {
                 // App class is unaware of static path resolving. Hence static file serving can easily ported into a
                 // separate server.
                 return staticResolver.createResponse(appName, uriWithoutAppContext, request);
@@ -112,11 +91,11 @@ public class UUFRegistry {
                     app = appCreator.createApp(appContext, appResolver.resolve(appName));
                     apps.put(appName, app);
                 }
-                if (uriWithoutAppContext.startsWith("/debug/")) {
+                if (RequestUtil.isDebugUri(request)) {
                     return renderDebug(app, uriWithoutAppContext);
                 } else if (isFragmentsUri(uriWithoutAppContext)) {
                     RequestLookup requestLookup = new RequestLookup(appContext, request);
-                    String fragmentResult = app.renderFragment(uri.substring(appContext.length()),
+                    String fragmentResult = app.renderFragment(uriWithoutAppContext,
                             new RequestLookup(appContext, request));
                     Response.ResponseBuilder responseBuilder = ifExistsAddResponseHeaders(Response.ok(fragmentResult),
                             requestLookup
@@ -124,7 +103,7 @@ public class UUFRegistry {
                     return responseBuilder.header(HttpHeaders.CONTENT_TYPE, "text/html");
                 } else {
                     RequestLookup requestLookup = new RequestLookup(appContext, request);
-                    String pageResult = app.renderPage(uri.substring(appContext.length()), requestLookup);
+                    String pageResult = app.renderPage(uriWithoutAppContext, requestLookup);
                     Response.ResponseBuilder responseBuilder = ifExistsAddResponseHeaders(Response.ok(pageResult),
                             requestLookup
                                     .getResponseHeaders());
@@ -135,15 +114,15 @@ public class UUFRegistry {
             // https://googlewebmastercentral.blogspot.com/2010/04/to-slash-or-not-to-slash.html
             // if the tailing / is extra or a it is missing, send 301
             if (app != null) {
-                if (uri.endsWith("/")) {
+                if (request.getRequestURI().endsWith("/")) {
                     String uriWithoutSlash = uriWithoutAppContext.substring(0, uriWithoutAppContext.length() - 1);
                     if (app.hasPage(uriWithoutSlash)) {
-                        return Response.status(301).header(HttpHeaders.LOCATION, host + uriWithoutSlash);
+                        return Response.status(301).header(HttpHeaders.LOCATION, request.getHostName() + uriWithoutSlash);
                     }
                 } else {
                     String uriWithSlash = uriWithoutAppContext + "/";
                     if (app.hasPage(uriWithSlash)) {
-                        return Response.status(301).header(HttpHeaders.LOCATION, host + uri + "/");
+                        return Response.status(301).header(HttpHeaders.LOCATION, request.getHostName() + request.getRequestURI() + "/");
                     }
                 }
             }

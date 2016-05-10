@@ -16,6 +16,9 @@
 
 package org.wso2.carbon.uuf;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.handler.codec.http.HttpResponseStatus;
+import org.apache.log4j.Logger;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
@@ -27,6 +30,9 @@ import org.wso2.carbon.uuf.fileio.ArtifactResolver;
 import org.wso2.carbon.uuf.fileio.BundleClassLoaderProvider;
 import org.wso2.carbon.uuf.fileio.HttpRequest;
 import org.wso2.carbon.uuf.fileio.StaticResolver;
+import org.wso2.msf4j.HttpResponder;
+import org.wso2.msf4j.HttpStreamHandler;
+import org.wso2.msf4j.HttpStreamer;
 import org.wso2.msf4j.Microservice;
 
 import javax.ws.rs.GET;
@@ -35,6 +41,14 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -50,7 +64,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class UUFService implements Microservice {
 
     private static final Set<RenderableCreator> RENDERABLE_CREATORS = new HashSet<>();
-
+    private static final Logger log = Logger.getLogger(UUFService.class);
     private UUFRegistry registry;
     private final AtomicInteger count = new AtomicInteger(0);
 
@@ -82,7 +96,8 @@ public class UUFService implements Microservice {
     @POST
     @Path(".*")
     @Produces({"text/plain"})
-    public Response post(@Context io.netty.handler.codec.http.HttpRequest request) {
+    public Response post(@Context HttpStreamer httpStreamer, @Context io.netty.handler.codec.http.HttpRequest request) {
+        httpStreamer.callback(new HttpStreamHandlerImpl());
         return execute(new HttpRequest(request));
     }
 
@@ -129,5 +144,31 @@ public class UUFService implements Microservice {
     protected void unsetRenderableCreator(RenderableCreator renderableCreator) {
         RENDERABLE_CREATORS.remove(renderableCreator);
         this.registry = createRegistry();
+    }
+
+    private static class HttpStreamHandlerImpl implements HttpStreamHandler {
+        final ByteArrayOutputStream content = new ByteArrayOutputStream();
+
+        @Override
+        public void chunk(ByteBuf request, HttpResponder responder) throws IOException {
+            request.readBytes(content, request.capacity());
+        }
+
+        @Override
+        public void finished(ByteBuf request, HttpResponder responder) throws IOException {
+            request.readBytes(content, request.capacity());
+            content.close();
+            responder.sendStatus(HttpResponseStatus.ACCEPTED);
+        }
+
+        @Override
+        public void error(Throwable cause) {
+            try {
+                content.close();
+            } catch (IOException e) {
+                // Log if unable to close the output stream
+                log.error("Unable to close byte array output stream", e);
+            }
+        }
     }
 }

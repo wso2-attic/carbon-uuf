@@ -33,10 +33,11 @@ import java.util.Date;
 import java.util.Optional;
 import java.util.TimeZone;
 
+
+import static org.wso2.carbon.uuf.fileio.RequestUtil.COMPONENT_STATIC_RESOURCES_URI_PREFIX;
+
 public class StaticResolver {
 
-    public static final String COMPONENT_STATIC_RESOURCES_URI_PREFIX = "/public/components";
-    public static final String THEMES_STATIC_RESOURCES_URI_PREFIX = "/public/themes";
     public static final String DIR_NAME_COMPONENT_RESOURCES = "base";
     private static final String DIR_NAME_FRAGMENT_RESOURCES = "public";
     private static final String CACHE_HEADER_DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss zzz";
@@ -146,7 +147,4 @@ public class StaticResolver {
         return builder;
     }
 
-    public static boolean isStaticResourceUri(String uri) {
-        return uri.startsWith(COMPONENT_STATIC_RESOURCES_URI_PREFIX);
-    }
 }

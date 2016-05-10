@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.wso2.carbon.uuf.fileio.StaticResolver.DIR_NAME_COMPONENT_RESOURCES;
-import static org.wso2.carbon.uuf.fileio.StaticResolver.THEMES_STATIC_RESOURCES_URI_PREFIX;
+import static org.wso2.carbon.uuf.fileio.RequestUtil.THEMES_STATIC_RESOURCES_URI_PREFIX;
 
 public class Theme {
 

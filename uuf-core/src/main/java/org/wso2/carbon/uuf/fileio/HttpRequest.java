@@ -18,7 +18,12 @@ package org.wso2.carbon.uuf.fileio;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.http.DefaultFullHttpRequest;
+import io.netty.handler.codec.http.HttpObjectAggregator;
+import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.QueryStringDecoder;
+import io.netty.handler.codec.serialization.ObjectDecoder;
+import org.wso2.carbon.uuf.core.exception.PageNotFoundException;
+import org.wso2.carbon.uuf.core.exception.PageRedirectException;
 
 import javax.ws.rs.core.HttpHeaders;
 import java.io.ByteArrayInputStream;
@@ -126,7 +131,11 @@ public class HttpRequest {
      * @return request uri
      */
     public String getRequestURI() {
-        return requestURI;
+        String uri = requestURI.replaceAll("/+", "/");
+        if (!uri.startsWith("/")) {
+            uri = "/" + uri;
+        };
+        return uri;
     }
 
     /**
@@ -194,21 +203,35 @@ public class HttpRequest {
     }
 
     /**
+     * Returns hostname. If host header is not found, returns //localhost
+     *
+     * @return
+     */
+    public String getHostName() {
+        String hostHeader = headers.get(HttpHeaders.HOST);
+        String host = "//" + ((hostHeader == null) ? "localhost" : hostHeader);
+        return host;
+    }
+
+    /**
      * Constructs a HTTP request using netty http request.
      *
      * @param request
      */
     public HttpRequest(io.netty.handler.codec.http.HttpRequest request) {
-        DefaultFullHttpRequest fullHttpRequest = (DefaultFullHttpRequest) request;
-        this.method = fullHttpRequest.getMethod().name();
-        this.protocol = fullHttpRequest.getProtocolVersion().text();
-        this.queryString = QueryStringDecoder.decodeComponent(fullHttpRequest.getUri());
-        ByteBuf buf = fullHttpRequest.content();
-        this.content = buf.array();
-        this.contentType = fullHttpRequest.headers().get(HttpHeaders.CONTENT_TYPE);
-        this.contentLength = content.length;
-        this.requestURI = fullHttpRequest.getUri();
-        this.inputStream = new ByteArrayInputStream(content);
+        this.method = request.getMethod().name();
+        this.protocol = request.getProtocolVersion().text();
+        this.queryString = QueryStringDecoder.decodeComponent(request.getUri());
+//        ByteBuf buf = request.content();
+//        this.content = buf.array();
+//        this.contentType = request.headers().get(HttpHeaders.CONTENT_TYPE);
+//        this.contentLength = content.length;
+        this.content = null;
+        this.contentLength = 0;
+        this.inputStream = null;
+        //
+        this.contentType = request.headers().get(HttpHeaders.CONTENT_TYPE);
+        this.requestURI = request.getUri();
         this.headers = request.headers().entries().stream().collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         //not implemented yet
         this.requestURL = null;
@@ -216,6 +239,51 @@ public class HttpRequest {
         this.remoteAddr = null;
         this.contextPath = null;
         this.localPort = -1;
+    }
+
+    public URIComponents getUriComponents() {
+        String uri = getRequestURI();
+        int firstSlash = uri.indexOf('/', 1);
+
+        if (firstSlash < 0) {
+            if (uri.equals("/favicon.ico")) {
+                //TODO: send a favicon, cacheable favicon avoids frequent requests for it.
+                throw new PageNotFoundException("");
+            }
+
+            // eg: url = http://example.com/app and uri = /app
+            // since we don't support ROOT app, this must be a mis-type
+            throw new PageRedirectException(uri + "/");
+        }
+
+        String appName = uri.substring(1, firstSlash);
+        String appContext = uri.substring(0, firstSlash);
+        String uriWithoutAppContext = uri.substring(firstSlash, uri.length());
+        return new URIComponents(appName, appContext, uriWithoutAppContext);
+    }
+
+    public static class URIComponents {
+        private String appName;
+        private String appContext;
+        private String uriWithoutAppContext;
+
+        public URIComponents(String appName, String appContext, String uriWithoutAppContext) {
+            this.appName = appName;
+            this.appContext = appContext;
+            this.uriWithoutAppContext = uriWithoutAppContext;
+        }
+
+        public String getAppName() {
+            return appName;
+        }
+
+        public String getAppContext() {
+            return appContext;
+        }
+
+        public String getUriWithoutAppContext() {
+            return uriWithoutAppContext;
+        }
     }
 
 }
