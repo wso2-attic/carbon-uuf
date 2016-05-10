@@ -56,6 +56,35 @@ public class HttpRequest {
     //getAllCookies
 
     /**
+     * Constructs a HTTP request using netty http request.
+     *
+     * @param request
+     */
+    public HttpRequest(io.netty.handler.codec.http.HttpRequest request) {
+        this.method = request.getMethod().name();
+        this.protocol = request.getProtocolVersion().text();
+        this.queryString = QueryStringDecoder.decodeComponent(request.getUri());
+//        ByteBuf buf = request.content();
+//        this.content = buf.array();
+//        this.contentType = request.headers().get(HttpHeaders.CONTENT_TYPE);
+//        this.contentLength = content.length;
+        this.content = null;
+        this.contentLength = 0;
+        this.inputStream = null;
+        //
+        this.contentType = request.headers().get(HttpHeaders.CONTENT_TYPE);
+        this.requestURI = request.getUri();
+        this.headers = request.headers().entries().stream().collect(Collectors.toMap(Map.Entry::getKey,
+                                                                                     Map.Entry::getValue));
+        //not implemented yet
+        this.requestURL = null;
+        this.isSecure = false;
+        this.remoteAddr = null;
+        this.contextPath = null;
+        this.localPort = -1;
+    }
+
+    /**
      * Returns the method of the request
      *
      * @return http method
@@ -128,7 +157,7 @@ public class HttpRequest {
         String uri = requestURI.replaceAll("/+", "/");
         if (!uri.startsWith("/")) {
             uri = "/" + uri;
-        };
+        }
         return uri;
     }
 
@@ -160,8 +189,7 @@ public class HttpRequest {
     }
 
     /**
-     * Returns the portion of the request URI that indicates the context of the request.
-     * eg. /uuf-app
+     * Returns the portion of the request URI that indicates the context of the request. eg. /uuf-app
      *
      * @return context path
      */
@@ -207,34 +235,6 @@ public class HttpRequest {
         return host;
     }
 
-    /**
-     * Constructs a HTTP request using netty http request.
-     *
-     * @param request
-     */
-    public HttpRequest(io.netty.handler.codec.http.HttpRequest request) {
-        this.method = request.getMethod().name();
-        this.protocol = request.getProtocolVersion().text();
-        this.queryString = QueryStringDecoder.decodeComponent(request.getUri());
-//        ByteBuf buf = request.content();
-//        this.content = buf.array();
-//        this.contentType = request.headers().get(HttpHeaders.CONTENT_TYPE);
-//        this.contentLength = content.length;
-        this.content = null;
-        this.contentLength = 0;
-        this.inputStream = null;
-        //
-        this.contentType = request.headers().get(HttpHeaders.CONTENT_TYPE);
-        this.requestURI = request.getUri();
-        this.headers = request.headers().entries().stream().collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-        //not implemented yet
-        this.requestURL = null;
-        this.isSecure = false;
-        this.remoteAddr = null;
-        this.contextPath = null;
-        this.localPort = -1;
-    }
-
     public URIComponents getUriComponents() {
         String uri = getRequestURI();
         int firstSlash = uri.indexOf('/', 1);
@@ -257,6 +257,7 @@ public class HttpRequest {
     }
 
     public static class URIComponents {
+
         private String appName;
         private String appContext;
         private String uriWithoutAppContext;
@@ -279,5 +280,4 @@ public class HttpRequest {
             return uriWithoutAppContext;
         }
     }
-
 }
