@@ -20,6 +20,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.uuf.api.Configuration;
 
 import java.util.Map;
 import java.util.Optional;
@@ -55,12 +56,16 @@ public class Component {
         return lookup.getComponentContext();
     }
 
-    public Map<String, Fragment> getFragments() {
-        return lookup.getFragments();
-    }
-
     ComponentLookup getLookup() {
         return lookup;
+    }
+
+    Configuration getConfiguration() {
+        return lookup.getConfigurations();
+    }
+
+    public Map<String, Fragment> getFragments() {
+        return lookup.getFragments();
     }
 
     public Optional<String> renderPage(String pageUri, RequestLookup requestLookup, API api) {
