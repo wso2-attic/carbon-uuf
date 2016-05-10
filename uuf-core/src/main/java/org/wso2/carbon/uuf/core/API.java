@@ -24,9 +24,9 @@ import org.apache.commons.lang3.reflect.MethodUtils;
 import org.wso2.carbon.uuf.api.auth.Session;
 import org.wso2.carbon.uuf.internal.core.auth.SessionRegistry;
 import org.wso2.carbon.uuf.api.auth.User;
-import org.wso2.carbon.uuf.core.exception.HTTPErrorException;
-import org.wso2.carbon.uuf.core.exception.PageRedirectException;
-import org.wso2.carbon.uuf.core.exception.UUFException;
+import org.wso2.carbon.uuf.exception.HTTPErrorException;
+import org.wso2.carbon.uuf.exception.PageRedirectException;
+import org.wso2.carbon.uuf.exception.UUFException;
 
 import javax.naming.Binding;
 import javax.naming.Context;

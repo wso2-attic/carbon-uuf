@@ -19,8 +19,8 @@ package org.wso2.carbon.uuf.internal.io;
 import org.wso2.carbon.kernel.utils.Utils;
 import org.wso2.carbon.uuf.reference.AppReference;
 import org.wso2.carbon.uuf.internal.core.create.AppResolver;
-import org.wso2.carbon.uuf.core.exception.PageNotFoundException;
-import org.wso2.carbon.uuf.core.exception.UUFException;
+import org.wso2.carbon.uuf.exception.PageNotFoundException;
+import org.wso2.carbon.uuf.exception.UUFException;
 
 import java.io.IOException;
 import java.nio.file.Files;

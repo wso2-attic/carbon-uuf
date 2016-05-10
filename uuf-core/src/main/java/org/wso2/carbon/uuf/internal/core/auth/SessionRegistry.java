@@ -17,7 +17,7 @@
 package org.wso2.carbon.uuf.internal.core.auth;
 
 import org.wso2.carbon.uuf.api.auth.Session;
-import org.wso2.carbon.uuf.core.exception.UUFException;
+import org.wso2.carbon.uuf.exception.UUFException;
 
 import javax.cache.Cache;
 import javax.cache.CacheException;

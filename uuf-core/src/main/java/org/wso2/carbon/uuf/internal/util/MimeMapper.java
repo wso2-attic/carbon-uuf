@@ -18,8 +18,8 @@ package org.wso2.carbon.uuf.internal.util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.uuf.core.exception.MalformedConfigurationException;
-import org.wso2.carbon.uuf.core.exception.UUFException;
+import org.wso2.carbon.uuf.exception.MalformedConfigurationException;
+import org.wso2.carbon.uuf.exception.UUFException;
 
 import java.io.IOException;
 import java.io.InputStream;

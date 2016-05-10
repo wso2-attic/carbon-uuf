@@ -16,8 +16,8 @@
 
 package org.wso2.carbon.uuf.api;
 
-import org.wso2.carbon.uuf.core.exception.InvalidTypeException;
-import org.wso2.carbon.uuf.core.exception.MalformedConfigurationException;
+import org.wso2.carbon.uuf.exception.InvalidTypeException;
+import org.wso2.carbon.uuf.exception.MalformedConfigurationException;
 
 import java.util.Collections;
 import java.util.HashMap;
