@@ -142,6 +142,20 @@ public class AppCreator {
                                       ComponentReference componentReference, Set<Component> dependencies,
                                       ClassLoader classLoader) {
 
+        ComponentLookup lookup = createComponentLookup(componentName, componentContext, componentReference,
+                                                       dependencies, classLoader);
+        SortedSet<Page> pages = componentReference
+                .getPages(supportedExtensions)
+                .parallel()
+                .map(pageReference -> createPage(pageReference, classLoader, lookup))
+                .collect(Collectors.toCollection(TreeSet::new));
+
+        return new Component(componentName, componentVersion, pages, lookup);
+    }
+
+    private ComponentLookup createComponentLookup(String componentName, String componentContext,
+                                                  ComponentReference componentReference, Set<Component> dependencies,
+                                                  ClassLoader classLoader) {
         Set<Layout> layouts = componentReference
                 .getLayouts(supportedExtensions)
                 .parallel()
@@ -184,16 +198,8 @@ public class AppCreator {
                             "' of component '" + getSimpleName(componentName) + "' is malformed.", e);
         }
 
-        ComponentLookup lookup = new ComponentLookup(componentName, componentContext, layouts,
-                                                     new HashSet<>(fragments.values()), bindings, configurations,
-                                                     dependencies);
-        SortedSet<Page> pages = componentReference
-                .getPages(supportedExtensions)
-                .parallel()
-                .map(pageReference -> createPage(pageReference, classLoader, lookup))
-                .collect(Collectors.toCollection(TreeSet::new));
-
-        return new Component(componentName, componentVersion, pages, lookup);
+        return new ComponentLookup(componentName, componentContext, layouts, new HashSet<>(fragments.values()),
+                                   bindings, configurations, dependencies);
     }
 
     private Layout createLayout(String componentName, LayoutReference layoutReference) {
