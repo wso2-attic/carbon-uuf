@@ -44,7 +44,7 @@ public class JSExecutable implements Executable {
         }
 
         NashornScriptEngine engine = (NashornScriptEngine) SCRIPT_ENGINE_FACTORY.getScriptEngine(SCRIPT_ENGINE_ARGS,
-                                                                                                 componentClassLoader);
+                componentClassLoader);
         engine.put("callOSGiService", (JSFunction.CallOSGiService) API::callOSGiService);
         engine.put("getOSGiServices", (JSFunction.GetOSGiServices) API::getOSGiServices);
         engine.put("callMicroService", (JSFunction.CallMicroService) API::callMicroService);
@@ -66,14 +66,15 @@ public class JSExecutable implements Executable {
         engine.put("createSession", (JSFunction.CreateSession) api::createSession);
         engine.put("getSession", (JSFunction.GetSession) api::getSession);
         engine.put("setTheme", (JSFunction.SetTheme) api::setTheme);
+        engine.put("getTheme", (JSFunction.GetTheme) api::getTheme);
         try {
             return engine.invokeFunction("onRequest", context);
         } catch (ScriptException e) {
             throw new UUFException("An error occurred when executing the 'onRequest' function in JavaScript file '" +
-                                           getPath() + "' with context '" + context + "'.", e);
+                    getPath() + "' with context '" + context + "'.", e);
         } catch (NoSuchMethodException e) {
             throw new UUFException("Cannot find the 'onRequest' function in the JavaScript file '" + getPath() + "'.",
-                                   e);
+                    e);
         }
     }
 
@@ -138,6 +139,13 @@ public class JSExecutable implements Executable {
 
             @SuppressWarnings("unused")
             void call(String name);
+        }
+
+        @FunctionalInterface
+        public interface GetTheme {
+
+            @SuppressWarnings("unused")
+            String call();
         }
     }
 }
