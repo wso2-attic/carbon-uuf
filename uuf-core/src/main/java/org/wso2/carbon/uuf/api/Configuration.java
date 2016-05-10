@@ -38,7 +38,8 @@ public class Configuration extends HashMap<String, Object> {
             if (entry.getKey() instanceof String) {
                 super.put((String) entry.getKey(), entry.getValue());
             } else {
-                throw new InvalidTypeException("Configurations must be a Map<String, Object>. Instead found ");
+                throw new InvalidTypeException("Configurations must be a Map<String, Object>. Instead found a '" +
+                                                       entry.getKey().getClass().getName() + "' key.");
             }
         }
     }
@@ -54,7 +55,11 @@ public class Configuration extends HashMap<String, Object> {
                     "Cannot find the value of 'appName' in the root component configurations.");
         }
         if (appNameObj instanceof String) {
-            return (String) appNameObj;
+            String appName = (String) appNameObj;
+            if (appName.isEmpty()) {
+                throw new IllegalArgumentException("App name cannot be empty.");
+            }
+            return appName;
         } else {
             throw new InvalidTypeException(
                     "Value of 'appName' in the root component configuration must be a string. Instead found '" +
@@ -69,7 +74,15 @@ public class Configuration extends HashMap<String, Object> {
                     "Cannot find the value of 'appContext' in the root component configurations.");
         }
         if (appContextObj instanceof String) {
-            return (String) appContextObj;
+            String appContext = (String) appContextObj;
+            if (appContext.isEmpty()) {
+                throw new IllegalArgumentException("App context cannot be empty.");
+            }
+            if (appContext.charAt(0) == '/') {
+                throw new IllegalArgumentException(
+                        "App context must start with a '/'. Instead found '" + appContext.charAt(0) + "'.");
+            }
+            return appContext;
         } else {
             throw new InvalidTypeException(
                     "Value of 'appContext' in the root component configuration must be a string. Instead found '" +
@@ -77,18 +90,22 @@ public class Configuration extends HashMap<String, Object> {
         }
     }
 
-    public String getDefaultTheme() {
-        Object appDefaultThemeObj = get(KEY_DEFAULT_THEME);
-        if (appDefaultThemeObj == null) {
+    public String getDefaultThemeName() {
+        Object defaultThemeNameObj = get(KEY_DEFAULT_THEME);
+        if (defaultThemeNameObj == null) {
             throw new MalformedConfigurationException(
                     "Cannot find the value of 'defaultTheme' in the root component configurations.");
         }
-        if (appDefaultThemeObj instanceof String) {
-            return (String) appDefaultThemeObj;
+        if (defaultThemeNameObj instanceof String) {
+            String defaultThemeName = (String) defaultThemeNameObj;
+            if (defaultThemeName.isEmpty()) {
+                throw new IllegalArgumentException("Default theme name cannot be empty.");
+            }
+            return defaultThemeName;
         } else {
             throw new InvalidTypeException(
                     "Value of 'defaultTheme' in the root component configuration must be a string. Instead found '" +
-                            appDefaultThemeObj.getClass().getName() + "'.");
+                            defaultThemeNameObj.getClass().getName() + "'.");
         }
     }
 
@@ -118,6 +135,21 @@ public class Configuration extends HashMap<String, Object> {
                     "Value of 'errorPages' in the root component configuration must be a Map<String, String>. " +
                             "Instead found '" + errorPagesObj.getClass().getName() + "'.");
         }
+    }
+
+    public String getAsString(String key) {
+        Object value = super.get(key);
+        if ((value == null) || (value instanceof String)) {
+            return (String) value;
+        } else {
+            throw new InvalidTypeException(
+                    "Value of '" + key + "' must be a string. Instead found '" + value.getClass().getName() + "'.");
+        }
+    }
+
+    public Object getAsStringOrDefault(String key, String defaultValue) {
+        String value = getAsString(key);
+        return (value == null) ? defaultValue : value;
     }
 
     @Override
