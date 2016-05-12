@@ -15,32 +15,29 @@
  */
 
 import com.google.common.collect.ImmutableSet;
+import org.wso2.carbon.uuf.handlebars.HbsRenderableCreator;
 import org.wso2.carbon.uuf.internal.DebugAppender;
 import org.wso2.carbon.uuf.internal.UUFRegistry;
 import org.wso2.carbon.uuf.internal.UUFService;
-import org.wso2.carbon.uuf.internal.core.create.ClassLoaderProvider;
 import org.wso2.carbon.uuf.internal.core.create.AppCreator;
-import org.wso2.carbon.uuf.spi.RenderableCreator;
-import org.wso2.carbon.uuf.internal.io.ArtifactResolver;
+import org.wso2.carbon.uuf.internal.core.create.AppDiscoverer;
+import org.wso2.carbon.uuf.internal.core.create.ClassLoaderProvider;
+import org.wso2.carbon.uuf.internal.io.ArtifactAppDiscoverer;
 import org.wso2.carbon.uuf.internal.io.StaticResolver;
-import org.wso2.carbon.uuf.handlebars.HbsRenderableCreator;
+import org.wso2.carbon.uuf.spi.RenderableCreator;
 import org.wso2.msf4j.MicroservicesRunner;
 
 import java.nio.file.FileSystems;
-import java.util.Optional;
 
 public class Main {
 
-    public static void main(String[] args)
-            throws ClassNotFoundException, IllegalAccessException, InstantiationException {
-
-        ArtifactResolver appResolver = new ArtifactResolver(FileSystems.getDefault().getPath("."));
-        StaticResolver staticResolver = new StaticResolver(FileSystems.getDefault().getPath("."));
-        ClassLoaderProvider classLoaderProvider = (an, cn, cv, cr) -> Main.class.getClassLoader();
+    public static void main(String[] args) {
+        AppDiscoverer appDiscoverer = new ArtifactAppDiscoverer(FileSystems.getDefault().getPath("."));
         RenderableCreator hbsCreator = new HbsRenderableCreator();
+        ClassLoaderProvider classLoaderProvider = (cn, cv, cr) -> Main.class.getClassLoader();
         AppCreator appCreator = new AppCreator(ImmutableSet.of(hbsCreator), classLoaderProvider);
-        UUFRegistry registry = new UUFRegistry(appCreator, Optional.of(new DebugAppender()), appResolver,
-                                               staticResolver);
+        StaticResolver staticResolver = new StaticResolver(FileSystems.getDefault().getPath("."));
+        UUFRegistry registry = new UUFRegistry(appDiscoverer, appCreator, staticResolver, new DebugAppender());
         new MicroservicesRunner().deploy(new UUFService(registry)).start();
     }
 }
