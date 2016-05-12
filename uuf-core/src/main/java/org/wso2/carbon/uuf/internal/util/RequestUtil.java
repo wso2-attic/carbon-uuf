@@ -25,18 +25,30 @@ public class RequestUtil {
     public static final String DEBUG_APP_URI_PREFIX = "/debug/";
 
     public static boolean isStaticResourceUri(HttpRequest request) {
-        return request.getUriComponents().getUriWithoutAppContext().startsWith(COMPONENT_STATIC_RESOURCES_URI_PREFIX);
+        return request.getUriWithoutAppContext().startsWith(COMPONENT_STATIC_RESOURCES_URI_PREFIX);
     }
 
     public static boolean isDebugUri(HttpRequest request) {
-        return request.getUriComponents().getUriWithoutAppContext().startsWith(DEBUG_APP_URI_PREFIX);
+        return request.getUriWithoutAppContext().startsWith(DEBUG_APP_URI_PREFIX);
     }
 
-    public static String getAppName(HttpRequest request) {
-        return request.getUriComponents().getAppName();
+    public static String getAppContext(String uri) {
+        int secondSlash = uri.indexOf('/', 1); // An URI must start with a slash.
+        if (secondSlash == -1) {
+            // There is only one slash in the URI.
+            return null;
+        } else {
+            return uri.substring(0, secondSlash);
+        }
     }
 
-    public static String getAppContext(HttpRequest request) {
-        return request.getUriComponents().getAppContext();
+    public static String getUriWithoutAppContext(String uri) {
+        int secondSlash = uri.indexOf('/', 1); // An URI must start with a slash.
+        if (secondSlash == -1) {
+            // There is only one slash in the URI.
+            return null;
+        } else {
+            return uri.substring(secondSlash, uri.length());
+        }
     }
 }

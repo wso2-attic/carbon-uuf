@@ -116,7 +116,7 @@ public class App {
     }
 
     private Model createModel(HttpRequest httpRequest) {
-        QueryStringDecoder decoder = new QueryStringDecoder(httpRequest.getRequestUri());
+        QueryStringDecoder decoder = new QueryStringDecoder(httpRequest.getUri());
         Map<String, List<String>> parameters = decoder.parameters();
         Map<String, Object> queryParams = parameters.entrySet().parallelStream()
                 .collect(Collectors.toMap(Map.Entry::getKey,

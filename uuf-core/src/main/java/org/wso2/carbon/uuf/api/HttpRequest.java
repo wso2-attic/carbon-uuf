@@ -17,8 +17,7 @@
 package org.wso2.carbon.uuf.api;
 
 import io.netty.handler.codec.http.QueryStringDecoder;
-import org.wso2.carbon.uuf.exception.PageNotFoundException;
-import org.wso2.carbon.uuf.exception.PageRedirectException;
+import org.wso2.carbon.uuf.internal.util.RequestUtil;
 
 import javax.ws.rs.core.HttpHeaders;
 import java.io.InputStream;
@@ -33,8 +32,10 @@ public class HttpRequest {
     private final byte[] content;
     private final String contentType;
     private final long contentLength;
-    private final String requestURI;
-    private final String requestURL;
+    private final String url;
+    private final String uri;
+    private final String appContext;
+    private final String uriWithoutAppContext;
     private final boolean isSecure;
     private final String remoteAddr;
     private final String contextPath;
@@ -73,11 +74,13 @@ public class HttpRequest {
         this.inputStream = null;
         //
         this.contentType = request.headers().get(HttpHeaders.CONTENT_TYPE);
-        this.requestURI = request.getUri();
+        this.uri = request.getUri();
+        this.appContext = RequestUtil.getAppContext(this.uri);
+        this.uriWithoutAppContext = RequestUtil.getUriWithoutAppContext(this.uri);
         this.headers = request.headers().entries().stream().collect(Collectors.toMap(Map.Entry::getKey,
                                                                                      Map.Entry::getValue));
         //not implemented yet
-        this.requestURL = null;
+        this.url = null;
         this.isSecure = false;
         this.remoteAddr = null;
         this.contextPath = null;
@@ -153,12 +156,16 @@ public class HttpRequest {
      *
      * @return request uri
      */
-    public String getRequestUri() {
-        String uri = requestURI.replaceAll("/+", "/");
-        if (!uri.startsWith("/")) {
-            uri = "/" + uri;
-        }
+    public String getUri() {
         return uri;
+    }
+
+    public String getAppContext() {
+        return appContext;
+    }
+
+    public String getUriWithoutAppContext() {
+        return uriWithoutAppContext;
     }
 
     /**
@@ -166,7 +173,7 @@ public class HttpRequest {
      *
      * @return request url
      */
-    public String getRequestUrl() {
+    public String getUrl() {
         throw new UnsupportedOperationException();
     }
 
@@ -233,51 +240,5 @@ public class HttpRequest {
         String hostHeader = headers.get(HttpHeaders.HOST);
         String host = "//" + ((hostHeader == null) ? "localhost" : hostHeader);
         return host;
-    }
-
-    public URIComponents getUriComponents() {
-        String uri = getRequestUri();
-        int firstSlash = uri.indexOf('/', 1);
-
-        if (firstSlash < 0) {
-            if (uri.equals("/favicon.ico")) {
-                //TODO: send a favicon, cacheable favicon avoids frequent requests for it.
-                throw new PageNotFoundException("");
-            }
-
-            // eg: url = http://example.com/app and uri = /app
-            // since we don't support ROOT app, this must be a mis-type
-            throw new PageRedirectException(uri + "/");
-        }
-
-        String appName = uri.substring(1, firstSlash);
-        String appContext = uri.substring(0, firstSlash);
-        String uriWithoutAppContext = uri.substring(firstSlash, uri.length());
-        return new URIComponents(appName, appContext, uriWithoutAppContext);
-    }
-
-    public static class URIComponents {
-
-        private String appName;
-        private String appContext;
-        private String uriWithoutAppContext;
-
-        public URIComponents(String appName, String appContext, String uriWithoutAppContext) {
-            this.appName = appName;
-            this.appContext = appContext;
-            this.uriWithoutAppContext = uriWithoutAppContext;
-        }
-
-        public String getAppName() {
-            return appName;
-        }
-
-        public String getAppContext() {
-            return appContext;
-        }
-
-        public String getUriWithoutAppContext() {
-            return uriWithoutAppContext;
-        }
     }
 }
