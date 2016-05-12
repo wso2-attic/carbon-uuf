@@ -23,14 +23,7 @@ public class RequestUtil {
     public static final String COMPONENT_STATIC_RESOURCES_URI_PREFIX = "/public/components";
     public static final String THEMES_STATIC_RESOURCES_URI_PREFIX = "/public/themes";
     public static final String DEBUG_APP_URI_PREFIX = "/debug/";
-
-    public static boolean isStaticResourceUri(HttpRequest request) {
-        return request.getUriWithoutAppContext().startsWith(COMPONENT_STATIC_RESOURCES_URI_PREFIX);
-    }
-
-    public static boolean isDebugUri(HttpRequest request) {
-        return request.getUriWithoutAppContext().startsWith(DEBUG_APP_URI_PREFIX);
-    }
+    public static final String FRAGMENTS_URI_PREFIX = "/fragments/";
 
     public static String getAppContext(String uri) {
         int secondSlash = uri.indexOf('/', 1); // An URI must start with a slash.
@@ -50,5 +43,50 @@ public class RequestUtil {
         } else {
             return uri.substring(secondSlash, uri.length());
         }
+    }
+
+    public static boolean isValid(HttpRequest request) {
+        String uri = request.getUri();
+
+        // An URI must begin with '/ & it should have at least two characters.
+        if ((uri.length() < 2) || (uri.charAt(0) != '/')) {
+            return false;
+        }
+
+        // '//' or '..' are not allowed in URIs.
+        boolean isPreviousCharInvalid = false;
+        for (int i = 0; i < uri.length(); i++) {
+            char currentChar = uri.charAt(i);
+            if ((currentChar == '/') || (currentChar == '.')) {
+                if (isPreviousCharInvalid) {
+                    return false;
+                } else {
+                    isPreviousCharInvalid = true;
+                }
+            } else {
+                isPreviousCharInvalid = false;
+            }
+        }
+        return true;
+    }
+
+    public static boolean isStaticResourceRequest(HttpRequest request) {
+        return request.getUriWithoutAppContext().startsWith("/public/");
+    }
+
+    public static boolean isComponentStaticResourceRequest(HttpRequest request) {
+        return request.getUriWithoutAppContext().startsWith(COMPONENT_STATIC_RESOURCES_URI_PREFIX);
+    }
+
+    public static boolean isThemeStaticResourceRequest(HttpRequest request) {
+        return request.getUriWithoutAppContext().startsWith(THEMES_STATIC_RESOURCES_URI_PREFIX);
+    }
+
+    public static boolean isDebugRequest(HttpRequest request) {
+        return request.getUriWithoutAppContext().startsWith(DEBUG_APP_URI_PREFIX);
+    }
+
+    public static boolean isFragmentRequest(HttpRequest request) {
+        return request.getUriWithoutAppContext().startsWith(FRAGMENTS_URI_PREFIX);
     }
 }
