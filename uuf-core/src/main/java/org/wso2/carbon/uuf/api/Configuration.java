@@ -22,12 +22,12 @@ import org.wso2.carbon.uuf.exception.MalformedConfigurationException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class Configuration extends HashMap<String, Object> {
 
-    public static final String KEY_APP_NAME = "appName";
     public static final String KEY_APP_CONTEXT = "appContext";
     public static final String KEY_DEFAULT_THEME = "defaultTheme";
     public static final String KEY_ERROR_PAGES = "errorPages";
@@ -48,30 +48,10 @@ public class Configuration extends HashMap<String, Object> {
         super(initialCapacity);
     }
 
-    public String getAppName() {
-        Object appNameObj = get(KEY_APP_NAME);
-        if (appNameObj == null) {
-            throw new MalformedConfigurationException(
-                    "Cannot find the value of 'appName' in the root component configurations.");
-        }
-        if (appNameObj instanceof String) {
-            String appName = (String) appNameObj;
-            if (appName.isEmpty()) {
-                throw new IllegalArgumentException("App name cannot be empty.");
-            }
-            return appName;
-        } else {
-            throw new InvalidTypeException(
-                    "Value of 'appName' in the root component configuration must be a string. Instead found '" +
-                            appNameObj.getClass().getName() + "'.");
-        }
-    }
-
-    public String getAppContext() {
+    public Optional<String> getAppContext() {
         Object appContextObj = get(KEY_APP_CONTEXT);
         if (appContextObj == null) {
-            throw new MalformedConfigurationException(
-                    "Cannot find the value of 'appContext' in the root component configurations.");
+            return Optional.<String>empty();
         }
         if (appContextObj instanceof String) {
             String appContext = (String) appContextObj;
@@ -82,7 +62,7 @@ public class Configuration extends HashMap<String, Object> {
                 throw new IllegalArgumentException(
                         "App context must start with a '/'. Instead found '" + appContext.charAt(0) + "'.");
             }
-            return appContext;
+            return Optional.of(appContext);
         } else {
             throw new InvalidTypeException(
                     "Value of 'appContext' in the root component configuration must be a string. Instead found '" +
