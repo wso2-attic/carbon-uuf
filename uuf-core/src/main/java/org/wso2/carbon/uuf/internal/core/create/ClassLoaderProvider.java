@@ -23,12 +23,10 @@ public interface ClassLoaderProvider {
     /**
      * Returns class loader of the given component.
      *
-     * @param appName            application name
      * @param componentName      full component name
      * @param componentVersion   component version
      * @param componentReference component reference
      * @return class loader for specified component
      */
-    ClassLoader getClassLoader(String appName, String componentName, String componentVersion,
-                               ComponentReference componentReference);
+    ClassLoader getClassLoader(String componentName, String componentVersion, ComponentReference componentReference);
 }
