@@ -18,8 +18,8 @@ package org.wso2.carbon.uuf.handlebars;
 
 import jdk.nashorn.api.scripting.NashornScriptEngine;
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
-import org.wso2.carbon.uuf.core.API;
 import org.wso2.carbon.uuf.api.auth.Session;
+import org.wso2.carbon.uuf.core.API;
 import org.wso2.carbon.uuf.exception.UUFException;
 
 import javax.script.ScriptException;
@@ -44,7 +44,7 @@ public class JSExecutable implements Executable {
         }
 
         NashornScriptEngine engine = (NashornScriptEngine) SCRIPT_ENGINE_FACTORY.getScriptEngine(SCRIPT_ENGINE_ARGS,
-                componentClassLoader);
+                                                                                                 componentClassLoader);
         engine.put("callOSGiService", (JSFunction.CallOSGiService) API::callOSGiService);
         engine.put("getOSGiServices", (JSFunction.GetOSGiServices) API::getOSGiServices);
         engine.put("callMicroService", (JSFunction.CallMicroService) API::callMicroService);
@@ -71,10 +71,10 @@ public class JSExecutable implements Executable {
             return engine.invokeFunction("onRequest", context);
         } catch (ScriptException e) {
             throw new UUFException("An error occurred when executing the 'onRequest' function in JavaScript file '" +
-                    getPath() + "' with context '" + context + "'.", e);
+                                           getPath() + "' with context '" + context + "'.", e);
         } catch (NoSuchMethodException e) {
             throw new UUFException("Cannot find the 'onRequest' function in the JavaScript file '" + getPath() + "'.",
-                    e);
+                                   e);
         }
     }
 

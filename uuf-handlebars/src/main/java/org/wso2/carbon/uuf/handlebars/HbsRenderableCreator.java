@@ -21,11 +21,11 @@ import com.github.jknack.handlebars.io.TemplateSource;
 import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.tuple.Pair;
 import org.osgi.service.component.annotations.Component;
-import org.wso2.carbon.uuf.spi.Renderable;
 import org.wso2.carbon.uuf.reference.FileReference;
 import org.wso2.carbon.uuf.reference.FragmentReference;
 import org.wso2.carbon.uuf.reference.LayoutReference;
 import org.wso2.carbon.uuf.reference.PageReference;
+import org.wso2.carbon.uuf.spi.Renderable;
 import org.wso2.carbon.uuf.spi.RenderableCreator;
 
 import java.util.Optional;
