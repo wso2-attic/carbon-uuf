@@ -17,13 +17,13 @@
 package org.wso2.carbon.uuf.core;
 
 import io.netty.handler.codec.http.QueryStringDecoder;
+import org.wso2.carbon.uuf.api.HttpRequest;
 import org.wso2.carbon.uuf.api.model.MapModel;
-import org.wso2.carbon.uuf.internal.UUFRegistry;
-import org.wso2.carbon.uuf.internal.core.auth.SessionRegistry;
 import org.wso2.carbon.uuf.exception.FragmentNotFoundException;
 import org.wso2.carbon.uuf.exception.PageNotFoundException;
-import org.wso2.carbon.uuf.api.HttpRequest;
+import org.wso2.carbon.uuf.internal.core.auth.SessionRegistry;
 import org.wso2.carbon.uuf.internal.util.NameUtils;
+import org.wso2.carbon.uuf.internal.util.RequestUtil;
 import org.wso2.carbon.uuf.spi.model.Model;
 
 import java.util.HashMap;
@@ -35,20 +35,27 @@ import java.util.stream.Collectors;
 
 public class App {
 
+    private final String name;
     private final String context;
     private final Map<String, Component> components;
     private final Component rootComponent;
     private final SessionRegistry sessionRegistry;
 
-    public App(String context, Set<Component> components, SessionRegistry sessionRegistry) {
-        if (!context.startsWith("/")) {
-            throw new IllegalArgumentException("App context must start with a '/'.");
-        }
-
-        this.context = context;
+    public App(String name, Set<Component> components, SessionRegistry sessionRegistry) {
+        this.name = name;
         this.components = components.stream().collect(Collectors.toMap(Component::getContext, cmp -> cmp));
         this.rootComponent = this.components.get(Component.ROOT_COMPONENT_CONTEXT);
+        this.context = this.rootComponent.getConfiguration().getAppContext()
+                .orElse("/" + NameUtils.getSimpleName(name));
         this.sessionRegistry = sessionRegistry;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getContext() {
+        return context;
     }
 
     public String renderPage(String uriWithoutContext, RequestLookup requestLookup) {
@@ -82,11 +89,13 @@ public class App {
      * @return rendered output
      */
     public String renderFragment(String uriWithoutAppContext, RequestLookup requestLookup) {
+
+
         API api = new API(sessionRegistry, requestLookup);
         int queryParamsPos = uriWithoutAppContext.indexOf("?");
         String fragmentName = (queryParamsPos > -1) ?
-                uriWithoutAppContext.substring(UUFRegistry.FRAGMENTS_URI_PREFIX.length(), queryParamsPos) :
-                uriWithoutAppContext.substring(UUFRegistry.FRAGMENTS_URI_PREFIX.length());
+                uriWithoutAppContext.substring(RequestUtil.FRAGMENTS_URI_PREFIX.length(), queryParamsPos) :
+                uriWithoutAppContext.substring(RequestUtil.FRAGMENTS_URI_PREFIX.length());
         if (!NameUtils.isFullyQualifiedName(fragmentName)) {
             fragmentName = NameUtils.getFullyQualifiedName(Component.ROOT_COMPONENT_NAME, fragmentName);
         }
@@ -147,16 +156,8 @@ public class App {
         return components;
     }
 
-    public SessionRegistry getSessionRegistry() {
-        return sessionRegistry;
-    }
-
-    public String getContext() {
-        return context;
-    }
-
     @Override
     public String toString() {
-        return "{\"context\": \"" + context + "\"}";
+        return "{\"name\": \"" + name + "\", \"context\": \"" + context + "\"}";
     }
 }
