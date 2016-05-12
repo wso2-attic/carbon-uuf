@@ -238,7 +238,12 @@ public class HttpRequest {
      */
     public String getHostName() {
         String hostHeader = headers.get(HttpHeaders.HOST);
-        String host = "//" + ((hostHeader == null) ? "localhost" : hostHeader);
-        return host;
+        return "//" + ((hostHeader == null) ? "localhost" : hostHeader);
+    }
+
+    @Override
+    public String toString() {
+        return "{\"method\": \"" + method + "\", \"url\": \"" + url + "\", \"protocol\": \"" + protocol +
+                "\", \"host\": \"" + getHostName() + "\"}";
     }
 }
