@@ -36,8 +36,8 @@ public class RequestLookup {
     private final Map<String, String> zoneContents;
     private Map<String, String> responseHeaders = new HashMap<>();
 
-    public RequestLookup(String appContext, HttpRequest request) {
-        this.appContext = appContext;
+    public RequestLookup(HttpRequest request) {
+        this.appContext = request.getAppContext();
         this.request = request;
         this.publicUriStack = new ArrayDeque<>();
         this.placeholderBuffers = new EnumMap<>(Placeholder.class);
