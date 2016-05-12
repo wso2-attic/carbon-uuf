@@ -19,13 +19,18 @@ package org.wso2.carbon.uuf.internal.core.create;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
 import org.apache.commons.lang3.tuple.Pair;
+import org.wso2.carbon.uuf.api.Configuration;
 import org.wso2.carbon.uuf.core.App;
 import org.wso2.carbon.uuf.core.Component;
 import org.wso2.carbon.uuf.core.ComponentLookup;
-import org.wso2.carbon.uuf.api.Configuration;
 import org.wso2.carbon.uuf.core.Fragment;
 import org.wso2.carbon.uuf.core.Layout;
 import org.wso2.carbon.uuf.core.Page;
+import org.wso2.carbon.uuf.exception.InvalidTypeException;
+import org.wso2.carbon.uuf.exception.MalformedConfigurationException;
+import org.wso2.carbon.uuf.exception.UUFException;
+import org.wso2.carbon.uuf.internal.core.UriPatten;
+import org.wso2.carbon.uuf.internal.core.auth.SessionRegistry;
 import org.wso2.carbon.uuf.reference.AppReference;
 import org.wso2.carbon.uuf.reference.ComponentReference;
 import org.wso2.carbon.uuf.reference.FileReference;
@@ -33,11 +38,6 @@ import org.wso2.carbon.uuf.reference.FragmentReference;
 import org.wso2.carbon.uuf.reference.LayoutReference;
 import org.wso2.carbon.uuf.reference.PageReference;
 import org.wso2.carbon.uuf.spi.Renderable;
-import org.wso2.carbon.uuf.internal.core.UriPatten;
-import org.wso2.carbon.uuf.internal.core.auth.SessionRegistry;
-import org.wso2.carbon.uuf.exception.InvalidTypeException;
-import org.wso2.carbon.uuf.exception.MalformedConfigurationException;
-import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.spi.RenderableCreator;
 import org.yaml.snakeyaml.Yaml;
 
@@ -89,13 +89,14 @@ public class AppCreator {
         return (indent == 1) ? indent : (indent / 2);
     }
 
-    public App createApp(String context, AppReference appReference) {
+    public App createApp(AppReference appReference) {
         List<String> dependencyLines = appReference.getDependencies();
         int previousLevel = -1;
         Set<Component> componentSiblings = new HashSet<>();
         Set<Component> componentDependencies;
         Deque<Set<Component>> componentLevels = new LinkedList<>();
         Set<Component> components = new HashSet<>();
+        String appName = null;
 
         for (int i = dependencyLines.size() - 1; i >= 0; i--) {
             String line = dependencyLines.get(i);
@@ -118,22 +119,21 @@ public class AppCreator {
                 }
             }
 
-            String componentName, componentSimpleName, componentVersion, componentContext;
+            Pair<String, String> componentNameAndVersion = getComponentNameAndVersion(line);
+            String componentName = componentNameAndVersion.getLeft();
+            String componentVersion = componentNameAndVersion.getRight();
+            String componentSimpleName, componentContext;
             if (i == 0) {
-                componentName = Component.ROOT_COMPONENT_NAME;
-                componentSimpleName = componentName;
-                componentVersion = getComponentNameAndVersion(line).getRight();
+                componentSimpleName = Component.ROOT_COMPONENT_NAME;
                 componentContext = Component.ROOT_COMPONENT_CONTEXT;
+                appName = componentName; // Name of the root component is the full app name.
             } else {
-                Pair<String, String> componentNameAndVersion = getComponentNameAndVersion(line);
-                componentName = componentNameAndVersion.getLeft();
                 componentSimpleName = getSimpleName(componentName);
-                componentVersion = componentNameAndVersion.getRight();
-                componentContext = getComponentContext(componentName);
+                componentContext = "/" + componentSimpleName;
             }
             ComponentReference componentReference = appReference.getComponentReference(componentSimpleName);
-            ClassLoader componentClassLoader = classLoaderProvider.getClassLoader(appReference.getName(), componentName,
-                                                                                  componentVersion, componentReference);
+            ClassLoader componentClassLoader = classLoaderProvider.getClassLoader(componentName, componentVersion,
+                                                                                  componentReference);
             // TODO: 5/3/16 check whether this component is already created
             Component component = createComponent(componentName, componentVersion, componentContext, componentReference,
                                                   componentDependencies, componentClassLoader);
@@ -142,7 +142,7 @@ public class AppCreator {
             components.add(component);
             previousLevel = currentLevel;
         }
-        return new App(context, components, new SessionRegistry(appReference.getName()));
+        return new App(appName, components, new SessionRegistry(appName));
     }
 
     private Component createComponent(String componentName, String componentVersion, String componentContext,
@@ -309,10 +309,6 @@ public class AppCreator {
         }
         // component name = <artifact ID> (2nd part), component version = <artifact version> (4th part)
         return Pair.of(parts[1], parts[3]);
-    }
-
-    private String getComponentContext(String componentName) {
-        return "/" + getSimpleName(componentName);
     }
 
     private RenderableCreator getRenderableCreator(FileReference fileReference) {
