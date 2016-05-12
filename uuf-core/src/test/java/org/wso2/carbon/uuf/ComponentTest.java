@@ -21,6 +21,7 @@ import com.google.common.collect.ImmutableSortedSet;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.wso2.carbon.uuf.api.Configuration;
+import org.wso2.carbon.uuf.api.HttpRequest;
 import org.wso2.carbon.uuf.core.API;
 import org.wso2.carbon.uuf.core.Component;
 import org.wso2.carbon.uuf.core.ComponentLookup;
@@ -32,8 +33,8 @@ import org.wso2.carbon.uuf.spi.model.Model;
 import java.util.Collections;
 import java.util.Optional;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class ComponentTest {
 
@@ -53,7 +54,9 @@ public class ComponentTest {
     }
 
     private static RequestLookup createRequestLookup() {
-        return new RequestLookup("/appContext", any());
+        HttpRequest request = mock(HttpRequest.class);
+        when(request.getAppContext()).thenReturn("/appContext");
+        return (new RequestLookup(request));
     }
 
     @Test
@@ -61,9 +64,9 @@ public class ComponentTest {
         Page p1 = createPage("/test/page/one", "Hello world from test page one!");
         Page p2 = createPage("/test/page/two", "Hello world from test page two!");
         ComponentLookup lookup = createLookup("componentName");
-        Component component = new Component("componentName", anyString(), ImmutableSortedSet.of(p1, p2), lookup);
+        Component component = new Component("componentName", "1.0.0", ImmutableSortedSet.of(p1, p2), lookup);
 
-        Optional<String> output = component.renderPage("/test/page/one", createRequestLookup(), any());
+        Optional<String> output = component.renderPage("/test/page/one", createRequestLookup(), null);
         Assert.assertEquals(output.get(), "Hello world from test page one!");
     }
 
@@ -72,20 +75,20 @@ public class ComponentTest {
         Page p1 = createPage("/test/page/{wildcard}/one", "Hello world from test page one!");
         Page p2 = createPage("/test/page/no-wildcard/two", "Hello world from test page two!");
         ComponentLookup lookup = createLookup("componentName");
-        Component component = new Component("componentName", anyString(), ImmutableSortedSet.of(p1, p2), lookup);
+        Component component = new Component("componentName", "1.0.0", ImmutableSortedSet.of(p1, p2), lookup);
 
-        Optional<String> output = component.renderPage("/test/page/wildcard-value/one", createRequestLookup(), any());
+        Optional<String> output = component.renderPage("/test/page/wildcard-value/one", createRequestLookup(), null);
         Assert.assertEquals(output.get(), "Hello world from test page one!");
     }
 
     @Test
     public void testRenderNonExistingPage() {
-        Page p1 = createPage("/test/page/one", anyString());
-        Page p2 = createPage("/test/page/two", anyString());
+        Page p1 = createPage("/test/page/one", null);
+        Page p2 = createPage("/test/page/two", null);
         ComponentLookup lookup = createLookup("componentName");
-        Component component = new Component("componentName", anyString(), ImmutableSortedSet.of(p1, p2), lookup);
+        Component component = new Component("componentName", "1.0.0", ImmutableSortedSet.of(p1, p2), lookup);
 
-        Optional<String> output = component.renderPage("/test/page/three", createRequestLookup(), any());
+        Optional<String> output = component.renderPage("/test/page/three", createRequestLookup(), null);
         Assert.assertFalse(output.isPresent());
     }
 }

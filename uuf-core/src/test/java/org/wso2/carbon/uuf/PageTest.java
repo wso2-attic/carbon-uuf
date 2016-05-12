@@ -20,6 +20,7 @@ import com.google.common.collect.ImmutableSetMultimap;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.wso2.carbon.uuf.api.Configuration;
+import org.wso2.carbon.uuf.api.HttpRequest;
 import org.wso2.carbon.uuf.core.ComponentLookup;
 import org.wso2.carbon.uuf.core.Page;
 import org.wso2.carbon.uuf.core.RequestLookup;
@@ -27,7 +28,8 @@ import org.wso2.carbon.uuf.spi.Renderable;
 
 import java.util.Collections;
 
-import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class PageTest {
 
@@ -38,10 +40,12 @@ public class PageTest {
         ComponentLookup lookup = new ComponentLookup("componentName", "/componentContext", Collections.emptySet(),
                                                      Collections.emptySet(), ImmutableSetMultimap.of(),
                                                      Configuration.emptyConfiguration(), Collections.emptySet());
-        RequestLookup requestLookup = new RequestLookup("/appContext", any());
-        Page page = new Page(any(), renderable);
+        HttpRequest request = mock(HttpRequest.class);
+        when(request.getAppContext()).thenReturn("/appContext");
+        RequestLookup requestLookup = new RequestLookup(request);
+        Page page = new Page(null, renderable);
 
-        String output = page.render(any(), lookup, requestLookup, any());
+        String output = page.render(null, lookup, requestLookup, null);
         Assert.assertEquals(output, content);
     }
 }

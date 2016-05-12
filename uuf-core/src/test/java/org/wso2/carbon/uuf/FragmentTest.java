@@ -20,6 +20,7 @@ import com.google.common.collect.ImmutableSetMultimap;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.wso2.carbon.uuf.api.Configuration;
+import org.wso2.carbon.uuf.api.HttpRequest;
 import org.wso2.carbon.uuf.core.ComponentLookup;
 import org.wso2.carbon.uuf.core.Fragment;
 import org.wso2.carbon.uuf.core.RequestLookup;
@@ -28,6 +29,8 @@ import org.wso2.carbon.uuf.spi.Renderable;
 import java.util.Collections;
 
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class FragmentTest {
 
@@ -38,7 +41,9 @@ public class FragmentTest {
         ComponentLookup lookup = new ComponentLookup("componentName", "/componentContext", Collections.emptySet(),
                                                      Collections.emptySet(), ImmutableSetMultimap.of(),
                                                      Configuration.emptyConfiguration(), Collections.emptySet());
-        RequestLookup requestLookup = new RequestLookup("/appContext", any());
+        HttpRequest request = mock(HttpRequest.class);
+        when(request.getAppContext()).thenReturn("/appContext");
+        RequestLookup requestLookup = new RequestLookup(request);
         Fragment fragment = new Fragment("componentName.fragmentName", renderable);
 
         String output = fragment.render(any(), lookup, requestLookup, any());
