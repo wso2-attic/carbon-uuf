@@ -16,13 +16,14 @@
 
 package org.wso2.carbon.uuf.internal.io;
 
-import org.apache.commons.lang3.StringUtils;
 import org.wso2.carbon.kernel.utils.Utils;
 import org.wso2.carbon.uuf.api.HttpRequest;
+import org.wso2.carbon.uuf.core.App;
 import org.wso2.carbon.uuf.internal.util.MimeMapper;
-import org.wso2.carbon.uuf.reference.AppReference;
-import org.wso2.carbon.uuf.reference.ComponentReference;
+import org.wso2.carbon.uuf.internal.util.NameUtils;
+import org.wso2.carbon.uuf.internal.util.RequestUtil;
 
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -34,16 +35,16 @@ import java.util.Date;
 import java.util.Optional;
 import java.util.TimeZone;
 
-
-import static org.wso2.carbon.uuf.internal.util.RequestUtil.COMPONENT_STATIC_RESOURCES_URI_PREFIX;
+import static org.wso2.carbon.uuf.reference.AppReference.DIR_NAME_COMPONENTS;
+import static org.wso2.carbon.uuf.reference.AppReference.DIR_NAME_THEMES;
 
 public class StaticResolver {
 
     public static final String DIR_NAME_COMPONENT_RESOURCES = "base";
-    private static final String DIR_NAME_FRAGMENT_RESOURCES = "public";
+    public static final String DIR_NAME_PUBLIC_RESOURCES = "public";
     private static final String CACHE_HEADER_DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss zzz";
 
-    private final Path uufHome;
+    private final Path appsHome;
 
     /**
      * This constructor will assume uufHome as $PRODUCT_HOME/deployment/uufapps
@@ -52,55 +53,115 @@ public class StaticResolver {
         this(Utils.getCarbonHome().resolve("deployment").resolve("uufapps"));
     }
 
-    public StaticResolver(Path uufHome) {
-        this.uufHome = uufHome;
+    public StaticResolver(Path appsHome) {
+        this.appsHome = appsHome.normalize();
     }
 
-    /**
-     * This method creates a Response upon static resource requests uris. Possible URI types are;
-     * <ol>
-     * <li>Component Static Resource URI, syntax: /public/{componentName}/base/{subResourceUri}</li>
-     * <li>Fragment Static Resource URI, syntax: /public/{componentName}/{fragmentName}/{subResourceUri}</li>
-     * </ol>
-     * These URI types are mapped into following file path syntax on the file system;
-     * <ul>
-     * <li>$UUF_HOME/{appName}/components/{componentName}/[{fragmentName}|base]/public/{subResourcePath}</li>
-     * </ul>
-     *
-     * @param appName              Application Name
-     * @param uriWithoutAppContext Static Resource Uri
-     * @param request              Static Resource Request
-     * @return Response Builder
-     */
-    public Response.ResponseBuilder createResponse(String appName, String uriWithoutAppContext, HttpRequest request) {
-        String uri = uriWithoutAppContext.substring(COMPONENT_STATIC_RESOURCES_URI_PREFIX.length());
-        Path resource = resolveUri(appName, uri);
-        if (Files.exists(resource) && Files.isRegularFile(resource)) {
-            return getResponseBuilder(resource, request);
+    public Response.ResponseBuilder createResponse(App app, HttpRequest request) {
+        Path resourcePath;
+        try {
+            if (RequestUtil.isComponentStaticResourceRequest(request)) {
+                // /public/components/...
+                resourcePath = resolveResourceInComponent(NameUtils.getSimpleName(app.getName()),
+                                                          request.getUriWithoutAppContext());
+            } else if (RequestUtil.isThemeStaticResourceRequest(request)) {
+                // /public/themes/...
+                resourcePath = resolveResourceInTheme(NameUtils.getSimpleName(app.getName()),
+                                                      request.getUriWithoutAppContext());
+            } else {
+                // /public/...
+                return Response.status(400)
+                        .entity("Invalid static resource URI '" + request.getUri() + "'.")
+                        .header(HttpHeaders.CONTENT_TYPE, "text/plain");
+            }
+        } catch (IllegalArgumentException e) {
+            return Response.status(400).entity(e.getMessage()).header(HttpHeaders.CONTENT_TYPE, "text/plain");
+        } catch (Exception e) {
+            // IOException or any other Exception
+            return Response.serverError()
+                    .entity("A server occurred while serving for static resource request '" + request.getUrl() + "'.");
+        }
+
+        if (Files.isRegularFile(resourcePath) && !Files.isDirectory(resourcePath)) {
+            // This is an existing regular, non-directory file.
+            return getResponseBuilder(resourcePath, request);
         } else {
-            return Response.status(Response.Status.NOT_FOUND).entity(
-                    "Requested resource '" + uri + "' does not exists at '/" + uufHome.relativize(resource) + "'.");
+            // Either file does not exists or it is a non-regular file. i.e. a directory
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("Requested resource '" + request.getUri() + "' does not exists.");
         }
     }
 
-    private Path resolveUri(String appName, String uri) {
-        String resourcePathParts[] = uri.split("/");
-        if (resourcePathParts.length < 5) {
-            throw new IllegalArgumentException("Resource URI '" + uri + "' is invalid.");
+    private Path resolveResourceInComponent(String appSimpleName, String uriWithoutAppContext) {
+        // Correct 'uriWithoutAppContext' value must be in either
+        // "/public/components/{component-simple-name}/{fragment-simple-name}/{sub-directory}/{rest-of-the-path}"
+        // format or in
+        // "/public/components/{component-simple-name}/base/{sub-directory}/{rest-of-the-path}" format.
+        // So there should be at least 6 slashes. Don't worry about multiple consecutive slashes. They  are covered
+        // in RequestUtil.isValid(HttpRequest) method which is called before this method.
+
+        int slashesCount = 0, thirdSlashIndex = -1, fourthSlashIndex = -1, fifthSlashIndex = -1;
+        for (int i = 0; i < uriWithoutAppContext.length(); i++) {
+            if (uriWithoutAppContext.charAt(i) == '/') {
+                slashesCount++;
+                if (slashesCount == 3) {
+                    thirdSlashIndex = i;
+                } else if (slashesCount == 4) {
+                    fourthSlashIndex = i;
+                } else if (slashesCount == 5) {
+                    fifthSlashIndex = i;
+                } else if (slashesCount == 6) {
+                    break;
+                }
+            }
+        }
+        if (slashesCount != 6) {
+            throw new IllegalArgumentException("Invalid static resource URI '" + uriWithoutAppContext + "'.");
         }
 
-        String componentName = resourcePathParts[1];
-        String fragmentName = resourcePathParts[2];
-        int fourthSlash = StringUtils.ordinalIndexOf(uri, "/", 3);
-        String subResourcePath = uri.substring(fourthSlash + 1, uri.length());
-        Path componentPath = uufHome.resolve(appName).resolve(AppReference.DIR_NAME_COMPONENTS).resolve(componentName);
-        Path fragmentPath;
-        if (fragmentName.equals(DIR_NAME_COMPONENT_RESOURCES)) {
-            fragmentPath = componentPath;
+        Path staticFilePath = appsHome.resolve(appSimpleName).resolve(DIR_NAME_COMPONENTS);
+        String componentSimpleName = uriWithoutAppContext.substring(thirdSlashIndex + 1, fourthSlashIndex);
+        staticFilePath = staticFilePath.resolve(componentSimpleName);
+        String fragmentSimpleName = uriWithoutAppContext.substring(fourthSlashIndex + 1, fifthSlashIndex);
+        if (fragmentSimpleName.equals(DIR_NAME_COMPONENT_RESOURCES)) {
+            staticFilePath = staticFilePath.resolve(DIR_NAME_PUBLIC_RESOURCES);
         } else {
-            fragmentPath = componentPath.resolve(ComponentReference.DIR_NAME_FRAGMENTS).resolve(fragmentName);
+            staticFilePath = staticFilePath.resolve(fragmentSimpleName).resolve(DIR_NAME_PUBLIC_RESOURCES);
         }
-        return fragmentPath.resolve(DIR_NAME_FRAGMENT_RESOURCES).resolve(subResourcePath);
+        // {sub-directory}/{rest-of-the-path}
+        String relativePathString = uriWithoutAppContext.substring(fifthSlashIndex + 1, uriWithoutAppContext.length());
+        return staticFilePath.resolve(relativePathString);
+    }
+
+    private Path resolveResourceInTheme(String appSimpleName, String uriWithoutAppContext) {
+        // Correct 'uriWithoutAppContext' value must be in
+        // "/public/themes/{theme-simple-name}/{sub-directory}/{rest-of-the-path}" format.
+        // So there should be at least 5 slashes. Don't worry about multiple consecutive slashes. They  are covered
+        // in RequestUtil.isValid(HttpRequest) method which is called before this method.
+
+        int slashesCount = 0, thirdSlashIndex = -1, fourthSlashIndex = -1;
+        for (int i = 0; i < uriWithoutAppContext.length(); i++) {
+            if (uriWithoutAppContext.charAt(i) == '/') {
+                slashesCount++;
+                if (slashesCount == 3) {
+                    thirdSlashIndex = i;
+                } else if (slashesCount == 4) {
+                    fourthSlashIndex = i;
+                } else if (slashesCount == 5) {
+                    break;
+                }
+            }
+        }
+        if (slashesCount != 5) {
+            throw new IllegalArgumentException("Invalid static resource URI '" + uriWithoutAppContext + "'.");
+        }
+
+        String themeSimpleName = uriWithoutAppContext.substring(thirdSlashIndex + 1, fourthSlashIndex);
+        // {sub-directory}/{rest-of-the-path}
+        String relativePathString = uriWithoutAppContext.substring(fourthSlashIndex + 1, uriWithoutAppContext.length());
+        return appsHome.resolve(appSimpleName).resolve(DIR_NAME_THEMES)
+                .resolve(themeSimpleName).resolve(DIR_NAME_PUBLIC_RESOURCES).resolve(relativePathString);
+
     }
 
     private Response.ResponseBuilder getResponseBuilder(Path resource, HttpRequest request) {
@@ -147,5 +208,4 @@ public class StaticResolver {
         builder.header("Cache-Control", "public,max-age=2592000");
         return builder;
     }
-
 }
