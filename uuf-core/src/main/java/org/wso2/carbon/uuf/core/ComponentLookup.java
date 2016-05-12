@@ -30,8 +30,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.wso2.carbon.uuf.internal.util.NameUtils.getFullyQualifiedName;
 import static org.wso2.carbon.uuf.internal.io.StaticResolver.DIR_NAME_COMPONENT_RESOURCES;
+import static org.wso2.carbon.uuf.internal.util.NameUtils.getFullyQualifiedName;
 import static org.wso2.carbon.uuf.internal.util.RequestUtil.COMPONENT_STATIC_RESOURCES_URI_PREFIX;
 
 public class ComponentLookup {
