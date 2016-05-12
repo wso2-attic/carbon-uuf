@@ -24,12 +24,13 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.MDC;
-import org.wso2.carbon.uuf.internal.core.create.AppCreator;
-import org.wso2.carbon.uuf.spi.RenderableCreator;
-import org.wso2.carbon.uuf.internal.io.ArtifactResolver;
-import org.wso2.carbon.uuf.internal.io.BundleClassLoaderProvider;
 import org.wso2.carbon.uuf.api.HttpRequest;
+import org.wso2.carbon.uuf.internal.core.create.AppCreator;
+import org.wso2.carbon.uuf.internal.core.create.AppDiscoverer;
+import org.wso2.carbon.uuf.internal.io.ArtifactAppDiscoverer;
+import org.wso2.carbon.uuf.internal.io.BundleClassLoaderProvider;
 import org.wso2.carbon.uuf.internal.io.StaticResolver;
+import org.wso2.carbon.uuf.spi.RenderableCreator;
 import org.wso2.msf4j.HttpResponder;
 import org.wso2.msf4j.HttpStreamHandler;
 import org.wso2.msf4j.HttpStreamer;
@@ -44,7 +45,6 @@ import javax.ws.rs.core.Response;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -52,8 +52,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  * UUF Main Service.
  */
 @Component(name = "org.wso2.carbon.uuf.internal.UUFService",
-        service = Microservice.class,
-        immediate = true)
+           service = Microservice.class,
+           immediate = true)
 @Path("/")
 public class UUFService implements Microservice {
 
@@ -74,10 +74,10 @@ public class UUFService implements Microservice {
     }
 
     private static UUFRegistry createRegistry() {
-        ArtifactResolver appResolver = new ArtifactResolver();
-        StaticResolver staticResolver = new StaticResolver();
+        AppDiscoverer appDiscoverer = new ArtifactAppDiscoverer();
         AppCreator appCreator = new AppCreator(RENDERABLE_CREATORS, new BundleClassLoaderProvider());
-        return new UUFRegistry(appCreator, Optional.empty(), appResolver, staticResolver);
+        StaticResolver staticResolver = new StaticResolver();
+        return new UUFRegistry(appDiscoverer, appCreator, staticResolver, new DebugAppender());
     }
 
     @GET
@@ -95,7 +95,7 @@ public class UUFService implements Microservice {
         return execute(new HttpRequest(request));
     }
 
-    private Response execute(HttpRequest request){
+    private Response execute(HttpRequest request) {
         try {
             MDC.put("uuf-request", String.valueOf(count.incrementAndGet()));
             Response.ResponseBuilder response = registry.serve(request);
@@ -115,10 +115,10 @@ public class UUFService implements Microservice {
      * @param renderableCreator registered renderable creator
      */
     @Reference(name = "renderablecreater",
-            service = RenderableCreator.class,
-            cardinality = ReferenceCardinality.MULTIPLE,
-            policy = ReferencePolicy.DYNAMIC,
-            unbind = "unsetRenderableCreator")
+               service = RenderableCreator.class,
+               cardinality = ReferenceCardinality.MULTIPLE,
+               policy = ReferencePolicy.DYNAMIC,
+               unbind = "unsetRenderableCreator")
     @SuppressWarnings("unused")
     protected void setRenderableCreator(RenderableCreator renderableCreator) {
         if (!RENDERABLE_CREATORS.add(renderableCreator)) {
