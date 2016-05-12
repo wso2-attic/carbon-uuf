@@ -57,7 +57,7 @@ public class BundleClassLoaderProvider implements ClassLoaderProvider {
     }
 
     @Override
-    public ClassLoader getClassLoader(String appName, String componentName, String componentVersion,
+    public ClassLoader getClassLoader(String componentName, String componentVersion,
                                       ComponentReference componentReference) {
         Bundle bundle = getBundle(componentName, componentVersion, componentReference);
         BundleWiring bundleWiring = bundle.adapt(BundleWiring.class);
