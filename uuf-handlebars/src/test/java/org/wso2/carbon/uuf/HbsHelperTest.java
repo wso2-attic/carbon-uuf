@@ -21,6 +21,7 @@ import com.github.jknack.handlebars.HandlebarsException;
 import com.github.jknack.handlebars.io.StringTemplateSource;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import org.wso2.carbon.uuf.api.HttpRequest;
 import org.wso2.carbon.uuf.core.ComponentLookup;
 import org.wso2.carbon.uuf.api.Configuration;
 import org.wso2.carbon.uuf.api.Placeholder;
@@ -46,7 +47,9 @@ public class HbsHelperTest {
     }
 
     private static RequestLookup createRequestLookup() {
-        RequestLookup requestLookup = spy(new RequestLookup("/myapp", null));
+        HttpRequest request = mock(HttpRequest.class);
+        when(request.getAppContext()).thenReturn("/myapp");
+        RequestLookup requestLookup = spy(new RequestLookup(request));
         when(requestLookup.getPublicUri()).thenReturn("/myapp/public/component/base");
         return requestLookup;
     }
