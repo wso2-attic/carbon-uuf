@@ -45,13 +45,23 @@ public class UUFRegistry {
 
     private static final Logger log = LoggerFactory.getLogger(UUFRegistry.class);
 
-    private final Map<String, App> apps;
+    private Map<String, App> apps;
     private final StaticResolver staticResolver;
     private final DebugAppender debugAppender;
+    private static final Object LOCK = new Object();
+    private final AppDiscoverer appDiscoverer;
+    private final AppCreator appCreator;
+
+
+    public UUFRegistry(AppDiscoverer appDiscoverer, AppCreator appCreator, StaticResolver staticResolver) {
+        this(appDiscoverer, appCreator, staticResolver, null);
+    }
 
     public UUFRegistry(AppDiscoverer appDiscoverer, AppCreator appCreator, StaticResolver staticResolver,
                        DebugAppender debugAppender) {
-        this.apps = loadApps(appDiscoverer, appCreator);
+        this.appDiscoverer = appDiscoverer;
+        this.appCreator = appCreator;
+        this.apps = null;
         this.staticResolver = staticResolver;
         this.debugAppender = debugAppender;
     }
@@ -71,12 +81,21 @@ public class UUFRegistry {
             log.debug("HTTP request received " + request);
         }
 
+        // We are creating apps on the first request, to provide sufficient time for RenderableCreators to register.
+        if (this.apps != null) {
+            synchronized (LOCK) {
+                if (this.apps != null) {
+                    this.apps = loadApps(appDiscoverer, appCreator);
+                }
+            }
+        }
+
         try {
             if (!RequestUtil.isValid(request)) {
                 throw new HttpErrorException(400, "Invalid URI '" + request.getUri() + "'.");
             }
             if (request.getUri().equals("/favicon.ico")) {
-                // TODO: send default favicon.
+                return staticResolver.createDefaultFaviconResponse(request);
             }
 
             App app = apps.get(request.getAppContext());
@@ -117,10 +136,10 @@ public class UUFRegistry {
         } catch (HttpErrorException e) {
             return createErrorResponse(e);
         } catch (UUFException e) {
-            return createErrorResponse("A server occurred while serving for request '" + request.getUrl() + "'.", e);
+            return createErrorResponse("A server occurred while serving for request '" + request.getUri() + "'.", e);
         } catch (Exception e) {
             return createErrorResponse(
-                    "An unexpected error occurred while serving for request '" + request.getUrl() + "'.", e);
+                    "An unexpected error occurred while serving for request '" + request.getUri() + "'.", e);
         }
     }
 
