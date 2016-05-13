@@ -18,13 +18,15 @@ package org.wso2.carbon.uuf.api;
 
 import io.netty.handler.codec.http.QueryStringDecoder;
 import org.wso2.carbon.uuf.internal.util.RequestUtil;
-
 import javax.ws.rs.core.HttpHeaders;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Provides a common interface to provide request information.
+ */
 public class HttpRequest {
 
     private final String method;

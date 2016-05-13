@@ -20,6 +20,9 @@ import org.wso2.carbon.uuf.spi.model.Model;
 
 import java.util.Map;
 
+/**
+ * Implements the {@link Model} interface to provide a Map based model.
+ */
 public class MapModel implements Model {
 
     private Map<String, Object> map;

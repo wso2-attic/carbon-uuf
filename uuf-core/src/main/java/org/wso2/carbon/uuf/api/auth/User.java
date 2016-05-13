@@ -18,6 +18,9 @@ package org.wso2.carbon.uuf.api.auth;
 
 import java.io.Serializable;
 
+/**
+ * Represents a user object. This class is being used for constructing a new {@link Session}.
+ */
 public class User implements Serializable {
 
     private final String username;

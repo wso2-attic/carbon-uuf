@@ -27,7 +27,6 @@ import org.wso2.carbon.uuf.api.auth.User;
 import org.wso2.carbon.uuf.exception.HttpErrorException;
 import org.wso2.carbon.uuf.exception.PageRedirectException;
 import org.wso2.carbon.uuf.exception.UUFException;
-
 import javax.naming.Binding;
 import javax.naming.Context;
 import javax.naming.InitialContext;

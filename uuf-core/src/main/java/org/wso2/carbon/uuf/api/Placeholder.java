@@ -16,6 +16,9 @@
 
 package org.wso2.carbon.uuf.api;
 
+/**
+ * Holds the constants for allowed placeholders for the layouts.
+ */
 public enum Placeholder {
 
     FAVICON, TITLE, CSS, HEAD_JS, HEAD_OTHER, BODY_JS

@@ -26,6 +26,9 @@ import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+/**
+ * Represents a Configuration object of a particular UUF component.
+ */
 public class Configuration extends HashMap<String, Object> {
 
     public static final String KEY_APP_CONTEXT = "appContext";
