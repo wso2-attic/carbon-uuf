@@ -32,9 +32,10 @@ import java.util.Optional;
 
 public class SessionRegistry implements Closeable {
 
+    public static final String SESSION_COOKIE_NAME = "UUFSESSIONID";
     private static final Object LOCK = new Object();
+
     private final Cache<String, Session> cache;
-    public static final String SESSION_COOKIE_NAME = "JSESSIONID";
 
     private static Cache<String, Session> getCache(String cacheName,
                                                    MutableConfiguration<String, Session> cacheConfig) {
