@@ -16,7 +16,10 @@
 
 package org.wso2.carbon.uuf.internal;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import org.apache.log4j.Logger;
 import org.osgi.service.component.annotations.Component;
@@ -28,6 +31,7 @@ import org.wso2.carbon.uuf.api.HttpRequest;
 import org.wso2.carbon.uuf.internal.core.create.AppCreator;
 import org.wso2.carbon.uuf.internal.core.create.AppDiscoverer;
 import org.wso2.carbon.uuf.internal.io.ArtifactAppDiscoverer;
+import org.wso2.carbon.uuf.internal.io.ArtifactResolver;
 import org.wso2.carbon.uuf.internal.io.BundleClassLoaderProvider;
 import org.wso2.carbon.uuf.internal.io.StaticResolver;
 import org.wso2.carbon.uuf.spi.RenderableCreator;
@@ -41,6 +45,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -84,15 +89,14 @@ public class UUFService implements Microservice {
     @Path(".*")
     @Produces({"text/plain"})
     public Response get(@Context io.netty.handler.codec.http.HttpRequest request) {
-        return execute(new HttpRequest(request));
+        return execute(new HttpRequest(request, null));
     }
 
     @POST
     @Path(".*")
     @Produces({"text/plain"})
-    public Response post(@Context HttpStreamer httpStreamer, @Context io.netty.handler.codec.http.HttpRequest request) {
-        httpStreamer.callback(new HttpStreamHandlerImpl());
-        return execute(new HttpRequest(request));
+    public void post(@Context HttpStreamer httpStreamer, @Context io.netty.handler.codec.http.HttpRequest request) {
+        httpStreamer.callback(new HttpStreamHandlerImpl(this, request));
     }
 
     private Response execute(HttpRequest request) {
@@ -141,7 +145,14 @@ public class UUFService implements Microservice {
     }
 
     private static class HttpStreamHandlerImpl implements HttpStreamHandler {
-        final ByteArrayOutputStream content = new ByteArrayOutputStream();
+        private final ByteArrayOutputStream content = new ByteArrayOutputStream();
+        private final UUFService uufService;
+        private final io.netty.handler.codec.http.HttpRequest nettyRequest;
+
+        public HttpStreamHandlerImpl(UUFService uufService, io.netty.handler.codec.http.HttpRequest nettyRequest) {
+            this.uufService = uufService;
+            this.nettyRequest = nettyRequest;
+        }
 
         @Override
         public void chunk(ByteBuf request, HttpResponder responder) throws IOException {
@@ -152,7 +163,18 @@ public class UUFService implements Microservice {
         public void finished(ByteBuf request, HttpResponder responder) throws IOException {
             request.readBytes(content, request.capacity());
             content.close();
-            responder.sendStatus(HttpResponseStatus.ACCEPTED);
+
+            HttpRequest httpRequest = new HttpRequest(this.nettyRequest, content.toByteArray());
+            Response response = uufService.execute(httpRequest);
+            ByteBuf channelBuffer = Unpooled.wrappedBuffer(response.getEntity().toString().getBytes());
+            Multimap<String, String> headers = ArrayListMultimap.create();
+            response.getHeaders().forEach((hKey, hList) -> hList.forEach(hValue -> headers.put(hKey, hValue.toString())));
+            HttpResponseStatus httpResponseStatus = HttpResponseStatus.valueOf(response.getStatus());
+            if (response.hasEntity()) {
+                responder.sendContent(httpResponseStatus, channelBuffer, response.getHeaders().get(HttpHeaders.CONTENT_TYPE).toString(), headers);
+            } else {
+                responder.sendStatus(httpResponseStatus);
+            }
         }
 
         @Override

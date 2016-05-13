@@ -20,6 +20,7 @@ import io.netty.handler.codec.http.QueryStringDecoder;
 import org.wso2.carbon.uuf.internal.util.RequestUtil;
 
 import javax.ws.rs.core.HttpHeaders;
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -61,24 +62,26 @@ public class HttpRequest {
      *
      * @param request
      */
-    public HttpRequest(io.netty.handler.codec.http.HttpRequest request) {
+    public HttpRequest(io.netty.handler.codec.http.HttpRequest request, byte[] content) {
         this.method = request.getMethod().name();
         this.protocol = request.getProtocolVersion().text();
         this.queryString = QueryStringDecoder.decodeComponent(request.getUri());
-//        ByteBuf buf = request.content();
-//        this.content = buf.array();
-//        this.contentType = request.headers().get(HttpHeaders.CONTENT_TYPE);
-//        this.contentLength = content.length;
-        this.content = null;
-        this.contentLength = 0;
-        this.inputStream = null;
+        if (content != null) {
+            this.content = content;
+            this.contentLength = content.length;
+            this.inputStream = new ByteArrayInputStream(content);
+        } else {
+            this.content = null;
+            this.contentLength = 0;
+            this.inputStream = null;
+        }
         //
         this.contentType = request.headers().get(HttpHeaders.CONTENT_TYPE);
         this.uri = request.getUri();
         this.appContext = RequestUtil.getAppContext(this.uri);
         this.uriWithoutAppContext = RequestUtil.getUriWithoutAppContext(this.uri);
         this.headers = request.headers().entries().stream().collect(Collectors.toMap(Map.Entry::getKey,
-                                                                                     Map.Entry::getValue));
+                Map.Entry::getValue));
         //not implemented yet
         this.url = null;
         this.isSecure = false;
