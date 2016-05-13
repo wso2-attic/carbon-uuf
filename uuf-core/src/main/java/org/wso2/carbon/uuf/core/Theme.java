@@ -54,13 +54,13 @@ public class Theme {
     public void render(RequestLookup requestLookup) {
         String appContext = requestLookup.getAppContext();
         for (String cssTagSuffix : cssTagSuffixes) {
-            requestLookup.addToPlaceholder(Placeholder.CSS, "<link href=\"" + appContext + cssTagSuffix);
+            requestLookup.addToPlaceholder(Placeholder.css, "<link href=\"" + appContext + cssTagSuffix);
         }
         for (String headJsTagSuffix : headJsTagSuffixes) {
-            requestLookup.addToPlaceholder(Placeholder.HEAD_JS, "<script src=\"" + appContext + headJsTagSuffix);
+            requestLookup.addToPlaceholder(Placeholder.headJs, "<script src=\"" + appContext + headJsTagSuffix);
         }
         for (String bodyJsTagSuffix : bodyJsTagSuffixes) {
-            requestLookup.addToPlaceholder(Placeholder.BODY_JS, "<script src=\"" + appContext + bodyJsTagSuffix);
+            requestLookup.addToPlaceholder(Placeholder.js, "<script src=\"" + appContext + bodyJsTagSuffix);
         }
     }
 

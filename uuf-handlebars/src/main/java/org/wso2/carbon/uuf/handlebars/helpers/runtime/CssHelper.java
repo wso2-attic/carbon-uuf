@@ -30,7 +30,7 @@ public class CssHelper extends FillPlaceholderHelper<String> {
     public static final String HELPER_NAME = "css";
 
     public CssHelper() {
-        super(Placeholder.CSS);
+        super(Placeholder.css);
     }
 
     @Override
