@@ -22,11 +22,12 @@ import io.netty.handler.codec.http.cookie.DefaultCookie;
 import io.netty.handler.codec.http.cookie.ServerCookieEncoder;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.wso2.carbon.uuf.api.auth.Session;
-import org.wso2.carbon.uuf.internal.core.auth.SessionRegistry;
 import org.wso2.carbon.uuf.api.auth.User;
 import org.wso2.carbon.uuf.exception.HttpErrorException;
 import org.wso2.carbon.uuf.exception.PageRedirectException;
 import org.wso2.carbon.uuf.exception.UUFException;
+import org.wso2.carbon.uuf.internal.core.auth.SessionRegistry;
+
 import javax.naming.Binding;
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -104,7 +105,7 @@ public class API {
             return services;
         } catch (NamingException e) {
             throw new UUFException("Cannot create the initial context when calling OSGi service '" +
-                    serviceClassName + "'.");
+                                           serviceClassName + "'.");
         }
     }
 
@@ -146,13 +147,13 @@ public class API {
      * @return {@link Session} object
      */
     public Session getSession() {
-        String cookieHeader = requestLookup.getRequest().getHeaders().get(HttpHeaders.COOKIE);
-        Optional<Cookie> cookie = readCookie(cookieHeader, SessionRegistry.SESSION_COOKIE_NAME);
-        if (cookie.isPresent()) {
-            Optional<Session> session = sessionRegistry.getSession(cookie.get().value());
-            return (session.isPresent()) ? session.get() : null;
+        Optional<String> sessionId = requestLookup.getRequest().getCookieValue(SessionRegistry.SESSION_COOKIE_NAME);
+        if (sessionId.isPresent()) {
+            Optional<Session> session = sessionRegistry.getSession(sessionId.get());
+            return session.isPresent() ? session.get() : null;
+        } else {
+            return null;
         }
-        return null;
     }
 
     /**
