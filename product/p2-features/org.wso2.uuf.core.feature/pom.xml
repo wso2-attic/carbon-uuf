@@ -76,7 +76,7 @@
                                 </bundle>
                                 <bundle>
                                     <symbolicName>snakeyaml</symbolicName>
-                                    <version>${org.wso2.orbit.org.yaml.version}</version>
+                                    <version>${orbit.org.yaml.version}</version>
                                 </bundle>
                                 <bundle>
                                     <symbolicName>org.objectweb.asm</symbolicName>

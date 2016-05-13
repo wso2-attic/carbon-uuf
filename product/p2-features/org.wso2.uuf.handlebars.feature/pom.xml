@@ -71,7 +71,7 @@
                                 </bundle>
                                 <bundle>
                                     <symbolicName>handlebars</symbolicName>
-                                    <version>${com.github.jknack.handlebars.version}</version>
+                                    <version>${orbit.com.github.jknack.handlebars.version}</version>
                                 </bundle>
                                 <bundle>
                                     <symbolicName>org.antlr.antlr4-runtime-osgi</symbolicName>

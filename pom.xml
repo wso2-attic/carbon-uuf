@@ -63,7 +63,7 @@
             <dependency>
                 <groupId>org.wso2.orbit.com.github.jknack</groupId>
                 <artifactId>handlebars</artifactId>
-                <version>${com.github.jknack.handlebars.version}</version>
+                <version>${orbit.com.github.jknack.handlebars.version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.mozilla</groupId>
@@ -87,11 +87,10 @@
                 <artifactId>commons-lang3</artifactId>
                 <version>${org.apache.commons.commons-lang3.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>org.wso2.orbit.org.yaml</groupId>
                 <artifactId>snakeyaml</artifactId>
-                <version>${org.wso2.orbit.org.yaml.version}</version>
+                <version>${orbit.org.yaml.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.wso2.eclipse.osgi</groupId>
@@ -285,10 +284,10 @@
         <carbon.jndi.version>1.0.0-m1</carbon.jndi.version>
 
         <!-- Dependencies for UUF -->
-        <com.github.jknack.handlebars.version>4.0.3.wso2v1</com.github.jknack.handlebars.version>
+        <orbit.com.github.jknack.handlebars.version>4.0.3.wso2v1</orbit.com.github.jknack.handlebars.version>
         <antlr-version>4.5.1-1</antlr-version>
         <org.apache.commons.commons-lang3.version>3.1</org.apache.commons.commons-lang3.version>
-        <org.wso2.orbit.org.yaml.version>1.16.0.wso2v1</org.wso2.orbit.org.yaml.version>
+        <orbit.org.yaml.version>1.16.0.wso2v1</orbit.org.yaml.version>
         <osgi.framework.import.version.range>[1.8.0, 2.0.0)</osgi.framework.import.version.range>
         <osgi.api.version>6.0.0</osgi.api.version>
         <javax.cache-api.version>1.0.0</javax.cache-api.version>
