@@ -90,7 +90,7 @@ public class MicroserviceConnector implements Microservice {
     @Path(".*")
     @Produces({"text/plain"})
     public Response get(@Context io.netty.handler.codec.http.HttpRequest request) {
-        return execute(new HttpRequest(request, null));
+        return execute(new MicroserviceHttpRequest(request, null));
     }
 
     @POST
@@ -166,7 +166,7 @@ public class MicroserviceConnector implements Microservice {
             request.readBytes(content, request.capacity());
             content.close();
 
-            HttpRequest httpRequest = new HttpRequest(this.nettyRequest, content.toByteArray());
+            HttpRequest httpRequest = new MicroserviceHttpRequest(this.nettyRequest, content.toByteArray());
             Response response = microserviceConnector.execute(httpRequest);
             ByteBuf channelBuffer = Unpooled.wrappedBuffer(response.getEntity().toString().getBytes());
             Multimap<String, String> headers = ArrayListMultimap.create();
