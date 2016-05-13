@@ -46,7 +46,7 @@ public class FragmentTest {
         RequestLookup requestLookup = new RequestLookup(request);
         Fragment fragment = new Fragment("componentName.fragmentName", renderable);
 
-        String output = fragment.render(any(), lookup, requestLookup, any());
+        String output = fragment.render(null, lookup, requestLookup, null);
         Assert.assertEquals(output, content);
     }
 }
