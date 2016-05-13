@@ -17,6 +17,8 @@
 package org.wso2.carbon.uuf.connector;
 
 import io.netty.handler.codec.http.QueryStringDecoder;
+import io.netty.handler.codec.http.cookie.ClientCookieDecoder;
+import org.apache.commons.lang3.StringUtils;
 import org.wso2.carbon.uuf.api.HttpRequest;
 import org.wso2.carbon.uuf.internal.util.RequestUtil;
 
@@ -24,6 +26,7 @@ import javax.ws.rs.core.HttpHeaders;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -88,77 +91,115 @@ public class MicroserviceHttpRequest implements HttpRequest {
         this.localPort = -1;
     }
 
+    @Override
     public String getMethod() {
         return method;
     }
 
+    @Override
     public String getProtocol() {
         return protocol;
     }
 
+    @Override
     public String getQueryString() {
         return queryString;
     }
 
+    @Override
     public String getContent() {
         return new String(content);
     }
 
+    @Override
     public byte[] getContentBytes() {
         return content;
     }
 
+    @Override
     public String getContentType() {
         return contentType;
     }
 
+    @Override
     public long getContentLength() {
         return contentLength;
     }
 
+    @Override
     public String getUri() {
         return uri;
     }
 
+    @Override
     public String getAppContext() {
         return appContext;
     }
 
+    @Override
     public String getUriWithoutAppContext() {
         return uriWithoutAppContext;
     }
 
+    @Override
     public String getUrl() {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public boolean isSecure() {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public String getRemoteAddr() {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public String getContextPath() {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public int getLocalPort() {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public InputStream getInputStream() {
         return inputStream;
     }
 
+    @Override
     public Map<String, String> getHeaders() {
         return headers;
     }
 
+    @Override
     public String getHostName() {
         String hostHeader = headers.get(HttpHeaders.HOST);
         return "//" + ((hostHeader == null) ? "localhost" : hostHeader);
+    }
+
+    @Override
+    public Optional<String> getCookieValue(String cookieName) {
+        String cookieHeader = headers.get(HttpHeaders.COOKIE);
+        if (cookieHeader == null) {
+            return Optional.<String>empty();
+        }
+        cookieHeader = cookieHeader.trim();
+        if (cookieHeader.isEmpty()) {
+            return Optional.<String>empty();
+        }
+
+        String[] cookiesParts = StringUtils.split(cookieHeader, ';');
+        for (String cookiePart : cookiesParts) {
+            if (cookiePart.trim().startsWith(cookieName)) {
+                return Optional.of(ClientCookieDecoder.STRICT.decode(cookiePart).value());
+            }
+        }
+        return Optional.<String>empty();
     }
 
     @Override
