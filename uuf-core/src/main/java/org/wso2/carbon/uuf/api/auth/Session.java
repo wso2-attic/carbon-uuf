@@ -17,17 +17,14 @@
 package org.wso2.carbon.uuf.api.auth;
 
 import java.io.Serializable;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Base64;
-import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * Provides a way to identify a user across more than one page request or visit to a Web site and to store
- * information about that user.
- *
+ * Provides a way to identify a user across more than one page request or visit to a Web site and to store information
+ * about that user.
+ * <p>
  * The {@link org.wso2.carbon.uuf.internal.core.auth.SessionRegistry SessionRegistry} uses this class to create a
  * session between an HTTP client and an HTTP server. The session persists for a specified time period, across more than
  * one connection or page request from the user.
@@ -52,26 +49,32 @@ public class Session implements Serializable {
         return user;
     }
 
+    /**
+     * Adopted from <a href="https://git.io/vrYMl">org.apache.catalina.util.SessionIdGenerator</a> in Apache Tomcat
+     * 8.0.0 release.
+     */
     private static class SessionIdGenerator {
         /**
-         * The default message digest algorithm.
+         * Default number of bytes in a session ID is 16.
          */
-        private static final String DEFAULT_MESSAGE_DIGEST_ALGORITHM = "MD5";
         private static final int DEFAULT_SESSION_ID_LENGTH = 16;
-        private final Random random;
-        private final MessageDigest messageDigest;
 
+        private final SecureRandom secureRandom;
+        private final int sessionIdLength;
+
+        /**
+         * Creates a new session ID generator.
+         */
         public SessionIdGenerator() {
-            this(DEFAULT_MESSAGE_DIGEST_ALGORITHM);
+            this(DEFAULT_SESSION_ID_LENGTH);
         }
 
-        public SessionIdGenerator(String algorithm) {
-            try {
-                this.messageDigest = MessageDigest.getInstance(algorithm);
-            } catch (NoSuchAlgorithmException ex) {
-                throw new IllegalStateException("No algorithms for session ID generator", ex);
-            }
-
+        /**
+         * Creates a new session ID generator.
+         *
+         * @param sessionIdLength number of bytes in a session ID
+         */
+        public SessionIdGenerator(int sessionIdLength) {
             byte[] randomBytes = new byte[32];
             ThreadLocalRandom.current().nextBytes(randomBytes);
             char[] entropy = Base64.getEncoder().encodeToString(randomBytes).toCharArray();
@@ -82,15 +85,14 @@ public class Session implements Serializable {
                 seed ^= update;
             }
 
-            this.random = new SecureRandom();
-            this.random.setSeed(seed);
+            // We call the default constructor so that system will figure-out the best, available algorithm.
+            // See: http://stackoverflow.com/a/27638413/1577286
+            this.secureRandom = new SecureRandom();
+            this.secureRandom.setSeed(seed);
+            this.sessionIdLength = sessionIdLength;
         }
 
-        public String generateId() {
-            return generateId(DEFAULT_SESSION_ID_LENGTH);
-        }
-
-        public synchronized String generateId(int sessionIdLength) {
+        public synchronized String generateId() {
             byte randomBytes[] = new byte[16];
             // Render the result as a String of hexadecimal digits
             StringBuilder buffer = new StringBuilder();
@@ -98,8 +100,7 @@ public class Session implements Serializable {
             int resultLenBytes = 0;
 
             while (resultLenBytes < sessionIdLength) {
-                random.nextBytes(randomBytes);
-                randomBytes = messageDigest.digest(randomBytes);
+                secureRandom.nextBytes(randomBytes);
                 for (int j = 0; j < randomBytes.length && resultLenBytes < sessionIdLength; j++) {
                     byte b1 = (byte) ((randomBytes[j] & 0xf0) >> 4);
                     byte b2 = (byte) (randomBytes[j] & 0x0f);
