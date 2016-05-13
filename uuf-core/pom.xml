@@ -54,6 +54,11 @@
             <groupId>org.wso2.carbon.jndi</groupId>
             <artifactId>org.wso2.carbon.jndi</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm</artifactId>
+        </dependency>
+
         <!-- Dependencies for MSF4J -->
         <dependency>
             <groupId>org.wso2.eclipse.osgi</groupId>
@@ -103,14 +108,6 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.ow2.asm</groupId>
-            <artifactId>asm</artifactId>
-        </dependency>
 
         <!-- Other Dependencies -->
         <dependency>
@@ -121,6 +118,10 @@
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
         </dependency>
     </dependencies>
 
