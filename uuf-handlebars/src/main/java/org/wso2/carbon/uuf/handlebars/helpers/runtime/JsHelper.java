@@ -23,6 +23,6 @@ public class JsHelper extends HeadJsHelper {
     public static final String HELPER_NAME = "js";
 
     public JsHelper() {
-        super(Placeholder.BODY_JS);
+        super(Placeholder.js);
     }
 }

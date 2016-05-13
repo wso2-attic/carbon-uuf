@@ -58,14 +58,14 @@ public class HbsHelperTest {
     public void testTitle() {
         RequestLookup requestLookup = createRequestLookup();
         createRenderable("{{title \"page-title\"}}").render(null, createLookup(), requestLookup, null);
-        Assert.assertEquals(requestLookup.getPlaceholderContent(Placeholder.TITLE).get(), "page-title");
+        Assert.assertEquals(requestLookup.getPlaceholderContent(Placeholder.title).get(), "page-title");
     }
 
     @Test
     public void testTitleWithMultipleParameters() {
         RequestLookup requestLookup = createRequestLookup();
         createRenderable("{{title \"page\" \"-\" \"title\"}}").render(null, createLookup(), requestLookup, null);
-        Assert.assertEquals(requestLookup.getPlaceholderContent(Placeholder.TITLE).get(), "page-title");
+        Assert.assertEquals(requestLookup.getPlaceholderContent(Placeholder.title).get(), "page-title");
 
     }
 
@@ -73,7 +73,7 @@ public class HbsHelperTest {
     public void testCss() {
         RequestLookup requestLookup = createRequestLookup();
         createRenderable("{{css \"css/my-styles.css\"}}").render(null, createLookup(), requestLookup, null);
-        Assert.assertEquals(requestLookup.getPlaceholderContent(Placeholder.CSS).get(),
+        Assert.assertEquals(requestLookup.getPlaceholderContent(Placeholder.css).get(),
                             "<link href=\"/myapp/public/component/base/css/my-styles.css\" rel=\"stylesheet\" " +
                                     "type=\"text/css\" />\n");
     }
@@ -82,7 +82,7 @@ public class HbsHelperTest {
     public void testCssWithMultipleParameters() {
         RequestLookup requestLookup = createRequestLookup();
         createRenderable("{{css \"css/\" \"my-styles\" \".css\"}}").render(null, createLookup(), requestLookup, null);
-        Assert.assertEquals(requestLookup.getPlaceholderContent(Placeholder.CSS).get(),
+        Assert.assertEquals(requestLookup.getPlaceholderContent(Placeholder.css).get(),
                             "<link href=\"/myapp/public/component/base/css/my-styles.css\" rel=\"stylesheet\" " +
                                     "type=\"text/css\" />\n");
     }
@@ -91,7 +91,7 @@ public class HbsHelperTest {
     public void testHeadJs() {
         RequestLookup requestLookup = createRequestLookup();
         createRenderable("{{headJs \"js/my-script.js\"}}").render(null, createLookup(), requestLookup, null);
-        Assert.assertEquals(requestLookup.getPlaceholderContent(Placeholder.HEAD_JS).get(),
+        Assert.assertEquals(requestLookup.getPlaceholderContent(Placeholder.headJs).get(),
                             "<script src=\"/myapp/public/component/base/js/my-script.js\" type=\"text/javascript\">" +
                                     "</script>\n");
     }
@@ -100,7 +100,7 @@ public class HbsHelperTest {
     public void testHeadJsWithMultipleParameters() {
         RequestLookup requestLookup = createRequestLookup();
         createRenderable("{{headJs \"js/\" \"my-script\" \".js\"}}").render(null, createLookup(), requestLookup, null);
-        Assert.assertEquals(requestLookup.getPlaceholderContent(Placeholder.HEAD_JS).get(),
+        Assert.assertEquals(requestLookup.getPlaceholderContent(Placeholder.headJs).get(),
                             "<script src=\"/myapp/public/component/base/js/my-script.js\" type=\"text/javascript\">" +
                                     "</script>\n");
     }
@@ -112,7 +112,7 @@ public class HbsHelperTest {
         RequestLookup requestLookup = createRequestLookup();
         createRenderable("{{#headOther}}" + content + "{{/headOther}}").render(null, createLookup(), requestLookup,
                                                                                null);
-        Assert.assertEquals(requestLookup.getPlaceholderContent(Placeholder.HEAD_OTHER).get(), content);
+        Assert.assertEquals(requestLookup.getPlaceholderContent(Placeholder.headOther).get(), content);
     }
 
     @Test
@@ -137,7 +137,7 @@ public class HbsHelperTest {
     public void testJs() {
         RequestLookup requestLookup = createRequestLookup();
         createRenderable("{{js \"js/my-other-script.js\"}}").render(null, createLookup(), requestLookup, null);
-        Assert.assertEquals(requestLookup.getPlaceholderContent(Placeholder.BODY_JS).get(),
+        Assert.assertEquals(requestLookup.getPlaceholderContent(Placeholder.js).get(),
                             "<script src=\"/myapp/public/component/base/js/my-other-script.js\" " +
                                     "type=\"text/javascript\"></script>\n");
     }

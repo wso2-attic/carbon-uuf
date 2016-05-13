@@ -28,7 +28,7 @@ public class TitleHelper extends FillPlaceholderHelper<String> {
     public static final String HELPER_NAME = "title";
 
     public TitleHelper() {
-        super(Placeholder.TITLE);
+        super(Placeholder.title);
     }
 
     public CharSequence apply(String title, Options options) throws IOException {

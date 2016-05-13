@@ -27,7 +27,7 @@ public class HeadOtherHelper extends FillPlaceholderHelper<Object> {
     public static final String HELPER_NAME = "headOther";
 
     public HeadOtherHelper() {
-        super(Placeholder.HEAD_OTHER);
+        super(Placeholder.headOther);
     }
 
     @Override

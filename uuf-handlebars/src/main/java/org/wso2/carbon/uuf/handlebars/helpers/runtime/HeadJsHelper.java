@@ -30,7 +30,7 @@ public class HeadJsHelper extends FillPlaceholderHelper<String> {
     public static final String HELPER_NAME = "headJs";
 
     public HeadJsHelper() {
-        this(Placeholder.HEAD_JS);
+        this(Placeholder.headJs);
     }
 
     protected HeadJsHelper(Placeholder placeholder) {

@@ -21,5 +21,29 @@ package org.wso2.carbon.uuf.api;
  */
 public enum Placeholder {
 
-    FAVICON, TITLE, CSS, HEAD_JS, HEAD_OTHER, BODY_JS
+    // These enums are named in camelcase because end-developer uses/access placeholders in same string.
+    /**
+     * Placeholder for the favicon which will be inside the {@code <head>} tag.
+     */
+    favicon,
+    /**
+     * Placeholder for the title of the page which will be inside the {@code <head>} tag.
+     */
+    title,
+    /**
+     * Placeholder for CSS style-sheet link which will be inside the {@code <head>} tag.
+     */
+    css,
+    /**
+     * Placeholder for JavaScript {@code <script>} tags that are in the {@code <head>} tag of the page.
+     */
+    headJs,
+    /**
+     * Placeholder for other tags that will go inside the {@code <head>} tag. e.g. {@code <meta>}
+     */
+    headOther,
+    /**
+     * Placeholder for JavScript {@code <script>} tags that will be at the bottom of the {@code <body>} tag.
+     */
+    js
 }
