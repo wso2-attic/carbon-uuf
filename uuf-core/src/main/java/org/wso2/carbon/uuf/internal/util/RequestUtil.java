@@ -89,4 +89,8 @@ public class RequestUtil {
     public static boolean isFragmentRequest(HttpRequest request) {
         return request.getUriWithoutAppContext().startsWith(FRAGMENTS_URI_PREFIX);
     }
+
+    public static boolean isDefaultFaviconRequest(HttpRequest request) {
+        return request.getUri().equals("/favicon.ico");
+    }
 }

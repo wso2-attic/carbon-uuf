@@ -14,24 +14,26 @@
  *  limitations under the License.
  */
 
-package org.wso2.carbon.uuf.internal;
+package org.wso2.carbon.uuf.connector;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.HttpResponseStatus;
-import org.apache.log4j.Logger;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.wso2.carbon.uuf.api.HttpRequest;
+import org.wso2.carbon.uuf.internal.DebugAppender;
+import org.wso2.carbon.uuf.internal.UUFRegistry;
 import org.wso2.carbon.uuf.internal.core.create.AppCreator;
 import org.wso2.carbon.uuf.internal.core.create.AppDiscoverer;
 import org.wso2.carbon.uuf.internal.io.ArtifactAppDiscoverer;
-import org.wso2.carbon.uuf.internal.io.ArtifactResolver;
 import org.wso2.carbon.uuf.internal.io.BundleClassLoaderProvider;
 import org.wso2.carbon.uuf.internal.io.StaticResolver;
 import org.wso2.carbon.uuf.spi.RenderableCreator;
@@ -54,26 +56,26 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * UUF Main Service.
+ * UUF Connector for MSF4J.
  */
-@Component(name = "org.wso2.carbon.uuf.internal.UUFService",
+@Component(name = "org.wso2.carbon.uuf.connector.MicroserviceConnector",
            service = Microservice.class,
            immediate = true)
 @Path("/")
-public class UUFService implements Microservice {
+public class MicroserviceConnector implements Microservice {
 
     private static final Set<RenderableCreator> RENDERABLE_CREATORS = new HashSet<>();
-    private static final Logger log = Logger.getLogger(UUFService.class);
+    private static final Logger log = LoggerFactory.getLogger(MicroserviceConnector.class);
     private UUFRegistry registry;
     private final AtomicInteger count = new AtomicInteger(0);
 
     @SuppressWarnings("unused")
-    public UUFService() {
+    public MicroserviceConnector() {
         // We need an empty constructor for running in OSGi mode.
         this(createRegistry());
     }
 
-    public UUFService(UUFRegistry server) {
+    public MicroserviceConnector(UUFRegistry server) {
         // Used in the fat-jar mode.
         this.registry = server;
     }
@@ -82,7 +84,7 @@ public class UUFService implements Microservice {
         AppDiscoverer appDiscoverer = new ArtifactAppDiscoverer();
         AppCreator appCreator = new AppCreator(RENDERABLE_CREATORS, new BundleClassLoaderProvider());
         StaticResolver staticResolver = new StaticResolver();
-        return new UUFRegistry(appDiscoverer, appCreator, staticResolver, new DebugAppender());
+        return new UUFRegistry(appDiscoverer, appCreator, staticResolver);
     }
 
     @GET
@@ -146,11 +148,11 @@ public class UUFService implements Microservice {
 
     private static class HttpStreamHandlerImpl implements HttpStreamHandler {
         private final ByteArrayOutputStream content = new ByteArrayOutputStream();
-        private final UUFService uufService;
+        private final MicroserviceConnector microserviceConnector;
         private final io.netty.handler.codec.http.HttpRequest nettyRequest;
 
-        public HttpStreamHandlerImpl(UUFService uufService, io.netty.handler.codec.http.HttpRequest nettyRequest) {
-            this.uufService = uufService;
+        public HttpStreamHandlerImpl(MicroserviceConnector microserviceConnector, io.netty.handler.codec.http.HttpRequest nettyRequest) {
+            this.microserviceConnector = microserviceConnector;
             this.nettyRequest = nettyRequest;
         }
 
@@ -165,7 +167,7 @@ public class UUFService implements Microservice {
             content.close();
 
             HttpRequest httpRequest = new HttpRequest(this.nettyRequest, content.toByteArray());
-            Response response = uufService.execute(httpRequest);
+            Response response = microserviceConnector.execute(httpRequest);
             ByteBuf channelBuffer = Unpooled.wrappedBuffer(response.getEntity().toString().getBytes());
             Multimap<String, String> headers = ArrayListMultimap.create();
             response.getHeaders().forEach((hKey, hList) -> hList.forEach(hValue -> headers.put(hKey, hValue.toString())));

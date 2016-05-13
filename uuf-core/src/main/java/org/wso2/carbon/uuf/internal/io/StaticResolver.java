@@ -26,8 +26,10 @@ import org.wso2.carbon.uuf.internal.util.RequestUtil;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -57,17 +59,27 @@ public class StaticResolver {
         this.appsHome = appsHome.normalize();
     }
 
+    public Response.ResponseBuilder createDefaultFaviconResponse(HttpRequest request) {
+        try {
+            Path resourcePath = Paths.get(StaticResolver.class.getResource("favicon.png").toURI());
+            return getResponseBuilder(resourcePath, request);
+        } catch (URISyntaxException e) {
+            //this will never thrown
+            return Response.status(500).entity("Internal Server Error").header(HttpHeaders.CONTENT_TYPE, "text/plain");
+        }
+    }
+
     public Response.ResponseBuilder createResponse(App app, HttpRequest request) {
         Path resourcePath;
         try {
             if (RequestUtil.isComponentStaticResourceRequest(request)) {
                 // /public/components/...
                 resourcePath = resolveResourceInComponent(NameUtils.getSimpleName(app.getName()),
-                                                          request.getUriWithoutAppContext());
+                        request.getUriWithoutAppContext());
             } else if (RequestUtil.isThemeStaticResourceRequest(request)) {
                 // /public/themes/...
                 resourcePath = resolveResourceInTheme(NameUtils.getSimpleName(app.getName()),
-                                                      request.getUriWithoutAppContext());
+                        request.getUriWithoutAppContext());
             } else {
                 // /public/...
                 return Response.status(400)
@@ -79,7 +91,7 @@ public class StaticResolver {
         } catch (Exception e) {
             // IOException or any other Exception
             return Response.serverError()
-                    .entity("A server occurred while serving for static resource request '" + request.getUrl() + "'.");
+                    .entity("A server occurred while serving for static resource request '" + request.getUri() + "'.");
         }
 
         if (Files.isRegularFile(resourcePath) && !Files.isDirectory(resourcePath)) {
