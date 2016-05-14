@@ -23,8 +23,9 @@ import org.wso2.carbon.uuf.api.HttpRequest;
 import org.wso2.carbon.uuf.internal.util.RequestUtil;
 
 import javax.ws.rs.core.HttpHeaders;
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -33,62 +34,45 @@ import java.util.stream.Collectors;
  * HttpRequest implementation based on Microservice HTTP request.
  */
 public class MicroserviceHttpRequest implements HttpRequest {
+
+    private final String url;
     private final String method;
     private final String protocol;
-    private final String queryString;
-    private final byte[] content;
-    private final String contentType;
-    private final long contentLength;
-    private final String url;
+    private final Map<String, String> headers;
     private final String uri;
     private final String appContext;
     private final String uriWithoutAppContext;
-    private final boolean isSecure;
-    private final String remoteAddr;
-    private final String contextPath;
-    private final int localPort;
-    private final InputStream inputStream;
-    private final Map<String, String> headers;
-    //TODO: Following need to be implemented.
-    //getPathTranslated
-    //getHeader
-    //getAllHeaders
-    //getParameter
-    //getAllParameters
-    //getLocale
-    //getAllLocales
-    //getMappedPath
-    //getFile(formFeildName)
-    //getAllFiles()
-    //getCookie(name)
-    //getAllCookies
+    private final String queryString;
+    private final Map<String, List<String>> queryParams;
 
     public MicroserviceHttpRequest(io.netty.handler.codec.http.HttpRequest request, byte[] content) {
+        this.url = null; // Netty HttpRequest does not have a 'getUrl()' method.
         this.method = request.getMethod().name();
         this.protocol = request.getProtocolVersion().text();
-        this.queryString = QueryStringDecoder.decodeComponent(request.getUri());
-        if (content != null) {
-            this.content = content;
-            this.contentLength = content.length;
-            this.inputStream = new ByteArrayInputStream(content);
-        } else {
-            this.content = null;
-            this.contentLength = 0;
-            this.inputStream = null;
-        }
-        //
-        this.contentType = request.headers().get(HttpHeaders.CONTENT_TYPE);
-        this.uri = request.getUri();
-        this.appContext = RequestUtil.getAppContext(this.uri);
-        this.uriWithoutAppContext = RequestUtil.getUriWithoutAppContext(this.uri);
         this.headers = request.headers().entries().stream().collect(Collectors.toMap(Map.Entry::getKey,
                                                                                      Map.Entry::getValue));
-        //not implemented yet
-        this.url = null;
-        this.isSecure = false;
-        this.remoteAddr = null;
-        this.contextPath = null;
-        this.localPort = -1;
+
+        String rawUri = request.getUri();
+        int uriPathEndIndex = rawUri.indexOf('?');
+        String rawUriPath, rawQueryString;
+        if (uriPathEndIndex == -1) {
+            rawUriPath = rawUri;
+            rawQueryString = null;
+        } else {
+            rawUriPath = rawUri.substring(0, uriPathEndIndex);
+            rawQueryString = rawUri.substring(uriPathEndIndex + 1, rawUri.length());
+        }
+        this.uri = QueryStringDecoder.decodeComponent(rawUriPath);
+        this.appContext = RequestUtil.getAppContext(this.uri);
+        this.uriWithoutAppContext = RequestUtil.getUriWithoutAppContext(this.uri);
+        this.queryString = rawQueryString; // Query string is not very useful, so we don't bother to decode it.
+        this.queryParams = (rawQueryString == null) ? Collections.emptyMap() :
+                new QueryStringDecoder(rawQueryString, false).parameters();
+    }
+
+    @Override
+    public String getUrl() {
+        return url;
     }
 
     @Override
@@ -99,76 +83,6 @@ public class MicroserviceHttpRequest implements HttpRequest {
     @Override
     public String getProtocol() {
         return protocol;
-    }
-
-    @Override
-    public String getQueryString() {
-        return queryString;
-    }
-
-    @Override
-    public String getContent() {
-        return new String(content);
-    }
-
-    @Override
-    public byte[] getContentBytes() {
-        return content;
-    }
-
-    @Override
-    public String getContentType() {
-        return contentType;
-    }
-
-    @Override
-    public long getContentLength() {
-        return contentLength;
-    }
-
-    @Override
-    public String getUri() {
-        return uri;
-    }
-
-    @Override
-    public String getAppContext() {
-        return appContext;
-    }
-
-    @Override
-    public String getUriWithoutAppContext() {
-        return uriWithoutAppContext;
-    }
-
-    @Override
-    public String getUrl() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean isSecure() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public String getRemoteAddr() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public String getContextPath() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public int getLocalPort() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public InputStream getInputStream() {
-        return inputStream;
     }
 
     @Override
@@ -195,8 +109,77 @@ public class MicroserviceHttpRequest implements HttpRequest {
     }
 
     @Override
+    public String getUri() {
+        return uri;
+    }
+
+    @Override
+    public String getAppContext() {
+        return appContext;
+    }
+
+    @Override
+    public String getUriWithoutAppContext() {
+        return uriWithoutAppContext;
+    }
+
+    @Override
+    public String getQueryString() {
+        return queryString;
+    }
+
+    public Map<String, List<String>> getQueryParams() {
+        return queryParams;
+    }
+
+    @Override
+    public String getContent() {
+        throw new UnsupportedOperationException("Netty HttpRequest does not have enough information.");
+    }
+
+    @Override
+    public byte[] getContentBytes() {
+        throw new UnsupportedOperationException("Netty HttpRequest does not have enough information.");
+    }
+
+    @Override
+    public String getContentType() {
+        throw new UnsupportedOperationException("Netty HttpRequest does not have enough information.");
+    }
+
+    @Override
+    public long getContentLength() {
+        throw new UnsupportedOperationException("Netty HttpRequest does not have enough information.");
+    }
+
+    @Override
+    public boolean isSecure() {
+        throw new UnsupportedOperationException("Netty HttpRequest does not have enough information.");
+    }
+
+    @Override
+    public String getRemoteAddr() {
+        throw new UnsupportedOperationException("Netty HttpRequest does not have enough information.");
+    }
+
+    @Override
+    public String getContextPath() {
+        throw new UnsupportedOperationException("Netty HttpRequest does not have enough information.");
+    }
+
+    @Override
+    public int getLocalPort() {
+        throw new UnsupportedOperationException("Netty HttpRequest does not have enough information.");
+    }
+
+    @Override
+    public InputStream getInputStream() {
+        throw new UnsupportedOperationException("Netty HttpRequest does not have enough information.");
+    }
+
+    @Override
     public String toString() {
-        return "{\"method\": \"" + method + "\", \"url\": \"" + url + "\", \"protocol\": \"" + protocol +
-                "\", \"host\": \"" + getHostName() + "\"}";
+        return "{\"method\": \"" + method + "\", \"protocol\": \"" + protocol + "\", \"uri\": \"" + uri +
+                "\", \"queryString\": \"" + queryString + "\"}";
     }
 }
