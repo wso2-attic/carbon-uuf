@@ -60,6 +60,7 @@ public class App {
 
     public String renderPage(String uriWithoutContext, RequestLookup requestLookup) {
         API api = new API(sessionRegistry, requestLookup);
+
         // First try to render the page with root component.
         Optional<String> output = rootComponent.renderPage(uriWithoutContext, requestLookup, api);
         if (output.isPresent()) {
@@ -89,9 +90,8 @@ public class App {
      * @return rendered output
      */
     public String renderFragment(String uriWithoutAppContext, RequestLookup requestLookup) {
-
-
         API api = new API(sessionRegistry, requestLookup);
+
         int queryParamsPos = uriWithoutAppContext.indexOf("?");
         String fragmentName = (queryParamsPos > -1) ?
                 uriWithoutAppContext.substring(RequestUtil.FRAGMENTS_URI_PREFIX.length(), queryParamsPos) :

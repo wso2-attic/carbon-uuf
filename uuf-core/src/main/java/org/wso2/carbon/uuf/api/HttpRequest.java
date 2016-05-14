@@ -85,6 +85,13 @@ public interface HttpRequest {
     Map<String, List<String>> getQueryParams();
 
     /**
+     * Returns the content Type of the request.
+     *
+     * @return content type
+     */
+    String getContentType();
+
+    /**
      * Returns the content of the request as string.
      *
      * @return converted content string
@@ -99,11 +106,11 @@ public interface HttpRequest {
     byte[] getContentBytes();
 
     /**
-     * Returns the content Type of the request.
+     * Retrieves the body of the request as binary data.
      *
-     * @return content type
+     * @return
      */
-    String getContentType();
+    InputStream getInputStream();
 
     /**
      * Returns the content length of the request.
@@ -139,11 +146,4 @@ public interface HttpRequest {
      * @return port number
      */
     int getLocalPort();
-
-    /**
-     * Retrieves the body of the request as binary data.
-     *
-     * @return
-     */
-    InputStream getInputStream();
 }
