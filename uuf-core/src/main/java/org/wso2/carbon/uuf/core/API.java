@@ -46,7 +46,7 @@ public class API {
     private final RequestLookup requestLookup;
     private Session currentSession;
 
-    public API(SessionRegistry sessionRegistry, RequestLookup requestLookup) {
+    API(SessionRegistry sessionRegistry, RequestLookup requestLookup) {
         this.sessionRegistry = sessionRegistry;
         this.requestLookup = requestLookup;
     }
