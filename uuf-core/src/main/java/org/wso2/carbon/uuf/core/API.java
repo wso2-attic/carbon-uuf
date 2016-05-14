@@ -44,6 +44,7 @@ public class API {
 
     private final SessionRegistry sessionRegistry;
     private final RequestLookup requestLookup;
+    private Session currentSession;
 
     public API(SessionRegistry sessionRegistry, RequestLookup requestLookup) {
         this.sessionRegistry = sessionRegistry;
@@ -143,13 +144,13 @@ public class API {
      * @return {@link Session} object
      */
     public Session getSession() {
-        Optional<String> sessionId = requestLookup.getRequest().getCookieValue(SessionRegistry.SESSION_COOKIE_NAME);
-        if (sessionId.isPresent()) {
-            Optional<Session> session = sessionRegistry.getSession(sessionId.get());
-            return session.isPresent() ? session.get() : null;
-        } else {
-            return null;
+        if (currentSession == null) {
+            // Since an API object lives in the request scope, it is safe to cache the current Session object.
+            currentSession = requestLookup.getRequest().getCookieValue(SessionRegistry.SESSION_COOKIE_NAME)
+                    .map(sessionId -> sessionRegistry.getSession(sessionId).orElse(null))
+                    .orElse(null);
         }
+        return currentSession;
     }
 
     /**
