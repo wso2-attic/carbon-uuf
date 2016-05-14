@@ -19,7 +19,6 @@ package org.wso2.carbon.uuf.api;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * Provides a common interface to provide request information.
@@ -61,7 +60,7 @@ public interface HttpRequest {
      */
     String getHostName();
 
-    Optional<String> getCookieValue(String cookieName);
+    String getCookieValue(String cookieName);
 
     /**
      * Returns the part of this request's URL from the protocol name up to the query String in the first line of the

@@ -146,9 +146,8 @@ public class API {
     public Session getSession() {
         if (currentSession == null) {
             // Since an API object lives in the request scope, it is safe to cache the current Session object.
-            currentSession = requestLookup.getRequest().getCookieValue(SessionRegistry.SESSION_COOKIE_NAME)
-                    .map(sessionId -> sessionRegistry.getSession(sessionId).orElse(null))
-                    .orElse(null);
+            String sessionId = requestLookup.getRequest().getCookieValue(SessionRegistry.SESSION_COOKIE_NAME);
+            currentSession = (sessionId == null) ? null : sessionRegistry.getSession(sessionId).orElse(null);
         }
         return currentSession;
     }

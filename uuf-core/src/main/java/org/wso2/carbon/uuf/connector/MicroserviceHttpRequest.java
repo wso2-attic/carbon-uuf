@@ -27,7 +27,6 @@ import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -114,15 +113,15 @@ public class MicroserviceHttpRequest implements org.wso2.carbon.uuf.api.HttpRequ
     }
 
     @Override
-    public Optional<String> getCookieValue(String cookieName) {
+    public String getCookieValue(String cookieName) {
         String cookieHeader = headers.get(HttpHeaders.COOKIE);
         if (cookieHeader == null) {
-            return Optional.<String>empty();
+            return null;
         }
         return ServerCookieDecoder.STRICT.decode(cookieHeader).stream()
                 .filter(cookie -> cookie.name().equals(cookieName))
                 .findFirst()
-                .map(Cookie::value);
+                .map(Cookie::value).orElse(null);
     }
 
     @Override
