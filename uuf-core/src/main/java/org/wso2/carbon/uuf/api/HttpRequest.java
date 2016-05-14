@@ -17,6 +17,7 @@
 package org.wso2.carbon.uuf.api;
 
 import java.io.InputStream;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -24,6 +25,13 @@ import java.util.Optional;
  * Provides a common interface to provide request information.
  */
 public interface HttpRequest {
+
+    /**
+     * Reconstructs the URL the client used to make the request.
+     *
+     * @return request url
+     */
+    String getUrl();
 
     /**
      * Returns the method of the request
@@ -40,11 +48,41 @@ public interface HttpRequest {
     String getProtocol();
 
     /**
+     * Retrieves the map of headers.
+     *
+     * @return
+     */
+    Map<String, String> getHeaders();
+
+    /**
+     * Returns hostname. If host header is not found, returns //localhost
+     *
+     * @return
+     */
+    String getHostName();
+
+    Optional<String> getCookieValue(String cookieName);
+
+    /**
+     * Returns the part of this request's URL from the protocol name up to the query String in the first line of the
+     * HTTP request.
+     *
+     * @return request uri
+     */
+    String getUri();
+
+    String getAppContext();
+
+    String getUriWithoutAppContext();
+
+    /**
      * Returns the query String of the request
      *
      * @return query string
      */
     String getQueryString();
+
+    Map<String, List<String>> getQueryParams();
 
     /**
      * Returns the content of the request as string.
@@ -73,25 +111,6 @@ public interface HttpRequest {
      * @return content length
      */
     long getContentLength();
-
-    /**
-     * Returns the part of this request's URL from the protocol name up to the query String in the first line of the
-     * HTTP request.
-     *
-     * @return request uri
-     */
-    String getUri();
-
-    String getAppContext();
-
-    String getUriWithoutAppContext();
-
-    /**
-     * Reconstructs the URL the client used to make the request.
-     *
-     * @return request url
-     */
-    String getUrl();
 
     /**
      * Returns true when https is used.
@@ -127,20 +146,4 @@ public interface HttpRequest {
      * @return
      */
     InputStream getInputStream();
-
-    /**
-     * Retrieves the map of headers.
-     *
-     * @return
-     */
-    Map<String, String> getHeaders();
-
-    /**
-     * Returns hostname. If host header is not found, returns //localhost
-     *
-     * @return
-     */
-    String getHostName();
-
-    Optional<String> getCookieValue(String cookieName);
 }
