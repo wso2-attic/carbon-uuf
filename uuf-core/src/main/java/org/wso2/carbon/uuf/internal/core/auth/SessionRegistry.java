@@ -78,12 +78,12 @@ public class SessionRegistry implements Closeable {
         cache.put(session.getSessionId(), session);
     }
 
-    public Optional<Session> getSession(String token) {
-        return Optional.ofNullable(cache.get(token));
+    public Optional<Session> getSession(String sessionId) {
+        return Optional.ofNullable(cache.get(sessionId));
     }
 
-    public boolean removeSession(String token) {
-        return cache.remove(token);
+    public boolean removeSession(String sessionId) {
+        return cache.remove(sessionId);
     }
 
     public void removeAllSessions() {
