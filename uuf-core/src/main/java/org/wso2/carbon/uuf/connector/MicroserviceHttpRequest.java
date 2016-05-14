@@ -17,8 +17,8 @@
 package org.wso2.carbon.uuf.connector;
 
 import io.netty.handler.codec.http.QueryStringDecoder;
-import io.netty.handler.codec.http.cookie.ClientCookieDecoder;
-import org.apache.commons.lang3.StringUtils;
+import io.netty.handler.codec.http.cookie.Cookie;
+import io.netty.handler.codec.http.cookie.ServerCookieDecoder;
 import org.wso2.carbon.uuf.api.HttpRequest;
 import org.wso2.carbon.uuf.internal.util.RequestUtil;
 
@@ -188,18 +188,10 @@ public class MicroserviceHttpRequest implements HttpRequest {
         if (cookieHeader == null) {
             return Optional.<String>empty();
         }
-        cookieHeader = cookieHeader.trim();
-        if (cookieHeader.isEmpty()) {
-            return Optional.<String>empty();
-        }
-
-        String[] cookiesParts = StringUtils.split(cookieHeader, ';');
-        for (String cookiePart : cookiesParts) {
-            if (cookiePart.trim().startsWith(cookieName)) {
-                return Optional.of(ClientCookieDecoder.STRICT.decode(cookiePart).value());
-            }
-        }
-        return Optional.<String>empty();
+        return ServerCookieDecoder.STRICT.decode(cookieHeader).stream()
+                .filter(cookie -> cookie.name().equals(cookieName))
+                .findFirst()
+                .map(Cookie::value);
     }
 
     @Override
