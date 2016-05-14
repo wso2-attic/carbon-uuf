@@ -131,13 +131,9 @@ public class API {
     public Session createSession(String userName) {
         Session session = new Session(new User(userName));
         sessionRegistry.addSession(session);
-        Cookie cookie = new DefaultCookie(SessionRegistry.SESSION_COOKIE_NAME, session.getSessionId());
-        cookie.setHttpOnly(true);
-        cookie.setPath("/");
-        // setting cookie.setSecure(true) will send "Upgrade-Insecure-Requests" -> "1" header
-        // for when accessing http instead https
-        // cookie.setSecure(true);
-        requestLookup.setResponseHeader(HttpHeaders.SET_COOKIE, ServerCookieEncoder.STRICT.encode(cookie));
+        String header = SessionRegistry.SESSION_COOKIE_NAME + "=" + session.getSessionId() + "; Path=" +
+                requestLookup.getAppContext() + "; Secure; HTTPOnly";
+        requestLookup.setResponseHeader(HttpHeaders.SET_COOKIE, header);
         return session;
     }
 
