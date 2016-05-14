@@ -19,10 +19,10 @@ package org.wso2.carbon.uuf.connector;
 import io.netty.handler.codec.http.QueryStringDecoder;
 import io.netty.handler.codec.http.cookie.Cookie;
 import io.netty.handler.codec.http.cookie.ServerCookieDecoder;
-import org.wso2.carbon.uuf.api.HttpRequest;
 import org.wso2.carbon.uuf.internal.util.RequestUtil;
 
 import javax.ws.rs.core.HttpHeaders;
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 /**
  * HttpRequest implementation based on Microservice HTTP request.
  */
-public class MicroserviceHttpRequest implements HttpRequest {
+public class MicroserviceHttpRequest implements org.wso2.carbon.uuf.api.HttpRequest {
 
     private final String url;
     private final String method;
@@ -44,8 +44,15 @@ public class MicroserviceHttpRequest implements HttpRequest {
     private final String uriWithoutAppContext;
     private final String queryString;
     private final Map<String, List<String>> queryParams;
+    private final byte[] contentBytes;
+    private final int contentLength;
+    private final InputStream inputStream;
 
-    public MicroserviceHttpRequest(io.netty.handler.codec.http.HttpRequest request, byte[] content) {
+    public MicroserviceHttpRequest(io.netty.handler.codec.http.HttpRequest request) {
+        this(request, null);
+    }
+
+    public MicroserviceHttpRequest(io.netty.handler.codec.http.HttpRequest request, byte[] contentBytes) {
         this.url = null; // Netty HttpRequest does not have a 'getUrl()' method.
         this.method = request.getMethod().name();
         this.protocol = request.getProtocolVersion().text();
@@ -68,6 +75,16 @@ public class MicroserviceHttpRequest implements HttpRequest {
         this.queryString = rawQueryString; // Query string is not very useful, so we don't bother to decode it.
         this.queryParams = (rawQueryString == null) ? Collections.emptyMap() :
                 new QueryStringDecoder(rawQueryString, false).parameters();
+
+        if (contentBytes != null) {
+            this.contentBytes = contentBytes;
+            this.contentLength = contentBytes.length;
+            this.inputStream = new ByteArrayInputStream(contentBytes);
+        } else {
+            this.contentBytes = null;
+            this.contentLength = 0;
+            this.inputStream = null;
+        }
     }
 
     @Override
@@ -128,28 +145,34 @@ public class MicroserviceHttpRequest implements HttpRequest {
         return queryString;
     }
 
+    @Override
     public Map<String, List<String>> getQueryParams() {
         return queryParams;
     }
 
     @Override
+    public String getContentType() {
+        return headers.get(HttpHeaders.CONTENT_TYPE);
+    }
+
+    @Override
     public String getContent() {
-        throw new UnsupportedOperationException("Netty HttpRequest does not have enough information.");
+        return new String(contentBytes);
     }
 
     @Override
     public byte[] getContentBytes() {
-        throw new UnsupportedOperationException("Netty HttpRequest does not have enough information.");
+        return contentBytes;
     }
 
     @Override
-    public String getContentType() {
-        throw new UnsupportedOperationException("Netty HttpRequest does not have enough information.");
+    public InputStream getInputStream() {
+        return inputStream;
     }
 
     @Override
     public long getContentLength() {
-        throw new UnsupportedOperationException("Netty HttpRequest does not have enough information.");
+        return contentLength;
     }
 
     @Override
@@ -169,11 +192,6 @@ public class MicroserviceHttpRequest implements HttpRequest {
 
     @Override
     public int getLocalPort() {
-        throw new UnsupportedOperationException("Netty HttpRequest does not have enough information.");
-    }
-
-    @Override
-    public InputStream getInputStream() {
         throw new UnsupportedOperationException("Netty HttpRequest does not have enough information.");
     }
 
