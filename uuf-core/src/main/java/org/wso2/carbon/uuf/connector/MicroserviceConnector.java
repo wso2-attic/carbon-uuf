@@ -101,17 +101,10 @@ public class MicroserviceConnector implements Microservice {
     }
 
     private Response execute(HttpRequest request) {
-        try {
-            MDC.put("uuf-request", String.valueOf(count.incrementAndGet()));
-            Response.ResponseBuilder response = registry.serve(request);
-            return response.build();
-        } finally {
-            try {
-                MDC.remove("uuf-request");
-            } catch (Exception ex) {
-                //ignore, just catching so ide wan't complain. MDC will never throw an IllegalArgumentException.
-            }
-        }
+        MDC.put("uuf-request", String.valueOf(count.incrementAndGet()));
+        Response.ResponseBuilder response = registry.serve(request);
+        MDC.remove("uuf-request");
+        return response.build();
     }
 
     /**
