@@ -44,11 +44,11 @@ import java.util.stream.Collectors;
 public class UUFRegistry {
 
     private static final Logger log = LoggerFactory.getLogger(UUFRegistry.class);
+    private static final Object LOCK = new Object();
 
     private Map<String, App> apps;
     private final StaticResolver staticResolver;
     private final DebugAppender debugAppender;
-    private static final Object LOCK = new Object();
     private final AppDiscoverer appDiscoverer;
     private final AppCreator appCreator;
 
@@ -82,9 +82,9 @@ public class UUFRegistry {
         }
 
         // We are creating apps on the first request, to provide sufficient time for RenderableCreators to register.
-        if (this.apps != null) {
+        if (this.apps == null) {
             synchronized (LOCK) {
-                if (this.apps != null) {
+                if (this.apps == null) {
                     this.apps = loadApps(appDiscoverer, appCreator);
                 }
             }
