@@ -88,7 +88,6 @@ public class MicroserviceConnector implements Microservice {
 
     @GET
     @Path(".*")
-    @Produces({"text/plain"})
     public Response get(@Context io.netty.handler.codec.http.HttpRequest request) {
         return execute(new MicroserviceHttpRequest(request));
     }
