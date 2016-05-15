@@ -23,6 +23,7 @@ import org.wso2.carbon.uuf.core.App;
 import org.wso2.carbon.uuf.internal.util.MimeMapper;
 import org.wso2.carbon.uuf.internal.util.NameUtils;
 import org.wso2.carbon.uuf.internal.util.RequestUtil;
+import org.wso2.carbon.uuf.reference.ComponentReference;
 
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
@@ -141,7 +142,9 @@ public class StaticResolver {
         if (fragmentSimpleName.equals(DIR_NAME_COMPONENT_RESOURCES)) {
             staticFilePath = staticFilePath.resolve(DIR_NAME_PUBLIC_RESOURCES);
         } else {
-            staticFilePath = staticFilePath.resolve(fragmentSimpleName).resolve(DIR_NAME_PUBLIC_RESOURCES);
+            staticFilePath = staticFilePath.resolve(ComponentReference.DIR_NAME_FRAGMENTS)
+                    .resolve(fragmentSimpleName)
+                    .resolve(DIR_NAME_PUBLIC_RESOURCES);
         }
         // {sub-directory}/{rest-of-the-path}
         String relativePathString = uriWithoutAppContext.substring(fifthSlashIndex + 1, uriWithoutAppContext.length());
