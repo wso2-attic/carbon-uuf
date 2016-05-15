@@ -16,6 +16,7 @@
 
 package org.wso2.carbon.uuf.internal.io;
 
+import org.apache.commons.io.IOUtils;
 import org.wso2.carbon.kernel.utils.Utils;
 import org.wso2.carbon.uuf.api.HttpRequest;
 import org.wso2.carbon.uuf.core.App;
@@ -26,10 +27,9 @@ import org.wso2.carbon.uuf.internal.util.RequestUtil;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
-import java.net.URISyntaxException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -60,12 +60,15 @@ public class StaticResolver {
     }
 
     public Response.ResponseBuilder createDefaultFaviconResponse(HttpRequest request) {
+        InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("/favicon.png");
         try {
-            Path resourcePath = Paths.get(StaticResolver.class.getResource("favicon.png").toURI());
-            return getResponseBuilder(resourcePath, request);
-        } catch (URISyntaxException e) {
-            //this will never thrown
-            return Response.status(500).entity("Internal Server Error").header(HttpHeaders.CONTENT_TYPE, "text/plain");
+            // Since default favicon is very small (~1.9 kB) it is ok to load it directly to the memory.
+            byte[] data = IOUtils.toByteArray(inputStream);
+            // FIXME: 5/15/16 MSF4J doesn't support InputStream or byte arrays
+            return Response.ok().entity(data).type("image/png");
+        } catch (IOException e) {
+            // This never happens.
+            return Response.serverError().entity("Cannot read default favicon.");
         }
     }
 
@@ -75,11 +78,11 @@ public class StaticResolver {
             if (RequestUtil.isComponentStaticResourceRequest(request)) {
                 // /public/components/...
                 resourcePath = resolveResourceInComponent(NameUtils.getSimpleName(app.getName()),
-                        request.getUriWithoutAppContext());
+                                                          request.getUriWithoutAppContext());
             } else if (RequestUtil.isThemeStaticResourceRequest(request)) {
                 // /public/themes/...
                 resourcePath = resolveResourceInTheme(NameUtils.getSimpleName(app.getName()),
-                        request.getUriWithoutAppContext());
+                                                      request.getUriWithoutAppContext());
             } else {
                 // /public/...
                 return Response.status(400)
