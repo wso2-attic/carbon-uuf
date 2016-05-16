@@ -34,7 +34,7 @@ public class RequestLookup {
     private final Deque<String> publicUriStack;
     private final EnumMap<Placeholder, StringBuilder> placeholderBuffers;
     private final Map<String, String> zoneContents;
-    private Map<String, String> responseHeaders = new HashMap<>();
+    private final Map<String, String> responseHeaders;
 
     public RequestLookup(HttpRequest request) {
         this.appContext = request.getAppContext();
@@ -42,6 +42,7 @@ public class RequestLookup {
         this.publicUriStack = new ArrayDeque<>();
         this.placeholderBuffers = new EnumMap<>(Placeholder.class);
         this.zoneContents = new HashMap<>();
+        this.responseHeaders = new HashMap<>();
     }
 
     public String getAppContext() {
@@ -118,7 +119,7 @@ public class RequestLookup {
      * @param name
      * @param value
      */
-    void setResponseHeader(String name, String value){
+    void setResponseHeader(String name, String value) {
         responseHeaders.put(name, value);
     }
 }
