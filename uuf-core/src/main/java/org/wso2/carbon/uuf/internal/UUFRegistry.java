@@ -34,6 +34,7 @@ import org.wso2.carbon.uuf.internal.util.MimeMapper;
 import org.wso2.carbon.uuf.internal.util.RequestUtil;
 
 import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.io.InputStream;
@@ -52,7 +53,6 @@ public class UUFRegistry {
     private final AppDiscoverer appDiscoverer;
     private final AppCreator appCreator;
 
-
     public UUFRegistry(AppDiscoverer appDiscoverer, AppCreator appCreator, StaticResolver staticResolver) {
         this(appDiscoverer, appCreator, staticResolver, null);
     }
@@ -66,17 +66,7 @@ public class UUFRegistry {
         this.debugAppender = debugAppender;
     }
 
-    private static Map<String, App> loadApps(AppDiscoverer appDiscoverer, AppCreator appCreator) {
-        return appDiscoverer.getAppReferences()
-                .map(appReference -> {
-                    App app = appCreator.createApp(appReference);
-                    log.info("App '" + app.getName() + "' created.");
-                    return app;
-                })
-                .collect(Collectors.toMap(App::getContext, app -> app));
-    }
-
-    public Response.ResponseBuilder serve(HttpRequest request) {
+    public Response serve(HttpRequest request) {
         if (log.isDebugEnabled() && !RequestUtil.isDebugRequest(request)) {
             log.debug("HTTP request received " + request);
         }
@@ -95,7 +85,7 @@ public class UUFRegistry {
                 throw new HttpErrorException(400, "Invalid URI '" + request.getUri() + "'.");
             }
             if (request.getUri().equals("/favicon.ico")) {
-                return staticResolver.createDefaultFaviconResponse(request);
+                return staticResolver.createDefaultFaviconResponse(request).build();
             }
 
             App app = apps.get(request.getAppContext());
@@ -103,10 +93,10 @@ public class UUFRegistry {
                 throw new HttpErrorException(404, "Cannot find an app for context '" + request.getAppContext() + "'.");
             }
             if (RequestUtil.isStaticResourceRequest(request)) {
-                return staticResolver.createResponse(app, request);
+                return staticResolver.createResponse(app, request).build();
             }
             if (RequestUtil.isDebugRequest(request)) {
-                return renderDebug(app, request.getUriWithoutAppContext());
+                return renderDebug(app, request.getUriWithoutAppContext()).build();
             }
             RequestLookup requestLookup = new RequestLookup(request);
             String html;
@@ -121,26 +111,36 @@ public class UUFRegistry {
                     String uri = request.getUri();
                     String fixedUri = uri.endsWith("/") ? uri.substring(0, uri.length() - 1) : uri + "/";
                     if (app.hasPage(fixedUri)) {
-                        return Response.status(301).header(HttpHeaders.LOCATION, request.getHostName() + fixedUri);
+                        return Response.status(301)
+                                .header(HttpHeaders.LOCATION, request.getHostName() + fixedUri).build();
                     }
                     throw e;
                 }
             }
-            Response.ResponseBuilder responseBuilder = ifExistsAddResponseHeaders(Response.ok(html),
-                                                                                  requestLookup.getResponseHeaders());
-            return responseBuilder.header(HttpHeaders.CONTENT_TYPE, "text/html");
+            return addHeaders(Response.ok(html), requestLookup).type(MediaType.TEXT_HTML_TYPE).build();
         } catch (PageNotFoundException | FragmentNotFoundException e) {
             return createErrorResponse(e);
         } catch (PageRedirectException e) {
-            return Response.status(e.getHttpStatusCode()).header("Location", e.getRedirectUrl());
+            return Response.status(e.getHttpStatusCode()).header("Location", e.getRedirectUrl()).build();
         } catch (HttpErrorException e) {
             return createErrorResponse(e);
         } catch (UUFException e) {
-            return createErrorResponse("A server occurred while serving for request '" + request.getUri() + "'.", e);
+            return createServerErrorResponse("A server occurred while serving for request '" + request.getUri() + "'.",
+                                             e);
         } catch (Exception e) {
-            return createErrorResponse(
+            return createServerErrorResponse(
                     "An unexpected error occurred while serving for request '" + request.getUri() + "'.", e);
         }
+    }
+
+    private static Map<String, App> loadApps(AppDiscoverer appDiscoverer, AppCreator appCreator) {
+        return appDiscoverer.getAppReferences()
+                .map(appReference -> {
+                    App app = appCreator.createApp(appReference);
+                    log.info("App '" + app.getName() + "' created.");
+                    return app;
+                })
+                .collect(Collectors.toMap(App::getContext, app -> app));
     }
 
     private Response.ResponseBuilder renderDebug(App app, String uriWithoutAppContext) {
@@ -188,21 +188,21 @@ public class UUFRegistry {
         return (mime.isPresent()) ? mime.get() : "text/html";
     }
 
-    private Response.ResponseBuilder ifExistsAddResponseHeaders(Response.ResponseBuilder responseBuilder,
-                                                                Map<String, String> headers) {
-        headers.entrySet().stream().forEach(
-                entry -> responseBuilder.header(entry.getKey(), entry.getValue()));
+    private static Response.ResponseBuilder addHeaders(Response.ResponseBuilder responseBuilder,
+                                                       RequestLookup requestLookup) {
+        Map<String, String> headers = requestLookup.getResponseHeaders();
+        for (Map.Entry<String, String> entry : headers.entrySet()) {
+            responseBuilder.header(entry.getKey(), entry.getValue());
+        }
         return responseBuilder;
     }
 
-    private Response.ResponseBuilder createErrorResponse(HttpErrorException e) {
-        return Response.status(e.getHttpStatusCode())
-                .entity(e.getMessage())
-                .header(HttpHeaders.CONTENT_TYPE, "text/plain");
+    private static Response createErrorResponse(HttpErrorException e) {
+        return Response.status(e.getHttpStatusCode()).entity(e.getMessage()).type(MediaType.TEXT_HTML_TYPE).build();
     }
 
-    private Response.ResponseBuilder createErrorResponse(String message, Exception e) {
+    private static Response createServerErrorResponse(String message, Exception e) {
         log.error(message, e);
-        return Response.serverError().entity(message);
+        return Response.serverError().entity(message).type(MediaType.TEXT_HTML_TYPE).build();
     }
 }
