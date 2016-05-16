@@ -35,6 +35,7 @@ public class Session implements Serializable {
 
     private final String sessionId;
     private final User user;
+    private String themeName;
 
     public Session(User user) {
         this.sessionId = sessionIdGenerator.generateId();
@@ -47,6 +48,36 @@ public class Session implements Serializable {
 
     public User getUser() {
         return user;
+    }
+
+    public String getThemeName() {
+        return themeName;
+    }
+
+    public void setThemeName(String themeName) {
+        if (themeName == null) {
+            throw new IllegalArgumentException("Theme name cannot be null.");
+        }
+        themeName = themeName.trim();
+        if (themeName.isEmpty()) {
+            throw new IllegalArgumentException("Theme name cannot be empty.");
+        }
+        this.themeName = themeName;
+    }
+
+    @Override
+    public int hashCode() {
+        return sessionId.hashCode() * 31;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return (obj != null) && (obj instanceof Session) && (sessionId.equals(((Session) obj).sessionId));
+    }
+
+    @Override
+    public String toString() {
+        return "{\"sessionId\": \"" + sessionId + "\", \"user\": \"" + user + "\", \"theme\": \"" + themeName + "\"}";
     }
 
     /**
