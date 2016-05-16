@@ -142,7 +142,7 @@ public class ComponentLookup {
                 .map(lookup -> lookup.allFragments.get(getFullyQualifiedName(currentComponentName, fragmentName)));
     }
 
-    Map<String, Fragment> getFragments() {
+    Map<String, Fragment> getAllFragments() {
         return allFragments;
     }
 

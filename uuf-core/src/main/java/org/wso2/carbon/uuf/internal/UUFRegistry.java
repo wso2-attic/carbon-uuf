@@ -152,7 +152,7 @@ public class UUFRegistry {
         }
         if (uriWithoutAppContext.startsWith("/debug/api/fragments/")) {
             return Response.ok(app.getComponents().entrySet().stream()
-                                       .flatMap(entry -> entry.getValue().getFragments().values().stream())
+                                       .flatMap(entry -> entry.getValue().getAllFragments().values().stream())
                                        .collect(Collectors.toSet()));
         }
         if (uriWithoutAppContext.startsWith("/debug/logs")) {

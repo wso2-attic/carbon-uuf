@@ -231,7 +231,7 @@ public class AppCreator {
 
         Map<String, Fragment> allFragments = new HashMap<>(fragments);
         for (Component dependency : dependencies) {
-            allFragments.putAll(dependency.getFragments());
+            allFragments.putAll(dependency.getAllFragments());
         }
 
         for (Map.Entry<Object, Object> entry : bindingsConfig.entrySet()) {

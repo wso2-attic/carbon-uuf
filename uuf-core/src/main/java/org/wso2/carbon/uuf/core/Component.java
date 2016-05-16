@@ -64,8 +64,8 @@ public class Component {
         return lookup.getConfigurations();
     }
 
-    public Map<String, Fragment> getFragments() {
-        return lookup.getFragments();
+    public Map<String, Fragment> getAllFragments() {
+        return lookup.getAllFragments();
     }
 
     public Optional<String> renderPage(String pageUri, RequestLookup requestLookup, API api) {
