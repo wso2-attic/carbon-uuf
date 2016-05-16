@@ -32,4 +32,9 @@ public class User implements Serializable {
     public String getUsername() {
         return username;
     }
+
+    @Override
+    public String toString() {
+        return "{\"username\": \"" + username + "\"}";
+    }
 }
