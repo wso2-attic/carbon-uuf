@@ -16,6 +16,7 @@
 
 package org.wso2.carbon.uuf.core;
 
+import org.wso2.carbon.uuf.api.auth.Session;
 import org.wso2.carbon.uuf.api.model.MapModel;
 import org.wso2.carbon.uuf.exception.FragmentNotFoundException;
 import org.wso2.carbon.uuf.exception.PageNotFoundException;
@@ -35,14 +36,28 @@ public class App {
     private final String context;
     private final Map<String, Component> components;
     private final Component rootComponent;
+    private final Map<String, Theme> themes;
+    private Theme appTheme;
     private final SessionRegistry sessionRegistry;
 
-    public App(String name, Set<Component> components, SessionRegistry sessionRegistry) {
+    public App(String name, Set<Component> components, Set<Theme> themes, SessionRegistry sessionRegistry) {
         this.name = name;
+
         this.components = components.stream().collect(Collectors.toMap(Component::getContext, cmp -> cmp));
         this.rootComponent = this.components.remove(Component.ROOT_COMPONENT_CONTEXT);
         this.context = this.rootComponent.getConfiguration().getAppContext()
                 .orElse("/" + NameUtils.getSimpleName(name));
+
+        this.themes = themes.stream().collect(Collectors.toMap(Theme::getName, theme -> theme));
+        String defaultThemeName = this.rootComponent.getConfiguration().getDefaultThemeName();
+        Theme defaultTheme = this.themes.get(defaultThemeName);
+        if (defaultTheme == null) {
+            throw new IllegalArgumentException(
+                    "Theme '" + defaultThemeName + "' which is set as the default theme of app '" + name +
+                            "' does not exists.");
+        }
+        this.appTheme = defaultTheme;
+
         this.sessionRegistry = sessionRegistry;
     }
 
@@ -54,12 +69,22 @@ public class App {
         return context;
     }
 
+    public Map<String, Component> getComponents() {
+        return components;
+    }
+
+    public Map<String, Theme> getThemes() {
+        return themes;
+    }
+
     public String renderPage(String uriWithoutAppContext, RequestLookup requestLookup) {
         API api = new API(sessionRegistry, requestLookup);
+        getRenderingTheme(api).render(requestLookup);
 
         // First try to render the page with 'root' component.
         Optional<String> output = rootComponent.renderPage(uriWithoutAppContext, requestLookup, api);
         if (output.isPresent()) {
+            updateAppTheme(api);
             return output.get();
         }
 
@@ -78,10 +103,10 @@ public class App {
         String pageUri = uriWithoutAppContext.substring(secondSlashIndex);
         output = component.renderPage(pageUri, requestLookup, api);
         if (output.isPresent()) {
-            // No page found for 'pageUri' in the 'component'.
+            updateAppTheme(api);
             return output.get();
         }
-
+        // No page found for 'pageUri' in the 'component'.
         throw new PageNotFoundException("Requested page '" + uriWithoutAppContext + "' does not exists.");
     }
 
@@ -131,8 +156,34 @@ public class App {
         return component.hasPage(pageUri);
     }
 
-    public Map<String, Component> getComponents() {
-        return components;
+    private Theme getRenderingTheme(API api) {
+        Session session = api.getSession();
+        if (session == null) {
+            return appTheme;
+        }
+        String sessionThemeName = session.getThemeName();
+        if (sessionThemeName == null) {
+            return appTheme;
+        }
+        Theme sessionTheme = themes.get(sessionThemeName);
+        if (sessionTheme == null) {
+            throw new IllegalArgumentException(
+                    "Theme '" + sessionThemeName + "' which is set as for the current session does not exists.");
+        }
+        return sessionTheme;
+    }
+
+    private void updateAppTheme(API api) {
+        String appThemeName = api.getTheme();
+        if (appThemeName == null) {
+            return; // Nothing to update.
+        }
+        Theme appTheme = themes.get(appThemeName);
+        if (appTheme == null) {
+            throw new IllegalArgumentException(
+                    "Theme '" + appThemeName + "' which is set for the app '" + name + "' does not exists.");
+        }
+        this.appTheme = appTheme; // Update the theme of the app.
     }
 
     @Override
