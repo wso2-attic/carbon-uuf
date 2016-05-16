@@ -54,28 +54,35 @@ public class App {
         return context;
     }
 
-    public String renderPage(String uriWithoutContext, RequestLookup requestLookup) {
+    public String renderPage(String uriWithoutAppContext, RequestLookup requestLookup) {
         API api = new API(sessionRegistry, requestLookup);
 
-        // First try to render the page with root component.
-        Optional<String> output = rootComponent.renderPage(uriWithoutContext, requestLookup, api);
+        // First try to render the page with 'root' component.
+        Optional<String> output = rootComponent.renderPage(uriWithoutAppContext, requestLookup, api);
         if (output.isPresent()) {
             return output.get();
         }
 
-        // Since root components doesn't have the page, try with other components.
-        for (Map.Entry<String, Component> entry : components.entrySet()) {
-            if (uriWithoutContext.startsWith(entry.getKey())) {
-                Component component = entry.getValue();
-                String pageUri = uriWithoutContext.substring(component.getName().length());
-                output = component.renderPage(pageUri, requestLookup, api);
-                if (output.isPresent()) {
-                    return output.get();
-                }
-                break;
-            }
+        // Since 'root' component doesn't have the page, try with other components.
+        int secondSlashIndex = uriWithoutAppContext.indexOf('/', 1);
+        if (secondSlashIndex == -1) {
+            // No component context found in the 'uriWithoutAppContext' URI.
+            throw new PageNotFoundException("Requested page '" + uriWithoutAppContext + "' does not exists.");
         }
-        throw new PageNotFoundException("Requested page '" + uriWithoutContext + "' does not exists.");
+        String componentContext = uriWithoutAppContext.substring(0, secondSlashIndex);
+        Component component = components.get(componentContext);
+        if (component == null) {
+            // No component found for the 'componentContext' key.
+            throw new PageNotFoundException("Requested page '" + uriWithoutAppContext + "' does not exists.");
+        }
+        String pageUri = uriWithoutAppContext.substring(secondSlashIndex);
+        output = component.renderPage(pageUri, requestLookup, api);
+        if (output.isPresent()) {
+            // No page found for 'pageUri' in the 'component'.
+            return output.get();
+        }
+
+        throw new PageNotFoundException("Requested page '" + uriWithoutAppContext + "' does not exists.");
     }
 
     /**
@@ -87,13 +94,13 @@ public class App {
      */
     public String renderFragment(String uriWithoutAppContext, RequestLookup requestLookup) {
         String fragmentName = uriWithoutAppContext.substring(RequestUtil.FRAGMENTS_URI_PREFIX.length());
-        if(NameUtils.isSimpleName(fragmentName)){
+        if (NameUtils.isSimpleName(fragmentName)) {
             fragmentName = NameUtils.getFullyQualifiedName(rootComponent.getName(), fragmentName);
         }
         // When building the dependency tree, all fragments are accumulated into the rootComponent.
         Fragment fragment = rootComponent.getAllFragments().get(fragmentName);
-        if(fragment == null){
-            throw new FragmentNotFoundException("Requested fragment '"+fragmentName+"' does not exists.");
+        if (fragment == null) {
+            throw new FragmentNotFoundException("Requested fragment '" + fragmentName + "' does not exists.");
         }
 
         Model model = new MapModel(requestLookup.getRequest().getQueryParams().entrySet().stream()
@@ -102,20 +109,26 @@ public class App {
         return fragment.render(model, rootComponent.getLookup(), requestLookup, api);
     }
 
-    public boolean hasPage(String uri) {
-        if (rootComponent.hasPage(uri)) {
+    public boolean hasPage(String uriWithoutAppContext) {
+        // First check 'root' component has the page.
+        if (rootComponent.hasPage(uriWithoutAppContext)) {
             return true;
         }
 
-        int firstSlash = uri.indexOf('/', 1);
-        if (firstSlash > 0) {
-            String componentContext = uri.substring(0, firstSlash);
-            Component component = components.get(componentContext);
-            if (component != null) {
-                return component.hasPage(uri.substring(firstSlash));
-            }
+        // Since 'root' components doesn't have the page, search in other components.
+        int secondSlashIndex = uriWithoutAppContext.indexOf('/', 1);
+        if (secondSlashIndex == -1) {
+            // No component context found in the 'uriWithoutAppContext' URI.
+            return false;
         }
-        return false;
+        String componentContext = uriWithoutAppContext.substring(0, secondSlashIndex);
+        Component component = components.get(componentContext);
+        if (component == null) {
+            // No component found for the 'componentContext' key.
+            return false;
+        }
+        String pageUri = uriWithoutAppContext.substring(secondSlashIndex);
+        return component.hasPage(pageUri);
     }
 
     public Map<String, Component> getComponents() {
