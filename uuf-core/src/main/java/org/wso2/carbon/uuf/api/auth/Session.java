@@ -31,7 +31,11 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class Session implements Serializable {
 
-    private static final SessionIdGenerator sessionIdGenerator = new SessionIdGenerator();
+    /**
+     * Number of bytes in a session ID.
+     */
+    public static final int SESSION_ID_LENGTH = 16;
+    private static final SessionIdGenerator sessionIdGenerator = new SessionIdGenerator(SESSION_ID_LENGTH);
 
     private final String sessionId;
     private final User user;
@@ -80,25 +84,18 @@ public class Session implements Serializable {
         return "{\"sessionId\": \"" + sessionId + "\", \"user\": \"" + user + "\", \"theme\": \"" + themeName + "\"}";
     }
 
+    public static boolean isValidSessionId(String sessionId) {
+        return (sessionId != null) && !sessionId.isEmpty() && (sessionId.length() == Session.SESSION_ID_LENGTH * 2);
+    }
+
     /**
      * Adopted from <a href="https://git.io/vrYMl">org.apache.catalina.util.SessionIdGenerator</a> in Apache Tomcat
      * 8.0.0 release.
      */
     private static class SessionIdGenerator {
-        /**
-         * Default number of bytes in a session ID is 16.
-         */
-        private static final int DEFAULT_SESSION_ID_LENGTH = 16;
 
         private final SecureRandom secureRandom;
         private final int sessionIdLength;
-
-        /**
-         * Creates a new session ID generator.
-         */
-        public SessionIdGenerator() {
-            this(DEFAULT_SESSION_ID_LENGTH);
-        }
 
         /**
          * Creates a new session ID generator.

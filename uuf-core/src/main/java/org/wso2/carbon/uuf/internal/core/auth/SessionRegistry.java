@@ -79,10 +79,16 @@ public class SessionRegistry implements Closeable {
     }
 
     public Optional<Session> getSession(String sessionId) {
+        if (!Session.isValidSessionId(sessionId)) {
+            throw new IllegalArgumentException("Session ID '" + sessionId + "' is invalid.");
+        }
         return Optional.ofNullable(cache.get(sessionId));
     }
 
     public boolean removeSession(String sessionId) {
+        if (!Session.isValidSessionId(sessionId)) {
+            throw new IllegalArgumentException("Session ID '" + sessionId + "' is invalid.");
+        }
         return cache.remove(sessionId);
     }
 
