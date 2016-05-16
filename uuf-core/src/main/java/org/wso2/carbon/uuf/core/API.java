@@ -40,6 +40,7 @@ public class API {
     private final SessionRegistry sessionRegistry;
     private final RequestLookup requestLookup;
     private Session currentSession;
+    private String themeName;
 
     API(SessionRegistry sessionRegistry, RequestLookup requestLookup) {
         this.sessionRegistry = sessionRegistry;
@@ -167,12 +168,14 @@ public class API {
     /**
      * Sets the theme.
      *
-     * @param name theme name
-     * @throws IllegalArgumentException when name is null or empty
+     * @param themeName theme themeName
+     * @throws IllegalArgumentException when themeName is null or empty
      */
-    public void setTheme(String name) {
-        // TODO: 5/16/16 Set theme in the App
-        throw new UnsupportedOperationException("To be implemented");
+    public void setTheme(String themeName) {
+        if (!Theme.isValidThemeName(themeName)) {
+            throw new IllegalArgumentException("Theme name '" + themeName + "' is invalid.");
+        }
+        this.themeName = themeName;
     }
 
     /**
@@ -181,8 +184,7 @@ public class API {
      * @return theme name
      */
     public String getTheme() {
-        // TODO: 5/16/16 Get theme from the App
-        throw new UnsupportedOperationException("To be implemented");
+        return themeName;
     }
 
     private static String joinClassNames(Object[] args) {
