@@ -21,7 +21,6 @@ import org.wso2.carbon.uuf.api.Placeholder;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.wso2.carbon.uuf.internal.io.StaticResolver.DIR_NAME_COMPONENT_RESOURCES;
 import static org.wso2.carbon.uuf.internal.util.RequestUtil.THEMES_STATIC_RESOURCES_URI_PREFIX;
 
 public class Theme {
@@ -35,7 +34,7 @@ public class Theme {
                  List<String> bodyJsRelativePaths) {
         this.name = name;
 
-        String uriPrefix = THEMES_STATIC_RESOURCES_URI_PREFIX + name + "/" + DIR_NAME_COMPONENT_RESOURCES + "/";
+        String uriPrefix = THEMES_STATIC_RESOURCES_URI_PREFIX + name + "/";
         this.cssTagSuffixes = cssRelativePaths.stream()
                 .map(relativePath -> uriPrefix + relativePath + "\" rel=\"stylesheet\" type=\"text/css\" />")
                 .collect(Collectors.toList());
