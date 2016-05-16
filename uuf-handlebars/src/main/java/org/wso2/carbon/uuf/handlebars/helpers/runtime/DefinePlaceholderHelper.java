@@ -22,7 +22,7 @@ import org.wso2.carbon.uuf.handlebars.PlaceholderWriter;
 
 import java.io.IOException;
 
-import static org.wso2.carbon.uuf.handlebars.HbsRenderable.DATA_KEY_CURRENT_WRITER;
+import static org.wso2.carbon.uuf.handlebars.renderable.HbsRenderable.DATA_KEY_CURRENT_WRITER;
 
 public class DefinePlaceholderHelper implements Helper<String> {
 

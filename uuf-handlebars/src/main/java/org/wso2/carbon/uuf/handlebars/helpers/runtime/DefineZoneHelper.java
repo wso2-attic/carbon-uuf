@@ -28,9 +28,9 @@ import org.wso2.carbon.uuf.handlebars.model.ContextModel;
 import java.io.IOException;
 import java.util.Set;
 
-import static org.wso2.carbon.uuf.handlebars.HbsRenderable.DATA_KEY_API;
-import static org.wso2.carbon.uuf.handlebars.HbsRenderable.DATA_KEY_LOOKUP;
-import static org.wso2.carbon.uuf.handlebars.HbsRenderable.DATA_KEY_REQUEST_LOOKUP;
+import static org.wso2.carbon.uuf.handlebars.renderable.HbsRenderable.DATA_KEY_API;
+import static org.wso2.carbon.uuf.handlebars.renderable.HbsRenderable.DATA_KEY_LOOKUP;
+import static org.wso2.carbon.uuf.handlebars.renderable.HbsRenderable.DATA_KEY_REQUEST_LOOKUP;
 
 public class DefineZoneHelper implements Helper<String> {
 

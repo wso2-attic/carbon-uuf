@@ -23,7 +23,7 @@ import org.wso2.carbon.uuf.handlebars.helpers.FillPlaceholderHelper;
 
 import java.io.IOException;
 
-import static org.wso2.carbon.uuf.handlebars.HbsRenderable.DATA_KEY_REQUEST_LOOKUP;
+import static org.wso2.carbon.uuf.handlebars.renderable.HbsRenderable.DATA_KEY_REQUEST_LOOKUP;
 
 public class HeadJsHelper extends FillPlaceholderHelper<String> {
 

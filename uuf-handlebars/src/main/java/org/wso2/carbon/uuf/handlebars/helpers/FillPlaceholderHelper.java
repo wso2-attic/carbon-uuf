@@ -23,7 +23,7 @@ import org.wso2.carbon.uuf.core.RequestLookup;
 
 import java.util.Optional;
 
-import static org.wso2.carbon.uuf.handlebars.HbsRenderable.DATA_KEY_REQUEST_LOOKUP;
+import static org.wso2.carbon.uuf.handlebars.renderable.HbsRenderable.DATA_KEY_REQUEST_LOOKUP;
 
 public abstract class FillPlaceholderHelper<T> implements Helper<T> {
 

@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.wso2.carbon.uuf.handlebars;
+package org.wso2.carbon.uuf.handlebars.renderable;
 
 import com.github.jknack.handlebars.Context;
 import com.github.jknack.handlebars.io.TemplateSource;
@@ -26,6 +26,9 @@ import org.wso2.carbon.uuf.core.ComponentLookup;
 import org.wso2.carbon.uuf.core.RequestLookup;
 import org.wso2.carbon.uuf.exception.InvalidTypeException;
 import org.wso2.carbon.uuf.exception.UUFException;
+import org.wso2.carbon.uuf.handlebars.DebugUtil;
+import org.wso2.carbon.uuf.handlebars.Executable;
+import org.wso2.carbon.uuf.handlebars.PlaceholderWriter;
 import org.wso2.carbon.uuf.spi.model.Model;
 
 import java.io.IOException;

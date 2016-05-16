@@ -31,9 +31,9 @@ import org.wso2.carbon.uuf.spi.model.Model;
 import java.io.IOException;
 import java.util.Optional;
 
-import static org.wso2.carbon.uuf.handlebars.HbsRenderable.DATA_KEY_API;
-import static org.wso2.carbon.uuf.handlebars.HbsRenderable.DATA_KEY_LOOKUP;
-import static org.wso2.carbon.uuf.handlebars.HbsRenderable.DATA_KEY_REQUEST_LOOKUP;
+import static org.wso2.carbon.uuf.handlebars.renderable.HbsRenderable.DATA_KEY_API;
+import static org.wso2.carbon.uuf.handlebars.renderable.HbsRenderable.DATA_KEY_LOOKUP;
+import static org.wso2.carbon.uuf.handlebars.renderable.HbsRenderable.DATA_KEY_REQUEST_LOOKUP;
 
 public class FragmentHelper implements Helper<String> {
 

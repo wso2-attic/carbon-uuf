@@ -27,7 +27,7 @@ import org.wso2.carbon.uuf.core.ComponentLookup;
 import org.wso2.carbon.uuf.core.Fragment;
 import org.wso2.carbon.uuf.core.RequestLookup;
 import org.wso2.carbon.uuf.handlebars.Executable;
-import org.wso2.carbon.uuf.handlebars.HbsPageRenderable;
+import org.wso2.carbon.uuf.handlebars.renderable.HbsPageRenderable;
 import org.wso2.carbon.uuf.spi.model.Model;
 
 import java.util.Collections;

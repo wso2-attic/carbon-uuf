@@ -26,8 +26,8 @@ import org.wso2.carbon.uuf.api.HttpRequest;
 import org.wso2.carbon.uuf.api.Placeholder;
 import org.wso2.carbon.uuf.core.ComponentLookup;
 import org.wso2.carbon.uuf.core.RequestLookup;
-import org.wso2.carbon.uuf.handlebars.HbsPageRenderable;
-import org.wso2.carbon.uuf.handlebars.HbsRenderable;
+import org.wso2.carbon.uuf.handlebars.renderable.HbsPageRenderable;
+import org.wso2.carbon.uuf.handlebars.renderable.HbsRenderable;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
