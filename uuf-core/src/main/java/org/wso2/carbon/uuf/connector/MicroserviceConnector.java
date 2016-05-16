@@ -65,12 +65,13 @@ public class MicroserviceConnector implements Microservice {
 
     private static final Set<RenderableCreator> RENDERABLE_CREATORS = new HashSet<>();
     private static final Logger log = LoggerFactory.getLogger(MicroserviceConnector.class);
+
     private UUFRegistry registry;
     private final AtomicInteger count = new AtomicInteger(0);
 
     @SuppressWarnings("unused")
     public MicroserviceConnector() {
-        // We need an empty constructor for running in OSGi mode.
+        // Used in in OSGi mode.
         this(createRegistry());
     }
 
@@ -101,9 +102,9 @@ public class MicroserviceConnector implements Microservice {
 
     private Response execute(HttpRequest request) {
         MDC.put("uuf-request", String.valueOf(count.incrementAndGet()));
-        Response.ResponseBuilder response = registry.serve(request);
+        Response response = registry.serve(request);
         MDC.remove("uuf-request");
-        return response.build();
+        return response;
     }
 
     /**
