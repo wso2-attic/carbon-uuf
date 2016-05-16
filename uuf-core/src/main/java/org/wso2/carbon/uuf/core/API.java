@@ -16,10 +16,6 @@
 
 package org.wso2.carbon.uuf.core;
 
-import io.netty.handler.codec.http.cookie.ClientCookieDecoder;
-import io.netty.handler.codec.http.cookie.Cookie;
-import io.netty.handler.codec.http.cookie.DefaultCookie;
-import io.netty.handler.codec.http.cookie.ServerCookieEncoder;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.wso2.carbon.uuf.api.auth.Session;
 import org.wso2.carbon.uuf.api.auth.User;
@@ -33,10 +29,8 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
-import javax.ws.rs.core.HttpHeaders;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 // TODO remove this SuppressWarnings
 @SuppressWarnings("PackageAccessibility")
@@ -111,7 +105,7 @@ public class API {
     }
 
     public static void callMicroService() {
-        // this need to switch network call or osgi call accordingly
+        // TODO: 5/16/16 Call a Microservice through OSGi or network-call accrodingly
         throw new UnsupportedOperationException("To be implemented");
     }
 
@@ -134,7 +128,7 @@ public class API {
         sessionRegistry.addSession(session);
         String header = SessionRegistry.SESSION_COOKIE_NAME + "=" + session.getSessionId() + "; Path=" +
                 requestLookup.getAppContext() + "; Secure; HTTPOnly";
-        requestLookup.setResponseHeader(HttpHeaders.SET_COOKIE, header);
+        requestLookup.setResponseHeader("Set-Cookie", header);
         return session;
     }
 
@@ -159,14 +153,8 @@ public class API {
      * @throws IllegalArgumentException when name is null or empty
      */
     public void setTheme(String name) {
-        if (name == null || name.isEmpty()) {
-            throw new IllegalArgumentException("Cannot set the theme, 'theme-name' can not be empty.");
-        }
-        Cookie cookie = new DefaultCookie("uuf-theme", name);
-        cookie.setHttpOnly(true);
-        //TODO: may be we can have multiple themes based on paths
-        cookie.setPath("/");
-        requestLookup.setResponseHeader(HttpHeaders.SET_COOKIE, ServerCookieEncoder.STRICT.encode(cookie));
+        // TODO: 5/16/16 Set theme in the App
+        throw new UnsupportedOperationException("To be implemented");
     }
 
     /**
@@ -175,22 +163,8 @@ public class API {
      * @return theme name
      */
     public String getTheme() {
-        String cookieHeader = requestLookup.getRequest().getHeaders().get(HttpHeaders.COOKIE);
-        Optional<Cookie> cookie = readCookie(cookieHeader, "uuf-theme");
-        if (cookie.isPresent()) {
-            return cookie.get().value();
-        }
-        return null;
-    }
-
-    private Optional<Cookie> readCookie(String header, String name) {
-        String[] cookiesParts = header.split(";");
-        for (String cookiePart : cookiesParts) {
-            if (cookiePart.trim().startsWith(name)) {
-                return Optional.of(ClientCookieDecoder.STRICT.decode(cookiePart));
-            }
-        }
-        return Optional.empty();
+        // TODO: 5/16/16 Get theme from the App
+        throw new UnsupportedOperationException("To be implemented");
     }
 
     private static String joinClassNames(Object[] args) {
