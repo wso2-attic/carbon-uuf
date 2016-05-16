@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.wso2.carbon.uuf.connector;
+package org.wso2.carbon.uuf.connector.ms;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
