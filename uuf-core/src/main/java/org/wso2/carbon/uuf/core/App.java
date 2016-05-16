@@ -16,8 +16,6 @@
 
 package org.wso2.carbon.uuf.core;
 
-import io.netty.handler.codec.http.QueryStringDecoder;
-import org.wso2.carbon.uuf.api.HttpRequest;
 import org.wso2.carbon.uuf.api.model.MapModel;
 import org.wso2.carbon.uuf.exception.FragmentNotFoundException;
 import org.wso2.carbon.uuf.exception.PageNotFoundException;
@@ -26,8 +24,6 @@ import org.wso2.carbon.uuf.internal.util.NameUtils;
 import org.wso2.carbon.uuf.internal.util.RequestUtil;
 import org.wso2.carbon.uuf.spi.model.Model;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -44,7 +40,7 @@ public class App {
     public App(String name, Set<Component> components, SessionRegistry sessionRegistry) {
         this.name = name;
         this.components = components.stream().collect(Collectors.toMap(Component::getContext, cmp -> cmp));
-        this.rootComponent = this.components.get(Component.ROOT_COMPONENT_CONTEXT);
+        this.rootComponent = this.components.remove(Component.ROOT_COMPONENT_CONTEXT);
         this.context = this.rootComponent.getConfiguration().getAppContext()
                 .orElse("/" + NameUtils.getSimpleName(name));
         this.sessionRegistry = sessionRegistry;
@@ -90,50 +86,20 @@ public class App {
      * @return rendered output
      */
     public String renderFragment(String uriWithoutAppContext, RequestLookup requestLookup) {
+        String fragmentName = uriWithoutAppContext.substring(RequestUtil.FRAGMENTS_URI_PREFIX.length());
+        if(NameUtils.isSimpleName(fragmentName)){
+            fragmentName = NameUtils.getFullyQualifiedName(rootComponent.getName(), fragmentName);
+        }
+        // When building the dependency tree, all fragments are accumulated into the rootComponent.
+        Fragment fragment = rootComponent.getAllFragments().get(fragmentName);
+        if(fragment == null){
+            throw new FragmentNotFoundException("Requested fragment '"+fragmentName+"' does not exists.");
+        }
+
+        Model model = new MapModel(requestLookup.getRequest().getQueryParams().entrySet().stream()
+                                           .collect(Collectors.toMap(Map.Entry::getKey, entry -> (Object) entry)));
         API api = new API(sessionRegistry, requestLookup);
-
-        int queryParamsPos = uriWithoutAppContext.indexOf("?");
-        String fragmentName = (queryParamsPos > -1) ?
-                uriWithoutAppContext.substring(RequestUtil.FRAGMENTS_URI_PREFIX.length(), queryParamsPos) :
-                uriWithoutAppContext.substring(RequestUtil.FRAGMENTS_URI_PREFIX.length());
-        if (!NameUtils.isFullyQualifiedName(fragmentName)) {
-            fragmentName = NameUtils.getFullyQualifiedName(Component.ROOT_COMPONENT_NAME, fragmentName);
-        }
-
-        Model model = createModel(requestLookup.getRequest());
-        // First try to render the fragment with root component.
-        ComponentLookup componentLookup = rootComponent.getLookup();
-        Optional<Fragment> fragment = rootComponent.getLookup().getFragment(fragmentName);
-        if (fragment.isPresent()) {
-            return fragment.get().render(model, componentLookup, requestLookup, api);
-        }
-
-        // Since root components doesn't have the fragment, try with other components.
-        String componentName = NameUtils.getComponentName(fragmentName);
-        for (Map.Entry<String, Component> entry : components.entrySet()) {
-            if (componentName.startsWith(entry.getKey())) {
-                Component component = entry.getValue();
-                componentLookup = component.getLookup();
-                fragment = componentLookup.getFragment(fragmentName);
-                if (fragment.isPresent()) {
-                    return fragment.get().render(new MapModel(new HashMap<>()), componentLookup, requestLookup, api);
-                }
-                break;
-            }
-        }
-        throw new FragmentNotFoundException("Requested fragment '" + uriWithoutAppContext + "' does not exists.");
-    }
-
-    private Model createModel(HttpRequest httpRequest) {
-        QueryStringDecoder decoder = new QueryStringDecoder(httpRequest.getUri());
-        Map<String, List<String>> parameters = decoder.parameters();
-        Map<String, Object> queryParams = parameters.entrySet().parallelStream()
-                .collect(Collectors.toMap(Map.Entry::getKey,
-                                          entry -> {
-                                              List<String> value = entry.getValue();
-                                              return (value.size() > 1) ? value : value.get(0);
-                                          }));
-        return new MapModel(queryParams);
+        return fragment.render(model, rootComponent.getLookup(), requestLookup, api);
     }
 
     public boolean hasPage(String uri) {
