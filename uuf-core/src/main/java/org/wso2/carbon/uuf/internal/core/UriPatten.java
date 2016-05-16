@@ -117,7 +117,7 @@ public class UriPatten implements Comparable<UriPatten> {
 
     public Optional<Map<String, String>> match(String uri) {
         Matcher matcher = this.pattern.matcher(uri);
-        if (matcher.find()) {
+        if (matcher.matches()) {
             Map<String, String> result = new HashMap<>(variableNames.size());
             for (int i = 1; i <= matcher.groupCount(); i++) {
                 String name = variableNames.get(i - 1);
