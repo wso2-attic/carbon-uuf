@@ -153,7 +153,7 @@ public class StaticResolver {
 
     private Path resolveResourceInTheme(String appSimpleName, String uriWithoutAppContext) {
         // Correct 'uriWithoutAppContext' value must be in
-        // "/public/themes/{theme-simple-name}/{sub-directory}/{rest-of-the-path}" format.
+        // "/public/themes/{theme-name}/{sub-directory}/{rest-of-the-path}" format.
         // So there should be at least 5 slashes. Don't worry about multiple consecutive slashes. They  are covered
         // in RequestUtil.isValid(HttpRequest) method which is called before this method.
 
