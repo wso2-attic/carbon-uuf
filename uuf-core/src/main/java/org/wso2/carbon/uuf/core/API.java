@@ -16,6 +16,7 @@
 
 package org.wso2.carbon.uuf.core;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.wso2.carbon.uuf.api.auth.Session;
 import org.wso2.carbon.uuf.api.auth.User;
@@ -141,9 +142,26 @@ public class API {
         if (currentSession == null) {
             // Since an API object lives in the request scope, it is safe to cache the current Session object.
             String sessionId = requestLookup.getRequest().getCookieValue(SessionRegistry.SESSION_COOKIE_NAME);
-            currentSession = (sessionId == null) ? null : sessionRegistry.getSession(sessionId).orElse(null);
+            currentSession = StringUtils.isEmpty(sessionId) ? null : sessionRegistry.getSession(sessionId).orElse(null);
         }
         return currentSession;
+    }
+
+    public boolean destroySession() {
+        Session session = getSession();
+        if (session == null) {
+            // No session found in the current request.
+            return false;
+        }
+
+        // Remove session from the SessionRegistry.
+        sessionRegistry.removeSession(session.getSessionId());
+        // Clear the session cookie by setting its value to an empty string, Max-Age to zero, & Expires to a past date.
+        String header = SessionRegistry.SESSION_COOKIE_NAME +
+                "=; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:01 GMT; Path=" + requestLookup.getAppContext() +
+                "; Secure; HTTPOnly";
+        requestLookup.setResponseHeader("Set-Cookie", header);
+        return true;
     }
 
     /**
