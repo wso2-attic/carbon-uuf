@@ -65,6 +65,8 @@ public class JSExecutable implements Executable {
     public Object execute(Object context, API api) {
         engine.put("createSession", (JSFunction.CreateSession) api::createSession);
         engine.put("getSession", (JSFunction.GetSession) api::getSession);
+        engine.put("getSession", (JSFunction.GetSession) api::getSession);
+        engine.put("destroySession", (JSFunction.DestroySession) api::destroySession);
         engine.put("setTheme", (JSFunction.SetTheme) api::setTheme);
         engine.put("getTheme", (JSFunction.GetTheme) api::getTheme);
         try {
@@ -118,6 +120,13 @@ public class JSExecutable implements Executable {
 
             @SuppressWarnings("unused")
             Session call();
+        }
+
+        @FunctionalInterface
+        public interface DestroySession {
+
+            @SuppressWarnings("unused")
+            boolean call();
         }
 
         @FunctionalInterface
