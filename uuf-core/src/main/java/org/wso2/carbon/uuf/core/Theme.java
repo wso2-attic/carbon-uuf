@@ -77,4 +77,8 @@ public class Theme {
     public String toString() {
         return "{\"name\": \"" + name + "}";
     }
+
+    public static boolean isValidThemeName(String themeName) {
+        return (themeName != null) && (!themeName.isEmpty());
+    }
 }

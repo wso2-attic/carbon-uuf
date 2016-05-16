@@ -16,6 +16,8 @@
 
 package org.wso2.carbon.uuf.api.auth;
 
+import org.wso2.carbon.uuf.core.Theme;
+
 import java.io.Serializable;
 import java.security.SecureRandom;
 import java.util.Base64;
@@ -59,12 +61,8 @@ public class Session implements Serializable {
     }
 
     public void setThemeName(String themeName) {
-        if (themeName == null) {
-            throw new IllegalArgumentException("Theme name cannot be null.");
-        }
-        themeName = themeName.trim();
-        if (themeName.isEmpty()) {
-            throw new IllegalArgumentException("Theme name cannot be empty.");
+        if (!Theme.isValidThemeName(themeName)) {
+            throw new IllegalArgumentException("Theme name '" + themeName + "' is invalid.");
         }
         this.themeName = themeName;
     }
