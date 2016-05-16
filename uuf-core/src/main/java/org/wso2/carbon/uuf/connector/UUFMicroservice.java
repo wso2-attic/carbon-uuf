@@ -61,21 +61,21 @@ import java.util.concurrent.atomic.AtomicInteger;
            service = Microservice.class,
            immediate = true)
 @Path("/")
-public class MicroserviceConnector implements Microservice {
+public class UUFMicroservice implements Microservice {
 
     private static final Set<RenderableCreator> RENDERABLE_CREATORS = new HashSet<>();
-    private static final Logger log = LoggerFactory.getLogger(MicroserviceConnector.class);
+    private static final Logger log = LoggerFactory.getLogger(UUFMicroservice.class);
 
     private UUFRegistry registry;
     private final AtomicInteger count = new AtomicInteger(0);
 
     @SuppressWarnings("unused")
-    public MicroserviceConnector() {
+    public UUFMicroservice() {
         // Used in in OSGi mode.
         this(createRegistry());
     }
 
-    public MicroserviceConnector(UUFRegistry server) {
+    public UUFMicroservice(UUFRegistry server) {
         // Used in the fat-jar mode.
         this.registry = server;
     }
@@ -140,12 +140,12 @@ public class MicroserviceConnector implements Microservice {
 
     private static class HttpStreamHandlerImpl implements HttpStreamHandler {
         private final ByteArrayOutputStream content = new ByteArrayOutputStream();
-        private final MicroserviceConnector microserviceConnector;
+        private final UUFMicroservice UUFMicroservice;
         private final io.netty.handler.codec.http.HttpRequest nettyRequest;
 
-        public HttpStreamHandlerImpl(MicroserviceConnector microserviceConnector,
+        public HttpStreamHandlerImpl(UUFMicroservice UUFMicroservice,
                                      io.netty.handler.codec.http.HttpRequest nettyRequest) {
-            this.microserviceConnector = microserviceConnector;
+            this.UUFMicroservice = UUFMicroservice;
             this.nettyRequest = nettyRequest;
         }
 
@@ -160,7 +160,7 @@ public class MicroserviceConnector implements Microservice {
             content.close();
 
             HttpRequest httpRequest = new MicroserviceHttpRequest(this.nettyRequest, content.toByteArray());
-            Response response = microserviceConnector.execute(httpRequest);
+            Response response = UUFMicroservice.execute(httpRequest);
             ByteBuf channelBuffer = Unpooled.wrappedBuffer(response.getEntity().toString().getBytes());
             Multimap<String, String> headers = ArrayListMultimap.create();
             response.getHeaders().forEach(
