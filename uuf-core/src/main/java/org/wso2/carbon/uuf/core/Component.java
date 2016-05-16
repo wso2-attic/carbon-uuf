@@ -89,7 +89,6 @@ public class Component {
         return Optional.of(servingPage.render(null, lookup, requestLookup, api));
     }
 
-    @Deprecated
     public boolean hasPage(String pageUri) {
         return pages.stream().filter(page -> page.getUriPatten().matches(pageUri)).findFirst().isPresent();
     }
