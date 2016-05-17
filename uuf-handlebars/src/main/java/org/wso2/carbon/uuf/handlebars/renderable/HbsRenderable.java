@@ -25,6 +25,7 @@ import org.wso2.carbon.uuf.core.RequestLookup;
 import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.handlebars.helpers.FillPlaceholderHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.CssHelper;
+import org.wso2.carbon.uuf.handlebars.helpers.runtime.MenuHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.DefinePlaceholderHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.DefineZoneHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.FillZoneHelper;
@@ -57,6 +58,7 @@ public abstract class HbsRenderable implements Renderable {
             HeadOtherHelper.HELPER_NAME, new HeadOtherHelper());
 
     static {
+        HANDLEBARS.registerHelper(MenuHelper.HELPER_NAME, new MenuHelper());
         HANDLEBARS.registerHelper(DefineZoneHelper.HELPER_NAME, new DefineZoneHelper());
         HANDLEBARS.registerHelper(FillZoneHelper.HELPER_NAME, new FillZoneHelper());
         HANDLEBARS.registerHelper(FragmentHelper.HELPER_NAME, new FragmentHelper());

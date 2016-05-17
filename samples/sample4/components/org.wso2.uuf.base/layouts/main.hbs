@@ -4,7 +4,9 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    {{css "css/bootstrap.min.css"}}
+    {{css "lib/bootstrap-v3.3.5/bootstrap.min.css"}}
+    {{headJs "lib/jquery-v2.2.3/jquery.min.js"}}
+    {{headJs "lib/bootstrap-v3.3.5/bootstrap.min.js"}}
     {{css "css/theme.css" }}
     <title>WSO2 Template</title>
 
@@ -12,7 +14,6 @@
     {{placeholder 'css'}}
 </head>
 <body>
-
 <header class="header header-default">
     <div class="container-fluid">
         <div class="pull-left brand float-remove-xs text-center-xs">
@@ -28,6 +29,40 @@
         </div>
     </div>
 </header>
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <!------start of menu----->
+            {{#menu "main"}}
+                {{~#if this~}}
+                    <ul class="nav navbar-nav">
+                        {{~#each this}}
+                            {{~#if link}}
+                                <li><a href="{{@app.context}}/{{link}}"><i class="{{icon}}"></i>{{text}}</a></li>
+                            {{~else}}
+                                {{~#each this}}
+                                    <li class="dropdown">
+                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                                           aria-haspopup="true" aria-expanded="false">{{@key}} <span
+                                                class="caret"></span></a>
+                                        <ul class="dropdown-menu">
+                                            {{~#each this}}
+                                                {{~#if link}}
+                                                    <li><a href="{{@app.context}}/{{link}}"><i class="{{icon}}"></i>{{text}}</a></li>
+                                                {{~/if}}
+                                            {{~/each}}
+                                        </ul>
+                                    </li>
+                                {{~/each}}
+                            {{~/if}}
+                        {{~/each}}
+                    </ul>
+                {{~/if}}
+            {{/menu}}
+        </div>
+    </div>
+</nav>
 <div class="page-content-wrapper">
     <div class="container-fluid body-wrapper">
         {{defineZone "content"}}

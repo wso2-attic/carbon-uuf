@@ -19,8 +19,10 @@ package org.wso2.carbon.uuf.api;
 import org.wso2.carbon.uuf.exception.InvalidTypeException;
 import org.wso2.carbon.uuf.exception.MalformedConfigurationException;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiFunction;
@@ -34,6 +36,7 @@ public class Configuration extends HashMap<String, Object> {
     public static final String KEY_APP_CONTEXT = "appContext";
     public static final String KEY_DEFAULT_THEME = "defaultTheme";
     public static final String KEY_ERROR_PAGES = "errorPages";
+    public static final String KEY_MENU = "menu";
 
     public Configuration(Map<?, ?> rawMap) {
         this(rawMap.size());
@@ -90,6 +93,46 @@ public class Configuration extends HashMap<String, Object> {
                     "Value of 'defaultTheme' in the root component configuration must be a string. Instead found '" +
                             defaultThemeNameObj.getClass().getName() + "'.");
         }
+    }
+
+    /**
+     * Returns List of Menu Items for this 'name'. Menu Item can be a Map(end item), or a List(sub-menu).
+     * When there is no menu associated with the specified 'name' returns an empty list.
+     * @param name menu name
+     * @return List of menu items or empty list
+     */
+    public List<Object> getMenu(String name) {
+        //validate menu property
+        Object value = super.get(KEY_MENU);
+        if ((value == null)){
+            return new ArrayList<>();
+        } else if (!(value instanceof Map)) {
+            throw new InvalidTypeException(
+                    "Menu property on the configurations must be a map / dictionary. Instead found " + value.getClass().getName() + ".");
+        }
+        //validate requested menu
+        Object menuObj = ((Map)value).get(name);
+        if ((menuObj == null)){
+            return new ArrayList<>();
+        } else if (!(menuObj instanceof List)) {
+            throw new InvalidTypeException(
+                    "Menu of '" + name + "' must be a list. Instead found " + value.getClass().getName() + ".");
+        }
+        @SuppressWarnings("unchecked")
+        List<Object> menu = (List) menuObj;
+        //validate menu items
+        for (int index = 0; index < menu.size(); index++) {
+            Object obj = menu.get(index);
+            if (obj == null) {
+                throw new InvalidTypeException(
+                        "Menu item[" + index + "] for the menu '" + name + "' must be non-empty.");
+            } else if (!(obj instanceof Map || obj instanceof List)) {
+                throw new InvalidTypeException(
+                        "Menu item[" + index + "] for the menu '" + name + "' must be a list or a map. Instead found " +
+                                value.getClass().getName() + ".");
+            }
+        }
+        return menu;
     }
 
     @SuppressWarnings("unchecked")

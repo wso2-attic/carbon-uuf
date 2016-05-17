@@ -5,3 +5,4 @@ lifecycle:
       show: false
     - state: new
       show: true
+defaultTheme : default

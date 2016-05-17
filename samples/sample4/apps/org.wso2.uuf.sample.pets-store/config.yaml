@@ -5,3 +5,11 @@ lifecycle:
       show: false
     - state: new
       show: true
+defaultTheme : default
+menu :
+  main :
+    - { icon: "fw-home", link: "#home", text: "Home" }
+    - Pets :
+      - { icon: "fw fw-list", link: "pets", text: "See all our amazing pets" }
+      - { icon: "fw fw-add", link: "pets/new", text: "Add a new pets" }
+      - { icon: "fw fw-bug", link: "pets/snowball", text: "Pet of the month" }
