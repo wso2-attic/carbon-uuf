@@ -15,10 +15,9 @@
  */
 
 import com.google.common.collect.ImmutableSet;
+import org.wso2.carbon.uuf.connector.ms.UUFMicroservice;
 import org.wso2.carbon.uuf.handlebars.HbsRenderableCreator;
-import org.wso2.carbon.uuf.internal.DebugAppender;
 import org.wso2.carbon.uuf.internal.UUFRegistry;
-import org.wso2.carbon.uuf.connector.MicroserviceConnector;
 import org.wso2.carbon.uuf.internal.core.create.AppCreator;
 import org.wso2.carbon.uuf.internal.core.create.AppDiscoverer;
 import org.wso2.carbon.uuf.internal.core.create.ClassLoaderProvider;
@@ -38,6 +37,6 @@ public class Main {
         AppCreator appCreator = new AppCreator(ImmutableSet.of(hbsCreator), classLoaderProvider);
         StaticResolver staticResolver = new StaticResolver(FileSystems.getDefault().getPath("."));
         UUFRegistry registry = new UUFRegistry(appDiscoverer, appCreator, staticResolver);
-        new MicroservicesRunner().deploy(new MicroserviceConnector(registry)).start();
+        new MicroservicesRunner().deploy(new UUFMicroservice(registry)).start();
     }
 }
