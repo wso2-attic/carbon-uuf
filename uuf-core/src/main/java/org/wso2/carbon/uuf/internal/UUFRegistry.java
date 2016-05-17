@@ -29,6 +29,7 @@ import org.wso2.carbon.uuf.exception.PageRedirectException;
 import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.internal.core.create.AppCreator;
 import org.wso2.carbon.uuf.internal.core.create.AppDiscoverer;
+import org.wso2.carbon.uuf.internal.debug.DebugAppender;
 import org.wso2.carbon.uuf.internal.io.StaticResolver;
 import org.wso2.carbon.uuf.internal.util.MimeMapper;
 import org.wso2.carbon.uuf.internal.util.RequestUtil;
