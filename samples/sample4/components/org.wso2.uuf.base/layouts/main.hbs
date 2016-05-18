@@ -4,14 +4,10 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    {{css "lib/bootstrap-v3.3.5/bootstrap.min.css"}}
-    {{headJs "lib/jquery-v2.2.3/jquery.min.js"}}
-    {{headJs "lib/bootstrap-v3.3.5/bootstrap.min.js"}}
-    {{css "css/theme.css" }}
-    <title>WSO2 Template</title>
-
-    {{placeholder 'headJs'}}
-    {{placeholder 'css'}}
+    <title>{{placeholder "title"}}</title>
+    {{placeholder "css"}}
+    {{placeholder "headJs"}}
+    {{placeholder "headOther"}}
 </head>
 <body>
 <header class="header header-default">
@@ -33,16 +29,16 @@
     <div class="container-fluid">
         <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
-            <!------start of menu----->
+            <!-- start of menu -->
             {{#menu "main"}}
                 {{~#if this~}}
                     <ul class="nav navbar-nav">
                         {{~#each this}}
-                            <!------end menu item----->
+                            <!-- end menu item -->
                             {{~#if link}}
                                 <li><a href="{{@app.context}}/{{link}}"><i class="{{icon}}"></i>{{text}}</a></li>
                             {{~else}}
-                            <!------sub menu item----->
+                            <!-- sub menu item -->
                                 {{~#each this}}
                                     <li class="dropdown">
                                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
@@ -66,7 +62,7 @@
                     </ul>
                 {{~/if}}
             {{/menu}}
-            <!------end of menu----->
+            <!-- end of menu -->
         </div>
     </div>
 </nav>
