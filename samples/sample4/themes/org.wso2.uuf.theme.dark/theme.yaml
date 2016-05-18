@@ -1,1 +1,7 @@
-themeName: Dark
+css:
+ - lib/bootstrap-v3.3.5/bootstrap.min.css
+ - lib/theme-wso2_1.0/theme.css
+headJs:
+ - lib/jquery-v2.2.3/jquery.min.js
+ - lib/bootstrap-v3.3.5/bootstrap.min.js
+js: []
