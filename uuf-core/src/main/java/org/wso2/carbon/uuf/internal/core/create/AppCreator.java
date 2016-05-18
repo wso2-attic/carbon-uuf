@@ -149,8 +149,6 @@ public class AppCreator {
         }
 
         Set<Theme> themes = appReference.getThemeReferences().map(this::createTheme).collect(Collectors.toSet());
-        // TODO: 5/17/16 remove following line after fixing maven plugin to build themes
-        themes.add(new Theme("default", Collections.emptyList(), Collections.emptyList(), Collections.emptyList()));
 
         return new App(appName, components, themes, new SessionRegistry(appName));
     }
