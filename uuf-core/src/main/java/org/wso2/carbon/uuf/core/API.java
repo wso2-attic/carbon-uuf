@@ -112,10 +112,19 @@ public class API {
     }
 
     public static void sendError(int status, String message) {
+        if ((status < 100) || (status > 599)) {
+            throw new IllegalArgumentException("HTTP status code must be between 100 (inclusive) and 600 (exclusive).");
+        }
+        if ((message == null) || message.isEmpty()) {
+            throw new IllegalArgumentException("Error message cannot be null or empty.");
+        }
         throw new HttpErrorException(status, message);
     }
 
     public static void sendRedirect(String redirectUrl) {
+        if ((redirectUrl == null) || redirectUrl.isEmpty()) {
+            throw new IllegalArgumentException("Redirect URL cannot be null or empty");
+        }
         throw new PageRedirectException(redirectUrl);
     }
 
