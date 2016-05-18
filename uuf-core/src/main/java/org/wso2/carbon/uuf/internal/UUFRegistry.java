@@ -29,8 +29,11 @@ import org.wso2.carbon.uuf.exception.PageRedirectException;
 import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.internal.core.create.AppCreator;
 import org.wso2.carbon.uuf.internal.core.create.AppDiscoverer;
+import org.wso2.carbon.uuf.internal.debug.DebugAppender;
+import org.wso2.carbon.uuf.internal.debug.Debugger;
 import org.wso2.carbon.uuf.internal.io.StaticResolver;
 import org.wso2.carbon.uuf.internal.util.MimeMapper;
+import org.wso2.carbon.uuf.internal.util.NameUtils;
 import org.wso2.carbon.uuf.internal.util.RequestUtil;
 
 import javax.ws.rs.core.HttpHeaders;
@@ -92,6 +95,9 @@ public class UUFRegistry {
             if (app == null) {
                 throw new HttpErrorException(404, "Cannot find an app for context '" + request.getAppContext() + "'.");
             }
+            if (Debugger.isDebuggingEnabled()) {
+                app = reloadApp(app, appDiscoverer, appCreator);
+            }
             if (RequestUtil.isStaticResourceRequest(request)) {
                 return staticResolver.createResponse(app, request).build();
             }
@@ -141,6 +147,15 @@ public class UUFRegistry {
                     return app;
                 })
                 .collect(Collectors.toMap(App::getContext, app -> app));
+    }
+
+    private static App reloadApp(App app, AppDiscoverer appDiscoverer, AppCreator appCreator) {
+        String appSimpleName = NameUtils.getSimpleName(app.getName());
+        return appDiscoverer.getAppReferences()
+                .filter(appReference -> appSimpleName.equals(appReference.getName()))
+                .findFirst()
+                .map(appCreator::createApp)
+                .orElseThrow(() -> new UUFException("Cannot reload app '" + app.getName() + "'."));
     }
 
     private Response.ResponseBuilder renderDebug(App app, String uriWithoutAppContext) {

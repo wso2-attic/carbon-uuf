@@ -51,7 +51,11 @@
                                         <ul class="dropdown-menu">
                                             {{~#each this}}
                                                 {{~#if link}}
-                                                    <li><a href="{{@app.context}}/{{link}}"><i class="{{icon}}"></i>{{text}}</a></li>
+                                                    <li>
+                                                        <a href="{{@app.context}}/{{link}}">
+                                                            <i class="{{icon}}"></i> {{text}}
+                                                        </a>
+                                                    </li>
                                                 {{~/if}}
                                             {{~/each}}
                                         </ul>

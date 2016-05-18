@@ -1,4 +1,4 @@
-uuf.productName : Pet Store
+appName : Pet Store
 elementsPerPage: 10
 lifecycle:
     - state: adopted

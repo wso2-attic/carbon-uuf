@@ -16,16 +16,20 @@
 
 package org.wso2.carbon.uuf.internal.core.create;
 
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ListMultimap;
 import com.google.common.collect.SetMultimap;
 import org.apache.commons.lang3.tuple.Pair;
 import org.wso2.carbon.uuf.api.Configuration;
+import org.wso2.carbon.uuf.api.Placeholder;
 import org.wso2.carbon.uuf.core.App;
 import org.wso2.carbon.uuf.core.Component;
 import org.wso2.carbon.uuf.core.ComponentLookup;
 import org.wso2.carbon.uuf.core.Fragment;
 import org.wso2.carbon.uuf.core.Layout;
 import org.wso2.carbon.uuf.core.Page;
+import org.wso2.carbon.uuf.core.Theme;
 import org.wso2.carbon.uuf.exception.InvalidTypeException;
 import org.wso2.carbon.uuf.exception.MalformedConfigurationException;
 import org.wso2.carbon.uuf.exception.UUFException;
@@ -37,6 +41,7 @@ import org.wso2.carbon.uuf.reference.FileReference;
 import org.wso2.carbon.uuf.reference.FragmentReference;
 import org.wso2.carbon.uuf.reference.LayoutReference;
 import org.wso2.carbon.uuf.reference.PageReference;
+import org.wso2.carbon.uuf.reference.ThemeReference;
 import org.wso2.carbon.uuf.spi.Renderable;
 import org.wso2.carbon.uuf.spi.RenderableCreator;
 import org.yaml.snakeyaml.Yaml;
@@ -142,7 +147,12 @@ public class AppCreator {
             components.add(component);
             previousLevel = currentLevel;
         }
-        return new App(appName, components, new SessionRegistry(appName));
+
+        Set<Theme> themes = appReference.getThemeReferences().map(this::createTheme).collect(Collectors.toSet());
+        // TODO: 5/17/16 remove following line after fixing maven plugin to build themes
+        themes.add(new Theme("default", Collections.emptyList(), Collections.emptyList(), Collections.emptyList()));
+
+        return new App(appName, components, themes, new SessionRegistry(appName));
     }
 
     private Component createComponent(String componentName, String componentVersion, String componentContext,
@@ -175,12 +185,13 @@ public class AppCreator {
                 .map((fragmentReference) -> createFragment(componentName, fragmentReference, classLoader))
                 .collect(Collectors.toMap(Fragment::getName, fragment -> fragment));
 
+        Yaml yaml = new Yaml();
         SetMultimap<String, Fragment> bindings;
         try {
             @SuppressWarnings("unchecked")
             Map<Object, Object> bindingsConfig = componentReference
                     .getBindingsConfig()
-                    .map(fileReference -> new Yaml().loadAs(fileReference.getContent(), Map.class))
+                    .map(fileReference -> yaml.loadAs(fileReference.getContent(), Map.class))
                     .orElse(Collections.emptyMap());
             bindings = createBindings(bindingsConfig, fragments, dependencies);
         } catch (Exception e) {
@@ -192,10 +203,9 @@ public class AppCreator {
 
         Configuration configurations;
         try {
-            @SuppressWarnings("unchecked")
-            Map<String, Object> rawConfigurations = componentReference
+            Map<?, ?> rawConfigurations = componentReference
                     .getConfigurations()
-                    .map(fileReference -> new Yaml().loadAs(fileReference.getContent(), Map.class))
+                    .map(fileReference -> yaml.loadAs(fileReference.getContent(), Map.class))
                     .orElse(new HashMap<>(0));
             configurations = new Configuration(rawConfigurations);
         } catch (Exception e) {
@@ -318,5 +328,53 @@ public class AppCreator {
                     "Cannot find a RenderableCreator for file type '" + fileReference.getExtension() + "'.");
         }
         return renderableCreator;
+    }
+
+    private Theme createTheme(ThemeReference themeReference) {
+        Map<?, ?> rawConfig;
+        try {
+            rawConfig = new Yaml().loadAs(themeReference.getThemeConfig().getContent(), Map.class);
+        } catch (Exception e) {
+            // Yaml.loadAs() throws an Exception
+            throw new MalformedConfigurationException(
+                    "Theme configuration '" + themeReference.getThemeConfig().getRelativePath() + "' is malformed.", e);
+        }
+
+        ListMultimap<String, String> config = ArrayListMultimap.create();
+        for (Map.Entry<?, ?> entry : rawConfig.entrySet()) {
+            if (!(entry.getKey() instanceof String)) {
+                throw new InvalidTypeException(
+                        "Theme configuration must be a Map<String, String[]>. Instead found a '" +
+                                entry.getKey().getClass().getName() + "' key.");
+            }
+            String key = (String) entry.getKey();
+            if (!key.equals(Placeholder.css.name()) || !key.equals(Placeholder.headJs.name()) || !key.equals(
+                    Placeholder.js.name())) {
+                throw new IllegalArgumentException(
+                        "Theme configuration must be a Map<String, String[]> where key has to be either '" +
+                                Placeholder.css + "', '" + Placeholder.headJs + "', and '" + Placeholder.js +
+                                "'. Instead found '" + key + "' key.");
+            }
+
+            if (!(entry.getValue() instanceof List)) {
+                throw new InvalidTypeException(
+                        "Theme configuration must be a Map<String, List<String>>. Instead found a '" +
+                                entry.getKey().getClass().getName() + "' value.");
+            } else {
+                List<?> rawList = (List) entry.getValue();
+                for (Object listValue : rawList) {
+                    if ((listValue instanceof String)) {
+                        config.put(key, (String) listValue);
+                    } else {
+                        throw new InvalidTypeException(
+                                "Theme configuration must be a Map<String, List<String>>. Instead found a '" +
+                                        entry.getKey().getClass().getName() + "' value.");
+                    }
+                }
+            }
+
+        }
+        return new Theme(themeReference.getName(), config.get(Placeholder.css.name()),
+                         config.get(Placeholder.headJs.name()), config.get(Placeholder.js.name()));
     }
 }

@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.wso2.carbon.uuf.internal;
+package org.wso2.carbon.uuf.internal.debug;
 
 import com.google.gson.Gson;
 import org.apache.log4j.AppenderSkeleton;
