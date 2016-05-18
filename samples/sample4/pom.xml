@@ -29,6 +29,7 @@
     <url>http://wso2.org</url>
 
     <modules>
+        <module>themes/org.wso2.uuf.theme.dark</module>
         <module>components/org.wso2.is.uuf.basicauth</module>
         <module>components/org.wso2.uuf.base</module>
         <module>components/org.wso2.store.ui.store-common</module>

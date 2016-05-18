@@ -32,7 +32,7 @@
             <plugin>
                 <groupId>org.wso2.carbon.maven</groupId>
                 <artifactId>carbon-uuf-maven-plugin</artifactId>
-                <version>1.0.0-m1</version>
+                <version>1.0.0-m3</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
