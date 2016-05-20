@@ -346,8 +346,8 @@ public class AppCreator {
                                 entry.getKey().getClass().getName() + "' key.");
             }
             String key = (String) entry.getKey();
-            if (!key.equals(Placeholder.css.name()) || !key.equals(Placeholder.headJs.name()) || !key.equals(
-                    Placeholder.js.name())) {
+            if (!(key.equals(Placeholder.css.name()) || key.equals(Placeholder.headJs.name()) ||
+                    key.equals(Placeholder.js.name()))) {
                 throw new IllegalArgumentException(
                         "Theme configuration must be a Map<String, String[]> where key has to be either '" +
                                 Placeholder.css + "', '" + Placeholder.headJs + "', and '" + Placeholder.js +
