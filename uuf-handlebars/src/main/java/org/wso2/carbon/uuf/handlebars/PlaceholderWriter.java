@@ -102,15 +102,9 @@ public class PlaceholderWriter extends Writer {
             String key = placeholders.get(i);
             String placeholderValue;
             if (key != null) {
-                out.append("<!-- start ");
-                out.append(key);
-                out.append(" -->\n");
                 if ((placeholderValue = placeholderValues.get(key)) != null) {
                     out.append(placeholderValue);
                 }
-                out.append("<!-- end ");
-                out.append(key);
-                out.append(" -->\n");
             }
             out.append(buffers.get(i + 1));
         }
