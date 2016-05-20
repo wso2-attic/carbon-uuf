@@ -21,7 +21,6 @@ import org.wso2.carbon.kernel.utils.Utils;
 import org.wso2.carbon.uuf.api.HttpRequest;
 import org.wso2.carbon.uuf.core.App;
 import org.wso2.carbon.uuf.internal.util.MimeMapper;
-import org.wso2.carbon.uuf.internal.util.NameUtils;
 import org.wso2.carbon.uuf.internal.util.RequestUtil;
 import org.wso2.carbon.uuf.reference.ComponentReference;
 
@@ -78,12 +77,10 @@ public class StaticResolver {
         try {
             if (RequestUtil.isComponentStaticResourceRequest(request)) {
                 // /public/components/...
-                resourcePath = resolveResourceInComponent(NameUtils.getSimpleName(app.getName()),
-                                                          request.getUriWithoutAppContext());
+                resourcePath = resolveResourceInComponent(app.getName(), request.getUriWithoutAppContext());
             } else if (RequestUtil.isThemeStaticResourceRequest(request)) {
                 // /public/themes/...
-                resourcePath = resolveResourceInTheme(NameUtils.getSimpleName(app.getName()),
-                                                      request.getUriWithoutAppContext());
+                resourcePath = resolveResourceInTheme(app.getName(), request.getUriWithoutAppContext());
             } else {
                 // /public/...
                 return Response.status(400)
