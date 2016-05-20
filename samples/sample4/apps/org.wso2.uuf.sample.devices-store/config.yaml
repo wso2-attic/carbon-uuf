@@ -5,4 +5,4 @@ lifecycle:
       show: false
     - state: new
       show: true
-defaultTheme : default
+defaultTheme : org.wso2.uuf.theme.default
