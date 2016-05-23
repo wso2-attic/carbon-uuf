@@ -174,7 +174,7 @@ public class App {
     }
 
     private void updateAppTheme(API api) {
-        String appThemeName = api.getTheme();
+        String appThemeName = api.getAppTheme();
         if (appThemeName == null) {
             return; // Nothing to update.
         }

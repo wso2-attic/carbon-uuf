@@ -180,7 +180,7 @@ public class API {
      * @param themeName theme themeName
      * @throws IllegalArgumentException when themeName is null or empty
      */
-    public void setTheme(String themeName) {
+    public void setAppTheme(String themeName) {
         if (!Theme.isValidThemeName(themeName)) {
             throw new IllegalArgumentException("Theme name '" + themeName + "' is invalid.");
         }
@@ -192,7 +192,7 @@ public class API {
      *
      * @return theme name
      */
-    public String getTheme() {
+    public String getAppTheme() {
         return themeName;
     }
 
