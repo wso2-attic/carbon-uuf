@@ -38,4 +38,7 @@
         <module>apps/org.wso2.uuf.sample.features-app</module>
     </modules>
 
+    <properties>
+        <sample.version>1.0.0-SNAPSHOT</sample.version>
+    </properties>
 </project>
