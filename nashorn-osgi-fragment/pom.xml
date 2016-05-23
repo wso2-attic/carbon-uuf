@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright (c) 2016, WSO2 Inc. (http://wso2.com) All Rights Reserved.
   ~
@@ -12,9 +13,21 @@
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
-  -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+-->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>nashorn-osgi-fragment</artifactId>
+    <version>1.0.0</version>
+    <packaging>bundle</packaging>
+
+    <name>Nashorn Scripting OSGi Fragment</name>
+    <description>
+        Modifies the system bundle's package exports to include the Nashorn scripting API package.
+    </description>
 
     <parent>
         <groupId>org.wso2.uuf</groupId>
@@ -22,15 +35,6 @@
         <version>1.0.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-
-    <modelVersion>4.0.0</modelVersion>
-    <artifactId>nashorn-osgi-fragment</artifactId>
-    <packaging>bundle</packaging>
-    <version>1.0.0</version>
-    <name>Nashorn Scripting OSGi Fragment</name>
-    <description>
-        Modifies the system bundle's package exports to include the Nashorn scripting API package.
-    </description>
 
     <build>
         <plugins>
@@ -51,7 +55,9 @@
                 <configuration>
                     <instructions>
                         <Fragment-Host>system.bundle;extension:=framework</Fragment-Host>
-                        <Export-Package>jdk.nashorn.api.scripting; version="${nashorn-osgi-fragment.version}"</Export-Package>
+                        <Export-Package>
+                            jdk.nashorn.api.scripting; version="${nashorn-osgi-fragment.version}"
+                        </Export-Package>
                     </instructions>
                 </configuration>
             </plugin>
