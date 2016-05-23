@@ -13,7 +13,7 @@
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
-  -->
+-->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -89,18 +89,6 @@
 
     <build>
         <plugins>
-            <!--<plugin>-->
-            <!--<artifactId>maven-clean-plugin</artifactId>-->
-            <!--<executions>-->
-            <!--<execution>-->
-            <!--<id>auto-clean</id>-->
-            <!--<phase>initialize</phase>-->
-            <!--<goals>-->
-            <!--<goal>clean</goal>-->
-            <!--</goals>-->
-            <!--</execution>-->
-            <!--</executions>-->
-            <!--</plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
@@ -140,7 +128,9 @@
                                     <version>1.0.0-SNAPSHOT</version>
                                     <type>zip</type>
                                     <overWrite>true</overWrite>
-                                    <outputDirectory>${basedir}/target/wso2carbon-kernel-${carbon.kernel.version}/deployment/uufapps</outputDirectory>
+                                    <outputDirectory>
+                                        ${basedir}/target/wso2carbon-kernel-${carbon.kernel.version}/deployment/uufapps
+                                    </outputDirectory>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.wso2.uuf.sample</groupId>
@@ -148,7 +138,9 @@
                                     <version>1.0.0-SNAPSHOT</version>
                                     <type>zip</type>
                                     <overWrite>true</overWrite>
-                                    <outputDirectory>${basedir}/target/wso2carbon-kernel-${carbon.kernel.version}/deployment/uufapps</outputDirectory>
+                                    <outputDirectory>
+                                        ${basedir}/target/wso2carbon-kernel-${carbon.kernel.version}/deployment/uufapps
+                                    </outputDirectory>
                                 </artifactItem>
                             </artifactItems>
                         </configuration>
@@ -286,9 +278,9 @@
                         <phase>package</phase>
                         <configuration>
                             <tasks>
-                                <replace dir="target/wso2carbon-kernel-${carbon.kernel.version}/osgi"
-                                         token="false" value="true">
-                                    <include name="**/bundles.info"/>
+                                <replace dir="target/wso2carbon-kernel-${carbon.kernel.version}/osgi" token="false"
+                                         value="true">
+                                    <include name="**/bundles.info" />
                                 </replace>
                             </tasks>
                         </configuration>
@@ -301,14 +293,14 @@
                         <phase>install</phase>
                         <configuration>
                             <target>
-                                <delete dir="target/archive-tmp"/>
-                                <delete dir="target/dependency-maven-plugin-markers"/>
-                                <delete dir="target/org.eclipse.equinox.executable-3.5.0.v20110530-7P7NFUFFLWUl76mart"/>
-                                <delete dir="target/p2-repo"/>
-                                <!-- Figure out a way to delete tmp.* files -->
-                                <delete file="target/tmp"/>
-                                <delete dir="target/wso2carbon-kernel-${carbon.kernel.version}"/>
-                                <delete dir="target/antrun"/>
+                                <delete dir="target/archive-tmp" />
+                                <delete dir="target/dependency-maven-plugin-markers" />
+                                <delete dir="target/org.eclipse.equinox.executable-3.5.0.v20110530-7P7NFUFFLWUl76mart" />
+                                <delete dir="target/p2-repo" />
+                                <!-- TODO: Figure out a way to delete tmp.* files -->
+                                <delete file="target/tmp" />
+                                <delete dir="target/wso2carbon-kernel-${carbon.kernel.version}" />
+                                <delete dir="target/antrun" />
                             </target>
                         </configuration>
                         <goals>
@@ -342,4 +334,5 @@
             </plugin>
         </plugins>
     </build>
+
 </project>
