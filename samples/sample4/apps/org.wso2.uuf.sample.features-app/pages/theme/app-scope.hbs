@@ -1,0 +1,23 @@
+{{layout "org.wso2.uuf.base.main"}}
+{{#fillZone "content"}}
+    <h3>App Scoped Theme Sample.</h3>
+    <hr />
+    <p>You can set an application-scope theme using your executable.
+       In your JS file;</p>
+    <pre>
+        var onRequest = function (context) {
+            setAppTheme("org.wso2.uuf.theme.blue");
+        };
+    </pre>
+    <br />
+    <h3>Notes:</h3>
+    <ul>
+        <li>
+            Changing theme through the server-side Js will be affected from the next HTTP request.
+            To view changed theme; please refresh this page.
+        </li>
+        <li>
+            Setting <code>app-scope</code> theme will affect all sessions to change into specified new theme.
+        </li>
+    </ul>
+{{/fillZone}}

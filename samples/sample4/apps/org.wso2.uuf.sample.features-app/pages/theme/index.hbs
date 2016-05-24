@@ -1,0 +1,29 @@
+{{layout "org.wso2.uuf.base.main"}}
+{{#fillZone "content"}}
+    <h3>Theme Sample.</h3>
+    <hr />
+    <h4>1. Setting theme on build-time(static)</h4>
+    <p>You can setup a default theme for your app via config.yaml of the app.</p>
+    <p>Example config.yaml would look like this:</p>
+    <pre>
+        appName : Pet Store
+        elementsPerPage: 10
+        lifecycle:
+            - state: adopted
+              show: false
+            - state: new
+              show: true
+        <b>defaultTheme : org.wso2.uuf.theme.default</b>
+    </pre>
+    <h4>2. Setting theme on runtime(dynamic)</h4>
+    <p>You can override your default theme set by config.yaml on the runtime.</p>
+    <p>UUF provides two scopes for changing theme during runtime.</p>
+    <ol>
+        <li>
+            Changing theme on <code>application-scope</code>. See the sample <a href="./theme/app-scope"><b>here</b></a>.
+        </li>
+        <li>
+            Changing theme on <code>session-scope</code>. See the sample <a href="./theme/session-scope"><b>here</b></a>.
+        </li>
+    </ol>
+{{/fillZone}}
