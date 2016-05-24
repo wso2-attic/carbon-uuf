@@ -150,12 +150,12 @@ public class UUFRegistry {
     }
 
     private static App reloadApp(App app, AppDiscoverer appDiscoverer, AppCreator appCreator) {
-        String appSimpleName = NameUtils.getSimpleName(app.getName());
+        String appName = app.getName();
         return appDiscoverer.getAppReferences()
-                .filter(appReference -> appSimpleName.equals(appReference.getName()))
+                .filter(appReference -> appName.equals(appReference.getName()))
                 .findFirst()
                 .map(appCreator::createApp)
-                .orElseThrow(() -> new UUFException("Cannot reload app '" + app.getName() + "'."));
+                .orElseThrow(() -> new UUFException("Cannot reload app '" + appName + "'."));
     }
 
     private Response.ResponseBuilder renderDebug(App app, String uriWithoutAppContext) {
