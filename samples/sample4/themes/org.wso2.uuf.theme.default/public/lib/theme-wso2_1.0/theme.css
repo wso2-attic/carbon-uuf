@@ -20,8 +20,8 @@
   font-family: 'Roboto Light';
   font-style: 'normal';
   font-weight: 300;
-  src: url('../fonts/Roboto/Roboto-Light-webfont.eot');
-  src: local('Roboto Light'), local('Roboto-Light-webfont'), url('../fonts/Roboto/Roboto-Light-webfont.eot') format('embedded-opentype'), url('../fonts/Roboto/Roboto-Light-webfont.woff') format('woff'), url('../fonts/Roboto/Roboto-Light-webfont.ttf') format('truetype'), url('../fonts/Roboto/Roboto-Light-webfont.svg#Roboto Light') format('svg');
+  src: url('./fonts/Roboto/Roboto-Light-webfont.eot');
+  src: local('Roboto Light'), local('Roboto-Light-webfont'), url('./fonts/Roboto/Roboto-Light-webfont.eot') format('embedded-opentype'), url('./fonts/Roboto/Roboto-Light-webfont.woff') format('woff'), url('./fonts/Roboto/Roboto-Light-webfont.ttf') format('truetype'), url('./fonts/Roboto/Roboto-Light-webfont.svg#Roboto Light') format('svg');
 }
 /* ========================================================================
  * methods
@@ -2231,8 +2231,8 @@ a.list-group-item:hover {
   font-family: 'Roboto Light';
   font-style: 'normal';
   font-weight: 300;
-  src: url('../lib/theme-wso2_1.0/fonts/Roboto/Roboto-Light-webfont.eot');
-  src: local('Roboto Light'), local('Roboto-Light-webfont'), url('../lib/theme-wso2_1.0/fonts/Roboto/Roboto-Light-webfont.eot') format('embedded-opentype'), url('../lib/theme-wso2_1.0/fonts/Roboto/Roboto-Light-webfont.woff') format('woff'), url('../lib/theme-wso2_1.0/fonts/Roboto/Roboto-Light-webfont.ttf') format('truetype'), url('../lib/theme-wso2_1.0/fonts/Roboto/Roboto-Light-webfont.svg#Roboto Light') format('svg');
+  src: url('./fonts/Roboto/Roboto-Light-webfont.eot');
+  src: local('Roboto Light'), local('Roboto-Light-webfont'), url('./fonts/Roboto/Roboto-Light-webfont.eot') format('embedded-opentype'), url('./fonts/Roboto/Roboto-Light-webfont.woff') format('woff'), url('./fonts/Roboto/Roboto-Light-webfont.ttf') format('truetype'), url('./fonts/Roboto/Roboto-Light-webfont.svg#Roboto Light') format('svg');
 }
 /* ========================================================================
  * WSO2 UUF Theme Variables
