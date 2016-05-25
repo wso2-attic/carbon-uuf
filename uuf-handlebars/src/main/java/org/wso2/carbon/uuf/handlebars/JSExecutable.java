@@ -65,7 +65,6 @@ public class JSExecutable implements Executable {
     public Object execute(Object context, API api) {
         engine.put("createSession", (JSFunction.CreateSession) api::createSession);
         engine.put("getSession", (JSFunction.GetSession) api::getSession);
-        engine.put("getSession", (JSFunction.GetSession) api::getSession);
         engine.put("destroySession", (JSFunction.DestroySession) api::destroySession);
         engine.put("setAppTheme", (JSFunction.SetTheme) api::setAppTheme);
         engine.put("getAppTheme", (JSFunction.GetTheme) api::getAppTheme);
