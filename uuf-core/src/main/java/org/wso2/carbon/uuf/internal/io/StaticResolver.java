@@ -105,7 +105,7 @@ public class StaticResolver {
         }
     }
 
-    private Path resolveResourceInComponent(String appSimpleName, String uriWithoutAppContext) {
+    private Path resolveResourceInComponent(String appName, String uriWithoutAppContext) {
         // Correct 'uriWithoutAppContext' value must be in either
         // "/public/components/{component-simple-name}/{fragment-simple-name}/{sub-directory}/{rest-of-the-path}"
         // format or in
@@ -132,7 +132,7 @@ public class StaticResolver {
             throw new IllegalArgumentException("Invalid static resource URI '" + uriWithoutAppContext + "'.");
         }
 
-        Path staticFilePath = appsHome.resolve(appSimpleName).resolve(DIR_NAME_COMPONENTS);
+        Path staticFilePath = appsHome.resolve(appName).resolve(DIR_NAME_COMPONENTS);
         String componentSimpleName = uriWithoutAppContext.substring(thirdSlashIndex + 1, fourthSlashIndex);
         staticFilePath = staticFilePath.resolve(componentSimpleName);
         String fragmentSimpleName = uriWithoutAppContext.substring(fourthSlashIndex + 1, fifthSlashIndex);
@@ -148,7 +148,7 @@ public class StaticResolver {
         return staticFilePath.resolve(relativePathString);
     }
 
-    private Path resolveResourceInTheme(String appSimpleName, String uriWithoutAppContext) {
+    private Path resolveResourceInTheme(String appName, String uriWithoutAppContext) {
         // Correct 'uriWithoutAppContext' value must be in
         // "/public/themes/{theme-name}/{sub-directory}/{rest-of-the-path}" format.
         // So there should be at least 5 slashes. Don't worry about multiple consecutive slashes. They  are covered
@@ -174,7 +174,7 @@ public class StaticResolver {
         String themeSimpleName = uriWithoutAppContext.substring(thirdSlashIndex + 1, fourthSlashIndex);
         // {sub-directory}/{rest-of-the-path}
         String relativePathString = uriWithoutAppContext.substring(fourthSlashIndex + 1, uriWithoutAppContext.length());
-        return appsHome.resolve(appSimpleName).resolve(DIR_NAME_THEMES)
+        return appsHome.resolve(appName).resolve(DIR_NAME_THEMES)
                 .resolve(themeSimpleName).resolve(DIR_NAME_PUBLIC_RESOURCES).resolve(relativePathString);
 
     }
