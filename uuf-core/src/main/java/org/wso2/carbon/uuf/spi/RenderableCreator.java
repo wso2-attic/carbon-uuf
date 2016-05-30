@@ -37,4 +37,65 @@ public interface RenderableCreator {
     int hashCode();
 
     boolean equals(Object obj);
+
+    class FragmentRenderableData {
+
+        private final Renderable renderable;
+        private final boolean isSecured;
+
+        public FragmentRenderableData(Renderable renderable, boolean isSecured) {
+            this.renderable = renderable;
+            this.isSecured = isSecured;
+        }
+
+        public Renderable getRenderable() {
+            return renderable;
+        }
+
+        public boolean isSecured() {
+            return isSecured;
+        }
+    }
+
+    class PageRenderableData {
+
+        private final Renderable renderable;
+        private final boolean isSecured;
+        private final String layoutName;
+
+        public PageRenderableData(Renderable renderable, boolean isSecured) {
+            this(renderable, isSecured, null);
+        }
+
+        public PageRenderableData(Renderable renderable, boolean isSecured, String layoutName) {
+            this.renderable = renderable;
+            this.isSecured = isSecured;
+            this.layoutName = layoutName;
+        }
+
+        public Renderable getRenderable() {
+            return renderable;
+        }
+
+        public boolean isSecured() {
+            return isSecured;
+        }
+
+        public Optional<String> getLayoutName() {
+            return Optional.ofNullable(layoutName);
+        }
+    }
+
+    class LayoutRenderableData {
+
+        private final Renderable renderable;
+
+        public LayoutRenderableData(Renderable renderable) {
+            this.renderable = renderable;
+        }
+
+        public Renderable getRenderable() {
+            return renderable;
+        }
+    }
 }
