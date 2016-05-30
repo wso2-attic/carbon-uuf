@@ -24,7 +24,6 @@ import org.wso2.carbon.uuf.exception.UUFException;
 
 import javax.script.ScriptException;
 import java.util.Map;
-import java.util.Optional;
 
 // TODO remove this SuppressWarnings
 @SuppressWarnings("PackageAccessibility")
@@ -33,15 +32,16 @@ public class JSExecutable implements Executable {
     private static final NashornScriptEngineFactory SCRIPT_ENGINE_FACTORY = new NashornScriptEngineFactory();
     private static final String[] SCRIPT_ENGINE_ARGS = new String[]{"-strict"};
 
-    private final Optional<String> scriptPath;
+    private final String scriptPath;
     private final NashornScriptEngine engine;
 
-    public JSExecutable(String scriptSource, ClassLoader componentClassLoader, Optional<String> scriptPath) {
+    public JSExecutable(String scriptSource, ClassLoader componentClassLoader) {
+        this(scriptSource, null, componentClassLoader);
+    }
+
+    public JSExecutable(String scriptSource, String scriptPath, ClassLoader componentClassLoader) {
         this.scriptPath = scriptPath;
-        if (scriptPath.isPresent()) {
-            // Append script file name for debugging purposes.
-            scriptSource = scriptSource + "//@ sourceURL=" + getPath();
-        }
+        scriptSource = scriptSource + "//@ sourceURL=" + scriptPath; // Append script file path for debugging purposes.
 
         NashornScriptEngine engine = (NashornScriptEngine) SCRIPT_ENGINE_FACTORY.getScriptEngine(SCRIPT_ENGINE_ARGS,
                                                                                                  componentClassLoader);
@@ -59,7 +59,7 @@ public class JSExecutable implements Executable {
     }
 
     private String getPath() {
-        return scriptPath.orElse("\"<in-memory-script>\"");
+        return scriptPath;
     }
 
     public Object execute(Object context, API api) {
@@ -81,7 +81,7 @@ public class JSExecutable implements Executable {
 
     @Override
     public String toString() {
-        return "{\"path\": \"" + getPath() + "\"}";
+        return "{\"path\": \"" + scriptPath + "\"}";
     }
 
     static private class JSFunction {
