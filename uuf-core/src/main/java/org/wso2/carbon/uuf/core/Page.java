@@ -17,16 +17,14 @@
 package org.wso2.carbon.uuf.core;
 
 import org.wso2.carbon.uuf.internal.core.UriPatten;
-import org.wso2.carbon.uuf.spi.model.Model;
 import org.wso2.carbon.uuf.spi.Renderable;
-
-import java.util.Optional;
+import org.wso2.carbon.uuf.spi.model.Model;
 
 public class Page implements Comparable<Page> {
 
     private final UriPatten uriPatten;
     private final Renderable renderer;
-    private final Optional<Layout> layout;
+    private final Layout layout;
 
     public Page(UriPatten uriPatten, Renderable renderer) {
         this(uriPatten, renderer, null);
@@ -35,7 +33,7 @@ public class Page implements Comparable<Page> {
     public Page(UriPatten uriPatten, Renderable renderer, Layout layout) {
         this.uriPatten = uriPatten;
         this.renderer = renderer;
-        this.layout = Optional.ofNullable(layout);
+        this.layout = layout;
     }
 
     public UriPatten getUriPatten() {
@@ -46,8 +44,8 @@ public class Page implements Comparable<Page> {
         lookup.in(this);
         requestLookup.pushToPublicUriStack(requestLookup.getAppContext() + lookup.getPublicUriInfix(this));
         String output = renderer.render(model, lookup, requestLookup, api);
-        if (layout.isPresent()) {
-            output = layout.get().render(lookup, requestLookup);
+        if (layout != null) {
+            output = layout.render(lookup, requestLookup);
         }
         requestLookup.popPublicUriStack();
         lookup.out();
@@ -56,7 +54,7 @@ public class Page implements Comparable<Page> {
 
     @Override
     public int hashCode() {
-        return uriPatten.hashCode() + (31 * renderer.hashCode()) + (layout.isPresent() ? (31 * layout.hashCode()) : 0);
+        return uriPatten.hashCode() + (31 * renderer.hashCode()) + (layout == null ? 0 : (31 * layout.hashCode()));
     }
 
     @Override
@@ -71,6 +69,7 @@ public class Page implements Comparable<Page> {
 
     @Override
     public String toString() {
-        return "{\"uriPattern\": " + uriPatten + ", \"renderer\": " + renderer + ", \"layout\": " + layout.get() + "}";
+        return "{\"uriPattern\": " + uriPatten + ", \"renderer\": " + renderer +
+                (layout == null ? "}" : ", \"layout\": " + layout + "}");
     }
 }
