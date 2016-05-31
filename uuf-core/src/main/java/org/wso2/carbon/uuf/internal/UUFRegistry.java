@@ -33,7 +33,6 @@ import org.wso2.carbon.uuf.internal.debug.DebugAppender;
 import org.wso2.carbon.uuf.internal.debug.Debugger;
 import org.wso2.carbon.uuf.internal.io.StaticResolver;
 import org.wso2.carbon.uuf.internal.util.MimeMapper;
-import org.wso2.carbon.uuf.internal.util.NameUtils;
 import org.wso2.carbon.uuf.internal.util.RequestUtil;
 
 import javax.ws.rs.core.HttpHeaders;
@@ -131,11 +130,10 @@ public class UUFRegistry {
         } catch (HttpErrorException e) {
             return createErrorResponse(e);
         } catch (UUFException e) {
-            return createServerErrorResponse("A server occurred while serving for request '" + request.getUri() + "'.",
-                                             e);
+            return createServerErrorResponse("A server error occurred while serving for request '" + request + "'.", e);
         } catch (Exception e) {
             return createServerErrorResponse(
-                    "An unexpected error occurred while serving for request '" + request.getUri() + "'.", e);
+                    "An unexpected error occurred while serving for request '" + request + "'.", e);
         }
     }
 
