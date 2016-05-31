@@ -19,7 +19,6 @@ package org.wso2.carbon.uuf.handlebars;
 import com.github.jknack.handlebars.io.StringTemplateSource;
 import com.github.jknack.handlebars.io.TemplateSource;
 import com.google.common.collect.ImmutableSet;
-import org.apache.commons.lang3.tuple.Pair;
 import org.osgi.service.component.annotations.Component;
 import org.wso2.carbon.uuf.handlebars.renderable.HbsFragmentRenderable;
 import org.wso2.carbon.uuf.handlebars.renderable.HbsLayoutRenderable;
@@ -28,10 +27,8 @@ import org.wso2.carbon.uuf.reference.FileReference;
 import org.wso2.carbon.uuf.reference.FragmentReference;
 import org.wso2.carbon.uuf.reference.LayoutReference;
 import org.wso2.carbon.uuf.reference.PageReference;
-import org.wso2.carbon.uuf.spi.Renderable;
 import org.wso2.carbon.uuf.spi.RenderableCreator;
 
-import java.util.Optional;
 import java.util.Set;
 
 @Component(name = "org.wso2.carbon.uuf.handlebars.HbsRenderableCreator",
@@ -44,33 +41,28 @@ public class HbsRenderableCreator implements RenderableCreator {
     private static final Set<String> SUPPORTED_FILE_EXTENSIONS = ImmutableSet.of("hbs");
 
     @Override
-    public Renderable createFragmentRenderable(FragmentReference fragmentReference, ClassLoader classLoader) {
+    public FragmentRenderableData createFragmentRenderable(FragmentReference fragmentReference,
+                                                                             ClassLoader classLoader) {
         TemplateSource templateSource = createTemplateSource(fragmentReference.getRenderingFile());
-        Optional<Executable> executable = createSameNameJs(fragmentReference.getRenderingFile(), classLoader);
-        if (executable.isPresent()) {
-            return new HbsFragmentRenderable(templateSource, executable.get());
-        } else {
-            return new HbsFragmentRenderable(templateSource);
-        }
+        Executable executable = createSameNameJs(fragmentReference.getRenderingFile(), classLoader);
+        HbsFragmentRenderable fragmentRenderable = new HbsFragmentRenderable(templateSource, executable);
+        return new RenderableCreator.FragmentRenderableData(fragmentRenderable, false);
     }
 
     @Override
-    public Pair<Renderable, Optional<String>> createPageRenderable(PageReference pageReference,
-                                                                   ClassLoader classLoader) {
+    public PageRenderableData createPageRenderable(PageReference pageReference,
+                                                                     ClassLoader classLoader) {
         TemplateSource templateSource = createTemplateSource(pageReference.getRenderingFile());
-        Optional<Executable> executable = createSameNameJs(pageReference.getRenderingFile(), classLoader);
-        Optional<String> layoutName = new HbsPagePreprocessor(templateSource).getLayoutName();
-        if (executable.isPresent()) {
-            return Pair.of(new HbsPageRenderable(templateSource, executable.get()), layoutName);
-        } else {
-            return Pair.of(new HbsPageRenderable(templateSource), layoutName);
-        }
+        Executable executable = createSameNameJs(pageReference.getRenderingFile(), classLoader);
+        HbsPageRenderable pageRenderable = new HbsPageRenderable(templateSource, executable);
+        String layoutName = new HbsPagePreprocessor(templateSource).getLayoutName().orElse(null);
+        return new RenderableCreator.PageRenderableData(pageRenderable, false, layoutName);
     }
 
     @Override
-    public Renderable createLayoutRenderable(LayoutReference layoutReference) {
+    public LayoutRenderableData createLayoutRenderable(LayoutReference layoutReference) {
         TemplateSource templateSource = createTemplateSource(layoutReference.getRenderingFile());
-        return new HbsLayoutRenderable(templateSource);
+        return new RenderableCreator.LayoutRenderableData(new HbsLayoutRenderable(templateSource));
     }
 
     @Override
@@ -82,10 +74,11 @@ public class HbsRenderableCreator implements RenderableCreator {
         return new StringTemplateSource(pageReference.getRelativePath(), pageReference.getContent());
     }
 
-    private Optional<Executable> createSameNameJs(FileReference pageReference, ClassLoader loader) {
+    private Executable createSameNameJs(FileReference pageReference, ClassLoader classLoader) {
         String jsName = withoutExtension(pageReference.getName()) + EXTENSION_JAVASCRIPT;
-        Optional<FileReference> jsReference = pageReference.getSibling(jsName);
-        return jsReference.map(fr -> new JSExecutable(fr.getContent(), loader, Optional.of(fr.getAbsolutePath())));
+        return pageReference.getSibling(jsName)
+                .map(fr -> new JSExecutable(fr.getContent(), fr.getAbsolutePath(), classLoader))
+                .orElse(null);
     }
 
     private String withoutExtension(String name) {

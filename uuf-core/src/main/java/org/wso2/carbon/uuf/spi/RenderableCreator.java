@@ -16,7 +16,6 @@
 
 package org.wso2.carbon.uuf.spi;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.wso2.carbon.uuf.reference.FragmentReference;
 import org.wso2.carbon.uuf.reference.LayoutReference;
 import org.wso2.carbon.uuf.reference.PageReference;
@@ -28,11 +27,11 @@ public interface RenderableCreator {
 
     Set<String> getSupportedFileExtensions();
 
-    Renderable createFragmentRenderable(FragmentReference fragmentReference, ClassLoader classLoader);
+    FragmentRenderableData createFragmentRenderable(FragmentReference fragmentReference, ClassLoader classLoader);
 
-    Pair<Renderable, Optional<String>> createPageRenderable(PageReference pageReference, ClassLoader classLoader);
+    PageRenderableData createPageRenderable(PageReference pageReference, ClassLoader classLoader);
 
-    Renderable createLayoutRenderable(LayoutReference layoutReference);
+    LayoutRenderableData createLayoutRenderable(LayoutReference layoutReference);
 
     int hashCode();
 
