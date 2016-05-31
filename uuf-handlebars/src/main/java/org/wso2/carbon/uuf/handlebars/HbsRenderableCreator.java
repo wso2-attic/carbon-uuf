@@ -41,8 +41,13 @@ public class HbsRenderableCreator implements RenderableCreator {
     private static final Set<String> SUPPORTED_FILE_EXTENSIONS = ImmutableSet.of("hbs");
 
     @Override
+    public Set<String> getSupportedFileExtensions() {
+        return SUPPORTED_FILE_EXTENSIONS;
+    }
+
+    @Override
     public FragmentRenderableData createFragmentRenderable(FragmentReference fragmentReference,
-                                                                             ClassLoader classLoader) {
+                                                           ClassLoader classLoader) {
         TemplateSource templateSource = createTemplateSource(fragmentReference.getRenderingFile());
         Executable executable = createSameNameJs(fragmentReference.getRenderingFile(), classLoader);
         HbsFragmentRenderable fragmentRenderable = new HbsFragmentRenderable(templateSource, executable);
@@ -51,7 +56,7 @@ public class HbsRenderableCreator implements RenderableCreator {
 
     @Override
     public PageRenderableData createPageRenderable(PageReference pageReference,
-                                                                     ClassLoader classLoader) {
+                                                   ClassLoader classLoader) {
         TemplateSource templateSource = createTemplateSource(pageReference.getRenderingFile());
         Executable executable = createSameNameJs(pageReference.getRenderingFile(), classLoader);
         HbsPageRenderable pageRenderable = new HbsPageRenderable(templateSource, executable);
@@ -63,11 +68,6 @@ public class HbsRenderableCreator implements RenderableCreator {
     public LayoutRenderableData createLayoutRenderable(LayoutReference layoutReference) {
         TemplateSource templateSource = createTemplateSource(layoutReference.getRenderingFile());
         return new RenderableCreator.LayoutRenderableData(new HbsLayoutRenderable(templateSource));
-    }
-
-    @Override
-    public Set<String> getSupportedFileExtensions() {
-        return SUPPORTED_FILE_EXTENSIONS;
     }
 
     private TemplateSource createTemplateSource(FileReference pageReference) {
