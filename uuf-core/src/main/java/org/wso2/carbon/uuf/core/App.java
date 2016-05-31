@@ -157,33 +157,23 @@ public class App {
     }
 
     private Theme getRenderingTheme(API api) {
-        Session session = api.getSession();
-        if (session == null) {
-            return appTheme;
-        }
-        String sessionThemeName = session.getThemeName();
-        if (sessionThemeName == null) {
-            return appTheme;
-        }
-        Theme sessionTheme = themes.get(sessionThemeName);
-        if (sessionTheme == null) {
-            throw new IllegalArgumentException(
-                    "Theme '" + sessionThemeName + "' which is set as for the current session does not exists.");
-        }
-        return sessionTheme;
+        Optional<String> sessionThemeName = api.getSession().map(Session::getThemeName);
+        return sessionThemeName
+                .map(themes::get)
+                .orElseThrow(() -> new IllegalArgumentException("Theme '" + sessionThemeName.get() + "' which is set " +
+                                                                        "as for the current session does not exists."));
     }
 
     private void updateAppTheme(API api) {
-        String appThemeName = api.getAppTheme();
-        if (appThemeName == null) {
+        Optional<String> appThemeName = api.getAppTheme();
+        if (!appThemeName.isPresent()) {
             return; // Nothing to update.
         }
-        Theme appTheme = themes.get(appThemeName);
-        if (appTheme == null) {
-            throw new IllegalArgumentException(
-                    "Theme '" + appThemeName + "' which is set for the app '" + name + "' does not exists.");
-        }
-        this.appTheme = appTheme; // Update the theme of the app.
+        // Update the theme of the app.
+        this.appTheme = appThemeName
+                .map(themes::get)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Theme '" + appThemeName.get() + "' which is set for the app '" + name + "' does not exists."));
     }
 
     @Override
