@@ -39,7 +39,7 @@ import static org.mockito.Mockito.when;
 public class ComponentTest {
 
     private static Page createPage(String uriPattern, String content) {
-        return new Page(new UriPatten(uriPattern), null) {
+        return new Page(new UriPatten(uriPattern), null, false) {
             @Override
             public String render(Model model, ComponentLookup lookup, RequestLookup requestLookup, API api) {
                 return content;
