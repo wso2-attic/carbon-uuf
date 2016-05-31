@@ -227,7 +227,8 @@ public class AppCreator {
         RenderableCreator renderableCreator = getRenderableCreator(fragmentReference.getRenderingFile());
         RenderableCreator.FragmentRenderableData frd = renderableCreator.createFragmentRenderable(fragmentReference,
                                                                                                   classLoader);
-        return new Fragment(getFullyQualifiedName(componentName, fragmentReference.getName()), frd.getRenderable());
+        String fragmentName = getFullyQualifiedName(componentName, fragmentReference.getName());
+        return new Fragment(fragmentName, frd.getRenderable(), frd.isSecured());
     }
 
     private SetMultimap<String, Fragment> createBindings(Map<Object, Object> bindingsConfig,
