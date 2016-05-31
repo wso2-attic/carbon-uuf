@@ -16,6 +16,7 @@
 
 package org.wso2.carbon.uuf.core;
 
+import org.wso2.carbon.uuf.exception.SessionNotFoundException;
 import org.wso2.carbon.uuf.internal.core.UriPatten;
 import org.wso2.carbon.uuf.spi.Renderable;
 import org.wso2.carbon.uuf.spi.model.Model;
@@ -24,15 +25,17 @@ public class Page implements Comparable<Page> {
 
     private final UriPatten uriPatten;
     private final Renderable renderer;
+    private final boolean isSecured;
     private final Layout layout;
 
-    public Page(UriPatten uriPatten, Renderable renderer) {
-        this(uriPatten, renderer, null);
+    public Page(UriPatten uriPatten, Renderable renderer, boolean isSecured) {
+        this(uriPatten, renderer, isSecured, null);
     }
 
-    public Page(UriPatten uriPatten, Renderable renderer, Layout layout) {
+    public Page(UriPatten uriPatten, Renderable renderer, boolean isSecured, Layout layout) {
         this.uriPatten = uriPatten;
         this.renderer = renderer;
+        this.isSecured = isSecured;
         this.layout = layout;
     }
 
@@ -41,6 +44,11 @@ public class Page implements Comparable<Page> {
     }
 
     public String render(Model model, ComponentLookup lookup, RequestLookup requestLookup, API api) {
+        if (isSecured && !api.getSession().isPresent()) {
+            throw new SessionNotFoundException(
+                    "Page '" + this + "' is secured and required an user session to render.");
+        }
+
         lookup.in(this);
         requestLookup.pushToPublicUriStack(requestLookup.getAppContext() + lookup.getPublicUriInfix(this));
         String output = renderer.render(model, lookup, requestLookup, api);
@@ -64,12 +72,12 @@ public class Page implements Comparable<Page> {
 
     @Override
     public boolean equals(Object obj) {
-        return (obj != null) && (!(obj instanceof Page)) && (this.compareTo((Page) obj) == 0);
+        return (obj != null) && (obj instanceof Page) && (this.compareTo((Page) obj) == 0);
     }
 
     @Override
     public String toString() {
-        return "{\"uriPattern\": " + uriPatten + ", \"renderer\": " + renderer +
+        return "{\"uriPattern\": " + uriPatten + ", \"renderer\": " + renderer + ", \"secured\": " + isSecured +
                 (layout == null ? "}" : ", \"layout\": " + layout + "}");
     }
 }

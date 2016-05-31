@@ -293,7 +293,7 @@ public class AppCreator {
             String layoutName = prd.getLayoutName().get();
             Optional<Layout> layout = lookup.getLayout(layoutName);
             if (layout.isPresent()) {
-                return new Page(uriPatten, prd.getRenderable(), layout.get());
+                return new Page(uriPatten, prd.getRenderable(), prd.isSecured(), layout.get());
             } else {
                 throw new IllegalArgumentException("Layout '" + layoutName + "' mentioned in page '" +
                                                            pageReference.getRenderingFile().getRelativePath() +
@@ -302,7 +302,7 @@ public class AppCreator {
             }
         } else {
             // This page does not have a layout.
-            return new Page(uriPatten, prd.getRenderable());
+            return new Page(uriPatten, prd.getRenderable(), prd.isSecured());
         }
     }
 
