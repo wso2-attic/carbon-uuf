@@ -135,6 +135,7 @@ public class API {
      * @return {@link Session}
      */
     public Session createSession(String userName) {
+        // TODO: 5/31/16 if exists, remove current session form SessionRegistry before creating a new one
         Session session = new Session(new User(userName));
         sessionRegistry.addSession(session);
         String header = SessionRegistry.SESSION_COOKIE_NAME + "=" + session.getSessionId() + "; Path=" +
