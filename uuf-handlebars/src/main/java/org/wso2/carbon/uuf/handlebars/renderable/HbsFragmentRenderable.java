@@ -95,6 +95,6 @@ public class HbsFragmentRenderable extends HbsPageRenderable {
 
     @Override
     public String toString() {
-        return "{\"path\": \"" + templatePath + "\"" + (executable == null ? "}" : " ,\"js\": \"" + executable + "\"}");
+        return "{\"path\": \"" + templatePath + "\"" + (executable == null ? "}" : ", \"js\": " + executable + "}");
     }
 }
