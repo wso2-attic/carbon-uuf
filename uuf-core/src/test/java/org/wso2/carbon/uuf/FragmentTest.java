@@ -28,7 +28,6 @@ import org.wso2.carbon.uuf.spi.Renderable;
 
 import java.util.Collections;
 
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -44,7 +43,7 @@ public class FragmentTest {
         HttpRequest request = mock(HttpRequest.class);
         when(request.getAppContext()).thenReturn("/appContext");
         RequestLookup requestLookup = new RequestLookup(request);
-        Fragment fragment = new Fragment("componentName.fragmentName", renderable);
+        Fragment fragment = new Fragment("componentName.fragmentName", renderable, false);
 
         String output = fragment.render(null, lookup, requestLookup, null);
         Assert.assertEquals(output, content);
