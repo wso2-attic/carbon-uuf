@@ -16,26 +16,27 @@
 
 package org.wso2.carbon.uuf.core;
 
+import org.wso2.carbon.uuf.exception.SessionNotFoundException;
 import org.wso2.carbon.uuf.internal.core.UriPatten;
-import org.wso2.carbon.uuf.spi.model.Model;
 import org.wso2.carbon.uuf.spi.Renderable;
-
-import java.util.Optional;
+import org.wso2.carbon.uuf.spi.model.Model;
 
 public class Page implements Comparable<Page> {
 
     private final UriPatten uriPatten;
     private final Renderable renderer;
-    private final Optional<Layout> layout;
+    private final boolean isSecured;
+    private final Layout layout;
 
-    public Page(UriPatten uriPatten, Renderable renderer) {
-        this(uriPatten, renderer, null);
+    public Page(UriPatten uriPatten, Renderable renderer, boolean isSecured) {
+        this(uriPatten, renderer, isSecured, null);
     }
 
-    public Page(UriPatten uriPatten, Renderable renderer, Layout layout) {
+    public Page(UriPatten uriPatten, Renderable renderer, boolean isSecured, Layout layout) {
         this.uriPatten = uriPatten;
         this.renderer = renderer;
-        this.layout = Optional.ofNullable(layout);
+        this.isSecured = isSecured;
+        this.layout = layout;
     }
 
     public UriPatten getUriPatten() {
@@ -43,11 +44,16 @@ public class Page implements Comparable<Page> {
     }
 
     public String render(Model model, ComponentLookup lookup, RequestLookup requestLookup, API api) {
+        if (isSecured && !api.getSession().isPresent()) {
+            throw new SessionNotFoundException(
+                    "Page '" + this + "' is secured and required an user session to render.");
+        }
+
         lookup.in(this);
         requestLookup.pushToPublicUriStack(requestLookup.getAppContext() + lookup.getPublicUriInfix(this));
         String output = renderer.render(model, lookup, requestLookup, api);
-        if (layout.isPresent()) {
-            output = layout.get().render(lookup, requestLookup);
+        if (layout != null) {
+            output = layout.render(lookup, requestLookup);
         }
         requestLookup.popPublicUriStack();
         lookup.out();
@@ -56,7 +62,7 @@ public class Page implements Comparable<Page> {
 
     @Override
     public int hashCode() {
-        return uriPatten.hashCode() + (31 * renderer.hashCode()) + (layout.isPresent() ? (31 * layout.hashCode()) : 0);
+        return uriPatten.hashCode() + (31 * renderer.hashCode()) + (layout == null ? 0 : (31 * layout.hashCode()));
     }
 
     @Override
@@ -66,11 +72,12 @@ public class Page implements Comparable<Page> {
 
     @Override
     public boolean equals(Object obj) {
-        return (obj != null) && (!(obj instanceof Page)) && (this.compareTo((Page) obj) == 0);
+        return (obj != null) && (obj instanceof Page) && (this.compareTo((Page) obj) == 0);
     }
 
     @Override
     public String toString() {
-        return "{\"uriPattern\": " + uriPatten + ", \"renderer\": " + renderer + ", \"layout\": " + layout.get() + "}";
+        return "{\"uriPattern\": " + uriPatten + ", \"renderer\": " + renderer + ", \"secured\": " + isSecured +
+                (layout == null ? "}" : ", \"layout\": " + layout + "}");
     }
 }

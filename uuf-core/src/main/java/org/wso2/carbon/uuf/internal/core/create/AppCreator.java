@@ -42,7 +42,6 @@ import org.wso2.carbon.uuf.reference.FragmentReference;
 import org.wso2.carbon.uuf.reference.LayoutReference;
 import org.wso2.carbon.uuf.reference.PageReference;
 import org.wso2.carbon.uuf.reference.ThemeReference;
-import org.wso2.carbon.uuf.spi.Renderable;
 import org.wso2.carbon.uuf.spi.RenderableCreator;
 import org.yaml.snakeyaml.Yaml;
 
@@ -219,15 +218,17 @@ public class AppCreator {
 
     private Layout createLayout(String componentName, LayoutReference layoutReference) {
         RenderableCreator renderableCreator = getRenderableCreator(layoutReference.getRenderingFile());
-        Renderable renderer = renderableCreator.createLayoutRenderable(layoutReference);
-        return new Layout(getFullyQualifiedName(componentName, layoutReference.getName()), renderer);
+        RenderableCreator.LayoutRenderableData lrd = renderableCreator.createLayoutRenderable(layoutReference);
+        return new Layout(getFullyQualifiedName(componentName, layoutReference.getName()), lrd.getRenderable());
     }
 
     private Fragment createFragment(String componentName, FragmentReference fragmentReference,
                                     ClassLoader classLoader) {
         RenderableCreator renderableCreator = getRenderableCreator(fragmentReference.getRenderingFile());
-        Renderable renderer = renderableCreator.createFragmentRenderable(fragmentReference, classLoader);
-        return new Fragment(getFullyQualifiedName(componentName, fragmentReference.getName()), renderer);
+        RenderableCreator.FragmentRenderableData frd = renderableCreator.createFragmentRenderable(fragmentReference,
+                                                                                                  classLoader);
+        String fragmentName = getFullyQualifiedName(componentName, fragmentReference.getName());
+        return new Fragment(fragmentName, frd.getRenderable(), frd.isSecured());
     }
 
     private SetMultimap<String, Fragment> createBindings(Map<Object, Object> bindingsConfig,
@@ -286,14 +287,14 @@ public class AppCreator {
 
     private Page createPage(PageReference pageReference, ClassLoader classLoader, ComponentLookup lookup) {
         RenderableCreator renderableCreator = getRenderableCreator(pageReference.getRenderingFile());
-        Pair<Renderable, Optional<String>> pr = renderableCreator.createPageRenderable(pageReference, classLoader);
+        RenderableCreator.PageRenderableData prd = renderableCreator.createPageRenderable(pageReference, classLoader);
         UriPatten uriPatten = new UriPatten(pageReference.getPathPattern());
-        if (pr.getRight().isPresent()) {
+        if (prd.getLayoutName().isPresent()) {
             // This page has a layout.
-            String layoutName = pr.getRight().get();
+            String layoutName = prd.getLayoutName().get();
             Optional<Layout> layout = lookup.getLayout(layoutName);
             if (layout.isPresent()) {
-                return new Page(uriPatten, pr.getLeft(), layout.get());
+                return new Page(uriPatten, prd.getRenderable(), prd.isSecured(), layout.get());
             } else {
                 throw new IllegalArgumentException("Layout '" + layoutName + "' mentioned in page '" +
                                                            pageReference.getRenderingFile().getRelativePath() +
@@ -302,7 +303,7 @@ public class AppCreator {
             }
         } else {
             // This page does not have a layout.
-            return new Page(uriPatten, pr.getLeft());
+            return new Page(uriPatten, prd.getRenderable(), prd.isSecured());
         }
     }
 

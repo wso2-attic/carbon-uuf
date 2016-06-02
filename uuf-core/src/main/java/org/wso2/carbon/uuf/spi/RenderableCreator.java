@@ -16,7 +16,6 @@
 
 package org.wso2.carbon.uuf.spi;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.wso2.carbon.uuf.reference.FragmentReference;
 import org.wso2.carbon.uuf.reference.LayoutReference;
 import org.wso2.carbon.uuf.reference.PageReference;
@@ -28,13 +27,74 @@ public interface RenderableCreator {
 
     Set<String> getSupportedFileExtensions();
 
-    Renderable createFragmentRenderable(FragmentReference fragmentReference, ClassLoader classLoader);
+    FragmentRenderableData createFragmentRenderable(FragmentReference fragmentReference, ClassLoader classLoader);
 
-    Pair<Renderable, Optional<String>> createPageRenderable(PageReference pageReference, ClassLoader classLoader);
+    PageRenderableData createPageRenderable(PageReference pageReference, ClassLoader classLoader);
 
-    Renderable createLayoutRenderable(LayoutReference layoutReference);
+    LayoutRenderableData createLayoutRenderable(LayoutReference layoutReference);
 
     int hashCode();
 
     boolean equals(Object obj);
+
+    class FragmentRenderableData {
+
+        private final Renderable renderable;
+        private final boolean isSecured;
+
+        public FragmentRenderableData(Renderable renderable, boolean isSecured) {
+            this.renderable = renderable;
+            this.isSecured = isSecured;
+        }
+
+        public Renderable getRenderable() {
+            return renderable;
+        }
+
+        public boolean isSecured() {
+            return isSecured;
+        }
+    }
+
+    class PageRenderableData {
+
+        private final Renderable renderable;
+        private final boolean isSecured;
+        private final String layoutName;
+
+        public PageRenderableData(Renderable renderable, boolean isSecured) {
+            this(renderable, isSecured, null);
+        }
+
+        public PageRenderableData(Renderable renderable, boolean isSecured, String layoutName) {
+            this.renderable = renderable;
+            this.isSecured = isSecured;
+            this.layoutName = layoutName;
+        }
+
+        public Renderable getRenderable() {
+            return renderable;
+        }
+
+        public boolean isSecured() {
+            return isSecured;
+        }
+
+        public Optional<String> getLayoutName() {
+            return Optional.ofNullable(layoutName);
+        }
+    }
+
+    class LayoutRenderableData {
+
+        private final Renderable renderable;
+
+        public LayoutRenderableData(Renderable renderable) {
+            this.renderable = renderable;
+        }
+
+        public Renderable getRenderable() {
+            return renderable;
+        }
+    }
 }

@@ -32,6 +32,7 @@ import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 // TODO remove this SuppressWarnings
 @SuppressWarnings("PackageAccessibility")
@@ -39,12 +40,13 @@ public class API {
 
     private final SessionRegistry sessionRegistry;
     private final RequestLookup requestLookup;
-    private Session currentSession;
+    private Optional<Session> currentSession;
     private String themeName;
 
     API(SessionRegistry sessionRegistry, RequestLookup requestLookup) {
         this.sessionRegistry = sessionRegistry;
         this.requestLookup = requestLookup;
+        this.currentSession = Optional.<Session>empty();
     }
 
     /**
@@ -133,12 +135,13 @@ public class API {
     }
 
     /**
-     * Creates a new session and returns created session.
+     * Creates a new session and returns it.
      *
      * @param userName user name
-     * @return {@link Session}
+     * @return newly created session
      */
     public Session createSession(String userName) {
+        // TODO: 5/31/16 if exists, remove current session form SessionRegistry before creating a new one
         Session session = new Session(new User(userName));
         sessionRegistry.addSession(session);
         String header = SessionRegistry.SESSION_COOKIE_NAME + "=" + session.getSessionId() + "; Path=" +
@@ -147,29 +150,26 @@ public class API {
         return session;
     }
 
-    /**
-     * Returns the session object. If not found returns {@code null}.
-     *
-     * @return {@link Session} object
-     */
-    public Session getSession() {
-        if (currentSession == null) {
+    public Optional<Session> getSession() {
+        if (!currentSession.isPresent()) {
             // Since an API object lives in the request scope, it is safe to cache the current Session object.
             String sessionId = requestLookup.getRequest().getCookieValue(SessionRegistry.SESSION_COOKIE_NAME);
-            currentSession = StringUtils.isEmpty(sessionId) ? null : sessionRegistry.getSession(sessionId).orElse(null);
+            if(!StringUtils.isEmpty(sessionId)){
+                currentSession = sessionRegistry.getSession(sessionId);
+            }
         }
         return currentSession;
     }
 
     public boolean destroySession() {
-        Session session = getSession();
-        if (session == null) {
+        Optional<Session> session = getSession();
+        if (!session.isPresent()) {
             // No session found in the current request.
             return false;
         }
 
         // Remove session from the SessionRegistry.
-        sessionRegistry.removeSession(session.getSessionId());
+        sessionRegistry.removeSession(session.get().getSessionId());
         // Clear the session cookie by setting its value to an empty string, Max-Age to zero, & Expires to a past date.
         String header = SessionRegistry.SESSION_COOKIE_NAME +
                 "=; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:01 GMT; Path=" + requestLookup.getAppContext() +
@@ -192,12 +192,12 @@ public class API {
     }
 
     /**
-     * Returns the theme name. If not found returns {@code null}
+     * Returns the theme name.
      *
      * @return theme name
      */
-    public String getAppTheme() {
-        return themeName;
+    public Optional<String> getAppTheme() {
+        return Optional.ofNullable(themeName);
     }
 
     private static String joinClassNames(Object[] args) {

@@ -47,9 +47,15 @@ public class HbsFragmentRenderable extends HbsPageRenderable {
     @Override
     public String render(Model model, ComponentLookup lookup, RequestLookup requestLookup, API api) {
         Context context;
-        if (executable.isPresent()) {
-            Object executableOutput = executeExecutable(getExecutableContext(model, lookup, requestLookup),
-                                                        api);
+        if (executable == null) {
+            Map<String, Object> hbsModel = getHbsModel(model, lookup, requestLookup);
+            if (model instanceof ContextModel) {
+                context = Context.newContext(((ContextModel) model).getParentContext(), hbsModel);
+            } else {
+                context = Context.newContext(hbsModel);
+            }
+        } else {
+            Object executableOutput = executeExecutable(getExecutableContext(model, lookup, requestLookup), api);
             if (log.isDebugEnabled()) {
                 log.debug("Executable output \"" + DebugUtil.safeJsonString(executableOutput) + "\".");
             }
@@ -59,13 +65,6 @@ public class HbsFragmentRenderable extends HbsPageRenderable {
                 context = Context.newContext(executableOutput);
             }
             context.combine(getHbsModel(model, lookup, requestLookup));
-        } else {
-            Map<String, Object> hbsModel = getHbsModel(model, lookup, requestLookup);
-            if (model instanceof ContextModel) {
-                context = Context.newContext(((ContextModel) model).getParentContext(), hbsModel);
-            } else {
-                context = Context.newContext(hbsModel);
-            }
         }
 
         context.data(DATA_KEY_LOOKUP, lookup);
@@ -96,7 +95,6 @@ public class HbsFragmentRenderable extends HbsPageRenderable {
 
     @Override
     public String toString() {
-        return "{\"path\": \"" + templatePath + "\"" +
-                (executable.isPresent() ? ",\"js\": \"" + executable + "\"}" : "}");
+        return "{\"path\": \"" + templatePath + "\"" + (executable == null ? "}" : ", \"js\": " + executable + "}");
     }
 }

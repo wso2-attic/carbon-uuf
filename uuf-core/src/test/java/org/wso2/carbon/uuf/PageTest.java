@@ -43,7 +43,7 @@ public class PageTest {
         HttpRequest request = mock(HttpRequest.class);
         when(request.getAppContext()).thenReturn("/appContext");
         RequestLookup requestLookup = new RequestLookup(request);
-        Page page = new Page(null, renderable);
+        Page page = new Page(null, renderable, false);
 
         String output = page.render(null, lookup, requestLookup, null);
         Assert.assertEquals(output, content);

@@ -35,23 +35,18 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 public class HbsPageRenderable extends HbsRenderable {
 
     private static final Logger log = LoggerFactory.getLogger(HbsPageRenderable.class);
 
-    protected final Optional<Executable> executable;
+    protected final Executable executable;
 
     public HbsPageRenderable(TemplateSource template) {
-        this(template, Optional.<Executable>empty());
+        this(template, null);
     }
 
     public HbsPageRenderable(TemplateSource template, Executable executable) {
-        this(template, Optional.of(executable));
-    }
-
-    private HbsPageRenderable(TemplateSource template, Optional<Executable> executable) {
         super(template);
         this.executable = executable;
     }
@@ -59,14 +54,14 @@ public class HbsPageRenderable extends HbsRenderable {
     @Override
     public String render(Model model, ComponentLookup lookup, RequestLookup requestLookup, API api) {
         Context context;
-        if (executable.isPresent()) {
+        if (executable == null) {
+            context = Context.newContext(getHbsModel(lookup, requestLookup));
+        } else {
             Object executableOutput = executeExecutable(getExecutableContext(lookup, requestLookup), api);
             if (log.isDebugEnabled()) {
                 log.debug("Executable output \"" + DebugUtil.safeJsonString(executableOutput) + "\".");
             }
             context = Context.newContext(executableOutput).combine(getHbsModel(lookup, requestLookup));
-        } else {
-            context = Context.newContext(getHbsModel(lookup, requestLookup));
         }
 
         context.data(DATA_KEY_LOOKUP, lookup);
@@ -89,7 +84,7 @@ public class HbsPageRenderable extends HbsRenderable {
     }
 
     protected Map executeExecutable(Object context, API api) {
-        Object executableOutput = executable.get().execute(context, api);
+        Object executableOutput = executable.execute(context, api);
         if (executableOutput == null) {
             return Collections.emptyMap();
         }
@@ -97,8 +92,8 @@ public class HbsPageRenderable extends HbsRenderable {
             return (Map) executableOutput;
         } else {
             throw new InvalidTypeException(
-                    "Expected a Map as the output from executing the executable '" + executable.get() +
-                            "'. Instead found '" + executableOutput.getClass().getName() + "'");
+                    "Expected a Map as the output from executing the executable '" + executable +
+                            "'. Instead found '" + executableOutput.getClass().getName() + "'.");
         }
     }
 
@@ -113,7 +108,6 @@ public class HbsPageRenderable extends HbsRenderable {
 
     @Override
     public String toString() {
-        return "{\"path\": \"" + templatePath + "\"" +
-                (executable.isPresent() ? ",\"js\": \"" + executable + "\"}" : "}");
+        return "{\"path\": \"" + templatePath + "\"" + (executable == null ? "}" : ", \"js\": " + executable + "}");
     }
 }
