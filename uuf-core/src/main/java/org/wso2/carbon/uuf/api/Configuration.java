@@ -33,6 +33,7 @@ public class Configuration extends HashMap<String, Object> {
 
     public static final String KEY_APP_CONTEXT = "appContext";
     public static final String KEY_DEFAULT_THEME = "defaultTheme";
+    public static final String KEY_LOGIN_PAGE_URI = "loginPageUri";
     public static final String KEY_MENU = "menu";
     public static final String KEY_ERROR_PAGES = "errorPages";
 
@@ -92,6 +93,28 @@ public class Configuration extends HashMap<String, Object> {
                     "Value of 'defaultTheme' in the app configuration must be a string. Instead found '" +
                             defaultThemeNameObj.getClass().getName() + "'.");
         }
+    }
+
+    public String getLoginPageUri() {
+        Object loginPageUriObj = get(KEY_LOGIN_PAGE_URI);
+        if (loginPageUriObj == null) {
+            return null;
+        }
+        if (!(loginPageUriObj instanceof String)) {
+            throw new InvalidTypeException(
+                    "Value of 'loginPageUri' in the app configuration must be a string. Instead found '" +
+                            loginPageUriObj.getClass().getName() + "'.");
+        }
+        String loginPageUri = (String) loginPageUriObj;
+        if (loginPageUri.isEmpty()) {
+            throw new IllegalArgumentException("Value of 'loginPageUri' in the app configuration cannot be empty.");
+        }
+        if (loginPageUri.charAt(0) == '/') {
+            throw new IllegalArgumentException(
+                    "Value of 'loginPageUri' in the app configuration must start with a '/'. Instead found '" +
+                            loginPageUri.charAt(0) + "' at the beginning.");
+        }
+        return loginPageUri;
     }
 
     /**
