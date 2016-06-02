@@ -177,14 +177,14 @@ public class App {
 
     private Theme getRenderingTheme(API api) {
         Optional<String> sessionThemeName = api.getSession().map(Session::getThemeName);
-        if (sessionThemeName.isPresent()) {
-            return sessionThemeName
-                    .map(themes::get)
-                    .orElseThrow(() -> new IllegalArgumentException("Theme '" + sessionThemeName.get() +
-                                                                            "' which is set as for the current " +
-                                                                            "session does not exists."));
+        if (!sessionThemeName.isPresent()) {
+            return appTheme;
         }
-        return appTheme;
+        return sessionThemeName
+                .map(themes::get)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Theme '" + sessionThemeName.get() +
+                                "' which is set as for the current session does not exists."));
     }
 
     private void updateAppTheme(API api) {
