@@ -22,7 +22,6 @@ import com.github.jknack.handlebars.Options;
 import org.wso2.carbon.uuf.core.ComponentLookup;
 
 import java.io.IOException;
-import java.util.List;
 
 import static org.wso2.carbon.uuf.handlebars.renderable.HbsRenderable.DATA_KEY_LOOKUP;
 
@@ -35,9 +34,9 @@ public class MenuHelper implements Helper<String> {
         if(menuName == null || menuName.isEmpty()){
             throw new IllegalArgumentException("Invalid menu name. Menu name cannot be empty.");
         }
+
         ComponentLookup lookup = options.data(DATA_KEY_LOOKUP);
-        List<Object> menuItems = lookup.getConfigurations().getMenu(menuName);
-        Context context = Context.newContext(options.context, menuItems);
+        Context context = Context.newContext(options.context, lookup.getConfigurations().getMenu(menuName));
         return options.fn(context);
     }
 }
