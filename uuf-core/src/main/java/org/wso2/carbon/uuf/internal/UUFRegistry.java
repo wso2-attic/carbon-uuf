@@ -130,8 +130,6 @@ public class UUFRegistry {
         } catch (HttpErrorException e) {
             return createErrorResponse(e);
         } catch (UUFException e) {
-            return createServerErrorResponse(
-                    "A server error occurred while serving for request '" + request.getUri() + "'.", e);
             return createServerErrorResponse("A server error occurred while serving for request '" + request + "'.", e);
         } catch (Exception e) {
             return createServerErrorResponse(
