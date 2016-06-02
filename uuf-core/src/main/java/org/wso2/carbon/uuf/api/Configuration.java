@@ -17,7 +17,6 @@
 package org.wso2.carbon.uuf.api;
 
 import org.wso2.carbon.uuf.exception.InvalidTypeException;
-import org.wso2.carbon.uuf.exception.MalformedConfigurationException;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -34,7 +33,7 @@ public class Configuration extends HashMap<String, Object> {
     public static final String KEY_APP_CONTEXT = "appContext";
     public static final String KEY_APP_CONTEXT_SERVER = "server";
     public static final String KEY_APP_CONTEXT_CLIENT = "client";
-    public static final String KEY_DEFAULT_THEME = "defaultTheme";
+    public static final String KEY_THEME = "theme";
     public static final String KEY_LOGIN_PAGE_URI = "loginPageUri";
     public static final String KEY_MENU = "menu";
     public static final String KEY_ERROR_PAGES = "errorPages";
@@ -108,23 +107,21 @@ public class Configuration extends HashMap<String, Object> {
         return (String) clientAppContextObj;
     }
 
-    public String getDefaultThemeName() {
-        Object defaultThemeNameObj = get(KEY_DEFAULT_THEME);
-        if (defaultThemeNameObj == null) {
-            throw new MalformedConfigurationException(
-                    "Cannot find the value of 'defaultTheme' in the app configuration.");
+    public String getThemeName() {
+        Object themeNameObj = get(KEY_THEME);
+        if (themeNameObj == null) {
+            return null;
         }
-        if (defaultThemeNameObj instanceof String) {
-            String defaultThemeName = (String) defaultThemeNameObj;
-            if (defaultThemeName.isEmpty()) {
-                throw new IllegalArgumentException("Default theme name cannot be empty.");
-            }
-            return defaultThemeName;
-        } else {
+        if (!(themeNameObj instanceof String)) {
             throw new InvalidTypeException(
-                    "Value of 'defaultTheme' in the app configuration must be a string. Instead found '" +
-                            defaultThemeNameObj.getClass().getName() + "'.");
+                    "Value of 'theme' in the app configuration must be a string. Instead found '" +
+                            themeNameObj.getClass().getName() + "'.");
         }
+        String themeName = (String) themeNameObj;
+        if (themeName.isEmpty()) {
+            throw new IllegalArgumentException("Value of 'theme' in the app configuration cannot be empty.");
+        }
+        return themeName;
     }
 
     public String getLoginPageUri() {
