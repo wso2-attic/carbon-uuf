@@ -58,14 +58,8 @@ public class App {
         this.context = (configuredServerAppContext == null) ? ("/" + getSimpleName(name)) : configuredServerAppContext;
 
         this.themes = themes.stream().collect(Collectors.toMap(Theme::getName, theme -> theme));
-        String defaultThemeName = this.rootComponent.getConfiguration().getDefaultThemeName();
-        Theme defaultTheme = this.themes.get(defaultThemeName);
-        if (defaultTheme == null) {
-            throw new IllegalArgumentException(
-                    "Theme '" + defaultThemeName + "' which is set as the default theme of app '" + name +
-                            "' does not exists.");
-        }
-        this.appTheme = defaultTheme;
+        String configuredThemeName = this.rootComponent.getConfiguration().getThemeName();
+        this.appTheme = (configuredThemeName == null) ? null : this.themes.get(configuredThemeName);
 
         this.sessionRegistry = sessionRegistry;
     }
@@ -115,13 +109,16 @@ public class App {
             throw new PageNotFoundException("Requested page '" + uriWithoutAppContext + "' does not exists.");
         }
 
+        API api = new API(sessionRegistry, requestLookup);
+        Theme renderingTheme = getRenderingTheme(api);
+        if (renderingTheme != null) {
+            renderingTheme.render(requestLookup);
+        }
         try {
-            API api = new API(sessionRegistry, requestLookup);
-            getRenderingTheme(api).render(requestLookup);
-            String output = componentPage.getRight().render(null, componentPage.getLeft().getLookup(), requestLookup,
-                                                            api);
+            String html = componentPage.getRight().render(null, componentPage.getLeft().getLookup(), requestLookup,
+                                                          api);
             updateAppTheme(api);
-            return output;
+            return html;
         } catch (SessionNotFoundException e) {
             String loginPageUri = configuration.getLoginPageUri();
             if (loginPageUri == null) {
@@ -180,10 +177,14 @@ public class App {
 
     private Theme getRenderingTheme(API api) {
         Optional<String> sessionThemeName = api.getSession().map(Session::getThemeName);
-        return sessionThemeName
-                .map(themes::get)
-                .orElseThrow(() -> new IllegalArgumentException("Theme '" + sessionThemeName.get() + "' which is set " +
-                                                                        "as for the current session does not exists."));
+        if (sessionThemeName.isPresent()) {
+            return sessionThemeName
+                    .map(themes::get)
+                    .orElseThrow(() -> new IllegalArgumentException("Theme '" + sessionThemeName.get() +
+                                                                            "' which is set as for the current " +
+                                                                            "session does not exists."));
+        }
+        return appTheme;
     }
 
     private void updateAppTheme(API api) {
