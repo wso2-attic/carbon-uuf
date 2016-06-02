@@ -16,9 +16,6 @@
 
 //noinspection JSUnusedGlobalSymbols
 var onRequest = function (context) {
-    var session = getSession();
-    if (!session) {
-        session = createSession("admin");
-    }
-    return {"username": session.getUser().getUsername()};
+    var result = callOSGiService("org.wso2.uuf.sample.pets_store.service.PetsManagerService", "getHelloMessage", ["John"]);
+    return {"helloWorldText" : result};
 };

@@ -1,2 +1,32 @@
 Welcome!
 {{username}}
+
+{{layout "org.wso2.uuf.base.main"}}
+{{#fillZone "content"}}
+    <h3>Create, Get & Destroy Session.</h3>
+    <hr />
+    <p>You can get already existing session and create a new user session using your executable.</p>
+    <p>Syntax : <code>createSession(username);</code></p>
+    <p>Syntax : <code>getSession();</code></p>
+    <p>Syntax : <code>destroySession();</code></p>
+    <p>In your JS file;</p>
+    <pre>
+        var onRequest = function (context) {
+            var session = getSession();
+            if (!session) {
+                session = createSession("admin");
+            }
+            return {"username": session.getUser().getUsername()};
+        };
+    </pre>
+    <p>Then, you can use this variable in your handlebars;</p>
+    <pre>
+        \{{username}}
+    </pre>
+    <h3>Notes:</h3>
+    <ol>
+        <li>The above code will print "{{username}}".</li>
+        <li>Once session is created; you can access the same session from any page with getSession().</li>
+        <li>Session is implemented on top of Carbon Cache.</li>
+    </ol>
+{{/fillZone}}

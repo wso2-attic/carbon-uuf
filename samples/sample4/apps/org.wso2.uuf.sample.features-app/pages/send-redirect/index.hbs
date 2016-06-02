@@ -1,0 +1,23 @@
+{{layout "org.wso2.uuf.base.main"}}
+{{#fillZone "content"}}
+    <h3>Send Redirect.</h3>
+    <hr />
+    <p>You can immediately halt execution and send a HTTP redirection using your executable.</p>
+    <p>Syntax : <code>sendRedirect(url);</code></p>
+    <p>In your JS file;</p>
+    <pre>
+        var onRequest = function (context) {
+            sendRedirect("http://www.google.lk");
+        };
+    </pre>
+    <h3>Demo:</h3>
+    <pre>
+        var onRequest = function (context) {
+            var demoSendRedirect = context.request.queryParams["sendRedirect"];
+            if(demoSendRedirect) {
+                sendRedirect("http://www.google.lk");
+            }
+        }
+    </pre>
+    <a href="{{@app.context}}/send-redirect?sendRedirect=true" class="btn btn-info"><b>Click Here To Run Demo</b></a>
+{{/fillZone}}

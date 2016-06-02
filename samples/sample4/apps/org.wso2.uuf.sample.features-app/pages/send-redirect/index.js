@@ -16,9 +16,8 @@
 
 //noinspection JSUnusedGlobalSymbols
 var onRequest = function (context) {
-    var session = getSession();
-    if (!session) {
-        session = createSession("admin");
+    var demoSendRedirect = context.request.queryParams["sendRedirect"];
+    if(demoSendRedirect) {
+        sendRedirect("http://www.google.lk");
     }
-    return {"username": session.getUser().getUsername()};
-};
+}

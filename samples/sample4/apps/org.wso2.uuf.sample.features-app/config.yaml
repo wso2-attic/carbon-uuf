@@ -1,8 +1,14 @@
 uuf.productName : Features App
 elementsPerPage: 10
-lifecycle:
-    - state: adopted
-      show: false
-    - state: new
-      show: true
 defaultTheme : org.wso2.uuf.theme.default
+menu :
+  main :
+    - { icon: "fw-home", link: "#home", text: "Home" }
+    - Features :
+      - { icon: "fw fw-list", link: "call-osgi", text: "Call a OSGi Service" }
+      - { icon: "fw fw-add", link: "http-form", text: "Http Form POST" }
+      - { icon: "fw fw-bug", link: "send-error", text: "Send HTTP Error" }
+      - { icon: "fw fw-bug", link: "send-redirect", text: "Send HTTP Redirect" }
+      - { icon: "fw fw-bug", link: "session", text: "Session" }
+      - { icon: "fw fw-bug", link: "theme", text: "Theme" }
+      - { icon: "fw fw-bug", link: "menu", text: "Menu" }

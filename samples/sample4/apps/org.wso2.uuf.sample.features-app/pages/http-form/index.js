@@ -16,9 +16,6 @@
 
 //noinspection JSUnusedGlobalSymbols
 var onRequest = function (context) {
-    var session = getSession();
-    if (!session) {
-        session = createSession("admin");
-    }
-    return {"username": session.getUser().getUsername()};
+    var hellotext = "";
+    return {"hellotext": hellotext};
 };

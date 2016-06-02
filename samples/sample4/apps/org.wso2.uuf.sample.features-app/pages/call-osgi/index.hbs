@@ -1,0 +1,20 @@
+{{layout "org.wso2.uuf.base.main"}}
+{{#fillZone "content"}}
+    <h3>Call OSGi Service.</h3>
+    <hr />
+    <p>You can call your back-end OSGi service using your executable.</p>
+    <p>Syntax : <code>callOSGiService(serviceClassName, serviceMethodName, [methodParameters]);</code></p>
+    <p>In your JS file;</p>
+    <pre>
+        var onRequest = function (context) {
+            var result = callOSGiService("org.wso2.uuf.sample.pets_store.service.PetsManagerService", "getHelloMessage", ["John"]);
+            return {"helloWorldText" : result};
+        };
+    </pre>
+    <p>Then, you can use this variable in your handlebars;</p>
+    <pre>
+        \{{helloWorldText}}
+    </pre>
+    <h3>Notes:</h3>
+    The above code will print "{{helloWorldText}}".
+{{/fillZone}}

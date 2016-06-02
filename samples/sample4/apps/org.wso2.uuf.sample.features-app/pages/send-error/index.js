@@ -16,9 +16,9 @@
 
 //noinspection JSUnusedGlobalSymbols
 var onRequest = function (context) {
-    var session = getSession();
-    if (!session) {
-        session = createSession("admin");
+    print(context.request.queryParams["sendError"]);
+    var sendErrorParams = context.request.queryParams["sendError"];
+    if(sendErrorParams) {
+        sendError(404, "Yep, this is a 404. Requested resource not found.");
     }
-    return {"username": session.getUser().getUsername()};
 };

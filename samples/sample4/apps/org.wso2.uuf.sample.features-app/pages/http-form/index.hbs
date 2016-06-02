@@ -1,0 +1,15 @@
+{{layout "org.wso2.uuf.base.main"}}
+{{#fillZone "content"}}
+    <h3>HTTP Form Sample.</h3>
+    <hr />
+    {{#if hellotext}}
+        {{hellotext}}
+    {{else}}
+    <form method="post">
+        <div class="form-group">
+            <label for="inputName">Name</label>
+            <input type="text" class="form-control" id="inputName" placeholder="Name">
+        </div>
+    </form>
+    {{/if}}
+{{/fillZone}}

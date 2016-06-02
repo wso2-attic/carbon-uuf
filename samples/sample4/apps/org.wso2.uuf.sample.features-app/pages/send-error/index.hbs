@@ -1,0 +1,23 @@
+{{layout "org.wso2.uuf.base.main"}}
+{{#fillZone "content"}}
+    <h3>Send Error.</h3>
+    <hr />
+    <p>You can immediately halt execution and send a HTTP error code using your executable.</p>
+    <p>Syntax : <code>sendError(status, message);</code></p>
+    <p>In your JS file;</p>
+    <pre>
+        var onRequest = function (context) {
+            sendError(404, "Requested resource not found.");
+        };
+    </pre>
+    <h3>Demo:</h3>
+    <pre>
+        var onRequest = function (context) {
+            var sendErrorParams = context.request.queryParams["sendError"];
+            if(sendErrorParams) {
+                sendError(404, "Yep, this is a 404. Requested resource not found.");
+            }
+        }
+    </pre>
+    <a href="{{@app.context}}/send-error?sendError=true" class="btn btn-info"><b>Click Here To Run Demo</b></a>
+{{/fillZone}}
