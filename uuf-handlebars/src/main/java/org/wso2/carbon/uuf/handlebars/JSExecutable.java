@@ -44,12 +44,12 @@ public class JSExecutable implements Executable {
         scriptSource = scriptSource + "//@ sourceURL=" + scriptPath; // Append script file path for debugging purposes.
 
         NashornScriptEngine engine = (NashornScriptEngine) SCRIPT_ENGINE_FACTORY.getScriptEngine(SCRIPT_ENGINE_ARGS,
-                                                                                                 componentClassLoader);
-        engine.put("callOSGiService", (JSFunction.CallOSGiService) API::callOSGiService);
-        engine.put("getOSGiServices", (JSFunction.GetOSGiServices) API::getOSGiServices);
-        engine.put("callMicroService", (JSFunction.CallMicroService) API::callMicroService);
-        engine.put("sendError", (JSFunction.SendError) API::sendError);
-        engine.put("sendRedirect", (JSFunction.SendRedirect) API::sendRedirect);
+                componentClassLoader);
+        engine.put("callOSGiService", (CallOSGiService) API::callOSGiService);
+        engine.put("getOSGiServices", (GetOSGiServices) API::getOSGiServices);
+        engine.put("callMicroService", (CallMicroService) API::callMicroService);
+        engine.put("sendError", (SendError) API::sendError);
+        engine.put("sendRedirect", (SendRedirect) API::sendRedirect);
         try {
             engine.eval(scriptSource);
             this.engine = engine;
@@ -63,11 +63,11 @@ public class JSExecutable implements Executable {
     }
 
     public Object execute(Object context, API api) {
-        engine.put("createSession", (JSFunction.CreateSession) api::createSession);
-        engine.put("getSession", (JSFunction.GetSession) api::getSession);
-        engine.put("destroySession", (JSFunction.DestroySession) api::destroySession);
-        engine.put("setAppTheme", (JSFunction.SetTheme) api::setAppTheme);
-        engine.put("getAppTheme", (JSFunction.GetTheme) api::getAppTheme);
+        engine.put("createSession", (CreateSession) api::createSession);
+        engine.put("getSession", (GetSession) api::getSession);
+        engine.put("destroySession", (DestroySession) api::destroySession);
+        engine.put("setAppTheme", (SetTheme) api::setAppTheme);
+        engine.put("getAppTheme", (GetTheme) api::getAppTheme);
         try {
             return engine.invokeFunction("onRequest", context);
         } catch (ScriptException e) {
@@ -84,76 +84,73 @@ public class JSExecutable implements Executable {
         return "{\"path\": \"" + scriptPath + "\"}";
     }
 
-    static private class JSFunction {
+    @FunctionalInterface
+    public interface CallOSGiService {
 
-        @FunctionalInterface
-        protected interface CallOSGiService {
+        @SuppressWarnings("unused")
+        Object call(String serviceClassName, String serviceMethodName, Object... args);
+    }
 
-            @SuppressWarnings("unused")
-            Object call(String serviceClassName, String serviceMethodName, Object... args);
-        }
+    @FunctionalInterface
+    public interface GetOSGiServices {
 
-        @FunctionalInterface
-        public interface GetOSGiServices {
+        @SuppressWarnings("unused")
+        Map<String, Object> call(String serviceClassName);
+    }
 
-            @SuppressWarnings("unused")
-            Map<String, Object> call(String serviceClassName);
-        }
+    @FunctionalInterface
+    public interface CallMicroService {
 
-        @FunctionalInterface
-        public interface CallMicroService {
+        @SuppressWarnings("unused")
+        void call();
+    }
 
-            @SuppressWarnings("unused")
-            void call();
-        }
+    @FunctionalInterface
+    public interface CreateSession {
 
-        @FunctionalInterface
-        public interface CreateSession {
+        @SuppressWarnings("unused")
+        Session call(String userName);
+    }
 
-            @SuppressWarnings("unused")
-            Session call(String userName);
-        }
+    @FunctionalInterface
+    public interface GetSession {
 
-        @FunctionalInterface
-        public interface GetSession {
+        @SuppressWarnings("unused")
+        Session call();
+    }
 
-            @SuppressWarnings("unused")
-            Session call();
-        }
+    @FunctionalInterface
+    public interface DestroySession {
 
-        @FunctionalInterface
-        public interface DestroySession {
+        @SuppressWarnings("unused")
+        boolean call();
+    }
 
-            @SuppressWarnings("unused")
-            boolean call();
-        }
+    @FunctionalInterface
+    public interface SendError {
 
-        @FunctionalInterface
-        public interface SendError {
+        @SuppressWarnings("unused")
+        void call(int status, String message);
+    }
 
-            @SuppressWarnings("unused")
-            void call(int status, String message);
-        }
+    @FunctionalInterface
+    public interface SendRedirect {
 
-        @FunctionalInterface
-        public interface SendRedirect {
+        @SuppressWarnings("unused")
+        void call(String redirectUrl);
+    }
 
-            @SuppressWarnings("unused")
-            void call(String redirectUrl);
-        }
+    @FunctionalInterface
+    public interface SetTheme {
 
-        @FunctionalInterface
-        public interface SetTheme {
+        @SuppressWarnings("unused")
+        void call(String name);
+    }
 
-            @SuppressWarnings("unused")
-            void call(String name);
-        }
+    @FunctionalInterface
+    public interface GetTheme {
 
-        @FunctionalInterface
-        public interface GetTheme {
-
-            @SuppressWarnings("unused")
-            String call();
-        }
+        @SuppressWarnings("unused")
+        String call();
     }
 }
