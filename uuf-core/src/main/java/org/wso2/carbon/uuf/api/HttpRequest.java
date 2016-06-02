@@ -81,7 +81,7 @@ public interface HttpRequest {
      */
     String getQueryString();
 
-    Map<String, List<String>> getQueryParams();
+    Map<String, Object> getQueryParams();
 
     /**
      * Returns the content Type of the request.
