@@ -57,15 +57,19 @@ public class API {
      */
     public static Object callOSGiService(String serviceClassName, String serviceMethodName, Object... args) {
         Object serviceInstance;
+        InitialContext initialContext;
         try {
-            serviceInstance = (new InitialContext()).lookup("osgi:service/" + serviceClassName);
-            if (serviceInstance == null) {
-                throw new IllegalArgumentException(
-                        "Cannot find any OSGi service registered with the name '" + serviceClassName + "'.");
-            }
+            initialContext = new InitialContext();
         } catch (NamingException e) {
             throw new UUFException(
-                    "Cannot create the initial context when calling OSGi service '" + serviceClassName + "'.");
+                    "Cannot create the JNDI initial context when calling OSGi service '" + serviceClassName + "'.");
+        }
+
+        try {
+            serviceInstance = initialContext.lookup("osgi:service/" + serviceClassName);
+        } catch (NamingException e) {
+            throw new UUFException(
+                    "Cannot find any OSGi service registered with the name '" + serviceClassName + "'.");
         }
 
         try {
