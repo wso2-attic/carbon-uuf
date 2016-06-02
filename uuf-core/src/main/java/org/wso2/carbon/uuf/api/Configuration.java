@@ -32,6 +32,8 @@ import java.util.function.Function;
 public class Configuration extends HashMap<String, Object> {
 
     public static final String KEY_APP_CONTEXT = "appContext";
+    public static final String KEY_APP_CONTEXT_SERVER = "server";
+    public static final String KEY_APP_CONTEXT_CLIENT = "client";
     public static final String KEY_DEFAULT_THEME = "defaultTheme";
     public static final String KEY_LOGIN_PAGE_URI = "loginPageUri";
     public static final String KEY_MENU = "menu";
@@ -53,27 +55,57 @@ public class Configuration extends HashMap<String, Object> {
         super(initialCapacity);
     }
 
-    public String getAppContext() {
+    private Object getAppContext() {
         Object appContextObj = get(KEY_APP_CONTEXT);
         if (appContextObj == null) {
-            throw new MalformedConfigurationException(
-                    "Cannot find the value of 'appContext' in the app configuration.");
+            return null;
         }
-        if (!(appContextObj instanceof String)) {
+        if (!(appContextObj instanceof String) && !(appContextObj instanceof Map)) {
+            throw new InvalidTypeException("Value of 'appContext' in the app configuration must be either a string " +
+                                                   "or a Map<String, String>. Instead found '" +
+                                                   appContextObj.getClass().getName() + "'.");
+        }
+        return appContextObj;
+    }
+
+    public String getServerAppContext() {
+        Object appContextObj = getAppContext();
+        if (appContextObj == null) {
+            return null;
+        }
+        if (appContextObj instanceof String) {
+            return (String) appContextObj;
+        }
+        // appContextObj must be a Map
+        Map<?, ?> appContext = (Map) appContextObj;
+        Object serverAppContextObj = appContext.get(KEY_APP_CONTEXT_SERVER);
+        if (serverAppContextObj == null) {
+            return null;
+        }
+        if (!(serverAppContextObj instanceof String)) {
             throw new InvalidTypeException(
-                    "Value of 'appContext' in the app configuration must be a string. Instead found '" +
-                            appContextObj.getClass().getName() + "'.");
+                    "Value of 'server' in 'appContext' Map in the app configuration must be a string. Instead found '" +
+                            serverAppContextObj.getClass().getName() + "'.");
         }
-        String appContext = (String) appContextObj;
-        if (appContext.isEmpty()) {
-            throw new IllegalArgumentException("Value of 'appContext' in the app configuration cannot be empty.");
+        return (String) serverAppContextObj;
+    }
+
+    public String getClientAppContext() {
+        Object appContextObj = getAppContext();
+        if (!(appContextObj instanceof Map)) {
+            return null;
         }
-        if (appContext.charAt(0) == '/') {
-            throw new IllegalArgumentException(
-                    "Value of 'appContext' in the app configuration must start with a '/'. Instead found '" +
-                            appContext.charAt(0) + "' at the beginning.");
+        Map<?, ?> appContext = (Map) appContextObj;
+        Object clientAppContextObj = appContext.get(KEY_APP_CONTEXT_CLIENT);
+        if (clientAppContextObj == null) {
+            return null;
         }
-        return appContext;
+        if (!(clientAppContextObj instanceof String)) {
+            throw new InvalidTypeException(
+                    "Value of 'client' in 'appContext' Map in the app configuration must be a string. Instead found '" +
+                            clientAppContextObj.getClass().getName() + "'.");
+        }
+        return (String) clientAppContextObj;
     }
 
     public String getDefaultThemeName() {
