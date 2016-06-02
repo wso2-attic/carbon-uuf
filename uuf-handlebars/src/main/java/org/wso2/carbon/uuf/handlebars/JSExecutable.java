@@ -44,7 +44,7 @@ public class JSExecutable implements Executable {
         scriptSource = scriptSource + "//@ sourceURL=" + scriptPath; // Append script file path for debugging purposes.
 
         NashornScriptEngine engine = (NashornScriptEngine) SCRIPT_ENGINE_FACTORY.getScriptEngine(SCRIPT_ENGINE_ARGS,
-                componentClassLoader);
+                                                                                                 componentClassLoader);
         engine.put("callOSGiService", (CallOSGiService) API::callOSGiService);
         engine.put("getOSGiServices", (GetOSGiServices) API::getOSGiServices);
         engine.put("callMicroService", (CallMicroService) API::callMicroService);
@@ -64,10 +64,10 @@ public class JSExecutable implements Executable {
 
     public Object execute(Object context, API api) {
         engine.put("createSession", (CreateSession) api::createSession);
-        engine.put("getSession", (GetSession) api::getSession);
+        engine.put("getSession", (GetSession) () -> api.getSession().orElse(null));
         engine.put("destroySession", (DestroySession) api::destroySession);
         engine.put("setAppTheme", (SetTheme) api::setAppTheme);
-        engine.put("getAppTheme", (GetTheme) api::getAppTheme);
+        engine.put("getAppTheme", (GetTheme) () -> api.getAppTheme().orElse(null));
         try {
             return engine.invokeFunction("onRequest", context);
         } catch (ScriptException e) {
