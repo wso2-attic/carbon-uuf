@@ -16,6 +16,7 @@
 
 package org.wso2.carbon.uuf.core;
 
+import org.wso2.carbon.uuf.api.Configuration;
 import org.wso2.carbon.uuf.api.auth.Session;
 import org.wso2.carbon.uuf.api.model.MapModel;
 import org.wso2.carbon.uuf.exception.FragmentNotFoundException;
@@ -29,6 +30,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static org.wso2.carbon.uuf.internal.util.NameUtils.getSimpleName;
 
 public class App {
 
@@ -45,8 +48,9 @@ public class App {
 
         this.components = components.stream().collect(Collectors.toMap(Component::getContext, cmp -> cmp));
         this.rootComponent = this.components.remove(Component.ROOT_COMPONENT_CONTEXT);
-        this.context = this.rootComponent.getConfiguration().getAppContext()
-                .orElse("/" + NameUtils.getSimpleName(name));
+        Configuration configuration = rootComponent.getConfiguration();
+        String configuredServerAppContext = configuration.getServerAppContext();
+        this.context = (configuredServerAppContext == null) ? ("/" + getSimpleName(name)) : configuredServerAppContext;
 
         this.themes = themes.stream().collect(Collectors.toMap(Theme::getName, theme -> theme));
         String defaultThemeName = this.rootComponent.getConfiguration().getDefaultThemeName();
