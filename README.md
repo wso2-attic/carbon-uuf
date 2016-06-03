@@ -4,10 +4,6 @@
 
 You need to build following dependencies before building 'Carbon UUF'.
 
-- Build 'JCache 1.0 for WSO2 Carbon'
-  1. Clone [carbon-caching](https://github.com/wso2/carbon-caching) repository.<br/>`git clone https://github.com/wso2/carbon-caching.git`
-  2. Checkout *v1.0.0-m1* tag.<br/>`git checkout v1.0.0-m1`
-  3. Build and install using Maven.<br/> `mvn clean install`
 - Build 'Carbon JNDI'
   1. Clone [carbon-jndi](https://github.com/wso2/carbon-jndi) repository.<br/>`git clone https://github.com/wso2/carbon-jndi.git`
   2. Checkout *v1.0.0-m1* tag.<br/>`git checkout v1.0.0-m1`
