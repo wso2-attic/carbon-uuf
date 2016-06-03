@@ -4,10 +4,6 @@
 
 You need to build following dependencies before building 'Carbon UUF'.
 
-- Build 'Carbon JNDI'
-  1. Clone [carbon-jndi](https://github.com/wso2/carbon-jndi) repository.<br/>`git clone https://github.com/wso2/carbon-jndi.git`
-  2. Checkout *v1.0.0-m1* tag.<br/>`git checkout v1.0.0-m1`
-  3. Build and install using Maven.<br/> `mvn clean install`
 - Build 'Carbon UUF Maven Plugin' (for [samples](samples/sample4))
   1. Clone [carbon-uuf-maven-plugin](https://github.com/wso2/carbon-uuf-maven-plugin) repository.<br/>`git clone https://github.com/wso2/carbon-uuf-maven-plugin.git`
   2. Checkout *v1.0.0-m3* tag.<br/>`git checkout v1.0.0-m3`

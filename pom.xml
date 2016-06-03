@@ -282,7 +282,7 @@
         <carbon.kernel.version.range>[5.0,6)</carbon.kernel.version.range>
         <carbon.feature.plugin.version>2.0.0</carbon.feature.plugin.version>
         <carbon.cache.version>1.0.0</carbon.cache.version>
-        <carbon.jndi.version>1.0.0-alpha</carbon.jndi.version>
+        <carbon.jndi.version>1.0.0</carbon.jndi.version>
 
         <!-- Dependencies for UUF -->
         <orbit.com.github.jknack.handlebars.version>4.0.3.wso2v1</orbit.com.github.jknack.handlebars.version>
