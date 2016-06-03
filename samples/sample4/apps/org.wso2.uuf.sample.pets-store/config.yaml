@@ -1,10 +1,5 @@
 appName : Pet Store
 elementsPerPage: 10
-lifecycle:
-    - state: adopted
-      show: false
-    - state: new
-      show: true
 theme : org.wso2.uuf.theme.default
 menu :
   main :
