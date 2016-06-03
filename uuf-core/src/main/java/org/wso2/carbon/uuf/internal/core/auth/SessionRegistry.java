@@ -67,7 +67,7 @@ public class SessionRegistry implements Closeable {
     public SessionRegistry(String appName) {
         MutableConfiguration<String, Session> cacheConfig = new MutableConfiguration<>();
         cacheConfig.setTypes(String.class, Session.class);
-        cacheConfig.setStoreByValue(true);
+        cacheConfig.setStoreByValue(false);
         // TODO: read session expire time from configurations
         cacheConfig.setExpiryPolicyFactory(AccessedExpiryPolicy.factoryOf(Duration.TWENTY_MINUTES));
         String cacheName = this.getClass().getName() + "-" + appName + "-sessions_cache";
