@@ -5,7 +5,7 @@ lifecycle:
       show: false
     - state: new
       show: true
-defaultTheme : org.wso2.uuf.theme.default
+theme : org.wso2.uuf.theme.default
 menu :
   main :
     - { icon: "fw-home", link: "#home", text: "Home" }
