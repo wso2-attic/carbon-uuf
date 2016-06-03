@@ -1,4 +1,4 @@
-uuf.productName : Devices Store
+appName : Devices Store
 elementsPerPage: 10
 lifecycle:
     - state: adopted

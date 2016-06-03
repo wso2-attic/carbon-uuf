@@ -1,4 +1,4 @@
-uuf.productName : Features App
+appName : Features App
 elementsPerPage: 10
 theme : org.wso2.uuf.theme.default
 menu :
