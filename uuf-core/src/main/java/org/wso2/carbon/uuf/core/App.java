@@ -16,7 +16,6 @@
 
 package org.wso2.carbon.uuf.core;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.wso2.carbon.uuf.api.Configuration;
 import org.wso2.carbon.uuf.api.auth.Session;
 import org.wso2.carbon.uuf.api.model.MapModel;
@@ -80,43 +79,14 @@ public class App {
         return themes;
     }
 
-    private Pair<Component, Page> getComponentPage(String uriWithoutAppContext) {
-        Optional<Page> page = rootComponent.getPage(uriWithoutAppContext);
-        // First check 'root' component has the page.
-        if (page.isPresent()) {
-            return Pair.of(rootComponent, page.get());
-        }
-
-        // Since 'root' components doesn't have the page, search in other components.
-        int secondSlashIndex = uriWithoutAppContext.indexOf('/', 1);
-        if (secondSlashIndex == -1) {
-            // No component context found in the 'uriWithoutAppContext' URI.
-            return null;
-        }
-        String componentContext = uriWithoutAppContext.substring(0, secondSlashIndex);
-        Component component = components.get(componentContext);
-        if (component == null) {
-            // No component found for the 'componentContext' key.
-            return null;
-        }
-        String pageUri = uriWithoutAppContext.substring(secondSlashIndex);
-        return Pair.of(component, component.getPage(pageUri).get());
-    }
-
     public String renderPage(String uriWithoutAppContext, RequestLookup requestLookup) {
-        Pair<Component, Page> componentPage = getComponentPage(uriWithoutAppContext);
-        if (componentPage == null) {
-            throw new PageNotFoundException("Requested page '" + uriWithoutAppContext + "' does not exists.");
-        }
-
         API api = new API(sessionRegistry, requestLookup);
         Theme renderingTheme = getRenderingTheme(api);
         if (renderingTheme != null) {
             renderingTheme.render(requestLookup);
         }
         try {
-            String html = componentPage.getRight().render(null, componentPage.getLeft().getLookup(), requestLookup,
-                                                          api);
+            String html = renderPage(uriWithoutAppContext, requestLookup, api);
             updateAppTheme(api);
             return html;
         } catch (SessionNotFoundException e) {
@@ -127,6 +97,34 @@ public class App {
                 throw new PageRedirectException(loginPageUri);
             }
         }
+    }
+
+    private String renderPage(String uriWithoutAppContext, RequestLookup requestLookup, API api) {
+        // First try to render the page with 'root' component.
+        Optional<String> output = rootComponent.renderPage(uriWithoutAppContext, requestLookup, api);
+        if (output.isPresent()) {
+            return output.get();
+        }
+
+        // Since 'root' component doesn't have the page, try with other components.
+        int secondSlashIndex = uriWithoutAppContext.indexOf('/', 1);
+        if (secondSlashIndex == -1) {
+            // No component context found in the 'uriWithoutAppContext' URI.
+            throw new PageNotFoundException("Requested page '" + uriWithoutAppContext + "' does not exists.");
+        }
+        String componentContext = uriWithoutAppContext.substring(0, secondSlashIndex);
+        Component component = components.get(componentContext);
+        if (component == null) {
+            // No component found for the 'componentContext' key.
+            throw new PageNotFoundException("Requested page '" + uriWithoutAppContext + "' does not exists.");
+        }
+        String pageUri = uriWithoutAppContext.substring(secondSlashIndex);
+        output = component.renderPage(pageUri, requestLookup, api);
+        if (output.isPresent()) {
+            return output.get();
+        }
+        // No page found for 'pageUri' in the 'component'.
+        throw new PageNotFoundException("Requested page '" + uriWithoutAppContext + "' does not exists.");
     }
 
     /**

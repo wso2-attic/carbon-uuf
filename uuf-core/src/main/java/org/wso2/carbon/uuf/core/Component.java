@@ -68,11 +68,6 @@ public class Component {
         return lookup.getAllFragments();
     }
 
-    public Optional<Page> getPage(String pageUri) {
-        return pages.stream().filter(page -> page.getUriPatten().matches(pageUri)).findFirst();
-    }
-
-    @Deprecated
     public Optional<String> renderPage(String pageUri, RequestLookup requestLookup, API api) {
         Page servingPage = null;
         for (Page page : pages) {
@@ -95,7 +90,7 @@ public class Component {
     }
 
     public boolean hasPage(String pageUri) {
-        return getPage(pageUri).isPresent();
+        return pages.stream().filter(page -> page.getUriPatten().matches(pageUri)).findFirst().isPresent();
     }
 
     public Set<Page> getPages() {
