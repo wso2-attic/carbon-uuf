@@ -1,0 +1,42 @@
+org.wso2.uuf:org.wso2.uuf.core:bundle:1.0.0-SNAPSHOT
++- org.wso2.orbit.org.yaml:snakeyaml:jar:1.16.0.wso2v1:compile
++- org.wso2.orbit.com.github.jknack:handlebars:jar:4.0.3.wso2v1:compile
++- javax.cache:cache-api:jar:1.0.0:compile
++- org.wso2.carbon.caching:org.wso2.carbon.caching:jar:1.0.0-m1:compile
+|  +- org.osgi:org.osgi.core:jar:6.0.0:compile
+|  +- org.wso2.eclipse.osgi:org.eclipse.osgi.services:jar:3.4.0.v20140312-2051:compile
+|  \- org.wso2.eclipse.equinox:org.eclipse.equinox.ds:jar:1.4.200.v20131126-2331:compile
++- org.wso2.carbon.jndi:org.wso2.carbon.jndi:jar:1.0.0-m1:compile
++- org.ow2.asm:asm:jar:5.1:compile
++- org.wso2.eclipse.osgi:org.eclipse.osgi:jar:3.10.2.v20150203-1939:compile
++- org.wso2.msf4j:msf4j-core:jar:1.0.0:compile
+|  +- org.wso2.carbon.transport:org.wso2.carbon.transport.http.netty:jar:1.0.0:compile
+|  |  \- org.wso2.carbon:org.wso2.carbon.core:jar:5.0.0:compile
+|  +- org.wso2.msf4j:jaxrs-delegates:jar:1.0.0:compile
+|  +- io.netty:netty-common:jar:4.0.30.Final:compile
+|  +- com.google.guava:guava:jar:13.0.1:compile
+|  +- com.google.code.findbugs:jsr305:jar:2.0.1:provided
+|  +- org.apache.servicemix.bundles:org.apache.servicemix.bundles.commons-beanutils:jar:1.8.3_2:compile
+|  |  \- commons-logging:commons-logging:jar:1.1.1:compile
+|  \- com.nimbusds:nimbus-jose-jwt:jar:2.25:compile
+|     +- net.jcip:jcip-annotations:jar:1.0:compile
+|     +- net.minidev:json-smart:jar:1.1.1:compile
+|     \- org.bouncycastle:bcprov-jdk15on:jar:1.50:compile
++- javax.ws.rs:javax.ws.rs-api:jar:2.0:compile
++- io.netty:netty-buffer:jar:4.0.30.Final:compile
++- io.netty:netty-transport:jar:4.0.30.Final:compile
++- io.netty:netty-handler:jar:4.0.30.Final:compile
++- io.netty:netty-codec:jar:4.0.30.Final:compile
++- io.netty:netty-codec-http:jar:4.0.30.Final:compile
++- org.apache.commons:commons-lang3:jar:3.1:compile
++- com.google.code.gson:gson:jar:2.2.4:compile
++- org.slf4j:slf4j-api:jar:1.7.5:compile
++- org.slf4j:slf4j-log4j12:jar:1.6.0:compile
+|  \- log4j:log4j:jar:1.2.14:compile
++- commons-io.wso2:commons-io:jar:2.4.0.wso2v1:compile
++- org.testng:testng:jar:6.9.4:test
+|  +- org.beanshell:bsh:jar:2.0b4:test
+|  \- com.beust:jcommander:jar:1.48:test
+\- org.mockito:mockito-core:jar:2.0.44-beta:test
+   +- net.bytebuddy:byte-buddy:jar:1.2.3:test
+   \- org.objenesis:objenesis:jar:2.1:test
