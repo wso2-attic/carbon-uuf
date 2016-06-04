@@ -23,6 +23,10 @@ import java.util.Map;
 
 public interface HttpResponse {
 
+    String CONTENT_TYPE_WILDCARD = "*/*";
+    String CONTENT_TYPE_TEXT_PLAIN = "text/plain";
+    String CONTENT_TYPE_TEXT_HTML = "text/html";
+
     void setStatus(int statusCode);
 
     void setContent(String content);

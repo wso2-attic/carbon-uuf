@@ -45,8 +45,7 @@ public class MicroserviceHttpResponse implements HttpResponse {
 
     @Override
     public void setContent(String content) {
-        this.content = content;
-        this.contentType = "text/plain";
+        setContent(content, CONTENT_TYPE_TEXT_PLAIN);
     }
 
     @Override
@@ -57,8 +56,8 @@ public class MicroserviceHttpResponse implements HttpResponse {
 
     @Override
     public void setContent(File content) {
-        this.content = content;
-        this.contentType = MimeMapper.getMimeType(FilenameUtils.getExtension(content.getName())).orElse("*/*");
+        String extension = FilenameUtils.getExtension(content.getName());
+        setContent(content, MimeMapper.getMimeType(extension).orElse(CONTENT_TYPE_WILDCARD));
     }
 
     @Override
@@ -69,9 +68,8 @@ public class MicroserviceHttpResponse implements HttpResponse {
 
     @Override
     public void setContent(Path content) {
-        this.content = content;
         String extension = FilenameUtils.getExtension(content.getFileName().toString());
-        this.contentType = MimeMapper.getMimeType(extension).orElse("*/*");
+        setContent(content, MimeMapper.getMimeType(extension).orElse(CONTENT_TYPE_WILDCARD));
     }
 
     @Override
@@ -82,6 +80,7 @@ public class MicroserviceHttpResponse implements HttpResponse {
 
     @Override
     public void setContent(InputStream content, String contentType) {
+        // FIXME: 5/15/16 MSF4J doesn't support InputStream or byte arrays
         this.content = content;
         this.contentType = contentType;
     }
