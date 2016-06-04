@@ -51,7 +51,8 @@ public class HbsRenderableCreator implements RenderableCreator {
         TemplateSource templateSource = createTemplateSource(fragmentReference.getRenderingFile());
         Executable executable = createSameNameJs(fragmentReference.getRenderingFile(), classLoader);
         HbsFragmentRenderable fragmentRenderable = new HbsFragmentRenderable(templateSource, executable);
-        return new RenderableCreator.FragmentRenderableData(fragmentRenderable, false);
+        boolean isSecured = new HbsPreprocessor(templateSource).isSecured();
+        return new RenderableCreator.FragmentRenderableData(fragmentRenderable, isSecured);
     }
 
     @Override
@@ -60,8 +61,9 @@ public class HbsRenderableCreator implements RenderableCreator {
         TemplateSource templateSource = createTemplateSource(pageReference.getRenderingFile());
         Executable executable = createSameNameJs(pageReference.getRenderingFile(), classLoader);
         HbsPageRenderable pageRenderable = new HbsPageRenderable(templateSource, executable);
-        String layoutName = new HbsPreprocessor(templateSource).getLayoutName().orElse(null);
-        return new RenderableCreator.PageRenderableData(pageRenderable, false, layoutName);
+        HbsPreprocessor preprocessor = new HbsPreprocessor(templateSource);
+        String layoutName = preprocessor.getLayoutName().orElse(null);
+        return new RenderableCreator.PageRenderableData(pageRenderable, preprocessor.isSecured(), layoutName);
     }
 
     @Override
