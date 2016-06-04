@@ -60,7 +60,7 @@ public class HbsRenderableCreator implements RenderableCreator {
         TemplateSource templateSource = createTemplateSource(pageReference.getRenderingFile());
         Executable executable = createSameNameJs(pageReference.getRenderingFile(), classLoader);
         HbsPageRenderable pageRenderable = new HbsPageRenderable(templateSource, executable);
-        String layoutName = new HbsPagePreprocessor(templateSource).getLayoutName().orElse(null);
+        String layoutName = new HbsPreprocessor(templateSource).getLayoutName().orElse(null);
         return new RenderableCreator.PageRenderableData(pageRenderable, false, layoutName);
     }
 

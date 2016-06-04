@@ -18,7 +18,7 @@ package org.wso2.carbon.uuf.handlebars.helpers.init;
 
 import com.github.jknack.handlebars.Helper;
 import com.github.jknack.handlebars.Options;
-import org.wso2.carbon.uuf.handlebars.HbsPagePreprocessor;
+import org.wso2.carbon.uuf.handlebars.HbsPreprocessor;
 
 import java.io.IOException;
 
@@ -30,7 +30,7 @@ public class SecuredHelper implements Helper<Object> {
     public CharSequence apply(Object context, Options options) throws IOException {
         if (options.tagType.inline()) {
             // Is a {{secured}} inline helper, not the block version.
-            options.data(HbsPagePreprocessor.DATA_KEY_IS_SECURED, Boolean.TRUE);
+            options.data(HbsPreprocessor.DATA_KEY_IS_SECURED, Boolean.TRUE);
         }
         return "";
     }

@@ -27,10 +27,10 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.Optional;
 
-public class HbsPagePreprocessor {
+public class HbsPreprocessor {
 
-    public static final String DATA_KEY_CURRENT_LAYOUT = HbsPagePreprocessor.class.getName() + "#layout";
-    public static final String DATA_KEY_IS_SECURED = HbsPagePreprocessor.class.getName() + "#secured";
+    public static final String DATA_KEY_CURRENT_LAYOUT = HbsPreprocessor.class.getName() + "#layout";
+    public static final String DATA_KEY_IS_SECURED = HbsPreprocessor.class.getName() + "#secured";
     private static final Handlebars HANDLEBARS = new Handlebars();
 
     static {
@@ -42,14 +42,14 @@ public class HbsPagePreprocessor {
     private final Optional<String> layout;
     private final boolean isSecured;
 
-    public HbsPagePreprocessor(TemplateSource template) {
+    public HbsPreprocessor(TemplateSource template) {
         String templatePath = template.filename();
         Context context = Context.newContext(Collections.emptyMap());
         try {
             HANDLEBARS.compile(template).apply(context);
         } catch (IOException e) {
             throw new UUFException(
-                    "An error occurred when pre-processing the Handlebars template of page '" + templatePath + "'.", e);
+                    "An error occurred when pre-processing the Handlebars template '" + templatePath + "'.", e);
         }
         layout = Optional.ofNullable(context.data(DATA_KEY_CURRENT_LAYOUT));
         isSecured = Boolean.TRUE.equals(context.data(DATA_KEY_IS_SECURED));

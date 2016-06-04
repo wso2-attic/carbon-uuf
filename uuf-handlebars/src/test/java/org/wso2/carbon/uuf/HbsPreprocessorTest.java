@@ -21,14 +21,14 @@ import com.github.jknack.handlebars.HandlebarsException;
 import com.github.jknack.handlebars.io.StringTemplateSource;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import org.wso2.carbon.uuf.handlebars.HbsPagePreprocessor;
+import org.wso2.carbon.uuf.handlebars.HbsPreprocessor;
 
 import java.util.Optional;
 
-public class HbsPagePreprocessorTest {
+public class HbsPreprocessorTest {
 
-    private static HbsPagePreprocessor createHbsPagePreprocessor(String pageTemplateContent) {
-        return new HbsPagePreprocessor(new StringTemplateSource("<test-source>", pageTemplateContent));
+    private static HbsPreprocessor createHbsPagePreprocessor(String pageTemplateContent) {
+        return new HbsPreprocessor(new StringTemplateSource("<test-source>", pageTemplateContent));
     }
 
     @Test
