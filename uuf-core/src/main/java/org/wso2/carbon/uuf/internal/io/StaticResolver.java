@@ -17,7 +17,6 @@
 package org.wso2.carbon.uuf.internal.io;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.kernel.utils.Utils;
@@ -28,7 +27,6 @@ import org.wso2.carbon.uuf.internal.util.MimeMapper;
 import org.wso2.carbon.uuf.internal.util.RequestUtil;
 import org.wso2.carbon.uuf.reference.ComponentReference;
 
-import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -41,6 +39,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Optional;
 
+import static org.wso2.carbon.uuf.api.HttpResponse.CONTENT_TYPE_IMAGE_PNG;
 import static org.wso2.carbon.uuf.api.HttpResponse.CONTENT_TYPE_WILDCARD;
 import static org.wso2.carbon.uuf.api.HttpResponse.STATUS_BAD_REQUEST;
 import static org.wso2.carbon.uuf.api.HttpResponse.STATUS_INTERNAL_SERVER_ERROR;
@@ -77,16 +76,14 @@ public class StaticResolver {
         this.appsHome = appsHome.normalize();
     }
 
-    public Response.ResponseBuilder createDefaultFaviconResponse(HttpRequest request, HttpResponse response) {
+    public void createDefaultFaviconResponse(HttpRequest request, HttpResponse response) {
         InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("/favicon.png");
-        try {
-            // Since default favicon is very small (~1.9 kB) it is ok to load it directly to the memory.
-            byte[] data = IOUtils.toByteArray(inputStream);
-            // FIXME: 5/15/16 MSF4J doesn't support InputStream or byte arrays
-            return Response.ok().entity(data).type("image/png");
-        } catch (IOException e) {
-            // This never happens.
-            return Response.serverError().entity("Cannot read default favicon.");
+        if (inputStream == null) {
+            log.error("Cannot find default favicon 'favicon.png' in classpath.");
+            response.setStatus(STAUS_NOT_FOUND);
+        } else {
+            response.setStatus(STATUS_OK);
+            response.setContent(inputStream, CONTENT_TYPE_IMAGE_PNG);
         }
     }
 

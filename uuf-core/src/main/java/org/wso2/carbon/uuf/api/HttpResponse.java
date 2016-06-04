@@ -36,6 +36,7 @@ public interface HttpResponse {
     String CONTENT_TYPE_WILDCARD = "*/*";
     String CONTENT_TYPE_TEXT_PLAIN = "text/plain";
     String CONTENT_TYPE_TEXT_HTML = "text/html";
+    String CONTENT_TYPE_IMAGE_PNG = "image/png";
 
     void setStatus(int statusCode);
 
