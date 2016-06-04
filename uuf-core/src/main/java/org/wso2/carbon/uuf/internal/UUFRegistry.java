@@ -38,9 +38,9 @@ import java.util.stream.Collectors;
 import static org.wso2.carbon.uuf.api.HttpResponse.HEADER_LOCATION;
 import static org.wso2.carbon.uuf.api.HttpResponse.STATUS_BAD_REQUEST;
 import static org.wso2.carbon.uuf.api.HttpResponse.STATUS_INTERNAL_SERVER_ERROR;
-import static org.wso2.carbon.uuf.api.HttpResponse.STAUS_FOUND;
-import static org.wso2.carbon.uuf.api.HttpResponse.STAUS_MOVED_PERMANENTLY;
-import static org.wso2.carbon.uuf.api.HttpResponse.STAUS_NOT_FOUND;
+import static org.wso2.carbon.uuf.api.HttpResponse.STATUS_FOUND;
+import static org.wso2.carbon.uuf.api.HttpResponse.STATUS_MOVED_PERMANENTLY;
+import static org.wso2.carbon.uuf.api.HttpResponse.STATUS_NOT_FOUND;
 
 public class UUFRegistry {
 
@@ -87,7 +87,7 @@ public class UUFRegistry {
 
             app = apps.get(request.getAppContext());
             if (app == null) {
-                response.setContent(STAUS_NOT_FOUND,
+                response.setContent(STATUS_NOT_FOUND,
                                     "Cannot find an app for context '" + request.getAppContext() + "'.");
                 return;
             }
@@ -122,7 +122,7 @@ public class UUFRegistry {
                     String uri = request.getUri();
                     String fixedUri = uri.endsWith("/") ? uri.substring(0, uri.length() - 1) : uri + "/";
                     if (app.hasPage(fixedUri)) {
-                        response.setStatus(STAUS_MOVED_PERMANENTLY);
+                        response.setStatus(STATUS_MOVED_PERMANENTLY);
                         response.setHeader(HEADER_LOCATION, request.getHostName() + fixedUri);
                         return;
                     }
@@ -130,9 +130,9 @@ public class UUFRegistry {
                 }
             }
         } catch (PageNotFoundException | FragmentNotFoundException e) {
-            renderErrorPage(app, request, response, STAUS_NOT_FOUND, e.getMessage());
+            renderErrorPage(app, request, response, STATUS_NOT_FOUND, e.getMessage());
         } catch (PageRedirectException e) {
-            response.setStatus(STAUS_FOUND);
+            response.setStatus(STATUS_FOUND);
             response.setHeader(HEADER_LOCATION, e.getRedirectUrl());
         } catch (HttpErrorException e) {
             renderErrorPage(app, request, response, e.getHttpStatusCode(), e.getMessage());
