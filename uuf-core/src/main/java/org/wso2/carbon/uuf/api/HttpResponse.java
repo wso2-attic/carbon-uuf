@@ -23,13 +23,25 @@ import java.util.Map;
 
 public interface HttpResponse {
 
+    int STATUS_OK = 200;
+    int STAUS_MOVED_PERMANENTLY = 301;
+    int STAUS_FOUND = 302;
+    int STAUS_NOT_MODIFIED = 304;
+    int STATUS_BAD_REQUEST = 400;
+    int STATUS_UNAUTHORIZED = 401;
+    int STATUS_FORBIDDEN = 403;
+    int STAUS_NOT_FOUND = 404;
+    int STATUS_INTERNAL_SERVER_ERROR = 500;
+
     String CONTENT_TYPE_WILDCARD = "*/*";
     String CONTENT_TYPE_TEXT_PLAIN = "text/plain";
     String CONTENT_TYPE_TEXT_HTML = "text/html";
 
     void setStatus(int statusCode);
 
-    void setContent(String content);
+    default void setContent(String content) {
+        setContent(content, CONTENT_TYPE_TEXT_PLAIN);
+    }
 
     void setContent(String content, String contentType);
 
@@ -37,11 +49,26 @@ public interface HttpResponse {
 
     void setContent(File content, String contentType);
 
-    void setContent(Path content);
+    default void setContent(Path content) {
+        setContent(content.toFile());
+    }
 
-    void setContent(Path content, String contentType);
+    default void setContent(Path content, String contentType) {
+        setContent(content.toFile(), contentType);
+    }
 
     void setContent(InputStream content, String contentType);
+
+    default void setContent(int statusCode, String content) {
+        setStatus(statusCode);
+        setContent(content);
+    }
+
+    default void setContent(int statusCode, String content, String contentType) {
+        setStatus(statusCode);
+        setContent(content);
+        setContentType(contentType);
+    }
 
     Object getContent();
 

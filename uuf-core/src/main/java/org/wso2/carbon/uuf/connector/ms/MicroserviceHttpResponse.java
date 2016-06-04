@@ -22,7 +22,6 @@ import org.wso2.carbon.uuf.internal.util.MimeMapper;
 
 import java.io.File;
 import java.io.InputStream;
-import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,11 +43,6 @@ public class MicroserviceHttpResponse implements HttpResponse {
     }
 
     @Override
-    public void setContent(String content) {
-        setContent(content, CONTENT_TYPE_TEXT_PLAIN);
-    }
-
-    @Override
     public void setContent(String content, String contentType) {
         this.content = content;
         this.contentType = contentType;
@@ -62,18 +56,6 @@ public class MicroserviceHttpResponse implements HttpResponse {
 
     @Override
     public void setContent(File content, String contentType) {
-        this.content = content;
-        this.contentType = contentType;
-    }
-
-    @Override
-    public void setContent(Path content) {
-        String extension = FilenameUtils.getExtension(content.getFileName().toString());
-        setContent(content, MimeMapper.getMimeType(extension).orElse(CONTENT_TYPE_WILDCARD));
-    }
-
-    @Override
-    public void setContent(Path content, String contentType) {
         this.content = content;
         this.contentType = contentType;
     }
