@@ -40,14 +40,7 @@ public class Configuration extends HashMap<String, Object> {
 
     public Configuration(Map<?, ?> rawMap) {
         this(rawMap.size());
-        for (Entry<?, ?> entry : rawMap.entrySet()) {
-            if (entry.getKey() instanceof String) {
-                super.put((String) entry.getKey(), entry.getValue());
-            } else {
-                throw new InvalidTypeException("Configurations must be a Map<String, Object>. Instead found a '" +
-                                                       entry.getKey().getClass().getName() + "' key.");
-            }
-        }
+        merge(rawMap);
     }
 
     private Configuration(int initialCapacity) {
@@ -295,6 +288,17 @@ public class Configuration extends HashMap<String, Object> {
     public void merge(Configuration otherConfiguration) {
         for (Entry<String, Object> entry : otherConfiguration.entrySet()) {
             super.putIfAbsent(entry.getKey(), entry.getValue());
+        }
+    }
+
+    public void merge(Map<?, ?> rawMap) {
+        for (Entry<?, ?> entry : rawMap.entrySet()) {
+            if (entry.getKey() instanceof String) {
+                super.put((String) entry.getKey(), entry.getValue());
+            } else {
+                throw new InvalidTypeException("Configurations must be a Map<String, Object>. Instead found a '" +
+                                                       entry.getKey().getClass().getName() + "' key.");
+            }
         }
     }
 
