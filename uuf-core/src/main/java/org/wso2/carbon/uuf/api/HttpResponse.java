@@ -39,6 +39,8 @@ public interface HttpResponse {
     String CONTENT_TYPE_IMAGE_PNG = "image/png";
     String CONTENT_TYPE_APPLICATION_JSON = "application/json";
 
+    String HEADER_LOCATION = "Location";
+
     void setStatus(int statusCode);
 
     default void setContent(String content) {

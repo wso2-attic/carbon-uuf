@@ -29,6 +29,7 @@ import org.wso2.carbon.uuf.internal.util.NameUtils;
 import org.wso2.carbon.uuf.internal.util.RequestUtil;
 import org.wso2.carbon.uuf.spi.model.Model;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -73,6 +74,10 @@ public class App {
 
     public Map<String, Component> getComponents() {
         return components;
+    }
+
+    public Map<String, Fragment> getFragments(){
+        return Collections.emptyMap();
     }
 
     public Map<String, Theme> getThemes() {
