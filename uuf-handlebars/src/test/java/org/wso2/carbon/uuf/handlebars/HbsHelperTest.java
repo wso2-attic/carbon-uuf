@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.wso2.carbon.uuf;
+package org.wso2.carbon.uuf.handlebars;
 
 import com.github.jknack.handlebars.HandlebarsError;
 import com.github.jknack.handlebars.HandlebarsException;
