@@ -22,18 +22,19 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.spi.LoggingEvent;
 
+import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class DebugAppender extends AppenderSkeleton {
 
-    private static final int CAPACITY = 1000;
-    private final ConcurrentLinkedQueue<DebugMessage> messages = new ConcurrentLinkedQueue<>();
+    private static final int MAX_CAPACITY = 1000;
 
-    public void attach() {
-        setThreshold(Level.DEBUG);
-        Logger logger = Logger.getLogger("org.wso2.carbon.uuf");
-        logger.setLevel(Level.DEBUG);
-        Logger.getRootLogger().addAppender(this);
+    private final Queue<DebugMessage> messages;
+    private final Gson gson;
+
+    public DebugAppender() {
+        this.messages = new ConcurrentLinkedQueue<>();
+        this.gson = new Gson();
     }
 
     @Override
@@ -41,15 +42,10 @@ public class DebugAppender extends AppenderSkeleton {
         String requestId = (String) event.getMDC("uuf-request");
         if (requestId != null) {
             messages.add(new DebugMessage(requestId, event));
-            if (messages.size() > CAPACITY) {
+            if (messages.size() > MAX_CAPACITY) {
                 messages.poll();
             }
         }
-    }
-
-    public String asJson() {
-        Gson gson = new Gson();
-        return gson.toJson(messages);
     }
 
     @Override
@@ -59,13 +55,30 @@ public class DebugAppender extends AppenderSkeleton {
 
     @Override
     public void close() {
+        messages.clear();
+    }
+
+    public void attach() {
+        setThreshold(Level.DEBUG);
+        Logger logger = Logger.getLogger("org.wso2.carbon.uuf");
+        logger.setLevel(Level.DEBUG);
+        Logger.getRootLogger().addAppender(this);
+    }
+
+    public void dettach() {
+        Logger.getRootLogger().removeAppender(this);
+    }
+
+    public String getMessagesAsJson() {
+        return gson.toJson(messages);
     }
 
     private static class DebugMessage {
+
         private final String requestId;
         private final LoggingEvent event;
 
-        DebugMessage(String requestId, LoggingEvent event) {
+        public DebugMessage(String requestId, LoggingEvent event) {
             this.requestId = requestId;
             this.event = event;
         }
