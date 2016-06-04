@@ -34,11 +34,12 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.Duration;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Optional;
-import java.util.TimeZone;
 
 import static org.wso2.carbon.uuf.api.HttpResponse.CONTENT_TYPE_WILDCARD;
 import static org.wso2.carbon.uuf.api.HttpResponse.STATUS_BAD_REQUEST;
@@ -53,10 +54,17 @@ public class StaticResolver {
 
     public static final String DIR_NAME_COMPONENT_RESOURCES = "base";
     public static final String DIR_NAME_PUBLIC_RESOURCES = "public";
-    private static final String CACHE_HEADER_DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss zzz";
+    private static final DateTimeFormatter HTTP_DATE_FORMATTER;
+    private static final ZoneId GMT_TIME_ZONE;
     private static final Logger log = LoggerFactory.getLogger(StaticResolver.class);
 
     private final Path appsHome;
+
+    static {
+        // See https://tools.ietf.org/html/rfc7231#section-7.1.1.1
+        HTTP_DATE_FORMATTER = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss zzz");
+        GMT_TIME_ZONE = ZoneId.of("GMT");
+    }
 
     /**
      * This constructor will assume uufHome as $PRODUCT_HOME/deployment/uufapps
@@ -112,11 +120,11 @@ public class StaticResolver {
             return;
         }
 
-        Optional<Date> modifiedSinceDate = getIfModifiedSinceDate(request);
-        Date latModifiedDate;
+        Optional<ZonedDateTime> modifiedSinceDate = getIfModifiedSinceDate(request);
+        ZonedDateTime latModifiedDate;
         try {
             BasicFileAttributes fileAttributes = Files.readAttributes(resourcePath, BasicFileAttributes.class);
-            latModifiedDate = new Date(fileAttributes.lastModifiedTime().toMillis());
+            latModifiedDate = ZonedDateTime.ofInstant(fileAttributes.lastModifiedTime().toInstant(), GMT_TIME_ZONE);
         } catch (IOException e) {
             log.error("Cannot read attributes from file '" + resourcePath + "'", e);
             // Since we failed to read file attributes, we cannot set cache headers. So just serve the file
@@ -125,8 +133,8 @@ public class StaticResolver {
             response.setContent(resourcePath, getContentType(request, resourcePath));
             return;
         }
-        if (modifiedSinceDate.isPresent() && (!modifiedSinceDate.get().after(latModifiedDate))) {
-            // !after == (before OR equal) Resource is NOT modified since the last serve.
+        if (modifiedSinceDate.isPresent() && Duration.between(modifiedSinceDate.get(), latModifiedDate).isZero()) {
+            // Resource is NOT modified since the last serve.
             response.setStatus(STAUS_NOT_MODIFIED);
             return;
         }
@@ -210,17 +218,17 @@ public class StaticResolver {
 
     }
 
-    private Optional<Date> getIfModifiedSinceDate(HttpRequest request) {
-        String httpDateStr = request.getHeaders().get("If-Modified-Since");
-        if (httpDateStr == null) {
-            return Optional.empty();
+    private Optional<ZonedDateTime> getIfModifiedSinceDate(HttpRequest request) {
+        // If-Modified-Since: Sat, 29 Oct 1994 19:43:31 GMT
+        String ifModifiedSinceHeader = request.getHeaders().get("If-Modified-Since");
+        if (ifModifiedSinceHeader == null) {
+            return Optional.<ZonedDateTime>empty();
         }
-        SimpleDateFormat df = new SimpleDateFormat(CACHE_HEADER_DATE_FORMAT);
-        df.setTimeZone(TimeZone.getTimeZone("GMT"));
         try {
-            return Optional.of(df.parse(httpDateStr));
-        } catch (ParseException e) {
-            return Optional.empty();
+            return Optional.of(ZonedDateTime.parse(ifModifiedSinceHeader, HTTP_DATE_FORMATTER));
+        } catch (DateTimeParseException e) {
+            log.error("Cannot parse 'If-Modified-Since' HTTP header value '" + ifModifiedSinceHeader + "'.", e);
+            return Optional.<ZonedDateTime>empty();
         }
     }
 
@@ -234,10 +242,8 @@ public class StaticResolver {
         return MimeMapper.getMimeType(extensionFromPath).orElse(CONTENT_TYPE_WILDCARD);
     }
 
-    private void setCacheHeaders(HttpResponse response, Date latModifiedDate) {
-        SimpleDateFormat df = new SimpleDateFormat(CACHE_HEADER_DATE_FORMAT);
-        df.setTimeZone(TimeZone.getTimeZone("GMT"));
-        response.setHeader("Last-Modified", df.format(latModifiedDate));
+    private void setCacheHeaders(HttpResponse response, ZonedDateTime latModifiedDate) {
+        response.setHeader("Last-Modified", HTTP_DATE_FORMATTER.format(latModifiedDate));
         response.setHeader("Cache-Control", "public,max-age=2592000");
     }
 }
