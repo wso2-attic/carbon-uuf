@@ -16,37 +16,98 @@
 
 package org.wso2.carbon.uuf.connector.ms;
 
+import org.apache.commons.io.FilenameUtils;
 import org.wso2.carbon.uuf.api.HttpResponse;
+import org.wso2.carbon.uuf.internal.util.MimeMapper;
 
+import java.io.File;
+import java.io.InputStream;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
 public class MicroserviceHttpResponse implements HttpResponse {
 
-    private String content;
+    private int status;
+    private Object content;
+    private String contentType;
     private Map<String, String> headers;
 
     public MicroserviceHttpResponse() {
+        this.status = 200;
         this.headers = new HashMap<>();
+    }
+
+    @Override
+    public void setStatus(int statusCode) {
+        this.status = statusCode;
     }
 
     @Override
     public void setContent(String content) {
         this.content = content;
+        this.contentType = "text/plain";
     }
 
     @Override
-    public String getContent() {
+    public void setContent(String content, String contentType) {
+        this.content = content;
+        this.contentType = contentType;
+    }
+
+    @Override
+    public void setContent(File content) {
+        this.content = content;
+        this.contentType = MimeMapper.getMimeType(FilenameUtils.getExtension(content.getName())).orElse("*/*");
+    }
+
+    @Override
+    public void setContent(File content, String contentType) {
+        this.content = content;
+        this.contentType = contentType;
+    }
+
+    @Override
+    public void setContent(Path content) {
+        this.content = content;
+        String extension = FilenameUtils.getExtension(content.getFileName().toString());
+        this.contentType = MimeMapper.getMimeType(extension).orElse("*/*");
+    }
+
+    @Override
+    public void setContent(Path content, String contentType) {
+        this.content = content;
+        this.contentType = contentType;
+    }
+
+    @Override
+    public void setContent(InputStream content, String contentType) {
+        this.content = content;
+        this.contentType = contentType;
+    }
+
+    @Override
+    public Object getContent() {
         return content;
     }
 
     @Override
-    public void setResponseHeader(String name, String value) {
+    public void setContentType(String type) {
+        this.contentType = type;
+    }
+
+    @Override
+    public String getContentType() {
+        return contentType;
+    }
+
+    @Override
+    public void setHeader(String name, String value) {
         headers.put(name, value);
     }
 
     @Override
-    public Map<String, String> getResponseHeaders() {
+    public Map<String, String> getHeaders() {
         return headers;
     }
 }

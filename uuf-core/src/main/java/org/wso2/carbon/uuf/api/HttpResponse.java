@@ -16,15 +16,36 @@
 
 package org.wso2.carbon.uuf.api;
 
+import java.io.File;
+import java.io.InputStream;
+import java.nio.file.Path;
 import java.util.Map;
 
 public interface HttpResponse {
 
+    void setStatus(int statusCode);
+
     void setContent(String content);
 
-    String getContent();
+    void setContent(String content, String contentType);
 
-    void setResponseHeader(String name, String value);
+    void setContent(File content);
 
-    Map<String, String> getResponseHeaders();
+    void setContent(File content, String contentType);
+
+    void setContent(Path content);
+
+    void setContent(Path content, String contentType);
+
+    void setContent(InputStream content, String contentType);
+
+    Object getContent();
+
+    void setContentType(String type);
+
+    String getContentType();
+
+    void setHeader(String name, String value);
+
+    Map<String, String> getHeaders();
 }
