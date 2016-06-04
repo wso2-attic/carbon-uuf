@@ -53,6 +53,7 @@ public class StaticResolver {
 
     public static final String DIR_NAME_COMPONENT_RESOURCES = "base";
     public static final String DIR_NAME_PUBLIC_RESOURCES = "public";
+
     private static final DateTimeFormatter HTTP_DATE_FORMATTER;
     private static final ZoneId GMT_TIME_ZONE;
     private static final Logger log = LoggerFactory.getLogger(StaticResolver.class);
@@ -76,7 +77,7 @@ public class StaticResolver {
         this.appsHome = appsHome.normalize();
     }
 
-    public void createDefaultFaviconResponse(HttpRequest request, HttpResponse response) {
+    public void serveDefaultFavicon(HttpRequest request, HttpResponse response) {
         InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("/favicon.png");
         if (inputStream == null) {
             log.error("Cannot find default favicon 'favicon.png' in classpath.");
@@ -87,7 +88,7 @@ public class StaticResolver {
         }
     }
 
-    public void createResponse(App app, HttpRequest request, HttpResponse response) {
+    public void serve(App app, HttpRequest request, HttpResponse response) {
         Path resourcePath;
         try {
             if (RequestUtil.isComponentStaticResourceRequest(request)) {
