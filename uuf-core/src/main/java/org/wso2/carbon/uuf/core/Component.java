@@ -16,11 +16,8 @@
 
 package org.wso2.carbon.uuf.core;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.uuf.api.Configuration;
 
 import java.util.Map;
 import java.util.Optional;
@@ -35,40 +32,29 @@ public class Component {
 
     private final String name;
     private final String version;
+    private final String context;
     private final SortedSet<Page> pages;
-    private final ComponentLookup lookup;
 
-    public Component(String name, String version, SortedSet<Page> pages, ComponentLookup lookup) {
-        if (!name.equals(lookup.getComponentName())) {
-            throw new IllegalArgumentException("Specified 'lookup' does not belong to this component.");
-        }
+    public Component(String name, String version, String context, SortedSet<Page> pages) {
         this.name = name;
         this.version = version;
+        this.context = context;
         this.pages = pages;
-        this.lookup = lookup;
     }
 
-    String getName() {
+    public String getName() {
         return name;
     }
 
-    String getContext() {
-        return lookup.getComponentContext();
+    public String getVersion() {
+        return version;
     }
 
-    ComponentLookup getLookup() {
-        return lookup;
+    public String getContext() {
+        return context;
     }
 
-    Configuration getConfiguration() {
-        return lookup.getConfigurations();
-    }
-
-    public Map<String, Fragment> getAllFragments() {
-        return lookup.getAllFragments();
-    }
-
-    public Optional<String> renderPage(String pageUri, RequestLookup requestLookup, API api) {
+    public Optional<String> renderPage(String pageUri, Lookup lookup, RequestLookup requestLookup, API api) {
         Page servingPage = null;
         for (Page page : pages) {
             Optional<Map<String, String>> uriParams = page.getUriPatten().match(pageUri);
@@ -98,42 +84,22 @@ public class Component {
     }
 
     @Override
-    public String toString() {
-        return "{\"name\":\"" + name + "\", \"version\": \"" + version + "\", \"context\": \"" + getContext() + "\"}";
-    }
-
-    /**
-     * Returns a hash code value for the object. This method is supported for the benefit of hash tables such as those
-     * provided by {@link java.util.HashMap}. This assumes name, version and context is immutable
-     * (http://stackoverflow.com/a/27609/1560536).
-     *
-     * @return a hash code value for this object.
-     */
-    @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(name).append(version).append(getContext()).toHashCode();
+        return name.hashCode() + (version.hashCode() * 31) + (context.hashCode() * 31);
     }
 
-    /**
-     * Indicates whether some other object is "equal to" this one.
-     *
-     * @param obj the reference object with which to compare.
-     * @return {@code true} if this object is the same as the obj argument; {@code false} otherwise.
-     */
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof Component)) {
-            return false;
+        if ((obj != null) && (obj instanceof Component)) {
+            Component other = (Component) obj;
+            return this.name.equals(other.name) && this.version.equals(other.version) &&
+                    this.context.equals(other.context);
         }
-        if (obj == this) {
-            return true;
-        }
+        return false;
+    }
 
-        Component comp = (Component) obj;
-        return new EqualsBuilder().
-                append(name, comp.name).
-                append(version, comp.version).
-                append(getContext(), comp.getContext()).
-                isEquals();
+    @Override
+    public String toString() {
+        return "{\"name\":\"" + name + "\", \"version\": \"" + version + "\", \"context\": \"" + context + "\"}";
     }
 }
