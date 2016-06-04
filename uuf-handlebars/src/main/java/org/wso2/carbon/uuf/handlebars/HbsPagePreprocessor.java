@@ -21,6 +21,7 @@ import com.github.jknack.handlebars.Handlebars;
 import com.github.jknack.handlebars.io.TemplateSource;
 import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.handlebars.helpers.init.LayoutHelper;
+import org.wso2.carbon.uuf.handlebars.helpers.init.SecuredHelper;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -29,14 +30,17 @@ import java.util.Optional;
 public class HbsPagePreprocessor {
 
     public static final String DATA_KEY_CURRENT_LAYOUT = HbsPagePreprocessor.class.getName() + "#layout";
+    public static final String DATA_KEY_IS_SECURED = HbsPagePreprocessor.class.getName() + "#secured";
     private static final Handlebars HANDLEBARS = new Handlebars();
 
     static {
         HANDLEBARS.registerHelper(LayoutHelper.HELPER_NAME, new LayoutHelper());
+        HANDLEBARS.registerHelper(SecuredHelper.HELPER_NAME, new SecuredHelper());
         HANDLEBARS.registerHelperMissing((context, options) -> "");
     }
 
     private final Optional<String> layout;
+    private final boolean isSecured;
 
     public HbsPagePreprocessor(TemplateSource template) {
         String templatePath = template.filename();
@@ -48,9 +52,14 @@ public class HbsPagePreprocessor {
                     "An error occurred when pre-processing the Handlebars template of page '" + templatePath + "'.", e);
         }
         layout = Optional.ofNullable(context.data(DATA_KEY_CURRENT_LAYOUT));
+        isSecured = Boolean.TRUE.equals(context.data(DATA_KEY_IS_SECURED));
     }
 
     public Optional<String> getLayoutName() {
         return layout;
+    }
+
+    public boolean isSecured() {
+        return isSecured;
     }
 }
