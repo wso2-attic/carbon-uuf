@@ -44,8 +44,8 @@ import static org.wso2.carbon.uuf.api.HttpResponse.CONTENT_TYPE_WILDCARD;
 import static org.wso2.carbon.uuf.api.HttpResponse.STATUS_BAD_REQUEST;
 import static org.wso2.carbon.uuf.api.HttpResponse.STATUS_INTERNAL_SERVER_ERROR;
 import static org.wso2.carbon.uuf.api.HttpResponse.STATUS_OK;
-import static org.wso2.carbon.uuf.api.HttpResponse.STAUS_NOT_FOUND;
-import static org.wso2.carbon.uuf.api.HttpResponse.STAUS_NOT_MODIFIED;
+import static org.wso2.carbon.uuf.api.HttpResponse.STATUS_NOT_FOUND;
+import static org.wso2.carbon.uuf.api.HttpResponse.STATUS_NOT_MODIFIED;
 import static org.wso2.carbon.uuf.reference.AppReference.DIR_NAME_COMPONENTS;
 import static org.wso2.carbon.uuf.reference.AppReference.DIR_NAME_THEMES;
 
@@ -81,7 +81,7 @@ public class StaticResolver {
         InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("/favicon.png");
         if (inputStream == null) {
             log.error("Cannot find default favicon 'favicon.png' in classpath.");
-            response.setStatus(STAUS_NOT_FOUND);
+            response.setStatus(STATUS_NOT_FOUND);
         } else {
             response.setStatus(STATUS_OK);
             response.setContent(inputStream, CONTENT_TYPE_IMAGE_PNG);
@@ -114,7 +114,7 @@ public class StaticResolver {
         }
         if (!Files.isRegularFile(resourcePath) || Files.isDirectory(resourcePath)) {
             // Either file does not exists or it is a non-regular file. i.e. a directory
-            response.setContent(STAUS_NOT_FOUND, "Requested resource '" + request.getUri() + "' does not exists.");
+            response.setContent(STATUS_NOT_FOUND, "Requested resource '" + request.getUri() + "' does not exists.");
             return;
         }
 
@@ -133,7 +133,7 @@ public class StaticResolver {
         }
         if (modifiedSinceDate.isPresent() && Duration.between(modifiedSinceDate.get(), latModifiedDate).isZero()) {
             // Resource is NOT modified since the last serve.
-            response.setStatus(STAUS_NOT_MODIFIED);
+            response.setStatus(STATUS_NOT_MODIFIED);
             return;
         }
 

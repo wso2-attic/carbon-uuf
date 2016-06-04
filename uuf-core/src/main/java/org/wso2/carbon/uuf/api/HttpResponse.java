@@ -24,13 +24,13 @@ import java.util.Map;
 public interface HttpResponse {
 
     int STATUS_OK = 200;
-    int STAUS_MOVED_PERMANENTLY = 301;
-    int STAUS_FOUND = 302;
-    int STAUS_NOT_MODIFIED = 304;
+    int STATUS_MOVED_PERMANENTLY = 301;
+    int STATUS_FOUND = 302;
+    int STATUS_NOT_MODIFIED = 304;
     int STATUS_BAD_REQUEST = 400;
     int STATUS_UNAUTHORIZED = 401;
     int STATUS_FORBIDDEN = 403;
-    int STAUS_NOT_FOUND = 404;
+    int STATUS_NOT_FOUND = 404;
     int STATUS_INTERNAL_SERVER_ERROR = 500;
 
     String CONTENT_TYPE_WILDCARD = "*/*";

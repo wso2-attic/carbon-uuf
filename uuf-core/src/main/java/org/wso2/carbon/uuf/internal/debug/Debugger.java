@@ -37,7 +37,7 @@ import static org.wso2.carbon.uuf.api.HttpResponse.CONTENT_TYPE_TEXT_HTML;
 import static org.wso2.carbon.uuf.api.HttpResponse.STATUS_BAD_REQUEST;
 import static org.wso2.carbon.uuf.api.HttpResponse.STATUS_INTERNAL_SERVER_ERROR;
 import static org.wso2.carbon.uuf.api.HttpResponse.STATUS_OK;
-import static org.wso2.carbon.uuf.api.HttpResponse.STAUS_NOT_FOUND;
+import static org.wso2.carbon.uuf.api.HttpResponse.STATUS_NOT_FOUND;
 
 public class Debugger {
 
@@ -100,7 +100,7 @@ public class Debugger {
             InputStream resourceAsStream = this.getClass().getResourceAsStream("/apps/index.html");
             if (resourceAsStream == null) {
                 log.error("Cannot find resource '/apps/index.html' in classpath.");
-                response.setStatus(STAUS_NOT_FOUND);
+                response.setStatus(STATUS_NOT_FOUND);
                 return;
             }
             try {
