@@ -21,7 +21,6 @@ import com.github.jknack.handlebars.HandlebarsException;
 import com.github.jknack.handlebars.io.StringTemplateSource;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import org.wso2.carbon.uuf.handlebars.HbsPreprocessor;
 
 import java.util.Optional;
 
@@ -32,7 +31,7 @@ public class HbsPreprocessorTest {
     }
 
     @Test
-    public void test() {
+    public void testLayout() {
         String pageTemplateContent = "foo\nbar\n{{layout \"test-layout\"}}bla bla\nfoobar";
         Optional<String> layoutName = createHbsPagePreprocessor(pageTemplateContent).getLayoutName();
         Assert.assertTrue(layoutName.isPresent(), "This page has a layout");
@@ -50,5 +49,12 @@ public class HbsPreprocessorTest {
             Assert.assertEquals(error.line, 4, "error is in the 4th line");
             Assert.assertEquals(error.column, 2, "error is in the 2nd column");
         }
+    }
+
+    @Test
+    public void testSecured() {
+        String templateContent = "foo\nbar\n{{secured}}bla bla\nfoobar";
+        boolean isSecured = createHbsPagePreprocessor(templateContent).isSecured();
+        Assert.assertTrue(isSecured, "This page/fragment is secured");
     }
 }
