@@ -37,6 +37,7 @@ public interface HttpResponse {
     String CONTENT_TYPE_TEXT_PLAIN = "text/plain";
     String CONTENT_TYPE_TEXT_HTML = "text/html";
     String CONTENT_TYPE_IMAGE_PNG = "image/png";
+    String CONTENT_TYPE_APPLICATION_JSON = "application/json";
 
     void setStatus(int statusCode);
 
