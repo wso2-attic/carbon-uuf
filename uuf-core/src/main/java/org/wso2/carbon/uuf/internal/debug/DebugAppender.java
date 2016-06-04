@@ -65,7 +65,7 @@ public class DebugAppender extends AppenderSkeleton {
         Logger.getRootLogger().addAppender(this);
     }
 
-    public void dettach() {
+    public void detach() {
         Logger.getRootLogger().removeAppender(this);
     }
 
