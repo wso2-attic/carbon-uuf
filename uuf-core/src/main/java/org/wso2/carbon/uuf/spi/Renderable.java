@@ -17,11 +17,11 @@
 package org.wso2.carbon.uuf.spi;
 
 import org.wso2.carbon.uuf.core.API;
-import org.wso2.carbon.uuf.core.ComponentLookup;
+import org.wso2.carbon.uuf.core.Lookup;
 import org.wso2.carbon.uuf.core.RequestLookup;
 import org.wso2.carbon.uuf.spi.model.Model;
 
 public interface Renderable {
 
-    String render(Model model, ComponentLookup lookup, RequestLookup requestLookup, API api);
+    String render(Model model, Lookup lookup, RequestLookup requestLookup, API api);
 }
