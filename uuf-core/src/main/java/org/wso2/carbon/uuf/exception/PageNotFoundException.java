@@ -16,15 +16,15 @@
 
 package org.wso2.carbon.uuf.exception;
 
+import org.wso2.carbon.uuf.api.HttpResponse;
+
 public class PageNotFoundException extends HttpErrorException {
 
-    private static final int HTTP_STATUS_NOT_FOUND = 404;
-
     public PageNotFoundException(String message) {
-        super(HTTP_STATUS_NOT_FOUND, message);
+        super(HttpResponse.STATUS_NOT_FOUND, message);
     }
 
     public PageNotFoundException(String message, Throwable cause) {
-        super(HTTP_STATUS_NOT_FOUND, message, cause);
+        super(HttpResponse.STATUS_NOT_FOUND, message, cause);
     }
 }

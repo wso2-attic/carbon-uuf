@@ -16,15 +16,15 @@
 
 package org.wso2.carbon.uuf.exception;
 
+import org.wso2.carbon.uuf.api.HttpResponse;
+
 public class FragmentNotFoundException extends HttpErrorException {
 
-    private static final int HTTP_STATUS_NOT_FOUND = 404;
-
     public FragmentNotFoundException(String message) {
-        super(HTTP_STATUS_NOT_FOUND, message);
+        super(HttpResponse.STATUS_NOT_FOUND, message);
     }
 
     public FragmentNotFoundException(String message, Throwable cause) {
-        super(HTTP_STATUS_NOT_FOUND, message, cause);
+        super(HttpResponse.STATUS_NOT_FOUND, message, cause);
     }
 }

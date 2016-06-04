@@ -16,18 +16,19 @@
 
 package org.wso2.carbon.uuf.exception;
 
+import org.wso2.carbon.uuf.api.HttpResponse;
+
 public class PageRedirectException extends HttpErrorException {
 
-    private static final int HTTP_STATUS_FOUND = 302;
     private final String redirectUrl;
 
     public PageRedirectException(String redirectUrl) {
-        super(HTTP_STATUS_FOUND, "Redirecting to '" + redirectUrl + "'.");
+        super(HttpResponse.STATUS_FOUND, "Redirecting to '" + redirectUrl + "'.");
         this.redirectUrl = redirectUrl;
     }
 
     public PageRedirectException(String redirectUrl, Throwable cause) {
-        super(HTTP_STATUS_FOUND, "Redirecting to '" + redirectUrl + "'.", cause);
+        super(HttpResponse.STATUS_FOUND, "Redirecting to '" + redirectUrl + "'.", cause);
         this.redirectUrl = redirectUrl;
     }
 
