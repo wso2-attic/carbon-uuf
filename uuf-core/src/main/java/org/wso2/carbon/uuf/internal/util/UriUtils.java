@@ -23,7 +23,7 @@ import org.wso2.carbon.uuf.core.Page;
 import org.wso2.carbon.uuf.core.Theme;
 import org.wso2.carbon.uuf.internal.io.StaticResolver;
 
-public class UrlUtils {
+public class UriUtils {
 
     public static final String COMPONENT_STATIC_RESOURCES_URI_PREFIX = "/public/components";
     public static final String THEMES_STATIC_RESOURCES_URI_PREFIX = "/public/themes/";

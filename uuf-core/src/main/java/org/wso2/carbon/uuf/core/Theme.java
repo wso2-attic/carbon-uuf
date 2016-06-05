@@ -17,7 +17,7 @@
 package org.wso2.carbon.uuf.core;
 
 import org.wso2.carbon.uuf.api.Placeholder;
-import org.wso2.carbon.uuf.internal.util.UrlUtils;
+import org.wso2.carbon.uuf.internal.util.UriUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,7 +33,7 @@ public class Theme {
                  List<String> bodyJsRelativePaths) {
         this.name = name;
 
-        String uriPrefix = UrlUtils.getPublicUri(this) + "/";
+        String uriPrefix = UriUtils.getPublicUri(this) + "/";
         this.cssTagSuffixes = cssRelativePaths.stream()
                 .map(relativePath -> uriPrefix + relativePath + "\" rel=\"stylesheet\" type=\"text/css\" />")
                 .collect(Collectors.toList());

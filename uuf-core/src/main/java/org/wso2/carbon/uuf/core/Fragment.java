@@ -18,7 +18,7 @@ package org.wso2.carbon.uuf.core;
 
 import org.wso2.carbon.uuf.exception.SessionNotFoundException;
 import org.wso2.carbon.uuf.internal.util.NameUtils;
-import org.wso2.carbon.uuf.internal.util.UrlUtils;
+import org.wso2.carbon.uuf.internal.util.UriUtils;
 import org.wso2.carbon.uuf.spi.Renderable;
 import org.wso2.carbon.uuf.spi.model.Model;
 
@@ -57,7 +57,7 @@ public class Fragment {
         // Rendering flow tracking in.
         requestLookup.tracker().in(this);
         Component currentComponent = lookup.getComponent(requestLookup.tracker().getCurrentComponentName()).get();
-        requestLookup.pushToPublicUriStack(UrlUtils.getPublicUri(currentComponent, this));
+        requestLookup.pushToPublicUriStack(UriUtils.getPublicUri(currentComponent, this));
         String output = renderer.render(model, lookup, requestLookup, api);
         // Rendering flow tracking out.
         requestLookup.popPublicUriStack();

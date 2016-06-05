@@ -16,7 +16,7 @@
 
 package org.wso2.carbon.uuf.api;
 
-import org.wso2.carbon.uuf.internal.util.UrlUtils;
+import org.wso2.carbon.uuf.internal.util.UriUtils;
 
 import java.io.InputStream;
 import java.util.Map;
@@ -177,19 +177,19 @@ public interface HttpRequest {
     }
 
     default boolean isComponentStaticResourceRequest() {
-        return getUriWithoutAppContext().startsWith(UrlUtils.COMPONENT_STATIC_RESOURCES_URI_PREFIX);
+        return getUriWithoutAppContext().startsWith(UriUtils.COMPONENT_STATIC_RESOURCES_URI_PREFIX);
     }
 
     default boolean isThemeStaticResourceRequest() {
-        return getUriWithoutAppContext().startsWith(UrlUtils.THEMES_STATIC_RESOURCES_URI_PREFIX);
+        return getUriWithoutAppContext().startsWith(UriUtils.THEMES_STATIC_RESOURCES_URI_PREFIX);
     }
 
     default boolean isDebugRequest() {
-        return getUriWithoutAppContext().startsWith(UrlUtils.DEBUG_APP_URI_PREFIX);
+        return getUriWithoutAppContext().startsWith(UriUtils.DEBUG_APP_URI_PREFIX);
     }
 
     default boolean isFragmentRequest() {
-        return getUriWithoutAppContext().startsWith(UrlUtils.FRAGMENTS_URI_PREFIX);
+        return getUriWithoutAppContext().startsWith(UriUtils.FRAGMENTS_URI_PREFIX);
     }
 
     default boolean isDefaultFaviconRequest() {

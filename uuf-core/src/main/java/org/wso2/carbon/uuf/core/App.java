@@ -28,7 +28,7 @@ import org.wso2.carbon.uuf.exception.PageRedirectException;
 import org.wso2.carbon.uuf.exception.SessionNotFoundException;
 import org.wso2.carbon.uuf.internal.core.auth.SessionRegistry;
 import org.wso2.carbon.uuf.internal.util.NameUtils;
-import org.wso2.carbon.uuf.internal.util.UrlUtils;
+import org.wso2.carbon.uuf.internal.util.UriUtils;
 import org.wso2.carbon.uuf.spi.model.Model;
 
 import java.util.Map;
@@ -148,7 +148,7 @@ public class App {
      */
     public String renderFragment(HttpRequest request, HttpResponse response) {
         String uriWithoutAppContext = request.getUriWithoutAppContext();
-        String fragmentName = uriWithoutAppContext.substring(UrlUtils.FRAGMENTS_URI_PREFIX.length());
+        String fragmentName = uriWithoutAppContext.substring(UriUtils.FRAGMENTS_URI_PREFIX.length());
         if (NameUtils.isSimpleName(fragmentName)) {
             fragmentName = NameUtils.getFullyQualifiedName(rootComponent.getName(), fragmentName);
         }
