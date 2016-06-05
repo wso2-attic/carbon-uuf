@@ -43,6 +43,8 @@ public interface HttpResponse {
 
     void setStatus(int statusCode);
 
+    int getStatus();
+
     default void setContent(String content) {
         setContent(content, CONTENT_TYPE_TEXT_PLAIN);
     }

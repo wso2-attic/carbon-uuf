@@ -43,6 +43,11 @@ public class MicroserviceHttpResponse implements HttpResponse {
     }
 
     @Override
+    public int getStatus() {
+        return status;
+    }
+
+    @Override
     public void setContent(String content, String contentType) {
         this.content = content;
         this.contentType = contentType;
