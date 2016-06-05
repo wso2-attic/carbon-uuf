@@ -16,6 +16,8 @@
 
 package org.wso2.carbon.uuf.api;
 
+import org.wso2.carbon.uuf.internal.util.UrlUtils;
+
 import java.io.InputStream;
 import java.util.Map;
 
@@ -144,4 +146,53 @@ public interface HttpRequest {
      * @return port number
      */
     int getLocalPort();
+
+    default boolean isValid() {
+        String uri = getUri();
+
+        // An URI must begin with '/ & it should have at least two characters.
+        if ((uri.length() < 2) || (uri.charAt(0) != '/')) {
+            return false;
+        }
+
+        // '//' or '..' are not allowed in URIs.
+        boolean isPreviousCharInvalid = false;
+        for (int i = 0; i < uri.length(); i++) {
+            char currentChar = uri.charAt(i);
+            if ((currentChar == '/') || (currentChar == '.')) {
+                if (isPreviousCharInvalid) {
+                    return false;
+                } else {
+                    isPreviousCharInvalid = true;
+                }
+            } else {
+                isPreviousCharInvalid = false;
+            }
+        }
+        return true;
+    }
+
+    default boolean isStaticResourceRequest() {
+        return getUriWithoutAppContext().startsWith("/public/");
+    }
+
+    default boolean isComponentStaticResourceRequest() {
+        return getUriWithoutAppContext().startsWith(UrlUtils.COMPONENT_STATIC_RESOURCES_URI_PREFIX);
+    }
+
+    default boolean isThemeStaticResourceRequest() {
+        return getUriWithoutAppContext().startsWith(UrlUtils.THEMES_STATIC_RESOURCES_URI_PREFIX);
+    }
+
+    default boolean isDebugRequest() {
+        return getUriWithoutAppContext().startsWith(UrlUtils.DEBUG_APP_URI_PREFIX);
+    }
+
+    default boolean isFragmentRequest() {
+        return getUriWithoutAppContext().startsWith(UrlUtils.FRAGMENTS_URI_PREFIX);
+    }
+
+    default boolean isDefaultFaviconRequest() {
+        return getUri().equals("/favicon.ico");
+    }
 }
