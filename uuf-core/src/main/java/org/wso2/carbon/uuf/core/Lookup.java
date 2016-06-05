@@ -29,28 +29,23 @@ import java.util.Set;
 public class Lookup {
 
     private final SetMultimap<String, String> flattenedDependencies;
-    private final Map<String, Layout> layouts;
+    private final Map<String, Component> components;
     private final Map<String, Fragment> fragments;
     private final SetMultimap<String, Fragment> bindings;
-    private final Map<String, String> componentContexts;
+    private final Map<String, Layout> layouts;
     private final Configuration configuration;
-    private String currentComponentName;
 
     public Lookup(SetMultimap<String, String> flattenedDependencies) {
         this.flattenedDependencies = flattenedDependencies;
+        this.components = new HashMap<>();
         this.layouts = new HashMap<>();
         this.fragments = new HashMap<>();
         this.bindings = HashMultimap.create();
-        this.componentContexts = new HashMap<>();
         this.configuration = Configuration.emptyConfiguration();
     }
 
-    void setCurrentComponentName(String componentName) {
-        currentComponentName = componentName;
-    }
-
-    public void add(Layout layout) {
-        layouts.put(layout.getName(), layout);
+    public void add(Component component) {
+        components.put(component.getName(), component);
     }
 
     public void add(Fragment fragment) {
@@ -61,32 +56,16 @@ public class Lookup {
         bindings.put(zoneName, fragment);
     }
 
-    public void add(Component component) {
-        componentContexts.put(component.getName(), component.getContext());
+    public void add(Layout layout) {
+        layouts.put(layout.getName(), layout);
     }
 
-    public Optional<Layout> getLayout(String layoutName) {
-        return getLayoutIn(currentComponentName, layoutName);
+    Optional<Component> getComponent(String componentName) {
+        return Optional.ofNullable(components.get(componentName));
     }
 
-    public Optional<Layout> getLayoutIn(String componentName, String layoutName) {
-        if (NameUtils.isSimpleName(layoutName)) {
-            return Optional.ofNullable(layouts.get(NameUtils.getFullyQualifiedName(componentName, layoutName)));
-        }
-
-        // layoutName == <dependency-component-name>.<layout-simple-name>
-        String dependencyComponentName = NameUtils.getComponentName(layoutName);
-        if (flattenedDependencies.get(componentName).contains(dependencyComponentName)) {
-            // Component 'dependencyComponentName' is a dependency of component 'componentName'.
-            return Optional.ofNullable(layouts.get(layoutName));
-        } else {
-            // Component 'dependencyComponentName' is NOT a dependency of component 'componentName'.
-            return Optional.<Layout>empty();
-        }
-    }
-
-    public Optional<Fragment> getFragment(String fragmentName) {
-        return getFragmentIn(currentComponentName, fragmentName);
+    Map<String, Component> getAllComponents() {
+        return components;
     }
 
     public Optional<Fragment> getFragmentIn(String componentName, String fragmentName) {
@@ -110,14 +89,23 @@ public class Lookup {
     }
 
     public Set<Fragment> getBindings(String componentName, String zoneName) {
-        if (NameUtils.isSimpleName(zoneName)) {
-            zoneName = NameUtils.getFullyQualifiedName(componentName, zoneName);
-        }
-        return bindings.get(zoneName);
+        return bindings.get(NameUtils.getFullyQualifiedName(componentName, zoneName));
     }
 
-    String getComponentContext(String componentName) {
-        return componentContexts.get(componentName);
+    public Optional<Layout> getLayoutIn(String componentName, String layoutName) {
+        if (NameUtils.isSimpleName(layoutName)) {
+            return Optional.ofNullable(layouts.get(NameUtils.getFullyQualifiedName(componentName, layoutName)));
+        }
+
+        // layoutName == <dependency-component-name>.<layout-simple-name>
+        String dependencyComponentName = NameUtils.getComponentName(layoutName);
+        if (flattenedDependencies.get(componentName).contains(dependencyComponentName)) {
+            // Component 'dependencyComponentName' is a dependency of component 'componentName'.
+            return Optional.ofNullable(layouts.get(layoutName));
+        } else {
+            // Component 'dependencyComponentName' is NOT a dependency of component 'componentName'.
+            return Optional.<Layout>empty();
+        }
     }
 
     public Configuration getConfiguration() {
