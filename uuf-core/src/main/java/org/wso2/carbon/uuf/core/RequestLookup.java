@@ -19,6 +19,7 @@ package org.wso2.carbon.uuf.core;
 import org.wso2.carbon.uuf.api.HttpRequest;
 import org.wso2.carbon.uuf.api.HttpResponse;
 import org.wso2.carbon.uuf.api.Placeholder;
+import org.wso2.carbon.uuf.internal.util.NameUtils;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -68,18 +69,6 @@ public class RequestLookup {
         this.uriParams = uriParams;
     }
 
-    void pushToPublicUriStack(String publicUri) {
-        publicUriStack.addLast(publicUri);
-    }
-
-    String popPublicUriStack() {
-        return publicUriStack.removeLast();
-    }
-
-    public String getPublicUri() {
-        return publicUriStack.peekLast();
-    }
-
     public void addToPlaceholder(Placeholder placeholder, String content) {
         StringBuilder buffer = placeholderBuffers.get(placeholder);
         if (buffer == null) {
@@ -116,34 +105,44 @@ public class RequestLookup {
         return Optional.ofNullable(zoneContents.get(zoneName));
     }
 
+    void pushToPublicUriStack(String publicUri) {
+        publicUriStack.addLast(appContext + publicUri);
+    }
+
+    public String getPublicUri() {
+        return publicUriStack.peekLast();
+    }
+
+    String popPublicUriStack() {
+        return publicUriStack.removeLast();
+    }
+
     public RenderingFlowTracker tracker() {
         return renderingFlowTracker;
     }
 
     public static class RenderingFlowTracker {
 
-        private static final Integer TYPE_COMPONENT = 1;
         private static final Integer TYPE_PAGE = 2;
         private static final Integer TYPE_FRAGMENT = 3;
         private static final Integer TYPE_LAYOUT = 4;
 
-        private final Deque<Component> componentStack;
+        private final Deque<String> componentNamesStack;
         private final Deque<Page> pageStack;
         private final Deque<Fragment> fragmentStack;
         private final Deque<Layout> layoutStack;
         private final Deque<Integer> rendererStack;
 
         RenderingFlowTracker() {
-            this.componentStack = new ArrayDeque<>();
+            this.componentNamesStack = new ArrayDeque<>();
             this.pageStack = new ArrayDeque<>();
             this.fragmentStack = new ArrayDeque<>();
             this.layoutStack = new ArrayDeque<>();
             this.rendererStack = new ArrayDeque<>();
         }
 
-        void in(Component component) {
-            componentStack.push(component);
-            rendererStack.push(TYPE_COMPONENT);
+        void start(Component component) {
+            componentNamesStack.push(component.getName());
         }
 
         void in(Page page) {
@@ -151,18 +150,19 @@ public class RequestLookup {
             rendererStack.push(TYPE_PAGE);
         }
 
-        void in(Fragment fragment) {
-            fragmentStack.push(fragment);
-            rendererStack.push(TYPE_FRAGMENT);
-        }
-
         void in(Layout layout) {
             layoutStack.push(layout);
             rendererStack.push(TYPE_LAYOUT);
         }
 
-        Optional<Component> getCurrentComponent() {
-            return Optional.ofNullable(componentStack.peekLast());
+        void in(Fragment fragment) {
+            fragmentStack.push(fragment);
+            componentNamesStack.push(NameUtils.getComponentName(fragment.getName()));
+            rendererStack.push(TYPE_FRAGMENT);
+        }
+
+        public String getCurrentComponentName() {
+            return componentNamesStack.peekLast();
         }
 
         Optional<Page> getCurrentPage() {
@@ -177,10 +177,6 @@ public class RequestLookup {
             return Optional.ofNullable(layoutStack.peekLast());
         }
 
-        public boolean isInComponent() {
-            return rendererStack.peekLast().equals(TYPE_COMPONENT);
-        }
-
         public boolean isInPage() {
             return rendererStack.peekLast().equals(TYPE_PAGE);
         }
@@ -191,14 +187,6 @@ public class RequestLookup {
 
         public boolean isInLayout() {
             return rendererStack.peekLast().equals(TYPE_LAYOUT);
-        }
-
-        void out(Component component) {
-            if (!isInComponent()) {
-                throw new IllegalStateException("Not in a component");
-            }
-            componentStack.removeLast();
-            rendererStack.removeLast();
         }
 
         void out(Page page) {
@@ -214,6 +202,7 @@ public class RequestLookup {
                 throw new IllegalStateException("Not in a fragment");
             }
             fragmentStack.removeLast();
+            componentNamesStack.removeLast();
             rendererStack.removeLast();
         }
 
@@ -223,6 +212,13 @@ public class RequestLookup {
             }
             layoutStack.removeLast();
             rendererStack.removeLast();
+        }
+
+        void finish() {
+            if (componentNamesStack.size() != 1) {
+                throw new IllegalStateException("Not where you started");
+            }
+            componentNamesStack.removeLast();
         }
     }
 }
