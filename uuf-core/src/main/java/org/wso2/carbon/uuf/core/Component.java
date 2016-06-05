@@ -26,7 +26,7 @@ import java.util.SortedSet;
 
 public class Component {
 
-    public static final String ROOT_COMPONENT_NAME = "root";
+    public static final String ROOT_COMPONENT_SIMPLE_NAME = "root";
     public static final String ROOT_COMPONENT_CONTEXT = "/root";
     private static final Logger log = LoggerFactory.getLogger(Component.class);
 
@@ -72,7 +72,12 @@ public class Component {
             log.debug("Component '" + name + "' is serving Page '" + servingPage + "' for URI '" + pageUri + "'.");
         }
 
-        return Optional.of(servingPage.render(null, lookup, requestLookup, api));
+        // Rendering flow tracking start.
+        requestLookup.tracker().start(this);
+        String html = servingPage.render(null, lookup, requestLookup, api);
+        // Rendering flow tracking  finish.
+        requestLookup.tracker().finish();
+        return Optional.of(html);
     }
 
     public boolean hasPage(String pageUri) {

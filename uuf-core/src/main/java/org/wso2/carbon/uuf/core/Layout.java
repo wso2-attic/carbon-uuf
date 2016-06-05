@@ -17,6 +17,7 @@
 package org.wso2.carbon.uuf.core;
 
 import org.wso2.carbon.uuf.internal.util.NameUtils;
+import org.wso2.carbon.uuf.internal.util.UrlUtils;
 import org.wso2.carbon.uuf.spi.Renderable;
 
 public class Layout {
@@ -43,12 +44,15 @@ public class Layout {
         return simpleName;
     }
 
-    public String render(ComponentLookup lookup, RequestLookup requestLookup) {
-        lookup.in(this);
-        requestLookup.pushToPublicUriStack(requestLookup.getAppContext() + lookup.getPublicUriInfix(this));
+    public String render(Lookup lookup, RequestLookup requestLookup) {
+        // Rendering flow tracking in.
+        requestLookup.tracker().in(this);
+        Component currentComponent = lookup.getComponent(requestLookup.tracker().getCurrentComponentName()).get();
+        requestLookup.pushToPublicUriStack(UrlUtils.getPublicUri(currentComponent, this));
         String output = renderer.render(null, lookup, requestLookup, null);
+        // Rendering flow tracking out.
         requestLookup.popPublicUriStack();
-        lookup.out();
+        requestLookup.tracker().out(this);
         return output;
     }
 
