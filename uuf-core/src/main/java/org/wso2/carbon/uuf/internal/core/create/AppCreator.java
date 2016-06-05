@@ -19,7 +19,6 @@ package org.wso2.carbon.uuf.internal.core.create;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import org.apache.commons.lang3.tuple.Pair;
-import org.wso2.carbon.uuf.api.Configuration;
 import org.wso2.carbon.uuf.api.Placeholder;
 import org.wso2.carbon.uuf.core.App;
 import org.wso2.carbon.uuf.core.Component;
@@ -96,7 +95,7 @@ public class AppCreator {
                 String componentSimpleName, componentContext;
                 if (i == 0) {
                     // This happens only once, because when (i == 0) then (dependencies.size() == 1).
-                    componentSimpleName = Component.ROOT_COMPONENT_NAME;
+                    componentSimpleName = Component.ROOT_COMPONENT_SIMPLE_NAME;
                     componentContext = Component.ROOT_COMPONENT_CONTEXT;
                     appName = componentName; // Name of the root component is the full app name.
                 } else {
@@ -115,7 +114,7 @@ public class AppCreator {
 
         Set<Theme> themes = appReference.getThemeReferences().map(this::createTheme).collect(Collectors.toSet());
 
-        return new App(appName, new HashSet<>(createdComponents.values()), themes, new SessionRegistry(appName));
+        return new App(appName, lookup, themes, new SessionRegistry(appName));
     }
 
     private Component createComponent(String componentName, String componentVersion, String componentContext,
@@ -144,7 +143,6 @@ public class AppCreator {
                             "' of component '" + getSimpleName(componentName) + "' is malformed.", e);
         }
 
-        Configuration configurations;
         try {
             Map<?, ?> rawConfigurations = componentReference
                     .getConfigurations()
@@ -240,7 +238,7 @@ public class AppCreator {
         if (prd.getLayoutName().isPresent()) {
             // This page has a layout.
             String layoutName = prd.getLayoutName().get();
-            Optional<Layout> layout = lookup.getLayout(layoutName);
+            Optional<Layout> layout = lookup.getLayoutIn(componentName, layoutName);
             if (layout.isPresent()) {
                 return new Page(uriPatten, prd.getRenderable(), prd.isSecured(), layout.get());
             } else {
