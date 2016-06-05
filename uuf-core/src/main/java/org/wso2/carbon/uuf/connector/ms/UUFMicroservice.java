@@ -20,6 +20,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -28,7 +29,6 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
-import org.wso2.carbon.uuf.api.HttpRequest;
 import org.wso2.carbon.uuf.internal.UUFRegistry;
 import org.wso2.carbon.uuf.internal.core.create.AppCreator;
 import org.wso2.carbon.uuf.internal.core.create.AppDiscoverer;
@@ -89,22 +89,29 @@ public class UUFMicroservice implements Microservice {
 
     @GET
     @Path(".*")
-    public Response get(@Context io.netty.handler.codec.http.HttpRequest request) {
-        return execute(new MicroserviceHttpRequest(request));
+    public Response get(@Context HttpRequest request) {
+        return execute(request, null);
     }
 
     @POST
     @Path(".*")
     @Produces({"text/plain"})
-    public void post(@Context HttpStreamer httpStreamer, @Context io.netty.handler.codec.http.HttpRequest request) {
-        httpStreamer.callback(new HttpStreamHandlerImpl(this, request));
+    public void post(@Context HttpStreamer httpStreamer, @Context HttpRequest nettyRequest) {
+        httpStreamer.callback(new HttpStreamHandlerImpl(this, nettyRequest));
     }
 
-    private Response execute(HttpRequest request) {
+    private Response execute(HttpRequest nettyRequest, byte[] contentBytes) {
+        org.wso2.carbon.uuf.api.HttpRequest httpRequest = new MicroserviceHttpRequest(nettyRequest, contentBytes);
+        org.wso2.carbon.uuf.api.HttpResponse httpResponse = new MicroserviceHttpResponse();
         MDC.put("uuf-request", String.valueOf(count.incrementAndGet()));
-        Response response = registry.serve(request);
+        registry.serve(httpRequest, httpResponse);
         MDC.remove("uuf-request");
-        return response;
+        Response.ResponseBuilder responseBuilder = Response.status(httpResponse.getStatus());
+        if (httpResponse.getContent() != null) {
+            responseBuilder.entity(httpResponse.getContent()).type(httpResponse.getContentType());
+        }
+        httpResponse.getHeaders().entrySet().forEach(entry -> responseBuilder.header(entry.getKey(), entry.getValue()));
+        return responseBuilder.build();
     }
 
     /**
@@ -141,10 +148,10 @@ public class UUFMicroservice implements Microservice {
     private static class HttpStreamHandlerImpl implements HttpStreamHandler {
         private final ByteArrayOutputStream content = new ByteArrayOutputStream();
         private final UUFMicroservice UUFMicroservice;
-        private final io.netty.handler.codec.http.HttpRequest nettyRequest;
+        private final HttpRequest nettyRequest;
 
         public HttpStreamHandlerImpl(UUFMicroservice UUFMicroservice,
-                                     io.netty.handler.codec.http.HttpRequest nettyRequest) {
+                                     HttpRequest nettyRequest) {
             this.UUFMicroservice = UUFMicroservice;
             this.nettyRequest = nettyRequest;
         }
@@ -159,8 +166,7 @@ public class UUFMicroservice implements Microservice {
             request.readBytes(content, request.capacity());
             content.close();
 
-            HttpRequest httpRequest = new MicroserviceHttpRequest(this.nettyRequest, content.toByteArray());
-            Response response = UUFMicroservice.execute(httpRequest);
+            Response response = UUFMicroservice.execute(nettyRequest, content.toByteArray());
             ByteBuf channelBuffer = Unpooled.wrappedBuffer(response.getEntity().toString().getBytes());
             Multimap<String, String> headers = ArrayListMultimap.create();
             response.getHeaders().forEach(
