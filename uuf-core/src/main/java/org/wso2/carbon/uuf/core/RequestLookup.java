@@ -17,6 +17,7 @@
 package org.wso2.carbon.uuf.core;
 
 import org.wso2.carbon.uuf.api.HttpRequest;
+import org.wso2.carbon.uuf.api.HttpResponse;
 import org.wso2.carbon.uuf.api.Placeholder;
 
 import java.util.ArrayDeque;
@@ -30,14 +31,16 @@ public class RequestLookup {
 
     private final String appContext;
     private final HttpRequest request;
+    private final HttpResponse response;
     private Map<String, String> uriParams;
     private final Deque<String> publicUriStack;
     private final EnumMap<Placeholder, StringBuilder> placeholderBuffers;
     private final Map<String, String> zoneContents;
 
-    public RequestLookup(HttpRequest request) {
-        this.appContext = request.getAppContext();
+    public RequestLookup(String appContext, HttpRequest request, HttpResponse response) {
+        this.appContext = (appContext == null) ? request.getAppContext() : appContext;
         this.request = request;
+        this.response = response;
         this.publicUriStack = new ArrayDeque<>();
         this.placeholderBuffers = new EnumMap<>(Placeholder.class);
         this.zoneContents = new HashMap<>();
@@ -49,6 +52,10 @@ public class RequestLookup {
 
     public HttpRequest getRequest() {
         return request;
+    }
+
+    public HttpResponse getResponse() {
+        return response;
     }
 
     public Map<String, String> getUriParams() {
