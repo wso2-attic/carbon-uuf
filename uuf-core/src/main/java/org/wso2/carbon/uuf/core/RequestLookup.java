@@ -33,6 +33,7 @@ public class RequestLookup {
     private final HttpRequest request;
     private final HttpResponse response;
     private Map<String, String> uriParams;
+    private final RenderingFlowTracker renderingFlowTracker;
     private final Deque<String> publicUriStack;
     private final EnumMap<Placeholder, StringBuilder> placeholderBuffers;
     private final Map<String, String> zoneContents;
@@ -41,6 +42,7 @@ public class RequestLookup {
         this.appContext = (appContext == null) ? request.getAppContext() : appContext;
         this.request = request;
         this.response = response;
+        this.renderingFlowTracker = new RenderingFlowTracker();
         this.publicUriStack = new ArrayDeque<>();
         this.placeholderBuffers = new EnumMap<>(Placeholder.class);
         this.zoneContents = new HashMap<>();
@@ -112,5 +114,115 @@ public class RequestLookup {
 
     public Optional<String> getZoneContent(String zoneName) {
         return Optional.ofNullable(zoneContents.get(zoneName));
+    }
+
+    public RenderingFlowTracker tracker() {
+        return renderingFlowTracker;
+    }
+
+    public static class RenderingFlowTracker {
+
+        private static final Integer TYPE_COMPONENT = 1;
+        private static final Integer TYPE_PAGE = 2;
+        private static final Integer TYPE_FRAGMENT = 3;
+        private static final Integer TYPE_LAYOUT = 4;
+
+        private final Deque<Component> componentStack;
+        private final Deque<Page> pageStack;
+        private final Deque<Fragment> fragmentStack;
+        private final Deque<Layout> layoutStack;
+        private final Deque<Integer> rendererStack;
+
+        RenderingFlowTracker() {
+            this.componentStack = new ArrayDeque<>();
+            this.pageStack = new ArrayDeque<>();
+            this.fragmentStack = new ArrayDeque<>();
+            this.layoutStack = new ArrayDeque<>();
+            this.rendererStack = new ArrayDeque<>();
+        }
+
+        void in(Component component) {
+            componentStack.push(component);
+            rendererStack.push(TYPE_COMPONENT);
+        }
+
+        void in(Page page) {
+            pageStack.push(page);
+            rendererStack.push(TYPE_PAGE);
+        }
+
+        void in(Fragment fragment) {
+            fragmentStack.push(fragment);
+            rendererStack.push(TYPE_FRAGMENT);
+        }
+
+        void in(Layout layout) {
+            layoutStack.push(layout);
+            rendererStack.push(TYPE_LAYOUT);
+        }
+
+        Optional<Component> getCurrentComponent() {
+            return Optional.ofNullable(componentStack.peekLast());
+        }
+
+        Optional<Page> getCurrentPage() {
+            return Optional.ofNullable(pageStack.peekLast());
+        }
+
+        Optional<Fragment> getCurrentFragment() {
+            return Optional.ofNullable(fragmentStack.peekLast());
+        }
+
+        Optional<Layout> getCurrentLayout() {
+            return Optional.ofNullable(layoutStack.peekLast());
+        }
+
+        public boolean isInComponent() {
+            return rendererStack.peekLast().equals(TYPE_COMPONENT);
+        }
+
+        public boolean isInPage() {
+            return rendererStack.peekLast().equals(TYPE_PAGE);
+        }
+
+        public boolean isInFragment() {
+            return rendererStack.peekLast().equals(TYPE_FRAGMENT);
+        }
+
+        public boolean isInLayout() {
+            return rendererStack.peekLast().equals(TYPE_LAYOUT);
+        }
+
+        void out(Component component) {
+            if (!isInComponent()) {
+                throw new IllegalStateException("Not in a component");
+            }
+            componentStack.removeLast();
+            rendererStack.removeLast();
+        }
+
+        void out(Page page) {
+            if (!isInPage()) {
+                throw new IllegalStateException("Not in a page");
+            }
+            pageStack.removeLast();
+            rendererStack.removeLast();
+        }
+
+        void out(Fragment fragment) {
+            if (!isInFragment()) {
+                throw new IllegalStateException("Not in a fragment");
+            }
+            fragmentStack.removeLast();
+            rendererStack.removeLast();
+        }
+
+        void out(Layout layout) {
+            if (!isInLayout()) {
+                throw new IllegalStateException("Not in a layout");
+            }
+            layoutStack.removeLast();
+            rendererStack.removeLast();
+        }
     }
 }
