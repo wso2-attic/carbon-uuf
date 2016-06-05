@@ -19,16 +19,12 @@ package org.wso2.carbon.uuf;
 import com.google.common.collect.ImmutableList;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import org.wso2.carbon.uuf.api.HttpRequest;
 import org.wso2.carbon.uuf.api.Placeholder;
 import org.wso2.carbon.uuf.core.RequestLookup;
 import org.wso2.carbon.uuf.core.Theme;
 
 import java.util.List;
 import java.util.Optional;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class ThemeTest {
 
@@ -38,9 +34,7 @@ public class ThemeTest {
         List<String> headJsRelativePaths = ImmutableList.of("js/main-script.css");
         List<String> bodyJsRelativePaths = ImmutableList.of("js/last-script.css");
         Theme theme = new Theme("test.theme", cssRelativePaths, headJsRelativePaths, bodyJsRelativePaths);
-        HttpRequest request = mock(HttpRequest.class);
-        when(request.getAppContext()).thenReturn("/appContext");
-        RequestLookup requestLookup = new RequestLookup(request);
+        RequestLookup requestLookup = new RequestLookup("/appContext", null, null);
         theme.render(requestLookup);
 
         Optional<String> css = requestLookup.getPlaceholderContent(Placeholder.css);
