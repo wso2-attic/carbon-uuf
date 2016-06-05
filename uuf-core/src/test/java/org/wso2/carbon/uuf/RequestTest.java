@@ -24,7 +24,7 @@ import org.wso2.carbon.uuf.api.HttpRequest;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class RequestUtilTest {
+public class RequestTest {
 
     @DataProvider(name = "uris")
     public static Object[][] getUris() {
