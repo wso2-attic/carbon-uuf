@@ -35,12 +35,14 @@ import org.wso2.carbon.uuf.internal.util.RequestUtil;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static org.wso2.carbon.uuf.api.HttpResponse.CONTENT_TYPE_TEXT_HTML;
 import static org.wso2.carbon.uuf.api.HttpResponse.HEADER_LOCATION;
 import static org.wso2.carbon.uuf.api.HttpResponse.STATUS_BAD_REQUEST;
 import static org.wso2.carbon.uuf.api.HttpResponse.STATUS_INTERNAL_SERVER_ERROR;
 import static org.wso2.carbon.uuf.api.HttpResponse.STATUS_FOUND;
 import static org.wso2.carbon.uuf.api.HttpResponse.STATUS_MOVED_PERMANENTLY;
 import static org.wso2.carbon.uuf.api.HttpResponse.STATUS_NOT_FOUND;
+import static org.wso2.carbon.uuf.api.HttpResponse.STATUS_OK;
 
 public class UUFRegistry {
 
@@ -110,12 +112,13 @@ public class UUFRegistry {
                 debugger.serve(app, request, response);
                 return;
             }
+            String html;
             if (RequestUtil.isFragmentRequest(request)) {
-                app.renderFragment(request, response);
+                html = app.renderFragment(request, response);
             } else {
                 // Request for a page.
                 try {
-                    app.renderPage(request, response);
+                    html = app.renderPage(request, response);
                 } catch (PageNotFoundException e) {
                     // See https://googlewebmastercentral.blogspot.com/2010/04/to-slash-or-not-to-slash.html
                     // if the tailing / is extra or a it is missing, send 301
@@ -129,6 +132,7 @@ public class UUFRegistry {
                     throw e;
                 }
             }
+            response.setContent(STATUS_OK, html, CONTENT_TYPE_TEXT_HTML);
         } catch (PageNotFoundException | FragmentNotFoundException e) {
             renderErrorPage(app, request, response, STATUS_NOT_FOUND, e.getMessage());
         } catch (PageRedirectException e) {
