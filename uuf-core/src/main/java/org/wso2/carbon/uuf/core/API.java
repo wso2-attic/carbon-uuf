@@ -146,7 +146,7 @@ public class API {
         sessionRegistry.addSession(session);
         String header = SessionRegistry.SESSION_COOKIE_NAME + "=" + session.getSessionId() + "; Path=" +
                 requestLookup.getAppContext() + "; Secure; HTTPOnly";
-        requestLookup.setResponseHeader("Set-Cookie", header);
+        requestLookup.getResponse().setHeader("Set-Cookie", header);
         return session;
     }
 
@@ -154,7 +154,7 @@ public class API {
         if (!currentSession.isPresent()) {
             // Since an API object lives in the request scope, it is safe to cache the current Session object.
             String sessionId = requestLookup.getRequest().getCookieValue(SessionRegistry.SESSION_COOKIE_NAME);
-            if(!StringUtils.isEmpty(sessionId)){
+            if (!StringUtils.isEmpty(sessionId)) {
                 currentSession = sessionRegistry.getSession(sessionId);
             }
         }
@@ -174,7 +174,7 @@ public class API {
         String header = SessionRegistry.SESSION_COOKIE_NAME +
                 "=; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:01 GMT; Path=" + requestLookup.getAppContext() +
                 "; Secure; HTTPOnly";
-        requestLookup.setResponseHeader("Set-Cookie", header);
+        requestLookup.getResponse().setHeader("Set-Cookie", header);
         return true;
     }
 
