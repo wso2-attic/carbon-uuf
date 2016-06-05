@@ -17,6 +17,8 @@
 package org.wso2.carbon.uuf.core;
 
 import org.wso2.carbon.uuf.api.Configuration;
+import org.wso2.carbon.uuf.api.HttpRequest;
+import org.wso2.carbon.uuf.api.HttpResponse;
 import org.wso2.carbon.uuf.api.auth.Session;
 import org.wso2.carbon.uuf.api.model.MapModel;
 import org.wso2.carbon.uuf.exception.FragmentNotFoundException;
@@ -29,7 +31,6 @@ import org.wso2.carbon.uuf.internal.util.NameUtils;
 import org.wso2.carbon.uuf.internal.util.RequestUtil;
 import org.wso2.carbon.uuf.spi.model.Model;
 
-import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -41,6 +42,7 @@ public class App {
 
     private final String name;
     private final String context;
+    private final Lookup lookup;
     private final Map<String, Component> components;
     private final Component rootComponent;
     private final Map<String, Theme> themes;
@@ -48,20 +50,21 @@ public class App {
     private final Configuration configuration;
     private final SessionRegistry sessionRegistry;
 
-    public App(String name, Set<Component> components, Set<Theme> themes, SessionRegistry sessionRegistry) {
+    public App(String name, Lookup lookup, Set<Theme> themes, SessionRegistry sessionRegistry) {
         this.name = name;
+        this.lookup = lookup;
+        this.configuration = this.lookup.getConfiguration();
+        this.sessionRegistry = sessionRegistry;
 
-        this.components = components.stream().collect(Collectors.toMap(Component::getContext, cmp -> cmp));
+        this.components = this.lookup.getAllComponents().values().stream()
+                .collect(Collectors.toMap(Component::getContext, cmp -> cmp));
         this.rootComponent = this.components.remove(Component.ROOT_COMPONENT_CONTEXT);
-        this.configuration = rootComponent.getConfiguration();
         String configuredServerAppContext = configuration.getServerAppContext();
         this.context = (configuredServerAppContext == null) ? ("/" + getSimpleName(name)) : configuredServerAppContext;
 
         this.themes = themes.stream().collect(Collectors.toMap(Theme::getName, theme -> theme));
-        String configuredThemeName = this.rootComponent.getConfiguration().getThemeName();
+        String configuredThemeName = this.configuration.getThemeName();
         this.appTheme = (configuredThemeName == null) ? null : this.themes.get(configuredThemeName);
-
-        this.sessionRegistry = sessionRegistry;
     }
 
     public String getName() {
@@ -76,22 +79,28 @@ public class App {
         return components;
     }
 
-    public Map<String, Fragment> getFragments(){
-        return Collections.emptyMap();
+    public Map<String, Fragment> getFragments() {
+        return lookup.getAllFragments();
     }
 
     public Map<String, Theme> getThemes() {
         return themes;
     }
 
-    public String renderPage(String uriWithoutAppContext, RequestLookup requestLookup) {
+    /**
+     * @param request  HTTP request
+     * @param response HTTP response
+     * @return rendered HTML output
+     */
+    public String renderPage(HttpRequest request, HttpResponse response) {
+        RequestLookup requestLookup = new RequestLookup(configuration.getClientAppContext(), request, response);
         API api = new API(sessionRegistry, requestLookup);
         Theme renderingTheme = getRenderingTheme(api);
         if (renderingTheme != null) {
             renderingTheme.render(requestLookup);
         }
         try {
-            String html = renderPage(uriWithoutAppContext, requestLookup, api);
+            String html = renderPage(request.getUriWithoutAppContext(), requestLookup, api);
             updateAppTheme(api);
             return html;
         } catch (SessionNotFoundException e) {
@@ -106,7 +115,7 @@ public class App {
 
     private String renderPage(String uriWithoutAppContext, RequestLookup requestLookup, API api) {
         // First try to render the page with 'root' component.
-        Optional<String> output = rootComponent.renderPage(uriWithoutAppContext, requestLookup, api);
+        Optional<String> output = rootComponent.renderPage(uriWithoutAppContext, lookup, requestLookup, api);
         if (output.isPresent()) {
             return output.get();
         }
@@ -124,7 +133,7 @@ public class App {
             throw new PageNotFoundException("Requested page '" + uriWithoutAppContext + "' does not exists.");
         }
         String pageUri = uriWithoutAppContext.substring(secondSlashIndex);
-        output = component.renderPage(pageUri, requestLookup, api);
+        output = component.renderPage(pageUri, lookup, requestLookup, api);
         if (output.isPresent()) {
             return output.get();
         }
@@ -133,27 +142,27 @@ public class App {
     }
 
     /**
-     * Returns rendered output of this fragment uri. This method intended to use for serving AJAX requests.
-     *
-     * @param uriWithoutAppContext fragment uri
-     * @param requestLookup        request lookup
-     * @return rendered output
+     * @param request  HTTP request
+     * @param response HTTP response
+     * @return rendered HTML output
      */
-    public String renderFragment(String uriWithoutAppContext, RequestLookup requestLookup) {
+    public String renderFragment(HttpRequest request, HttpResponse response) {
+        String uriWithoutAppContext = request.getUriWithoutAppContext();
         String fragmentName = uriWithoutAppContext.substring(RequestUtil.FRAGMENTS_URI_PREFIX.length());
         if (NameUtils.isSimpleName(fragmentName)) {
             fragmentName = NameUtils.getFullyQualifiedName(rootComponent.getName(), fragmentName);
         }
         // When building the dependency tree, all fragments are accumulated into the rootComponent.
-        Fragment fragment = rootComponent.getAllFragments().get(fragmentName);
+        Fragment fragment = lookup.getAllFragments().get(fragmentName);
         if (fragment == null) {
             throw new FragmentNotFoundException("Requested fragment '" + fragmentName + "' does not exists.");
         }
 
-        Model model = new MapModel(requestLookup.getRequest().getQueryParams().entrySet().stream()
+        Model model = new MapModel(request.getQueryParams().entrySet().stream()
                                            .collect(Collectors.toMap(Map.Entry::getKey, entry -> (Object) entry)));
+        RequestLookup requestLookup = new RequestLookup(configuration.getClientAppContext(), request, response);
         API api = new API(sessionRegistry, requestLookup);
-        return fragment.render(model, rootComponent.getLookup(), requestLookup, api);
+        return fragment.render(model, lookup, requestLookup, api);
     }
 
     public boolean hasPage(String uriWithoutAppContext) {
