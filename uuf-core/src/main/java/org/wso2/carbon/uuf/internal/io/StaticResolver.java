@@ -24,7 +24,6 @@ import org.wso2.carbon.uuf.api.HttpRequest;
 import org.wso2.carbon.uuf.api.HttpResponse;
 import org.wso2.carbon.uuf.core.App;
 import org.wso2.carbon.uuf.internal.util.MimeMapper;
-import org.wso2.carbon.uuf.internal.util.RequestUtil;
 import org.wso2.carbon.uuf.reference.ComponentReference;
 
 import java.io.IOException;
@@ -43,9 +42,9 @@ import static org.wso2.carbon.uuf.api.HttpResponse.CONTENT_TYPE_IMAGE_PNG;
 import static org.wso2.carbon.uuf.api.HttpResponse.CONTENT_TYPE_WILDCARD;
 import static org.wso2.carbon.uuf.api.HttpResponse.STATUS_BAD_REQUEST;
 import static org.wso2.carbon.uuf.api.HttpResponse.STATUS_INTERNAL_SERVER_ERROR;
-import static org.wso2.carbon.uuf.api.HttpResponse.STATUS_OK;
 import static org.wso2.carbon.uuf.api.HttpResponse.STATUS_NOT_FOUND;
 import static org.wso2.carbon.uuf.api.HttpResponse.STATUS_NOT_MODIFIED;
+import static org.wso2.carbon.uuf.api.HttpResponse.STATUS_OK;
 import static org.wso2.carbon.uuf.reference.AppReference.DIR_NAME_COMPONENTS;
 import static org.wso2.carbon.uuf.reference.AppReference.DIR_NAME_THEMES;
 
@@ -91,10 +90,10 @@ public class StaticResolver {
     public void serve(App app, HttpRequest request, HttpResponse response) {
         Path resourcePath;
         try {
-            if (RequestUtil.isComponentStaticResourceRequest(request)) {
+            if (request.isComponentStaticResourceRequest()) {
                 // /public/components/...
                 resourcePath = resolveResourceInComponent(app.getName(), request.getUriWithoutAppContext());
-            } else if (RequestUtil.isThemeStaticResourceRequest(request)) {
+            } else if (request.isThemeStaticResourceRequest()) {
                 // /public/themes/...
                 resourcePath = resolveResourceInTheme(app.getName(), request.getUriWithoutAppContext());
             } else {

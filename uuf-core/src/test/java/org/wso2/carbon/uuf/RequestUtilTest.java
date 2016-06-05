@@ -20,7 +20,6 @@ import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import org.wso2.carbon.uuf.api.HttpRequest;
-import org.wso2.carbon.uuf.internal.util.RequestUtil;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -51,7 +50,7 @@ public class RequestUtilTest {
     public void testIsValid(String uri, boolean expectedResult) throws Exception {
         HttpRequest request = mock(HttpRequest.class);
         when(request.getUri()).thenReturn(uri);
-        boolean actualResult = RequestUtil.isValid(request);
+        boolean actualResult = request.isValid();
         Assert.assertEquals(actualResult, expectedResult);
     }
 }

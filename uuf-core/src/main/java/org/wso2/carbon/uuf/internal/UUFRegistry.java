@@ -30,7 +30,6 @@ import org.wso2.carbon.uuf.internal.core.create.AppCreator;
 import org.wso2.carbon.uuf.internal.core.create.AppDiscoverer;
 import org.wso2.carbon.uuf.internal.debug.Debugger;
 import org.wso2.carbon.uuf.internal.io.StaticResolver;
-import org.wso2.carbon.uuf.internal.util.RequestUtil;
 
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -38,8 +37,8 @@ import java.util.stream.Collectors;
 import static org.wso2.carbon.uuf.api.HttpResponse.CONTENT_TYPE_TEXT_HTML;
 import static org.wso2.carbon.uuf.api.HttpResponse.HEADER_LOCATION;
 import static org.wso2.carbon.uuf.api.HttpResponse.STATUS_BAD_REQUEST;
-import static org.wso2.carbon.uuf.api.HttpResponse.STATUS_INTERNAL_SERVER_ERROR;
 import static org.wso2.carbon.uuf.api.HttpResponse.STATUS_FOUND;
+import static org.wso2.carbon.uuf.api.HttpResponse.STATUS_INTERNAL_SERVER_ERROR;
 import static org.wso2.carbon.uuf.api.HttpResponse.STATUS_MOVED_PERMANENTLY;
 import static org.wso2.carbon.uuf.api.HttpResponse.STATUS_NOT_FOUND;
 import static org.wso2.carbon.uuf.api.HttpResponse.STATUS_OK;
@@ -63,7 +62,7 @@ public class UUFRegistry {
     }
 
     public void serve(HttpRequest request, HttpResponse response) {
-        if (log.isDebugEnabled() && !RequestUtil.isDebugRequest(request)) {
+        if (log.isDebugEnabled() && !request.isDebugRequest()) {
             log.debug("HTTP request received " + request);
         }
 
@@ -78,11 +77,11 @@ public class UUFRegistry {
 
         App app = null;
         try {
-            if (!RequestUtil.isValid(request)) {
+            if (!request.isValid()) {
                 response.setContent(STATUS_BAD_REQUEST, "Invalid URI '" + request.getUri() + "'.");
                 return;
             }
-            if (RequestUtil.isDefaultFaviconRequest(request)) {
+            if (request.isDefaultFaviconRequest()) {
                 staticResolver.serveDefaultFavicon(request, response);
                 return;
             }
@@ -97,11 +96,11 @@ public class UUFRegistry {
                 app = reloadApp(app, appDiscoverer, appCreator);
             }
 
-            if (RequestUtil.isStaticResourceRequest(request)) {
+            if (request.isStaticResourceRequest()) {
                 staticResolver.serve(app, request, response);
                 return;
             }
-            if (Debugger.isDebuggingEnabled() && RequestUtil.isDebugRequest(request)) {
+            if (Debugger.isDebuggingEnabled() && request.isDebugRequest()) {
                 if (this.debugger == null) {
                     synchronized (LOCK) {
                         if (this.debugger == null) {
@@ -113,7 +112,7 @@ public class UUFRegistry {
                 return;
             }
             String html;
-            if (RequestUtil.isFragmentRequest(request)) {
+            if (request.isFragmentRequest()) {
                 html = app.renderFragment(request, response);
             } else {
                 // Request for a page.
