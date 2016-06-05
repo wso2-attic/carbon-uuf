@@ -19,17 +19,13 @@ package org.wso2.carbon.uuf;
 import com.google.common.collect.ImmutableSetMultimap;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import org.wso2.carbon.uuf.api.Configuration;
-import org.wso2.carbon.uuf.api.HttpRequest;
-import org.wso2.carbon.uuf.core.ComponentLookup;
+import org.wso2.carbon.uuf.core.Component;
 import org.wso2.carbon.uuf.core.Fragment;
+import org.wso2.carbon.uuf.core.Lookup;
 import org.wso2.carbon.uuf.core.RequestLookup;
 import org.wso2.carbon.uuf.spi.Renderable;
 
 import java.util.Collections;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class FragmentTest {
 
@@ -37,12 +33,10 @@ public class FragmentTest {
     public void testRenderFragment() {
         final String content = "Hello world from a fragment!";
         Renderable renderable = (model, componentLookup, requestLookup, api) -> content;
-        ComponentLookup lookup = new ComponentLookup("componentName", "/componentContext", Collections.emptySet(),
-                                                     Collections.emptySet(), ImmutableSetMultimap.of(),
-                                                     Configuration.emptyConfiguration(), Collections.emptySet());
-        HttpRequest request = mock(HttpRequest.class);
-        when(request.getAppContext()).thenReturn("/appContext");
-        RequestLookup requestLookup = new RequestLookup(request);
+        Component component = new Component("componentName", null, "/componentContext", Collections.emptySortedSet());
+        Lookup lookup = new Lookup(ImmutableSetMultimap.of());
+        lookup.add(component);
+        RequestLookup requestLookup = new RequestLookup("/appContext", null, null);
         Fragment fragment = new Fragment("componentName.fragmentName", renderable, false);
 
         String output = fragment.render(null, lookup, requestLookup, null);

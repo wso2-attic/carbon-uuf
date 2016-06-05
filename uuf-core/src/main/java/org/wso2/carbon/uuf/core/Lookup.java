@@ -60,7 +60,7 @@ public class Lookup {
         layouts.put(layout.getName(), layout);
     }
 
-    Optional<Component> getComponent(String componentName) {
+    public Optional<Component> getComponent(String componentName) {
         return Optional.ofNullable(components.get(componentName));
     }
 
