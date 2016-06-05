@@ -16,9 +16,33 @@
 
 package org.wso2.carbon.uuf.internal.util;
 
+import org.wso2.carbon.uuf.core.Component;
+import org.wso2.carbon.uuf.core.Fragment;
+import org.wso2.carbon.uuf.core.Layout;
+import org.wso2.carbon.uuf.core.Page;
+import org.wso2.carbon.uuf.core.Theme;
+import org.wso2.carbon.uuf.internal.io.StaticResolver;
+
 public class UrlUtils {
 
     private static final String COMPONENT_STATIC_RESOURCES_URI_PREFIX = "/public/components";
     private static final String THEMES_STATIC_RESOURCES_URI_PREFIX = "/public/themes/";
 
+    public static String getPublicUri(Component component, Page page) {
+        return COMPONENT_STATIC_RESOURCES_URI_PREFIX + component.getContext() + "/" +
+                StaticResolver.DIR_NAME_COMPONENT_RESOURCES;
+    }
+
+    public static String getPublicUri(Component component, Layout layout) {
+        return COMPONENT_STATIC_RESOURCES_URI_PREFIX + component.getContext() + "/" +
+                StaticResolver.DIR_NAME_COMPONENT_RESOURCES;
+    }
+
+    public static String getPublicUri(Component component, Fragment fragment) {
+        return COMPONENT_STATIC_RESOURCES_URI_PREFIX + component.getContext() + "/" + fragment.getSimpleName();
+    }
+
+    public static String getPublicUri(Theme theme) {
+        return THEMES_STATIC_RESOURCES_URI_PREFIX + theme.getName();
+    }
 }
