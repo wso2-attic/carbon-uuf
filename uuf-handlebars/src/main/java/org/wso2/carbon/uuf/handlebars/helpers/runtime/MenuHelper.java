@@ -19,7 +19,7 @@ package org.wso2.carbon.uuf.handlebars.helpers.runtime;
 import com.github.jknack.handlebars.Context;
 import com.github.jknack.handlebars.Helper;
 import com.github.jknack.handlebars.Options;
-import org.wso2.carbon.uuf.core.ComponentLookup;
+import org.wso2.carbon.uuf.core.Lookup;
 
 import java.io.IOException;
 
@@ -31,12 +31,12 @@ public class MenuHelper implements Helper<String> {
 
     @Override
     public CharSequence apply(String menuName, Options options) throws IOException {
-        if(menuName == null || menuName.isEmpty()){
+        if (menuName == null || menuName.isEmpty()) {
             throw new IllegalArgumentException("Invalid menu name. Menu name cannot be empty.");
         }
 
-        ComponentLookup lookup = options.data(DATA_KEY_LOOKUP);
-        Context context = Context.newContext(options.context, lookup.getConfigurations().getMenu(menuName));
+        Lookup lookup = options.data(DATA_KEY_LOOKUP);
+        Context context = Context.newContext(options.context, lookup.getConfiguration().getMenu(menuName));
         return options.fn(context);
     }
 }

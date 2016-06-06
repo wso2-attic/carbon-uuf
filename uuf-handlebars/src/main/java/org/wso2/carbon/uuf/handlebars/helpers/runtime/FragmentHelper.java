@@ -22,8 +22,8 @@ import com.github.jknack.handlebars.Options;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.core.API;
-import org.wso2.carbon.uuf.core.ComponentLookup;
 import org.wso2.carbon.uuf.core.Fragment;
+import org.wso2.carbon.uuf.core.Lookup;
 import org.wso2.carbon.uuf.core.RequestLookup;
 import org.wso2.carbon.uuf.handlebars.model.ContextModel;
 import org.wso2.carbon.uuf.spi.model.Model;
@@ -42,11 +42,14 @@ public class FragmentHelper implements Helper<String> {
 
     @Override
     public CharSequence apply(String fragmentName, Options options) throws IOException {
-        ComponentLookup lookup = options.data(DATA_KEY_LOOKUP);
-        Optional<Fragment> fragment = lookup.getFragment(fragmentName);
+        Lookup lookup = options.data(DATA_KEY_LOOKUP);
+        RequestLookup requestLookup = options.data(DATA_KEY_REQUEST_LOOKUP);
+        Optional<Fragment> fragment = lookup.getFragmentIn(requestLookup.tracker().getCurrentComponentName(),
+                                                           fragmentName);
         if (!fragment.isPresent()) {
-            throw new IllegalArgumentException("Fragment '" + fragmentName + "' does not exists in Component '" +
-                                                       lookup.getComponentName() + "' or in its dependencies.");
+            throw new IllegalArgumentException(
+                    "Fragment '" + fragmentName + "' does not exists in Component '" +
+                            requestLookup.tracker().getCurrentComponentName() + "' or in its dependencies.");
         }
 
         if (log.isDebugEnabled()) {
@@ -54,7 +57,6 @@ public class FragmentHelper implements Helper<String> {
         }
 
         Model model = new ContextModel(options.context, options.hash);
-        RequestLookup requestLookup = options.data(DATA_KEY_REQUEST_LOOKUP);
         API api = options.data(DATA_KEY_API);
         String content = fragment.get().render(model, lookup, requestLookup, api);
         return new Handlebars.SafeString(content);

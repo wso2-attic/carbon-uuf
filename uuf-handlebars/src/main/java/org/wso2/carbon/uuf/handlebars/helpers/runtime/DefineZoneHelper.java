@@ -20,8 +20,8 @@ import com.github.jknack.handlebars.Handlebars;
 import com.github.jknack.handlebars.Helper;
 import com.github.jknack.handlebars.Options;
 import org.wso2.carbon.uuf.core.API;
-import org.wso2.carbon.uuf.core.ComponentLookup;
 import org.wso2.carbon.uuf.core.Fragment;
+import org.wso2.carbon.uuf.core.Lookup;
 import org.wso2.carbon.uuf.core.RequestLookup;
 import org.wso2.carbon.uuf.handlebars.model.ContextModel;
 
@@ -38,11 +38,11 @@ public class DefineZoneHelper implements Helper<String> {
 
     @Override
     public CharSequence apply(String zoneName, Options options) throws IOException {
-        ComponentLookup lookup = options.data(DATA_KEY_LOOKUP);
+        Lookup lookup = options.data(DATA_KEY_LOOKUP);
         RequestLookup requestLookup = options.data(DATA_KEY_REQUEST_LOOKUP);
         StringBuilder buffer = new StringBuilder();
 
-        Set<Fragment> bindings = lookup.getBindings(zoneName);
+        Set<Fragment> bindings = lookup.getBindings(requestLookup.tracker().getCurrentComponentName(), zoneName);
         if (!bindings.isEmpty()) {
             API api = options.data(DATA_KEY_API);
             for (Fragment fragment : bindings) {
