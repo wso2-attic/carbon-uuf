@@ -22,7 +22,9 @@ import com.google.common.collect.ImmutableSet;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.wso2.carbon.uuf.api.Configuration;
+import org.wso2.carbon.uuf.api.HttpRequest;
 import org.wso2.carbon.uuf.api.model.MapModel;
+import org.wso2.carbon.uuf.core.API;
 import org.wso2.carbon.uuf.core.Fragment;
 import org.wso2.carbon.uuf.core.Lookup;
 import org.wso2.carbon.uuf.core.RequestLookup;
@@ -63,7 +65,15 @@ public class HbsPageRenderableTest {
     }
 
     private static RequestLookup createRequestLookup() {
-        return spy(new RequestLookup("/appContext", null, null));
+        HttpRequest request = mock(HttpRequest.class);
+        when(request.getQueryParams()).thenReturn(Collections.emptyMap());
+        return spy(new RequestLookup("/appContext", request, null));
+    }
+
+    private static API createAPI() {
+        API api = mock(API.class);
+        when(api.getSession()).thenReturn(Optional.empty());
+        return api;
     }
 
     @Test
@@ -71,7 +81,7 @@ public class HbsPageRenderableTest {
         final String templateContent = "A Plain Handlebars template.";
         HbsPageRenderable pageRenderable = createPageRenderable(templateContent);
 
-        String output = pageRenderable.render(createModel(), createLookup(), createRequestLookup(), null);
+        String output = pageRenderable.render(createModel(), createLookup(), createRequestLookup(), createAPI());
         Assert.assertEquals(output, templateContent);
     }
 
@@ -81,7 +91,7 @@ public class HbsPageRenderableTest {
         HbsPageRenderable pageRenderable = createPageRenderable("Hello {{name}}! Have a good day.", executable);
         Model model = new MapModel(new HashMap<>());
 
-        String output = pageRenderable.render(model, createLookup(), createRequestLookup(), null);
+        String output = pageRenderable.render(model, createLookup(), createRequestLookup(), createAPI());
         Assert.assertEquals(output, "Hello Alice! Have a good day.");
     }
 
@@ -93,7 +103,7 @@ public class HbsPageRenderableTest {
         Lookup lookup = createLookup();
         when(lookup.getFragmentIn(any(), anyString())).thenReturn(Optional.of(fragment));
 
-        String output = pageRenderable.render(createModel(), lookup, createRequestLookup(), null);
+        String output = pageRenderable.render(createModel(), lookup, createRequestLookup(), createAPI());
         Assert.assertEquals(output, "X fragment content Y");
     }
 
@@ -105,7 +115,7 @@ public class HbsPageRenderableTest {
         when(pushedFragment.render(any(), any(), any(), any())).thenReturn("fragment content");
         when(lookup.getBindings(any(), eq("test-zone"))).thenReturn(ImmutableSet.of(pushedFragment));
 
-        String output = pageRenderable.render(createModel(), lookup, createRequestLookup(), null);
+        String output = pageRenderable.render(createModel(), lookup, createRequestLookup(), createAPI());
         Assert.assertEquals(output, "X fragment content Y");
     }
 
@@ -117,7 +127,7 @@ public class HbsPageRenderableTest {
         RequestLookup requestLookup = createRequestLookup();
         when(requestLookup.getZoneContent("test-zone")).thenReturn(Optional.of("zone content"));
 
-        String output = pageRenderable.render(createModel(), lookup, requestLookup, null);
+        String output = pageRenderable.render(createModel(), lookup, requestLookup, createAPI());
         Assert.assertEquals(output, "X zone content Y");
     }
 }
