@@ -173,6 +173,7 @@ public class UUFRegistry {
             response.setContent(status, message);
         } else {
             // TODO: 6/5/16 if exists render configured error page
+            response.setContent(status, message);
         }
     }
 }
