@@ -22,9 +22,8 @@ import com.github.jknack.handlebars.io.StringTemplateSource;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.wso2.carbon.uuf.api.Configuration;
-import org.wso2.carbon.uuf.api.HttpRequest;
 import org.wso2.carbon.uuf.api.Placeholder;
-import org.wso2.carbon.uuf.core.ComponentLookup;
+import org.wso2.carbon.uuf.core.Lookup;
 import org.wso2.carbon.uuf.core.RequestLookup;
 import org.wso2.carbon.uuf.handlebars.renderable.HbsPageRenderable;
 import org.wso2.carbon.uuf.handlebars.renderable.HbsRenderable;
@@ -40,18 +39,14 @@ public class HbsHelperTest {
         return new HbsPageRenderable(stringTemplateSource);
     }
 
-    private static ComponentLookup createLookup() {
-        ComponentLookup lookup = mock(ComponentLookup.class);
-        when(lookup.getConfigurations()).thenReturn(Configuration.emptyConfiguration());
+    private static Lookup createLookup() {
+        Lookup lookup = mock(Lookup.class);
+        when(lookup.getConfiguration()).thenReturn(Configuration.emptyConfiguration());
         return lookup;
     }
 
     private static RequestLookup createRequestLookup() {
-        HttpRequest request = mock(HttpRequest.class);
-        when(request.getAppContext()).thenReturn("/myapp");
-        RequestLookup requestLookup = spy(new RequestLookup(request));
-        when(requestLookup.getPublicUri()).thenReturn("/myapp/public/component/base");
-        return requestLookup;
+        return spy(new RequestLookup("/appContext", null, null));
     }
 
     @Test
@@ -72,6 +67,7 @@ public class HbsHelperTest {
     @Test
     public void testCss() {
         RequestLookup requestLookup = createRequestLookup();
+        when(requestLookup.getPublicUri()).thenReturn("/myapp/public/component/base");
         createRenderable("{{css \"css/my-styles.css\"}}").render(null, createLookup(), requestLookup, null);
         Assert.assertEquals(requestLookup.getPlaceholderContent(Placeholder.css).get(),
                             "<link href=\"/myapp/public/component/base/css/my-styles.css\" rel=\"stylesheet\" " +
@@ -81,6 +77,7 @@ public class HbsHelperTest {
     @Test
     public void testCssWithMultipleParameters() {
         RequestLookup requestLookup = createRequestLookup();
+        when(requestLookup.getPublicUri()).thenReturn("/myapp/public/component/base");
         createRenderable("{{css \"css/\" \"my-styles\" \".css\"}}").render(null, createLookup(), requestLookup, null);
         Assert.assertEquals(requestLookup.getPlaceholderContent(Placeholder.css).get(),
                             "<link href=\"/myapp/public/component/base/css/my-styles.css\" rel=\"stylesheet\" " +
@@ -90,6 +87,7 @@ public class HbsHelperTest {
     @Test
     public void testHeadJs() {
         RequestLookup requestLookup = createRequestLookup();
+        when(requestLookup.getPublicUri()).thenReturn("/myapp/public/component/base");
         createRenderable("{{headJs \"js/my-script.js\"}}").render(null, createLookup(), requestLookup, null);
         Assert.assertEquals(requestLookup.getPlaceholderContent(Placeholder.headJs).get(),
                             "<script src=\"/myapp/public/component/base/js/my-script.js\" type=\"text/javascript\">" +
@@ -99,6 +97,7 @@ public class HbsHelperTest {
     @Test
     public void testHeadJsWithMultipleParameters() {
         RequestLookup requestLookup = createRequestLookup();
+        when(requestLookup.getPublicUri()).thenReturn("/myapp/public/component/base");
         createRenderable("{{headJs \"js/\" \"my-script\" \".js\"}}").render(null, createLookup(), requestLookup, null);
         Assert.assertEquals(requestLookup.getPlaceholderContent(Placeholder.headJs).get(),
                             "<script src=\"/myapp/public/component/base/js/my-script.js\" type=\"text/javascript\">" +
@@ -118,6 +117,7 @@ public class HbsHelperTest {
     @Test
     public void testPublic() {
         RequestLookup requestLookup = createRequestLookup();
+        when(requestLookup.getPublicUri()).thenReturn("/myapp/public/component/base");
         String template = "<img src=\"{{public \"img/my-photo.png\"}}\" />";
         String output = createRenderable(template).render(null, createLookup(), requestLookup, null);
         Assert.assertEquals(output, "<img src=\"/myapp/public/component/base/img/my-photo.png\" />");
@@ -127,6 +127,7 @@ public class HbsHelperTest {
     @Test
     public void testPublicWithMultipleParameters() {
         RequestLookup requestLookup = createRequestLookup();
+        when(requestLookup.getPublicUri()).thenReturn("/myapp/public/component/base");
         String template = "<img src=\"{{public \"img/\" \"my-photo.png\"}}\" />";
         String output = createRenderable(template).render(null, createLookup(), requestLookup, null);
         Assert.assertEquals(output, "<img src=\"/myapp/public/component/base/img/my-photo.png\" />");
@@ -136,6 +137,7 @@ public class HbsHelperTest {
     @Test
     public void testJs() {
         RequestLookup requestLookup = createRequestLookup();
+        when(requestLookup.getPublicUri()).thenReturn("/myapp/public/component/base");
         createRenderable("{{js \"js/my-other-script.js\"}}").render(null, createLookup(), requestLookup, null);
         Assert.assertEquals(requestLookup.getPlaceholderContent(Placeholder.js).get(),
                             "<script src=\"/myapp/public/component/base/js/my-other-script.js\" " +

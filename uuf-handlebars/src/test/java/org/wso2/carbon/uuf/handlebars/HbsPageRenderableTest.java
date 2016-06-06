@@ -23,10 +23,9 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.wso2.carbon.uuf.api.Configuration;
 import org.wso2.carbon.uuf.api.model.MapModel;
-import org.wso2.carbon.uuf.core.ComponentLookup;
 import org.wso2.carbon.uuf.core.Fragment;
+import org.wso2.carbon.uuf.core.Lookup;
 import org.wso2.carbon.uuf.core.RequestLookup;
-import org.wso2.carbon.uuf.handlebars.Executable;
 import org.wso2.carbon.uuf.handlebars.renderable.HbsPageRenderable;
 import org.wso2.carbon.uuf.spi.model.Model;
 
@@ -36,7 +35,9 @@ import java.util.Optional;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 public class HbsPageRenderableTest {
@@ -52,23 +53,17 @@ public class HbsPageRenderableTest {
     }
 
     private static Model createModel() {
-        Model model = mock(Model.class);
-        when(model.toMap()).thenReturn(Collections.emptyMap());
-        return model;
+        return new MapModel(Collections.emptyMap());
     }
 
-    private static ComponentLookup createLookup() {
-        ComponentLookup lookup = mock(ComponentLookup.class);
-        when(lookup.getConfigurations()).thenReturn(Configuration.emptyConfiguration());
+    private static Lookup createLookup() {
+        Lookup lookup = mock(Lookup.class);
+        when(lookup.getConfiguration()).thenReturn(Configuration.emptyConfiguration());
         return lookup;
     }
 
     private static RequestLookup createRequestLookup() {
-        RequestLookup requestLookup = mock(RequestLookup.class);
-        when(requestLookup.getZoneContent(anyString())).thenReturn(Optional.<String>empty());
-        when(requestLookup.getPlaceholderContents()).thenReturn(Collections.<String, String>emptyMap());
-        when(requestLookup.getAppContext()).thenReturn("/myapp");
-        return requestLookup;
+        return spy(new RequestLookup("/appContext", null, null));
     }
 
     @Test
@@ -95,8 +90,8 @@ public class HbsPageRenderableTest {
         HbsPageRenderable pageRenderable = createPageRenderable("X {{fragment \"test-fragment\"}} Y");
         Fragment fragment = mock(Fragment.class);
         when(fragment.render(any(), any(), any(), any())).thenReturn("fragment content");
-        ComponentLookup lookup = createLookup();
-        when(lookup.getFragment("test-fragment")).thenReturn(Optional.of(fragment));
+        Lookup lookup = createLookup();
+        when(lookup.getFragmentIn(any(), anyString())).thenReturn(Optional.of(fragment));
 
         String output = pageRenderable.render(createModel(), lookup, createRequestLookup(), null);
         Assert.assertEquals(output, "X fragment content Y");
@@ -105,10 +100,10 @@ public class HbsPageRenderableTest {
     @Test
     public void testFragmentBinding() {
         HbsPageRenderable pageRenderable = createPageRenderable("X {{defineZone \"test-zone\"}} Y");
-        ComponentLookup lookup = createLookup();
+        Lookup lookup = createLookup();
         Fragment pushedFragment = mock(Fragment.class);
         when(pushedFragment.render(any(), any(), any(), any())).thenReturn("fragment content");
-        when(lookup.getBindings("test-zone")).thenReturn(ImmutableSet.of(pushedFragment));
+        when(lookup.getBindings(any(), eq("test-zone"))).thenReturn(ImmutableSet.of(pushedFragment));
 
         String output = pageRenderable.render(createModel(), lookup, createRequestLookup(), null);
         Assert.assertEquals(output, "X fragment content Y");
@@ -117,8 +112,8 @@ public class HbsPageRenderableTest {
     @Test
     public void testZone() {
         HbsPageRenderable pageRenderable = createPageRenderable("X {{defineZone \"test-zone\"}} Y");
-        ComponentLookup lookup = createLookup();
-        when(lookup.getBindings(anyString())).thenReturn(Collections.emptySet());
+        Lookup lookup = createLookup();
+        when(lookup.getBindings(anyString(), anyString())).thenReturn(Collections.emptySet());
         RequestLookup requestLookup = createRequestLookup();
         when(requestLookup.getZoneContent("test-zone")).thenReturn(Optional.of("zone content"));
 
