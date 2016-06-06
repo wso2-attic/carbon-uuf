@@ -22,11 +22,16 @@ import com.github.jknack.handlebars.io.StringTemplateSource;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.wso2.carbon.uuf.api.Configuration;
+import org.wso2.carbon.uuf.api.HttpRequest;
 import org.wso2.carbon.uuf.api.Placeholder;
+import org.wso2.carbon.uuf.core.API;
 import org.wso2.carbon.uuf.core.Lookup;
 import org.wso2.carbon.uuf.core.RequestLookup;
 import org.wso2.carbon.uuf.handlebars.renderable.HbsPageRenderable;
 import org.wso2.carbon.uuf.handlebars.renderable.HbsRenderable;
+
+import java.util.Collections;
+import java.util.Optional;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -46,20 +51,28 @@ public class HbsHelperTest {
     }
 
     private static RequestLookup createRequestLookup() {
-        return spy(new RequestLookup("/appContext", null, null));
+        HttpRequest request = mock(HttpRequest.class);
+        when(request.getQueryParams()).thenReturn(Collections.emptyMap());
+        return spy(new RequestLookup("/appContext", request, null));
+    }
+
+    private static API createAPI() {
+        API api = mock(API.class);
+        when(api.getSession()).thenReturn(Optional.empty());
+        return api;
     }
 
     @Test
     public void testTitle() {
         RequestLookup requestLookup = createRequestLookup();
-        createRenderable("{{title \"page-title\"}}").render(null, createLookup(), requestLookup, null);
+        createRenderable("{{title \"page-title\"}}").render(null, createLookup(), requestLookup, createAPI());
         Assert.assertEquals(requestLookup.getPlaceholderContent(Placeholder.title).get(), "page-title");
     }
 
     @Test
     public void testTitleWithMultipleParameters() {
         RequestLookup requestLookup = createRequestLookup();
-        createRenderable("{{title \"page\" \"-\" \"title\"}}").render(null, createLookup(), requestLookup, null);
+        createRenderable("{{title \"page\" \"-\" \"title\"}}").render(null, createLookup(), requestLookup, createAPI());
         Assert.assertEquals(requestLookup.getPlaceholderContent(Placeholder.title).get(), "page-title");
 
     }
@@ -68,7 +81,7 @@ public class HbsHelperTest {
     public void testCss() {
         RequestLookup requestLookup = createRequestLookup();
         when(requestLookup.getPublicUri()).thenReturn("/myapp/public/component/base");
-        createRenderable("{{css \"css/my-styles.css\"}}").render(null, createLookup(), requestLookup, null);
+        createRenderable("{{css \"css/my-styles.css\"}}").render(null, createLookup(), requestLookup, createAPI());
         Assert.assertEquals(requestLookup.getPlaceholderContent(Placeholder.css).get(),
                             "<link href=\"/myapp/public/component/base/css/my-styles.css\" rel=\"stylesheet\" " +
                                     "type=\"text/css\" />\n");
@@ -78,7 +91,8 @@ public class HbsHelperTest {
     public void testCssWithMultipleParameters() {
         RequestLookup requestLookup = createRequestLookup();
         when(requestLookup.getPublicUri()).thenReturn("/myapp/public/component/base");
-        createRenderable("{{css \"css/\" \"my-styles\" \".css\"}}").render(null, createLookup(), requestLookup, null);
+        createRenderable("{{css \"css/\" \"my-styles\" \".css\"}}").render(null, createLookup(), requestLookup,
+                                                                           createAPI());
         Assert.assertEquals(requestLookup.getPlaceholderContent(Placeholder.css).get(),
                             "<link href=\"/myapp/public/component/base/css/my-styles.css\" rel=\"stylesheet\" " +
                                     "type=\"text/css\" />\n");
@@ -88,7 +102,7 @@ public class HbsHelperTest {
     public void testHeadJs() {
         RequestLookup requestLookup = createRequestLookup();
         when(requestLookup.getPublicUri()).thenReturn("/myapp/public/component/base");
-        createRenderable("{{headJs \"js/my-script.js\"}}").render(null, createLookup(), requestLookup, null);
+        createRenderable("{{headJs \"js/my-script.js\"}}").render(null, createLookup(), requestLookup, createAPI());
         Assert.assertEquals(requestLookup.getPlaceholderContent(Placeholder.headJs).get(),
                             "<script src=\"/myapp/public/component/base/js/my-script.js\" type=\"text/javascript\">" +
                                     "</script>\n");
@@ -98,7 +112,8 @@ public class HbsHelperTest {
     public void testHeadJsWithMultipleParameters() {
         RequestLookup requestLookup = createRequestLookup();
         when(requestLookup.getPublicUri()).thenReturn("/myapp/public/component/base");
-        createRenderable("{{headJs \"js/\" \"my-script\" \".js\"}}").render(null, createLookup(), requestLookup, null);
+        createRenderable("{{headJs \"js/\" \"my-script\" \".js\"}}").render(null, createLookup(), requestLookup,
+                                                                            createAPI());
         Assert.assertEquals(requestLookup.getPlaceholderContent(Placeholder.headJs).get(),
                             "<script src=\"/myapp/public/component/base/js/my-script.js\" type=\"text/javascript\">" +
                                     "</script>\n");
@@ -110,7 +125,7 @@ public class HbsHelperTest {
                 "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">";
         RequestLookup requestLookup = createRequestLookup();
         createRenderable("{{#headOther}}" + content + "{{/headOther}}").render(null, createLookup(), requestLookup,
-                                                                               null);
+                                                                               createAPI());
         Assert.assertEquals(requestLookup.getPlaceholderContent(Placeholder.headOther).get(), content);
     }
 
@@ -119,7 +134,7 @@ public class HbsHelperTest {
         RequestLookup requestLookup = createRequestLookup();
         when(requestLookup.getPublicUri()).thenReturn("/myapp/public/component/base");
         String template = "<img src=\"{{public \"img/my-photo.png\"}}\" />";
-        String output = createRenderable(template).render(null, createLookup(), requestLookup, null);
+        String output = createRenderable(template).render(null, createLookup(), requestLookup, createAPI());
         Assert.assertEquals(output, "<img src=\"/myapp/public/component/base/img/my-photo.png\" />");
 
     }
@@ -129,7 +144,7 @@ public class HbsHelperTest {
         RequestLookup requestLookup = createRequestLookup();
         when(requestLookup.getPublicUri()).thenReturn("/myapp/public/component/base");
         String template = "<img src=\"{{public \"img/\" \"my-photo.png\"}}\" />";
-        String output = createRenderable(template).render(null, createLookup(), requestLookup, null);
+        String output = createRenderable(template).render(null, createLookup(), requestLookup, createAPI());
         Assert.assertEquals(output, "<img src=\"/myapp/public/component/base/img/my-photo.png\" />");
 
     }
@@ -138,7 +153,7 @@ public class HbsHelperTest {
     public void testJs() {
         RequestLookup requestLookup = createRequestLookup();
         when(requestLookup.getPublicUri()).thenReturn("/myapp/public/component/base");
-        createRenderable("{{js \"js/my-other-script.js\"}}").render(null, createLookup(), requestLookup, null);
+        createRenderable("{{js \"js/my-other-script.js\"}}").render(null, createLookup(), requestLookup, createAPI());
         Assert.assertEquals(requestLookup.getPlaceholderContent(Placeholder.js).get(),
                             "<script src=\"/myapp/public/component/base/js/my-other-script.js\" " +
                                     "type=\"text/javascript\"></script>\n");
@@ -149,7 +164,7 @@ public class HbsHelperTest {
         RequestLookup requestLookup = createRequestLookup();
         HbsRenderable renderable = createRenderable("foo\nbar\n{{abc param1=\"p1\"}}\nfoobar");
         try {
-            renderable.render(null, createLookup(), requestLookup, null);
+            renderable.render(null, createLookup(), requestLookup, createAPI());
             Assert.fail("Variable or helper named 'abc' does not exists.");
         } catch (HandlebarsException ex) {
             HandlebarsError error = ex.getError();
