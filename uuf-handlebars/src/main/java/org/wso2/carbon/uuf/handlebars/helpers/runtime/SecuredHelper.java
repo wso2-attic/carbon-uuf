@@ -25,25 +25,25 @@ import java.io.IOException;
 
 import static org.wso2.carbon.uuf.handlebars.renderable.HbsRenderable.DATA_KEY_API;
 
-public class SecuredHelper implements Helper<String> {
+public class SecuredHelper implements Helper<Object> {
 
     public static final String HELPER_NAME = "secured";
 
     @Override
-    public CharSequence apply(String permissionUri, Options options) throws IOException {
+    public CharSequence apply(Object context, Options options) throws IOException {
         if (options.tagType.inline()) {
             // Is a {{secured}} inline helper, not the block version.
             return "";
         }
 
-        if (permissionUri == null) {
-            // {{#secured}} ... {{/secured}}
-            API api = options.data(DATA_KEY_API);
-            return api.getSession().map(Session::getUser).isPresent() ? options.fn() : options.inverse();
-        } else {
+        if (context instanceof String) {
             // {{#secured permissionUri permissionAction}} ... {{/secured}}
             // TODO: 6/6/16 implement this with carbon-security C5
             return null;
+        } else {
+            // {{#secured}} ... {{/secured}}
+            API api = options.data(DATA_KEY_API);
+            return api.getSession().map(Session::getUser).isPresent() ? options.fn() : options.inverse();
         }
     }
 }

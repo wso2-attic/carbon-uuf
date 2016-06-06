@@ -160,6 +160,13 @@ public class HbsHelperTest {
     }
 
     @Test
+    public void testSecured() {
+        String content = "{{#secured}} secured content {{else}} un-secured content {{/secured}}";
+        String output = createRenderable(content).render(null, createLookup(), createRequestLookup(), createAPI());
+        Assert.assertEquals(output, " un-secured content ");
+    }
+
+    @Test
     public void testMissing() {
         RequestLookup requestLookup = createRequestLookup();
         HbsRenderable renderable = createRenderable("foo\nbar\n{{abc param1=\"p1\"}}\nfoobar");
