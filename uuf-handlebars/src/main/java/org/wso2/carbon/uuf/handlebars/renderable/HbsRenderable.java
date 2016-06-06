@@ -20,6 +20,8 @@ import com.github.jknack.handlebars.Handlebars;
 import com.github.jknack.handlebars.Template;
 import com.github.jknack.handlebars.io.TemplateSource;
 import com.google.common.collect.ImmutableMap;
+import org.wso2.carbon.uuf.api.auth.Session;
+import org.wso2.carbon.uuf.core.API;
 import org.wso2.carbon.uuf.core.Lookup;
 import org.wso2.carbon.uuf.core.RequestLookup;
 import org.wso2.carbon.uuf.exception.UUFException;
@@ -49,7 +51,7 @@ public abstract class HbsRenderable implements Renderable {
     public static final String DATA_KEY_API = HbsRenderable.class.getName() + "#api";
     public static final String DATA_KEY_CURRENT_WRITER = HbsRenderable.class.getName() + "#writer";
     //
-    private static final Handlebars HANDLEBARS = new Handlebars();
+    protected static final Handlebars HANDLEBARS = new Handlebars();
     private static final Map<String, FillPlaceholderHelper> PLACEHOLDER_HELPERS = ImmutableMap.of(
             CssHelper.HELPER_NAME, new CssHelper(),
             HeadJsHelper.HELPER_NAME, new HeadJsHelper(),
@@ -80,11 +82,13 @@ public abstract class HbsRenderable implements Renderable {
         }
     }
 
-    protected Map<String, Object> getHbsModel(Lookup lookup, RequestLookup requestLookup) {
+    protected Map<String, Object> getHbsModel(Lookup lookup, RequestLookup requestLookup, API api) {
         Map<String, Object> context = new HashMap<>();
-        context.put("@uriParams", requestLookup.getUriParams());
         context.put("@app",
                     ImmutableMap.of("context", requestLookup.getAppContext(), "config", lookup.getConfiguration()));
+        context.put("@user", api.getSession().map(Session::getUser).orElse(null));
+        context.put("@uriParams", requestLookup.getUriParams());
+        context.put("@queryParams", requestLookup.getRequest().getQueryParams());
         return context;
     }
 }
