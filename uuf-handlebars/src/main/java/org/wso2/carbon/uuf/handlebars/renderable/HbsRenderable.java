@@ -20,12 +20,11 @@ import com.github.jknack.handlebars.Handlebars;
 import com.github.jknack.handlebars.Template;
 import com.github.jknack.handlebars.io.TemplateSource;
 import com.google.common.collect.ImmutableMap;
-import org.wso2.carbon.uuf.core.ComponentLookup;
+import org.wso2.carbon.uuf.core.Lookup;
 import org.wso2.carbon.uuf.core.RequestLookup;
 import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.handlebars.helpers.FillPlaceholderHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.CssHelper;
-import org.wso2.carbon.uuf.handlebars.helpers.runtime.MenuHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.DefinePlaceholderHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.DefineZoneHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.FillZoneHelper;
@@ -33,6 +32,7 @@ import org.wso2.carbon.uuf.handlebars.helpers.runtime.FragmentHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.HeadJsHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.HeadOtherHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.JsHelper;
+import org.wso2.carbon.uuf.handlebars.helpers.runtime.MenuHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.MissingHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.PublicHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.TitleHelper;
@@ -80,11 +80,11 @@ public abstract class HbsRenderable implements Renderable {
         }
     }
 
-    protected Map<String, Object> getHbsModel(ComponentLookup lookup, RequestLookup requestLookup) {
+    protected Map<String, Object> getHbsModel(Lookup lookup, RequestLookup requestLookup) {
         Map<String, Object> context = new HashMap<>();
         context.put("@uriParams", requestLookup.getUriParams());
         context.put("@app",
-                    ImmutableMap.of("context", requestLookup.getAppContext(), "config", lookup.getConfigurations()));
+                    ImmutableMap.of("context", requestLookup.getAppContext(), "config", lookup.getConfiguration()));
         return context;
     }
 }

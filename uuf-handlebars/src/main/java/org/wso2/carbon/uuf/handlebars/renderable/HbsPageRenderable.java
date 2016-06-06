@@ -22,7 +22,7 @@ import com.google.common.collect.ImmutableMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.core.API;
-import org.wso2.carbon.uuf.core.ComponentLookup;
+import org.wso2.carbon.uuf.core.Lookup;
 import org.wso2.carbon.uuf.core.RequestLookup;
 import org.wso2.carbon.uuf.exception.InvalidTypeException;
 import org.wso2.carbon.uuf.exception.UUFException;
@@ -52,7 +52,7 @@ public class HbsPageRenderable extends HbsRenderable {
     }
 
     @Override
-    public String render(Model model, ComponentLookup lookup, RequestLookup requestLookup, API api) {
+    public String render(Model model, Lookup lookup, RequestLookup requestLookup, API api) {
         Context context;
         if (executable == null) {
             context = Context.newContext(getHbsModel(lookup, requestLookup));
@@ -97,12 +97,12 @@ public class HbsPageRenderable extends HbsRenderable {
         }
     }
 
-    protected Map<String, Object> getExecutableContext(ComponentLookup lookup, RequestLookup requestLookup) {
+    protected Map<String, Object> getExecutableContext(Lookup lookup, RequestLookup requestLookup) {
         Map<String, Object> context = new HashMap<>();
         context.put("request", requestLookup.getRequest());
         context.put("uriParams", requestLookup.getUriParams());
         context.put("app",
-                    ImmutableMap.of("context", requestLookup.getAppContext(), "config", lookup.getConfigurations()));
+                    ImmutableMap.of("context", requestLookup.getAppContext(), "config", lookup.getConfiguration()));
         return context;
     }
 

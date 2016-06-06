@@ -21,7 +21,7 @@ import com.github.jknack.handlebars.io.TemplateSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.core.API;
-import org.wso2.carbon.uuf.core.ComponentLookup;
+import org.wso2.carbon.uuf.core.Lookup;
 import org.wso2.carbon.uuf.core.RequestLookup;
 import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.handlebars.DebugUtil;
@@ -45,7 +45,7 @@ public class HbsFragmentRenderable extends HbsPageRenderable {
     }
 
     @Override
-    public String render(Model model, ComponentLookup lookup, RequestLookup requestLookup, API api) {
+    public String render(Model model, Lookup lookup, RequestLookup requestLookup, API api) {
         Context context;
         if (executable == null) {
             Map<String, Object> hbsModel = getHbsModel(model, lookup, requestLookup);
@@ -81,13 +81,13 @@ public class HbsFragmentRenderable extends HbsPageRenderable {
         }
     }
 
-    private Map<String, Object> getExecutableContext(Model model, ComponentLookup lookup, RequestLookup requestLookup) {
+    private Map<String, Object> getExecutableContext(Model model, Lookup lookup, RequestLookup requestLookup) {
         Map<String, Object> context = getExecutableContext(lookup, requestLookup);
         context.put("params", model.toMap());
         return context;
     }
 
-    private Map<String, Object> getHbsModel(Model model, ComponentLookup lookup, RequestLookup requestLookup) {
+    private Map<String, Object> getHbsModel(Model model, Lookup lookup, RequestLookup requestLookup) {
         Map<String, Object> context = getHbsModel(lookup, requestLookup);
         context.put("@params", model.toMap());
         return context;
