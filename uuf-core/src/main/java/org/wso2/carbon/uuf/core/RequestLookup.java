@@ -142,23 +142,23 @@ public class RequestLookup {
         }
 
         void start(Component component) {
-            componentNamesStack.push(component.getName());
+            componentNamesStack.addLast(component.getName());
         }
 
         void in(Page page) {
-            pageStack.push(page);
-            rendererStack.push(TYPE_PAGE);
+            pageStack.addLast(page);
+            rendererStack.addLast(TYPE_PAGE);
         }
 
         void in(Layout layout) {
-            layoutStack.push(layout);
-            rendererStack.push(TYPE_LAYOUT);
+            layoutStack.addLast(layout);
+            rendererStack.addLast(TYPE_LAYOUT);
         }
 
         void in(Fragment fragment) {
-            fragmentStack.push(fragment);
-            componentNamesStack.push(NameUtils.getComponentName(fragment.getName()));
-            rendererStack.push(TYPE_FRAGMENT);
+            fragmentStack.addLast(fragment);
+            componentNamesStack.addLast(NameUtils.getComponentName(fragment.getName()));
+            rendererStack.addLast(TYPE_FRAGMENT);
         }
 
         public String getCurrentComponentName() {
