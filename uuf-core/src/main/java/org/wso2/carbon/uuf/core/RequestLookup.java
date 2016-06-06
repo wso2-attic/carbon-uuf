@@ -152,6 +152,7 @@ public class RequestLookup {
 
         void in(Layout layout) {
             layoutStack.addLast(layout);
+            componentNamesStack.addLast(NameUtils.getComponentName(layout.getName()));
             rendererStack.addLast(TYPE_LAYOUT);
         }
 
@@ -197,20 +198,21 @@ public class RequestLookup {
             rendererStack.removeLast();
         }
 
+        void out(Layout layout) {
+            if (!isInLayout()) {
+                throw new IllegalStateException("Not in a layout");
+            }
+            layoutStack.removeLast();
+            componentNamesStack.removeLast();
+            rendererStack.removeLast();
+        }
+
         void out(Fragment fragment) {
             if (!isInFragment()) {
                 throw new IllegalStateException("Not in a fragment");
             }
             fragmentStack.removeLast();
             componentNamesStack.removeLast();
-            rendererStack.removeLast();
-        }
-
-        void out(Layout layout) {
-            if (!isInLayout()) {
-                throw new IllegalStateException("Not in a layout");
-            }
-            layoutStack.removeLast();
             rendererStack.removeLast();
         }
 
