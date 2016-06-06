@@ -142,6 +142,7 @@
             org.objectweb.asm,
             org.slf4j.*;version="${slf4j.version.range}",
             com.google.common.*;version="${guava.version.range}",
+            com.google.gson.*;version="${gson.version}",
             io.netty.handler.*,
             org.apache.commons.lang3.*,
             com.github.jknack.handlebars.*,

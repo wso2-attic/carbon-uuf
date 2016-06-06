@@ -92,6 +92,10 @@
                                     <symbolicName>org.apache.commons.lang3</symbolicName>
                                     <version>${org.apache.commons.commons-lang3.version}</version>
                                 </bundle>
+                                <bundle>
+                                    <symbolicName>com.google.gson</symbolicName>
+                                    <version>${gson.version}</version>
+                                </bundle>
                                 <!-- Metrics Bundles - End -->
                             </bundles>
                         </configuration>
