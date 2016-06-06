@@ -108,6 +108,7 @@ public class AppCreator {
                                                                              componentReference);
                 Component component = createComponent(componentName, componentVersion, componentContext,
                                                       componentReference, classLoader, lookup);
+                lookup.add(component);
                 createdComponents.put(componentName, component);
             }
         }
