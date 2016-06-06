@@ -129,7 +129,7 @@
     </dependencies>
 
     <properties>
-        <!--<private.package>org.wso2.carbon.uuf.internal</private.package>-->
+        <private.package>org.wso2.carbon.uuf.internal.*</private.package>
         <import.package>
             org.osgi.framework;version="${osgi.framework.import.version.range}",
             org.wso2.carbon.kernel.startupresolver.*;version="${carbon.kernel.version.range}",
@@ -153,7 +153,6 @@
             javax.cache.*
         </import.package>
         <export.package>
-            org.wso2.carbon.uuf.internal.*;version="${uuf.version}",
             org.wso2.carbon.uuf.api.*;version="${uuf.version}",
             org.wso2.carbon.uuf.connector.*;version="${uuf.version}",
             org.wso2.carbon.uuf.core.*;version="${uuf.version}",
