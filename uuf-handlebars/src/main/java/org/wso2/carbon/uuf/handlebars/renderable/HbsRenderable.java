@@ -37,6 +37,7 @@ import org.wso2.carbon.uuf.handlebars.helpers.runtime.JsHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.MenuHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.MissingHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.PublicHelper;
+import org.wso2.carbon.uuf.handlebars.helpers.runtime.SecuredHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.TitleHelper;
 import org.wso2.carbon.uuf.spi.Renderable;
 
@@ -67,6 +68,7 @@ public abstract class HbsRenderable implements Renderable {
         HANDLEBARS.registerHelper(DefinePlaceholderHelper.HELPER_NAME, new DefinePlaceholderHelper());
         PLACEHOLDER_HELPERS.forEach(HANDLEBARS::registerHelper);
         HANDLEBARS.registerHelper(PublicHelper.HELPER_NAME, new PublicHelper());
+        HANDLEBARS.registerHelper(SecuredHelper.HELPER_NAME, new SecuredHelper());
         HANDLEBARS.registerHelperMissing(new MissingHelper());
     }
 
