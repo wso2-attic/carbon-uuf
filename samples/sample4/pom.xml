@@ -33,6 +33,7 @@
     <groupId>org.wso2.uuf</groupId>
         <artifactId>uuf-parent</artifactId>
         <version>1.0.0-SNAPSHOT</version>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
 
     <modules>
