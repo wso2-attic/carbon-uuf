@@ -102,7 +102,7 @@ public class HbsPageRenderable extends HbsRenderable {
                     ImmutableMap.of("context", requestLookup.getAppContext(), "config", lookup.getConfiguration()));
         context.put("request", requestLookup.getRequest());
         context.put("response", requestLookup.getResponse());
-        context.put("uriParams", requestLookup.getUriParams());
+        context.put("pathParams", requestLookup.getPathParams());
         return context;
     }
 

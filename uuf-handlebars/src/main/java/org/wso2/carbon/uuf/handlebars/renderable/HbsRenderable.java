@@ -88,7 +88,7 @@ public abstract class HbsRenderable implements Renderable {
         context.put("@app",
                     ImmutableMap.of("context", requestLookup.getAppContext(), "config", lookup.getConfiguration()));
         context.put("@user", api.getSession().map(Session::getUser).orElse(null));
-        context.put("@uriParams", requestLookup.getUriParams());
+        context.put("@pathParams", requestLookup.getPathParams());
         context.put("@queryParams", requestLookup.getRequest().getQueryParams());
         return context;
     }

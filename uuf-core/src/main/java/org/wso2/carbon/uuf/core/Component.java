@@ -57,9 +57,9 @@ public class Component {
     public Optional<String> renderPage(String pageUri, Lookup lookup, RequestLookup requestLookup, API api) {
         Page servingPage = null;
         for (Page page : pages) {
-            Optional<Map<String, String>> uriParams = page.getUriPatten().match(pageUri);
-            if (uriParams.isPresent()) {
-                requestLookup.setUriParams(uriParams.get());
+            Optional<Map<String, String>> pathParams = page.getUriPatten().match(pageUri);
+            if (pathParams.isPresent()) {
+                requestLookup.setPathParams(pathParams.get());
                 servingPage = page;
                 break;
             }

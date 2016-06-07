@@ -1,4 +1,8 @@
 //noinspection JSUnusedGlobalSymbols
-var onRequest = function (context) {
-    return {"name": context.uriParams.id, "tags": ['white', 'short-hair']};
-};
+function onRequest(context) {
+    return {"tags": getTags(context.pathParams['id'])};
+}
+
+function getTags(petName) {
+    return ['white', 'short-hair'];
+}
