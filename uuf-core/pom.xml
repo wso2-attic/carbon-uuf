@@ -133,7 +133,6 @@
         <import.package>
             org.osgi.framework;version="${osgi.framework.import.version.range}",
             org.wso2.carbon.kernel.startupresolver.*;version="${carbon.kernel.version.range}",
-            org.osgi.service.jndi;version="1.0.0",
             org.osgi.framework.wiring,
             org.wso2.msf4j.*,
             org.apache.log4j.*,
