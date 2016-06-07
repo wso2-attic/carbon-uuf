@@ -72,7 +72,6 @@ public class ConfigurationTest {
 
         originalConfig.merge(configOther);
         //check whether Devices added on mainMenu
-        System.out.println(mainMenu);
         Assert.assertEquals(mainMenu.size(), 3);
         Assert.assertEquals(((Map) mainMenu.get("Devices")).size(), 2);
     }
