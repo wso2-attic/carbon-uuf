@@ -79,8 +79,13 @@
                                     <symbolicName>org.antlr.antlr4-runtime-osgi</symbolicName>
                                     <version>${antlr-version}</version>
                                 </bundle>
-                                <!-- Metrics Bundles - End -->
                             </bundles>
+                            <importFeatures>
+                                <feature>
+                                    <id>org.wso2.uuf.core.feature</id>
+                                    <version>${uuf.version}</version>
+                                </feature>
+                            </importFeatures>
                         </configuration>
                     </execution>
                 </executions>
