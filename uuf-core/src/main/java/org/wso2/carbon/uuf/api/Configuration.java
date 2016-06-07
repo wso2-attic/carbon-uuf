@@ -22,7 +22,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -290,19 +289,18 @@ public class Configuration extends HashMap<String, Object> {
     public void merge(Map<?, ?> rawMap) {
         for (Entry<?, ?> entry : rawMap.entrySet()) {
             if (entry.getKey() instanceof String) {
-                super.compute((String)entry.getKey(), (key, oldValue) -> {
+                super.compute((String) entry.getKey(), (key, oldValue) -> {
                     Object newValue = entry.getValue();
-                    //when value present
-                    if (oldValue != null) {
-                        if (newValue instanceof Map && oldValue instanceof Map) {
-                            return deepMergeMap((Map) oldValue, (Map) newValue);
-                        } else if (newValue instanceof List && oldValue instanceof List) {
-                            return deepMergeList((List) oldValue, (List) newValue);
-                        }
-                        return oldValue;
+                    if (oldValue == null) {
+                        return newValue; // Add the new value.
                     }
-                    //when value absence
-                    return newValue;
+
+                    if (newValue instanceof Map && oldValue instanceof Map) {
+                        return deepMergeMap((Map) oldValue, (Map) newValue);
+                    } else if (newValue instanceof List && oldValue instanceof List) {
+                        return deepMergeList((List) oldValue, (List) newValue);
+                    }
+                    return newValue; // Cannot merge if not a Map or a List, hence replace with the new value.
                 });
             } else {
                 throw new InvalidTypeException("Configurations must be a Map<String, Object>. Instead found a '" +
