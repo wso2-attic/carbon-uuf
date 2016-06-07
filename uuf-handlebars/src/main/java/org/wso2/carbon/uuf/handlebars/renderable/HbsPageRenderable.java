@@ -55,13 +55,13 @@ public class HbsPageRenderable extends HbsRenderable {
     public String render(Model model, Lookup lookup, RequestLookup requestLookup, API api) {
         Context context;
         if (executable == null) {
-            context = Context.newContext(getHbsModel(lookup, requestLookup));
+            context = Context.newContext(getHbsModel(model, lookup, requestLookup, api));
         } else {
-            Object executableOutput = executeExecutable(getExecutableContext(lookup, requestLookup), api);
+            Object executableOutput = executeExecutable(getExecutableContext(model, lookup, requestLookup), api);
             if (log.isDebugEnabled()) {
                 log.debug("Executable output \"" + DebugUtil.safeJsonString(executableOutput) + "\".");
             }
-            context = Context.newContext(executableOutput).combine(getHbsModel(lookup, requestLookup));
+            context = Context.newContext(executableOutput).combine(getHbsModel(model, lookup, requestLookup, api));
         }
 
         context.data(DATA_KEY_LOOKUP, lookup);
@@ -91,18 +91,19 @@ public class HbsPageRenderable extends HbsRenderable {
         if ((executableOutput instanceof Map)) {
             return (Map) executableOutput;
         } else {
-            throw new InvalidTypeException(
-                    "Expected a Map as the output from executing the executable '" + executable +
-                            "'. Instead found '" + executableOutput.getClass().getName() + "'.");
+            throw new InvalidTypeException("Expected a Map as the output from executing the executable '" + executable +
+                                                   "'. Instead found '" + executableOutput.getClass().getName() + "'.");
         }
     }
 
-    protected Map<String, Object> getExecutableContext(Lookup lookup, RequestLookup requestLookup) {
+    protected Map<String, Object> getExecutableContext(Model model, Lookup lookup, RequestLookup requestLookup) {
         Map<String, Object> context = new HashMap<>();
-        context.put("request", requestLookup.getRequest());
-        context.put("uriParams", requestLookup.getUriParams());
         context.put("app",
                     ImmutableMap.of("context", requestLookup.getAppContext(), "config", lookup.getConfiguration()));
+        context.put("request", requestLookup.getRequest());
+        context.put("response", requestLookup.getResponse());
+        context.put("pathParams", requestLookup.getPathParams());
+        context.put("params", ((model == null) ? null : model.toMap()));
         return context;
     }
 

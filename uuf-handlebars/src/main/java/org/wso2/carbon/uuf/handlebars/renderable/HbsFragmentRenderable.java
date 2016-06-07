@@ -48,7 +48,7 @@ public class HbsFragmentRenderable extends HbsPageRenderable {
     public String render(Model model, Lookup lookup, RequestLookup requestLookup, API api) {
         Context context;
         if (executable == null) {
-            Map<String, Object> hbsModel = getHbsModel(model, lookup, requestLookup);
+            Map<String, Object> hbsModel = getHbsModel(model, lookup, requestLookup, api);
             if (model instanceof ContextModel) {
                 context = Context.newContext(((ContextModel) model).getParentContext(), hbsModel);
             } else {
@@ -64,7 +64,7 @@ public class HbsFragmentRenderable extends HbsPageRenderable {
             } else {
                 context = Context.newContext(executableOutput);
             }
-            context.combine(getHbsModel(model, lookup, requestLookup));
+            context.combine(getHbsModel(model, lookup, requestLookup, api));
         }
 
         context.data(DATA_KEY_LOOKUP, lookup);
@@ -79,18 +79,6 @@ public class HbsFragmentRenderable extends HbsPageRenderable {
         } catch (IOException e) {
             throw new UUFException("An error occurred when writing to the in-memory PlaceholderWriter.", e);
         }
-    }
-
-    private Map<String, Object> getExecutableContext(Model model, Lookup lookup, RequestLookup requestLookup) {
-        Map<String, Object> context = getExecutableContext(lookup, requestLookup);
-        context.put("params", model.toMap());
-        return context;
-    }
-
-    private Map<String, Object> getHbsModel(Model model, Lookup lookup, RequestLookup requestLookup) {
-        Map<String, Object> context = getHbsModel(lookup, requestLookup);
-        context.put("@params", model.toMap());
-        return context;
     }
 
     @Override

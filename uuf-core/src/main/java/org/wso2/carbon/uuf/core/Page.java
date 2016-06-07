@@ -56,7 +56,7 @@ public class Page implements Comparable<Page> {
         requestLookup.pushToPublicUriStack(UriUtils.getPublicUri(currentComponent, this));
         String output = renderer.render(model, lookup, requestLookup, api);
         if (layout != null) {
-            output = layout.render(lookup, requestLookup);
+            output = layout.render(lookup, requestLookup, api);
         }
         // Rendering flow tracking out.
         requestLookup.popPublicUriStack();

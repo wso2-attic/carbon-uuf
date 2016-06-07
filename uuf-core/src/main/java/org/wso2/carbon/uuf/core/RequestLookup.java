@@ -33,7 +33,7 @@ public class RequestLookup {
     private final String appContext;
     private final HttpRequest request;
     private final HttpResponse response;
-    private Map<String, String> uriParams;
+    private Map<String, String> pathParams;
     private final RenderingFlowTracker renderingFlowTracker;
     private final Deque<String> publicUriStack;
     private final EnumMap<Placeholder, StringBuilder> placeholderBuffers;
@@ -61,12 +61,12 @@ public class RequestLookup {
         return response;
     }
 
-    public Map<String, String> getUriParams() {
-        return uriParams;
+    public Map<String, String> getPathParams() {
+        return pathParams;
     }
 
-    void setUriParams(Map<String, String> uriParams) {
-        this.uriParams = uriParams;
+    void setPathParams(Map<String, String> pathParams) {
+        this.pathParams = pathParams;
     }
 
     public void addToPlaceholder(Placeholder placeholder, String content) {

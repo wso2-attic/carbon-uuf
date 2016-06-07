@@ -20,13 +20,15 @@ import com.github.jknack.handlebars.Handlebars;
 import com.github.jknack.handlebars.Template;
 import com.github.jknack.handlebars.io.TemplateSource;
 import com.google.common.collect.ImmutableMap;
+import org.wso2.carbon.uuf.api.auth.Session;
+import org.wso2.carbon.uuf.core.API;
 import org.wso2.carbon.uuf.core.Lookup;
 import org.wso2.carbon.uuf.core.RequestLookup;
 import org.wso2.carbon.uuf.exception.UUFException;
-import org.wso2.carbon.uuf.handlebars.helpers.FillPlaceholderHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.CssHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.DefinePlaceholderHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.DefineZoneHelper;
+import org.wso2.carbon.uuf.handlebars.helpers.runtime.FaviconHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.FillZoneHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.FragmentHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.HeadJsHelper;
@@ -35,8 +37,10 @@ import org.wso2.carbon.uuf.handlebars.helpers.runtime.JsHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.MenuHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.MissingHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.PublicHelper;
+import org.wso2.carbon.uuf.handlebars.helpers.runtime.SecuredHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.TitleHelper;
 import org.wso2.carbon.uuf.spi.Renderable;
+import org.wso2.carbon.uuf.spi.model.Model;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -50,21 +54,21 @@ public abstract class HbsRenderable implements Renderable {
     public static final String DATA_KEY_CURRENT_WRITER = HbsRenderable.class.getName() + "#writer";
     //
     private static final Handlebars HANDLEBARS = new Handlebars();
-    private static final Map<String, FillPlaceholderHelper> PLACEHOLDER_HELPERS = ImmutableMap.of(
-            CssHelper.HELPER_NAME, new CssHelper(),
-            HeadJsHelper.HELPER_NAME, new HeadJsHelper(),
-            JsHelper.HELPER_NAME, new JsHelper(),
-            TitleHelper.HELPER_NAME, new TitleHelper(),
-            HeadOtherHelper.HELPER_NAME, new HeadOtherHelper());
 
     static {
+        HANDLEBARS.registerHelper(FragmentHelper.HELPER_NAME, new FragmentHelper());
+        HANDLEBARS.registerHelper(SecuredHelper.HELPER_NAME, new SecuredHelper());
+        HANDLEBARS.registerHelper(PublicHelper.HELPER_NAME, new PublicHelper());
         HANDLEBARS.registerHelper(MenuHelper.HELPER_NAME, new MenuHelper());
         HANDLEBARS.registerHelper(DefineZoneHelper.HELPER_NAME, new DefineZoneHelper());
         HANDLEBARS.registerHelper(FillZoneHelper.HELPER_NAME, new FillZoneHelper());
-        HANDLEBARS.registerHelper(FragmentHelper.HELPER_NAME, new FragmentHelper());
         HANDLEBARS.registerHelper(DefinePlaceholderHelper.HELPER_NAME, new DefinePlaceholderHelper());
-        PLACEHOLDER_HELPERS.forEach(HANDLEBARS::registerHelper);
-        HANDLEBARS.registerHelper(PublicHelper.HELPER_NAME, new PublicHelper());
+        HANDLEBARS.registerHelper(FaviconHelper.HELPER_NAME, new FaviconHelper());
+        HANDLEBARS.registerHelper(TitleHelper.HELPER_NAME, new TitleHelper());
+        HANDLEBARS.registerHelper(CssHelper.HELPER_NAME, new CssHelper());
+        HANDLEBARS.registerHelper(HeadJsHelper.HELPER_NAME, new HeadJsHelper());
+        HANDLEBARS.registerHelper(HeadOtherHelper.HELPER_NAME, new HeadOtherHelper());
+        HANDLEBARS.registerHelper(JsHelper.HELPER_NAME, new JsHelper());
         HANDLEBARS.registerHelperMissing(new MissingHelper());
     }
 
@@ -80,11 +84,14 @@ public abstract class HbsRenderable implements Renderable {
         }
     }
 
-    protected Map<String, Object> getHbsModel(Lookup lookup, RequestLookup requestLookup) {
+    protected Map<String, Object> getHbsModel(Model model, Lookup lookup, RequestLookup requestLookup, API api) {
         Map<String, Object> context = new HashMap<>();
-        context.put("@uriParams", requestLookup.getUriParams());
         context.put("@app",
                     ImmutableMap.of("context", requestLookup.getAppContext(), "config", lookup.getConfiguration()));
+        context.put("@user", api.getSession().map(Session::getUser).orElse(null));
+        context.put("@pathParams", requestLookup.getPathParams());
+        context.put("@queryParams", requestLookup.getRequest().getQueryParams());
+        context.put("@params", ((model == null) ? null : model.toMap()));
         return context;
     }
 }

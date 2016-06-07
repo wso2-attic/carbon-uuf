@@ -148,18 +148,15 @@ public class App {
      */
     public String renderFragment(HttpRequest request, HttpResponse response) {
         String uriWithoutAppContext = request.getUriWithoutAppContext();
-        String fragmentName = uriWithoutAppContext.substring(UriUtils.FRAGMENTS_URI_PREFIX.length());
-        if (NameUtils.isSimpleName(fragmentName)) {
-            fragmentName = NameUtils.getFullyQualifiedName(rootComponent.getName(), fragmentName);
-        }
+        String uriPart = uriWithoutAppContext.substring(UriUtils.FRAGMENTS_URI_PREFIX.length());
+        String fragmentName = NameUtils.getFullyQualifiedName(rootComponent.getName(), uriPart);
         // When building the dependency tree, all fragments are accumulated into the rootComponent.
         Fragment fragment = lookup.getAllFragments().get(fragmentName);
         if (fragment == null) {
             throw new FragmentNotFoundException("Requested fragment '" + fragmentName + "' does not exists.");
         }
 
-        Model model = new MapModel(request.getQueryParams().entrySet().stream()
-                                           .collect(Collectors.toMap(Map.Entry::getKey, entry -> (Object) entry)));
+        Model model = new MapModel(request.getQueryParams());
         RequestLookup requestLookup = new RequestLookup(configuration.getClientAppContext(), request, response);
         API api = new API(sessionRegistry, requestLookup);
         return fragment.render(model, lookup, requestLookup, api);

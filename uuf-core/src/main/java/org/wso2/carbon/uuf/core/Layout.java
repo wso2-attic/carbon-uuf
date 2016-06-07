@@ -44,12 +44,12 @@ public class Layout {
         return simpleName;
     }
 
-    public String render(Lookup lookup, RequestLookup requestLookup) {
+    public String render(Lookup lookup, RequestLookup requestLookup, API api) {
         // Rendering flow tracking in.
         requestLookup.tracker().in(this);
         Component currentComponent = lookup.getComponent(requestLookup.tracker().getCurrentComponentName()).get();
         requestLookup.pushToPublicUriStack(UriUtils.getPublicUri(currentComponent, this));
-        String output = renderer.render(null, lookup, requestLookup, null);
+        String output = renderer.render(null, lookup, requestLookup, api);
         // Rendering flow tracking out.
         requestLookup.popPublicUriStack();
         requestLookup.tracker().out(this);
