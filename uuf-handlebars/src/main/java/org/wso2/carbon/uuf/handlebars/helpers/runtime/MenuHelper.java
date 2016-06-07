@@ -22,6 +22,7 @@ import com.github.jknack.handlebars.Options;
 import org.wso2.carbon.uuf.core.Lookup;
 
 import java.io.IOException;
+import java.util.Map;
 
 import static org.wso2.carbon.uuf.handlebars.renderable.HbsRenderable.DATA_KEY_LOOKUP;
 
@@ -36,7 +37,11 @@ public class MenuHelper implements Helper<String> {
         }
 
         Lookup lookup = options.data(DATA_KEY_LOOKUP);
-        Context context = Context.newContext(options.context, lookup.getConfiguration().getMenu(menuName));
+        Map<String, Map> menu = lookup.getConfiguration().getMenu(menuName);
+        if(menu == null){
+            return "";
+        }
+        Context context = Context.newContext(options.context, menu);
         return options.fn(context);
     }
 }
