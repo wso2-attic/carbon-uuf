@@ -3,12 +3,12 @@ elementsPerPage: 10
 theme : org.wso2.uuf.theme.default
 menu :
   main :
-    - { icon: "fw-home", link: "#home", text: "Home" }
-    - Features :
-      - { icon: "fw fw-list", link: "call-osgi", text: "Call a OSGi Service" }
-      - { icon: "fw fw-add", link: "http-form", text: "Http Form POST" }
-      - { icon: "fw fw-bug", link: "send-error", text: "Send HTTP Error" }
-      - { icon: "fw fw-bug", link: "send-redirect", text: "Send HTTP Redirect" }
-      - { icon: "fw fw-bug", link: "session", text: "Session" }
-      - { icon: "fw fw-bug", link: "theme", text: "Theme" }
-      - { icon: "fw fw-bug", link: "menu", text: "Menu" }
+    Home : { icon: "fw-home", link: "#home" }
+    Features :
+      Call a OSGi Service:  { icon: "fw fw-list", link: "call-osgi" }
+      Http Form POST : { icon: "fw fw-add", link: "http-form" }
+      Send HTTP Error : { icon: "fw fw-bug", link: "send-error" }
+      Send HTTP Redirect : { icon: "fw fw-bug", link: "send-redirect" }
+      Session : { icon: "fw fw-bug", link: "session" }
+      Theme : { icon: "fw fw-bug", link: "theme" }
+      Menu : { icon: "fw fw-bug", link: "menu" }

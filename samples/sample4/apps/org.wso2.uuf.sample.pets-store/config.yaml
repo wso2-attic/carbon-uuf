@@ -3,8 +3,8 @@ elementsPerPage: 10
 theme : org.wso2.uuf.theme.default
 menu :
   main :
-    - { icon: "fw-home", link: "#home", text: "Home" }
-    - Pets :
-      - { icon: "fw fw-list", link: "pets", text: "See all our amazing pets" }
-      - { icon: "fw fw-add", link: "pets/new", text: "Add a new pets" }
-      - { icon: "fw fw-bug", link: "pets/snowball", text: "Pet of the month" }
+    Home : { icon: "fw-home", link: "#home"}
+    Pets :
+      See all our amazing pets : { icon: "fw fw-list", link: "pets"}
+      Add a new pets : { icon: "fw fw-add", link: "pets/new" }
+      Pet of the month : { icon: "fw fw-bug", link: "pets/snowball" }
