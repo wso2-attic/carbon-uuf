@@ -120,12 +120,12 @@ public class UUFRegistry {
                     html = app.renderPage(request, response);
                 } catch (PageNotFoundException e) {
                     // See https://googlewebmastercentral.blogspot.com/2010/04/to-slash-or-not-to-slash.html
-                    // if the tailing / is extra or a it is missing, send 301
+                    // If the tailing '/' is extra or a it is missing, then send 301 with corrected URL.
                     String uri = request.getUri();
-                    String fixedUri = uri.endsWith("/") ? uri.substring(0, uri.length() - 1) : uri + "/";
-                    if (app.hasPage(fixedUri)) {
+                    String correctedUri = uri.endsWith("/") ? uri.substring(0, uri.length() - 1) : uri + "/";
+                    if (app.hasPage(correctedUri)) {
                         response.setStatus(STATUS_MOVED_PERMANENTLY);
-                        response.setHeader(HEADER_LOCATION, request.getHostName() + fixedUri);
+                        response.setHeader(HEADER_LOCATION, request.getHostName() + correctedUri);
                         return;
                     }
                     throw e;
