@@ -63,6 +63,28 @@ public class HbsHelperTest {
     }
 
     @Test
+    public void testFavicon() {
+        RequestLookup requestLookup = createRequestLookup();
+        when(requestLookup.getPublicUri()).thenReturn("/myapp/public/component/base");
+        createRenderable("{{favicon \"img/favicon.png\" type=\"image/png\"}}").render(null, createLookup(),
+                                                                                      requestLookup, createAPI());
+        Assert.assertEquals(requestLookup.getPlaceholderContent(Placeholder.favicon).get(),
+                            "<link rel=\"shortcut icon\" href=\"/myapp/public/component/base/img/favicon.png\" " +
+                                    "type=\"image/png\" />\n");
+    }
+
+    @Test
+    public void testFaviconWithMultipleParameters() {
+        RequestLookup requestLookup = createRequestLookup();
+        when(requestLookup.getPublicUri()).thenReturn("/myapp/public/component/base");
+        createRenderable("{{favicon \"img/\" \"favicon\" \".png\"}}").render(null, createLookup(), requestLookup,
+                                                                             createAPI());
+        Assert.assertEquals(requestLookup.getPlaceholderContent(Placeholder.favicon).get(),
+                            "<link rel=\"shortcut icon\" href=\"/myapp/public/component/base/img/favicon.png\" />\n");
+
+    }
+
+    @Test
     public void testTitle() {
         RequestLookup requestLookup = createRequestLookup();
         createRenderable("{{title \"page-title\"}}").render(null, createLookup(), requestLookup, createAPI());
