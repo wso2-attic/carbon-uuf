@@ -37,7 +37,7 @@
     <properties>
         <!--<private.package>org.wso2.carbon.uuf.internal</private.package>-->
         <import.package>
-            org.osgi.framework;version="${osgi.framework.import.version.range}",
+            org.osgi.framework,
             org.slf4j.*;version="${slf4j.version.range}",
             org.apache.log4j.*
         </import.package>
@@ -51,6 +51,7 @@
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.core</artifactId>
+            <version>${osgi.api.version}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>

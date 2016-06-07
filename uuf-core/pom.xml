@@ -36,14 +36,10 @@
     </parent>
 
     <dependencies>
-        <!-- Dependencies for UUF -->
+        <!-- Dependencies for UUF Core-->
         <dependency>
             <groupId>org.wso2.orbit.org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.wso2.orbit.com.github.jknack</groupId>
-            <artifactId>handlebars</artifactId>
         </dependency>
         <dependency>
             <groupId>javax.cache</groupId>
@@ -61,39 +57,9 @@
             <groupId>org.ow2.asm</groupId>
             <artifactId>asm</artifactId>
         </dependency>
-
-        <!-- Dependencies for MSF4J -->
-        <dependency>
-            <groupId>org.wso2.eclipse.osgi</groupId>
-            <artifactId>org.eclipse.osgi</artifactId>
-        </dependency>
         <dependency>
             <groupId>org.wso2.msf4j</groupId>
             <artifactId>msf4j-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>javax.ws.rs</groupId>
-            <artifactId>javax.ws.rs-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-buffer</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-transport</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-handler</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-codec</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-codec-http</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -111,12 +77,12 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
         </dependency>
-
-        <!-- Other Dependencies -->
         <dependency>
             <groupId>commons-io.wso2</groupId>
             <artifactId>commons-io</artifactId>
         </dependency>
+
+        <!-- Other Dependencies -->
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
@@ -132,7 +98,6 @@
         <private.package>org.wso2.carbon.uuf.internal.*</private.package>
         <import.package>
             org.osgi.framework;version="${osgi.framework.import.version.range}",
-            org.wso2.carbon.kernel.startupresolver.*;version="${carbon.kernel.version.range}",
             org.osgi.framework.wiring,
             org.wso2.msf4j.*,
             org.apache.log4j.*,
@@ -144,12 +109,9 @@
             com.google.gson.*;version="${gson.version}",
             io.netty.handler.*,
             org.apache.commons.lang3.*,
-            com.github.jknack.handlebars.*,
-            javax.script,
             org.apache.commons.io,
             org.wso2.carbon.kernel.utils,
             org.yaml.snakeyaml,
-            jdk.nashorn.api.scripting,
             javax.cache.*
         </import.package>
         <export.package>
