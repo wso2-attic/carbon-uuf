@@ -75,6 +75,10 @@ public class Lookup {
 
         // fragmentName == <dependency-component-name>.<fragment-simple-name>
         String dependencyComponentName = NameUtils.getComponentName(fragmentName);
+        if (componentName.equals(dependencyComponentName)) {
+            // Fragment is referred with its fully qualified name even though it is in the same component.
+            return Optional.ofNullable(fragments.get(fragmentName));
+        }
         if (flattenedDependencies.get(componentName).contains(dependencyComponentName)) {
             // Component 'dependencyComponentName' is a dependency of component 'componentName'.
             return Optional.ofNullable(fragments.get(fragmentName));
@@ -99,7 +103,10 @@ public class Lookup {
 
         // layoutName == <dependency-component-name>.<layout-simple-name>
         String dependencyComponentName = NameUtils.getComponentName(layoutName);
-        if (flattenedDependencies.get(componentName).contains(dependencyComponentName)) {
+        if (componentName.equals(dependencyComponentName)) {
+            // Layout is referred with its fully qualified name even though it is in the same component.
+            return Optional.ofNullable(layouts.get(layoutName));
+        } else if (flattenedDependencies.get(componentName).contains(dependencyComponentName)) {
             // Component 'dependencyComponentName' is a dependency of component 'componentName'.
             return Optional.ofNullable(layouts.get(layoutName));
         } else {
