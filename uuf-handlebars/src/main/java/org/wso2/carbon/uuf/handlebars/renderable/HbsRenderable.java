@@ -40,6 +40,7 @@ import org.wso2.carbon.uuf.handlebars.helpers.runtime.PublicHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.SecuredHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.TitleHelper;
 import org.wso2.carbon.uuf.spi.Renderable;
+import org.wso2.carbon.uuf.spi.model.Model;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -83,13 +84,14 @@ public abstract class HbsRenderable implements Renderable {
         }
     }
 
-    protected Map<String, Object> getHbsModel(Lookup lookup, RequestLookup requestLookup, API api) {
+    protected Map<String, Object> getHbsModel(Model model, Lookup lookup, RequestLookup requestLookup, API api) {
         Map<String, Object> context = new HashMap<>();
         context.put("@app",
                     ImmutableMap.of("context", requestLookup.getAppContext(), "config", lookup.getConfiguration()));
         context.put("@user", api.getSession().map(Session::getUser).orElse(null));
         context.put("@pathParams", requestLookup.getPathParams());
         context.put("@queryParams", requestLookup.getRequest().getQueryParams());
+        context.put("@params", ((model == null) ? null : model.toMap()));
         return context;
     }
 }

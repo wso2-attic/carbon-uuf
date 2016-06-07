@@ -81,18 +81,6 @@ public class HbsFragmentRenderable extends HbsPageRenderable {
         }
     }
 
-    private Map<String, Object> getExecutableContext(Model model, Lookup lookup, RequestLookup requestLookup) {
-        Map<String, Object> context = getExecutableContext(lookup, requestLookup);
-        context.put("params", model.toMap());
-        return context;
-    }
-
-    private Map<String, Object> getHbsModel(Model model, Lookup lookup, RequestLookup requestLookup, API api) {
-        Map<String, Object> context = getHbsModel(lookup, requestLookup, api);
-        context.put("@params", model.toMap());
-        return context;
-    }
-
     @Override
     public String toString() {
         return "{\"path\": \"" + templatePath + "\"" + (executable == null ? "}" : ", \"js\": " + executable + "}");
