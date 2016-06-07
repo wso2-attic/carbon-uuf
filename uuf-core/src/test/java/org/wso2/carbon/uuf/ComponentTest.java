@@ -50,7 +50,7 @@ public class ComponentTest {
         Page p2 = createPage("/test/page/two", "Hello world from test page two!");
         Component component = new Component("componentName", null, null, ImmutableSortedSet.of(p1, p2));
 
-        Optional<String> output = component.renderPage("/test/page/one", null, createRequestLookup(), null);
+        Optional<String> output = component.renderPage("/test/page/one", null, null, createRequestLookup(), null);
         Assert.assertEquals(output.get(), "Hello world from test page one!");
     }
 
@@ -60,8 +60,8 @@ public class ComponentTest {
         Page p2 = createPage("/test/page/no-wildcard/two", "Hello world from test page two!");
         Component component = new Component("componentName", null, null, ImmutableSortedSet.of(p1, p2));
 
-        Optional<String> output = component.renderPage("/test/page/wildcard-value/one", null, createRequestLookup(),
-                                                       null);
+        Optional<String> output = component.renderPage("/test/page/wildcard-value/one", null, null,
+                                                       createRequestLookup(), null);
         Assert.assertEquals(output.get(), "Hello world from test page one!");
     }
 
@@ -71,7 +71,7 @@ public class ComponentTest {
         Page p2 = createPage("/test/page/two", null);
         Component component = new Component("componentName", null, null, ImmutableSortedSet.of(p1, p2));
 
-        Optional<String> output = component.renderPage("/test/page/three", null, createRequestLookup(), null);
+        Optional<String> output = component.renderPage("/test/page/three", null, null, createRequestLookup(), null);
         Assert.assertFalse(output.isPresent());
     }
 }

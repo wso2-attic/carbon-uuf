@@ -115,7 +115,7 @@ public class App {
 
     private String renderPage(String uriWithoutAppContext, RequestLookup requestLookup, API api) {
         // First try to render the page with 'root' component.
-        Optional<String> output = rootComponent.renderPage(uriWithoutAppContext, lookup, requestLookup, api);
+        Optional<String> output = rootComponent.renderPage(uriWithoutAppContext, null, lookup, requestLookup, api);
         if (output.isPresent()) {
             return output.get();
         }
@@ -133,7 +133,7 @@ public class App {
             throw new PageNotFoundException("Requested page '" + uriWithoutAppContext + "' does not exists.");
         }
         String pageUri = uriWithoutAppContext.substring(secondSlashIndex);
-        output = component.renderPage(pageUri, lookup, requestLookup, api);
+        output = component.renderPage(pageUri, null, lookup, requestLookup, api);
         if (output.isPresent()) {
             return output.get();
         }

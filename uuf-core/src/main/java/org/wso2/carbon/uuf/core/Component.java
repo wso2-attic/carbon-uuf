@@ -18,6 +18,7 @@ package org.wso2.carbon.uuf.core;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.uuf.spi.model.Model;
 
 import java.util.Map;
 import java.util.Optional;
@@ -54,7 +55,8 @@ public class Component {
         return context;
     }
 
-    public Optional<String> renderPage(String pageUri, Lookup lookup, RequestLookup requestLookup, API api) {
+    public Optional<String> renderPage(String pageUri, Model model, Lookup lookup, RequestLookup requestLookup,
+                                       API api) {
         Page servingPage = null;
         for (Page page : pages) {
             Optional<Map<String, String>> pathParams = page.getUriPatten().match(pageUri);
@@ -74,7 +76,7 @@ public class Component {
 
         // Rendering flow tracking start.
         requestLookup.tracker().start(this);
-        String html = servingPage.render(null, lookup, requestLookup, api);
+        String html = servingPage.render(model, lookup, requestLookup, api);
         // Rendering flow tracking  finish.
         requestLookup.tracker().finish();
         return Optional.of(html);
