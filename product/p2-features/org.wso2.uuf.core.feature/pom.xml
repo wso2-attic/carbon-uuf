@@ -96,7 +96,6 @@
                                     <symbolicName>com.google.gson</symbolicName>
                                     <version>${gson.version}</version>
                                 </bundle>
-                                <!-- Metrics Bundles - End -->
                             </bundles>
                         </configuration>
                     </execution>
