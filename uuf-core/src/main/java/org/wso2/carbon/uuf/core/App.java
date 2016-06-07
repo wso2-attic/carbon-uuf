@@ -31,6 +31,7 @@ import org.wso2.carbon.uuf.internal.util.NameUtils;
 import org.wso2.carbon.uuf.internal.util.UriUtils;
 import org.wso2.carbon.uuf.spi.model.Model;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -95,12 +96,13 @@ public class App {
     public String renderPage(HttpRequest request, HttpResponse response) {
         RequestLookup requestLookup = new RequestLookup(configuration.getClientAppContext(), request, response);
         API api = new API(sessionRegistry, requestLookup);
+        // If exists, render Theme.
         Theme renderingTheme = getRenderingTheme(api);
         if (renderingTheme != null) {
             renderingTheme.render(requestLookup);
         }
         try {
-            String html = renderPage(request.getUriWithoutAppContext(), requestLookup, api);
+            String html = renderPage(request.getUriWithoutAppContext(), null, requestLookup, api);
             updateAppTheme(api);
             return html;
         } catch (SessionNotFoundException e) {
@@ -113,32 +115,54 @@ public class App {
         }
     }
 
-    private String renderPage(String uriWithoutAppContext, RequestLookup requestLookup, API api) {
+    public Optional<String> renderErrorPage(HttpErrorException ex, HttpRequest request, HttpResponse response) {
+        Map<String, String> errorPages = configuration.getErrorPages();
+        String errorPageUri = errorPages.getOrDefault(String.valueOf(ex.getHttpStatusCode()),
+                                                      errorPages.get("default"));
+        if (errorPageUri == null) {
+            return Optional.<String>empty();
+        }
+
+        RequestLookup requestLookup = new RequestLookup(configuration.getClientAppContext(), request, response);
+        API api = new API(sessionRegistry, requestLookup);
+        // If exists, render Theme.
+        Theme renderingTheme = getRenderingTheme(api);
+        if (renderingTheme != null) {
+            renderingTheme.render(requestLookup);
+        }
+        // Create Model with HTTP status code and error message.
+        Map<String, Object> modelMap = new HashMap<>(2);
+        modelMap.put("status", ex.getHttpStatusCode());
+        modelMap.put("message", ex.getMessage());
+        return Optional.of(renderPage(errorPageUri, new MapModel(modelMap), requestLookup, api));
+    }
+
+    private String renderPage(String pageUri, Model model, RequestLookup requestLookup, API api) {
         // First try to render the page with 'root' component.
-        Optional<String> output = rootComponent.renderPage(uriWithoutAppContext, null, lookup, requestLookup, api);
+        Optional<String> output = rootComponent.renderPage(pageUri, model, lookup, requestLookup, api);
         if (output.isPresent()) {
             return output.get();
         }
 
         // Since 'root' component doesn't have the page, try with other components.
-        int secondSlashIndex = uriWithoutAppContext.indexOf('/', 1);
+        int secondSlashIndex = pageUri.indexOf('/', 1);
         if (secondSlashIndex == -1) {
-            // No component context found in the 'uriWithoutAppContext' URI.
-            throw new PageNotFoundException("Requested page '" + uriWithoutAppContext + "' does not exists.");
+            // No component context found in the 'pageUri' URI.
+            throw new PageNotFoundException("Requested page '" + pageUri + "' does not exists.");
         }
-        String componentContext = uriWithoutAppContext.substring(0, secondSlashIndex);
+        String componentContext = pageUri.substring(0, secondSlashIndex);
         Component component = components.get(componentContext);
         if (component == null) {
             // No component found for the 'componentContext' key.
-            throw new PageNotFoundException("Requested page '" + uriWithoutAppContext + "' does not exists.");
+            throw new PageNotFoundException("Requested page '" + pageUri + "' does not exists.");
         }
-        String pageUri = uriWithoutAppContext.substring(secondSlashIndex);
-        output = component.renderPage(pageUri, null, lookup, requestLookup, api);
+        String uriWithoutComponentContext = pageUri.substring(secondSlashIndex);
+        output = component.renderPage(uriWithoutComponentContext, model, lookup, requestLookup, api);
         if (output.isPresent()) {
             return output.get();
         }
-        // No page found for 'pageUri' in the 'component'.
-        throw new PageNotFoundException("Requested page '" + uriWithoutAppContext + "' does not exists.");
+        // No page found for 'uriWithoutComponentContext' in the 'component'.
+        throw new PageNotFoundException("Requested page '" + pageUri + "' does not exists.");
     }
 
     /**

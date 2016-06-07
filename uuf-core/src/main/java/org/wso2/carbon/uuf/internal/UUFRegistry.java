@@ -32,6 +32,7 @@ import org.wso2.carbon.uuf.internal.debug.Debugger;
 import org.wso2.carbon.uuf.internal.io.StaticResolver;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.wso2.carbon.uuf.api.HttpResponse.CONTENT_TYPE_TEXT_HTML;
@@ -132,19 +133,23 @@ public class UUFRegistry {
                 }
             }
             response.setContent(STATUS_OK, html, CONTENT_TYPE_TEXT_HTML);
-        } catch (PageNotFoundException | FragmentNotFoundException e) {
-            renderErrorPage(app, request, response, STATUS_NOT_FOUND, e.getMessage());
+        } catch (PageNotFoundException e) {
+            renderErrorPage(app, request, response, e);
+        } catch (FragmentNotFoundException e) {
+            response.setContent(e.getHttpStatusCode(), e.getMessage());
         } catch (PageRedirectException e) {
             response.setStatus(STATUS_FOUND);
             response.setHeader(HEADER_LOCATION, e.getRedirectUrl());
         } catch (HttpErrorException e) {
-            renderErrorPage(app, request, response, e.getHttpStatusCode(), e.getMessage());
+            renderErrorPage(app, request, response, e);
         } catch (UUFException e) {
             log.error("A server error occurred while serving for request '" + request + "'.", e);
-            renderErrorPage(app, request, response, STATUS_INTERNAL_SERVER_ERROR, e.getMessage());
+            renderErrorPage(app, request, response,
+                            new HttpErrorException(STATUS_INTERNAL_SERVER_ERROR, e.getMessage(), e));
         } catch (Exception e) {
             log.error("An unexpected error occurred while serving for request '" + request + "'.", e);
-            renderErrorPage(app, request, response, STATUS_INTERNAL_SERVER_ERROR, e.getMessage());
+            renderErrorPage(app, request, response,
+                            new HttpErrorException(STATUS_INTERNAL_SERVER_ERROR, e.getMessage(), e));
         }
     }
 
@@ -167,13 +172,25 @@ public class UUFRegistry {
                 .orElseThrow(() -> new UUFException("Cannot reload app '" + appName + "'."));
     }
 
-    private void renderErrorPage(App app, HttpRequest request, HttpResponse response, int status, String message) {
+    private void renderErrorPage(App app, HttpRequest request, HttpResponse response, HttpErrorException ex) {
         if (app == null) {
             // Exception occurred before creating/retrieving the app. So we cannot render configured error pages.
-            response.setContent(status, message);
-        } else {
-            // TODO: 6/5/16 if exists render configured error page
-            response.setContent(status, message);
+            response.setContent(ex.getHttpStatusCode(), ex.getMessage());
+            return;
+        }
+
+        try {
+            Optional<String> html = app.renderErrorPage(ex, request, response);
+            if (html.isPresent()) {
+                response.setContent(STATUS_OK, html.get(), CONTENT_TYPE_TEXT_HTML);
+            } else {
+                // Error page is not configured.
+                response.setContent(ex.getHttpStatusCode(), ex.getMessage());
+            }
+        } catch (Exception e) {
+            // Another exception occurred when rendering the error page for HttpErrorException ex.
+            log.error("An error occurred when rendering the error page for exception '" + ex + "'.", e);
+            response.setContent(ex.getHttpStatusCode(), ex.getMessage());
         }
     }
 }
