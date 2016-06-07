@@ -25,10 +25,10 @@ import org.wso2.carbon.uuf.core.API;
 import org.wso2.carbon.uuf.core.Lookup;
 import org.wso2.carbon.uuf.core.RequestLookup;
 import org.wso2.carbon.uuf.exception.UUFException;
-import org.wso2.carbon.uuf.handlebars.helpers.FillPlaceholderHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.CssHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.DefinePlaceholderHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.DefineZoneHelper;
+import org.wso2.carbon.uuf.handlebars.helpers.runtime.FaviconHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.FillZoneHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.FragmentHelper;
 import org.wso2.carbon.uuf.handlebars.helpers.runtime.HeadJsHelper;
@@ -52,23 +52,22 @@ public abstract class HbsRenderable implements Renderable {
     public static final String DATA_KEY_API = HbsRenderable.class.getName() + "#api";
     public static final String DATA_KEY_CURRENT_WRITER = HbsRenderable.class.getName() + "#writer";
     //
-    protected static final Handlebars HANDLEBARS = new Handlebars();
-    private static final Map<String, FillPlaceholderHelper> PLACEHOLDER_HELPERS = ImmutableMap.of(
-            CssHelper.HELPER_NAME, new CssHelper(),
-            HeadJsHelper.HELPER_NAME, new HeadJsHelper(),
-            JsHelper.HELPER_NAME, new JsHelper(),
-            TitleHelper.HELPER_NAME, new TitleHelper(),
-            HeadOtherHelper.HELPER_NAME, new HeadOtherHelper());
+    private static final Handlebars HANDLEBARS = new Handlebars();
 
     static {
+        HANDLEBARS.registerHelper(FragmentHelper.HELPER_NAME, new FragmentHelper());
+        HANDLEBARS.registerHelper(SecuredHelper.HELPER_NAME, new SecuredHelper());
+        HANDLEBARS.registerHelper(PublicHelper.HELPER_NAME, new PublicHelper());
         HANDLEBARS.registerHelper(MenuHelper.HELPER_NAME, new MenuHelper());
         HANDLEBARS.registerHelper(DefineZoneHelper.HELPER_NAME, new DefineZoneHelper());
         HANDLEBARS.registerHelper(FillZoneHelper.HELPER_NAME, new FillZoneHelper());
-        HANDLEBARS.registerHelper(FragmentHelper.HELPER_NAME, new FragmentHelper());
         HANDLEBARS.registerHelper(DefinePlaceholderHelper.HELPER_NAME, new DefinePlaceholderHelper());
-        PLACEHOLDER_HELPERS.forEach(HANDLEBARS::registerHelper);
-        HANDLEBARS.registerHelper(PublicHelper.HELPER_NAME, new PublicHelper());
-        HANDLEBARS.registerHelper(SecuredHelper.HELPER_NAME, new SecuredHelper());
+        HANDLEBARS.registerHelper(FaviconHelper.HELPER_NAME, new FaviconHelper());
+        HANDLEBARS.registerHelper(TitleHelper.HELPER_NAME, new TitleHelper());
+        HANDLEBARS.registerHelper(CssHelper.HELPER_NAME, new CssHelper());
+        HANDLEBARS.registerHelper(HeadJsHelper.HELPER_NAME, new HeadJsHelper());
+        HANDLEBARS.registerHelper(HeadOtherHelper.HELPER_NAME, new HeadOtherHelper());
+        HANDLEBARS.registerHelper(JsHelper.HELPER_NAME, new JsHelper());
         HANDLEBARS.registerHelperMissing(new MissingHelper());
     }
 
