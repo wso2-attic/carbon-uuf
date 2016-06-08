@@ -96,6 +96,10 @@
                                     <symbolicName>com.google.gson</symbolicName>
                                     <version>${gson.version}</version>
                                 </bundle>
+                                <bundle>
+                                    <symbolicName>com.google.guava</symbolicName>
+                                    <version>${guava.version}.0</version>
+                                </bundle>
                             </bundles>
                         </configuration>
                     </execution>
