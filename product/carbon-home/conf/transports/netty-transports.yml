@@ -26,14 +26,14 @@ listenerConfigurations:
      name: "execThreadPoolSize"
      value: 60
 
-# -
-#  id: "jaxrs-https"
-#  host: "127.0.0.1"
-#  port: 8888
-#  bossThreadPoolSize: 2
-#  workerThreadPoolSize: 250
-#  execHandlerThreadPoolSize: 60
-#  scheme: https
-#  keyStoreFile: "repository/resources/security/cert.jks"
-#  keyStorePass: secret
-#  certPass: secret
+ -
+  id: "jaxrs-https"
+  host: "127.0.0.1"
+  port: 8888
+  bossThreadPoolSize: 2
+  workerThreadPoolSize: 250
+  execHandlerThreadPoolSize: 60
+  scheme: https
+  keyStoreFile: "resources/security/wso2carbon.jks"
+  keyStorePass: wso2carbon
+  certPass: wso2carbon

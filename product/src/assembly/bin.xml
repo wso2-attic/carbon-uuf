@@ -60,6 +60,12 @@
             <fileMode>644</fileMode>
         </fileSet>
 
+        <fileSet>
+            <directory>carbon-home/resources/</directory>
+            <outputDirectory>resources/</outputDirectory>
+            <fileMode>644</fileMode>
+        </fileSet>
+
         <!-- Copy the samples -->
         <fileSet>
             <directory>../samples</directory>
