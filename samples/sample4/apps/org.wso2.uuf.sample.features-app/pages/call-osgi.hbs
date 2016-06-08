@@ -7,10 +7,10 @@
     <p>Syntax : <code>callOSGiService(serviceClassName, serviceMethodName, [methodParameters]);</code></p>
     <p>In your JS file;</p>
     <pre>
-        var onRequest = function (context) {
+        function onRequest(context) {
             var result = callOSGiService("org.wso2.uuf.sample.pets_store.service.PetsManagerService", "getHelloMessage", ["John"]);
-            return {"helloWorldText" : result};
-        };
+            return {"helloWorldText": result};
+        }
     </pre>
     <p>Then, you can use this variable in your handlebars;</p>
     <pre>

@@ -9,13 +9,13 @@
     <p>Syntax : <code>destroySession();</code></p>
     <p>In your JS file;</p>
     <pre>
-        var onRequest = function (context) {
+        function onRequest(context) {
             var session = getSession();
             if (!session) {
                 session = createSession("admin");
             }
             return {"username": session.getUser().getUsername()};
-        };
+        }
     </pre>
     <p>Then, you can use this variable in your handlebars;</p>
     <pre>

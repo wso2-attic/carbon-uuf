@@ -13,9 +13,9 @@
     </pre>
     <h3>Demo:</h3>
     <pre>
-        var onRequest = function (context) {
+        function onRequest(context) {
             var sendErrorParams = context.request.queryParams["sendError"];
-            if(sendErrorParams) {
+            if (sendErrorParams) {
                 sendError(404, "Yep, this is a 404. Requested resource not found.");
             }
         }
