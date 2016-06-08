@@ -1,0 +1,9 @@
+appName: test app 2
+menu:
+  main:
+    Home: {link: "#home-2", icon: "fw fw-home"}
+    Pets:
+      Delete a pet: {link: "/pets/remove", icon: "fw fw-delete"}
+    Devices:
+      See all devices: {link: "/devices", icon: "fw fw-list"}
+      Add a new device: {link: "/devices/add", icon: "fw fw-add"}
