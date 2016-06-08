@@ -21,18 +21,17 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class PlaceholderWriter extends Writer {
 
-    private List<StringBuilder> buffers;
+    private List<Object> buffers;
     private StringBuilder currentBuffer;
-    private List<String> placeholders;
 
     public PlaceholderWriter() {
         buffers = new ArrayList<>();
         currentBuffer = new StringBuilder();
         buffers.add(currentBuffer);
-        placeholders = new ArrayList<>();
     }
 
     @Override
@@ -86,35 +85,69 @@ public class PlaceholderWriter extends Writer {
     public void close() {
         currentBuffer = null;
         buffers = null;
-        placeholders = null;
     }
 
-    public void addPlaceholder(final String placeholderName) {
+    public void addPlaceholder(String placeholderName) {
+        addPlaceholder(placeholderName, null);
+    }
+
+    public void addPlaceholder(String placeholderName, String defaultContent) {
+        buffers.add(new PlaceholderMarker(placeholderName, defaultContent));
         currentBuffer = new StringBuilder();
         buffers.add(currentBuffer);
-        placeholders.add(placeholderName);
     }
 
     public String toString(Map<String, String> placeholderValues) {
-        StringBuilder out = new StringBuilder();
-        out.append(buffers.get(0));
-        for (int i = 0; i < placeholders.size(); i++) {
-            String key = placeholders.get(i);
-            String placeholderValue;
-            if (key != null) {
-                if ((placeholderValue = placeholderValues.get(key)) != null) {
-                    out.append(placeholderValue);
-                }
+        StringBuilder output = new StringBuilder();
+        for (Object item : buffers) {
+            if (item instanceof PlaceholderMarker) {
+                // This is a marked placeholder.
+                PlaceholderMarker marker = (PlaceholderMarker) item;
+                String placeholderValue = placeholderValues.get(marker.getName());
+                output.append((placeholderValue == null) ? marker.getDefaultContent().orElse("") : placeholderValue);
+            } else {
+                // This is a normal string buffer.
+                output.append(item);
             }
-            out.append(buffers.get(i + 1));
         }
-        return out.toString();
+        return output.toString();
     }
 
     @Override
     public String toString() {
-        StringBuilder tmpBuffer = new StringBuilder();
-        buffers.forEach(tmpBuffer::append);
-        return tmpBuffer.toString();
+        StringBuilder output = new StringBuilder();
+        for (Object item : buffers) {
+            if (item instanceof PlaceholderMarker) {
+                // This is a marked placeholder.
+                PlaceholderMarker marker = (PlaceholderMarker) item;
+                output.append(marker.getDefaultContent().orElse(null));
+            } else {
+                // This is a normal string buffer.
+                output.append(item);
+            }
+        }
+        return output.toString();
+    }
+
+    private class PlaceholderMarker {
+        private final String name;
+        private final String defaultContent;
+
+        public PlaceholderMarker(String name) {
+            this(name, null);
+        }
+
+        public PlaceholderMarker(String name, String defaultContent) {
+            this.name = name;
+            this.defaultContent = defaultContent;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public Optional<String> getDefaultContent() {
+            return Optional.ofNullable(defaultContent);
+        }
     }
 }
