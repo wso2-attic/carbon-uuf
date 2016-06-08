@@ -66,17 +66,27 @@
         </dependency>
     </dependencies>
 
-    <properties>
-        <import.package>
-            org.wso2.carbon.uuf.*;version="${uuf.version}",
-            jdk.nashorn.api.scripting,
-            org.slf4j.*;version="${slf4j.version.range}",
-            com.google.common.*;version="${guava.version.range}",
-            javax.script,
-            com.github.jknack.handlebars.*,
-            org.yaml.snakeyaml,
-        </import.package>
-        <export.package>org.wso2.carbon.uuf.handlebars.*;version="${uuf.version}"</export.package>
-    </properties>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Import-Package>
+                            org.wso2.carbon.uuf.*;version="${uuf.version}",
+                            jdk.nashorn.api.scripting,
+                            org.slf4j.*;version="${slf4j.version.range}",
+                            com.google.common.*;version="${guava.version.range}",
+                            javax.script,
+                            com.github.jknack.handlebars.*,
+                            org.yaml.snakeyaml
+                        </Import-Package>
+                        <Export-Package>org.wso2.carbon.uuf.handlebars.*;version="${uuf.version}"</Export-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
