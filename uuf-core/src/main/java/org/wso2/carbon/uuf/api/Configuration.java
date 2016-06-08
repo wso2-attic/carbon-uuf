@@ -141,14 +141,14 @@ public class Configuration extends HashMap<String, Object> {
 
     /**
      * Returns the list of menu-items of the menu identified by the given {@code name}. If there is no menu associated
-     * with the given name, then an empty list is returned.
+     * with the given name, then an {@code null} is returned.
      *
      * @param name name of the menu
-     * @return list of menu-items
+     * @return menu-items
      */
     @SuppressWarnings("unchecked")
     public Map<String, Map> getMenu(String name) {
-        // validate menu property
+        // Validate menu property.
         Object menuObj = super.get(KEY_MENU);
         if (menuObj == null) {
             return null;
@@ -157,28 +157,27 @@ public class Configuration extends HashMap<String, Object> {
                     "Value of 'menu' in the configurations must be a Map<String, Map>. Instead found " +
                             menuObj.getClass().getName() + ".");
         }
-        // validate requested menu
+        // Validate requested menu.
         Object menuMapObj = ((Map) menuObj).get(name);
         if (menuMapObj == null) {
             return null;
         } else if (!(menuMapObj instanceof Map)) {
-            throw new InvalidTypeException(
-                    "Menu '" + name + "' must be a Map<String, Map>. Instead found " + menuObj.getClass().getName() + ".");
+            throw new InvalidTypeException("Menu '" + name + "' must be a Map<String, Map>. Instead found " +
+                                                   menuObj.getClass().getName() + ".");
         }
-        Map menuMap = (Map) menuMapObj;
-        // validate menu items
-        menuMap.forEach(
-                (key, value) -> {
-                    if (value == null) {
-                        throw new InvalidTypeException(
-                                "Menu '" + name + "' must be a Map<String, Map>. Instead found a null value at key: " + key + ".");
-                    } else if (!(value instanceof Map)) {
-                        throw new InvalidTypeException(
-                                "Menu '" + name + "' must be a Map<String, Map>. Instead found a '" + value.getClass().getName() +
-                                        "' value at key: " + key + ".");
-                    }
-                }
-        );
+        Map<?, ?> menuMap = (Map) menuMapObj;
+        // Validate menu items.
+        for (Map.Entry entry : menuMap.entrySet()) {
+            if (!(entry.getKey() instanceof String)) {
+                throw new InvalidTypeException("Menu '" + name + "' must be a Map<String, Map>. Instead found a '" +
+                                                       entry.getKey().getClass().getName() + "' key.");
+            }
+            if (!(entry.getValue() instanceof Map)) {
+                throw new InvalidTypeException("Menu '" + name + "' must be a Map<String, Map>. Instead found a '" +
+                                                       entry.getValue().getClass().getName() + "' value at key '" +
+                                                       entry.getKey() + "'.");
+            }
+        }
         return (Map<String, Map>) menuMap;
     }
 
@@ -199,7 +198,8 @@ public class Configuration extends HashMap<String, Object> {
                 if (!(entry.getValue() instanceof String)) {
                     throw new InvalidTypeException(
                             "Value of 'errorPages' in the app configuration must be a Map<String, String> " +
-                                    "Instead found a '" + entry.getValue().getClass().getName() + "' value.");
+                                    "Instead found a '" + entry.getValue().getClass().getName() + "' value at key '" +
+                                    entry.getKey() + "'.");
                 }
             }
             return (Map<String, String>) errorPagesMap;
