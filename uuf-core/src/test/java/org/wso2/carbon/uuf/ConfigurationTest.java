@@ -14,11 +14,12 @@
  *  limitations under the License.
  */
 
-package org.wso2.carbon.uuf.api;
+package org.wso2.carbon.uuf;
 
 import org.apache.commons.io.IOUtils;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import org.wso2.carbon.uuf.api.Configuration;
 import org.yaml.snakeyaml.Yaml;
 
 import java.util.Map;
