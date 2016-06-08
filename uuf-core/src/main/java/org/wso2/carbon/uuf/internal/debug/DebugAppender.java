@@ -61,12 +61,13 @@ public class DebugAppender extends AppenderSkeleton {
     public void attach() {
         setThreshold(Level.DEBUG);
         Logger logger = Logger.getLogger("org.wso2.carbon.uuf");
-        logger.setLevel(Level.DEBUG);
-        Logger.getRootLogger().addAppender(this);
+        //TODO: fix this
+//        logger.setLevel(Level.DEBUG);
+//        Logger.getRootLogger().addAppender(this);
     }
 
     public void detach() {
-        Logger.getRootLogger().removeAppender(this);
+//        Logger.getRootLogger().removeAppender(this);
     }
 
     public String getMessagesAsJson() {
