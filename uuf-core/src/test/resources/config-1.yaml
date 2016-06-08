@@ -1,0 +1,9 @@
+appName: test app 1
+menu:
+  main:
+    Home: {link: "#home", icon: "fw fw-home"}
+    Pets:
+      See all pets: {link: "/pets", icon: "fw fw-list"}
+      Add a new pet: {link: "/pets/add", icon: "fw fw-add"}
+  side:
+    Back: {link: "#back", icon: "fw fw-left-arrow"}

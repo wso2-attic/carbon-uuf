@@ -16,70 +16,41 @@
 
 package org.wso2.carbon.uuf.api;
 
+import org.apache.commons.io.IOUtils;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import org.yaml.snakeyaml.Yaml;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class ConfigurationTest {
-    @Test
-    public void testMergeConfiguration() {
-        //menu item home
-        Map<String, Object> homeMenuItem = createMenuItem("fw fw-home", "#home");
-        //sub menu pets
-        Map<String, Object> seePetsMenuItem = createMenuItem("fw fw-list", "pets");
-        Map<String, Object> addNewPetItem = createMenuItem("fw fw-add", "pets/new");
-        Map<String, Object> petsSubMenu = new HashMap<>();
-        petsSubMenu.put("See all pets", seePetsMenuItem);
-        petsSubMenu.put("Add a new pet", addNewPetItem);
-        //main menu
-        Map<String, Object> mainMenu = new HashMap<>();
-        mainMenu.put("Home", homeMenuItem);
-        mainMenu.put("Pets", petsSubMenu);
-        Map<String, Object> menu = new HashMap<>();
-        menu.put("main", mainMenu);
-        //menu
-        Map<String, Object> config = new HashMap<>();
-        config.put("menu", menu);
 
-        Configuration originalConfig = new Configuration(config);
-        //----------------Other Configuration------------------//
-        //menu item home
-        Map<String, Object> homeMenuItemOther = createMenuItem("fw fw-home", "#");
-        //sub menu devices
-        Map<String, Object> seeDevicesMenuItem = createMenuItem("fw fw-list", "devices");
-        Map<String, Object> addNewDeviceItem = createMenuItem("fw fw-add", "devices/new");
-        Map<String, Object> devicesSubMenu = new HashMap<>();
-        devicesSubMenu.put("See all devices", seeDevicesMenuItem);
-        devicesSubMenu.put("Add a new device", addNewDeviceItem);
-        Map<String, Object> deletePetsMenuItem = createMenuItem("fw fw-delete", "pets/remove");
-        Map<String, Object> petsSubMenuOther = new HashMap<>();
-        petsSubMenuOther.put("Delete a pet", deletePetsMenuItem);
-        //main menu - other
-        Map<String, Object> mainMenuOther = new HashMap<>();
-        mainMenuOther.put("Home", homeMenuItemOther);
-        mainMenuOther.put("Devices", devicesSubMenu);
-        mainMenuOther.put("Pets", petsSubMenuOther);
-        Map<String, Object> menuOther = new HashMap<>();
-        menuOther.put("main", mainMenuOther);
-        //menu other
-        Map<String, Object> configOther = new HashMap<>();
-        configOther.put("menu", menuOther);
-
-        originalConfig.merge(configOther);
-        //check whether Devices added on mainMenu
-        Assert.assertEquals(mainMenu.size(), 3);
-        Assert.assertEquals(((Map) mainMenu.get("Devices")).size(), 2);
+    public static Map<?, ?> loadConfiguration(String filename) throws Exception {
+        String content = IOUtils.toString(ConfigurationTest.class.getResourceAsStream("/" + filename), "UTF-8");
+        return new Yaml().loadAs(content, Map.class);
     }
 
-    private Map<String, Object> createMenuItem(String icon, String link) {
-        Map<String, Object> menuItem = new HashMap<>();
-        menuItem.put("icon", icon);
-        menuItem.put("link", link);
-        return menuItem;
+    @Test
+    public void testMergeConfiguration() throws Exception {
+        Configuration configuration = new Configuration(loadConfiguration("config-1.yaml"));
+        configuration.merge(loadConfiguration("config-2.yaml"));
+
+        Map<String, Map> mainMenu = configuration.getMenu("main");
+        Assert.assertEquals(mainMenu.size(), 3);
+        Assert.assertTrue(mainMenu.get("Home") != null);
+        Assert.assertTrue(mainMenu.get("Home").get("link").equals("#home-2"));
+        Assert.assertTrue(mainMenu.get("Pets") != null);
+        Assert.assertEquals(mainMenu.get("Pets").size(), 3);
+        Assert.assertTrue(mainMenu.get("Pets").get("See all pets") instanceof Map);
+        Assert.assertEquals(((Map) mainMenu.get("Pets").get("See all pets")).get("link"), "/pets");
+        Assert.assertTrue(mainMenu.get("Devices") != null);
+        Assert.assertEquals(mainMenu.get("Devices").size(), 2);
+        Assert.assertTrue(mainMenu.get("Devices").get("See all devices") instanceof Map);
+        Assert.assertEquals(((Map) mainMenu.get("Devices").get("See all devices")).get("link"), "/devices");
+
+        Map<String, Map> sideMenu = configuration.getMenu("side");
+        Assert.assertEquals(sideMenu.size(), 1);
+
+        Assert.assertEquals(configuration.get("appName"), "test app 2");
     }
 }
