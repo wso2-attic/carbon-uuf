@@ -4,9 +4,10 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    {{favicon "images/default-favicon.png" type="image/png"}}
-    {{placeholder "favicon"}}
-    <title>{{placeholder "title"}}</title>
+    {{#placeholder "favicon"}}
+        <link rel="shortcut icon" href="{{public "images/default-favicon.png"}}" type="image/png" />
+    {{/placeholder}}
+    <title>{{#placeholder "title"}}UUF Base{{/placeholder}}</title>
     {{placeholder "css"}}
     {{placeholder "headJs"}}
     {{placeholder "headOther"}}
