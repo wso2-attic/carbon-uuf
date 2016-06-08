@@ -1,5 +1,4 @@
 appName : Features App
-elementsPerPage: 10
 theme : org.wso2.uuf.theme.default
 menu :
   main :
@@ -10,5 +9,8 @@ menu :
       Send HTTP Error : { icon: "fw fw-bug", link: "send-error" }
       Send HTTP Redirect : { icon: "fw fw-bug", link: "send-redirect" }
       Session : { icon: "fw fw-bug", link: "session" }
-      Theme : { icon: "fw fw-bug", link: "theme" }
+      Theme:
+        Theme2: {link: "theme"}
+        App Scope: {link: "theme/app-scope"}
+        Session Scope: {link: "theme/session-scope"}
       Menu : { icon: "fw fw-bug", link: "menu" }
