@@ -38,7 +38,7 @@
         <dependency>
             <groupId>org.wso2.uuf</groupId>
             <artifactId>org.wso2.uuf.core</artifactId>
-            <version>${uuf.version}</version>
+            <version>${carbon.uuf.version}</version>
         </dependency>
         <dependency>
             <groupId>org.wso2.uuf</groupId>
@@ -74,7 +74,7 @@
                             <bundles>
                                 <bundle>
                                     <symbolicName>org.wso2.uuf.core</symbolicName>
-                                    <version>${uuf.version}</version>
+                                    <version>${carbon.uuf.version}</version>
                                 </bundle>
                                 <bundle>
                                     <symbolicName>snakeyaml</symbolicName>

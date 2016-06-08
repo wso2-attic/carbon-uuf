@@ -72,13 +72,13 @@
         <dependency>
             <groupId>org.wso2.uuf</groupId>
             <artifactId>org.wso2.uuf.core.feature</artifactId>
-            <version>${uuf.version}</version>
+            <version>${carbon.uuf.version}</version>
             <type>zip</type>
         </dependency>
         <dependency>
             <groupId>org.wso2.uuf</groupId>
             <artifactId>org.wso2.uuf.handlebars.feature</artifactId>
-            <version>${uuf.version}</version>
+            <version>${carbon.uuf.version}</version>
             <type>zip</type>
         </dependency>
         <dependency>
@@ -201,11 +201,11 @@
                                 </feature>
                                 <feature>
                                     <id>org.wso2.uuf.core.feature</id>
-                                    <version>${uuf.version}</version>
+                                    <version>${carbon.uuf.version}</version>
                                 </feature>
                                 <feature>
                                     <id>org.wso2.uuf.handlebars.feature</id>
-                                    <version>${uuf.version}</version>
+                                    <version>${carbon.uuf.version}</version>
                                 </feature>
                                 <feature>
                                     <id>org.wso2.carbon.jndi.feature</id>
@@ -277,11 +277,11 @@
                                 </feature>
                                 <feature>
                                     <id>org.wso2.uuf.core.feature.group</id>
-                                    <version>${uuf.version}</version>
+                                    <version>${carbon.uuf.version}</version>
                                 </feature>
                                 <feature>
                                     <id>org.wso2.uuf.handlebars.feature.group</id>
-                                    <version>${uuf.version}</version>
+                                    <version>${carbon.uuf.version}</version>
                                 </feature>
                                 <feature>
                                     <id>org.wso2.carbon.jndi.feature.group</id>

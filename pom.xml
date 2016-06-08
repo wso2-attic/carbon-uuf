@@ -36,9 +36,9 @@
     </parent>
 
     <scm>
-        <connection>scm:git:https://github.com/wso2/carbon-uuf.git</connection>
         <url>https://github.com/wso2/carbon-uuf.git</url>
         <developerConnection>scm:git:https://github.com/wso2/carbon-uuf.git</developerConnection>
+        <connection>scm:git:https://github.com/wso2/carbon-uuf.git</connection>
         <tag>HEAD</tag>
     </scm>
 
@@ -212,7 +212,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <uuf.version>1.0.0-SNAPSHOT</uuf.version>
+        <carbon.uuf.version>1.0.0-SNAPSHOT</carbon.uuf.version>
 
         <!-- Dependencies for UUF -->
         <maven.bundle.plugin.version>2.5.0</maven.bundle.plugin.version>

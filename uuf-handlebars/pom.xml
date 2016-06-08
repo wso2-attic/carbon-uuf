@@ -37,7 +37,7 @@
         <dependency>
             <groupId>org.wso2.uuf</groupId>
             <artifactId>org.wso2.uuf.core</artifactId>
-            <version>${uuf.version}</version>
+            <version>${carbon.uuf.version}</version>
         </dependency>
         <dependency>
             <groupId>org.wso2.orbit.com.github.jknack</groupId>
@@ -74,7 +74,7 @@
                 <configuration>
                     <instructions>
                         <Import-Package>
-                            org.wso2.carbon.uuf.*;version="${uuf.version}",
+                            org.wso2.carbon.uuf.*;version="${carbon.uuf.version}",
                             jdk.nashorn.api.scripting,
                             org.slf4j.*;version="${slf4j.version.range}",
                             com.google.common.*;version="${guava.version.range}",
@@ -82,7 +82,7 @@
                             com.github.jknack.handlebars.*,
                             org.yaml.snakeyaml
                         </Import-Package>
-                        <Export-Package>org.wso2.carbon.uuf.handlebars.*;version="${uuf.version}"</Export-Package>
+                        <Export-Package>org.wso2.carbon.uuf.handlebars.*;version="${carbon.uuf.version}"</Export-Package>
                     </instructions>
                 </configuration>
             </plugin>

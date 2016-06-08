@@ -121,12 +121,12 @@
                             javax.cache.*
                         </Import-Package>
                         <Export-Package>
-                            org.wso2.carbon.uuf.api.*;version="${uuf.version}",
-                            org.wso2.carbon.uuf.connector.*;version="${uuf.version}",
-                            org.wso2.carbon.uuf.core.*;version="${uuf.version}",
-                            org.wso2.carbon.uuf.exception.*;version="${uuf.version}",
-                            org.wso2.carbon.uuf.reference.*;version="${uuf.version}",
-                            org.wso2.carbon.uuf.spi.*;version="${uuf.version}",
+                            org.wso2.carbon.uuf.api.*;version="${carbon.uuf.version}",
+                            org.wso2.carbon.uuf.connector.*;version="${carbon.uuf.version}",
+                            org.wso2.carbon.uuf.core.*;version="${carbon.uuf.version}",
+                            org.wso2.carbon.uuf.exception.*;version="${carbon.uuf.version}",
+                            org.wso2.carbon.uuf.reference.*;version="${carbon.uuf.version}",
+                            org.wso2.carbon.uuf.spi.*;version="${carbon.uuf.version}",
                         </Export-Package>
                         <Include-Resource>src/main/resources</Include-Resource>
                     </instructions>
