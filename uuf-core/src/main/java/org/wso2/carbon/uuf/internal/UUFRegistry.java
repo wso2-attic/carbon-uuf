@@ -93,24 +93,22 @@ public class UUFRegistry {
                                     "Cannot find an app for context '" + request.getAppContext() + "'.");
                 return;
             }
-            if (Debugger.isDebuggingEnabled()) {
-                app = reloadApp(app, appDiscoverer, appCreator);
-            }
 
             if (request.isStaticResourceRequest()) {
                 staticResolver.serve(app, request, response);
                 return;
             }
-            if (Debugger.isDebuggingEnabled() && request.isDebugRequest()) {
-                if (this.debugger == null) {
+            if (Debugger.isDebuggingEnabled()) {
+                app = reloadApp(app, appDiscoverer, appCreator);
+                if (request.isDebugRequest() && (this.debugger == null)) {
                     synchronized (LOCK) {
                         if (this.debugger == null) {
-                            this.debugger = new Debugger();
+                            this.debugger = new Debugger(); // Create a debugger.
                         }
                     }
+                    debugger.serve(app, request, response);
+                    return;
                 }
-                debugger.serve(app, request, response);
-                return;
             }
             String html;
             if (request.isFragmentRequest()) {
