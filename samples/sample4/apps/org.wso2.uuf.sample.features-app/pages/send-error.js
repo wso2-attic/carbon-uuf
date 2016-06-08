@@ -15,10 +15,9 @@
  */
 
 //noinspection JSUnusedGlobalSymbols
-var onRequest = function (context) {
-    print(context.request.queryParams["sendError"]);
+function onRequest(context) {
     var sendErrorParams = context.request.queryParams["sendError"];
-    if(sendErrorParams) {
+    if (sendErrorParams) {
         sendError(404, "Yep, this is a 404. Requested resource not found.");
     }
-};
+}

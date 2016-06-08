@@ -15,10 +15,10 @@
  */
 
 //noinspection JSUnusedGlobalSymbols
-var onRequest = function (context) {
+function onRequest(context) {
     var session = getSession();
     if (!session) {
         session = createSession("rasika");
     }
     session.setThemeName("org.wso2.uuf.theme.green");
-};
+}

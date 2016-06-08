@@ -15,10 +15,10 @@
  */
 
 //noinspection JSUnusedGlobalSymbols
-var onRequest = function (context) {
+function onRequest(context) {
     var session = getSession();
     if (!session) {
         session = createSession("admin");
     }
     return {"username": session.getUser().getUsername()};
-};
+}

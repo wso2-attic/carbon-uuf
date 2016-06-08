@@ -15,6 +15,6 @@
  */
 
 //noinspection JSUnusedGlobalSymbols
-var onRequest = function (context) {
+function onRequest(context) {
     setAppTheme("org.wso2.uuf.theme.blue");
-};
+}

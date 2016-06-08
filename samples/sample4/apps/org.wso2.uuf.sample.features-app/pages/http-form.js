@@ -15,7 +15,7 @@
  */
 
 //noinspection JSUnusedGlobalSymbols
-var onRequest = function (context) {
+function onRequest(context) {
     var hellotext = "";
     return {"hellotext": hellotext};
-};
+}
