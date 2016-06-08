@@ -31,7 +31,13 @@ public class DefinePlaceholderHelper implements Helper<String> {
     @Override
     public CharSequence apply(String placeholderName, Options options) throws IOException {
         PlaceholderWriter writer = options.data(DATA_KEY_CURRENT_WRITER);
-        writer.addPlaceholder(placeholderName);
+        if (options.tagType.inline()) {
+            // {{placeholder "name"}}
+            writer.addPlaceholder(placeholderName);
+        } else {
+            // {{#placeholder "name"}} default content of this placeholder {{/placeholder}}
+            writer.addPlaceholder(placeholderName, options.fn().toString());
+        }
         return "";
     }
 }
