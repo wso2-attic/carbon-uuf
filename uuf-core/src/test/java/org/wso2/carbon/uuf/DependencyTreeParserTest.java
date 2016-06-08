@@ -29,7 +29,7 @@ import java.util.Set;
 
 public class DependencyTreeParserTest {
 
-    public static List<String> getDependencyTreeLines() throws Exception {
+    public static List<String> getDependencyTreeLines() {
         List<String> dependencyTreeLines = new ArrayList<>();
         Scanner scanner = new Scanner(DependencyTreeParserTest.class.getResourceAsStream("/test-dependency.tree"));
         while (scanner.hasNextLine()) {
@@ -39,7 +39,7 @@ public class DependencyTreeParserTest {
     }
 
     @Test
-    public void testParse() throws Exception {
+    public void testParse() {
         DependencyTreeParser.Result result = DependencyTreeParser.parse(getDependencyTreeLines());
 
         SetMultimap<String, String> flattenedDependencies = result.getFlattenedDependencies();
