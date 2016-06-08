@@ -217,6 +217,7 @@
     </repositories>
 
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <uuf.version>1.0.0-SNAPSHOT</uuf.version>
 
         <!-- Dependencies for UUF -->
