@@ -30,6 +30,7 @@ import java.util.function.Function;
  */
 public class Configuration extends HashMap<String, Object> {
 
+    // TODO: 6/8/16 Cache values of 'appContext', 'theme', 'loginPageUri', 'menu', 'errorPages' configs
     public static final String KEY_APP_CONTEXT = "appContext";
     public static final String KEY_APP_CONTEXT_SERVER = "server";
     public static final String KEY_APP_CONTEXT_CLIENT = "client";
