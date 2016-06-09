@@ -3,11 +3,11 @@ elementsPerPage: 10
 theme : org.wso2.uuf.theme.default
 menu :
   main :
-    Home : { icon: "fw-home", link: "#home"}
+    Home : {link: "", icon: "fw-home"}
     Pets :
-      See all our amazing pets : { icon: "fw fw-list", link: "pets"}
-      Add a new pets : { icon: "fw fw-add", link: "pets/new" }
-      Pet of the month : { icon: "fw fw-bug", link: "pets/snowball" }
+      See all our amazing pets : {link: "pets"}
+      Add a new pets : {link: "pets/new", icon: "fw fw-add"}
+      Pet of the month : {link: "pets/snowball" }
 errorPages:
- "404": /base/error/404
- default: /base/error/default
+  "404": /base/error/404
+  default: /base/error/default
