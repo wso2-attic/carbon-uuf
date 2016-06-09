@@ -2,15 +2,18 @@ appName : Features App
 theme : org.wso2.uuf.theme.default
 menu :
   main :
-    Home : { icon: "fw-home", link: "#home" }
+    Home : {link: "", icon: "fw-home"}
     Features :
-      Call a OSGi Service:  { icon: "fw fw-list", link: "call-osgi" }
-#      Http Form POST : { icon: "fw fw-add", link: "http-form" } #TODO un-comment after implementing POST handling
-      Send HTTP Error : { icon: "fw fw-bug", link: "send-error" }
-      Send HTTP Redirect : { icon: "fw fw-bug", link: "send-redirect" }
-      Session : { icon: "fw fw-bug", link: "session" }
+      Call a OSGi Service: {link: "call-osgi", icon: "fw fw-service"}
+#      Http Form POST : {link: "http-form"} #TODO un-comment after implementing POST handling
+      Send HTTP Error : {link: "send-error", icon: "fw fw-bug"}
+      Send HTTP Redirect : {link: "send-redirect"}
+      Session : {link: "session", icon: "fw fw-user"}
       Theme :
-        "@this" : {link: "theme"}
+        this : {link: "theme"}
         App Scope : {link: "theme/app-scope"}
         Session Scope : {link: "theme/session-scope"}
-      Menu : { icon: "fw fw-bug", link: "menu" }
+      Menu : {link: "menu", icon: "fw fw-list"}
+errorPages:
+  "404": /base/error/404
+  default: /base/error/default
