@@ -17,7 +17,7 @@
 package org.wso2.carbon.uuf.connector.ms;
 
 import org.apache.commons.io.FilenameUtils;
-import org.wso2.carbon.uuf.api.HttpResponse;
+import org.wso2.carbon.uuf.spi.HttpResponse;
 import org.wso2.carbon.uuf.internal.util.MimeMapper;
 
 import javax.ws.rs.core.Response;

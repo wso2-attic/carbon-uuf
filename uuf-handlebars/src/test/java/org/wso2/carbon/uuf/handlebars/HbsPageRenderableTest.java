@@ -22,7 +22,7 @@ import com.google.common.collect.ImmutableSet;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.wso2.carbon.uuf.api.Configuration;
-import org.wso2.carbon.uuf.api.HttpRequest;
+import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.carbon.uuf.api.model.MapModel;
 import org.wso2.carbon.uuf.core.API;
 import org.wso2.carbon.uuf.core.Fragment;

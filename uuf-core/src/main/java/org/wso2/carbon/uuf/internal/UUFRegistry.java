@@ -18,8 +18,8 @@ package org.wso2.carbon.uuf.internal;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.uuf.api.HttpRequest;
-import org.wso2.carbon.uuf.api.HttpResponse;
+import org.wso2.carbon.uuf.spi.HttpRequest;
+import org.wso2.carbon.uuf.spi.HttpResponse;
 import org.wso2.carbon.uuf.core.App;
 import org.wso2.carbon.uuf.exception.FragmentNotFoundException;
 import org.wso2.carbon.uuf.exception.HttpErrorException;
@@ -35,14 +35,14 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static org.wso2.carbon.uuf.api.HttpResponse.CONTENT_TYPE_TEXT_HTML;
-import static org.wso2.carbon.uuf.api.HttpResponse.HEADER_LOCATION;
-import static org.wso2.carbon.uuf.api.HttpResponse.STATUS_BAD_REQUEST;
-import static org.wso2.carbon.uuf.api.HttpResponse.STATUS_FOUND;
-import static org.wso2.carbon.uuf.api.HttpResponse.STATUS_INTERNAL_SERVER_ERROR;
-import static org.wso2.carbon.uuf.api.HttpResponse.STATUS_MOVED_PERMANENTLY;
-import static org.wso2.carbon.uuf.api.HttpResponse.STATUS_NOT_FOUND;
-import static org.wso2.carbon.uuf.api.HttpResponse.STATUS_OK;
+import static org.wso2.carbon.uuf.spi.HttpResponse.CONTENT_TYPE_TEXT_HTML;
+import static org.wso2.carbon.uuf.spi.HttpResponse.HEADER_LOCATION;
+import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_BAD_REQUEST;
+import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_FOUND;
+import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_INTERNAL_SERVER_ERROR;
+import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_MOVED_PERMANENTLY;
+import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_NOT_FOUND;
+import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_OK;
 
 public class UUFRegistry {
 

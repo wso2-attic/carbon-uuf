@@ -20,6 +20,7 @@ import io.netty.handler.codec.http.QueryStringDecoder;
 import io.netty.handler.codec.http.cookie.Cookie;
 import io.netty.handler.codec.http.cookie.ServerCookieDecoder;
 import org.wso2.carbon.uuf.internal.util.UriUtils;
+import org.wso2.carbon.uuf.spi.HttpRequest;
 
 import javax.ws.rs.core.HttpHeaders;
 import java.io.ByteArrayInputStream;
@@ -32,7 +33,7 @@ import java.util.stream.Collectors;
 /**
  * HttpRequest implementation based on Microservice HTTP request.
  */
-public class MicroserviceHttpRequest implements org.wso2.carbon.uuf.api.HttpRequest {
+public class MicroserviceHttpRequest implements HttpRequest {
 
     private final String url;
     private final String method;

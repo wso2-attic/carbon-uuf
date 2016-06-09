@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.wso2.carbon.uuf.api;
+package org.wso2.carbon.uuf.spi;
 
 import org.wso2.carbon.uuf.internal.util.UriUtils;
 

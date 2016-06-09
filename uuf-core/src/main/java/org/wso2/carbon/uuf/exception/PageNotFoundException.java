@@ -16,7 +16,7 @@
 
 package org.wso2.carbon.uuf.exception;
 
-import org.wso2.carbon.uuf.api.HttpResponse;
+import org.wso2.carbon.uuf.spi.HttpResponse;
 
 public class PageNotFoundException extends HttpErrorException {
 

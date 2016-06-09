@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.wso2.carbon.uuf.api;
+package org.wso2.carbon.uuf.spi;
 
 import java.io.File;
 import java.io.InputStream;

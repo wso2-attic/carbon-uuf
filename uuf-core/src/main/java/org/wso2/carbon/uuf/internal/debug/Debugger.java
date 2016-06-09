@@ -21,8 +21,8 @@ import com.google.gson.JsonObject;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.uuf.api.HttpRequest;
-import org.wso2.carbon.uuf.api.HttpResponse;
+import org.wso2.carbon.uuf.spi.HttpRequest;
+import org.wso2.carbon.uuf.spi.HttpResponse;
 import org.wso2.carbon.uuf.core.App;
 import org.wso2.carbon.uuf.core.Component;
 import org.wso2.carbon.uuf.internal.core.UriPatten;
@@ -32,12 +32,12 @@ import java.io.InputStream;
 import java.lang.management.ManagementFactory;
 import java.util.Map;
 
-import static org.wso2.carbon.uuf.api.HttpResponse.CONTENT_TYPE_APPLICATION_JSON;
-import static org.wso2.carbon.uuf.api.HttpResponse.CONTENT_TYPE_TEXT_HTML;
-import static org.wso2.carbon.uuf.api.HttpResponse.STATUS_BAD_REQUEST;
-import static org.wso2.carbon.uuf.api.HttpResponse.STATUS_INTERNAL_SERVER_ERROR;
-import static org.wso2.carbon.uuf.api.HttpResponse.STATUS_OK;
-import static org.wso2.carbon.uuf.api.HttpResponse.STATUS_NOT_FOUND;
+import static org.wso2.carbon.uuf.spi.HttpResponse.CONTENT_TYPE_APPLICATION_JSON;
+import static org.wso2.carbon.uuf.spi.HttpResponse.CONTENT_TYPE_TEXT_HTML;
+import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_BAD_REQUEST;
+import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_INTERNAL_SERVER_ERROR;
+import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_OK;
+import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_NOT_FOUND;
 
 public class Debugger {
 

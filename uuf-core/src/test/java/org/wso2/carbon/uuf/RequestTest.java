@@ -19,7 +19,7 @@ package org.wso2.carbon.uuf;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-import org.wso2.carbon.uuf.api.HttpRequest;
+import org.wso2.carbon.uuf.spi.HttpRequest;
 
 import java.io.InputStream;
 import java.util.Map;
