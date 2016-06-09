@@ -30,7 +30,7 @@ import static org.wso2.carbon.uuf.handlebars.renderable.HbsRenderable.DATA_KEY_L
 public class MenuHelper implements Helper<Object> {
 
     public static final String HELPER_NAME = "menu";
-    private static final String KEY_THIS = "@this";
+    private static final String KEY_THIS = "this";
 
     @Override
     @SuppressWarnings("unchecked")
