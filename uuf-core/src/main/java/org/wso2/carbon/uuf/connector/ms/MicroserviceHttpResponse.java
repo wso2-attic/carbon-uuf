@@ -20,6 +20,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.wso2.carbon.uuf.api.HttpResponse;
 import org.wso2.carbon.uuf.internal.util.MimeMapper;
 
+import javax.ws.rs.core.Response;
 import java.io.File;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -95,5 +96,14 @@ public class MicroserviceHttpResponse implements HttpResponse {
     @Override
     public Map<String, String> getHeaders() {
         return headers;
+    }
+
+    public Response build(){
+        Response.ResponseBuilder responseBuilder = Response.status(status);
+        if (content != null) {
+            responseBuilder.entity(content).type(contentType);
+        }
+        headers.entrySet().forEach(entry -> responseBuilder.header(entry.getKey(), entry.getValue()));
+        return responseBuilder.build();
     }
 }

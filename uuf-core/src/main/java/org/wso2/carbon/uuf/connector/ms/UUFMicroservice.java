@@ -101,17 +101,12 @@ public class UUFMicroservice implements Microservice {
     }
 
     private Response execute(HttpRequest nettyRequest, byte[] contentBytes) {
-        org.wso2.carbon.uuf.api.HttpRequest httpRequest = new MicroserviceHttpRequest(nettyRequest, contentBytes);
-        org.wso2.carbon.uuf.api.HttpResponse httpResponse = new MicroserviceHttpResponse();
+        MicroserviceHttpRequest httpRequest = new MicroserviceHttpRequest(nettyRequest, contentBytes);
+        MicroserviceHttpResponse httpResponse = new MicroserviceHttpResponse();
         MDC.put("uuf-request", String.valueOf(count.incrementAndGet()));
         registry.serve(httpRequest, httpResponse);
         MDC.remove("uuf-request");
-        Response.ResponseBuilder responseBuilder = Response.status(httpResponse.getStatus());
-        if (httpResponse.getContent() != null) {
-            responseBuilder.entity(httpResponse.getContent()).type(httpResponse.getContentType());
-        }
-        httpResponse.getHeaders().entrySet().forEach(entry -> responseBuilder.header(entry.getKey(), entry.getValue()));
-        return responseBuilder.build();
+        return httpResponse.build();
     }
 
     /**
