@@ -4,19 +4,20 @@
     <h3>Menu.</h3>
     <hr />
     <p>You can add a menu to your Application with following changes to the <code>config.yaml</code>.</p>
-    <p>In your config.yaml file;</p>
+    <p>In your <code>config.yaml</code> file:</p>
     <pre>
-        appName : Pet Store
         menu :
           main :
-            - { icon: "fw-home", link: "#home", text: "Home" }
-            - Pets :
-              - { icon: "fw fw-list", link: "pets", text: "See all our amazing pets" }
-              - { icon: "fw fw-add", link: "pets/new", text: "Add a new pets" }
-              - { icon: "fw fw-bug", link: "pets/snowball", text: "Pet of the month" }
+            Home : {link: "#", icon: "fw-home"}
+            Pets :
+              See all our amazing pets : {link: "pets"}
+              Add a new pets : {link: "pets/new", icon: "fw fw-add"}
+              Pet of the month : {link: "pets/snowball" }
     </pre>
-    <p>Adding this will automatically picked up by <code>default</code> uuf layout. However; if you are using your own layout,
-       you can use "menu" helper;</p>
+    <p>
+        Adding this will automatically picked up by <code>org.wso2.uuf.base.main</code> layout. However, if you are using
+       your own layout,you can use "menu" helper.
+    </p>
     <h3>Notes:</h3>
-    <p>The default menu implementation will be supported only up to two levels.</p>
+    <p>The default menu implementation will be supported only up to three levels.</p>
 {{/fillZone}}
