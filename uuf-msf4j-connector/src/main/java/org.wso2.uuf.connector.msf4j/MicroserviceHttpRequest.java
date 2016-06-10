@@ -14,12 +14,11 @@
  *  limitations under the License.
  */
 
-package org.wso2.carbon.uuf.connector.ms;
+package org.wso2.uuf.connector.msf4j;
 
 import io.netty.handler.codec.http.QueryStringDecoder;
 import io.netty.handler.codec.http.cookie.Cookie;
 import io.netty.handler.codec.http.cookie.ServerCookieDecoder;
-import org.wso2.carbon.uuf.internal.util.UriUtils;
 import org.wso2.carbon.uuf.spi.HttpRequest;
 
 import javax.ws.rs.core.HttpHeaders;
@@ -33,7 +32,7 @@ import java.util.stream.Collectors;
 /**
  * HttpRequest implementation based on Microservice HTTP request.
  */
-public class MicroserviceHttpRequest implements HttpRequest {
+public class MicroserviceHttpRequest implements org.wso2.carbon.uuf.spi.HttpRequest {
 
     private final String url;
     private final String method;
@@ -70,8 +69,8 @@ public class MicroserviceHttpRequest implements HttpRequest {
             rawQueryString = rawUri.substring(uriPathEndIndex + 1, rawUri.length());
         }
         this.uri = QueryStringDecoder.decodeComponent(rawUriPath);
-        this.appContext = UriUtils.getAppContext(this.uri);
-        this.uriWithoutAppContext = UriUtils.getUriWithoutAppContext(this.uri);
+        this.appContext = HttpRequest.getAppContext(this.uri);
+        this.uriWithoutAppContext = HttpRequest.getUriWithoutAppContext(this.uri);
         this.queryString = rawQueryString; // Query string is not very useful, so we don't bother to decode it.
         if (rawQueryString != null) {
             HashMap<String, Object> map = new HashMap<>();

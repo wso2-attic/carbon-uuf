@@ -30,26 +30,6 @@ public class UriUtils {
     public static final String DEBUG_APP_URI_PREFIX = "/debug/";
     public static final String FRAGMENTS_URI_PREFIX = "/fragments/";
 
-    public static String getAppContext(String uri) {
-        int secondSlash = uri.indexOf('/', 1); // An URI must start with a slash.
-        if (secondSlash == -1) {
-            // There is only one slash in the URI.
-            return null;
-        } else {
-            return uri.substring(0, secondSlash);
-        }
-    }
-
-    public static String getUriWithoutAppContext(String uri) {
-        int secondSlash = uri.indexOf('/', 1); // An URI must start with a slash.
-        if (secondSlash == -1) {
-            // There is only one slash in the URI.
-            return null;
-        } else {
-            return uri.substring(secondSlash, uri.length());
-        }
-    }
-
     public static String getPublicUri(Component component, Page page) {
         return COMPONENT_STATIC_RESOURCES_URI_PREFIX + component.getContext() + "/" +
                 StaticResolver.DIR_NAME_COMPONENT_RESOURCES;

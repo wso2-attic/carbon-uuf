@@ -195,4 +195,24 @@ public interface HttpRequest {
     default boolean isDefaultFaviconRequest() {
         return getUri().equals("/favicon.ico");
     }
+
+    static String getAppContext(String uri) {
+        int secondSlash = uri.indexOf('/', 1); // An URI must start with a slash.
+        if (secondSlash == -1) {
+            // There is only one slash in the URI.
+            return null;
+        } else {
+            return uri.substring(0, secondSlash);
+        }
+    }
+
+    static String getUriWithoutAppContext(String uri) {
+        int secondSlash = uri.indexOf('/', 1); // An URI must start with a slash.
+        if (secondSlash == -1) {
+            // There is only one slash in the URI.
+            return null;
+        } else {
+            return uri.substring(secondSlash, uri.length());
+        }
+    }
 }

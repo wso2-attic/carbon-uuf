@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.wso2.carbon.uuf.connector.ms;
+package org.wso2.uuf.connector.msf4j;
 
 import org.apache.commons.io.FilenameUtils;
 import org.wso2.carbon.uuf.spi.HttpResponse;
@@ -57,7 +57,7 @@ public class MicroserviceHttpResponse implements HttpResponse {
     @Override
     public void setContent(File content) {
         String extension = FilenameUtils.getExtension(content.getName());
-        setContent(content, MimeMapper.getMimeType(extension).orElse(CONTENT_TYPE_WILDCARD));
+        setContent(content, MimeMapper.getMimeType(extension).orElse(HttpResponse.CONTENT_TYPE_WILDCARD));
     }
 
     @Override

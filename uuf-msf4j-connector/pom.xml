@@ -63,9 +63,13 @@
                     <instructions>
                         <Import-Package>
                             org.wso2.carbon.uuf.*;version="${carbon.uuf.version}",
+                            org.wso2.msf4j.*,
+                            javax.ws.rs.*,
+                            io.netty.handler.*,
                             org.slf4j.*;version="${slf4j.version.range}",
                             com.google.common.*;version="${guava.version.range}",
-                            org.yaml.snakeyaml
+                            org.yaml.snakeyaml,
+                            org.wso2.carbon.kernel.startupresolver.*;version="${carbon.kernel.version.range}"
                         </Import-Package>
                         <Export-Package>org.wso2.uuf.connector.msf4j.*;version="${carbon.uuf.version}"</Export-Package>
                     </instructions>
