@@ -86,6 +86,7 @@ public class UUFServerSC {
                     "A RenderableCreator for '" + renderableCreator.getSupportedFileExtensions() +
                             "' extensions is already registered");
         }
+        this.registry = createRegistry();
     }
 
     /**
@@ -96,6 +97,7 @@ public class UUFServerSC {
     @SuppressWarnings("unused")
     protected void unsetRenderableCreator(RenderableCreator renderableCreator) {
         RENDERABLE_CREATORS.remove(renderableCreator);
+        this.registry = createRegistry();
     }
 
     /**
