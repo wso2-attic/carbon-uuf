@@ -87,6 +87,8 @@ public class UUFServerSC {
                             "' extensions is already registered");
         }
         this.registry = createRegistry();
+        log.info("RenderableCreator registered: " + renderableCreator.getClass().getName() + " for " +
+                         renderableCreator.getSupportedFileExtensions() + " extensions.");
     }
 
     /**
@@ -98,6 +100,8 @@ public class UUFServerSC {
     protected void unsetRenderableCreator(RenderableCreator renderableCreator) {
         RENDERABLE_CREATORS.remove(renderableCreator);
         this.registry = createRegistry();
+        log.info("RenderableCreator unregistered: " + renderableCreator.getClass().getName() + " for " +
+                         renderableCreator.getSupportedFileExtensions() + " extensions.");
     }
 
     /**
@@ -118,6 +122,7 @@ public class UUFServerSC {
             MDC.remove("uuf-request");
             return response;
         });
+        log.info("Connector registered: " + connector.getClass().getName());
     }
 
     /**
@@ -127,6 +132,6 @@ public class UUFServerSC {
      */
     @SuppressWarnings("unused")
     protected void unsetConnector(Connector connector) {
-        //do nothing
+        log.info("Connector unregistered: " + connector.getClass().getName());
     }
 }
