@@ -48,6 +48,7 @@
         <module>uuf-handlebars</module>
         <module>product/p2-features/org.wso2.uuf.core.feature</module>
         <module>product/p2-features/org.wso2.uuf.handlebars.feature</module>
+        <module>product/p2-features/org.wso2.uuf.connector.msf4j.feature</module>
         <module>samples/sample4</module>
         <module>product</module>
         <module>uuf-msf4j-connector</module>
