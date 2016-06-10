@@ -18,7 +18,6 @@ package org.wso2.uuf.connector.msf4j;
 
 import org.apache.commons.io.FilenameUtils;
 import org.wso2.carbon.uuf.spi.HttpResponse;
-import org.wso2.carbon.uuf.internal.util.MimeMapper;
 
 import javax.ws.rs.core.Response;
 import java.io.File;
@@ -57,7 +56,7 @@ public class MicroserviceHttpResponse implements HttpResponse {
     @Override
     public void setContent(File content) {
         String extension = FilenameUtils.getExtension(content.getName());
-        setContent(content, MimeMapper.getMimeType(extension).orElse(HttpResponse.CONTENT_TYPE_WILDCARD));
+        setContent(content, extension.isEmpty() ? CONTENT_TYPE_WILDCARD : extension);
     }
 
     @Override
