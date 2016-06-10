@@ -45,7 +45,7 @@ import java.io.IOException;
 /**
  * UUF Connector for MSF4J.
  */
-@Component(name = "org.wso2.carbon.uuf.connector.Microservice",
+@Component(name = "org.wso2.uuf.connector.msf4j.UUFMicroservice",
            service = {Microservice.class, Connector.class},
            immediate = true)
 @Path("/")
