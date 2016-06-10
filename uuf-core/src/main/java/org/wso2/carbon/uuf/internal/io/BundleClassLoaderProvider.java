@@ -89,7 +89,7 @@ public class BundleClassLoaderProvider implements ClassLoaderProvider {
     }
 
     private String getBundleVersion(String componentVersion) {
-        return componentVersion.replace("-SNAPSHOT", ".SNAPSHOT");
+        return componentVersion.replace('-', '.').replace('_', '.'); // There shouldn't be any '-' or '_' in version
     }
 
     private List<String> getImports(ComponentReference componentReference) {
