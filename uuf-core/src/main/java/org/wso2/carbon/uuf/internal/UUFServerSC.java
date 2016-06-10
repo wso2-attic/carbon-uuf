@@ -104,7 +104,7 @@ public class UUFServerSC {
      * @param connector registered connector
      */
     @Reference(name = "connector",
-               service = RenderableCreator.class,
+               service = Connector.class,
                cardinality = ReferenceCardinality.MULTIPLE,
                policy = ReferencePolicy.DYNAMIC,
                unbind = "unsetConnector")

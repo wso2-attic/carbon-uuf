@@ -46,12 +46,13 @@ import java.io.IOException;
  * UUF Connector for MSF4J.
  */
 @Component(name = "org.wso2.carbon.uuf.connector.Microservice",
-           service = Microservice.class,
+           service = {Microservice.class, Connector.class},
            immediate = true)
 @Path("/")
-public class UUFMicroservice implements Microservice {
+public class UUFMicroservice implements Microservice, Connector {
 
     private static final Logger log = LoggerFactory.getLogger(UUFMicroservice.class);
+    private RequestServer requestServer;
 
     @GET
     @Path(".*")
@@ -73,6 +74,15 @@ public class UUFMicroservice implements Microservice {
         return httpResponse.build();
     }
 
+    @Override
+    public void setRequestServer(RequestServer requestServer) {
+        this.requestServer = requestServer;
+    }
+
+    @Override
+    public RequestServer getRequestServer() {
+        return requestServer;
+    }
 
     private static class HttpStreamHandlerImpl implements HttpStreamHandler {
         private final ByteArrayOutputStream content = new ByteArrayOutputStream();
