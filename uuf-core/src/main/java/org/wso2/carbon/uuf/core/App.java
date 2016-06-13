@@ -17,8 +17,6 @@
 package org.wso2.carbon.uuf.core;
 
 import org.wso2.carbon.uuf.api.Configuration;
-import org.wso2.carbon.uuf.spi.HttpRequest;
-import org.wso2.carbon.uuf.spi.HttpResponse;
 import org.wso2.carbon.uuf.api.auth.Session;
 import org.wso2.carbon.uuf.api.model.MapModel;
 import org.wso2.carbon.uuf.exception.FragmentNotFoundException;
@@ -29,6 +27,8 @@ import org.wso2.carbon.uuf.exception.SessionNotFoundException;
 import org.wso2.carbon.uuf.internal.core.auth.SessionRegistry;
 import org.wso2.carbon.uuf.internal.util.NameUtils;
 import org.wso2.carbon.uuf.internal.util.UriUtils;
+import org.wso2.carbon.uuf.spi.HttpRequest;
+import org.wso2.carbon.uuf.spi.HttpResponse;
 import org.wso2.carbon.uuf.spi.model.Model;
 
 import java.util.HashMap;
@@ -230,6 +230,11 @@ public class App {
                 .map(themes::get)
                 .orElseThrow(() -> new IllegalArgumentException(
                         "Theme '" + appThemeName.get() + "' which is set for the app '" + name + "' does not exists."));
+    }
+
+    @Override
+    public int hashCode() {
+        return name.hashCode() * (31 * context.hashCode());
     }
 
     @Override
