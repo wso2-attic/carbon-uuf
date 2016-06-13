@@ -49,6 +49,7 @@ import java.util.concurrent.atomic.AtomicInteger;
         }
 )
 public class UUFServerSC {
+
     private static final Set<RenderableCreator> RENDERABLE_CREATORS = new HashSet<>();
     private final AtomicInteger count = new AtomicInteger(0);
     private static final Logger log = LoggerFactory.getLogger(UUFServerSC.class);
@@ -67,41 +68,6 @@ public class UUFServerSC {
         AppCreator appCreator = new AppCreator(RENDERABLE_CREATORS, new BundleClassLoaderProvider());
         StaticResolver staticResolver = new StaticResolver();
         return new UUFRegistry(appDiscoverer, appCreator, staticResolver);
-    }
-
-    /**
-     * This bind method is invoked by OSGi framework whenever a new RenderableCreator is registered.
-     *
-     * @param renderableCreator registered renderable creator
-     */
-    @Reference(name = "renderablecreater",
-               service = RenderableCreator.class,
-               cardinality = ReferenceCardinality.MULTIPLE,
-               policy = ReferencePolicy.DYNAMIC,
-               unbind = "unsetRenderableCreator")
-    @SuppressWarnings("unused")
-    protected void setRenderableCreator(RenderableCreator renderableCreator) {
-        if (!RENDERABLE_CREATORS.add(renderableCreator)) {
-            throw new IllegalArgumentException(
-                    "A RenderableCreator for '" + renderableCreator.getSupportedFileExtensions() +
-                            "' extensions is already registered");
-        }
-        this.registry = createRegistry();
-        log.info("RenderableCreator registered: " + renderableCreator.getClass().getName() + " for " +
-                         renderableCreator.getSupportedFileExtensions() + " extensions.");
-    }
-
-    /**
-     * This bind method is invoked by OSGi framework whenever a RenderableCreator is left.
-     *
-     * @param renderableCreator unregistered renderable creator
-     */
-    @SuppressWarnings("unused")
-    protected void unsetRenderableCreator(RenderableCreator renderableCreator) {
-        RENDERABLE_CREATORS.remove(renderableCreator);
-        this.registry = createRegistry();
-        log.info("RenderableCreator unregistered: " + renderableCreator.getClass().getName() + " for " +
-                         renderableCreator.getSupportedFileExtensions() + " extensions.");
     }
 
     /**
