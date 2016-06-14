@@ -20,5 +20,6 @@ import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.carbon.uuf.spi.HttpResponse;
 
 public interface RequestServer {
+
     HttpResponse serve(HttpRequest request, HttpResponse response);
 }
