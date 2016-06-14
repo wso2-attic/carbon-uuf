@@ -16,10 +16,6 @@
 
 package org.wso2.carbon.uuf.internal;
 
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
-import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.kernel.deployment.Artifact;
@@ -29,20 +25,15 @@ import org.wso2.carbon.kernel.deployment.exception.CarbonDeploymentException;
 import org.wso2.carbon.uuf.core.App;
 import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.internal.core.create.AppCreator;
-import org.wso2.carbon.uuf.internal.core.create.ClassLoaderProvider;
 import org.wso2.carbon.uuf.internal.io.ArtifactAppReference;
-import org.wso2.carbon.uuf.internal.io.BundleClassLoaderProvider;
-import org.wso2.carbon.uuf.spi.RenderableCreator;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-@Component(name = "UUFAppDeployer", immediate = true)
 public class UUFAppDeployer implements Deployer {
 
     private static final Logger log = LoggerFactory.getLogger(UUFAppDeployer.class);
@@ -50,8 +41,6 @@ public class UUFAppDeployer implements Deployer {
     private final ArtifactType artifactType;
     private final URL location;
     private final Map<String, App> apps;
-    private final Set<RenderableCreator> renderableCreators;
-    private final ClassLoaderProvider classLoaderProvider;
     private volatile AppCreator appCreator;
 
     public UUFAppDeployer() {
@@ -62,12 +51,11 @@ public class UUFAppDeployer implements Deployer {
             throw new UUFException("Cannot create URL 'file:uufapps'.", e);
         }
         this.apps = new ConcurrentHashMap<>();
-        this.renderableCreators = ConcurrentHashMap.newKeySet();
-        this.classLoaderProvider = new BundleClassLoaderProvider();
     }
 
     @Override
     public void init() {
+        log.info("UUFAppDeployer initialized." + this.hashCode());
     }
 
     @Override
@@ -108,39 +96,8 @@ public class UUFAppDeployer implements Deployer {
         return artifactType;
     }
 
-    /**
-     * This bind method is invoked by OSGi framework whenever a new RenderableCreator is registered.
-     *
-     * @param renderableCreator registered renderable creator
-     */
-    @Reference(name = "renderablecreater",
-               service = RenderableCreator.class,
-               cardinality = ReferenceCardinality.MULTIPLE,
-               policy = ReferencePolicy.DYNAMIC,
-               unbind = "unsetRenderableCreator")
-    @SuppressWarnings("unused")
-    protected void setRenderableCreator(RenderableCreator renderableCreator) {
-        if (!renderableCreators.add(renderableCreator)) {
-            throw new IllegalArgumentException(
-                    "A RenderableCreator for '" + renderableCreator.getSupportedFileExtensions() +
-                            "' extensions is already registered");
-        }
-        appCreator = new AppCreator(renderableCreators, classLoaderProvider);
-        log.info("RenderableCreator registered: " + renderableCreator.getClass().getName() + " for " +
-                         renderableCreator.getSupportedFileExtensions() + " extensions.");
-    }
-
-    /**
-     * This bind method is invoked by OSGi framework whenever a RenderableCreator is left.
-     *
-     * @param renderableCreator unregistered renderable creator
-     */
-    @SuppressWarnings("unused")
-    protected void unsetRenderableCreator(RenderableCreator renderableCreator) {
-        renderableCreators.remove(renderableCreator);
-        appCreator = new AppCreator(renderableCreators, classLoaderProvider);
-        log.info("RenderableCreator unregistered: " + renderableCreator.getClass().getName() + " for " +
-                         renderableCreator.getSupportedFileExtensions() + " extensions.");
+    public void setAppCreator(AppCreator appCreator) {
+        this.appCreator = appCreator;
     }
 
     public Optional<App> getApp(String contextPath) {
