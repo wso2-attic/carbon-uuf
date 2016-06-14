@@ -1,1 +1,0 @@
-This directory can be used to deploy UUF webapps that runs on top of WSO2 UUF.
