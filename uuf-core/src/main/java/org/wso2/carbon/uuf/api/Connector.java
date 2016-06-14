@@ -17,6 +17,8 @@
 package org.wso2.carbon.uuf.api;
 
 public interface Connector {
+
     void setRequestServer(RequestServer requestServer);
+
     RequestServer getRequestServer();
 }
