@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.wso2.carbon.kernel.deployment.Deployer;
 import org.wso2.carbon.kernel.startupresolver.RequiredCapabilityListener;
-import org.wso2.carbon.uuf.api.HttpConnector;
+import org.wso2.carbon.uuf.spi.HttpConnector;
 import org.wso2.carbon.uuf.core.App;
 import org.wso2.carbon.uuf.exception.HttpErrorException;
 import org.wso2.carbon.uuf.internal.core.create.AppCreator;
