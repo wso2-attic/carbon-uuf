@@ -55,7 +55,7 @@ public class UUFAppDeployer implements Deployer {
 
     @Override
     public void init() {
-        log.info("UUFAppDeployer initialized." + this.hashCode());
+        log.debug("UUFAppDeployer initialized.");
     }
 
     @Override
