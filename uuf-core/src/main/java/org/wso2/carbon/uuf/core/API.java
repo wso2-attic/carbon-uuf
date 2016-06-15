@@ -50,6 +50,14 @@ public class API {
     }
 
     /**
+     * Returns the request lookup.
+     * @return RequestLookup
+     */
+    public RequestLookup getRequestLookup() {
+        return requestLookup;
+    }
+
+    /**
      * Returns the result of the method invocation of the best matched OSGi service.
      *
      * @param serviceClassName  service class name

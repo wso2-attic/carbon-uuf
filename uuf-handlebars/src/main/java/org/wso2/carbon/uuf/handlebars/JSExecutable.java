@@ -16,8 +16,10 @@
 
 package org.wso2.carbon.uuf.handlebars;
 
+import com.google.gson.Gson;
 import jdk.nashorn.api.scripting.NashornScriptEngine;
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
+import org.wso2.carbon.uuf.api.Placeholder;
 import org.wso2.carbon.uuf.api.auth.Session;
 import org.wso2.carbon.uuf.core.API;
 import org.wso2.carbon.uuf.exception.UUFException;
@@ -34,12 +36,14 @@ public class JSExecutable implements Executable {
 
     private final String scriptPath;
     private final NashornScriptEngine engine;
+    private final Gson gson;
 
     public JSExecutable(String scriptSource, ClassLoader componentClassLoader) {
         this(scriptSource, null, componentClassLoader);
     }
 
     public JSExecutable(String scriptSource, String scriptPath, ClassLoader componentClassLoader) {
+        gson = new Gson();
         this.scriptPath = scriptPath;
         scriptSource = scriptSource + "//@ sourceURL=" + scriptPath; // Append script file path for debugging purposes.
 
@@ -68,6 +72,14 @@ public class JSExecutable implements Executable {
         engine.put("destroySession", (DestroySession) api::destroySession);
         engine.put("setAppTheme", (SetTheme) api::setAppTheme);
         engine.put("getAppTheme", (GetTheme) () -> api.getAppTheme().orElse(null));
+        engine.put("sendToClient", (sendToClient) (name, value) -> {
+            String jsOpenTag = "<script type=\"text/javascript\"> var ";
+            String jsCloseTag = "; </script>";
+            api.getRequestLookup().addToPlaceholder(
+                    Placeholder.js, jsOpenTag + name + "=" + gson.toJson(value) + jsCloseTag
+            );
+        });
+
         try {
             return engine.invokeFunction("onRequest", context);
         } catch (ScriptException e) {
@@ -152,5 +164,12 @@ public class JSExecutable implements Executable {
 
         @SuppressWarnings("unused")
         String call();
+    }
+
+    @FunctionalInterface
+    public interface sendToClient {
+
+        @SuppressWarnings("unused")
+        void call(String name, Object value);
     }
 }

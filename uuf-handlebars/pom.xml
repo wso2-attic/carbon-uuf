@@ -78,6 +78,7 @@
                             jdk.nashorn.api.scripting,
                             org.slf4j.*;version="${slf4j.version.range}",
                             com.google.common.*;version="${guava.version.range}",
+                            com.google.gson.*;version="${gson.version}",
                             javax.script,
                             com.github.jknack.handlebars.*,
                             org.yaml.snakeyaml
