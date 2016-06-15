@@ -22,7 +22,9 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponseStatus;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.api.Connector;
@@ -53,6 +55,16 @@ public class UUFMicroservice implements Microservice, Connector {
 
     private static final Logger log = LoggerFactory.getLogger(UUFMicroservice.class);
     private RequestServer requestServer;
+
+    @Activate
+    protected void activate() {
+        log.debug("UUFMicroservice activated.");
+    }
+
+    @Deactivate
+    protected void deactivate() {
+        log.debug("UUFMicroservice deactivated.");
+    }
 
     @GET
     @Path(".*")
@@ -129,5 +141,4 @@ public class UUFMicroservice implements Microservice, Connector {
             }
         }
     }
-
 }
