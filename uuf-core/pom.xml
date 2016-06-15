@@ -107,6 +107,8 @@
                     <instructions>
                         <Private-Package>org.wso2.carbon.uuf.internal.*</Private-Package>
                         <Import-Package>
+                            org.wso2.carbon.kernel.deployment.*; version="${carbon.kernel.version.range}",
+                            org.wso2.carbon.kernel.startupresolver.*; version="${carbon.kernel.version.range}",
                             org.osgi.framework;version="${osgi.framework.import.version.range}",
                             org.osgi.framework.wiring,
                             org.apache.log4j.*,
