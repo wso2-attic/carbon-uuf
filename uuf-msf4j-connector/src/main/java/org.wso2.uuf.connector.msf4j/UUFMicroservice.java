@@ -28,7 +28,7 @@ import org.osgi.service.component.annotations.Deactivate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.spi.HttpConnector;
-import org.wso2.carbon.uuf.api.RequestServer;
+import org.wso2.carbon.uuf.api.ServerConnection;
 import org.wso2.msf4j.HttpResponder;
 import org.wso2.msf4j.HttpStreamHandler;
 import org.wso2.msf4j.HttpStreamer;
@@ -54,7 +54,7 @@ import java.io.IOException;
 public class UUFMicroservice implements Microservice, HttpConnector {
 
     private static final Logger log = LoggerFactory.getLogger(UUFMicroservice.class);
-    private RequestServer requestServer;
+    private ServerConnection serverConnection;
 
     @Activate
     protected void activate() {
@@ -82,18 +82,16 @@ public class UUFMicroservice implements Microservice, HttpConnector {
     private Response execute(HttpRequest nettyRequest, byte[] contentBytes) {
         MicroserviceHttpRequest httpRequest = new MicroserviceHttpRequest(nettyRequest, contentBytes);
         MicroserviceHttpResponse httpResponse = new MicroserviceHttpResponse();
-        requestServer.serve(httpRequest, httpResponse);
+        serverConnection.serve(httpRequest, httpResponse);
         return httpResponse.build();
     }
 
-    @Override
-    public void setRequestServer(RequestServer requestServer) {
-        this.requestServer = requestServer;
+    public void setServerConnection(ServerConnection serverConnection) {
+        this.serverConnection = serverConnection;
     }
 
-    @Override
-    public RequestServer getRequestServer() {
-        return requestServer;
+    public ServerConnection getServerConnection() {
+        return serverConnection;
     }
 
     private static class HttpStreamHandlerImpl implements HttpStreamHandler {

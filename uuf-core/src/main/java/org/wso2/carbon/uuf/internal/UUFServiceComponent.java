@@ -126,7 +126,7 @@ public class UUFServiceComponent implements RequiredCapabilityListener {
                unbind = "unsetConnector")
     @SuppressWarnings("unused")
     public void setConnector(HttpConnector connector) {
-        connector.setRequestServer((request, response) -> {
+        connector.setServerConnection((request, response) -> {
             MDC.put("uuf-request", String.valueOf(count.incrementAndGet()));
             serve(request, response);
             MDC.remove("uuf-request");

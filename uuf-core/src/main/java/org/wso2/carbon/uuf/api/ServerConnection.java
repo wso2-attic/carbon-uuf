@@ -19,7 +19,7 @@ package org.wso2.carbon.uuf.api;
 import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.carbon.uuf.spi.HttpResponse;
 
-public interface RequestServer {
+public interface ServerConnection {
 
     HttpResponse serve(HttpRequest request, HttpResponse response);
 }

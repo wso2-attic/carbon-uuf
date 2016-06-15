@@ -16,11 +16,11 @@
 
 package org.wso2.carbon.uuf.spi;
 
-import org.wso2.carbon.uuf.api.RequestServer;
+import org.wso2.carbon.uuf.api.ServerConnection;
 
 public interface HttpConnector {
 
-    void setRequestServer(RequestServer requestServer);
+    void setServerConnection(ServerConnection serverConnection);
 
-    RequestServer getRequestServer();
+    ServerConnection getServerConnection();
 }
