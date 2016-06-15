@@ -16,6 +16,7 @@
 
 package org.wso2.carbon.uuf.internal;
 
+import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -25,14 +26,21 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
+import org.wso2.carbon.kernel.deployment.Deployer;
 import org.wso2.carbon.kernel.startupresolver.RequiredCapabilityListener;
 import org.wso2.carbon.uuf.api.Connector;
 import org.wso2.carbon.uuf.core.App;
 import org.wso2.carbon.uuf.exception.HttpErrorException;
+import org.wso2.carbon.uuf.internal.core.create.AppCreator;
+import org.wso2.carbon.uuf.internal.core.create.ClassLoaderProvider;
+import org.wso2.carbon.uuf.internal.io.BundleClassLoaderProvider;
 import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.carbon.uuf.spi.HttpResponse;
+import org.wso2.carbon.uuf.spi.RenderableCreator;
 
 import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_BAD_REQUEST;
@@ -42,51 +50,68 @@ import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_NOT_FOUND;
 /**
  * OSGi service component for UUFServer.
  */
-@Component(
-        name = "UUFServerSC",
-        immediate = true,
-        service = RequiredCapabilityListener.class
+@Component(name = "UUFServiceComponent",
+           immediate = true,
+           service = RequiredCapabilityListener.class,
+           property = {
+                   "capability-name=org.wso2.carbon.uuf.spi.RenderableCreator,org.wso2.carbon.uuf.api.Connector",
+                   "component-key=wso2-uuf-service"
+           }
 )
-public class UUFServiceComponent {
+public class UUFServiceComponent implements RequiredCapabilityListener {
 
     private static final Logger log = LoggerFactory.getLogger(UUFServiceComponent.class);
 
     private final AtomicInteger count = new AtomicInteger(0);
-    private UUFAppDeployer appDeployer;
+    private final Set<RenderableCreator> renderableCreators;
+    private final UUFAppDeployer appDeployer;
     private final RequestDispatcher requestDispatcher;
+    private final ClassLoaderProvider classLoaderProvider;
+    private BundleContext bundleContext;
 
     public UUFServiceComponent() {
-        this(null, new RequestDispatcher());
+        this(new UUFAppDeployer(), new RequestDispatcher());
     }
 
     public UUFServiceComponent(UUFAppDeployer appDeployer, RequestDispatcher requestDispatcher) {
+        this.renderableCreators = ConcurrentHashMap.newKeySet();
         this.appDeployer = appDeployer;
         this.requestDispatcher = requestDispatcher;
+        this.classLoaderProvider = new BundleClassLoaderProvider();
     }
 
-    @Activate
-    public void activate() {
-        log.info("UUFServer service component activated.");
-    }
-
-    @Deactivate
-    public void deactivate() {
-        log.info("UUFServer service component deactivated.");
-    }
-
-    @Reference(name = "deployer",
-               service = UUFAppDeployer.class,
-               cardinality = ReferenceCardinality.MANDATORY,
+    /**
+     * This bind method is invoked by OSGi framework whenever a new RenderableCreator is registered.
+     *
+     * @param renderableCreator registered renderable creator
+     */
+    @Reference(name = "renderableCreator",
+               service = RenderableCreator.class,
+               cardinality = ReferenceCardinality.AT_LEAST_ONE,
                policy = ReferencePolicy.DYNAMIC,
-               unbind = "unsetAppDeployer")
+               unbind = "unsetRenderableCreator")
     @SuppressWarnings("unused")
-    public void setAppDeployer(UUFAppDeployer appDeployer) {
-        this.appDeployer = appDeployer;
-        log.info("UUF App Deployer '" + appDeployer + "' registered.");
+    public void setRenderableCreator(RenderableCreator renderableCreator) {
+        if (!renderableCreators.add(renderableCreator)) {
+            throw new IllegalArgumentException(
+                    "A RenderableCreator for '" + renderableCreator.getSupportedFileExtensions() +
+                            "' extensions is already registered");
+        }
+        appDeployer.setAppCreator(new AppCreator(renderableCreators, classLoaderProvider));
+        log.info("RenderableCreator '" + renderableCreator.getClass().getName() + "' registered for " +
+                         renderableCreator.getSupportedFileExtensions() + " extensions.");
     }
 
-    public void unsetAppDeployer(UUFAppDeployer appDeployer) {
-        log.info("sasss");
+    /**
+     * This bind method is invoked by OSGi framework whenever a RenderableCreator is left.
+     *
+     * @param renderableCreator unregistered renderable creator
+     */
+    @SuppressWarnings("unused")
+    public void unsetRenderableCreator(RenderableCreator renderableCreator) {
+        renderableCreators.remove(renderableCreator);
+        log.info("RenderableCreator " + renderableCreator.getClass().getName() + " unregistered for " +
+                         renderableCreator.getSupportedFileExtensions() + " extensions.");
     }
 
     /**
@@ -100,7 +125,7 @@ public class UUFServiceComponent {
                policy = ReferencePolicy.DYNAMIC,
                unbind = "unsetConnector")
     @SuppressWarnings("unused")
-    protected void setConnector(Connector connector) {
+    public void setConnector(Connector connector) {
         connector.setRequestServer((request, response) -> {
             MDC.put("uuf-request", String.valueOf(count.incrementAndGet()));
             serve(request, response);
@@ -116,8 +141,25 @@ public class UUFServiceComponent {
      * @param connector unregistered connector
      */
     @SuppressWarnings("unused")
-    protected void unsetConnector(Connector connector) {
+    public void unsetConnector(Connector connector) {
         log.info("Connector '" + connector.getClass().getName() + "' unregistered.");
+    }
+
+    @Activate
+    protected void activate(BundleContext bundleContext) {
+        this.bundleContext = bundleContext;
+        log.debug("UUFServer service component activated.");
+    }
+
+    @Override
+    public void onAllRequiredCapabilitiesAvailable() {
+        bundleContext.registerService(Deployer.class, appDeployer, null);
+        log.debug("UUF AppDeployer registered.");
+    }
+
+    @Deactivate
+    protected void deactivate(BundleContext bundleContext) {
+        log.debug("UUFServer service component deactivated.");
     }
 
     public void serve(HttpRequest request, HttpResponse response) {
