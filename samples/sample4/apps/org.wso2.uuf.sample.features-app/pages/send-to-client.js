@@ -15,6 +15,6 @@
  */
 
 //noinspection JSUnusedGlobalSymbols
-function onRequest(context) {
-    sendToClient("request", context.request); 
+function onRequest(env) {
+    sendToClient("request", env.request); 
 }

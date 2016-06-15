@@ -15,8 +15,8 @@
  */
 
 //noinspection JSUnusedGlobalSymbols
-function onRequest(context) {
-    var demoSendRedirect = context.request.queryParams["sendRedirect"];
+function onRequest(env) {
+    var demoSendRedirect = env.request.queryParams["sendRedirect"];
     if (demoSendRedirect) {
         sendRedirect("http://www.google.lk");
     }

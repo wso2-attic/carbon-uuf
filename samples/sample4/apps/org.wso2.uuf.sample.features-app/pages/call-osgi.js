@@ -15,7 +15,7 @@
  */
 
 //noinspection JSUnusedGlobalSymbols
-function onRequest(context) {
+function onRequest(env) {
     var result = callOSGiService("org.wso2.uuf.sample.pets_store.service.PetsManagerService", "getHelloMessage",
                                  ["John"]);
     return {"helloWorldText": result};

@@ -15,14 +15,14 @@
  */
 
 
-function onRequest(context) {
-    if (context.request.method == "POST") {
+function onRequest(env) {
+    if (env.request.method == "POST") {
         // TODO: 5/18/16 read HTML form parameters & receive the username & password.
         var username = "admin", password = "admin";
         // TODO: 5/18/16 authenticate username & password.
         try {
             createSession(username);
-            sendRedirect(encodeURIComponent(context.app.context + "/"));
+            sendRedirect(encodeURIComponent(env.app.env + "/"));
         } catch (e) {
             print(e);
         }
