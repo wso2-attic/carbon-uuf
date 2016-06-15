@@ -19,7 +19,11 @@ package org.wso2.carbon.uuf.handlebars;
 import com.github.jknack.handlebars.io.StringTemplateSource;
 import com.github.jknack.handlebars.io.TemplateSource;
 import com.google.common.collect.ImmutableSet;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.handlebars.renderable.HbsFragmentRenderable;
 import org.wso2.carbon.uuf.handlebars.renderable.HbsLayoutRenderable;
 import org.wso2.carbon.uuf.handlebars.renderable.HbsPageRenderable;
@@ -39,6 +43,17 @@ public class HbsRenderableCreator implements RenderableCreator {
     private static final String EXTENSION_HANDLEBARS = ".hbs";
     private static final String EXTENSION_JAVASCRIPT = ".js";
     private static final Set<String> SUPPORTED_FILE_EXTENSIONS = ImmutableSet.of("hbs");
+    private static final Logger log = LoggerFactory.getLogger(HbsRenderableCreator.class);
+
+    @Activate
+    protected void activate() {
+        log.debug("HbsRenderableCreator activated.");
+    }
+
+    @Deactivate
+    protected void deactivate() {
+        log.debug("HbsRenderableCreator deactivated.");
+    }
 
     @Override
     public Set<String> getSupportedFileExtensions() {
