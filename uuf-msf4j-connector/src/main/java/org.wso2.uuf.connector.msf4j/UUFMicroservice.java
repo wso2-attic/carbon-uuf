@@ -27,7 +27,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.uuf.api.Connector;
+import org.wso2.carbon.uuf.api.HttpConnector;
 import org.wso2.carbon.uuf.api.RequestServer;
 import org.wso2.msf4j.HttpResponder;
 import org.wso2.msf4j.HttpStreamHandler;
@@ -48,10 +48,10 @@ import java.io.IOException;
  * UUF Connector for MSF4J.
  */
 @Component(name = "org.wso2.uuf.connector.msf4j.UUFMicroservice",
-           service = {Microservice.class, Connector.class},
+           service = {Microservice.class, HttpConnector.class},
            immediate = true)
 @Path("/")
-public class UUFMicroservice implements Microservice, Connector {
+public class UUFMicroservice implements Microservice, HttpConnector {
 
     private static final Logger log = LoggerFactory.getLogger(UUFMicroservice.class);
     private RequestServer requestServer;
