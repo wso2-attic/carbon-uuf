@@ -119,13 +119,13 @@ public class UUFServiceComponent implements RequiredCapabilityListener {
      *
      * @param connector registered connector
      */
-    @Reference(name = "connector",
+    @Reference(name = "httpConnector",
                service = HttpConnector.class,
                cardinality = ReferenceCardinality.AT_LEAST_ONE,
                policy = ReferencePolicy.DYNAMIC,
-               unbind = "unsetConnector")
+               unbind = "unsetHttpConnector")
     @SuppressWarnings("unused")
-    public void setConnector(HttpConnector connector) {
+    public void setHttpConnector(HttpConnector connector) {
         connector.setServerConnection((request, response) -> {
             MDC.put("uuf-request", String.valueOf(count.incrementAndGet()));
             serve(request, response);
@@ -141,11 +141,13 @@ public class UUFServiceComponent implements RequiredCapabilityListener {
      * @param connector unregistered connector
      */
     @SuppressWarnings("unused")
-    public void unsetConnector(HttpConnector connector) {
+    public void unsetHttpConnector(HttpConnector connector) {
+        connector.setServerConnection(null);
         log.info("Connector '" + connector.getClass().getName() + "' unregistered.");
     }
 
     @Activate
+    @SuppressWarnings("unused")
     protected void activate(BundleContext bundleContext) {
         this.bundleContext = bundleContext;
         log.debug("UUFServer service component activated.");
@@ -158,6 +160,7 @@ public class UUFServiceComponent implements RequiredCapabilityListener {
     }
 
     @Deactivate
+    @SuppressWarnings("unused")
     protected void deactivate(BundleContext bundleContext) {
         log.debug("UUFServer service component deactivated.");
     }
