@@ -24,6 +24,7 @@ import org.wso2.carbon.uuf.api.auth.Session;
 import org.wso2.carbon.uuf.core.API;
 import org.wso2.carbon.uuf.exception.UUFException;
 
+import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 import java.util.Map;
 
@@ -43,12 +44,12 @@ public class JSExecutable implements Executable {
     }
 
     public JSExecutable(String scriptSource, String scriptPath, ClassLoader componentClassLoader) {
-        gson = new Gson();
+        this.gson = new Gson();
         this.scriptPath = scriptPath;
-        scriptSource = scriptSource + "//@ sourceURL=" + scriptPath; // Append script file path for debugging purposes.
 
         NashornScriptEngine engine = (NashornScriptEngine) SCRIPT_ENGINE_FACTORY.getScriptEngine(SCRIPT_ENGINE_ARGS,
                                                                                                  componentClassLoader);
+        engine.put(ScriptEngine.FILENAME, this.scriptPath);
         engine.put("callOSGiService", (CallOSGiService) API::callOSGiService);
         engine.put("getOSGiServices", (GetOSGiServices) API::getOSGiServices);
         engine.put("callMicroService", (CallMicroService) API::callMicroService);
