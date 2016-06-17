@@ -52,6 +52,18 @@
             <type>zip</type>
         </dependency>
         <dependency>
+            <groupId>org.wso2.carbon.deployment</groupId>
+            <artifactId>org.wso2.carbon.deployment.engine.feature</artifactId>
+            <version>${carbon.deployment.version}</version>
+            <type>zip</type>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.deployment</groupId>
+            <artifactId>org.wso2.carbon.deployment.notifier.feature</artifactId>
+            <version>${carbon.deployment.version}</version>
+            <type>zip</type>
+        </dependency>
+        <dependency>
             <groupId>org.wso2.carbon</groupId>
             <artifactId>org.wso2.carbon.runtime.feature</artifactId>
             <version>${carbon.kernel.version}</version>
@@ -232,6 +244,14 @@
                                     <version>${carbon.kernel.version}</version>
                                 </feature>
                                 <feature>
+                                    <id>org.wso2.carbon.deployment.engine.feature</id>
+                                    <version>${carbon.deployment.version}</version>
+                                </feature>
+                                <feature>
+                                    <id>org.wso2.carbon.deployment.notifier.feature</id>
+                                    <version>${carbon.deployment.version}</version>
+                                </feature>
+                                <feature>
                                     <id>org.wso2.carbon.runtime.feature</id>
                                     <version>${carbon.kernel.version}</version>
                                 </feature>
@@ -318,6 +338,14 @@
                                 <feature>
                                     <id>org.wso2.carbon.kernel.feature.group</id>
                                     <version>${carbon.kernel.version}</version>
+                                </feature>
+                                <feature>
+                                    <id>org.wso2.carbon.deployment.engine.feature.group</id>
+                                    <version>${carbon.deployment.version}</version>
+                                </feature>
+                                <feature>
+                                    <id>org.wso2.carbon.deployment.notifier.feature.group</id>
+                                    <version>${carbon.deployment.version}</version>
                                 </feature>
                                 <feature>
                                     <id>org.wso2.carbon.caching.feature.group</id>

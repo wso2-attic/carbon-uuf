@@ -38,6 +38,14 @@
     <dependencies>
         <!-- Dependencies for UUF Core-->
         <dependency>
+            <groupId>org.wso2.carbon.deployment</groupId>
+            <artifactId>org.wso2.carbon.deployment.engine</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.deployment</groupId>
+            <artifactId>org.wso2.carbon.deployment.notifier</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.wso2.orbit.org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
         </dependency>
@@ -111,7 +119,8 @@
                     <instructions>
                         <Private-Package>org.wso2.carbon.uuf.internal.*</Private-Package>
                         <Import-Package>
-                            org.wso2.carbon.kernel.deployment.*; version="${carbon.kernel.version.range}",
+                            org.wso2.carbon.deployment.engine.*; version="${carbon.kernel.version.range}",
+                            org.wso2.carbon.deployment.notifier.*; version="${carbon.kernel.version.range}",
                             org.wso2.carbon.kernel.startupresolver.*; version="${carbon.kernel.version.range}",
                             org.osgi.framework;version="${osgi.framework.import.version.range}",
                             org.osgi.framework.wiring,
@@ -135,6 +144,10 @@
                             org.wso2.carbon.uuf.reference.*;version="${carbon.uuf.version}",
                             org.wso2.carbon.uuf.spi.*;version="${carbon.uuf.version}",
                         </Export-Package>
+                        <Carbon-Component>
+                            startup.listener;componentName="wso2-uuf-service";
+                            requiredService="org.wso2.carbon.uuf.spi.RenderableCreator,org.wso2.carbon.uuf.api.Connector"
+                        </Carbon-Component>
                         <Include-Resource>src/main/resources</Include-Resource>
                     </instructions>
                 </configuration>

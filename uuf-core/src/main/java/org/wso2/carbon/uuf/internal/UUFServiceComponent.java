@@ -26,7 +26,7 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
-import org.wso2.carbon.kernel.deployment.Deployer;
+import org.wso2.carbon.deployment.engine.Deployer;
 import org.wso2.carbon.kernel.startupresolver.RequiredCapabilityListener;
 import org.wso2.carbon.uuf.spi.HttpConnector;
 import org.wso2.carbon.uuf.core.App;
@@ -50,12 +50,11 @@ import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_NOT_FOUND;
 /**
  * OSGi service component for UUFServer.
  */
-@Component(name = "UUFServiceComponent",
+@Component(name = "org.wso2.carbon.uuf.internal.UUFServiceComponent",
            immediate = true,
            service = RequiredCapabilityListener.class,
            property = {
-                   "capability-name=org.wso2.carbon.uuf.spi.RenderableCreator,org.wso2.carbon.uuf.api.Connector",
-                   "component-key=wso2-uuf-service"
+                   "componentName=wso2-uuf-service"
            }
 )
 public class UUFServiceComponent implements RequiredCapabilityListener {

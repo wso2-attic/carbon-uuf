@@ -18,10 +18,10 @@ package org.wso2.carbon.uuf.internal;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.kernel.deployment.Artifact;
-import org.wso2.carbon.kernel.deployment.ArtifactType;
-import org.wso2.carbon.kernel.deployment.Deployer;
-import org.wso2.carbon.kernel.deployment.exception.CarbonDeploymentException;
+import org.wso2.carbon.deployment.engine.Artifact;
+import org.wso2.carbon.deployment.engine.ArtifactType;
+import org.wso2.carbon.deployment.engine.Deployer;
+import org.wso2.carbon.deployment.engine.exception.CarbonDeploymentException;
 import org.wso2.carbon.uuf.core.App;
 import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.internal.core.create.AppCreator;

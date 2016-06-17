@@ -25,14 +25,14 @@
     <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <name>WSO2 UUF - Parent</name>
+    <name>WSO2 UUF - Unified UI Framework</name>
     <url>https://github.com/wso2/carbon-uuf</url>
     <description>WSO2 Unified Ui Framework</description>
 
     <parent>
         <groupId>org.wso2</groupId>
         <artifactId>wso2</artifactId>
-        <version>2</version>
+        <version>5</version>
     </parent>
 
     <scm>
@@ -52,6 +52,7 @@
         <module>product/p2-features/org.wso2.uuf.connector.msf4j.feature</module>
         <module>samples/sample4</module>
         <module>product</module>
+        <module>uuf-msf4j-connector</module>
     </modules>
 
     <dependencyManagement>
@@ -111,6 +112,16 @@
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>${guava.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.deployment</groupId>
+                <artifactId>org.wso2.carbon.deployment.engine</artifactId>
+                <version>${carbon.deployment.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.deployment</groupId>
+                <artifactId>org.wso2.carbon.deployment.notifier</artifactId>
+                <version>${carbon.deployment.version}</version>
             </dependency>
             <!-- Dependencies for Handlebars -->
             <dependency>
@@ -199,45 +210,6 @@
         <pluginManagement>
             <plugins>
                 <plugin>
-                    <groupId>org.apache.felix</groupId>
-                    <artifactId>maven-bundle-plugin</artifactId>
-                    <extensions>${maven.bundle.plugin.extensions}</extensions>
-                    <configuration>
-                        <obrRepository>NONE</obrRepository>
-                        <instructions>
-                            <Bundle-Activator>${bundle.activator}</Bundle-Activator>
-                            <Bundle-ActivationPolicy>${bundle.activation.policy}</Bundle-ActivationPolicy>
-                            <Bundle-ClassPath>${bundle.classpath}</Bundle-ClassPath>
-                            <Bundle-Contributors>${bundle.contributors}</Bundle-Contributors>
-                            <Bundle-Copyright>WSO2 Inc</Bundle-Copyright>
-                            <Bundle-Description>${project.description}</Bundle-Description>
-                            <Bundle-Developers>${bundle.developers}</Bundle-Developers>
-                            <Bundle-DocURL>${bundle.docurl}</Bundle-DocURL>
-                            <Bundle-License>http://www.apache.org/licenses/LICENSE-2.0.txt</Bundle-License>
-                            <Bundle-Name>${bundle.name}</Bundle-Name>
-                            <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                            <Bundle-Vendor>WSO2 Inc</Bundle-Vendor>
-                            <Conditional-Package>${conditional.package}</Conditional-Package>
-                            <DynamicImport-Package>${dynamic.import.package}</DynamicImport-Package>
-                            <Export-Package>${export.package}</Export-Package>
-                            <Fragment-Host>${fragment.host}</Fragment-Host>
-                            <Import-Package>${import.package}</Import-Package>
-                            <Meta-Persistence>${meta.persistence}</Meta-Persistence>
-                            <Private-Package>${private.package}</Private-Package>
-                            <Provide-Capability>${provide.capability}</Provide-Capability>
-                            <Require-Bundle>${require.bundle}</Require-Bundle>
-                            <Require-Capability>${require.capability}</Require-Capability>
-                            <Service-Component>${service.component}</Service-Component>
-                            <Microservices>${microservices}</Microservices>
-                            <_dsannotations>${dsannotations}</_dsannotations>
-                            <Startup-Component>${startup.component}</Startup-Component>
-                            <Carbon-Component>${carbon.component}</Carbon-Component>
-                            <_include>${_include}</_include>
-                            <SCM-Revision>${buildNumber}</SCM-Revision>
-                        </instructions>
-                    </configuration>
-                </plugin>
-                <plugin>
                     <groupId>org.wso2.carbon.maven</groupId>
                     <artifactId>carbon-feature-plugin</artifactId>
                     <version>${carbon.feature.plugin.version}</version>
@@ -294,6 +266,9 @@
         <guava.version>18.0</guava.version>
         <guava.version.range>[18.0,19.0)</guava.version.range>
         <commons-io.wso2.version>2.4.0.wso2v1</commons-io.wso2.version>
+        <carbon.deployment.version>5.0.0</carbon.deployment.version>
+
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 

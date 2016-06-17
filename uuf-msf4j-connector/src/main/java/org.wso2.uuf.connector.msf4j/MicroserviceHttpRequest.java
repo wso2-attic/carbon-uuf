@@ -23,13 +23,15 @@ import org.wso2.carbon.messaging.Constants;
 import org.wso2.carbon.uuf.spi.HttpRequest;
 
 import javax.ws.rs.core.HttpHeaders;
+
+import org.wso2.carbon.messaging.Constants;
+import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.msf4j.Request;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * HttpRequest implementation based on Microservice HTTP request.

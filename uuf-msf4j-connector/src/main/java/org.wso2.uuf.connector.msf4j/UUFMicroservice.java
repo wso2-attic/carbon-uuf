@@ -16,12 +16,6 @@
 
 package org.wso2.uuf.connector.msf4j;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
-import io.netty.handler.codec.http.HttpRequest;
-import io.netty.handler.codec.http.HttpResponseStatus;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -29,16 +23,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.spi.HttpConnector;
 import org.wso2.carbon.uuf.api.ServerConnection;
-import org.wso2.msf4j.HttpResponder;
-import org.wso2.msf4j.HttpStreamHandler;
-import org.slf4j.MDC;
-import org.wso2.carbon.uuf.internal.UUFRegistry;
-import org.wso2.carbon.uuf.internal.core.create.AppCreator;
-import org.wso2.carbon.uuf.internal.core.create.AppDiscoverer;
-import org.wso2.carbon.uuf.internal.io.ArtifactAppDiscoverer;
-import org.wso2.carbon.uuf.internal.io.BundleClassLoaderProvider;
-import org.wso2.carbon.uuf.internal.io.StaticResolver;
-import org.wso2.carbon.uuf.spi.RenderableCreator;
 import org.wso2.msf4j.HttpStreamer;
 import org.wso2.msf4j.Microservice;
 import org.wso2.msf4j.Request;
@@ -90,8 +74,8 @@ public class UUFMicroservice implements Microservice, HttpConnector {
 //        httpStreamer.callback(new HttpStreamHandlerImpl(this, nettyRequest));
     }
 
-    private Response execute(HttpRequest nettyRequest, byte[] contentBytes) {
-        MicroserviceHttpRequest httpRequest = new MicroserviceHttpRequest(nettyRequest, contentBytes);
+    private Response execute(Request request, byte[] contentBytes) {
+        MicroserviceHttpRequest httpRequest = new MicroserviceHttpRequest(request, contentBytes);
         MicroserviceHttpResponse httpResponse = new MicroserviceHttpResponse();
         serverConnection.serve(httpRequest, httpResponse);
         return httpResponse.build();
