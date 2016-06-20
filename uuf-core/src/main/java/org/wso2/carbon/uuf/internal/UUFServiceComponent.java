@@ -87,7 +87,7 @@ public class UUFServiceComponent implements RequiredCapabilityListener {
      */
     @Reference(name = "renderableCreator",
                service = RenderableCreator.class,
-               cardinality = ReferenceCardinality.MULTIPLE,
+               cardinality = ReferenceCardinality.AT_LEAST_ONE,
                policy = ReferencePolicy.DYNAMIC,
                unbind = "unsetRenderableCreator")
     @SuppressWarnings("unused")
@@ -169,7 +169,7 @@ public class UUFServiceComponent implements RequiredCapabilityListener {
 
     @Override
     public void onAllRequiredCapabilitiesAvailable() {
-        //bundleContext.registerService(Deployer.class, appDeployer, null);
+        bundleContext.registerService(Deployer.class, appDeployer, null);
         log.debug("UUF AppDeployer registered.");
     }
 
