@@ -16,6 +16,7 @@
 
 package org.wso2.carbon.uuf.internal;
 
+import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.deployment.engine.Artifact;
@@ -34,6 +35,13 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
+
+/**
+ * UUF Deployer.
+ */
+@Component(name = "org.wso2.carbon.uuf.internal.UUFAppDeployer",
+           service = Deployer.class,
+           immediate = true)
 public class UUFAppDeployer implements Deployer {
 
     private static final Logger log = LoggerFactory.getLogger(UUFAppDeployer.class);

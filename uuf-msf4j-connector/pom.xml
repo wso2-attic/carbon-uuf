@@ -72,6 +72,10 @@
                             org.slf4j.*;version="${slf4j.version.range}"
                         </Import-Package>
                         <Export-Package>org.wso2.uuf.connector.msf4j.*;version="${carbon.uuf.version}"</Export-Package>
+                        <Carbon-Component>
+                            osgi.service;objectClass="org.wso2.msf4j.Microservice",
+                            osgi.service;objectClass="org.wso2.carbon.uuf.spi.HttpConnector"
+                        </Carbon-Component>
                     </instructions>
                 </configuration>
             </plugin>

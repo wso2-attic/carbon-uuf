@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.wso2.carbon.deployment.engine.Deployer;
 import org.wso2.carbon.kernel.startupresolver.RequiredCapabilityListener;
+import org.wso2.carbon.kernel.transports.CarbonTransport;
 import org.wso2.carbon.uuf.spi.HttpConnector;
 import org.wso2.carbon.uuf.core.App;
 import org.wso2.carbon.uuf.exception.HttpErrorException;
@@ -86,7 +87,7 @@ public class UUFServiceComponent implements RequiredCapabilityListener {
      */
     @Reference(name = "renderableCreator",
                service = RenderableCreator.class,
-               cardinality = ReferenceCardinality.AT_LEAST_ONE,
+               cardinality = ReferenceCardinality.MULTIPLE,
                policy = ReferencePolicy.DYNAMIC,
                unbind = "unsetRenderableCreator")
     @SuppressWarnings("unused")
@@ -113,6 +114,20 @@ public class UUFServiceComponent implements RequiredCapabilityListener {
                          renderableCreator.getSupportedFileExtensions() + " extensions.");
     }
 
+
+    @Reference(
+            name = "carbon-transport",
+            service = CarbonTransport.class,
+            cardinality = ReferenceCardinality.AT_LEAST_ONE,
+            policy = ReferencePolicy.DYNAMIC,
+            unbind = "removeCarbonTransport"
+    )
+    protected void addCarbonTransport(CarbonTransport carbonTransport) {
+    }
+
+    protected void removeCarbonTransport(CarbonTransport carbonTransport) {
+    }
+
     /**
      * This bind method is invoked by OSGi framework whenever a new Connector is registered.
      *
@@ -120,7 +135,7 @@ public class UUFServiceComponent implements RequiredCapabilityListener {
      */
     @Reference(name = "httpConnector",
                service = HttpConnector.class,
-               cardinality = ReferenceCardinality.AT_LEAST_ONE,
+               cardinality = ReferenceCardinality.MULTIPLE,
                policy = ReferencePolicy.DYNAMIC,
                unbind = "unsetHttpConnector")
     @SuppressWarnings("unused")
@@ -154,7 +169,7 @@ public class UUFServiceComponent implements RequiredCapabilityListener {
 
     @Override
     public void onAllRequiredCapabilitiesAvailable() {
-        bundleContext.registerService(Deployer.class, appDeployer, null);
+        //bundleContext.registerService(Deployer.class, appDeployer, null);
         log.debug("UUF AppDeployer registered.");
     }
 
