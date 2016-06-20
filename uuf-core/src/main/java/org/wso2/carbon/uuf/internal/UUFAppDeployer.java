@@ -39,9 +39,6 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * UUF Deployer.
  */
-@Component(name = "org.wso2.carbon.uuf.internal.UUFAppDeployer",
-           service = Deployer.class,
-           immediate = true)
 public class UUFAppDeployer implements Deployer {
 
     private static final Logger log = LoggerFactory.getLogger(UUFAppDeployer.class);
