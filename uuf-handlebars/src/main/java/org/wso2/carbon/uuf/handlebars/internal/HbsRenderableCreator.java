@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.wso2.carbon.uuf.handlebars;
+package org.wso2.carbon.uuf.handlebars.internal;
 
 import com.github.jknack.handlebars.io.StringTemplateSource;
 import com.github.jknack.handlebars.io.TemplateSource;
@@ -37,7 +37,7 @@ import org.wso2.carbon.uuf.spi.RenderableCreator;
 
 import java.util.Set;
 
-@Component(name = "org.wso2.carbon.uuf.handlebars.HbsRenderableCreator",
+@Component(name = "org.wso2.carbon.uuf.handlebars.internal.HbsRenderableCreator",
            service = RenderableCreator.class,
            immediate = true)
 public class HbsRenderableCreator implements RenderableCreator {

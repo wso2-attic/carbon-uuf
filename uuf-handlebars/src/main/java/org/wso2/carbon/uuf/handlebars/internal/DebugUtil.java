@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.wso2.carbon.uuf.handlebars;
+package org.wso2.carbon.uuf.handlebars.internal;
 
 import com.github.jknack.handlebars.Context;
 import com.google.gson.Gson;

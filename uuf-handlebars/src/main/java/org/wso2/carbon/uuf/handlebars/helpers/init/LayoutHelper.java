@@ -19,7 +19,7 @@ package org.wso2.carbon.uuf.handlebars.helpers.init;
 import com.github.jknack.handlebars.Helper;
 import com.github.jknack.handlebars.Options;
 import org.wso2.carbon.uuf.exception.UUFException;
-import org.wso2.carbon.uuf.handlebars.HbsPreprocessor;
+import org.wso2.carbon.uuf.handlebars.internal.HbsPreprocessor;
 
 import java.io.IOException;
 

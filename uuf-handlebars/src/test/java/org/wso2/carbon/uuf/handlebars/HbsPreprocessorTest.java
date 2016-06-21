@@ -21,6 +21,7 @@ import com.github.jknack.handlebars.HandlebarsException;
 import com.github.jknack.handlebars.io.StringTemplateSource;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import org.wso2.carbon.uuf.handlebars.internal.HbsPreprocessor;
 
 import java.util.Optional;
 
