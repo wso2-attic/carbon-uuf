@@ -35,7 +35,7 @@ public class JSExecutable implements Executable {
     private static final NashornScriptEngineFactory SCRIPT_ENGINE_FACTORY = new NashornScriptEngineFactory();
     private static final String[] SCRIPT_ENGINE_ARGS = new String[]{"-strict"};
 
-    private final String scriptPath;
+    private final String path;
     private final NashornScriptEngine engine;
     private final Gson gson;
 
@@ -44,24 +44,20 @@ public class JSExecutable implements Executable {
     }
 
     public JSExecutable(String scriptSource, String scriptPath, ClassLoader componentClassLoader) {
-        this.gson = new Gson();
-        this.scriptPath = scriptPath;
+        this.path = scriptPath;
 
         NashornScriptEngine engine = (NashornScriptEngine) SCRIPT_ENGINE_FACTORY.getScriptEngine(SCRIPT_ENGINE_ARGS,
                                                                                                  componentClassLoader);
-        engine.put(ScriptEngine.FILENAME, this.scriptPath);
+        engine.put(ScriptEngine.FILENAME, this.path);
         try {
             engine.eval(scriptSource);
             // Even though 'NashornScriptEngineFactory.getParameter("THREADING")' returns null, NashornScriptEngine is
             // thread-safe. See http://stackoverflow.com/a/30159424
             this.engine = engine;
         } catch (ScriptException e) {
-            throw new UUFException("An error occurred when evaluating the JavaScript file '" + getPath() + "'.", e);
+            throw new UUFException("An error occurred when evaluating the JavaScript file '" + path + "'.", e);
         }
-    }
-
-    private String getPath() {
-        return scriptPath;
+        this.gson = new Gson();
     }
 
     public Object execute(Object context, API api) {
@@ -69,16 +65,16 @@ public class JSExecutable implements Executable {
             return engine.invokeFunction("onRequest", context, new UUF(api, gson));
         } catch (ScriptException e) {
             throw new UUFException("An error occurred when executing the 'onRequest' function in JavaScript file '" +
-                                           getPath() + "' with context '" + context + "'.", e);
+                                           path + "' with context '" + context + "'.", e);
         } catch (NoSuchMethodException e) {
-            throw new UUFException("Cannot find the 'onRequest' function in the JavaScript file '" + getPath() + "'.",
+            throw new UUFException("Cannot find the 'onRequest' function in the JavaScript file '" + path + "'.",
                                    e);
         }
     }
 
     @Override
     public String toString() {
-        return "{\"path\": \"" + scriptPath + "\"}";
+        return "{\"path\": \"" + path + "\"}";
     }
 
     public static class UUF {
