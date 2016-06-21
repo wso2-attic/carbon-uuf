@@ -47,4 +47,9 @@ public class ArtifactPageReference implements PageReference {
     public FileReference getRenderingFile() {
         return new ArtifactFileReference(path, componentReference.getAppReference());
     }
+
+    @Override
+    public ComponentReference getComponentReference() {
+        return componentReference;
+    }
 }

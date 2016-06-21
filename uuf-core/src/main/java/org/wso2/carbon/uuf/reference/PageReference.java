@@ -21,4 +21,6 @@ public interface PageReference {
     String getPathPattern();
 
     FileReference getRenderingFile();
+
+    ComponentReference getComponentReference();
 }
