@@ -21,4 +21,6 @@ public interface FragmentReference {
     String getName();
 
     FileReference getRenderingFile();
+
+    ComponentReference getComponentReference();
 }
