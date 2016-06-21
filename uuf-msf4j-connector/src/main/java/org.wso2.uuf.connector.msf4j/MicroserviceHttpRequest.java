@@ -19,14 +19,10 @@ package org.wso2.uuf.connector.msf4j;
 import io.netty.handler.codec.http.QueryStringDecoder;
 import io.netty.handler.codec.http.cookie.Cookie;
 import io.netty.handler.codec.http.cookie.ServerCookieDecoder;
-import org.wso2.carbon.messaging.Constants;
-import org.wso2.carbon.uuf.spi.HttpRequest;
-
-import javax.ws.rs.core.HttpHeaders;
-
-import org.wso2.carbon.messaging.Constants;
 import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.msf4j.Request;
+
+import javax.ws.rs.core.HttpHeaders;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Collections;
@@ -37,6 +33,8 @@ import java.util.Map;
  * HttpRequest implementation based on Microservice HTTP request.
  */
 public class MicroserviceHttpRequest implements org.wso2.carbon.uuf.spi.HttpRequest {
+
+    public static final String HTTP_VERSION = "HTTP_VERSION";
 
     private final String url;
     private final String method;
@@ -58,7 +56,7 @@ public class MicroserviceHttpRequest implements org.wso2.carbon.uuf.spi.HttpRequ
     public MicroserviceHttpRequest(Request request, byte[] contentBytes) {
         this.url = null; // MSF4JRequest does not have a 'getUrl()' method.
         this.method = request.getHttpMethod();
-        this.protocol = request.getProperty(Constants.HTTP_VERSION).toString();
+        this.protocol = request.getProperty(HTTP_VERSION).toString();
         this.headers = request.getHeaders();
         String rawUri = request.getUri();
         int uriPathEndIndex = rawUri.indexOf('?');
