@@ -50,13 +50,10 @@ public class JSExecutable implements Executable {
         NashornScriptEngine engine = (NashornScriptEngine) SCRIPT_ENGINE_FACTORY.getScriptEngine(SCRIPT_ENGINE_ARGS,
                                                                                                  componentClassLoader);
         engine.put(ScriptEngine.FILENAME, this.scriptPath);
-        engine.put("callOSGiService", (CallOSGiService) API::callOSGiService);
-        engine.put("getOSGiServices", (GetOSGiServices) API::getOSGiServices);
-        engine.put("callMicroService", (CallMicroService) API::callMicroService);
-        engine.put("sendError", (SendError) API::sendError);
-        engine.put("sendRedirect", (SendRedirect) API::sendRedirect);
         try {
             engine.eval(scriptSource);
+            // Even though 'NashornScriptEngineFactory.getParameter("THREADING")' returns null, NashornScriptEngine is
+            // thread-safe. See http://stackoverflow.com/a/30159424
             this.engine = engine;
         } catch (ScriptException e) {
             throw new UUFException("An error occurred when evaluating the JavaScript file '" + getPath() + "'.", e);
@@ -68,21 +65,8 @@ public class JSExecutable implements Executable {
     }
 
     public Object execute(Object context, API api) {
-        engine.put("createSession", (CreateSession) api::createSession);
-        engine.put("getSession", (GetSession) () -> api.getSession().orElse(null));
-        engine.put("destroySession", (DestroySession) api::destroySession);
-        engine.put("setAppTheme", (SetTheme) api::setAppTheme);
-        engine.put("getAppTheme", (GetTheme) () -> api.getAppTheme().orElse(null));
-        engine.put("sendToClient", (sendToClient) (name, value) -> {
-            String jsOpenTag = "<script type=\"text/javascript\"> var ";
-            String jsCloseTag = "; </script>";
-            api.getRequestLookup().addToPlaceholder(
-                    Placeholder.js, jsOpenTag + name + "=" + gson.toJson(value) + jsCloseTag
-            );
-        });
-
         try {
-            return engine.invokeFunction("onRequest", context);
+            return engine.invokeFunction("onRequest", context, new UUF(api, gson));
         } catch (ScriptException e) {
             throw new UUFException("An error occurred when executing the 'onRequest' function in JavaScript file '" +
                                            getPath() + "' with context '" + context + "'.", e);
@@ -97,80 +81,69 @@ public class JSExecutable implements Executable {
         return "{\"path\": \"" + scriptPath + "\"}";
     }
 
-    @FunctionalInterface
-    public interface CallOSGiService {
+    public static class UUF {
 
-        @SuppressWarnings("unused")
-        Object call(String serviceClassName, String serviceMethodName, Object... args);
-    }
+        private final API api;
+        private final Gson gson;
 
-    @FunctionalInterface
-    public interface GetOSGiServices {
+        private UUF(API api, Gson gson) {
+            this.api = api;
+            this.gson = gson;
+        }
 
-        @SuppressWarnings("unused")
-        Map<String, Object> call(String serviceClassName);
-    }
+        public Object callOSGiService(String serviceClassName, String serviceMethodName, Object[] args) {
+            return API.callOSGiService(serviceClassName, serviceMethodName, args);
+        }
 
-    @FunctionalInterface
-    public interface CallMicroService {
+        public Map<String, Object> getOSGiServices(String serviceClassName) {
+            return API.getOSGiServices(serviceClassName);
+        }
 
-        @SuppressWarnings("unused")
-        void call();
-    }
+        public void callMicroService() {
+            API.callMicroService();
+        }
 
-    @FunctionalInterface
-    public interface CreateSession {
+        public void sendError(int status, String message) {
+            API.sendError(status, message);
+        }
 
-        @SuppressWarnings("unused")
-        Session call(String userName);
-    }
+        public void sendRedirect(String redirectUrl) {
+            API.sendRedirect(redirectUrl);
+        }
 
-    @FunctionalInterface
-    public interface GetSession {
+        public Session createSession(String userName) {
+            return api.createSession(userName);
+        }
 
-        @SuppressWarnings("unused")
-        Session call();
-    }
+        public Session getSession() {
+            return api.getSession().orElse(null);
+        }
 
-    @FunctionalInterface
-    public interface DestroySession {
+        public boolean destroySession() {
+            return api.destroySession();
+        }
 
-        @SuppressWarnings("unused")
-        boolean call();
-    }
+        public void setAppTheme(String themeName) {
+            api.setAppTheme(themeName);
+        }
 
-    @FunctionalInterface
-    public interface SendError {
+        public String getAppTheme() {
+            return api.getAppTheme().orElse(null);
+        }
 
-        @SuppressWarnings("unused")
-        void call(int status, String message);
-    }
+        public void sendToClient(String name, Object value) {
+            String scriptTag = "<script type=\"text/javascript\">var " + name + "=" + gson.toJson(value) + ";</script>";
+            api.getRequestLookup().addToPlaceholder(Placeholder.js, scriptTag);
+        }
 
-    @FunctionalInterface
-    public interface SendRedirect {
-
-        @SuppressWarnings("unused")
-        void call(String redirectUrl);
-    }
-
-    @FunctionalInterface
-    public interface SetTheme {
-
-        @SuppressWarnings("unused")
-        void call(String name);
-    }
-
-    @FunctionalInterface
-    public interface GetTheme {
-
-        @SuppressWarnings("unused")
-        String call();
-    }
-
-    @FunctionalInterface
-    public interface sendToClient {
-
-        @SuppressWarnings("unused")
-        void call(String name, Object value);
+        @Override
+        public String toString() {
+            return "{\"callOSGiService\":\"function(serviceClassName, serviceMethodName, args)\", " +
+                    "\"getOSGiServices\":\"function(serviceClassName)\", \"callMicroService\":\"function()\", " +
+                    "\"sendError\":\"function(status, message)\", \"sendRedirect\":\"function(redirectUrl)\", " +
+                    "\"createSession\":\"function(userName)\", \"getSession\":\"function()\", " +
+                    "\"destroySession\":\"function()\", \"setAppTheme\":\"function(themeName)\", " +
+                    "\"getAppTheme\":\"function()\", \"sendToClient\":\"function(name, value)\"}";
+        }
     }
 }
