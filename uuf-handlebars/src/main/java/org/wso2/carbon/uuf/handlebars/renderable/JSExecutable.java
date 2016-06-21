@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.wso2.carbon.uuf.handlebars;
+package org.wso2.carbon.uuf.handlebars.renderable;
 
 import com.google.gson.Gson;
 import jdk.nashorn.api.scripting.NashornScriptEngine;
