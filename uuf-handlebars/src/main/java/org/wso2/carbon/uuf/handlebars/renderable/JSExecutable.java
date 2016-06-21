@@ -35,29 +35,32 @@ public class JSExecutable implements Executable {
     private static final NashornScriptEngineFactory SCRIPT_ENGINE_FACTORY = new NashornScriptEngineFactory();
     private static final String[] SCRIPT_ENGINE_ARGS = new String[]{"-strict", "--optimistic-types"};
 
-    private final String path;
     private final NashornScriptEngine engine;
+    private final String scriptPath;
+    private final String componentPath;
     private final Gson gson;
 
     public JSExecutable(String scriptSource, ClassLoader componentClassLoader) {
-        this(scriptSource, null, componentClassLoader);
+        this(scriptSource, componentClassLoader, null, null);
     }
 
-    public JSExecutable(String scriptSource, String scriptPath, ClassLoader componentClassLoader) {
-        this.path = scriptPath;
-
+    public JSExecutable(String scriptSource, ClassLoader componentClassLoader, String componentPath,
+                        String scriptPath) {
+        this.scriptPath = scriptPath;
+        this.componentPath = componentPath;
+        this.gson = new Gson();
         NashornScriptEngine engine = (NashornScriptEngine) SCRIPT_ENGINE_FACTORY.getScriptEngine(SCRIPT_ENGINE_ARGS,
                                                                                                  componentClassLoader);
-        engine.put(ScriptEngine.FILENAME, this.path);
+        engine.put(ScriptEngine.FILENAME, this.scriptPath);
         try {
             engine.eval(scriptSource);
             // Even though 'NashornScriptEngineFactory.getParameter("THREADING")' returns null, NashornScriptEngine is
             // thread-safe. See http://stackoverflow.com/a/30159424
             this.engine = engine;
         } catch (ScriptException e) {
-            throw new UUFException("An error occurred when evaluating the JavaScript file '" + path + "'.", e);
+            throw new UUFException("An error occurred when evaluating the JavaScript file '" + this.scriptPath + "'.",
+                                   e);
         }
-        this.gson = new Gson();
     }
 
     public Object execute(Object context, API api) {
@@ -65,16 +68,16 @@ public class JSExecutable implements Executable {
             return engine.invokeFunction("onRequest", context, new UUF(api, gson));
         } catch (ScriptException e) {
             throw new UUFException("An error occurred when executing the 'onRequest' function in JavaScript file '" +
-                                           path + "' with context '" + context + "'.", e);
+                                           scriptPath + "' with context '" + context + "'.", e);
         } catch (NoSuchMethodException e) {
-            throw new UUFException("Cannot find the 'onRequest' function in the JavaScript file '" + path + "'.",
+            throw new UUFException("Cannot find the 'onRequest' function in the JavaScript file '" + scriptPath + "'.",
                                    e);
         }
     }
 
     @Override
     public String toString() {
-        return "{\"path\": \"" + path + "\"}";
+        return "{\"path\": \"" + scriptPath + "\"}";
     }
 
     public static class UUF {
