@@ -33,7 +33,7 @@ import java.util.Map;
 public class JSExecutable implements Executable {
 
     private static final NashornScriptEngineFactory SCRIPT_ENGINE_FACTORY = new NashornScriptEngineFactory();
-    private static final String[] SCRIPT_ENGINE_ARGS = new String[]{"-strict"};
+    private static final String[] SCRIPT_ENGINE_ARGS = new String[]{"-strict", "--optimistic-types"};
 
     private final String path;
     private final NashornScriptEngine engine;
