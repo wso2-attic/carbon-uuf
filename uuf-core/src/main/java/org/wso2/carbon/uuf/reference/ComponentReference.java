@@ -40,4 +40,6 @@ public interface ComponentReference {
     Optional<FileReference> getConfigurations();
 
     Optional<FileReference> getOsgiImportsConfig();
+
+    String getPath();
 }

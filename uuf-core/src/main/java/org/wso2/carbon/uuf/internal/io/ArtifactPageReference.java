@@ -23,6 +23,8 @@ import org.wso2.carbon.uuf.reference.PageReference;
 
 import java.nio.file.Path;
 
+import static org.wso2.carbon.uuf.reference.ComponentReference.DIR_NAME_PAGES;
+
 public class ArtifactPageReference implements PageReference {
 
     private final Path path;
@@ -36,7 +38,7 @@ public class ArtifactPageReference implements PageReference {
     @Override
     public String getPathPattern() {
         StringBuilder sb = new StringBuilder();
-        Path pagesDirectory = componentReference.getPath().resolve(ComponentReference.DIR_NAME_PAGES).relativize(path);
+        Path pagesDirectory = componentReference.getFilePath().resolve(DIR_NAME_PAGES).relativize(path);
         for (Path path : pagesDirectory) {
             sb.append('/').append(FilenameUtils.removeExtension(path.toString()));
         }
