@@ -32,4 +32,6 @@ public interface AppReference {
     Stream<ThemeReference> getThemeReferences();
 
     List<String> getDependencies();
+
+    String getPath();
 }

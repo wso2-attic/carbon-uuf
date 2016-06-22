@@ -16,10 +16,10 @@
 
 package org.wso2.carbon.uuf.internal.io;
 
+import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.reference.AppReference;
 import org.wso2.carbon.uuf.reference.ComponentReference;
 import org.wso2.carbon.uuf.reference.ThemeReference;
-import org.wso2.carbon.uuf.exception.UUFException;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -74,7 +74,12 @@ public class ArtifactAppReference implements AppReference {
         }
     }
 
-    Path getPath() {
+    @Override
+    public String getPath() {
+        return path.toString();
+    }
+
+    Path getFilePath() {
         return path;
     }
 }

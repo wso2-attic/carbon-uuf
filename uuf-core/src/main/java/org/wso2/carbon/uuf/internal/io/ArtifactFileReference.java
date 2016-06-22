@@ -59,7 +59,7 @@ public class ArtifactFileReference implements FileReference {
 
     @Override
     public String getRelativePath() {
-        return appReference.getPath().relativize(path).toString();
+        return appReference.getFilePath().relativize(path).toString();
     }
 
     @Override
