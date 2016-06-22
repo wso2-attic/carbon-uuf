@@ -146,8 +146,9 @@
                             org.wso2.carbon.uuf.spi.*;version="${carbon.uuf.version}",
                         </Export-Package>
                         <Carbon-Component>
-                            startup.listener;componentName="wso2-uuf-service";
-                            requiredService="org.wso2.carbon.uuf.spi.RenderableCreator, org.wso2.msf4j.Microservice"
+                            startup.listener;componentName="wso2-uuf-deployer";
+                            requiredService="org.wso2.carbon.uuf.spi.RenderableCreator",
+                            osgi.service;objectClass="org.wso2.carbon.deployment.engine.Deployer"
                         </Carbon-Component>
                         <Include-Resource>src/main/resources</Include-Resource>
                     </instructions>
