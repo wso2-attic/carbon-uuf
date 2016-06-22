@@ -19,6 +19,7 @@ package org.wso2.carbon.uuf.handlebars.internal;
 import com.github.jknack.handlebars.io.StringTemplateSource;
 import com.github.jknack.handlebars.io.TemplateSource;
 import com.google.common.collect.ImmutableSet;
+import org.apache.commons.io.FilenameUtils;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -35,6 +36,7 @@ import org.wso2.carbon.uuf.reference.LayoutReference;
 import org.wso2.carbon.uuf.reference.PageReference;
 import org.wso2.carbon.uuf.spi.RenderableCreator;
 
+import java.util.Optional;
 import java.util.Set;
 
 @Component(name = "org.wso2.carbon.uuf.handlebars.internal.HbsRenderableCreator",
@@ -66,7 +68,7 @@ public class HbsRenderableCreator implements RenderableCreator {
     public FragmentRenderableData createFragmentRenderable(FragmentReference fragmentReference,
                                                            ClassLoader classLoader) {
         TemplateSource templateSource = createTemplateSource(fragmentReference.getRenderingFile());
-        Executable executable = createSameNameJs(fragmentReference.getRenderingFile(), classLoader);
+        Executable executable = createExecutable(fragmentReference, classLoader);
         HbsFragmentRenderable fragmentRenderable = new HbsFragmentRenderable(templateSource, executable);
         boolean isSecured = new HbsPreprocessor(templateSource).isSecured();
         return new RenderableCreator.FragmentRenderableData(fragmentRenderable, isSecured);
@@ -76,7 +78,7 @@ public class HbsRenderableCreator implements RenderableCreator {
     public PageRenderableData createPageRenderable(PageReference pageReference,
                                                    ClassLoader classLoader) {
         TemplateSource templateSource = createTemplateSource(pageReference.getRenderingFile());
-        Executable executable = createSameNameJs(pageReference.getRenderingFile(), classLoader);
+        Executable executable = createExecutable(pageReference, classLoader);
         HbsPageRenderable pageRenderable = new HbsPageRenderable(templateSource, executable);
         HbsPreprocessor preprocessor = new HbsPreprocessor(templateSource);
         String layoutName = preprocessor.getLayoutName().orElse(null);
@@ -93,15 +95,23 @@ public class HbsRenderableCreator implements RenderableCreator {
         return new StringTemplateSource(pageReference.getRelativePath(), pageReference.getContent());
     }
 
-    private Executable createSameNameJs(FileReference pageReference, ClassLoader classLoader) {
-        String jsName = withoutExtension(pageReference.getName()) + EXTENSION_JAVASCRIPT;
-        return pageReference.getSibling(jsName)
-                .map(fr -> new JSExecutable(fr.getContent(), fr.getAbsolutePath(), classLoader))
+    private Executable createExecutable(FragmentReference fragmentReference, ClassLoader classLoader) {
+        return getExecutableFile(fragmentReference.getRenderingFile())
+                .map(efr -> new JSExecutable(efr.getContent(), classLoader, efr.getAbsolutePath(),
+                                             fragmentReference.getComponentReference().getPath()))
                 .orElse(null);
     }
 
-    private String withoutExtension(String name) {
-        return name.substring(0, (name.length() - EXTENSION_HANDLEBARS.length()));
+    private Executable createExecutable(PageReference pageReference, ClassLoader classLoader) {
+        return getExecutableFile(pageReference.getRenderingFile())
+                .map(efr -> new JSExecutable(efr.getContent(), classLoader, efr.getAbsolutePath(),
+                                             pageReference.getComponentReference().getPath()))
+                .orElse(null);
+    }
+
+    private Optional<FileReference> getExecutableFile(FileReference renderableFileReference) {
+        String jsFileName = FilenameUtils.removeExtension(renderableFileReference.getName()) + EXTENSION_JAVASCRIPT;
+        return renderableFileReference.getSibling(jsFileName);
     }
 
     @Override

@@ -44,8 +44,8 @@ public class JSExecutable implements Executable {
         this(scriptSource, componentClassLoader, null, null);
     }
 
-    public JSExecutable(String scriptSource, ClassLoader componentClassLoader, String componentPath,
-                        String scriptPath) {
+    public JSExecutable(String scriptSource, ClassLoader componentClassLoader, String scriptPath,
+                        String componentPath) {
         this.scriptPath = scriptPath;
         this.componentPath = componentPath;
         this.gson = new Gson();
