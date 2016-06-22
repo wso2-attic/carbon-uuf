@@ -123,19 +123,19 @@
                             org.wso2.carbon.deployment.notifier.*; version="${carbon.kernel.version.range}",
                             org.wso2.carbon.kernel.startupresolver.*; version="${carbon.kernel.version.range}",
                             org.wso2.carbon.kernel.transports.*;version="${carbon.kernel.version.range}",
+                            org.wso2.carbon.kernel.utils,
+                            javax.naming,
+                            javax.cache.*,
                             org.osgi.framework;version="${osgi.framework.import.version.range}",
                             org.osgi.framework.wiring,
-                            org.apache.log4j.*,
-                            javax.naming,
                             org.objectweb.asm,
-                            org.slf4j.*;version="${slf4j.version.range}",
                             com.google.common.*;version="${guava.version.range}",
                             com.google.gson.*;version="${gson.version}",
                             org.apache.commons.lang3.*,
                             org.apache.commons.io,
-                            org.wso2.carbon.kernel.utils,
-                            org.yaml.snakeyaml,
-                            javax.cache.*
+                            org.apache.log4j.*,
+                            org.slf4j.*;version="${slf4j.version.range}",
+                            org.yaml.snakeyaml
                         </Import-Package>
                         <Export-Package>
                             org.wso2.carbon.uuf.api.*;version="${carbon.uuf.version}",
