@@ -75,14 +75,15 @@
                     <instructions>
                         <Import-Package>
                             org.wso2.carbon.uuf.*;version="${carbon.uuf.version}",
-                            org.osgi.service.component.annotations.*,
                             javax.script,
                             jdk.nashorn.api.scripting,
+                            org.osgi.service.component.annotations.*,
                             com.github.jknack.handlebars.*,
-                            org.yaml.snakeyaml,
                             com.google.common.*;version="${guava.version.range}",
                             com.google.gson.*;version="${gson.version}",
-                            org.slf4j.*;version="${slf4j.version.range}"
+                            org.slf4j.*;version="${slf4j.version.range}",
+                            org.apache.commons.io,
+                            org.yaml.snakeyaml
                         </Import-Package>
                         <Export-Package>org.wso2.carbon.uuf.handlebars.*;version="${carbon.uuf.version}"</Export-Package>
                         <Carbon-Component>
