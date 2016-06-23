@@ -16,17 +16,15 @@
 
 package org.wso2.carbon.uuf.handlebars.renderable;
 
-import com.google.gson.Gson;
 import jdk.nashorn.api.scripting.NashornScriptEngine;
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
-import org.wso2.carbon.uuf.api.Placeholder;
-import org.wso2.carbon.uuf.api.auth.Session;
 import org.wso2.carbon.uuf.core.API;
 import org.wso2.carbon.uuf.exception.UUFException;
 
+import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
-import java.util.Map;
+import javax.script.SimpleBindings;
 
 // TODO remove this SuppressWarnings
 @SuppressWarnings("PackageAccessibility")
@@ -36,9 +34,9 @@ public class JSExecutable implements Executable {
     private static final String[] SCRIPT_ENGINE_ARGS = new String[]{"-strict", "--optimistic-types"};
 
     private final NashornScriptEngine engine;
+    private final CustomeBindings engineBindings;
     private final String scriptPath;
     private final String componentPath;
-    private final Gson gson;
 
     public JSExecutable(String scriptSource, ClassLoader componentClassLoader) {
         this(scriptSource, componentClassLoader, null, null);
@@ -48,10 +46,16 @@ public class JSExecutable implements Executable {
                         String componentPath) {
         this.scriptPath = scriptPath;
         this.componentPath = componentPath;
-        this.gson = new Gson();
         NashornScriptEngine engine = (NashornScriptEngine) SCRIPT_ENGINE_FACTORY.getScriptEngine(SCRIPT_ENGINE_ARGS,
                                                                                                  componentClassLoader);
-        engine.put(ScriptEngine.FILENAME, this.scriptPath);
+        this.engineBindings = new CustomeBindings();
+        engineBindings.put(ScriptEngine.FILENAME, this.scriptPath);
+        engineBindings.put("callOSGiService", JSFunctionCreator.getCallOsgiServiceFunction());
+        engineBindings.put("getOSGiServices", JSFunctionCreator.getGetOsgiServicesFunction());
+        engineBindings.put("callMicroService", JSFunctionCreator.getCallMicroServiceFunction());
+        engineBindings.put("sendError", JSFunctionCreator.getSendErrorFunction());
+        engineBindings.put("sendRedirect", JSFunctionCreator.getSendRedirectFunction());
+        engine.setBindings(engineBindings, ScriptContext.ENGINE_SCOPE);
         try {
             engine.eval(scriptSource);
             // Even though 'NashornScriptEngineFactory.getParameter("THREADING")' returns null, NashornScriptEngine is
@@ -65,13 +69,16 @@ public class JSExecutable implements Executable {
 
     public Object execute(Object context, API api) {
         try {
-            return engine.invokeFunction("onRequest", context, new UUF(api, gson));
+            engineBindings.threadLocalFunctionCreator.set(new JSFunctionCreator(api));
+            return engine.invokeFunction("onRequest", context);
         } catch (ScriptException e) {
             throw new UUFException("An error occurred when executing the 'onRequest' function in JavaScript file '" +
                                            scriptPath + "' with context '" + context + "'.", e);
         } catch (NoSuchMethodException e) {
             throw new UUFException("Cannot find the 'onRequest' function in the JavaScript file '" + scriptPath + "'.",
                                    e);
+        } finally {
+            engineBindings.threadLocalFunctionCreator.remove();
         }
     }
 
@@ -80,69 +87,56 @@ public class JSExecutable implements Executable {
         return "{\"path\": \"" + scriptPath + "\"}";
     }
 
-    public static class UUF {
+    public static class CustomeBindings extends SimpleBindings {
 
-        private final API api;
-        private final Gson gson;
+        private static final String KEY_CREATE_SESSION = "createSession";
+        private static final String KEY_GET_SESSION = "getSession";
+        private static final String KEY_DESTROY_SESSION = "destroySession";
+        private static final String KEY_SET_APP_THEME = "setAppTheme";
+        private static final String KEY_GET_APP_THEME = "getAppTheme";
+        private static final String KEY_SEND_TO_CLIENT = "sendToClient";
 
-        private UUF(API api, Gson gson) {
-            this.api = api;
-            this.gson = gson;
-        }
+        private final ThreadLocal<JSFunctionCreator> threadLocalFunctionCreator = new ThreadLocal<>();
 
-        public Object callOSGiService(String serviceClassName, String serviceMethodName, Object[] args) {
-            return API.callOSGiService(serviceClassName, serviceMethodName, args);
-        }
-
-        public Map<String, Object> getOSGiServices(String serviceClassName) {
-            return API.getOSGiServices(serviceClassName);
-        }
-
-        public void callMicroService() {
-            API.callMicroService();
-        }
-
-        public void sendError(int status, String message) {
-            API.sendError(status, message);
-        }
-
-        public void sendRedirect(String redirectUrl) {
-            API.sendRedirect(redirectUrl);
-        }
-
-        public Session createSession(String userName) {
-            return api.createSession(userName);
-        }
-
-        public Session getSession() {
-            return api.getSession().orElse(null);
-        }
-
-        public boolean destroySession() {
-            return api.destroySession();
-        }
-
-        public void setAppTheme(String themeName) {
-            api.setAppTheme(themeName);
-        }
-
-        public String getAppTheme() {
-            return api.getAppTheme().orElse(null);
-        }
-
-        public void sendToClient(String name, Object value) {
-            String scriptTag = "<script type=\"text/javascript\">var " + name + "=" + gson.toJson(value) + ";</script>";
-            api.getRequestLookup().addToPlaceholder(Placeholder.js, scriptTag);
+        @Override
+        public Object get(Object key) {
+            if (!(key instanceof String)) {
+                return super.get(key);
+            }
+            switch ((String) key) {
+                case KEY_CREATE_SESSION:
+                    return threadLocalFunctionCreator.get().getCreateSessionFunction();
+                case KEY_GET_SESSION:
+                    return threadLocalFunctionCreator.get().getGetSessionFunction();
+                case KEY_DESTROY_SESSION:
+                    return threadLocalFunctionCreator.get().getDestroySessionFunction();
+                case KEY_SET_APP_THEME:
+                    return threadLocalFunctionCreator.get().getSetAppThemeFunction();
+                case KEY_GET_APP_THEME:
+                    return threadLocalFunctionCreator.get().getGetAppThemeFunction();
+                case KEY_SEND_TO_CLIENT:
+                    return threadLocalFunctionCreator.get().getSendToClientFunction();
+                default:
+                    return super.get(key);
+            }
         }
 
         @Override
-        public String toString() {
-            return "{\"callOSGiService\":\"function(serviceClassName, serviceMethodName, args)\", " +
-                    "\"getOSGiServices\":\"function(serviceClassName)\", \"callMicroService\":\"function()\", " +
-                    "\"sendError\":\"function(status, message)\", \"sendRedirect\":\"function(redirectUrl)\", " +
-                    "\"createSession\":\"function(userName)\", \"getSession\":\"function()\", " +
-                    "\"destroySession\":\"function()\", \"setAppTheme\":\"function(themeName)\", " +
-                    "\"getAppTheme\":\"function()\", \"sendToClient\":\"function(name, value)\"}";
+        public boolean containsKey(Object key) {
+            if (!(key instanceof String)) {
+                return super.containsKey(key);
+            }
+            switch ((String) key) {
+                case KEY_CREATE_SESSION:
+                case KEY_GET_SESSION:
+                case KEY_DESTROY_SESSION:
+                case KEY_SET_APP_THEME:
+                case KEY_GET_APP_THEME:
+                case KEY_SEND_TO_CLIENT:
+                    return true;
+                default:
+                    return super.containsKey(key);
+            }
         }
     }
 }
