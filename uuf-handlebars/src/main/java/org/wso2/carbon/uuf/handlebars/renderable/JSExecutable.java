@@ -69,7 +69,7 @@ public class JSExecutable implements Executable {
 
     public Object execute(Object context, API api) {
         try {
-            engineBindings.threadLocalFunctionCreator.set(new JSFunctionProvider(api));
+            engineBindings.setJSFunctionProvider(new JSFunctionProvider(api));
             return engine.invokeFunction("onRequest", context);
         } catch (ScriptException e) {
             throw new UUFException("An error occurred when executing the 'onRequest' function in JavaScript file '" +
@@ -78,7 +78,7 @@ public class JSExecutable implements Executable {
             throw new UUFException("Cannot find the 'onRequest' function in the JavaScript file '" + scriptPath + "'.",
                                    e);
         } finally {
-            engineBindings.threadLocalFunctionCreator.remove();
+            engineBindings.removeJSFunctionProvider();
         }
     }
 
@@ -96,7 +96,15 @@ public class JSExecutable implements Executable {
         private static final String KEY_GET_APP_THEME = "getAppTheme";
         private static final String KEY_SEND_TO_CLIENT = "sendToClient";
 
-        private final ThreadLocal<JSFunctionProvider> threadLocalFunctionCreator = new ThreadLocal<>();
+        private final ThreadLocal<JSFunctionProvider> threadLocalFunctionProvider = new ThreadLocal<>();
+
+        public void setJSFunctionProvider(JSFunctionProvider functionProvider) {
+            threadLocalFunctionProvider.set(functionProvider);
+        }
+
+        public void removeJSFunctionProvider() {
+            threadLocalFunctionProvider.remove();
+        }
 
         @Override
         public Object get(Object key) {
@@ -105,17 +113,17 @@ public class JSExecutable implements Executable {
             }
             switch ((String) key) {
                 case KEY_CREATE_SESSION:
-                    return threadLocalFunctionCreator.get().getCreateSessionFunction();
+                    return threadLocalFunctionProvider.get().getCreateSessionFunction();
                 case KEY_GET_SESSION:
-                    return threadLocalFunctionCreator.get().getGetSessionFunction();
+                    return threadLocalFunctionProvider.get().getGetSessionFunction();
                 case KEY_DESTROY_SESSION:
-                    return threadLocalFunctionCreator.get().getDestroySessionFunction();
+                    return threadLocalFunctionProvider.get().getDestroySessionFunction();
                 case KEY_SET_APP_THEME:
-                    return threadLocalFunctionCreator.get().getSetAppThemeFunction();
+                    return threadLocalFunctionProvider.get().getSetAppThemeFunction();
                 case KEY_GET_APP_THEME:
-                    return threadLocalFunctionCreator.get().getGetAppThemeFunction();
+                    return threadLocalFunctionProvider.get().getGetAppThemeFunction();
                 case KEY_SEND_TO_CLIENT:
-                    return threadLocalFunctionCreator.get().getSendToClientFunction();
+                    return threadLocalFunctionProvider.get().getSendToClientFunction();
                 default:
                     return super.get(key);
             }
