@@ -20,7 +20,7 @@ import com.google.gson.Gson;
 import org.wso2.carbon.uuf.api.Placeholder;
 import org.wso2.carbon.uuf.core.API;
 
-public class JSFunctionProvider {
+public class JSFunctionsImpl {
 
     private static final CallOSGiServiceFunction CALL_OSGI_SERVICE_FUNCTION;
     private static final GetOSGiServicesFunction GET_OSGI_SERVICES_FUNCTION;
@@ -46,7 +46,7 @@ public class JSFunctionProvider {
         GSON = new Gson();
     }
 
-    public JSFunctionProvider(API api) {
+    public JSFunctionsImpl(API api) {
         this.api = api;
     }
 
