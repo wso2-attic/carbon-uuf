@@ -37,7 +37,6 @@ public class JSExecutable implements Executable {
     private final NashornScriptEngine engine;
     private final UUFBindings engineBindings;
     private final String scriptPath;
-    private final String componentPath;
 
     public JSExecutable(String scriptSource, ClassLoader componentClassLoader) {
         this(scriptSource, componentClassLoader, null, null);
@@ -46,25 +45,28 @@ public class JSExecutable implements Executable {
     public JSExecutable(String scriptSource, ClassLoader componentClassLoader, String scriptPath,
                         String componentPath) {
         this.scriptPath = scriptPath;
-        this.componentPath = componentPath;
         NashornScriptEngine engine = (NashornScriptEngine) SCRIPT_ENGINE_FACTORY.getScriptEngine(SCRIPT_ENGINE_ARGS,
                                                                                                  componentClassLoader);
-        this.engineBindings = new UUFBindings();
+        UUFBindings engineBindings = new UUFBindings();
+        engine.setBindings(engineBindings, ScriptContext.ENGINE_SCOPE);
+
         engineBindings.put(ScriptEngine.FILENAME, this.scriptPath);
+        engineBindings.put(ModuleFunction.NAME, JSFunctionsImpl.getModuleFunction(componentPath, engine));
+        try {
+            engine.eval(scriptSource);
+        } catch (ScriptException e) {
+            throw new UUFException("Cannot evaluate JavaScript file '" + this.scriptPath + "'.", e);
+        }
+        engineBindings.put(ModuleFunction.NAME, null); // removing 'module' function
         engineBindings.put(CallOSGiServiceFunction.NAME, JSFunctionsImpl.getCallOsgiServiceFunction());
         engineBindings.put(GetOSGiServicesFunction.NAME, JSFunctionsImpl.getGetOsgiServicesFunction());
         engineBindings.put(CallMicroServiceFunction.NAME, JSFunctionsImpl.getCallMicroServiceFunction());
         engineBindings.put(SendErrorFunction.NAME, JSFunctionsImpl.getSendErrorFunction());
         engineBindings.put(SendRedirectFunction.NAME, JSFunctionsImpl.getSendRedirectFunction());
-        engine.setBindings(engineBindings, ScriptContext.ENGINE_SCOPE);
-        try {
-            engine.eval(scriptSource);
-            // Even though 'NashornScriptEngineFactory.getParameter("THREADING")' returns null, NashornScriptEngine is
-            // thread-safe. See http://stackoverflow.com/a/30159424
-            this.engine = engine;
-        } catch (ScriptException e) {
-            throw new UUFException("Cannot evaluate JavaScript file '" + this.scriptPath + "'.", e);
-        }
+        // Even though 'NashornScriptEngineFactory.getParameter("THREADING")' returns null, NashornScriptEngine is
+        // thread-safe. See http://stackoverflow.com/a/30159424
+        this.engine = engine;
+        this.engineBindings = engineBindings;
     }
 
     public Object execute(Object context, API api) {
