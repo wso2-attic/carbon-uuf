@@ -29,7 +29,7 @@ import org.wso2.carbon.uuf.handlebars.renderable.Executable;
 import org.wso2.carbon.uuf.handlebars.renderable.HbsFragmentRenderable;
 import org.wso2.carbon.uuf.handlebars.renderable.HbsLayoutRenderable;
 import org.wso2.carbon.uuf.handlebars.renderable.HbsPageRenderable;
-import org.wso2.carbon.uuf.handlebars.renderable.JSExecutable;
+import org.wso2.carbon.uuf.handlebars.renderable.js.JSExecutable;
 import org.wso2.carbon.uuf.reference.FileReference;
 import org.wso2.carbon.uuf.reference.FragmentReference;
 import org.wso2.carbon.uuf.reference.LayoutReference;

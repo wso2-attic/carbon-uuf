@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.wso2.carbon.uuf.handlebars.renderable;
+package org.wso2.carbon.uuf.handlebars.renderable.js;
 
 import com.google.gson.Gson;
 import org.wso2.carbon.uuf.api.Placeholder;

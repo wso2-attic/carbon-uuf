@@ -14,12 +14,13 @@
  *  limitations under the License.
  */
 
-package org.wso2.carbon.uuf.handlebars.renderable;
+package org.wso2.carbon.uuf.handlebars.renderable.js;
 
 import jdk.nashorn.api.scripting.NashornScriptEngine;
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
 import org.wso2.carbon.uuf.core.API;
 import org.wso2.carbon.uuf.exception.UUFException;
+import org.wso2.carbon.uuf.handlebars.renderable.Executable;
 
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
