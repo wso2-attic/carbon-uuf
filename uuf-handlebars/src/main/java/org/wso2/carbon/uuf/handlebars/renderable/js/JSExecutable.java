@@ -51,11 +51,11 @@ public class JSExecutable implements Executable {
                                                                                                  componentClassLoader);
         this.engineBindings = new UUFBindings();
         engineBindings.put(ScriptEngine.FILENAME, this.scriptPath);
-        engineBindings.put("callOSGiService", JSFunctionsImpl.getCallOsgiServiceFunction());
-        engineBindings.put("getOSGiServices", JSFunctionsImpl.getGetOsgiServicesFunction());
-        engineBindings.put("callMicroService", JSFunctionsImpl.getCallMicroServiceFunction());
-        engineBindings.put("sendError", JSFunctionsImpl.getSendErrorFunction());
-        engineBindings.put("sendRedirect", JSFunctionsImpl.getSendRedirectFunction());
+        engineBindings.put(CallOSGiServiceFunction.NAME, JSFunctionsImpl.getCallOsgiServiceFunction());
+        engineBindings.put(GetOSGiServicesFunction.NAME, JSFunctionsImpl.getGetOsgiServicesFunction());
+        engineBindings.put(CallMicroServiceFunction.NAME, JSFunctionsImpl.getCallMicroServiceFunction());
+        engineBindings.put(SendErrorFunction.NAME, JSFunctionsImpl.getSendErrorFunction());
+        engineBindings.put(SendRedirectFunction.NAME, JSFunctionsImpl.getSendRedirectFunction());
         engine.setBindings(engineBindings, ScriptContext.ENGINE_SCOPE);
         try {
             engine.eval(scriptSource);
@@ -90,13 +90,6 @@ public class JSExecutable implements Executable {
 
     public static class UUFBindings extends SimpleBindings {
 
-        private static final String KEY_CREATE_SESSION = "createSession";
-        private static final String KEY_GET_SESSION = "getSession";
-        private static final String KEY_DESTROY_SESSION = "destroySession";
-        private static final String KEY_SET_APP_THEME = "setAppTheme";
-        private static final String KEY_GET_APP_THEME = "getAppTheme";
-        private static final String KEY_SEND_TO_CLIENT = "sendToClient";
-
         private final ThreadLocal<JSFunctionsImpl> threadLocalFunctionProvider = new ThreadLocal<>();
 
         public void setJSFunctionProvider(JSFunctionsImpl functionProvider) {
@@ -113,17 +106,17 @@ public class JSExecutable implements Executable {
                 return super.get(key);
             }
             switch ((String) key) {
-                case KEY_CREATE_SESSION:
+                case CreateSessionFunction.NAME:
                     return threadLocalFunctionProvider.get().getCreateSessionFunction();
-                case KEY_GET_SESSION:
+                case GetSessionFunction.NAME:
                     return threadLocalFunctionProvider.get().getGetSessionFunction();
-                case KEY_DESTROY_SESSION:
+                case DestroySessionFunction.NAME:
                     return threadLocalFunctionProvider.get().getDestroySessionFunction();
-                case KEY_SET_APP_THEME:
+                case SetAppThemeFunction.NAME:
                     return threadLocalFunctionProvider.get().getSetAppThemeFunction();
-                case KEY_GET_APP_THEME:
+                case GetAppThemeFunction.NAME:
                     return threadLocalFunctionProvider.get().getGetAppThemeFunction();
-                case KEY_SEND_TO_CLIENT:
+                case SendToClientFunction.NAME:
                     return threadLocalFunctionProvider.get().getSendToClientFunction();
                 default:
                     return super.get(key);
@@ -136,12 +129,12 @@ public class JSExecutable implements Executable {
                 return super.containsKey(key);
             }
             switch ((String) key) {
-                case KEY_CREATE_SESSION:
-                case KEY_GET_SESSION:
-                case KEY_DESTROY_SESSION:
-                case KEY_SET_APP_THEME:
-                case KEY_GET_APP_THEME:
-                case KEY_SEND_TO_CLIENT:
+                case CreateSessionFunction.NAME:
+                case GetSessionFunction.NAME:
+                case DestroySessionFunction.NAME:
+                case SetAppThemeFunction.NAME:
+                case GetAppThemeFunction.NAME:
+                case SendToClientFunction.NAME:
                     return true;
                 default:
                     return super.containsKey(key);
