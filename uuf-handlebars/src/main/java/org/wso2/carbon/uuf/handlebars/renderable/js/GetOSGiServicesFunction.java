@@ -18,12 +18,10 @@ package org.wso2.carbon.uuf.handlebars.renderable.js;
 
 import java.util.Map;
 
-/**
- * Created by sajith on 6/24/16.
- */
 @FunctionalInterface
 public interface GetOSGiServicesFunction {
 
-    @SuppressWarnings("unused")
+    String NAME = "getOSGiServices";
+
     Map<String, Object> call(String serviceClassName);
 }

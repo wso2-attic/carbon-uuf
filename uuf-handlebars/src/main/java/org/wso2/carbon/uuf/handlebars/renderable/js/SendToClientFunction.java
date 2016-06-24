@@ -16,12 +16,10 @@
 
 package org.wso2.carbon.uuf.handlebars.renderable.js;
 
-/**
- * Created by sajith on 6/24/16.
- */
 @FunctionalInterface
 public interface SendToClientFunction {
 
-    @SuppressWarnings("unused")
+    String NAME = "sendToClient";
+
     void call(String name, Object value);
 }

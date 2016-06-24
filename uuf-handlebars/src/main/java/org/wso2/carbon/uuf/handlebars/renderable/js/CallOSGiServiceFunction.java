@@ -16,12 +16,10 @@
 
 package org.wso2.carbon.uuf.handlebars.renderable.js;
 
-/**
- * Created by sajith on 6/24/16.
- */
 @FunctionalInterface
 public interface CallOSGiServiceFunction {
 
-    @SuppressWarnings("unused")
+    String NAME = "callOSGiService";
+
     Object call(String serviceClassName, String serviceMethodName, Object... args);
 }

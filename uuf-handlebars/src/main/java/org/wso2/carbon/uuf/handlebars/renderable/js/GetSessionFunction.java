@@ -18,12 +18,10 @@ package org.wso2.carbon.uuf.handlebars.renderable.js;
 
 import org.wso2.carbon.uuf.api.auth.Session;
 
-/**
- * Created by sajith on 6/24/16.
- */
 @FunctionalInterface
 public interface GetSessionFunction {
 
-    @SuppressWarnings("unused")
+    String NAME = "getSession";
+
     Session call();
 }
