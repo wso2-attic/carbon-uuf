@@ -50,11 +50,11 @@ public class JSExecutable implements Executable {
                                                                                                  componentClassLoader);
         this.engineBindings = new CustomeBindings();
         engineBindings.put(ScriptEngine.FILENAME, this.scriptPath);
-        engineBindings.put("callOSGiService", JSFunctionCreator.getCallOsgiServiceFunction());
-        engineBindings.put("getOSGiServices", JSFunctionCreator.getGetOsgiServicesFunction());
-        engineBindings.put("callMicroService", JSFunctionCreator.getCallMicroServiceFunction());
-        engineBindings.put("sendError", JSFunctionCreator.getSendErrorFunction());
-        engineBindings.put("sendRedirect", JSFunctionCreator.getSendRedirectFunction());
+        engineBindings.put("callOSGiService", JSFunctionProvider.getCallOsgiServiceFunction());
+        engineBindings.put("getOSGiServices", JSFunctionProvider.getGetOsgiServicesFunction());
+        engineBindings.put("callMicroService", JSFunctionProvider.getCallMicroServiceFunction());
+        engineBindings.put("sendError", JSFunctionProvider.getSendErrorFunction());
+        engineBindings.put("sendRedirect", JSFunctionProvider.getSendRedirectFunction());
         engine.setBindings(engineBindings, ScriptContext.ENGINE_SCOPE);
         try {
             engine.eval(scriptSource);
@@ -69,7 +69,7 @@ public class JSExecutable implements Executable {
 
     public Object execute(Object context, API api) {
         try {
-            engineBindings.threadLocalFunctionCreator.set(new JSFunctionCreator(api));
+            engineBindings.threadLocalFunctionCreator.set(new JSFunctionProvider(api));
             return engine.invokeFunction("onRequest", context);
         } catch (ScriptException e) {
             throw new UUFException("An error occurred when executing the 'onRequest' function in JavaScript file '" +
@@ -96,7 +96,7 @@ public class JSExecutable implements Executable {
         private static final String KEY_GET_APP_THEME = "getAppTheme";
         private static final String KEY_SEND_TO_CLIENT = "sendToClient";
 
-        private final ThreadLocal<JSFunctionCreator> threadLocalFunctionCreator = new ThreadLocal<>();
+        private final ThreadLocal<JSFunctionProvider> threadLocalFunctionCreator = new ThreadLocal<>();
 
         @Override
         public Object get(Object key) {

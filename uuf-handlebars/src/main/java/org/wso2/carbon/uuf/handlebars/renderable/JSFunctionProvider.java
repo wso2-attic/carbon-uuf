@@ -23,7 +23,7 @@ import org.wso2.carbon.uuf.core.API;
 
 import java.util.Map;
 
-public class JSFunctionCreator {
+public class JSFunctionProvider {
 
     private static final CallOSGiServiceFunction CALL_OSGI_SERVICE_FUNCTION;
     private static final GetOSGiServicesFunction GET_OSGI_SERVICES_FUNCTION;
@@ -49,7 +49,7 @@ public class JSFunctionCreator {
         GSON = new Gson();
     }
 
-    public JSFunctionCreator(API api) {
+    public JSFunctionProvider(API api) {
         this.api = api;
     }
 
