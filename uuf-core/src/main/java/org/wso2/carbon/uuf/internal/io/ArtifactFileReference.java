@@ -53,7 +53,7 @@ public class ArtifactFileReference implements FileReference {
         try {
             return new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
         } catch (IOException e) {
-            throw new UUFException("Error while reading from file in '" + path + "'.", e);
+            throw new UUFException("Cannot read content of file '" + path + "'.", e);
         }
     }
 
