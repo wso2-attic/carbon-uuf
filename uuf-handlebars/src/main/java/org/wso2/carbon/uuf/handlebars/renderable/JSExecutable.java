@@ -34,7 +34,7 @@ public class JSExecutable implements Executable {
     private static final String[] SCRIPT_ENGINE_ARGS = new String[]{"-strict", "--optimistic-types"};
 
     private final NashornScriptEngine engine;
-    private final CustomeBindings engineBindings;
+    private final UUFBindings engineBindings;
     private final String scriptPath;
     private final String componentPath;
 
@@ -48,7 +48,7 @@ public class JSExecutable implements Executable {
         this.componentPath = componentPath;
         NashornScriptEngine engine = (NashornScriptEngine) SCRIPT_ENGINE_FACTORY.getScriptEngine(SCRIPT_ENGINE_ARGS,
                                                                                                  componentClassLoader);
-        this.engineBindings = new CustomeBindings();
+        this.engineBindings = new UUFBindings();
         engineBindings.put(ScriptEngine.FILENAME, this.scriptPath);
         engineBindings.put("callOSGiService", JSFunctionProvider.getCallOsgiServiceFunction());
         engineBindings.put("getOSGiServices", JSFunctionProvider.getGetOsgiServicesFunction());
@@ -87,7 +87,7 @@ public class JSExecutable implements Executable {
         return "{\"path\": \"" + scriptPath + "\"}";
     }
 
-    public static class CustomeBindings extends SimpleBindings {
+    public static class UUFBindings extends SimpleBindings {
 
         private static final String KEY_CREATE_SESSION = "createSession";
         private static final String KEY_GET_SESSION = "getSession";
