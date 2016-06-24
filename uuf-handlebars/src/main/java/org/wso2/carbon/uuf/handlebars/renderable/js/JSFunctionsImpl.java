@@ -19,6 +19,15 @@ package org.wso2.carbon.uuf.handlebars.renderable.js;
 import com.google.gson.Gson;
 import org.wso2.carbon.uuf.api.Placeholder;
 import org.wso2.carbon.uuf.core.API;
+import org.wso2.carbon.uuf.exception.UUFException;
+
+import javax.script.ScriptEngine;
+import javax.script.ScriptException;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class JSFunctionsImpl {
 
@@ -28,6 +37,7 @@ public class JSFunctionsImpl {
     private static final SendErrorFunction SEND_ERROR_FUNCTION;
     private static final SendRedirectFunction SEND_REDIRECT_FUNCTION;
     private static final Gson GSON;
+    private static ModuleFunction MODULE_FUNCTION;
 
     private final API api;
     private CreateSessionFunction createSessionFunction;
@@ -68,6 +78,30 @@ public class JSFunctionsImpl {
 
     public static SendRedirectFunction getSendRedirectFunction() {
         return SEND_REDIRECT_FUNCTION;
+    }
+
+    public static ModuleFunction getModuleFunction(String componentPath, ScriptEngine engine) {
+        return moduleName -> {
+            Path modulesDirPath = Paths.get(componentPath, "modules");
+            Path jsFilePath = modulesDirPath.resolve(moduleName + ".js");
+            if (!Files.exists(jsFilePath)) {
+                throw new IllegalArgumentException(
+                        "JavaScript module '" + moduleName + "' does not exists in component module directory '" +
+                                modulesDirPath + "'.");
+            }
+
+            try {
+                String content = new String(Files.readAllBytes(jsFilePath), StandardCharsets.UTF_8);
+                engine.eval(content);
+            } catch (IOException e) {
+                throw new UUFException("Cannot read content of JavaScript module '" + moduleName +
+                                               "' in component module directory '" + modulesDirPath + ".", e);
+            } catch (ScriptException e) {
+                throw new UUFException(
+                        "Cannot evaluate JavaScript module '" + moduleName + "' in component module directory '" +
+                                modulesDirPath + ".", e);
+            }
+        };
     }
 
     public CreateSessionFunction getCreateSessionFunction() {
