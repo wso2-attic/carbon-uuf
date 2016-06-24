@@ -63,8 +63,7 @@ public class JSExecutable implements Executable {
             // thread-safe. See http://stackoverflow.com/a/30159424
             this.engine = engine;
         } catch (ScriptException e) {
-            throw new UUFException("An error occurred when evaluating the JavaScript file '" + this.scriptPath + "'.",
-                                   e);
+            throw new UUFException("Cannot evaluate JavaScript file '" + this.scriptPath + "'.", e);
         }
     }
 
