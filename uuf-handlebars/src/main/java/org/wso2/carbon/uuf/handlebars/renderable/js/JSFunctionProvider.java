@@ -18,10 +18,7 @@ package org.wso2.carbon.uuf.handlebars.renderable.js;
 
 import com.google.gson.Gson;
 import org.wso2.carbon.uuf.api.Placeholder;
-import org.wso2.carbon.uuf.api.auth.Session;
 import org.wso2.carbon.uuf.core.API;
-
-import java.util.Map;
 
 public class JSFunctionProvider {
 
@@ -119,80 +116,4 @@ public class JSFunctionProvider {
         return sendToClientFunction;
     }
 
-    @FunctionalInterface
-    public interface CallOSGiServiceFunction {
-
-        @SuppressWarnings("unused")
-        Object call(String serviceClassName, String serviceMethodName, Object... args);
-    }
-
-    @FunctionalInterface
-    public interface GetOSGiServicesFunction {
-
-        @SuppressWarnings("unused")
-        Map<String, Object> call(String serviceClassName);
-    }
-
-    @FunctionalInterface
-    public interface CallMicroServiceFunction {
-
-        @SuppressWarnings("unused")
-        void call();
-    }
-
-    @FunctionalInterface
-    public interface SendErrorFunction {
-
-        @SuppressWarnings("unused")
-        void call(int status, String message);
-    }
-
-    @FunctionalInterface
-    public interface SendRedirectFunction {
-
-        @SuppressWarnings("unused")
-        void call(String redirectUrl);
-    }
-
-    @FunctionalInterface
-    public interface CreateSessionFunction {
-
-        @SuppressWarnings("unused")
-        Session call(String userName);
-    }
-
-    @FunctionalInterface
-    public interface GetSessionFunction {
-
-        @SuppressWarnings("unused")
-        Session call();
-    }
-
-    @FunctionalInterface
-    public interface DestroySessionFunction {
-
-        @SuppressWarnings("unused")
-        boolean call();
-    }
-
-    @FunctionalInterface
-    public interface SetAppThemeFunction {
-
-        @SuppressWarnings("unused")
-        void call(String themeName);
-    }
-
-    @FunctionalInterface
-    public interface GetAppThemeFunction {
-
-        @SuppressWarnings("unused")
-        String call();
-    }
-
-    @FunctionalInterface
-    public interface SendToClientFunction {
-
-        @SuppressWarnings("unused")
-        void call(String name, Object value);
-    }
 }
