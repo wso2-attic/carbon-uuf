@@ -37,7 +37,6 @@ public class JSFunctionsImpl {
     private static final SendErrorFunction SEND_ERROR_FUNCTION;
     private static final SendRedirectFunction SEND_REDIRECT_FUNCTION;
     private static final Gson GSON;
-    private static ModuleFunction MODULE_FUNCTION;
 
     private final API api;
     private CreateSessionFunction createSessionFunction;
