@@ -26,6 +26,7 @@ import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 import javax.script.SimpleBindings;
+import java.util.Map;
 
 // TODO remove this SuppressWarnings
 @SuppressWarnings("PackageAccessibility")
@@ -55,14 +56,16 @@ public class JSExecutable implements Executable {
         try {
             engine.eval(scriptSource);
         } catch (ScriptException e) {
-            throw new UUFException("Cannot evaluate JavaScript file '" + this.scriptPath + "'.", e);
+            throw new UUFException("An error occurred while evaluating the JavaScript file '" + this.scriptPath + "'.",
+                                   e);
         }
-        engineBindings.put(ModuleFunction.NAME, null); // removing 'module' function
+        engineBindings.remove(ModuleFunction.NAME); // removing 'module' function
         engineBindings.put(CallOSGiServiceFunction.NAME, JSFunctionsImpl.getCallOsgiServiceFunction());
         engineBindings.put(GetOSGiServicesFunction.NAME, JSFunctionsImpl.getGetOsgiServicesFunction());
         engineBindings.put(CallMicroServiceFunction.NAME, JSFunctionsImpl.getCallMicroServiceFunction());
         engineBindings.put(SendErrorFunction.NAME, JSFunctionsImpl.getSendErrorFunction());
         engineBindings.put(SendRedirectFunction.NAME, JSFunctionsImpl.getSendRedirectFunction());
+        engineBindings.lock();
         // Even though 'NashornScriptEngineFactory.getParameter("THREADING")' returns null, NashornScriptEngine is
         // thread-safe. See http://stackoverflow.com/a/30159424
         this.engine = engine;
@@ -91,7 +94,13 @@ public class JSExecutable implements Executable {
 
     public static class UUFBindings extends SimpleBindings {
 
-        private final ThreadLocal<JSFunctionsImpl> threadLocalFunctionProvider = new ThreadLocal<>();
+        private final ThreadLocal<JSFunctionsImpl> threadLocalFunctionProvider;
+        private boolean isLocked;
+
+        public UUFBindings() {
+            this.threadLocalFunctionProvider = new ThreadLocal<>();
+            this.isLocked = false;
+        }
 
         public void setJSFunctionProvider(JSFunctionsImpl functionProvider) {
             threadLocalFunctionProvider.set(functionProvider);
@@ -99,6 +108,10 @@ public class JSExecutable implements Executable {
 
         public void removeJSFunctionProvider() {
             threadLocalFunctionProvider.remove();
+        }
+
+        public void lock() {
+            isLocked = true;
         }
 
         @Override
@@ -140,6 +153,32 @@ public class JSExecutable implements Executable {
                 default:
                     return super.containsKey(key);
             }
+        }
+
+        @Override
+        public Object put(String name, Object value) {
+            if (isLocked) {
+                throw new IllegalStateException(
+                        "Cannot modify global '" + name + "' variable/function in this context;");
+            }
+            return super.put(name, value);
+        }
+
+        @Override
+        public void putAll(Map<? extends String, ? extends Object> toMerge) {
+            if (isLocked) {
+                throw new IllegalStateException("Cannot modify global variables/functions in this context;");
+            }
+            super.putAll(toMerge);
+        }
+
+        @Override
+        public Object remove(Object key) {
+            if (isLocked) {
+                throw new IllegalStateException(
+                        "Cannot modify global '" + key + "' variable/function in this context;");
+            }
+            return super.remove(key);
         }
     }
 }
