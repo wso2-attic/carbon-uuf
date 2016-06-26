@@ -56,6 +56,7 @@ import java.util.concurrent.ConcurrentHashMap;
                 "componentName=wso2-uuf-deployer"
         }
 )
+@SuppressWarnings("unused")
 public class UUFAppDeployer implements Deployer, RequiredCapabilityListener {
 
     private static final Logger log = LoggerFactory.getLogger(UUFAppDeployer.class);
@@ -79,16 +80,13 @@ public class UUFAppDeployer implements Deployer, RequiredCapabilityListener {
         }
     }
 
-
     @Activate
-    @SuppressWarnings("unused")
     protected void activate(BundleContext bundleContext) {
         this.bundleContext = bundleContext;
         log.debug("UUFAppDeployer service activated.");
     }
 
     @Deactivate
-    @SuppressWarnings("unused")
     protected void deactivate(BundleContext bundleContext) {
         this.bundleContext = null;
         log.debug("UUFAppDeployer service deactivated.");
@@ -104,7 +102,6 @@ public class UUFAppDeployer implements Deployer, RequiredCapabilityListener {
                cardinality = ReferenceCardinality.MANDATORY,
                policy = ReferencePolicy.DYNAMIC,
                unbind = "unsetUUFAppRegistry")
-    @SuppressWarnings("unused")
     public void setUUFAppRegistry(UUFAppRegistry uufAppRegistry) {
         this.uufAppRegistry = uufAppRegistry;
         log.info("UUFAppRegistry '" + uufAppRegistry.getClass().getName() + "' registered.");
@@ -115,7 +112,6 @@ public class UUFAppDeployer implements Deployer, RequiredCapabilityListener {
      *
      * @param uufAppRegistry unregistered uuf app registry
      */
-    @SuppressWarnings("unused")
     public void unsetUUFAppRegistry(UUFAppRegistry uufAppRegistry) {
         this.uufAppRegistry = null;
         log.info("UUFAppRegistry " + uufAppRegistry.getClass().getName() + " unregistered.");
@@ -131,7 +127,6 @@ public class UUFAppDeployer implements Deployer, RequiredCapabilityListener {
                cardinality = ReferenceCardinality.AT_LEAST_ONE,
                policy = ReferencePolicy.DYNAMIC,
                unbind = "unsetRenderableCreator")
-    @SuppressWarnings("unused")
     public void setRenderableCreator(RenderableCreator renderableCreator) {
         if (!renderableCreators.add(renderableCreator)) {
             throw new IllegalArgumentException(
@@ -147,7 +142,6 @@ public class UUFAppDeployer implements Deployer, RequiredCapabilityListener {
      *
      * @param renderableCreator unregistered renderable creator
      */
-    @SuppressWarnings("unused")
     public void unsetRenderableCreator(RenderableCreator renderableCreator) {
         renderableCreators.remove(renderableCreator);
         log.info("RenderableCreator " + renderableCreator.getClass().getName() + " unregistered for " +
@@ -163,16 +157,15 @@ public class UUFAppDeployer implements Deployer, RequiredCapabilityListener {
     public Object deploy(Artifact artifact) throws CarbonDeploymentException {
         App app = appCreator.createApp(new ArtifactAppReference(Paths.get(artifact.getPath())));
         uufAppRegistry.add(app);
-        log.info("App '" + app.getName() + "' deployed for context '" + app.getContext() + "'.");
+        log.info("UUF app '" + app.getName() + "' deployed for context path '" + app.getContext() + "'.");
         return app.getName();
     }
 
     @Override
     public void undeploy(Object key) throws CarbonDeploymentException {
         String appName = (String) key;
-        uufAppRegistry.remove(appName).ifPresent(removedApp -> log.info("App '" + removedApp.getName()
-                                                                                + "' undeployed for context '"
-                                                                                + removedApp.getContext() + "'."));
+        uufAppRegistry.remove(appName).ifPresent(
+                app -> log.info("UUF app '" + app.getName() + "' undeployed for context '" + app.getContext() + "'."));
     }
 
     @Override
@@ -196,7 +189,8 @@ public class UUFAppDeployer implements Deployer, RequiredCapabilityListener {
     @Override
     public void onAllRequiredCapabilitiesAvailable() {
         this.appCreator = new AppCreator(renderableCreators, classLoaderProvider);
-        log.info("AppCreator is ready.");
+        log.debug("AppCreator is ready.");
         bundleContext.registerService(Deployer.class, this, null);
+        log.debug("UUFAppDeployer registered as a Carbon artifact deployer.");
     }
 }
