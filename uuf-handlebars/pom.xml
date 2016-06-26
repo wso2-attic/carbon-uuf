@@ -88,7 +88,9 @@
                             org.apache.commons.io,
                             org.yaml.snakeyaml
                         </Import-Package>
-                        <Export-Package>org.wso2.carbon.uuf.handlebars.*;version="${carbon.uuf.version}"
+                        <Private-Package>org.wso2.carbon.uuf.handlebars.internal.*</Private-Package>
+                        <Export-Package>
+                            org.wso2.carbon.uuf.handlebars.*;version="${carbon.uuf.version}"
                         </Export-Package>
                         <Carbon-Component>
                             osgi.service;objectClass="org.wso2.carbon.uuf.spi.RenderableCreator"
