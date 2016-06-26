@@ -104,7 +104,7 @@ public class UUFAppDeployer implements Deployer, RequiredCapabilityListener {
                unbind = "unsetUUFAppRegistry")
     public void setUUFAppRegistry(UUFAppRegistry uufAppRegistry) {
         this.uufAppRegistry = uufAppRegistry;
-        log.info("UUFAppRegistry '" + uufAppRegistry.getClass().getName() + "' registered.");
+        log.debug("UUFAppRegistry '" + uufAppRegistry.getClass().getName() + "' registered.");
     }
 
     /**
@@ -114,7 +114,7 @@ public class UUFAppDeployer implements Deployer, RequiredCapabilityListener {
      */
     public void unsetUUFAppRegistry(UUFAppRegistry uufAppRegistry) {
         this.uufAppRegistry = null;
-        log.info("UUFAppRegistry " + uufAppRegistry.getClass().getName() + " unregistered.");
+        log.debug("UUFAppRegistry " + uufAppRegistry.getClass().getName() + " unregistered.");
     }
 
     /**
