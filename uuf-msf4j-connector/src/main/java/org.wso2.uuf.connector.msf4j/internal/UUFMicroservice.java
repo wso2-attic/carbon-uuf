@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.wso2.uuf.connector.msf4j;
+package org.wso2.uuf.connector.msf4j.internal;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -26,6 +26,8 @@ import org.wso2.carbon.uuf.api.ServerConnection;
 import org.wso2.msf4j.HttpStreamer;
 import org.wso2.msf4j.Microservice;
 import org.wso2.msf4j.Request;
+import org.wso2.uuf.connector.msf4j.MicroserviceHttpRequest;
+import org.wso2.uuf.connector.msf4j.MicroserviceHttpResponse;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -33,16 +35,11 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * UUF Connector for MSF4J.
  */
-@Component(name = "org.wso2.uuf.connector.msf4j.UUFMicroservice",
+@Component(name = "org.wso2.uuf.connector.msf4j.internal.UUFMicroservice",
            service = {Microservice.class, HttpConnector.class},
            immediate = true)
 @Path("/")
