@@ -70,7 +70,7 @@
                             com.google.common.*;version="${guava.version.range}",
                             org.slf4j.*;version="${slf4j.version.range}"
                         </Import-Package>
-                        <Private-Package>org.wso2.uuf.connector.msf4j.internal.*</Private-Package>
+                        <!--<Private-Package>org.wso2.uuf.connector.msf4j.internal.*</Private-Package>-->
                         <Export-Package>
                             org.wso2.uuf.connector.msf4j.*;version="${carbon.uuf.version}"
                         </Export-Package>
