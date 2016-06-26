@@ -24,7 +24,7 @@
     <packaging>pom</packaging>
 
     <name>WSO2 UUF Server - Distribution</name>
-    <description>WSO2 UUF Server - Distribution</description>
+    <description>WSO2 UUF Server</description>
     <url>http://wso2.org</url>
 
     <parent>

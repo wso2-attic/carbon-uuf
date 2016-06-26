@@ -22,8 +22,8 @@
     <artifactId>org.wso2.uuf.connector.msf4j</artifactId>
     <packaging>bundle</packaging>
 
-    <name>WSO2 UUF - MSF4J Connector</name>
-    <description>MSF4J Connector plugin for WSO2 Unified UI Framework</description>
+    <name>WSO2 UUF - HTTP Connector - MSF4J</name>
+    <description>HTTP Connector implementation using WSO2 MSF4j for Unified UI Framework</description>
 
     <parent>
         <artifactId>uuf-parent</artifactId>

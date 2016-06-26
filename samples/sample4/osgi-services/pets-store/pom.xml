@@ -25,6 +25,7 @@
     <packaging>bundle</packaging>
 
     <name>WSO2 UUF Sample - Pets Store Bundle</name>
+    <description>This feature contains the sample OSGi service for Pets Store sample app</description>
     <url>http://wso2.org</url>
 
     <parent>

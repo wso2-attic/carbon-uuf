@@ -24,7 +24,7 @@
     <artifactId>org.wso2.uuf.theme.green</artifactId>
     <version>1.0.0-SNAPSHOT</version>
 
-    <name>WSO2 UUF Theme - Green</name>
+    <name>WSO2 UUF Sample - Theme - Green</name>
     <url>http://wso2.org</url>
 
     <build>

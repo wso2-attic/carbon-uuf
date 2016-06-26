@@ -25,9 +25,9 @@
     <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <name>WSO2 UUF - Unified UI Framework</name>
-    <url>https://github.com/wso2/carbon-uuf</url>
+    <name>WSO2 UUF - Parent</name>
     <description>WSO2 Unified Ui Framework</description>
+    <url>http://wso2.org</url>
 
     <parent>
         <groupId>org.wso2</groupId>

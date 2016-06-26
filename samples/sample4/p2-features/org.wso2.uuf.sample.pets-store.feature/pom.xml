@@ -24,8 +24,8 @@
     <packaging>carbon-feature</packaging>
 
     <name>WSO2 UUF Sample - Pets Store - Feature</name>
+    <description>This feature contains the sample Pets Store app</description>
     <url>http://wso2.org</url>
-    <description>This feature contains the pets store feature</description>
 
     <parent>
         <groupId>org.wso2.uuf.sample</groupId>

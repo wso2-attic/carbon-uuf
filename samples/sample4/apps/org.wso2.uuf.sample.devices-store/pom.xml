@@ -24,7 +24,7 @@
     <artifactId>org.wso2.uuf.sample.devices-store</artifactId>
     <version>1.0.0-SNAPSHOT</version>
 
-    <name>WSO2 UUF Sample - Devices Store App</name>
+    <name>WSO2 UUF Sample - App - Devices Store App</name>
     <url>http://wso2.org</url>
 
     <properties>

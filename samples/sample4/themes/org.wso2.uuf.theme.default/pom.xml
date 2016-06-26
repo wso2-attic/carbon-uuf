@@ -24,7 +24,7 @@
     <artifactId>org.wso2.uuf.theme.default</artifactId>
     <version>1.0.0-SNAPSHOT</version>
 
-    <name>WSO2 UUF Theme - Default</name>
+    <name>WSO2 UUF Sample - Theme - Default</name>
     <url>http://wso2.org</url>
 
     <build>

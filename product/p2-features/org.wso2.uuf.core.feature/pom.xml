@@ -24,8 +24,8 @@
     <packaging>carbon-feature</packaging>
 
     <name>WSO2 UUF - Core - Feature</name>
+    <description>This feature contains the UUF core bundles for UUF server</description>
     <url>http://wso2.org</url>
-    <description>This feature contains the core bundles required by the UUF Core feature</description>
 
     <parent>
         <groupId>org.wso2.uuf</groupId>

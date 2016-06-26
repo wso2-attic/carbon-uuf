@@ -23,9 +23,9 @@
     <artifactId>org.wso2.uuf.connector.msf4j.feature</artifactId>
     <packaging>carbon-feature</packaging>
 
-    <name>WSO2 UUF - MSF4J Connector - Feature</name>
+    <name>WSO2 UUF - HTTP Connector - MSF4J - Feature</name>
+    <description>This feature contains the MSF4J HTTP Connector for UUF server</description>
     <url>http://wso2.org</url>
-    <description>This feature contains the MSF4J Connector feature</description>
 
     <parent>
         <groupId>org.wso2.uuf</groupId>

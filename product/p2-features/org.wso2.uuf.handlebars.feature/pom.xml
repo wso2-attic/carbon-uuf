@@ -23,9 +23,9 @@
     <artifactId>org.wso2.uuf.handlebars.feature</artifactId>
     <packaging>carbon-feature</packaging>
 
-    <name>WSO2 UUF - Handlebars - Feature</name>
+    <name>WSO2 UUF - Renderable Creator - Handlebars - Feature</name>
+    <description>This feature contains the Handlebars Renderable Creator for UUF server</description>
     <url>http://wso2.org</url>
-    <description>This feature contains the handlebars feature</description>
 
     <parent>
         <groupId>org.wso2.uuf</groupId>

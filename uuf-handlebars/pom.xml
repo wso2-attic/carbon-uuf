@@ -23,8 +23,11 @@
     <artifactId>org.wso2.uuf.handlebars</artifactId>
     <packaging>bundle</packaging>
 
-    <name>WSO2 UUF - Handlebars</name>
-    <description>Handlebars plugin for WSo2 Unified Ui Framework</description>
+    <name>WSO2 UUF - Renderable Creator - Handlebars</name>
+    <description>
+        Renderable Creator implementation using Handlebars and JavaScript for Unified Ui Framework
+    </description>
+    <url>http://wso2.org</url>
 
     <parent>
         <artifactId>uuf-parent</artifactId>
@@ -85,7 +88,8 @@
                             org.apache.commons.io,
                             org.yaml.snakeyaml
                         </Import-Package>
-                        <Export-Package>org.wso2.carbon.uuf.handlebars.*;version="${carbon.uuf.version}"</Export-Package>
+                        <Export-Package>org.wso2.carbon.uuf.handlebars.*;version="${carbon.uuf.version}"
+                        </Export-Package>
                         <Carbon-Component>
                             osgi.service;objectClass="org.wso2.carbon.uuf.spi.RenderableCreator"
                         </Carbon-Component>
