@@ -117,7 +117,6 @@
                 <artifactId>maven-bundle-plugin</artifactId>
                 <configuration>
                     <instructions>
-                        <Private-Package>org.wso2.carbon.uuf.internal.*</Private-Package>
                         <Import-Package>
                             org.wso2.carbon.deployment.engine.*; version="${carbon.kernel.version.range}",
                             org.wso2.carbon.deployment.notifier.*; version="${carbon.kernel.version.range}",
@@ -137,6 +136,7 @@
                             org.slf4j.*;version="${slf4j.version.range}",
                             org.yaml.snakeyaml
                         </Import-Package>
+                        <Private-Package>org.wso2.carbon.uuf.internal.*</Private-Package>
                         <Export-Package>
                             org.wso2.carbon.uuf.api.*;version="${carbon.uuf.version}",
                             org.wso2.carbon.uuf.connector.*;version="${carbon.uuf.version}",
