@@ -49,6 +49,7 @@ import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_NOT_FOUND;
            immediate = true,
            service = UUFAppRegistry.class
 )
+@SuppressWarnings("unused")
 public class UUFServer implements UUFAppRegistry {
 
     private static final Logger log = LoggerFactory.getLogger(UUFServer.class);
@@ -76,7 +77,6 @@ public class UUFServer implements UUFAppRegistry {
                cardinality = ReferenceCardinality.AT_LEAST_ONE,
                policy = ReferencePolicy.DYNAMIC,
                unbind = "unsetHttpConnector")
-    @SuppressWarnings("unused")
     public void setHttpConnector(HttpConnector connector) {
         connector.setServerConnection((request, response) -> {
             MDC.put("uuf-request", String.valueOf(count.incrementAndGet()));
@@ -84,7 +84,7 @@ public class UUFServer implements UUFAppRegistry {
             MDC.remove("uuf-request");
             return response;
         });
-        log.info("Connector '" + connector.getClass().getName() + "' registered.");
+        log.info("HttpConnector '" + connector.getClass().getName() + "' registered.");
     }
 
     /**
@@ -92,22 +92,19 @@ public class UUFServer implements UUFAppRegistry {
      *
      * @param connector unregistered connector
      */
-    @SuppressWarnings("unused")
     public void unsetHttpConnector(HttpConnector connector) {
         connector.setServerConnection(null);
-        log.info("Connector '" + connector.getClass().getName() + "' unregistered.");
+        log.info("HttpConnector '" + connector.getClass().getName() + "' unregistered.");
     }
 
     @Activate
-    @SuppressWarnings("unused")
     protected void activate(BundleContext bundleContext) {
-        log.info("UUFServer service activated.");
+        log.debug("UUFServer service activated.");
     }
 
     @Deactivate
-    @SuppressWarnings("unused")
     protected void deactivate(BundleContext bundleContext) {
-        log.info("UUFServer service deactivated.");
+        log.debug("UUFServer service deactivated.");
     }
 
     public void serve(HttpRequest request, HttpResponse response) {
