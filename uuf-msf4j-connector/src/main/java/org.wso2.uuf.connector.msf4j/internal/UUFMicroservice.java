@@ -21,8 +21,8 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.uuf.spi.HttpConnector;
 import org.wso2.carbon.uuf.api.ServerConnection;
+import org.wso2.carbon.uuf.spi.HttpConnector;
 import org.wso2.msf4j.HttpStreamer;
 import org.wso2.msf4j.Microservice;
 import org.wso2.msf4j.Request;
@@ -85,56 +85,4 @@ public class UUFMicroservice implements Microservice, HttpConnector {
     public ServerConnection getServerConnection() {
         return serverConnection;
     }
-
-//    private static class HttpStreamHandlerImpl implements HttpStreamHandler {
-//        private final ByteArrayOutputStream content = new ByteArrayOutputStream();
-//        private final UUFMicroservice UUFMicroservice;
-//        private final HttpRequest nettyRequest;
-//        private org.wso2.msf4j.Response response;
-//
-//        public HttpStreamHandlerImpl(UUFMicroservice UUFMicroservice,
-//                                     HttpRequest nettyRequest) {
-//            this.UUFMicroservice = UUFMicroservice;
-//            this.nettyRequest = nettyRequest;
-//        }
-//
-//        @Override
-//        public void init(org.wso2.msf4j.Response response) {
-//            this.response = response;
-//        }
-//
-//        @Override
-//        public void chunk(ByteBuffer request) throws IOException {
-//            request.readBytes(content, request.capacity());
-//        }
-//
-//        @Override
-//        public void finished(ByteBuf request) throws IOException {
-//            request.readBytes(content, request.capacity());
-//            content.close();
-//
-//            Response response = UUFMicroservice.execute(nettyRequest, content.toByteArray());
-//            ByteBuf channelBuffer = Unpooled.wrappedBuffer(response.getEntity().toString().getBytes());
-//            Multimap<String, String> headers = ArrayListMultimap.create();
-//            response.getHeaders().forEach(
-//                    (hKey, hList) -> hList.forEach(hValue -> headers.put(hKey, hValue.toString())));
-//            HttpResponseStatus httpResponseStatus = HttpResponseStatus.valueOf(response.getStatus());
-//            if (response.hasEntity()) {
-//                responder.sendContent(httpResponseStatus, channelBuffer,
-//                                      response.getHeaders().get(HttpHeaders.CONTENT_TYPE).toString(), headers);
-//            } else {
-//                responder.sendStatus(httpResponseStatus);
-//            }
-//        }
-//
-//        @Override
-//        public void error(Throwable cause) {
-//            try {
-//                content.close();
-//            } catch (IOException e) {
-//                // Log if unable to close the output stream
-//                log.error("Unable to close byte array output stream", e);
-//            }
-//        }
-//    }
 }
