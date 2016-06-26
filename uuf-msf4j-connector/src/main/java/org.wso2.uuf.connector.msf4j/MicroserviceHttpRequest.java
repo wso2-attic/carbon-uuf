@@ -30,9 +30,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * HttpRequest implementation based on Microservice HTTP request.
+ * UUF HttpRequest implementation based on MSF4J request.
  */
-public class MicroserviceHttpRequest implements org.wso2.carbon.uuf.spi.HttpRequest {
+public class MicroserviceHttpRequest implements HttpRequest {
 
     public static final String HTTP_VERSION = "HTTP_VERSION";
 

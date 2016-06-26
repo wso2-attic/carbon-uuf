@@ -25,6 +25,9 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * UUF HttpResponse implementation based on JAX-RS Response.
+ */
 public class MicroserviceHttpResponse implements HttpResponse {
 
     private int status;
@@ -97,7 +100,7 @@ public class MicroserviceHttpResponse implements HttpResponse {
         return headers;
     }
 
-    public Response build(){
+    public Response build() {
         Response.ResponseBuilder responseBuilder = Response.status(status);
         if (content != null) {
             responseBuilder.entity(content).type(contentType);
