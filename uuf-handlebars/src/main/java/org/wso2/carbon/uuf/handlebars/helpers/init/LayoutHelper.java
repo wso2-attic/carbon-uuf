@@ -29,6 +29,10 @@ public class LayoutHelper implements Helper<String> {
 
     @Override
     public CharSequence apply(String layoutName, Options options) throws IOException {
+        if ((layoutName == null) || layoutName.isEmpty()) {
+            throw new IllegalArgumentException("Layout name cannot be null or empty.");
+        }
+
         Object currentLayout = options.data(HbsPreprocessor.DATA_KEY_CURRENT_LAYOUT);
         if (currentLayout != null) {
             throw new UUFException("Cannot set layout '" + layoutName + "' to this page because layout '" +
