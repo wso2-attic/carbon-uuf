@@ -121,6 +121,7 @@ public class BundleClassLoaderProvider implements ClassLoaderProvider {
         InputStream bundleInputStream = createBundleStream(bundleName, bundleKey, bundleVersion, imports);
         bundle = bundleContext.installBundle(bundleKey, bundleInputStream);
         bundle.start();
+        //InputStream will be eventually consumed by org.eclipse.osgi.storage.StorageUtil hence cannot close it here.
         return bundle;
     }
 
