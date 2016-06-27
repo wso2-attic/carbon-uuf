@@ -1,5 +1,5 @@
 {{layout "org.wso2.uuf.base.main"}}
-{{title "Send Redirect Sample | " @app.config.appName}}
+{{title "Send Redirect Sample | " @config.appName}}
 {{#fillZone "content"}}
     <h3>Send Redirect.</h3>
     <hr />
@@ -20,5 +20,5 @@
             }
         }
     </pre>
-    <a href="{{@app.context}}/send-redirect?sendRedirect=true" class="btn btn-info"><b>Click Here To Run Demo</b></a>
+    <a href="{{@contextPath}}/send-redirect?sendRedirect=true" class="btn btn-info"><b>Click Here To Run Demo</b></a>
 {{/fillZone}}

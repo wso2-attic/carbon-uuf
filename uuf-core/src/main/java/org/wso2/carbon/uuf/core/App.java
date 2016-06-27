@@ -60,8 +60,8 @@ public class App {
         this.components = this.lookup.getAllComponents().values().stream()
                 .collect(Collectors.toMap(Component::getContext, cmp -> cmp));
         this.rootComponent = this.components.remove(Component.ROOT_COMPONENT_CONTEXT);
-        String configuredServerAppContext = configuration.getServerAppContext();
-        this.context = (configuredServerAppContext == null) ? ("/" + getSimpleName(name)) : configuredServerAppContext;
+        String configuredServerContextPath = configuration.getServerContextPath();
+        this.context = (configuredServerContextPath == null) ? ("/" + getSimpleName(name)) : configuredServerContextPath;
 
         this.themes = themes.stream().collect(Collectors.toMap(Theme::getName, theme -> theme));
         String configuredThemeName = this.configuration.getThemeName();
@@ -94,7 +94,7 @@ public class App {
      * @return rendered HTML output
      */
     public String renderPage(HttpRequest request, HttpResponse response) {
-        RequestLookup requestLookup = new RequestLookup(configuration.getClientAppContext(), request, response);
+        RequestLookup requestLookup = new RequestLookup(configuration.getClientContextPath(), request, response);
         API api = new API(sessionRegistry, requestLookup);
         // If exists, render Theme.
         Theme renderingTheme = getRenderingTheme(api);
@@ -102,7 +102,7 @@ public class App {
             renderingTheme.render(requestLookup);
         }
         try {
-            String html = renderPage(request.getUriWithoutAppContext(), null, requestLookup, api);
+            String html = renderPage(request.getUriWithoutContextPath(), null, requestLookup, api);
             updateAppTheme(api);
             return html;
         } catch (SessionNotFoundException e) {
@@ -123,7 +123,7 @@ public class App {
             return Optional.<String>empty();
         }
 
-        RequestLookup requestLookup = new RequestLookup(configuration.getClientAppContext(), request, response);
+        RequestLookup requestLookup = new RequestLookup(configuration.getClientContextPath(), request, response);
         API api = new API(sessionRegistry, requestLookup);
         // If exists, render Theme.
         Theme renderingTheme = getRenderingTheme(api);
@@ -171,8 +171,8 @@ public class App {
      * @return rendered HTML output
      */
     public String renderFragment(HttpRequest request, HttpResponse response) {
-        String uriWithoutAppContext = request.getUriWithoutAppContext();
-        String uriPart = uriWithoutAppContext.substring(UriUtils.FRAGMENTS_URI_PREFIX.length());
+        String uriWithoutContextPath = request.getUriWithoutContextPath();
+        String uriPart = uriWithoutContextPath.substring(UriUtils.FRAGMENTS_URI_PREFIX.length());
         String fragmentName = NameUtils.getFullyQualifiedName(rootComponent.getName(), uriPart);
         // When building the dependency tree, all fragments are accumulated into the rootComponent.
         Fragment fragment = lookup.getAllFragments().get(fragmentName);
@@ -181,30 +181,30 @@ public class App {
         }
 
         Model model = new MapModel(request.getQueryParams());
-        RequestLookup requestLookup = new RequestLookup(configuration.getClientAppContext(), request, response);
+        RequestLookup requestLookup = new RequestLookup(configuration.getClientContextPath(), request, response);
         API api = new API(sessionRegistry, requestLookup);
         return fragment.render(model, lookup, requestLookup, api);
     }
 
-    public boolean hasPage(String uriWithoutAppContext) {
+    public boolean hasPage(String uriWithoutContextPath) {
         // First check 'root' component has the page.
-        if (rootComponent.hasPage(uriWithoutAppContext)) {
+        if (rootComponent.hasPage(uriWithoutContextPath)) {
             return true;
         }
 
         // Since 'root' components doesn't have the page, search in other components.
-        int secondSlashIndex = uriWithoutAppContext.indexOf('/', 1);
+        int secondSlashIndex = uriWithoutContextPath.indexOf('/', 1);
         if (secondSlashIndex == -1) {
-            // No component context found in the 'uriWithoutAppContext' URI.
+            // No component context found in the 'uriWithoutContextPath' URI.
             return false;
         }
-        String componentContext = uriWithoutAppContext.substring(0, secondSlashIndex);
+        String componentContext = uriWithoutContextPath.substring(0, secondSlashIndex);
         Component component = components.get(componentContext);
         if (component == null) {
             // No component found for the 'componentContext' key.
             return false;
         }
-        String pageUri = uriWithoutAppContext.substring(secondSlashIndex);
+        String pageUri = uriWithoutContextPath.substring(secondSlashIndex);
         return component.hasPage(pageUri);
     }
 

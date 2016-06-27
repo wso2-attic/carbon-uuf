@@ -1,13 +1,13 @@
 {{layout "org.wso2.uuf.base.main"}}
 {{favicon "images/favicon.png" type="image/png"}}
-{{title @app.config.appName " | Home"}}
+{{title @config.appName " | Home"}}
 {{#fillZone "content"}}
     <h2>Welcome to pet store</h2>
     <h4>your new best friend awaits</h4>
     <hr/>
-    <a href="{{@app.context}}/pets">See all our amazing pets</a>
+    <a href="{{@contextPath}}/pets">See all our amazing pets</a>
     <br/>
-    <a href="{{@app.context}}/pets/new">Add a new pets</a>
+    <a href="{{@contextPath}}/pets/new">Add a new pets</a>
     <br/>
-    <a href="{{@app.context}}/pets/snowball">Pet of the month</a>
+    <a href="{{@contextPath}}/pets/snowball">Pet of the month</a>
 {{/fillZone}}

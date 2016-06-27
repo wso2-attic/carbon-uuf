@@ -17,14 +17,14 @@
 <header class="header header-default">
     <div class="container-fluid">
         <div class="pull-left brand float-remove-xs text-center-xs">
-            <a href="{{@app.context}}/">
+            <a href="{{@contextPath}}/">
                 <img src="{{public "images/logo.png"}}" class="logo" />
-                <h1>{{@app.config.appName}}</h1>
+                <h1>{{@config.appName}}</h1>
             </a>
         </div>
         <div class="pull-right auth float-remove-xs text-center-xs">
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="{{@app.context}}/basicauth/login">Login</a></li>
+                <li><a href="{{@contextPath}}/basicauth/login">Login</a></li>
             </ul>
         </div>
     </div>
@@ -39,7 +39,7 @@
                 {{~#menu "main"}}
                     {{~#if @leaf}}
                         <li>
-                            <a href="{{@app.context}}/{{link}}">{{#if icon}}<i class="{{icon}}"></i>{{/if}}{{@key}}</a>
+                            <a href="{{@contextPath}}/{{link}}">{{#if icon}}<i class="{{icon}}"></i>{{/if}}{{@key}}</a>
                         </li>
                     {{~else}}
                         <li class="dropdown">
@@ -52,7 +52,7 @@
                                 {{~#menu .}}
                                     {{~#if @leaf}}
                                         <li>
-                                            <a href="{{@app.context}}/{{link}}">
+                                            <a href="{{@contextPath}}/{{link}}">
                                                 {{#if icon}}<i class="{{icon}}"></i>{{/if}}{{@key}}</a>
                                         </li>
                                     {{~else}}
@@ -61,7 +61,7 @@
                                             <ul class="dropdown-menu">
                                                 {{#menu .}}
                                                     <li>
-                                                        <a href="{{@app.context}}/{{link}}">
+                                                        <a href="{{@contextPath}}/{{link}}">
                                                             {{#if icon}}<i class="{{icon}}"></i>{{/if}}{{@key}}
                                                         </a>
                                                     </li>

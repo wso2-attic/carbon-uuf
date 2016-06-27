@@ -153,7 +153,7 @@ public class API {
         Session session = new Session(new User(userName));
         sessionRegistry.addSession(session);
         String header = SessionRegistry.SESSION_COOKIE_NAME + "=" + session.getSessionId() + "; Path=" +
-                requestLookup.getAppContext() + "; Secure; HTTPOnly";
+                requestLookup.getContextPath() + "; Secure; HTTPOnly";
         requestLookup.getResponse().setHeader("Set-Cookie", header);
         return session;
     }
@@ -180,7 +180,7 @@ public class API {
         sessionRegistry.removeSession(session.get().getSessionId());
         // Clear the session cookie by setting its value to an empty string, Max-Age to zero, & Expires to a past date.
         String header = SessionRegistry.SESSION_COOKIE_NAME +
-                "=; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:01 GMT; Path=" + requestLookup.getAppContext() +
+                "=; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:01 GMT; Path=" + requestLookup.getContextPath() +
                 "; Secure; HTTPOnly";
         requestLookup.getResponse().setHeader("Set-Cookie", header);
         return true;

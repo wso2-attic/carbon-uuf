@@ -30,7 +30,7 @@ import java.util.Optional;
 
 public class RequestLookup {
 
-    private final String appContext;
+    private final String contextPath;
     private final HttpRequest request;
     private final HttpResponse response;
     private Map<String, String> pathParams;
@@ -39,8 +39,8 @@ public class RequestLookup {
     private final EnumMap<Placeholder, StringBuilder> placeholderBuffers;
     private final Map<String, String> zoneContents;
 
-    public RequestLookup(String appContext, HttpRequest request, HttpResponse response) {
-        this.appContext = (appContext == null) ? request.getAppContext() : appContext;
+    public RequestLookup(String contextPath, HttpRequest request, HttpResponse response) {
+        this.contextPath = (contextPath == null) ? request.getContextPath() : contextPath;
         this.request = request;
         this.response = response;
         this.renderingFlowTracker = new RenderingFlowTracker();
@@ -49,8 +49,8 @@ public class RequestLookup {
         this.zoneContents = new HashMap<>();
     }
 
-    public String getAppContext() {
-        return appContext;
+    public String getContextPath() {
+        return contextPath;
     }
 
     public HttpRequest getRequest() {
@@ -106,7 +106,7 @@ public class RequestLookup {
     }
 
     void pushToPublicUriStack(String publicUri) {
-        publicUriStack.addLast(appContext + publicUri);
+        publicUriStack.addLast(contextPath + publicUri);
     }
 
     public String getPublicUri() {

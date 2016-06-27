@@ -41,8 +41,8 @@ public class MicroserviceHttpRequest implements HttpRequest {
     private final String protocol;
     private final Map<String, String> headers;
     private final String uri;
-    private final String appContext;
-    private final String uriWithoutAppContext;
+    private final String contextPath;
+    private final String uriWithoutContextPath;
     private final String queryString;
     private final Map<String, Object> queryParams;
     private final byte[] contentBytes;
@@ -69,8 +69,8 @@ public class MicroserviceHttpRequest implements HttpRequest {
             rawQueryString = rawUri.substring(uriPathEndIndex + 1, rawUri.length());
         }
         this.uri = QueryStringDecoder.decodeComponent(rawUriPath);
-        this.appContext = HttpRequest.getAppContext(this.uri);
-        this.uriWithoutAppContext = HttpRequest.getUriWithoutAppContext(this.uri);
+        this.contextPath = HttpRequest.getContextPath(this.uri);
+        this.uriWithoutContextPath = HttpRequest.getUriWithoutContextPath(this.uri);
         this.queryString = rawQueryString; // Query string is not very useful, so we don't bother to decode it.
         if (rawQueryString != null) {
             HashMap<String, Object> map = new HashMap<>();
@@ -135,13 +135,13 @@ public class MicroserviceHttpRequest implements HttpRequest {
     }
 
     @Override
-    public String getAppContext() {
-        return appContext;
+    public String getContextPath() {
+        return contextPath;
     }
 
     @Override
-    public String getUriWithoutAppContext() {
-        return uriWithoutAppContext;
+    public String getUriWithoutContextPath() {
+        return uriWithoutContextPath;
     }
 
     @Override
@@ -186,11 +186,6 @@ public class MicroserviceHttpRequest implements HttpRequest {
 
     @Override
     public String getRemoteAddr() {
-        throw new UnsupportedOperationException("Netty HttpRequest does not have enough information.");
-    }
-
-    @Override
-    public String getContextPath() {
         throw new UnsupportedOperationException("Netty HttpRequest does not have enough information.");
     }
 

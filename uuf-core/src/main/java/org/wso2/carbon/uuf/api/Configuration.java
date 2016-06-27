@@ -30,10 +30,10 @@ import java.util.function.Function;
  */
 public class Configuration extends HashMap<String, Object> {
 
-    // TODO: 6/8/16 Cache values of 'appContext', 'theme', 'loginPageUri', 'menu', 'errorPages' configs
-    public static final String KEY_APP_CONTEXT = "appContext";
-    public static final String KEY_APP_CONTEXT_SERVER = "server";
-    public static final String KEY_APP_CONTEXT_CLIENT = "client";
+    // TODO: 6/8/16 Cache values of 'contextPath', 'theme', 'loginPageUri', 'menu', 'errorPages' configs
+    public static final String KEY_CONTEXT_PATH = "contextPath";
+    public static final String KEY_CONTEXT_PATH_SERVER = "server";
+    public static final String KEY_CONTEXT_PATH_CLIENT = "client";
     public static final String KEY_THEME = "theme";
     public static final String KEY_LOGIN_PAGE_URI = "loginPageUri";
     public static final String KEY_MENU = "menu";
@@ -48,57 +48,58 @@ public class Configuration extends HashMap<String, Object> {
         super(initialCapacity);
     }
 
-    private Object getAppContext() {
-        Object appContextObj = get(KEY_APP_CONTEXT);
-        if (appContextObj == null) {
+    private Object getContextPath() {
+        Object contextPathObj = get(KEY_CONTEXT_PATH);
+        if (contextPathObj == null) {
             return null;
         }
-        if (!(appContextObj instanceof String) && !(appContextObj instanceof Map)) {
-            throw new InvalidTypeException("Value of 'appContext' in the app configuration must be either a string " +
+        if (!(contextPathObj instanceof String) && !(contextPathObj instanceof Map)) {
+            throw new InvalidTypeException("Value of 'contextPath' in the app configuration must be either a string " +
                                                    "or a Map<String, String>. Instead found '" +
-                                                   appContextObj.getClass().getName() + "'.");
+                                                   contextPathObj.getClass().getName() + "'.");
         }
-        return appContextObj;
+        return contextPathObj;
     }
 
-    public String getServerAppContext() {
-        Object appContextObj = getAppContext();
-        if (appContextObj == null) {
+    public String getServerContextPath() {
+        Object contextPathObj = getContextPath();
+        if (contextPathObj == null) {
             return null;
         }
-        if (appContextObj instanceof String) {
-            return (String) appContextObj;
+        if (contextPathObj instanceof String) {
+            return (String) contextPathObj;
         }
-        // appContextObj must be a Map
-        Map<?, ?> appContext = (Map) appContextObj;
-        Object serverAppContextObj = appContext.get(KEY_APP_CONTEXT_SERVER);
-        if (serverAppContextObj == null) {
+        // contextPathObj must be a Map
+        Map<?, ?> contextPath = (Map) contextPathObj;
+        Object serverContextPathObj = contextPath.get(KEY_CONTEXT_PATH_SERVER);
+        if (serverContextPathObj == null) {
             return null;
         }
-        if (!(serverAppContextObj instanceof String)) {
+        if (!(serverContextPathObj instanceof String)) {
             throw new InvalidTypeException(
-                    "Value of 'server' in 'appContext' Map in the app configuration must be a string. Instead found '" +
-                            serverAppContextObj.getClass().getName() + "'.");
+                    "Value of 'server' in 'contextPath' Map in the app configuration must be a string. Instead found '" +
+                            serverContextPathObj.getClass().getName() + "'.");
         }
-        return (String) serverAppContextObj;
+        return (String) serverContextPathObj;
     }
 
-    public String getClientAppContext() {
-        Object appContextObj = getAppContext();
-        if (!(appContextObj instanceof Map)) {
+    public String getClientContextPath() {
+        Object contextPathObj = getContextPath();
+        if (!(contextPathObj instanceof Map)) {
             return null;
         }
-        Map<?, ?> appContext = (Map) appContextObj;
-        Object clientAppContextObj = appContext.get(KEY_APP_CONTEXT_CLIENT);
-        if (clientAppContextObj == null) {
+        // contextPathObj must be a Map
+        Map<?, ?> contextPath = (Map) contextPathObj;
+        Object clientContextPathObj = contextPath.get(KEY_CONTEXT_PATH_CLIENT);
+        if (clientContextPathObj == null) {
             return null;
         }
-        if (!(clientAppContextObj instanceof String)) {
+        if (!(clientContextPathObj instanceof String)) {
             throw new InvalidTypeException(
-                    "Value of 'client' in 'appContext' Map in the app configuration must be a string. Instead found '" +
-                            clientAppContextObj.getClass().getName() + "'.");
+                    "Value of 'client' in 'contextPath' Map in the app configuration must be a string. Instead found '" +
+                            clientContextPathObj.getClass().getName() + "'.");
         }
-        return (String) clientAppContextObj;
+        return (String) clientContextPathObj;
     }
 
     public String getThemeName() {

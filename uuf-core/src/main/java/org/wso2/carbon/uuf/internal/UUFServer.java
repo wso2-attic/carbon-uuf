@@ -120,10 +120,10 @@ public class UUFServer implements UUFAppRegistry {
                 return;
             }
 
-            app = get(request.getAppContext());
+            app = get(request.getContextPath());
             if (!app.isPresent()) {
                 requestDispatcher.serveErrorPage(request, response, STATUS_NOT_FOUND,
-                                                 "Cannot find an app for context '" + request.getAppContext() + "'.");
+                                                 "Cannot find an app for context '" + request.getContextPath() + "'.");
                 return;
             }
             requestDispatcher.serve(app.get(), request, response);
@@ -140,8 +140,8 @@ public class UUFServer implements UUFAppRegistry {
     }
 
     @Override
-    public Optional<App> get(String context) {
-        return Optional.ofNullable(apps.get(context));
+    public Optional<App> get(String contextPath) {
+        return Optional.ofNullable(apps.get(contextPath));
     }
 
     @Override

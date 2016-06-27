@@ -53,7 +53,7 @@ public class HbsHelperTest {
     private static RequestLookup createRequestLookup() {
         HttpRequest request = mock(HttpRequest.class);
         when(request.getQueryParams()).thenReturn(Collections.emptyMap());
-        return spy(new RequestLookup("/appContext", request, null));
+        return spy(new RequestLookup("/contextPath", request, null));
     }
 
     private static API createAPI() {
