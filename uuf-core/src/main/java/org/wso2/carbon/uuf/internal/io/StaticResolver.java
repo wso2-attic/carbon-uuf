@@ -235,6 +235,7 @@ public class StaticResolver {
         if (contentType.isPresent()) {
             return contentType.get();
         }
+        // Here 'resource' never null, thus 'FilenameUtils.getExtension(...)' never return null.
         String extensionFromPath = FilenameUtils.getExtension(resource.getFileName().toString());
         return MimeMapper.getMimeType(extensionFromPath).orElse(CONTENT_TYPE_WILDCARD);
     }
