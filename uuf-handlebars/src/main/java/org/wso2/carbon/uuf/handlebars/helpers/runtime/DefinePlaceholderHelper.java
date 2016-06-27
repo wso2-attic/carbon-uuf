@@ -30,6 +30,10 @@ public class DefinePlaceholderHelper implements Helper<String> {
 
     @Override
     public CharSequence apply(String placeholderName, Options options) throws IOException {
+        if ((placeholderName == null) || placeholderName.isEmpty()) {
+            throw new IllegalArgumentException("Placeholder name cannot be null or empty.");
+        }
+
         PlaceholderWriter writer = options.data(DATA_KEY_CURRENT_WRITER);
         if (options.tagType.inline()) {
             // {{placeholder "name"}}
