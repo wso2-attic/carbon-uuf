@@ -40,10 +40,10 @@ import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_OK;
 
 public class RequestDispatcher {
 
-    private static final Object LOCK = new Object();
     private static final Logger log = LoggerFactory.getLogger(RequestDispatcher.class);
 
     private final StaticResolver staticResolver = new StaticResolver();
+    private final Object lock = new Object();
     private Debugger debugger;
 
     public void serve(App app, HttpRequest request, HttpResponse response) {
@@ -59,7 +59,7 @@ public class RequestDispatcher {
             }
             if (Debugger.isDebuggingEnabled()) {
                 if (request.isDebugRequest() && (this.debugger == null)) {
-                    synchronized (LOCK) {
+                    synchronized (lock) {
                         if (this.debugger == null) {
                             this.debugger = new Debugger(); // Create a debugger.
                         }
