@@ -35,6 +35,11 @@ public class FaviconHelper extends FillPlaceholderHelper<String> {
 
     @Override
     public CharSequence apply(String relativePath, Options options) throws IOException {
+        if (relativePath == null) {
+            throw new IllegalArgumentException("Relative path of a favicon image cannot be null.");
+
+        }
+
         RequestLookup requestLookup = options.data(DATA_KEY_REQUEST_LOOKUP);
         StringBuilder buffer = new StringBuilder("<link rel=\"shortcut icon\" href=\"")
                 .append(requestLookup.getPublicUri())
