@@ -18,7 +18,6 @@ package org.wso2.carbon.uuf.spi;
 
 import org.wso2.carbon.uuf.internal.util.UriUtils;
 
-import java.io.InputStream;
 import java.util.Map;
 
 /**
@@ -92,25 +91,16 @@ public interface HttpRequest {
     String getContentType();
 
     /**
-     * Returns the content of the request as string.
-     *
-     * @return converted content string
-     */
-    String getContent();
-
-    /**
-     * Returns the content of the request as array of bytes.
-     *
-     * @return array of bytes
-     */
-    byte[] getContentBytes();
-
-    /**
-     * Retrieves the body of the request as binary data.
-     *
+     * Returns map of form fields
      * @return
      */
-    InputStream getInputStream();
+    Map<String, Object> getFormParams();
+
+    /**
+     * Returns map of uploaded files
+     * @return
+     */
+    Map<String, Object> getFiles();
 
     /**
      * Returns the content length of the request.
