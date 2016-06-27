@@ -42,6 +42,10 @@ public class FragmentHelper implements Helper<String> {
 
     @Override
     public CharSequence apply(String fragmentName, Options options) throws IOException {
+        if ((fragmentName == null) || fragmentName.isEmpty()) {
+            throw new IllegalArgumentException("Fragment name cannot be null or empty.");
+        }
+
         Lookup lookup = options.data(DATA_KEY_LOOKUP);
         RequestLookup requestLookup = options.data(DATA_KEY_REQUEST_LOOKUP);
         Optional<Fragment> fragment = lookup.getFragmentIn(requestLookup.tracker().getCurrentComponentName(),
