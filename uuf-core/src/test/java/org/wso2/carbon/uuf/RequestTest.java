@@ -110,17 +110,12 @@ public class RequestTest {
             }
 
             @Override
-            public String getContent() {
+            public Map<String, Object> getFormParams() {
                 return null;
             }
 
             @Override
-            public byte[] getContentBytes() {
-                return new byte[0];
-            }
-
-            @Override
-            public InputStream getInputStream() {
+            public Map<String, Object> getFiles() {
                 return null;
             }
 
