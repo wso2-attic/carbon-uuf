@@ -33,7 +33,7 @@ public class TitleHelper extends FillPlaceholderHelper<String> {
 
     public CharSequence apply(String title, Options options) throws IOException {
         if (title == null) {
-            throw new IllegalArgumentException("'title' cannot be null");
+            throw new IllegalArgumentException("Title cannot be null.");
         }
 
         Optional<String> currentTitle = getPlaceholderValue(options);
