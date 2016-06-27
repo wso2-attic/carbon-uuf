@@ -33,6 +33,7 @@ public class PlaceholderWriterTest {
         placeholderWriter.write("Third line.\n");
         placeholderWriter.write("Final text.");
         Assert.assertEquals(placeholderWriter.toString(), "First line.\nSecond line.\nThird line.\nFinal text.");
+        placeholderWriter.close();
     }
 
     @Test
@@ -56,5 +57,6 @@ public class PlaceholderWriterTest {
         String expectedOutput = "Placeholder zero,First line.\nSecond line.\nPlaceholder one,Placeholder two," +
                 "Third line.\nForth line.\nPlaceholder three";
         Assert.assertEquals(output, expectedOutput);
+        placeholderWriter.close();
     }
 }
