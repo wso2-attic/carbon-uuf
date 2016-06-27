@@ -42,7 +42,7 @@ import static org.wso2.carbon.uuf.internal.util.NameUtils.getSimpleName;
 public class App {
 
     private final String name;
-    private final String context;
+    private final String contextPath;
     private final Lookup lookup;
     private final Map<String, Component> components;
     private final Component rootComponent;
@@ -60,8 +60,7 @@ public class App {
         this.components = this.lookup.getAllComponents().values().stream()
                 .collect(Collectors.toMap(Component::getContext, cmp -> cmp));
         this.rootComponent = this.components.remove(Component.ROOT_COMPONENT_CONTEXT);
-        String configuredServerContextPath = configuration.getServerContextPath();
-        this.context = (configuredServerContextPath == null) ? ("/" + getSimpleName(name)) : configuredServerContextPath;
+        this.contextPath = ("/" + getSimpleName(name));
 
         this.themes = themes.stream().collect(Collectors.toMap(Theme::getName, theme -> theme));
         String configuredThemeName = this.configuration.getThemeName();
@@ -72,8 +71,8 @@ public class App {
         return name;
     }
 
-    public String getContext() {
-        return context;
+    public String getContextPath() {
+        return contextPath;
     }
 
     public Map<String, Component> getComponents() {
@@ -94,7 +93,7 @@ public class App {
      * @return rendered HTML output
      */
     public String renderPage(HttpRequest request, HttpResponse response) {
-        RequestLookup requestLookup = new RequestLookup(configuration.getClientContextPath(), request, response);
+        RequestLookup requestLookup = createRequestLookup(request, response);
         API api = new API(sessionRegistry, requestLookup);
         // If exists, render Theme.
         Theme renderingTheme = getRenderingTheme(api);
@@ -123,7 +122,7 @@ public class App {
             return Optional.<String>empty();
         }
 
-        RequestLookup requestLookup = new RequestLookup(configuration.getClientContextPath(), request, response);
+        RequestLookup requestLookup = createRequestLookup(request, response);
         API api = new API(sessionRegistry, requestLookup);
         // If exists, render Theme.
         Theme renderingTheme = getRenderingTheme(api);
@@ -181,7 +180,7 @@ public class App {
         }
 
         Model model = new MapModel(request.getQueryParams());
-        RequestLookup requestLookup = new RequestLookup(configuration.getClientContextPath(), request, response);
+        RequestLookup requestLookup = createRequestLookup(request, response);
         API api = new API(sessionRegistry, requestLookup);
         return fragment.render(model, lookup, requestLookup, api);
     }
@@ -232,13 +231,18 @@ public class App {
                         "Theme '" + appThemeName.get() + "' which is set for the app '" + name + "' does not exists."));
     }
 
+    private RequestLookup createRequestLookup(HttpRequest request, HttpResponse response) {
+        String clientContextPath = configuration.getContextPath();
+        return new RequestLookup((clientContextPath == null ? contextPath : clientContextPath), request, response);
+    }
+
     @Override
     public int hashCode() {
-        return name.hashCode() * (31 * context.hashCode());
+        return name.hashCode() * (31 * contextPath.hashCode());
     }
 
     @Override
     public String toString() {
-        return "{\"name\": \"" + name + "\", \"context\": \"" + context + "\"}";
+        return "{\"name\": \"" + name + "\", \"context\": \"" + contextPath + "\"}";
     }
 }
