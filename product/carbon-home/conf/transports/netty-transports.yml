@@ -32,6 +32,7 @@ listenerConfigurations:
   port: 9292
   bossThreadPoolSize: 4
   workerThreadPoolSize: 8
+  enableDisruptor: false
   scheme: "https"
   keyStoreFile: "resources/security/wso2carbon.jks"
   keyStorePass: "wso2carbon"
