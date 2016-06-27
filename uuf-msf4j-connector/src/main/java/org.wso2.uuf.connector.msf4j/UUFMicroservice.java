@@ -23,15 +23,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.api.ServerConnection;
 import org.wso2.carbon.uuf.spi.HttpConnector;
-import org.wso2.msf4j.HttpStreamer;
 import org.wso2.msf4j.Microservice;
 import org.wso2.msf4j.Request;
+import org.wso2.msf4j.formparam.FormParamIterator;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 /**
@@ -59,18 +60,17 @@ public class UUFMicroservice implements Microservice, HttpConnector {
     @GET
     @Path(".*")
     public Response get(@Context Request request) {
-        return execute(request, null);
+        MicroserviceHttpRequest httpRequest = new MicroserviceHttpRequest(request);
+        MicroserviceHttpResponse httpResponse = new MicroserviceHttpResponse();
+        serverConnection.serve(httpRequest, httpResponse);
+        return httpResponse.build();
     }
 
     @POST
     @Path(".*")
-    @Produces({"text/plain"})
-    public void post(@Context HttpStreamer httpStreamer, @Context Request nettyRequest) {
-//        httpStreamer.callback(new HttpStreamHandlerImpl(this, nettyRequest));
-    }
-
-    private Response execute(Request request, byte[] contentBytes) {
-        MicroserviceHttpRequest httpRequest = new MicroserviceHttpRequest(request, contentBytes);
+    @Consumes({MediaType.APPLICATION_FORM_URLENCODED, MediaType.MULTIPART_FORM_DATA})
+    public Response post(@Context Request request, @Context FormParamIterator formParamIterator) {
+        MicroserviceHttpRequest httpRequest = new MicroserviceHttpRequest(request, formParamIterator);
         MicroserviceHttpResponse httpResponse = new MicroserviceHttpResponse();
         serverConnection.serve(httpRequest, httpResponse);
         return httpResponse.build();
