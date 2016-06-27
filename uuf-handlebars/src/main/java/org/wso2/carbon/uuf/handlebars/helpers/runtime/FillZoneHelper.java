@@ -30,9 +30,10 @@ public class FillZoneHelper implements Helper<String> {
 
     @Override
     public CharSequence apply(String zoneName, Options options) throws IOException {
-        if (zoneName.isEmpty()) {
-            throw new IllegalArgumentException("A zone name cannot be empty.");
+        if ((zoneName == null) || zoneName.isEmpty()) {
+            throw new IllegalArgumentException("Zone name cannot be null or empty.");
         }
+
         RequestLookup requestLookup = options.data(DATA_KEY_REQUEST_LOOKUP);
         requestLookup.putToZone(zoneName, options.fn().toString());
         return "";
