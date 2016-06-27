@@ -129,7 +129,8 @@ public class PlaceholderWriter extends Writer {
         return output.toString();
     }
 
-    private class PlaceholderMarker {
+    private static class PlaceholderMarker {
+
         private final String name;
         private final String defaultContent;
 
