@@ -18,6 +18,7 @@ package org.wso2.carbon.uuf.handlebars.renderable.js;
 
 import jdk.nashorn.api.scripting.NashornScriptEngine;
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
+import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.core.API;
 import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.handlebars.renderable.Executable;
@@ -65,6 +66,7 @@ public class JSExecutable implements Executable {
         engineBindings.put(CallMicroServiceFunction.NAME, JSFunctionsImpl.getCallMicroServiceFunction());
         engineBindings.put(SendErrorFunction.NAME, JSFunctionsImpl.getSendErrorFunction());
         engineBindings.put(SendRedirectFunction.NAME, JSFunctionsImpl.getSendRedirectFunction());
+        engineBindings.put(LogFunction.NAME, JSFunctionsImpl.getLogFunction(LoggerFactory.getLogger("JAVASCRIPT")));
         engineBindings.lock();
         // Even though 'NashornScriptEngineFactory.getParameter("THREADING")' returns null, NashornScriptEngine is
         // thread-safe. See http://stackoverflow.com/a/30159424
