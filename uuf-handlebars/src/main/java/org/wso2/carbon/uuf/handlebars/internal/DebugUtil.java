@@ -31,6 +31,7 @@ import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.Set;
 
+// TODO: 6/27/16 refactor this class for proper debugging
 public class DebugUtil {
 
     private static final Logger log = LoggerFactory.getLogger(DebugUtil.class);
