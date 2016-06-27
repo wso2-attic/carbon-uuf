@@ -70,7 +70,7 @@ public class DebugUtil {
                     }
                 }
             } catch (NoSuchFieldException | IllegalAccessException e) {
-                e.printStackTrace();
+                log.error("Error while serializing the handlebars context: " + context);
             }
             return serialized;
         }
