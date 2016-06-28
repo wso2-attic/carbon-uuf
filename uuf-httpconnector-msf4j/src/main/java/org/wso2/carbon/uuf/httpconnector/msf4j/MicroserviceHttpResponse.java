@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.wso2.carbon.uuf.http_connector.msf4j;
+package org.wso2.carbon.uuf.httpconnector.msf4j;
 
 import org.apache.commons.io.FilenameUtils;
 import org.wso2.carbon.uuf.spi.HttpResponse;

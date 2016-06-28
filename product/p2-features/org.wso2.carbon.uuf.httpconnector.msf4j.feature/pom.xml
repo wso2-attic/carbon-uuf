@@ -20,7 +20,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>org.wso2.carbon.uuf.http_connector.msf4j.feature</artifactId>
+    <artifactId>org.wso2.carbon.uuf.httpconnector.msf4j.feature</artifactId>
     <packaging>carbon-feature</packaging>
 
     <name>WSO2 UUF - HTTP Connector - MSF4J - Feature</name>
@@ -37,7 +37,7 @@
     <dependencies>
         <dependency>
             <groupId>org.wso2.uuf</groupId>
-            <artifactId>org.wso2.carbon.uuf.http_connector.msf4j</artifactId>
+            <artifactId>org.wso2.carbon.uuf.httpconnector.msf4j</artifactId>
             <version>${carbon.uuf.version}</version>
         </dependency>
     </dependencies>
@@ -68,7 +68,7 @@
                             </adviceFileContents>
                             <bundles>
                                 <bundle>
-                                    <symbolicName>org.wso2.carbon.uuf.http_connector.msf4j</symbolicName>
+                                    <symbolicName>org.wso2.carbon.uuf.httpconnector.msf4j</symbolicName>
                                     <version>${carbon.uuf.version}</version>
                                 </bundle>
                             </bundles>
