@@ -37,8 +37,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.wso2.carbon.uuf.internal.util.NameUtils.getSimpleName;
-
 public class App {
 
     private final String name;
@@ -60,7 +58,7 @@ public class App {
         this.components = this.lookup.getAllComponents().values().stream()
                 .collect(Collectors.toMap(Component::getContext, cmp -> cmp));
         this.rootComponent = this.components.remove(Component.ROOT_COMPONENT_CONTEXT);
-        this.contextPath = ("/" + getSimpleName(name));
+        this.contextPath = ("/" + NameUtils.getSimpleName(name));
 
         this.themes = themes.stream().collect(Collectors.toMap(Theme::getName, theme -> theme));
         String configuredThemeName = this.configuration.getThemeName();
