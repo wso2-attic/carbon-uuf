@@ -44,8 +44,7 @@ import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_NOT_FOUND;
  * OSGi service component for UUFServer.
  */
 @Component(name = "org.wso2.carbon.uuf.internal.UUFServer",
-           immediate = true,
-           service = UUFAppRegistry.class
+           immediate = true
 )
 @SuppressWarnings("unused")
 public class UUFServer {
@@ -155,4 +154,5 @@ public class UUFServer {
                                              new HttpErrorException(STATUS_INTERNAL_SERVER_ERROR, e.getMessage(), e));
         }
     }
+
 }

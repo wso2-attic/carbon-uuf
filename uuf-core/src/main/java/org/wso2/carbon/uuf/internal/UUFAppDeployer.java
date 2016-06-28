@@ -249,7 +249,11 @@ public class UUFAppDeployer implements Deployer, UUFAppRegistry, RequiredCapabil
     public void onAllRequiredCapabilitiesAvailable() {
         this.appCreator = new AppCreator(renderableCreators, classLoaderProvider);
         log.debug("AppCreator is ready.");
+
         bundleContext.registerService(Deployer.class, this, null);
-        log.debug("UUFAppDeployer registered as a Carbon artifact deployer.");
+        log.info("UUFAppDeployer registered as a Carbon artifact deployer.");
+
+        bundleContext.registerService(UUFAppRegistry.class, this, null);
+        log.debug("UUFAppDeployer registered as an UUFAppRegistry.");
     }
 }
