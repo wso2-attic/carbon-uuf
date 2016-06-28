@@ -101,7 +101,7 @@
         </dependency>
         <dependency>
             <groupId>org.wso2.uuf</groupId>
-            <artifactId>org.wso2.uuf.handlebars.feature</artifactId>
+            <artifactId>org.wso2.carbon.uuf.renderablecreator.hbs.feature</artifactId>
             <version>${carbon.uuf.version}</version>
             <type>zip</type>
         </dependency>
@@ -276,7 +276,7 @@
                                     <version>${carbon.uuf.version}</version>
                                 </feature>
                                 <feature>
-                                    <id>org.wso2.uuf.handlebars.feature</id>
+                                    <id>org.wso2.carbon.uuf.renderablecreator.hbs.feature</id>
                                     <version>${carbon.uuf.version}</version>
                                 </feature>
                                 <feature>
@@ -368,7 +368,7 @@
                                     <version>${carbon.uuf.version}</version>
                                 </feature>
                                 <feature>
-                                    <id>org.wso2.uuf.handlebars.feature.group</id>
+                                    <id>org.wso2.carbon.uuf.renderablecreator.hbs.feature.group</id>
                                     <version>${carbon.uuf.version}</version>
                                 </feature>
                                 <feature>
