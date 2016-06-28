@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.wso2.uuf.connector.msf4j;
+package org.wso2.carbon.uuf.http_connector.msf4j;
 
 import io.netty.handler.codec.http.QueryStringDecoder;
 import io.netty.handler.codec.http.cookie.Cookie;
