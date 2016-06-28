@@ -16,6 +16,7 @@
 
 package org.wso2.carbon.uuf.internal;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -36,12 +37,15 @@ import org.wso2.carbon.uuf.internal.core.create.AppCreator;
 import org.wso2.carbon.uuf.internal.core.create.ClassLoaderProvider;
 import org.wso2.carbon.uuf.internal.io.ArtifactAppReference;
 import org.wso2.carbon.uuf.internal.io.BundleClassLoaderProvider;
+import org.wso2.carbon.uuf.internal.util.NameUtils;
 import org.wso2.carbon.uuf.spi.RenderableCreator;
 import org.wso2.carbon.uuf.spi.UUFAppRegistry;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Paths;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -57,64 +61,145 @@ import java.util.concurrent.ConcurrentHashMap;
         }
 )
 @SuppressWarnings("unused")
-public class UUFAppDeployer implements Deployer, RequiredCapabilityListener {
+public class UUFAppDeployer implements Deployer, UUFAppRegistry, RequiredCapabilityListener {
 
     private static final Logger log = LoggerFactory.getLogger(UUFAppDeployer.class);
 
     private final ArtifactType artifactType;
     private final URL location;
-    private volatile AppCreator appCreator;
-    private UUFAppRegistry uufAppRegistry;
+    private final Map<String, App> deployedApps;
+    private final Map<String, Artifact> pendingToDeployArtifacts;
+    private final Object lock;
     private final Set<RenderableCreator> renderableCreators;
     private final ClassLoaderProvider classLoaderProvider;
+    private AppCreator appCreator;
     private BundleContext bundleContext;
 
     public UUFAppDeployer() {
-        this.renderableCreators = ConcurrentHashMap.newKeySet();
-        this.classLoaderProvider = new BundleClassLoaderProvider();
         this.artifactType = new ArtifactType<>("uufapp");
         try {
             this.location = new URL("file:uufapps");
         } catch (MalformedURLException e) {
             throw new UUFException("Cannot create URL 'file:uufapps'.", e);
         }
+        this.deployedApps = new ConcurrentHashMap<>();
+        this.pendingToDeployArtifacts = new ConcurrentHashMap<>();
+        this.lock = new Object();
+        this.renderableCreators = ConcurrentHashMap.newKeySet();
+        this.classLoaderProvider = new BundleClassLoaderProvider();
     }
 
-    @Activate
-    protected void activate(BundleContext bundleContext) {
-        this.bundleContext = bundleContext;
-        log.debug("UUFAppDeployer service activated.");
+    @Override
+    public void init() {
+        log.debug("UUFAppDeployer initialized.");
     }
 
-    @Deactivate
-    protected void deactivate(BundleContext bundleContext) {
-        this.bundleContext = null;
-        log.debug("UUFAppDeployer service deactivated.");
+    @Override
+    public ArtifactType getArtifactType() {
+        return artifactType;
     }
 
-    /**
-     * This bind method is invoked by OSGi framework whenever a new UUFAppRegistry is registered.
-     *
-     * @param uufAppRegistry registered uuf app registry creator
-     */
-    @Reference(name = "uufAppRegistry",
-               service = UUFAppRegistry.class,
-               cardinality = ReferenceCardinality.MANDATORY,
-               policy = ReferencePolicy.DYNAMIC,
-               unbind = "unsetUUFAppRegistry")
-    public void setUUFAppRegistry(UUFAppRegistry uufAppRegistry) {
-        this.uufAppRegistry = uufAppRegistry;
-        log.debug("UUFAppRegistry '" + uufAppRegistry.getClass().getName() + "' registered.");
+    @Override
+    public URL getLocation() {
+        return location;
     }
 
-    /**
-     * This bind method is invoked by OSGi framework whenever a UUFAppRegistry is left.
-     *
-     * @param uufAppRegistry unregistered uuf app registry
-     */
-    public void unsetUUFAppRegistry(UUFAppRegistry uufAppRegistry) {
-        this.uufAppRegistry = null;
-        log.debug("UUFAppRegistry " + uufAppRegistry.getClass().getName() + " unregistered.");
+    @Override
+    public Object deploy(Artifact artifact) throws CarbonDeploymentException {
+        Pair<String, String> appNameContextPath = getAppNameContextPath(artifact);
+        if (deployedApps.containsKey(appNameContextPath.getRight())) {
+            throw new CarbonDeploymentException(
+                    "Cannot deploy UUF app artifact in '" + artifact.getPath() + "' for context path '" +
+                            appNameContextPath.getRight() +
+                            "' as another app is already registered for the same context path.");
+        }
+
+        pendingToDeployArtifacts.put(appNameContextPath.getRight(), artifact);
+        log.debug("UUF app '" + appNameContextPath.getLeft() + "' added to the pending deployments list.");
+        return appNameContextPath.getLeft();
+    }
+
+    @Override
+    public Object update(Artifact artifact) throws CarbonDeploymentException {
+        Pair<String, String> appNameContextPath = getAppNameContextPath(artifact);
+        if (deployedApps.containsKey(appNameContextPath.getRight())) {
+            // This artifact is already deployed.
+            App createdApp = appCreator.createApp(new ArtifactAppReference(Paths.get(artifact.getPath())));
+            deployedApps.put(createdApp.getContextPath(), createdApp);
+            log.info("UUF app '" + createdApp.getName() + "' re-deployed for context path '" +
+                             createdApp.getContextPath() + "'.");
+            return createdApp.getName();
+        } else {
+            // This artifact is not deployed yet. It is in the pending list 'pendingToDeployArtifacts'. So new
+            // changes will be picked up when it is actually deployed.
+            return appNameContextPath.getLeft();
+        }
+    }
+
+    @Override
+    public void undeploy(Object key) throws CarbonDeploymentException {
+        String appName = (String) key;
+        Optional<App> removedApp = deployedApps.values().stream()
+                .filter(app -> app.getName().equals(appName))
+                .findFirst()
+                .map(removingApp -> deployedApps.remove(removingApp.getContextPath()));
+        if (removedApp.isPresent()) {
+            // App with 'appName' is deployed.
+            log.info("UUF app '" + removedApp.get().getName() + "' undeployed for context '" +
+                             removedApp.get().getContextPath() + "'.");
+        } else {
+            // App with 'appName' is not deployed yet.
+            for (Map.Entry<String, Artifact> entry : pendingToDeployArtifacts.entrySet()) {
+                Pair<String, String> appNameContextPath = getAppNameContextPath(entry.getValue());
+                if (appName.equals(appNameContextPath.getLeft())) {
+                    Artifact removedArtifact = pendingToDeployArtifacts.remove(appNameContextPath.getRight());
+                    log.info("UUF app in '" + removedArtifact.getPath() + "' removed even before it deployed.");
+                    break;
+                }
+            }
+        }
+    }
+
+    private Pair<String, String> getAppNameContextPath(Artifact artifact) {
+        // TODO: 6/28/16 deployment.properties can override app's context path
+        // Fully qualified name of the app is equals to the name od the app directory. This is guaranteed by the UUF
+        // Maven plugin.
+        String appFullyQualifiedName = Paths.get(artifact.getPath()).getFileName().toString();
+        return Pair.of(appFullyQualifiedName, ("/" + NameUtils.getSimpleName(appFullyQualifiedName)));
+    }
+
+    private App deployApp(String contextPath) {
+        App app;
+        synchronized (lock) {
+            Artifact artifact = pendingToDeployArtifacts.remove(contextPath);
+            if (artifact == null) {
+                // App is deployed before acquiring the lock.
+                return deployedApps.get(contextPath);
+            }
+            if (!artifact.getFile().exists()) {
+                // Somehow artifact has been removed/deleted. So we cannot create an app from it.
+                log.warn("Cannot deploy UUF app in '" + artifact.getPath() + "' as it does not exists anymore.");
+                return null;
+            }
+            app = appCreator.createApp(new ArtifactAppReference(Paths.get(artifact.getPath())));
+            deployedApps.put(app.getContextPath(), app);
+        }
+        log.info("UUF app '" + app.getName() + "' deployed for context path '" + app.getContextPath() + "'.");
+        return app;
+    }
+
+    @Override
+    public Optional<App> getApp(String contextPath) {
+        App app = deployedApps.get(contextPath);
+        if (app != null) {
+            return Optional.of(app);
+        } else {
+            if (pendingToDeployArtifacts.containsKey(contextPath)) {
+                return Optional.ofNullable(deployApp(contextPath));
+            } else {
+                return Optional.empty();
+            }
+        }
     }
 
     /**
@@ -148,42 +233,16 @@ public class UUFAppDeployer implements Deployer, RequiredCapabilityListener {
                          renderableCreator.getSupportedFileExtensions() + " extensions.");
     }
 
-    @Override
-    public void init() {
-        log.debug("UUFAppDeployer initialized.");
+    @Activate
+    protected void activate(BundleContext bundleContext) {
+        this.bundleContext = bundleContext;
+        log.debug("UUFAppDeployer service activated.");
     }
 
-    @Override
-    public Object deploy(Artifact artifact) throws CarbonDeploymentException {
-        App app = appCreator.createApp(new ArtifactAppReference(Paths.get(artifact.getPath())));
-        uufAppRegistry.add(app);
-        log.info("UUF app '" + app.getName() + "' deployed for context path '" + app.getContext() + "'.");
-        return app.getName();
-    }
-
-    @Override
-    public void undeploy(Object key) throws CarbonDeploymentException {
-        String appName = (String) key;
-        uufAppRegistry.remove(appName).ifPresent(
-                app -> log.info("UUF app '" + app.getName() + "' undeployed for context '" + app.getContext() + "'."));
-    }
-
-    @Override
-    public Object update(Artifact artifact) throws CarbonDeploymentException {
-        App app = appCreator.createApp(new ArtifactAppReference(Paths.get(artifact.getPath())));
-        uufAppRegistry.add(app);
-        log.info("App '" + app.getName() + "' re-deployed for context '" + app.getContext() + "'.");
-        return app.getName();
-    }
-
-    @Override
-    public URL getLocation() {
-        return location;
-    }
-
-    @Override
-    public ArtifactType getArtifactType() {
-        return artifactType;
+    @Deactivate
+    protected void deactivate(BundleContext bundleContext) {
+        this.bundleContext = null;
+        log.debug("UUFAppDeployer service deactivated.");
     }
 
     @Override

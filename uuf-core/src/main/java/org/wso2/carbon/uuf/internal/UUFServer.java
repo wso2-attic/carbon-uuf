@@ -33,9 +33,7 @@ import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.carbon.uuf.spi.HttpResponse;
 import org.wso2.carbon.uuf.spi.UUFAppRegistry;
 
-import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_BAD_REQUEST;
@@ -50,13 +48,13 @@ import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_NOT_FOUND;
            service = UUFAppRegistry.class
 )
 @SuppressWarnings("unused")
-public class UUFServer implements UUFAppRegistry {
+public class UUFServer {
 
     private static final Logger log = LoggerFactory.getLogger(UUFServer.class);
 
     private final AtomicInteger count = new AtomicInteger(0);
     private final RequestDispatcher requestDispatcher;
-    private final Map<String, App> apps;
+    private UUFAppRegistry appRegistry;
 
     public UUFServer() {
         this(new RequestDispatcher());
@@ -64,7 +62,6 @@ public class UUFServer implements UUFAppRegistry {
 
     public UUFServer(RequestDispatcher requestDispatcher) {
         this.requestDispatcher = requestDispatcher;
-        this.apps = new ConcurrentHashMap<>();
     }
 
     /**
@@ -97,6 +94,31 @@ public class UUFServer implements UUFAppRegistry {
         log.info("HttpConnector '" + connector.getClass().getName() + "' unregistered.");
     }
 
+    /**
+     * This bind method is invoked by OSGi framework whenever a new UUFAppRegistry is registered.
+     *
+     * @param uufAppRegistry registered uuf app registry creator
+     */
+    @Reference(name = "uufAppRegistry",
+               service = UUFAppRegistry.class,
+               cardinality = ReferenceCardinality.MANDATORY,
+               policy = ReferencePolicy.DYNAMIC,
+               unbind = "unsetUUFAppRegistry")
+    public void setUUFAppRegistry(UUFAppRegistry uufAppRegistry) {
+        this.appRegistry = uufAppRegistry;
+        log.debug("UUFAppRegistry '" + uufAppRegistry.getClass().getName() + "' registered.");
+    }
+
+    /**
+     * This bind method is invoked by OSGi framework whenever a UUFAppRegistry is left.
+     *
+     * @param uufAppRegistry unregistered uuf app registry
+     */
+    public void unsetUUFAppRegistry(UUFAppRegistry uufAppRegistry) {
+        this.appRegistry = null;
+        log.debug("UUFAppRegistry " + uufAppRegistry.getClass().getName() + " unregistered.");
+    }
+
     @Activate
     protected void activate(BundleContext bundleContext) {
         log.debug("UUFServer service activated.");
@@ -120,7 +142,7 @@ public class UUFServer implements UUFAppRegistry {
                 return;
             }
 
-            app = get(request.getContextPath());
+            app = appRegistry.getApp(request.getContextPath());
             if (!app.isPresent()) {
                 requestDispatcher.serveErrorPage(request, response, STATUS_NOT_FOUND,
                                                  "Cannot find an app for context '" + request.getContextPath() + "'.");
@@ -132,23 +154,5 @@ public class UUFServer implements UUFAppRegistry {
             requestDispatcher.serveErrorPage((app.isPresent() ? app.get() : null), request, response,
                                              new HttpErrorException(STATUS_INTERNAL_SERVER_ERROR, e.getMessage(), e));
         }
-    }
-
-    @Override
-    public App add(App app) {
-        return apps.put(app.getContext(), app);
-    }
-
-    @Override
-    public Optional<App> get(String contextPath) {
-        return Optional.ofNullable(apps.get(contextPath));
-    }
-
-    @Override
-    public Optional<App> remove(String appName) {
-        return apps.values().stream()
-                .filter(app -> app.getName().equals(appName))
-                .findFirst()
-                .map(app -> apps.remove(app.getContext()));
     }
 }
