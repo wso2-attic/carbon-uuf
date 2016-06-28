@@ -35,6 +35,9 @@ public class HbsFragmentRenderable extends HbsPageRenderable {
 
     private static final Logger log = LoggerFactory.getLogger(HbsFragmentRenderable.class);
 
+    protected HbsFragmentRenderable() {
+    }
+
     public HbsFragmentRenderable(TemplateSource template) {
         super(template);
     }
@@ -74,14 +77,9 @@ public class HbsFragmentRenderable extends HbsPageRenderable {
                               "\".");
         }
         try {
-            return getCompiledTemplate().apply(context);
+            return getTemplate().apply(context);
         } catch (IOException e) {
             throw new UUFException("An error occurred when writing to the in-memory PlaceholderWriter.", e);
         }
-    }
-
-    @Override
-    public String toString() {
-        return "{\"path\": \"" + getPath() + "\"" + (executable == null ? "}" : ", \"js\": " + executable + "}");
     }
 }
