@@ -19,11 +19,19 @@ package org.wso2.uuf.connector.msf4j;
 import io.netty.handler.codec.http.QueryStringDecoder;
 import io.netty.handler.codec.http.cookie.Cookie;
 import io.netty.handler.codec.http.cookie.ServerCookieDecoder;
+import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.msf4j.Request;
+import org.wso2.msf4j.formparam.FormItem;
+import org.wso2.msf4j.formparam.FormParamIterator;
+import org.wso2.msf4j.formparam.exception.FormUploadException;
+import org.wso2.msf4j.formparam.util.StreamUtil;
 
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.HttpHeaders;
-import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.HashMap;
@@ -35,6 +43,7 @@ import java.util.Map;
 public class MicroserviceHttpRequest implements HttpRequest {
 
     public static final String HTTP_VERSION = "HTTP_VERSION";
+    public static final String HTTP_CONTENT_TYPE = "Content-Type";
 
     private final String url;
     private final String method;
@@ -45,19 +54,23 @@ public class MicroserviceHttpRequest implements HttpRequest {
     private final String uriWithoutContextPath;
     private final String queryString;
     private final Map<String, Object> queryParams;
-    private final byte[] contentBytes;
     private final int contentLength;
-    private final InputStream inputStream;
+    Map<String, Object> formParams;
+    Map<String, Object> files;
+
+    private static final Logger log = LoggerFactory.getLogger(MicroserviceHttpRequest.class);
 
     public MicroserviceHttpRequest(Request request) {
         this(request, null);
     }
 
-    public MicroserviceHttpRequest(Request request, byte[] contentBytes) {
+    public MicroserviceHttpRequest(Request request, FormParamIterator formParamIterator) {
         this.url = null; // MSF4JRequest does not have a 'getUrl()' method.
         this.method = request.getHttpMethod();
         this.protocol = request.getProperty(HTTP_VERSION).toString();
         this.headers = request.getHeaders();
+
+        //Process URI
         String rawUri = request.getUri();
         int uriPathEndIndex = rawUri.indexOf('?');
         String rawUriPath, rawQueryString;
@@ -80,15 +93,48 @@ public class MicroserviceHttpRequest implements HttpRequest {
         } else {
             this.queryParams = Collections.emptyMap();
         }
-        if (contentBytes != null) {
-            this.contentBytes = contentBytes;
-            this.contentLength = contentBytes.length;
-            this.inputStream = new ByteArrayInputStream(contentBytes);
+
+        //process form params
+        StringBuilder response = new StringBuilder();
+        if (formParamIterator != null) {
+            this.formParams = new HashMap<>();
+            this.files = new HashMap<>();
+            while (formParamIterator.hasNext()) {
+                FormItem item = formParamIterator.next();
+                InputStream inputStream = null;
+                try {
+                    inputStream = item.openStream();
+                    if (item.isFormField()) {
+                        this.formParams.put(item.getFieldName(), StreamUtil.asString(inputStream));
+                    } else {
+                        this.files.put(item.getName(), inputStream);
+                    }
+                } catch (FormUploadException | IOException e) {
+                    //respond back to client without further processing
+                    throw new WebApplicationException("Error while processing field item: " + item.getFieldName(), e);
+                } finally {
+                    IOUtils.closeQuietly(inputStream);
+                }
+            }
         } else {
-            this.contentBytes = null;
-            this.contentLength = 0;
-            this.inputStream = null;
+            this.formParams = Collections.emptyMap();
+            this.files = Collections.emptyMap();
         }
+
+        //process content length
+        int contentLength;
+        String contentLengthHeaderVal = this.headers.get(HTTP_CONTENT_TYPE);
+        try {
+            contentLength = contentLengthHeaderVal == null ? 0 : Integer.parseInt(contentLengthHeaderVal);
+        } catch (NumberFormatException e) {
+            throw new WebApplicationException(
+                    "Error while parsing the content-length header with the value '" + contentLengthHeaderVal + "'", e);
+        }
+        this.contentLength = contentLength;
+    }
+
+    private String constructUrl(boolean isSecured, String localAddr, String localPort, String uri) {
+        return "http" + ((isSecured) ? "s" : "") + "://" + localAddr + ":" + localPort + uri;
     }
 
     @Override
@@ -160,18 +206,13 @@ public class MicroserviceHttpRequest implements HttpRequest {
     }
 
     @Override
-    public String getContent() {
-        return new String(contentBytes);
+    public Map<String, Object> getFormParams() {
+        return formParams;
     }
 
     @Override
-    public byte[] getContentBytes() {
-        return contentBytes;
-    }
-
-    @Override
-    public InputStream getInputStream() {
-        return inputStream;
+    public Map<String, Object> getFiles() {
+        return files;
     }
 
     @Override
