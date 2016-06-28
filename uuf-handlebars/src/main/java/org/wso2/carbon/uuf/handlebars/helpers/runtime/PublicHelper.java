@@ -30,6 +30,11 @@ public class PublicHelper implements Helper<String> {
 
     @Override
     public CharSequence apply(String relativeUri, Options options) throws IOException {
+        if (relativeUri == null) {
+            throw new IllegalArgumentException("Relative URI of a hyperlink cannot be null.");
+
+        }
+
         RequestLookup requestLookup = options.data(DATA_KEY_REQUEST_LOOKUP);
         StringBuilder buffer = new StringBuilder(requestLookup.getPublicUri()).append('/').append(relativeUri);
         for (Object param : options.params) {

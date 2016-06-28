@@ -36,7 +36,7 @@ public class PageTest {
         Component component = new Component(null, null, "/componentContext", Collections.emptySortedSet());
         Lookup lookup = new Lookup(ImmutableSetMultimap.of());
         lookup.add(component);
-        RequestLookup requestLookup = new RequestLookup("/appContext", null, null);
+        RequestLookup requestLookup = new RequestLookup("/contextPath", null, null);
         Page page = new Page(null, renderable, false);
 
         String output = page.render(null, lookup, requestLookup, null);

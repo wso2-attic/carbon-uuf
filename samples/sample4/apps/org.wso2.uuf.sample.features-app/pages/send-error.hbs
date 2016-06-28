@@ -1,5 +1,5 @@
 {{layout "org.wso2.uuf.base.main"}}
-{{title "Send Error Sample | " @app.config.appName}}
+{{title "Send Error Sample | " @config.appName}}
 {{#fillZone "content"}}
     <h3>Send Error.</h3>
     <hr />
@@ -20,5 +20,5 @@
             }
         }
     </pre>
-    <a href="{{@app.context}}/send-error?sendError=true" class="btn btn-info"><b>Click Here To Run Demo</b></a>
+    <a href="{{@contextPath}}/send-error?sendError=true" class="btn btn-info"><b>Click Here To Run Demo</b></a>
 {{/fillZone}}

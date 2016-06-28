@@ -41,7 +41,7 @@ public class ComponentTest {
     }
 
     private static RequestLookup createRequestLookup() {
-        return new RequestLookup("/appContext", null, null);
+        return new RequestLookup("/contextPath", null, null);
     }
 
     @Test

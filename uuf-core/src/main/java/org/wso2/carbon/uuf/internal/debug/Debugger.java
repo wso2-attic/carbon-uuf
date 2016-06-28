@@ -62,9 +62,9 @@ public class Debugger {
     }
 
     public void serve(App app, HttpRequest request, HttpResponse response) {
-        String uriWithoutAppContext = request.getUriWithoutAppContext();
+        String uriWithoutContextPath = request.getUriWithoutContextPath();
 
-        if (URI_PATTEN_API_PAGES.matches(uriWithoutAppContext)) {
+        if (URI_PATTEN_API_PAGES.matches(uriWithoutContextPath)) {
             JsonObject jsonObject = new JsonObject();
             for (Map.Entry<String, Component> entry : app.getComponents().entrySet()) {
                 JsonArray jsonArray = new JsonArray();
@@ -77,26 +77,26 @@ public class Debugger {
 
         // TODO: 6/5/16 add an API to return layouts "/debug/api/layouts/"
 
-        if (URI_PATTEN_API_FRAGMENTS.matches(uriWithoutAppContext)) {
+        if (URI_PATTEN_API_FRAGMENTS.matches(uriWithoutContextPath)) {
             JsonArray jsonArray = new JsonArray();
             app.getFragments().values().stream().forEach(fragment -> jsonArray.add(fragment.toString()));
             response.setContent(STATUS_OK, jsonArray.toString(), CONTENT_TYPE_APPLICATION_JSON);
             return;
         }
 
-        if (URI_PATTEN_API_THEMES.matches(uriWithoutAppContext)) {
+        if (URI_PATTEN_API_THEMES.matches(uriWithoutContextPath)) {
             JsonArray jsonArray = new JsonArray();
             app.getThemes().values().stream().forEach(theme -> jsonArray.add(theme.toString()));
             response.setContent(STATUS_OK, jsonArray.toString(), CONTENT_TYPE_APPLICATION_JSON);
             return;
         }
 
-        if (URI_PATTEN_API_LOGS.matches(uriWithoutAppContext)) {
+        if (URI_PATTEN_API_LOGS.matches(uriWithoutContextPath)) {
             response.setContent(STATUS_OK, debugAppender.getMessagesAsJson(), CONTENT_TYPE_APPLICATION_JSON);
             return;
         }
 
-        if (URI_PATTEN_PAGE_INDEX.matches(uriWithoutAppContext)) {
+        if (URI_PATTEN_PAGE_INDEX.matches(uriWithoutContextPath)) {
             InputStream resourceAsStream = this.getClass().getResourceAsStream("/apps/index.html");
             if (resourceAsStream == null) {
                 log.error("Cannot find resource '/apps/index.html' in classpath.");

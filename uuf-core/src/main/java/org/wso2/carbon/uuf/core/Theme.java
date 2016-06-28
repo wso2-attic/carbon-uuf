@@ -50,15 +50,15 @@ public class Theme {
     }
 
     public void render(RequestLookup requestLookup) {
-        String appContext = requestLookup.getAppContext();
+        String contextPath = requestLookup.getContextPath();
         for (String cssTagSuffix : cssTagSuffixes) {
-            requestLookup.addToPlaceholder(Placeholder.css, "<link href=\"" + appContext + cssTagSuffix);
+            requestLookup.addToPlaceholder(Placeholder.css, "<link href=\"" + contextPath + cssTagSuffix);
         }
         for (String headJsTagSuffix : headJsTagSuffixes) {
-            requestLookup.addToPlaceholder(Placeholder.headJs, "<script src=\"" + appContext + headJsTagSuffix);
+            requestLookup.addToPlaceholder(Placeholder.headJs, "<script src=\"" + contextPath + headJsTagSuffix);
         }
         for (String bodyJsTagSuffix : bodyJsTagSuffixes) {
-            requestLookup.addToPlaceholder(Placeholder.js, "<script src=\"" + appContext + bodyJsTagSuffix);
+            requestLookup.addToPlaceholder(Placeholder.js, "<script src=\"" + contextPath + bodyJsTagSuffix);
         }
     }
 

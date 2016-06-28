@@ -70,9 +70,9 @@ public interface HttpRequest {
      */
     String getUri();
 
-    String getAppContext();
+    String getContextPath();
 
-    String getUriWithoutAppContext();
+    String getUriWithoutContextPath();
 
     /**
      * Returns the query String of the request
@@ -124,13 +124,6 @@ public interface HttpRequest {
     String getRemoteAddr();
 
     /**
-     * Returns the portion of the request URI that indicates the context of the request. eg. /uuf-app
-     *
-     * @return context path
-     */
-    String getContextPath();
-
-    /**
      * Returns the request local port number.
      *
      * @return port number
@@ -163,30 +156,30 @@ public interface HttpRequest {
     }
 
     default boolean isStaticResourceRequest() {
-        return getUriWithoutAppContext().startsWith("/public/");
+        return getUriWithoutContextPath().startsWith("/public/");
     }
 
     default boolean isComponentStaticResourceRequest() {
-        return getUriWithoutAppContext().startsWith(UriUtils.COMPONENT_STATIC_RESOURCES_URI_PREFIX);
+        return getUriWithoutContextPath().startsWith(UriUtils.COMPONENT_STATIC_RESOURCES_URI_PREFIX);
     }
 
     default boolean isThemeStaticResourceRequest() {
-        return getUriWithoutAppContext().startsWith(UriUtils.THEMES_STATIC_RESOURCES_URI_PREFIX);
+        return getUriWithoutContextPath().startsWith(UriUtils.THEMES_STATIC_RESOURCES_URI_PREFIX);
     }
 
     default boolean isDebugRequest() {
-        return getUriWithoutAppContext().startsWith(UriUtils.DEBUG_APP_URI_PREFIX);
+        return getUriWithoutContextPath().startsWith(UriUtils.DEBUG_APP_URI_PREFIX);
     }
 
     default boolean isFragmentRequest() {
-        return getUriWithoutAppContext().startsWith(UriUtils.FRAGMENTS_URI_PREFIX);
+        return getUriWithoutContextPath().startsWith(UriUtils.FRAGMENTS_URI_PREFIX);
     }
 
     default boolean isDefaultFaviconRequest() {
         return getUri().equals("/favicon.ico");
     }
 
-    static String getAppContext(String uri) {
+    static String getContextPath(String uri) {
         int secondSlash = uri.indexOf('/', 1); // An URI must start with a slash.
         if (secondSlash == -1) {
             // There is only one slash in the URI.
@@ -196,7 +189,7 @@ public interface HttpRequest {
         }
     }
 
-    static String getUriWithoutAppContext(String uri) {
+    static String getUriWithoutContextPath(String uri) {
         int secondSlash = uri.indexOf('/', 1); // An URI must start with a slash.
         if (secondSlash == -1) {
             // There is only one slash in the URI.

@@ -19,7 +19,6 @@ package org.wso2.carbon.uuf.handlebars.renderable;
 import com.github.jknack.handlebars.Handlebars;
 import com.github.jknack.handlebars.Template;
 import com.github.jknack.handlebars.io.TemplateSource;
-import com.google.common.collect.ImmutableMap;
 import org.wso2.carbon.uuf.core.API;
 import org.wso2.carbon.uuf.core.Lookup;
 import org.wso2.carbon.uuf.core.RequestLookup;
@@ -85,8 +84,8 @@ public abstract class HbsRenderable implements Renderable {
 
     protected Map<String, Object> getHbsModel(Model model, Lookup lookup, RequestLookup requestLookup, API api) {
         Map<String, Object> context = new HashMap<>();
-        context.put("@app",
-                    ImmutableMap.of("context", requestLookup.getAppContext(), "config", lookup.getConfiguration()));
+        context.put("@contextPath", requestLookup.getContextPath());
+        context.put("@config", lookup.getConfiguration());
         context.put("@user", api.getSession().map(session -> (Object) session.getUser()).orElse(false));
         context.put("@pathParams", requestLookup.getPathParams());
         context.put("@queryParams", requestLookup.getRequest().getQueryParams());

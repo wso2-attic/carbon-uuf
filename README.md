@@ -16,7 +16,9 @@ Then clone this repository (`git clone https://github.com/wso2/carbon-uuf.git`) 
 1. Extract `wso2uuf-1.0.0-SNAPSHOT.zip` archive.
 2. Go to `wso2uuf-1.0.0-SNAPSHOT/bin` direcotry.
 4. Run `./carbon.sh` to start the Carbon server.
-5. Visit [http://localhost:8080/pet-store/](http://localhost:8080/pets-store/) to access the pets store sample.
+5. Visit sample apps.
+  * Pets Store app [http://localhost:9090/pets-store/](http://localhost:9090/pets-store/)
+  * Features App [https://localhost:9292/features-app/](https://localhost:9292/features-app/)
 
 ## Contributing to Carbon Maven UUF Plugin Project
 

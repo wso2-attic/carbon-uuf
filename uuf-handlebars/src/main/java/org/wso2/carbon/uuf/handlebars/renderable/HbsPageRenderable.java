@@ -18,7 +18,6 @@ package org.wso2.carbon.uuf.handlebars.renderable;
 
 import com.github.jknack.handlebars.Context;
 import com.github.jknack.handlebars.io.TemplateSource;
-import com.google.common.collect.ImmutableMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.core.API;
@@ -26,8 +25,8 @@ import org.wso2.carbon.uuf.core.Lookup;
 import org.wso2.carbon.uuf.core.RequestLookup;
 import org.wso2.carbon.uuf.exception.InvalidTypeException;
 import org.wso2.carbon.uuf.exception.UUFException;
-import org.wso2.carbon.uuf.handlebars.internal.DebugUtil;
 import org.wso2.carbon.uuf.handlebars.PlaceholderWriter;
+import org.wso2.carbon.uuf.handlebars.internal.DebugUtil;
 import org.wso2.carbon.uuf.spi.model.Model;
 
 import java.io.IOException;
@@ -97,8 +96,8 @@ public class HbsPageRenderable extends HbsRenderable {
 
     protected Map<String, Object> getExecutableContext(Model model, Lookup lookup, RequestLookup requestLookup) {
         Map<String, Object> context = new HashMap<>();
-        context.put("app",
-                    ImmutableMap.of("context", requestLookup.getAppContext(), "config", lookup.getConfiguration()));
+        context.put("contextPath", requestLookup.getContextPath());
+        context.put("config", lookup.getConfiguration());
         context.put("request", requestLookup.getRequest());
         context.put("response", requestLookup.getResponse());
         context.put("pathParams", requestLookup.getPathParams());

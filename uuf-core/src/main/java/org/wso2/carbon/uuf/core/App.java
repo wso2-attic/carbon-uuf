@@ -37,12 +37,10 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.wso2.carbon.uuf.internal.util.NameUtils.getSimpleName;
-
 public class App {
 
     private final String name;
-    private final String context;
+    private final String contextPath;
     private final Lookup lookup;
     private final Map<String, Component> components;
     private final Component rootComponent;
@@ -60,8 +58,7 @@ public class App {
         this.components = this.lookup.getAllComponents().values().stream()
                 .collect(Collectors.toMap(Component::getContext, cmp -> cmp));
         this.rootComponent = this.components.remove(Component.ROOT_COMPONENT_CONTEXT);
-        String configuredServerAppContext = configuration.getServerAppContext();
-        this.context = (configuredServerAppContext == null) ? ("/" + getSimpleName(name)) : configuredServerAppContext;
+        this.contextPath = ("/" + NameUtils.getSimpleName(name));
 
         this.themes = themes.stream().collect(Collectors.toMap(Theme::getName, theme -> theme));
         String configuredThemeName = this.configuration.getThemeName();
@@ -72,8 +69,8 @@ public class App {
         return name;
     }
 
-    public String getContext() {
-        return context;
+    public String getContextPath() {
+        return contextPath;
     }
 
     public Map<String, Component> getComponents() {
@@ -94,7 +91,7 @@ public class App {
      * @return rendered HTML output
      */
     public String renderPage(HttpRequest request, HttpResponse response) {
-        RequestLookup requestLookup = new RequestLookup(configuration.getClientAppContext(), request, response);
+        RequestLookup requestLookup = createRequestLookup(request, response);
         API api = new API(sessionRegistry, requestLookup);
         // If exists, render Theme.
         Theme renderingTheme = getRenderingTheme(api);
@@ -102,7 +99,7 @@ public class App {
             renderingTheme.render(requestLookup);
         }
         try {
-            String html = renderPage(request.getUriWithoutAppContext(), null, requestLookup, api);
+            String html = renderPage(request.getUriWithoutContextPath(), null, requestLookup, api);
             updateAppTheme(api);
             return html;
         } catch (SessionNotFoundException e) {
@@ -123,7 +120,7 @@ public class App {
             return Optional.<String>empty();
         }
 
-        RequestLookup requestLookup = new RequestLookup(configuration.getClientAppContext(), request, response);
+        RequestLookup requestLookup = createRequestLookup(request, response);
         API api = new API(sessionRegistry, requestLookup);
         // If exists, render Theme.
         Theme renderingTheme = getRenderingTheme(api);
@@ -171,8 +168,8 @@ public class App {
      * @return rendered HTML output
      */
     public String renderFragment(HttpRequest request, HttpResponse response) {
-        String uriWithoutAppContext = request.getUriWithoutAppContext();
-        String uriPart = uriWithoutAppContext.substring(UriUtils.FRAGMENTS_URI_PREFIX.length());
+        String uriWithoutContextPath = request.getUriWithoutContextPath();
+        String uriPart = uriWithoutContextPath.substring(UriUtils.FRAGMENTS_URI_PREFIX.length());
         String fragmentName = NameUtils.getFullyQualifiedName(rootComponent.getName(), uriPart);
         // When building the dependency tree, all fragments are accumulated into the rootComponent.
         Fragment fragment = lookup.getAllFragments().get(fragmentName);
@@ -181,30 +178,30 @@ public class App {
         }
 
         Model model = new MapModel(request.getQueryParams());
-        RequestLookup requestLookup = new RequestLookup(configuration.getClientAppContext(), request, response);
+        RequestLookup requestLookup = createRequestLookup(request, response);
         API api = new API(sessionRegistry, requestLookup);
         return fragment.render(model, lookup, requestLookup, api);
     }
 
-    public boolean hasPage(String uriWithoutAppContext) {
+    public boolean hasPage(String uriWithoutContextPath) {
         // First check 'root' component has the page.
-        if (rootComponent.hasPage(uriWithoutAppContext)) {
+        if (rootComponent.hasPage(uriWithoutContextPath)) {
             return true;
         }
 
         // Since 'root' components doesn't have the page, search in other components.
-        int secondSlashIndex = uriWithoutAppContext.indexOf('/', 1);
+        int secondSlashIndex = uriWithoutContextPath.indexOf('/', 1);
         if (secondSlashIndex == -1) {
-            // No component context found in the 'uriWithoutAppContext' URI.
+            // No component context found in the 'uriWithoutContextPath' URI.
             return false;
         }
-        String componentContext = uriWithoutAppContext.substring(0, secondSlashIndex);
+        String componentContext = uriWithoutContextPath.substring(0, secondSlashIndex);
         Component component = components.get(componentContext);
         if (component == null) {
             // No component found for the 'componentContext' key.
             return false;
         }
-        String pageUri = uriWithoutAppContext.substring(secondSlashIndex);
+        String pageUri = uriWithoutContextPath.substring(secondSlashIndex);
         return component.hasPage(pageUri);
     }
 
@@ -232,13 +229,18 @@ public class App {
                         "Theme '" + appThemeName.get() + "' which is set for the app '" + name + "' does not exists."));
     }
 
+    private RequestLookup createRequestLookup(HttpRequest request, HttpResponse response) {
+        String clientContextPath = configuration.getContextPath();
+        return new RequestLookup((clientContextPath == null ? contextPath : clientContextPath), request, response);
+    }
+
     @Override
     public int hashCode() {
-        return name.hashCode() * (31 * context.hashCode());
+        return name.hashCode() * (31 * contextPath.hashCode());
     }
 
     @Override
     public String toString() {
-        return "{\"name\": \"" + name + "\", \"context\": \"" + context + "\"}";
+        return "{\"name\": \"" + name + "\", \"context\": \"" + contextPath + "\"}";
     }
 }

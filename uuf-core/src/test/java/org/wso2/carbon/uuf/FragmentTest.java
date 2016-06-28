@@ -36,7 +36,7 @@ public class FragmentTest {
         Component component = new Component("componentName", null, "/componentContext", Collections.emptySortedSet());
         Lookup lookup = new Lookup(ImmutableSetMultimap.of());
         lookup.add(component);
-        RequestLookup requestLookup = new RequestLookup("/appContext", null, null);
+        RequestLookup requestLookup = new RequestLookup("/contextPath", null, null);
         Fragment fragment = new Fragment("componentName.fragmentName", renderable, false);
 
         String output = fragment.render(null, lookup, requestLookup, null);

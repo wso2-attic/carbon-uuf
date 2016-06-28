@@ -85,12 +85,12 @@ public class RequestTest {
             }
 
             @Override
-            public String getAppContext() {
+            public String getContextPath() {
                 return null;
             }
 
             @Override
-            public String getUriWithoutAppContext() {
+            public String getUriWithoutContextPath() {
                 return null;
             }
 
@@ -131,11 +131,6 @@ public class RequestTest {
 
             @Override
             public String getRemoteAddr() {
-                return null;
-            }
-
-            @Override
-            public String getContextPath() {
                 return null;
             }
 

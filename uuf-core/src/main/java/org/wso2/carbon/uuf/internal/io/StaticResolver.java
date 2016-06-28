@@ -92,10 +92,10 @@ public class StaticResolver {
         try {
             if (request.isComponentStaticResourceRequest()) {
                 // /public/components/...
-                resourcePath = resolveResourceInComponent(app.getName(), request.getUriWithoutAppContext());
+                resourcePath = resolveResourceInComponent(app.getName(), request.getUriWithoutContextPath());
             } else if (request.isThemeStaticResourceRequest()) {
                 // /public/themes/...
-                resourcePath = resolveResourceInTheme(app.getName(), request.getUriWithoutAppContext());
+                resourcePath = resolveResourceInTheme(app.getName(), request.getUriWithoutContextPath());
             } else {
                 // /public/...
                 response.setContent(STATUS_BAD_REQUEST, "Invalid static resource URI '" + request.getUri() + "'.");
@@ -141,8 +141,8 @@ public class StaticResolver {
         response.setContent(resourcePath, getContentType(request, resourcePath));
     }
 
-    private Path resolveResourceInComponent(String appName, String uriWithoutAppContext) {
-        // Correct 'uriWithoutAppContext' value must be in either
+    private Path resolveResourceInComponent(String appName, String uriWithoutContextPath) {
+        // Correct 'uriWithoutContextPath' value must be in either
         // "/public/components/{component-simple-name}/{fragment-simple-name}/{sub-directory}/{rest-of-the-path}"
         // format or in
         // "/public/components/{component-simple-name}/base/{sub-directory}/{rest-of-the-path}" format.
@@ -150,8 +150,8 @@ public class StaticResolver {
         // in RequestUtil.isValid(HttpRequest) method which is called before this method.
 
         int slashesCount = 0, thirdSlashIndex = -1, fourthSlashIndex = -1, fifthSlashIndex = -1;
-        for (int i = 0; i < uriWithoutAppContext.length(); i++) {
-            if (uriWithoutAppContext.charAt(i) == '/') {
+        for (int i = 0; i < uriWithoutContextPath.length(); i++) {
+            if (uriWithoutContextPath.charAt(i) == '/') {
                 slashesCount++;
                 if (slashesCount == 3) {
                     thirdSlashIndex = i;
@@ -165,13 +165,13 @@ public class StaticResolver {
             }
         }
         if (slashesCount != 6) {
-            throw new IllegalArgumentException("Invalid static resource URI '" + uriWithoutAppContext + "'.");
+            throw new IllegalArgumentException("Invalid static resource URI '" + uriWithoutContextPath + "'.");
         }
 
         Path staticFilePath = appsHome.resolve(appName).resolve(DIR_NAME_COMPONENTS);
-        String componentSimpleName = uriWithoutAppContext.substring(thirdSlashIndex + 1, fourthSlashIndex);
+        String componentSimpleName = uriWithoutContextPath.substring(thirdSlashIndex + 1, fourthSlashIndex);
         staticFilePath = staticFilePath.resolve(componentSimpleName);
-        String fragmentSimpleName = uriWithoutAppContext.substring(fourthSlashIndex + 1, fifthSlashIndex);
+        String fragmentSimpleName = uriWithoutContextPath.substring(fourthSlashIndex + 1, fifthSlashIndex);
         if (fragmentSimpleName.equals(DIR_NAME_COMPONENT_RESOURCES)) {
             staticFilePath = staticFilePath.resolve(DIR_NAME_PUBLIC_RESOURCES);
         } else {
@@ -180,19 +180,19 @@ public class StaticResolver {
                     .resolve(DIR_NAME_PUBLIC_RESOURCES);
         }
         // {sub-directory}/{rest-of-the-path}
-        String relativePathString = uriWithoutAppContext.substring(fifthSlashIndex + 1, uriWithoutAppContext.length());
+        String relativePathString = uriWithoutContextPath.substring(fifthSlashIndex + 1, uriWithoutContextPath.length());
         return staticFilePath.resolve(relativePathString);
     }
 
-    private Path resolveResourceInTheme(String appName, String uriWithoutAppContext) {
-        // Correct 'uriWithoutAppContext' value must be in
+    private Path resolveResourceInTheme(String appName, String uriWithoutContextPath) {
+        // Correct 'uriWithoutContextPath' value must be in
         // "/public/themes/{theme-name}/{sub-directory}/{rest-of-the-path}" format.
         // So there should be at least 5 slashes. Don't worry about multiple consecutive slashes. They  are covered
         // in RequestUtil.isValid(HttpRequest) method which is called before this method.
 
         int slashesCount = 0, thirdSlashIndex = -1, fourthSlashIndex = -1;
-        for (int i = 0; i < uriWithoutAppContext.length(); i++) {
-            if (uriWithoutAppContext.charAt(i) == '/') {
+        for (int i = 0; i < uriWithoutContextPath.length(); i++) {
+            if (uriWithoutContextPath.charAt(i) == '/') {
                 slashesCount++;
                 if (slashesCount == 3) {
                     thirdSlashIndex = i;
@@ -204,12 +204,12 @@ public class StaticResolver {
             }
         }
         if (slashesCount != 5) {
-            throw new IllegalArgumentException("Invalid static resource URI '" + uriWithoutAppContext + "'.");
+            throw new IllegalArgumentException("Invalid static resource URI '" + uriWithoutContextPath + "'.");
         }
 
-        String themeSimpleName = uriWithoutAppContext.substring(thirdSlashIndex + 1, fourthSlashIndex);
+        String themeSimpleName = uriWithoutContextPath.substring(thirdSlashIndex + 1, fourthSlashIndex);
         // {sub-directory}/{rest-of-the-path}
-        String relativePathString = uriWithoutAppContext.substring(fourthSlashIndex + 1, uriWithoutAppContext.length());
+        String relativePathString = uriWithoutContextPath.substring(fourthSlashIndex + 1, uriWithoutContextPath.length());
         return appsHome.resolve(appName).resolve(DIR_NAME_THEMES)
                 .resolve(themeSimpleName).resolve(DIR_NAME_PUBLIC_RESOURCES).resolve(relativePathString);
 
@@ -230,11 +230,12 @@ public class StaticResolver {
     }
 
     private String getContentType(HttpRequest request, Path resource) {
-        String extensionFromUri = FilenameUtils.getExtension(request.getUriWithoutAppContext());
+        String extensionFromUri = FilenameUtils.getExtension(request.getUriWithoutContextPath());
         Optional<String> contentType = MimeMapper.getMimeType(extensionFromUri);
         if (contentType.isPresent()) {
             return contentType.get();
         }
+        // Here 'resource' never null, thus 'FilenameUtils.getExtension(...)' never return null.
         String extensionFromPath = FilenameUtils.getExtension(resource.getFileName().toString());
         return MimeMapper.getMimeType(extensionFromPath).orElse(CONTENT_TYPE_WILDCARD);
     }

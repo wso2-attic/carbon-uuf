@@ -1,5 +1,5 @@
 {{layout "org.wso2.uuf.base.main"}}
-{{title "Send to Client Sample | " @app.config.appName}}
+{{title "Send to Client Sample | " @config.appName}}
 {{#fillZone "content"}}
     <h3>Send to Client.</h3>
     <hr />
@@ -14,7 +14,7 @@
     <h3>Demo:</h3>
     <pre>
         &lt;script type="text/javascript"&gt;
-            var request = {"method":"GET","protocol":"HTTP/1.1","headers":{},"uri":"/pets-store/pets/1","appContext":"/pets-store","uriWithoutAppContext":"/pets/1","queryParams":{},"contentLength":0};
+            var request = {"method":"GET","protocol":"HTTP/1.1","headers":{},"uri":"/pets-store/pets/1","contextPath":"/pets-store","uriWithoutContextPath":"/pets/1","queryParams":{},"contentLength":0};
         &lt;/script&gt;
     </pre>
 {{/fillZone}}

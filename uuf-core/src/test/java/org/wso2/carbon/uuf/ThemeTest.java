@@ -34,22 +34,22 @@ public class ThemeTest {
         List<String> headJsRelativePaths = ImmutableList.of("js/main-script.css");
         List<String> bodyJsRelativePaths = ImmutableList.of("js/last-script.css");
         Theme theme = new Theme("test.theme", cssRelativePaths, headJsRelativePaths, bodyJsRelativePaths);
-        RequestLookup requestLookup = new RequestLookup("/appContext", null, null);
+        RequestLookup requestLookup = new RequestLookup("/contextPath", null, null);
         theme.render(requestLookup);
 
         Optional<String> css = requestLookup.getPlaceholderContent(Placeholder.css);
         Assert.assertTrue(css.isPresent());
-        Assert.assertEquals(css.get(), "<link href=\"/appContext/public/themes/test.theme/" + cssRelativePaths.get(0) +
+        Assert.assertEquals(css.get(), "<link href=\"/contextPath/public/themes/test.theme/" + cssRelativePaths.get(0) +
                 "\" rel=\"stylesheet\" type=\"text/css\" />");
 
         Optional<String> headJs = requestLookup.getPlaceholderContent(Placeholder.headJs);
         Assert.assertTrue(headJs.isPresent());
-        Assert.assertEquals(headJs.get(), "<script src=\"/appContext/public/themes/test.theme/" +
+        Assert.assertEquals(headJs.get(), "<script src=\"/contextPath/public/themes/test.theme/" +
                 headJsRelativePaths.get(0) + "\" type=\"text/javascript\"></script>");
 
         Optional<String> js = requestLookup.getPlaceholderContent(Placeholder.js);
         Assert.assertTrue(js.isPresent());
-        Assert.assertEquals(js.get(), "<script src=\"/appContext/public/themes/test.theme/" +
+        Assert.assertEquals(js.get(), "<script src=\"/contextPath/public/themes/test.theme/" +
                 bodyJsRelativePaths.get(0) + "\" type=\"text/javascript\"></script>");
     }
 }

@@ -17,6 +17,7 @@
 package org.wso2.carbon.uuf.handlebars.renderable.js;
 
 import com.google.gson.Gson;
+import org.slf4j.Logger;
 import org.wso2.carbon.uuf.api.Placeholder;
 import org.wso2.carbon.uuf.core.API;
 import org.wso2.carbon.uuf.exception.UUFException;
@@ -96,9 +97,39 @@ public class JSFunctionsImpl {
                 throw new UUFException("Cannot read content of JavaScript module '" + moduleName +
                                                "' in component module directory '" + modulesDirPath + ".", e);
             } catch (ScriptException e) {
-                throw new UUFException(
-                        "Cannot evaluate JavaScript module '" + moduleName + "' in component module directory '" +
-                                modulesDirPath + ".", e);
+                throw new UUFException("An error occurred while evaluating the JavaScript module '" + moduleName +
+                                               "' in component module directory '" + modulesDirPath + ".", e);
+            }
+        };
+    }
+
+    public static LogFunction getLogFunction(Logger log) {
+        return new LogFunction() {
+            @Override
+            public void call(Object... args) {
+                if (args.length == 1) {
+                    log.info(getLogMessage(args[0]));
+                } else if (args.length == 2) {
+                    String message = getLogMessage(args[1]);
+                    switch (getLogLevel(args[0])) {
+                        case INFO:
+                            log.info(message);
+                            break;
+                        case DEBUG:
+                            log.debug(message);
+                            break;
+                        case TRACE:
+                            log.trace(message);
+                            break;
+                        case WARN:
+                            log.warn(message);
+                            break;
+                        case ERROR:
+                            log.error(message);
+                    }
+                } else {
+                    throw new IllegalArgumentException("Incorrect number of arguments for 'log' function.");
+                }
             }
         };
     }
@@ -148,5 +179,4 @@ public class JSFunctionsImpl {
         }
         return sendToClientFunction;
     }
-
 }
