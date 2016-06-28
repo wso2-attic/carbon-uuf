@@ -56,7 +56,7 @@ public class HbsPageRenderable extends HbsRenderable {
 
     public HbsPageRenderable(TemplateSource templateSource, Executable executable) {
         this.path = templateSource.filename();
-        this.template = compileTemplate(templateSource);
+        this.template = compile(templateSource);
         this.executable = executable;
     }
 

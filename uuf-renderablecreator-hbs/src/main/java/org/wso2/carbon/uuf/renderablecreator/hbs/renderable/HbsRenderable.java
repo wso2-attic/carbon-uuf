@@ -73,7 +73,7 @@ public abstract class HbsRenderable implements Renderable {
 
     public abstract Template getTemplate();
 
-    protected Template compileTemplate(TemplateSource templateSource) {
+    protected Template compile(TemplateSource templateSource) {
         try {
             return HANDLEBARS.compile(templateSource);
         } catch (IOException e) {

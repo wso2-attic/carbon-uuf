@@ -40,7 +40,7 @@ public class HbsLayoutRenderable extends HbsRenderable {
 
     public HbsLayoutRenderable(TemplateSource templateSource) {
         this.path = templateSource.filename();
-        this.template = compileTemplate(templateSource);
+        this.template = compile(templateSource);
     }
 
     @Override
