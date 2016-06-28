@@ -20,7 +20,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>org.wso2.uuf.core.feature</artifactId>
+    <artifactId>org.wso2.carbon.uuf.core.feature</artifactId>
     <packaging>carbon-feature</packaging>
 
     <name>WSO2 UUF - Core - Feature</name>
@@ -37,7 +37,7 @@
     <dependencies>
         <dependency>
             <groupId>org.wso2.uuf</groupId>
-            <artifactId>org.wso2.uuf.core</artifactId>
+            <artifactId>org.wso2.carbon.uuf.core</artifactId>
             <version>${carbon.uuf.version}</version>
         </dependency>
         <dependency>
@@ -73,7 +73,7 @@
                             </adviceFileContents>
                             <bundles>
                                 <bundle>
-                                    <symbolicName>org.wso2.uuf.core</symbolicName>
+                                    <symbolicName>org.wso2.carbon.uuf.core</symbolicName>
                                     <version>${carbon.uuf.version}</version>
                                 </bundle>
                                 <bundle>

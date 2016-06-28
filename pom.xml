@@ -47,7 +47,7 @@
         <module>uuf-core</module>
         <module>uuf-renderablecreator-hbs</module>
         <module>uuf-httpconnector-msf4j</module>
-        <module>product/p2-features/org.wso2.uuf.core.feature</module>
+        <module>product/p2-features/org.wso2.carbon.uuf.core.feature</module>
         <module>product/p2-features/org.wso2.carbon.uuf.renderablecreator.hbs.feature</module>
         <module>product/p2-features/org.wso2.carbon.uuf.httpconnector.msf4j.feature</module>
         <module>samples/sample4</module>

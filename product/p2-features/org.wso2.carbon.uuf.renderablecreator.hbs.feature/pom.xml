@@ -82,7 +82,7 @@
                             </bundles>
                             <importFeatures>
                                 <feature>
-                                    <id>org.wso2.uuf.core.feature</id>
+                                    <id>org.wso2.carbon.uuf.core.feature</id>
                                     <version>${carbon.uuf.version}</version>
                                 </feature>
                             </importFeatures>

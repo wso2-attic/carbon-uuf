@@ -95,7 +95,7 @@
         </dependency>
         <dependency>
             <groupId>org.wso2.uuf</groupId>
-            <artifactId>org.wso2.uuf.core.feature</artifactId>
+            <artifactId>org.wso2.carbon.uuf.core.feature</artifactId>
             <version>${carbon.uuf.version}</version>
             <type>zip</type>
         </dependency>
@@ -272,7 +272,7 @@
                                     <version>${org.wso2.carbon.transport.http.netty.version}</version>
                                 </feature>
                                 <feature>
-                                    <id>org.wso2.uuf.core.feature</id>
+                                    <id>org.wso2.carbon.uuf.core.feature</id>
                                     <version>${carbon.uuf.version}</version>
                                 </feature>
                                 <feature>
@@ -364,7 +364,7 @@
                                     <version>${org.wso2.carbon.transport.http.netty.version}</version>
                                 </feature>
                                 <feature>
-                                    <id>org.wso2.uuf.core.feature.group</id>
+                                    <id>org.wso2.carbon.uuf.core.feature.group</id>
                                     <version>${carbon.uuf.version}</version>
                                 </feature>
                                 <feature>
