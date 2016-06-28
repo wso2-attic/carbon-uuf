@@ -20,6 +20,7 @@ import org.wso2.carbon.uuf.api.Placeholder;
 import org.wso2.carbon.uuf.internal.util.UriUtils;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class Theme {
@@ -64,7 +65,7 @@ public class Theme {
 
     @Override
     public int hashCode() {
-        return name.hashCode() * 31;
+        return Objects.hash(name);
     }
 
     @Override

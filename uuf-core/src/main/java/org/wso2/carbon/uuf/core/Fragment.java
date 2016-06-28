@@ -22,6 +22,8 @@ import org.wso2.carbon.uuf.internal.util.UriUtils;
 import org.wso2.carbon.uuf.spi.Renderable;
 import org.wso2.carbon.uuf.spi.model.Model;
 
+import java.util.Objects;
+
 public class Fragment {
 
     private final String name;
@@ -67,7 +69,7 @@ public class Fragment {
 
     @Override
     public int hashCode() {
-        return name.hashCode() + (31 * renderer.hashCode());
+        return Objects.hash(name, renderer);
     }
 
     @Override

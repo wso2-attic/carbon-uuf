@@ -22,6 +22,8 @@ import org.wso2.carbon.uuf.internal.util.UriUtils;
 import org.wso2.carbon.uuf.spi.Renderable;
 import org.wso2.carbon.uuf.spi.model.Model;
 
+import java.util.Objects;
+
 public class Page implements Comparable<Page> {
 
     private final UriPatten uriPatten;
@@ -66,7 +68,7 @@ public class Page implements Comparable<Page> {
 
     @Override
     public int hashCode() {
-        return uriPatten.hashCode() + (31 * renderer.hashCode()) + (layout == null ? 0 : (31 * layout.hashCode()));
+        return Objects.hash(uriPatten, renderer, layout);
     }
 
     @Override

@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.spi.model.Model;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.SortedSet;
@@ -92,7 +93,7 @@ public class Component {
 
     @Override
     public int hashCode() {
-        return name.hashCode() + (version.hashCode() * 31) + (context.hashCode() * 31);
+        return Objects.hash(name, version, context);
     }
 
     @Override

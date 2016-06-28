@@ -20,6 +20,8 @@ import org.wso2.carbon.uuf.internal.util.NameUtils;
 import org.wso2.carbon.uuf.internal.util.UriUtils;
 import org.wso2.carbon.uuf.spi.Renderable;
 
+import java.util.Objects;
+
 public class Layout {
 
     private final String name;
@@ -58,7 +60,7 @@ public class Layout {
 
     @Override
     public int hashCode() {
-        return name.hashCode() + (31 * renderer.hashCode());
+        return Objects.hash(name, renderer);
     }
 
     @Override

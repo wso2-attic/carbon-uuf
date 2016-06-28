@@ -21,6 +21,7 @@ import org.wso2.carbon.uuf.core.Theme;
 import java.io.Serializable;
 import java.security.SecureRandom;
 import java.util.Base64;
+import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -69,7 +70,7 @@ public class Session implements Serializable {
 
     @Override
     public int hashCode() {
-        return sessionId.hashCode() * 31;
+        return Objects.hash(sessionId);
     }
 
     @Override
