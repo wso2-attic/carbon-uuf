@@ -72,7 +72,7 @@ public class HbsPageRenderable extends HbsRenderable {
         PlaceholderWriter writer = new PlaceholderWriter();
         context.data(DATA_KEY_CURRENT_WRITER, writer);
         try {
-            compiledTemplate.apply(context, writer);
+            getCompiledTemplate().apply(context, writer);
         } catch (IOException e) {
             throw new UUFException("An error occurred when writing to the in-memory PlaceholderWriter.", e);
         }
@@ -107,6 +107,6 @@ public class HbsPageRenderable extends HbsRenderable {
 
     @Override
     public String toString() {
-        return "{\"path\": \"" + templatePath + "\"" + (executable == null ? "}" : ", \"js\": " + executable + "}");
+        return "{\"path\": \"" + getPath() + "\"" + (executable == null ? "}" : ", \"js\": " + executable + "}");
     }
 }

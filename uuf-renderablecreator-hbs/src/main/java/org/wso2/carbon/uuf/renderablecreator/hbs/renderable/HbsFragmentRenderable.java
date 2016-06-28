@@ -74,7 +74,7 @@ public class HbsFragmentRenderable extends HbsPageRenderable {
                               "\".");
         }
         try {
-            return compiledTemplate.apply(context);
+            return getCompiledTemplate().apply(context);
         } catch (IOException e) {
             throw new UUFException("An error occurred when writing to the in-memory PlaceholderWriter.", e);
         }
@@ -82,6 +82,6 @@ public class HbsFragmentRenderable extends HbsPageRenderable {
 
     @Override
     public String toString() {
-        return "{\"path\": \"" + templatePath + "\"" + (executable == null ? "}" : ", \"js\": " + executable + "}");
+        return "{\"path\": \"" + getPath() + "\"" + (executable == null ? "}" : ", \"js\": " + executable + "}");
     }
 }

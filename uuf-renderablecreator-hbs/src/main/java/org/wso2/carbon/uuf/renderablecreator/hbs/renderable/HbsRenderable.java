@@ -70,15 +70,32 @@ public abstract class HbsRenderable implements Renderable {
         HANDLEBARS.registerHelperMissing(new MissingHelper());
     }
 
-    protected final Template compiledTemplate;
-    protected final String templatePath;
+    private final Template compiledTemplate;
+    private final String path;
 
-    public HbsRenderable(TemplateSource template) {
-        this.templatePath = template.filename();
+    protected HbsRenderable() {
+        this.compiledTemplate = null;
+        this.path = null;
+    }
+
+    public HbsRenderable(TemplateSource templateSource) {
+        this.compiledTemplate = compileTemplate(templateSource);
+        this.path = templateSource.filename();
+    }
+
+    protected Template getCompiledTemplate() {
+        return compiledTemplate;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    protected Template compileTemplate(TemplateSource templateSource) {
         try {
-            this.compiledTemplate = HANDLEBARS.compile(template);
+            return HANDLEBARS.compile(templateSource);
         } catch (IOException e) {
-            throw new UUFException("Cannot compile Handlebars template '" + templatePath + "'.", e);
+            throw new UUFException("Cannot compile Handlebars template '" + templateSource.filename() + "'.", e);
         }
     }
 

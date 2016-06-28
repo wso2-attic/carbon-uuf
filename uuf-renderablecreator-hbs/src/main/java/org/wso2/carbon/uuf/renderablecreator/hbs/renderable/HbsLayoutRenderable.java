@@ -29,6 +29,9 @@ import java.io.IOException;
 
 public class HbsLayoutRenderable extends HbsRenderable {
 
+    protected HbsLayoutRenderable() {
+    }
+
     public HbsLayoutRenderable(TemplateSource template) {
         super(template);
     }
@@ -42,10 +45,10 @@ public class HbsLayoutRenderable extends HbsRenderable {
         PlaceholderWriter writer = new PlaceholderWriter();
         context.data(DATA_KEY_CURRENT_WRITER, writer);
         try {
-            compiledTemplate.apply(context, writer);
+            getCompiledTemplate().apply(context, writer);
         } catch (IOException e) {
             throw new UUFException("An error occurred when rendering the compiled Handlebars template of layout '" +
-                                           templatePath + "'.", e);
+                                           getPath() + "'.", e);
         }
         String out = writer.toString(requestLookup.getPlaceholderContents());
         writer.close();
@@ -54,6 +57,6 @@ public class HbsLayoutRenderable extends HbsRenderable {
 
     @Override
     public String toString() {
-        return "{\"path\": \"" + templatePath + "\"}";
+        return "{\"path\": \"" + getPath() + "\"}";
     }
 }
