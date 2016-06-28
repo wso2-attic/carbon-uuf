@@ -92,12 +92,14 @@ public interface HttpRequest {
 
     /**
      * Returns map of form fields
+     *
      * @return
      */
     Map<String, Object> getFormParams();
 
     /**
      * Returns map of uploaded files
+     *
      * @return
      */
     Map<String, Object> getFiles();

@@ -48,7 +48,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * UUF Deployer.
+ * UUF app deployer.
  */
 @Component(
         name = "org.wso2.carbon.uuf.internal.io.ArtifactAppDeployer",

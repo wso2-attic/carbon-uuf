@@ -21,7 +21,6 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import org.wso2.carbon.uuf.spi.HttpRequest;
 
-import java.io.InputStream;
 import java.util.Map;
 
 public class RequestTest {
