@@ -70,7 +70,6 @@ public class MicroserviceHttpResponse implements HttpResponse {
 
     @Override
     public void setContent(InputStream content, String contentType) {
-        // FIXME: 5/15/16 MSF4J doesn't support InputStream or byte arrays
         this.content = content;
         this.contentType = contentType;
     }
