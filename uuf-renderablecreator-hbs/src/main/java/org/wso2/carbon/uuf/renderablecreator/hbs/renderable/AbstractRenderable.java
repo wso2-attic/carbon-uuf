@@ -71,6 +71,8 @@ public abstract class AbstractRenderable implements Renderable {
 
     public abstract String getPath();
 
+    public abstract Template getTemplate();
+
     protected Template compileTemplate(TemplateSource templateSource) {
         try {
             return HANDLEBARS.compile(templateSource);
