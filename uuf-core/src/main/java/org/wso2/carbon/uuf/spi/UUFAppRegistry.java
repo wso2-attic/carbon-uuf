@@ -22,10 +22,5 @@ import java.util.Optional;
 
 public interface UUFAppRegistry {
 
-    App add(App app);
-
-    Optional<App> get(String context);
-
-    Optional<App> remove(String appName);
-
+    Optional<App> getApp(String contextPath);
 }
