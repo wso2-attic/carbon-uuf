@@ -61,9 +61,9 @@ public class HbsFragmentRenderable extends HbsPageRenderable {
             } else {
                 context = Context.newContext(executeOutput);
             }
-            context.combine(getHbsModel(model, lookup, requestLookup, api));
+            context.combine(getTemplateModel(model, lookup, requestLookup, api));
         } else {
-            Map<String, Object> hbsModel = getHbsModel(model, lookup, requestLookup, api);
+            Map<String, Object> hbsModel = getTemplateModel(model, lookup, requestLookup, api);
             if (model instanceof ContextModel) {
                 context = Context.newContext(((ContextModel) model).getParentContext(), hbsModel);
             } else {

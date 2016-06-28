@@ -83,9 +83,9 @@ public class HbsPageRenderable extends HbsRenderable {
             if (log.isDebugEnabled()) {
                 log.debug("Executable output \"" + DebugUtil.safeJsonString(executeOutput) + "\".");
             }
-            context = Context.newContext(executeOutput).combine(getHbsModel(model, lookup, requestLookup, api));
+            context = Context.newContext(executeOutput).combine(getTemplateModel(model, lookup, requestLookup, api));
         } else {
-            context = Context.newContext(getHbsModel(model, lookup, requestLookup, api));
+            context = Context.newContext(getTemplateModel(model, lookup, requestLookup, api));
         }
 
         context.data(DATA_KEY_LOOKUP, lookup);

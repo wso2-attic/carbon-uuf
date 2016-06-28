@@ -55,7 +55,7 @@ public class HbsLayoutRenderable extends HbsRenderable {
 
     @Override
     public String render(Model model, Lookup lookup, RequestLookup requestLookup, API api) {
-        Context context = Context.newContext(getHbsModel(model, lookup, requestLookup, api));
+        Context context = Context.newContext(getTemplateModel(model, lookup, requestLookup, api));
         context.data(DATA_KEY_LOOKUP, lookup);
         context.data(DATA_KEY_REQUEST_LOOKUP, requestLookup);
         context.data(DATA_KEY_API, api);

@@ -81,7 +81,7 @@ public abstract class HbsRenderable implements Renderable {
         }
     }
 
-    protected Map<String, Object> getHbsModel(Model model, Lookup lookup, RequestLookup requestLookup, API api) {
+    protected Map<String, Object> getTemplateModel(Model model, Lookup lookup, RequestLookup requestLookup, API api) {
         Map<String, Object> context = new HashMap<>();
         context.put("@contextPath", requestLookup.getContextPath());
         context.put("@config", lookup.getConfiguration());
