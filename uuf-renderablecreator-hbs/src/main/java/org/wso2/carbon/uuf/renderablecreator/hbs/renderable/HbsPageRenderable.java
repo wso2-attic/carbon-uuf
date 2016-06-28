@@ -17,6 +17,7 @@
 package org.wso2.carbon.uuf.renderablecreator.hbs.renderable;
 
 import com.github.jknack.handlebars.Context;
+import com.github.jknack.handlebars.Template;
 import com.github.jknack.handlebars.io.TemplateSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,15 +39,34 @@ public class HbsPageRenderable extends AbstractRenderable {
 
     private static final Logger log = LoggerFactory.getLogger(HbsPageRenderable.class);
 
+    private final String path;
+    private final Template template;
     protected final Executable executable;
 
-    public HbsPageRenderable(TemplateSource template) {
-        this(template, null);
+    protected HbsPageRenderable() {
+        this.path = null;
+        this.template = null;
+        this.executable = null;
     }
 
-    public HbsPageRenderable(TemplateSource template, Executable executable) {
-        super(template);
+    public HbsPageRenderable(TemplateSource templateSource) {
+        this(templateSource, null);
+    }
+
+    public HbsPageRenderable(TemplateSource templateSource, Executable executable) {
+        this.path = templateSource.filename();
+        this.template = compileTemplate(templateSource);
         this.executable = executable;
+    }
+
+    @Override
+    public String getPath() {
+        return path;
+    }
+
+    @Override
+    public Template getTemplate() {
+        return template;
     }
 
     @Override
@@ -72,7 +92,7 @@ public class HbsPageRenderable extends AbstractRenderable {
         PlaceholderWriter writer = new PlaceholderWriter();
         context.data(DATA_KEY_CURRENT_WRITER, writer);
         try {
-            getCompiledTemplate().apply(context, writer);
+            getTemplate().apply(context, writer);
         } catch (IOException e) {
             throw new UUFException("An error occurred when writing to the in-memory PlaceholderWriter.", e);
         }
