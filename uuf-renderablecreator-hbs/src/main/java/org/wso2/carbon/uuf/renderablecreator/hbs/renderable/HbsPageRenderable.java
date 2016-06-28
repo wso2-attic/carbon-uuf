@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class HbsPageRenderable extends HbsRenderable {
 
@@ -41,7 +42,7 @@ public class HbsPageRenderable extends HbsRenderable {
 
     private final String path;
     private final Template template;
-    protected final Executable executable;
+    private final Executable executable;
 
     protected HbsPageRenderable() {
         this.path = null;
@@ -69,17 +70,22 @@ public class HbsPageRenderable extends HbsRenderable {
         return template;
     }
 
+    public Optional<Executable> getExecutable() {
+        return Optional.ofNullable(executable);
+    }
+
     @Override
     public String render(Model model, Lookup lookup, RequestLookup requestLookup, API api) {
         Context context;
-        if (executable == null) {
-            context = Context.newContext(getHbsModel(model, lookup, requestLookup, api));
-        } else {
-            Object executableOutput = executeExecutable(getExecutableContext(model, lookup, requestLookup), api);
+        Optional<Executable> executable = getExecutable();
+        if (executable.isPresent()) {
+            Object executeOutput = execute(executable.get(), getExecutableContext(model, lookup, requestLookup), api);
             if (log.isDebugEnabled()) {
-                log.debug("Executable output \"" + DebugUtil.safeJsonString(executableOutput) + "\".");
+                log.debug("Executable output \"" + DebugUtil.safeJsonString(executeOutput) + "\".");
             }
-            context = Context.newContext(executableOutput).combine(getHbsModel(model, lookup, requestLookup, api));
+            context = Context.newContext(executeOutput).combine(getHbsModel(model, lookup, requestLookup, api));
+        } else {
+            context = Context.newContext(getHbsModel(model, lookup, requestLookup, api));
         }
 
         context.data(DATA_KEY_LOOKUP, lookup);
@@ -101,7 +107,18 @@ public class HbsPageRenderable extends HbsRenderable {
         return out;
     }
 
-    protected Map executeExecutable(Object context, API api) {
+    protected Map<String, Object> getExecutableContext(Model model, Lookup lookup, RequestLookup requestLookup) {
+        Map<String, Object> context = new HashMap<>();
+        context.put("contextPath", requestLookup.getContextPath());
+        context.put("config", lookup.getConfiguration());
+        context.put("request", requestLookup.getRequest());
+        context.put("response", requestLookup.getResponse());
+        context.put("pathParams", requestLookup.getPathParams());
+        context.put("params", ((model == null) ? null : model.toMap()));
+        return context;
+    }
+
+    protected Map execute(Executable executable, Object context, API api) {
         Object executableOutput = executable.execute(context, api);
         if (executableOutput == null) {
             return Collections.emptyMap();
@@ -114,19 +131,10 @@ public class HbsPageRenderable extends HbsRenderable {
         }
     }
 
-    protected Map<String, Object> getExecutableContext(Model model, Lookup lookup, RequestLookup requestLookup) {
-        Map<String, Object> context = new HashMap<>();
-        context.put("contextPath", requestLookup.getContextPath());
-        context.put("config", lookup.getConfiguration());
-        context.put("request", requestLookup.getRequest());
-        context.put("response", requestLookup.getResponse());
-        context.put("pathParams", requestLookup.getPathParams());
-        context.put("params", ((model == null) ? null : model.toMap()));
-        return context;
-    }
-
     @Override
     public String toString() {
-        return "{\"path\": \"" + getPath() + "\"" + (executable == null ? "}" : ", \"js\": " + executable + "}");
+        Optional<Executable> executable = getExecutable();
+        return executable.isPresent() ? ("{\"path\": \"" + getPath() + "\", \"js\": " + executable.get() + "}") :
+                super.toString();
     }
 }

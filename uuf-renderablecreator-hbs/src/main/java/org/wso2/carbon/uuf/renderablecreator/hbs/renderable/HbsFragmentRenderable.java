@@ -30,6 +30,7 @@ import org.wso2.carbon.uuf.spi.model.Model;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Optional;
 
 public class HbsFragmentRenderable extends HbsPageRenderable {
 
@@ -49,24 +50,25 @@ public class HbsFragmentRenderable extends HbsPageRenderable {
     @Override
     public String render(Model model, Lookup lookup, RequestLookup requestLookup, API api) {
         Context context;
-        if (executable == null) {
+        Optional<Executable> executable = getExecutable();
+        if (executable.isPresent()) {
+            Object executeOutput = execute(executable.get(), getExecutableContext(model, lookup, requestLookup), api);
+            if (log.isDebugEnabled()) {
+                log.debug("Executable output \"" + DebugUtil.safeJsonString(executeOutput) + "\".");
+            }
+            if (model instanceof ContextModel) {
+                context = Context.newContext(((ContextModel) model).getParentContext(), executeOutput);
+            } else {
+                context = Context.newContext(executeOutput);
+            }
+            context.combine(getHbsModel(model, lookup, requestLookup, api));
+        } else {
             Map<String, Object> hbsModel = getHbsModel(model, lookup, requestLookup, api);
             if (model instanceof ContextModel) {
                 context = Context.newContext(((ContextModel) model).getParentContext(), hbsModel);
             } else {
                 context = Context.newContext(hbsModel);
             }
-        } else {
-            Object executableOutput = executeExecutable(getExecutableContext(model, lookup, requestLookup), api);
-            if (log.isDebugEnabled()) {
-                log.debug("Executable output \"" + DebugUtil.safeJsonString(executableOutput) + "\".");
-            }
-            if (model instanceof ContextModel) {
-                context = Context.newContext(((ContextModel) model).getParentContext(), executableOutput);
-            } else {
-                context = Context.newContext(executableOutput);
-            }
-            context.combine(getHbsModel(model, lookup, requestLookup, api));
         }
 
         context.data(DATA_KEY_LOOKUP, lookup);
