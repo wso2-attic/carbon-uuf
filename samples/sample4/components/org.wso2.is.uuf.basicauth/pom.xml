@@ -30,7 +30,7 @@
     <properties>
         <import.package>
             org.wso2.msf4j,
-            org.wso2.carbon.uuf
+            org.wso2.uuf
         </import.package>
     </properties>
 

@@ -36,7 +36,7 @@
     </parent>
 
     <properties>
-        <!--<private.package>org.wso2.carbon.uuf.internal</private.package>-->
+        <!--<private.package>org.wso2.uuf.internal</private.package>-->
         <import.package>
             org.osgi.framework,
             org.slf4j.*;version="${slf4j.version.range}",

@@ -28,7 +28,7 @@
     <url>http://wso2.org</url>
 
     <parent>
-        <groupId>org.wso2.uuf</groupId>
+        <groupId>org.wso2.carbon.uuf</groupId>
         <artifactId>uuf-parent</artifactId>
         <version>1.0.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
@@ -94,19 +94,19 @@
             <type>zip</type>
         </dependency>
         <dependency>
-            <groupId>org.wso2.uuf</groupId>
+            <groupId>org.wso2.carbon.uuf</groupId>
             <artifactId>org.wso2.carbon.uuf.core.feature</artifactId>
             <version>${carbon.uuf.version}</version>
             <type>zip</type>
         </dependency>
         <dependency>
-            <groupId>org.wso2.uuf</groupId>
+            <groupId>org.wso2.carbon.uuf</groupId>
             <artifactId>org.wso2.carbon.uuf.renderablecreator.hbs.feature</artifactId>
             <version>${carbon.uuf.version}</version>
             <type>zip</type>
         </dependency>
         <dependency>
-            <groupId>org.wso2.uuf</groupId>
+            <groupId>org.wso2.carbon.uuf</groupId>
             <artifactId>org.wso2.carbon.uuf.httpconnector.msf4j.feature</artifactId>
             <version>${carbon.uuf.version}</version>
             <type>zip</type>

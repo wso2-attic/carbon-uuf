@@ -1,4 +1,4 @@
-org.wso2.uuf:org.wso2.uuf.core:bundle:1.0.0-SNAPSHOT
+org.wso2.carbon.uuf:org.wso2.carbon.uuf.core:bundle:1.0.0-SNAPSHOT
 +- org.wso2.orbit.org.yaml:snakeyaml:jar:1.16.0.wso2v1:compile
 +- org.wso2.orbit.com.github.jknack:handlebars:jar:4.0.3.wso2v1:compile
 +- javax.cache:cache-api:jar:1.0.0:compile

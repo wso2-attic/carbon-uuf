@@ -31,15 +31,15 @@
 
     <parent>
         <artifactId>uuf-parent</artifactId>
-        <groupId>org.wso2.uuf</groupId>
+        <groupId>org.wso2.carbon.uuf</groupId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
     <dependencies>
         <!-- Dependencies for UUF Handlebars -->
         <dependency>
-            <groupId>org.wso2.uuf</groupId>
-            <artifactId>org.wso2.uuf.core</artifactId>
+            <groupId>org.wso2.carbon.uuf</groupId>
+            <artifactId>org.wso2.carbon.uuf.core</artifactId>
             <version>${carbon.uuf.version}</version>
         </dependency>
         <dependency>

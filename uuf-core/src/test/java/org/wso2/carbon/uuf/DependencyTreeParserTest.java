@@ -43,7 +43,7 @@ public class DependencyTreeParserTest {
         DependencyTreeParser.Result result = DependencyTreeParser.parse(getDependencyTreeLines());
 
         SetMultimap<String, String> flattenedDependencies = result.getFlattenedDependencies();
-        Assert.assertEquals(flattenedDependencies.get("org.wso2.uuf.core").size(), 41);
+        Assert.assertEquals(flattenedDependencies.get("org.wso2.carbon.uuf.core").size(), 41);
         Assert.assertEquals(flattenedDependencies.get("snakeyaml").size(), 0);
         Assert.assertEquals(flattenedDependencies.get("handlebars").size(), 0);
         Assert.assertEquals(flattenedDependencies.get("cache-api").size(), 0);
@@ -58,7 +58,7 @@ public class DependencyTreeParserTest {
 
         List<Set<Pair<String, String>>> leveledDependencies = result.getLeveledDependencies();
         Assert.assertEquals(leveledDependencies.get(0).size(), 1);
-        Assert.assertTrue(leveledDependencies.get(0).contains(Pair.of("org.wso2.uuf.core", "1.0.0-SNAPSHOT")));
+        Assert.assertTrue(leveledDependencies.get(0).contains(Pair.of("org.wso2.carbon.uuf.core", "1.0.0-SNAPSHOT")));
         Assert.assertEquals(leveledDependencies.get(1).size(), 21);
         Assert.assertEquals(leveledDependencies.get(2).size(), 15);
         Assert.assertEquals(leveledDependencies.get(3).size(), 5);
