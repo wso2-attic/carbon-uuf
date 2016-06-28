@@ -52,7 +52,7 @@ public class HbsFragmentRenderable extends HbsPageRenderable {
         Context context;
         Optional<Executable> executable = getExecutable();
         if (executable.isPresent()) {
-            Object executeOutput = execute(executable.get(), getExecutableContext(model, lookup, requestLookup), api);
+            Map executeOutput = execute(executable.get(), getExecutableContext(model, lookup, requestLookup), api);
             if (log.isDebugEnabled()) {
                 log.debug("Executable output \"" + DebugUtil.safeJsonString(executeOutput) + "\".");
             }
@@ -63,11 +63,11 @@ public class HbsFragmentRenderable extends HbsPageRenderable {
             }
             context.combine(getTemplateModel(model, lookup, requestLookup, api));
         } else {
-            Map<String, Object> hbsModel = getTemplateModel(model, lookup, requestLookup, api);
+            Map<String, Object> templateModel = getTemplateModel(model, lookup, requestLookup, api);
             if (model instanceof ContextModel) {
-                context = Context.newContext(((ContextModel) model).getParentContext(), hbsModel);
+                context = Context.newContext(((ContextModel) model).getParentContext(), templateModel);
             } else {
-                context = Context.newContext(hbsModel);
+                context = Context.newContext(templateModel);
             }
         }
 
