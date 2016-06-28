@@ -42,8 +42,9 @@ import java.util.Map;
  */
 public class MicroserviceHttpRequest implements HttpRequest {
 
-    public static final String HTTP_VERSION = "HTTP_VERSION";
-    public static final String HTTP_CONTENT_TYPE = "Content-Type";
+    public static final String PROPERTY_KEY_HTTP_VERSION = "HTTP_VERSION";
+    public static final String HTTP_HEADER_CONTENT_LENGTH = "Content-Length";
+    private static final Logger log = LoggerFactory.getLogger(MicroserviceHttpRequest.class);
 
     private final String url;
     private final String method;
@@ -55,22 +56,20 @@ public class MicroserviceHttpRequest implements HttpRequest {
     private final String queryString;
     private final Map<String, Object> queryParams;
     private final int contentLength;
-    Map<String, Object> formParams;
-    Map<String, Object> files;
-
-    private static final Logger log = LoggerFactory.getLogger(MicroserviceHttpRequest.class);
+    private final Map<String, Object> formParams;
+    private final Map<String, Object> files;
 
     public MicroserviceHttpRequest(Request request) {
         this(request, null);
     }
 
     public MicroserviceHttpRequest(Request request, FormParamIterator formParamIterator) {
-        this.url = null; // MSF4JRequest does not have a 'getUrl()' method.
+        this.url = null; // MSF4J Request does not have a 'getUrl()' method.
         this.method = request.getHttpMethod();
-        this.protocol = request.getProperty(HTTP_VERSION).toString();
+        this.protocol = request.getProperty(PROPERTY_KEY_HTTP_VERSION).toString();
         this.headers = request.getHeaders();
 
-        //Process URI
+        // process URI
         String rawUri = request.getUri();
         int uriPathEndIndex = rawUri.indexOf('?');
         String rawUriPath, rawQueryString;
@@ -94,8 +93,7 @@ public class MicroserviceHttpRequest implements HttpRequest {
             this.queryParams = Collections.emptyMap();
         }
 
-        //process form params
-        StringBuilder response = new StringBuilder();
+        // POST form params
         if (formParamIterator != null) {
             this.formParams = new HashMap<>();
             this.files = new HashMap<>();
@@ -110,8 +108,9 @@ public class MicroserviceHttpRequest implements HttpRequest {
                         this.files.put(item.getName(), inputStream);
                     }
                 } catch (FormUploadException | IOException e) {
-                    //respond back to client without further processing
-                    throw new WebApplicationException("Error while processing field item: " + item.getFieldName(), e);
+                    // respond back to client without further processing
+                    throw new WebApplicationException(
+                            "An error occurred while processing POST param '" + item.getFieldName() + "'.", e);
                 } finally {
                     IOUtils.closeQuietly(inputStream);
                 }
@@ -121,16 +120,14 @@ public class MicroserviceHttpRequest implements HttpRequest {
             this.files = Collections.emptyMap();
         }
 
-        //process content length
-        int contentLength;
-        String contentLengthHeaderVal = this.headers.get(HTTP_CONTENT_TYPE);
+        // process content length
+        String contentLengthHeaderVal = this.headers.get(HTTP_HEADER_CONTENT_LENGTH);
         try {
-            contentLength = contentLengthHeaderVal == null ? 0 : Integer.parseInt(contentLengthHeaderVal);
+            this.contentLength = (contentLengthHeaderVal == null) ? 0 : Integer.parseInt(contentLengthHeaderVal);
         } catch (NumberFormatException e) {
             throw new WebApplicationException(
-                    "Error while parsing the content-length header with the value '" + contentLengthHeaderVal + "'", e);
+                    "Cannot parse 'Content-Length' header value '" + contentLengthHeaderVal + "' as an integer.", e);
         }
-        this.contentLength = contentLength;
     }
 
     private String constructUrl(boolean isSecured, String localAddr, String localPort, String uri) {
