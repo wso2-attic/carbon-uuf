@@ -28,6 +28,7 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 import javax.script.SimpleBindings;
 import java.util.Map;
+import java.util.Objects;
 
 // TODO remove this SuppressWarnings
 @SuppressWarnings("PackageAccessibility")
@@ -87,6 +88,11 @@ public class JSExecutable implements Executable {
         } finally {
             engineBindings.removeJSFunctionProvider();
         }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(scriptPath, engine);
     }
 
     @Override
