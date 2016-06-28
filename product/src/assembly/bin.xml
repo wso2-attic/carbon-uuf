@@ -67,20 +67,6 @@
             <fileMode>644</fileMode>
         </fileSet>
 
-        <!-- Copy the samples -->
-        <fileSet>
-            <directory>../samples</directory>
-            <outputDirectory>deployment/uufapps</outputDirectory>
-            <excludes>
-                <exclude>**/sample4/**</exclude>
-                <exclude>**/target/**</exclude>
-                <exclude>**/*.iml</exclude>
-                <exclude>**/*.ipr</exclude>
-                <exclude>**/*.iwr</exclude>
-                <exclude>**/*.eclipse</exclude>
-            </excludes>
-        </fileSet>
-
         <!-- Copy the analytics setup -->
         <fileSet>
             <directory>../analytics/das-setup</directory>
