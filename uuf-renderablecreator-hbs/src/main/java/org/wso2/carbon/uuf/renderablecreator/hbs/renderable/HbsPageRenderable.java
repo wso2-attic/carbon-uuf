@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 public class HbsPageRenderable extends HbsRenderable {
@@ -79,7 +80,7 @@ public class HbsPageRenderable extends HbsRenderable {
         Context context;
         Optional<Executable> executable = getExecutable();
         if (executable.isPresent()) {
-            Object executeOutput = execute(executable.get(), getExecutableContext(model, lookup, requestLookup), api);
+            Map executeOutput = execute(executable.get(), getExecutableContext(model, lookup, requestLookup), api);
             if (log.isDebugEnabled()) {
                 log.debug("Executable output \"" + DebugUtil.safeJsonString(executeOutput) + "\".");
             }
@@ -129,6 +130,11 @@ public class HbsPageRenderable extends HbsRenderable {
             throw new InvalidTypeException("Expected a Map as the output from executing the executable '" + executable +
                                                    "'. Instead found '" + executableOutput.getClass().getName() + "'.");
         }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getPath(), getTemplate(), getExecutable().orElse(null));
     }
 
     @Override
