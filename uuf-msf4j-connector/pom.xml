@@ -75,7 +75,8 @@
                             org.wso2.uuf.connector.msf4j.*;version="${carbon.uuf.version}"
                         </Export-Package>
                         <Carbon-Component>
-                            osgi.service;objectClass="org.wso2.msf4j.Microservice,org.wso2.carbon.uuf.spi.HttpConnector"
+                            osgi.service;objectClass="org.wso2.carbon.uuf.spi.HttpConnector",
+                            osgi.service;objectClass="org.wso2.msf4j.Microservice"
                         </Carbon-Component>
                     </instructions>
                 </configuration>
