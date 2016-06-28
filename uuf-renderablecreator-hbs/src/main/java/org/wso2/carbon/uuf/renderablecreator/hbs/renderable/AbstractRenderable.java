@@ -50,7 +50,6 @@ public abstract class AbstractRenderable implements Renderable {
     public static final String DATA_KEY_REQUEST_LOOKUP = AbstractRenderable.class.getName() + "#request-lookup";
     public static final String DATA_KEY_API = AbstractRenderable.class.getName() + "#api";
     public static final String DATA_KEY_CURRENT_WRITER = AbstractRenderable.class.getName() + "#writer";
-    //
     private static final Handlebars HANDLEBARS = new Handlebars();
 
     static {
@@ -70,26 +69,7 @@ public abstract class AbstractRenderable implements Renderable {
         HANDLEBARS.registerHelperMissing(new MissingHelper());
     }
 
-    private final Template compiledTemplate;
-    private final String path;
-
-    protected AbstractRenderable() {
-        this.compiledTemplate = null;
-        this.path = null;
-    }
-
-    public AbstractRenderable(TemplateSource templateSource) {
-        this.compiledTemplate = compileTemplate(templateSource);
-        this.path = templateSource.filename();
-    }
-
-    protected Template getCompiledTemplate() {
-        return compiledTemplate;
-    }
-
-    public String getPath() {
-        return path;
-    }
+    public abstract String getPath();
 
     protected Template compileTemplate(TemplateSource templateSource) {
         try {
@@ -108,5 +88,15 @@ public abstract class AbstractRenderable implements Renderable {
         context.put("@queryParams", requestLookup.getRequest().getQueryParams());
         context.put("@params", ((model == null) ? false : model.toMap()));
         return context;
+    }
+
+    @Override
+    public int hashCode() {
+        return (getPath().hashCode() * 31);
+    }
+
+    @Override
+    public String toString() {
+        return "{\"path\": \"" + getPath() + "\"}";
     }
 }
