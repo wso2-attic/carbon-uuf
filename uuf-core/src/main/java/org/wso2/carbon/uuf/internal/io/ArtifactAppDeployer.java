@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.wso2.carbon.uuf.internal;
+package org.wso2.carbon.uuf.internal.io;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.osgi.framework.BundleContext;
@@ -35,8 +35,6 @@ import org.wso2.carbon.uuf.core.App;
 import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.internal.core.create.AppCreator;
 import org.wso2.carbon.uuf.internal.core.create.ClassLoaderProvider;
-import org.wso2.carbon.uuf.internal.io.ArtifactAppReference;
-import org.wso2.carbon.uuf.internal.io.BundleClassLoaderProvider;
 import org.wso2.carbon.uuf.internal.util.NameUtils;
 import org.wso2.carbon.uuf.spi.RenderableCreator;
 import org.wso2.carbon.uuf.spi.UUFAppRegistry;
@@ -53,7 +51,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * UUF Deployer.
  */
 @Component(
-        name = "org.wso2.carbon.uuf.internal.ArtifactAppDeployer",
+        name = "org.wso2.carbon.uuf.internal.io.ArtifactAppDeployer",
         immediate = true,
         service = RequiredCapabilityListener.class,
         property = {
