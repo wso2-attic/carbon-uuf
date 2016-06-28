@@ -28,7 +28,7 @@ import org.wso2.carbon.uuf.core.API;
 import org.wso2.carbon.uuf.core.Lookup;
 import org.wso2.carbon.uuf.core.RequestLookup;
 import org.wso2.carbon.uuf.renderablecreator.hbs.renderable.HbsPageRenderable;
-import org.wso2.carbon.uuf.renderablecreator.hbs.renderable.AbstractRenderable;
+import org.wso2.carbon.uuf.renderablecreator.hbs.renderable.HbsRenderable;
 
 import java.util.Collections;
 import java.util.Optional;
@@ -39,7 +39,7 @@ import static org.mockito.Mockito.when;
 
 public class HbsHelperTest {
 
-    private static AbstractRenderable createRenderable(String sourceStr) {
+    private static HbsRenderable createRenderable(String sourceStr) {
         StringTemplateSource stringTemplateSource = new StringTemplateSource("<test-source>", sourceStr);
         return new HbsPageRenderable(stringTemplateSource);
     }
@@ -191,7 +191,7 @@ public class HbsHelperTest {
     @Test
     public void testMissing() {
         RequestLookup requestLookup = createRequestLookup();
-        AbstractRenderable renderable = createRenderable("foo\nbar\n{{abc param1=\"p1\"}}\nfoobar");
+        HbsRenderable renderable = createRenderable("foo\nbar\n{{abc param1=\"p1\"}}\nfoobar");
         try {
             renderable.render(null, createLookup(), requestLookup, createAPI());
             Assert.fail("Variable or helper named 'abc' does not exists.");

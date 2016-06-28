@@ -19,7 +19,7 @@ package org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime;
 import com.github.jknack.handlebars.Helper;
 import com.github.jknack.handlebars.Options;
 import org.wso2.carbon.uuf.core.RequestLookup;
-import org.wso2.carbon.uuf.renderablecreator.hbs.renderable.AbstractRenderable;
+import org.wso2.carbon.uuf.renderablecreator.hbs.renderable.HbsRenderable;
 
 import java.io.IOException;
 
@@ -34,7 +34,7 @@ public class PublicHelper implements Helper<String> {
 
         }
 
-        RequestLookup requestLookup = options.data(AbstractRenderable.DATA_KEY_REQUEST_LOOKUP);
+        RequestLookup requestLookup = options.data(HbsRenderable.DATA_KEY_REQUEST_LOOKUP);
         StringBuilder buffer = new StringBuilder(requestLookup.getPublicUri()).append('/').append(relativeUri);
         for (Object param : options.params) {
             buffer.append(param);

@@ -35,7 +35,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public class HbsPageRenderable extends AbstractRenderable {
+public class HbsPageRenderable extends HbsRenderable {
 
     private static final Logger log = LoggerFactory.getLogger(HbsPageRenderable.class);
 

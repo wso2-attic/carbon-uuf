@@ -20,7 +20,7 @@ import com.github.jknack.handlebars.Helper;
 import com.github.jknack.handlebars.Options;
 import org.wso2.carbon.uuf.api.auth.Session;
 import org.wso2.carbon.uuf.core.API;
-import org.wso2.carbon.uuf.renderablecreator.hbs.renderable.AbstractRenderable;
+import org.wso2.carbon.uuf.renderablecreator.hbs.renderable.HbsRenderable;
 
 import java.io.IOException;
 
@@ -41,7 +41,7 @@ public class SecuredHelper implements Helper<Object> {
             return null;
         } else {
             // {{#secured}} ... {{/secured}}
-            API api = options.data(AbstractRenderable.DATA_KEY_API);
+            API api = options.data(HbsRenderable.DATA_KEY_API);
             return api.getSession().map(Session::getUser).isPresent() ? options.fn() : options.inverse();
         }
     }

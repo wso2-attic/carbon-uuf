@@ -19,7 +19,7 @@ package org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime;
 import com.github.jknack.handlebars.Helper;
 import com.github.jknack.handlebars.Options;
 import org.wso2.carbon.uuf.core.RequestLookup;
-import org.wso2.carbon.uuf.renderablecreator.hbs.renderable.AbstractRenderable;
+import org.wso2.carbon.uuf.renderablecreator.hbs.renderable.HbsRenderable;
 
 import java.io.IOException;
 
@@ -33,7 +33,7 @@ public class FillZoneHelper implements Helper<String> {
             throw new IllegalArgumentException("Zone name cannot be null or empty.");
         }
 
-        RequestLookup requestLookup = options.data(AbstractRenderable.DATA_KEY_REQUEST_LOOKUP);
+        RequestLookup requestLookup = options.data(HbsRenderable.DATA_KEY_REQUEST_LOOKUP);
         requestLookup.putToZone(zoneName, options.fn().toString());
         return "";
     }

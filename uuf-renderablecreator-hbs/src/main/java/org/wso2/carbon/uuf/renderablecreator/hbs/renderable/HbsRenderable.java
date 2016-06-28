@@ -44,12 +44,12 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class AbstractRenderable implements Renderable {
+public abstract class HbsRenderable implements Renderable {
 
-    public static final String DATA_KEY_LOOKUP = AbstractRenderable.class.getName() + "#lookup";
-    public static final String DATA_KEY_REQUEST_LOOKUP = AbstractRenderable.class.getName() + "#request-lookup";
-    public static final String DATA_KEY_API = AbstractRenderable.class.getName() + "#api";
-    public static final String DATA_KEY_CURRENT_WRITER = AbstractRenderable.class.getName() + "#writer";
+    public static final String DATA_KEY_LOOKUP = HbsRenderable.class.getName() + "#lookup";
+    public static final String DATA_KEY_REQUEST_LOOKUP = HbsRenderable.class.getName() + "#request-lookup";
+    public static final String DATA_KEY_API = HbsRenderable.class.getName() + "#api";
+    public static final String DATA_KEY_CURRENT_WRITER = HbsRenderable.class.getName() + "#writer";
     private static final Handlebars HANDLEBARS = new Handlebars();
 
     static {
