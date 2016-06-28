@@ -53,7 +53,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * UUF Deployer.
  */
 @Component(
-        name = "org.wso2.carbon.uuf.internal.UUFAppDeployer",
+        name = "org.wso2.carbon.uuf.internal.ArtifactAppDeployer",
         immediate = true,
         service = RequiredCapabilityListener.class,
         property = {
@@ -61,9 +61,9 @@ import java.util.concurrent.ConcurrentHashMap;
         }
 )
 @SuppressWarnings("unused")
-public class UUFAppDeployer implements Deployer, UUFAppRegistry, RequiredCapabilityListener {
+public class ArtifactAppDeployer implements Deployer, UUFAppRegistry, RequiredCapabilityListener {
 
-    private static final Logger log = LoggerFactory.getLogger(UUFAppDeployer.class);
+    private static final Logger log = LoggerFactory.getLogger(ArtifactAppDeployer.class);
 
     private final ArtifactType artifactType;
     private final URL location;
@@ -75,7 +75,7 @@ public class UUFAppDeployer implements Deployer, UUFAppRegistry, RequiredCapabil
     private AppCreator appCreator;
     private BundleContext bundleContext;
 
-    public UUFAppDeployer() {
+    public ArtifactAppDeployer() {
         this.artifactType = new ArtifactType<>("uufapp");
         try {
             this.location = new URL("file:uufapps");
@@ -91,7 +91,7 @@ public class UUFAppDeployer implements Deployer, UUFAppRegistry, RequiredCapabil
 
     @Override
     public void init() {
-        log.debug("UUFAppDeployer initialized.");
+        log.debug("ArtifactAppDeployer initialized.");
     }
 
     @Override
@@ -236,13 +236,13 @@ public class UUFAppDeployer implements Deployer, UUFAppRegistry, RequiredCapabil
     @Activate
     protected void activate(BundleContext bundleContext) {
         this.bundleContext = bundleContext;
-        log.debug("UUFAppDeployer service activated.");
+        log.debug("ArtifactAppDeployer service activated.");
     }
 
     @Deactivate
     protected void deactivate(BundleContext bundleContext) {
         this.bundleContext = null;
-        log.debug("UUFAppDeployer service deactivated.");
+        log.debug("ArtifactAppDeployer service deactivated.");
     }
 
     @Override
@@ -251,9 +251,9 @@ public class UUFAppDeployer implements Deployer, UUFAppRegistry, RequiredCapabil
         log.debug("AppCreator is ready.");
 
         bundleContext.registerService(Deployer.class, this, null);
-        log.info("UUFAppDeployer registered as a Carbon artifact deployer.");
+        log.info("UUF ArtifactAppDeployer registered as a Carbon artifact deployer.");
 
         bundleContext.registerService(UUFAppRegistry.class, this, null);
-        log.debug("UUFAppDeployer registered as an UUFAppRegistry.");
+        log.debug("ArtifactAppDeployer registered as an UUFAppRegistry.");
     }
 }
