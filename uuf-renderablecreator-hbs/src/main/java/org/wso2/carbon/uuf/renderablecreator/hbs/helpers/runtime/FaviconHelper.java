@@ -20,7 +20,7 @@ import com.github.jknack.handlebars.Options;
 import org.wso2.carbon.uuf.api.Placeholder;
 import org.wso2.carbon.uuf.core.RequestLookup;
 import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.FillPlaceholderHelper;
-import org.wso2.carbon.uuf.renderablecreator.hbs.renderable.HbsRenderable;
+import org.wso2.carbon.uuf.renderablecreator.hbs.renderable.AbstractRenderable;
 
 import java.io.IOException;
 
@@ -39,7 +39,7 @@ public class FaviconHelper extends FillPlaceholderHelper<String> {
 
         }
 
-        RequestLookup requestLookup = options.data(HbsRenderable.DATA_KEY_REQUEST_LOOKUP);
+        RequestLookup requestLookup = options.data(AbstractRenderable.DATA_KEY_REQUEST_LOOKUP);
         StringBuilder buffer = new StringBuilder("<link rel=\"shortcut icon\" href=\"")
                 .append(requestLookup.getPublicUri())
                 .append('/')

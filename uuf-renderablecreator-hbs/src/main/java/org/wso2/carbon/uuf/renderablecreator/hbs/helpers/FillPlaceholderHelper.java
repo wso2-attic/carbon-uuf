@@ -20,7 +20,7 @@ import com.github.jknack.handlebars.Helper;
 import com.github.jknack.handlebars.Options;
 import org.wso2.carbon.uuf.api.Placeholder;
 import org.wso2.carbon.uuf.core.RequestLookup;
-import org.wso2.carbon.uuf.renderablecreator.hbs.renderable.HbsRenderable;
+import org.wso2.carbon.uuf.renderablecreator.hbs.renderable.AbstractRenderable;
 
 import java.util.Optional;
 
@@ -37,12 +37,12 @@ public abstract class FillPlaceholderHelper<T> implements Helper<T> {
     }
 
     protected void addToPlaceholder(String value, Options handlebarsOptions) {
-        RequestLookup requestLookup = handlebarsOptions.data(HbsRenderable.DATA_KEY_REQUEST_LOOKUP);
+        RequestLookup requestLookup = handlebarsOptions.data(AbstractRenderable.DATA_KEY_REQUEST_LOOKUP);
         requestLookup.addToPlaceholder(placeholder, value);
     }
 
     protected Optional<String> getPlaceholderValue(Options handlebarsOptions) {
-        RequestLookup requestLookup = handlebarsOptions.data(HbsRenderable.DATA_KEY_REQUEST_LOOKUP);
+        RequestLookup requestLookup = handlebarsOptions.data(AbstractRenderable.DATA_KEY_REQUEST_LOOKUP);
         return requestLookup.getPlaceholderContent(placeholder);
     }
 }

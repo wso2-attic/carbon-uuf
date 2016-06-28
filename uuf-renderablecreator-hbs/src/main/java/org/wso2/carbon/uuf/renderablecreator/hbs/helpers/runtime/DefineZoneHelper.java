@@ -24,7 +24,7 @@ import org.wso2.carbon.uuf.core.Fragment;
 import org.wso2.carbon.uuf.core.Lookup;
 import org.wso2.carbon.uuf.core.RequestLookup;
 import org.wso2.carbon.uuf.renderablecreator.hbs.model.ContextModel;
-import org.wso2.carbon.uuf.renderablecreator.hbs.renderable.HbsRenderable;
+import org.wso2.carbon.uuf.renderablecreator.hbs.renderable.AbstractRenderable;
 
 import java.io.IOException;
 import java.util.Set;
@@ -39,13 +39,13 @@ public class DefineZoneHelper implements Helper<String> {
             throw new IllegalArgumentException("Zone name cannot be null or empty.");
         }
 
-        Lookup lookup = options.data(HbsRenderable.DATA_KEY_LOOKUP);
-        RequestLookup requestLookup = options.data(HbsRenderable.DATA_KEY_REQUEST_LOOKUP);
+        Lookup lookup = options.data(AbstractRenderable.DATA_KEY_LOOKUP);
+        RequestLookup requestLookup = options.data(AbstractRenderable.DATA_KEY_REQUEST_LOOKUP);
         StringBuilder buffer = new StringBuilder();
 
         Set<Fragment> bindings = lookup.getBindings(requestLookup.tracker().getCurrentComponentName(), zoneName);
         if (!bindings.isEmpty()) {
-            API api = options.data(HbsRenderable.DATA_KEY_API);
+            API api = options.data(AbstractRenderable.DATA_KEY_API);
             for (Fragment fragment : bindings) {
                 buffer.append(fragment.render(new ContextModel(options.context), lookup, requestLookup, api));
             }

@@ -19,7 +19,7 @@ package org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime;
 import com.github.jknack.handlebars.Helper;
 import com.github.jknack.handlebars.Options;
 import org.wso2.carbon.uuf.renderablecreator.hbs.PlaceholderWriter;
-import org.wso2.carbon.uuf.renderablecreator.hbs.renderable.HbsRenderable;
+import org.wso2.carbon.uuf.renderablecreator.hbs.renderable.AbstractRenderable;
 
 import java.io.IOException;
 
@@ -33,7 +33,7 @@ public class DefinePlaceholderHelper implements Helper<String> {
             throw new IllegalArgumentException("Placeholder name cannot be null or empty.");
         }
 
-        PlaceholderWriter writer = options.data(HbsRenderable.DATA_KEY_CURRENT_WRITER);
+        PlaceholderWriter writer = options.data(AbstractRenderable.DATA_KEY_CURRENT_WRITER);
         if (options.tagType.inline()) {
             // {{placeholder "name"}}
             writer.addPlaceholder(placeholderName);

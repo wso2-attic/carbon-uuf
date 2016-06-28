@@ -20,7 +20,7 @@ import com.github.jknack.handlebars.Context;
 import com.github.jknack.handlebars.Helper;
 import com.github.jknack.handlebars.Options;
 import org.wso2.carbon.uuf.core.Lookup;
-import org.wso2.carbon.uuf.renderablecreator.hbs.renderable.HbsRenderable;
+import org.wso2.carbon.uuf.renderablecreator.hbs.renderable.AbstractRenderable;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -44,7 +44,7 @@ public class MenuHelper implements Helper<Object> {
             if (menuName.isEmpty()) {
                 throw new IllegalArgumentException("Invalid menu name. Menu name cannot be empty.");
             }
-            Lookup lookup = options.data(HbsRenderable.DATA_KEY_LOOKUP);
+            Lookup lookup = options.data(AbstractRenderable.DATA_KEY_LOOKUP);
             menu = lookup.getConfiguration().getMenu(menuName);
             if (menu == null) {
                 return ""; // Menu 'menuName' does not exists.

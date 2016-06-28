@@ -27,7 +27,7 @@ import org.wso2.carbon.uuf.spi.model.Model;
 
 import java.io.IOException;
 
-public class HbsLayoutRenderable extends HbsRenderable {
+public class HbsLayoutRenderable extends AbstractRenderable {
 
     protected HbsLayoutRenderable() {
     }

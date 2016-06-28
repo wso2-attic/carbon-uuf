@@ -26,7 +26,7 @@ import org.wso2.carbon.uuf.core.Fragment;
 import org.wso2.carbon.uuf.core.Lookup;
 import org.wso2.carbon.uuf.core.RequestLookup;
 import org.wso2.carbon.uuf.renderablecreator.hbs.model.ContextModel;
-import org.wso2.carbon.uuf.renderablecreator.hbs.renderable.HbsRenderable;
+import org.wso2.carbon.uuf.renderablecreator.hbs.renderable.AbstractRenderable;
 import org.wso2.carbon.uuf.spi.model.Model;
 
 import java.io.IOException;
@@ -43,8 +43,8 @@ public class FragmentHelper implements Helper<String> {
             throw new IllegalArgumentException("Fragment name cannot be null or empty.");
         }
 
-        Lookup lookup = options.data(HbsRenderable.DATA_KEY_LOOKUP);
-        RequestLookup requestLookup = options.data(HbsRenderable.DATA_KEY_REQUEST_LOOKUP);
+        Lookup lookup = options.data(AbstractRenderable.DATA_KEY_LOOKUP);
+        RequestLookup requestLookup = options.data(AbstractRenderable.DATA_KEY_REQUEST_LOOKUP);
         Optional<Fragment> fragment = lookup.getFragmentIn(requestLookup.tracker().getCurrentComponentName(),
                                                            fragmentName);
         if (!fragment.isPresent()) {
@@ -58,7 +58,7 @@ public class FragmentHelper implements Helper<String> {
         }
 
         Model model = new ContextModel(options.context, options.hash);
-        API api = options.data(HbsRenderable.DATA_KEY_API);
+        API api = options.data(AbstractRenderable.DATA_KEY_API);
         String content = fragment.get().render(model, lookup, requestLookup, api);
         return new Handlebars.SafeString(content);
     }
