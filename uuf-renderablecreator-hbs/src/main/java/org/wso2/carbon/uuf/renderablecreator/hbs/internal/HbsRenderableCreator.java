@@ -42,6 +42,7 @@ import java.util.Set;
 @Component(name = "org.wso2.carbon.uuf.renderablecreator.hbs.internal.HbsRenderableCreator",
            service = RenderableCreator.class,
            immediate = true)
+@SuppressWarnings("unused")
 public class HbsRenderableCreator implements RenderableCreator {
 
     private static final String EXTENSION_HANDLEBARS = ".hbs";
@@ -91,8 +92,8 @@ public class HbsRenderableCreator implements RenderableCreator {
         return new RenderableCreator.LayoutRenderableData(new HbsLayoutRenderable(templateSource));
     }
 
-    private TemplateSource createTemplateSource(FileReference pageReference) {
-        return new StringTemplateSource(pageReference.getRelativePath(), pageReference.getContent());
+    private TemplateSource createTemplateSource(FileReference fileReference) {
+        return new StringTemplateSource(fileReference.getRelativePath(), fileReference.getContent());
     }
 
     private Executable createExecutable(FragmentReference fragmentReference, ClassLoader classLoader) {
