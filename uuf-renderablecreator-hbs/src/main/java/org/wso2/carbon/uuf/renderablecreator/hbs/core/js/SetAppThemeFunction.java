@@ -14,12 +14,12 @@
  *  limitations under the License.
  */
 
-package org.wso2.carbon.uuf.renderablecreator.hbs.impl.js;
+package org.wso2.carbon.uuf.renderablecreator.hbs.core.js;
 
 @FunctionalInterface
-public interface SendToClientFunction {
+public interface SetAppThemeFunction {
 
-    String NAME = "sendToClient";
+    String NAME = "setAppTheme";
 
-    void call(String name, Object value);
+    void call(String themeName);
 }

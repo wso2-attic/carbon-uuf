@@ -14,12 +14,14 @@
  *  limitations under the License.
  */
 
-package org.wso2.carbon.uuf.renderablecreator.hbs.impl.js;
+package org.wso2.carbon.uuf.renderablecreator.hbs.core.js;
+
+import org.wso2.carbon.uuf.api.auth.Session;
 
 @FunctionalInterface
-public interface SendRedirectFunction {
+public interface CreateSessionFunction {
 
-    String NAME = "sendRedirect";
+    String NAME = "createSession";
 
-    void call(String redirectUrl);
+    Session call(String userName);
 }

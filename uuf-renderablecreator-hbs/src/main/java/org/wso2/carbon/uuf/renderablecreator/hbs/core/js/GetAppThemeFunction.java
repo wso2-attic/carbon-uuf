@@ -14,14 +14,12 @@
  *  limitations under the License.
  */
 
-package org.wso2.carbon.uuf.renderablecreator.hbs.impl.js;
-
-import org.wso2.carbon.uuf.api.auth.Session;
+package org.wso2.carbon.uuf.renderablecreator.hbs.core.js;
 
 @FunctionalInterface
-public interface CreateSessionFunction {
+public interface GetAppThemeFunction {
 
-    String NAME = "createSession";
+    String NAME = "getAppTheme";
 
-    Session call(String userName);
+    String call();
 }

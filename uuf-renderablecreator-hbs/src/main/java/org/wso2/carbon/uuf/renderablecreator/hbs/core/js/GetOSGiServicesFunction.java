@@ -14,12 +14,14 @@
  *  limitations under the License.
  */
 
-package org.wso2.carbon.uuf.renderablecreator.hbs.impl.js;
+package org.wso2.carbon.uuf.renderablecreator.hbs.core.js;
+
+import java.util.Map;
 
 @FunctionalInterface
-public interface CallOSGiServiceFunction {
+public interface GetOSGiServicesFunction {
 
-    String NAME = "callOSGiService";
+    String NAME = "getOSGiServices";
 
-    Object call(String serviceClassName, String serviceMethodName, Object... args);
+    Map<String, Object> call(String serviceClassName);
 }

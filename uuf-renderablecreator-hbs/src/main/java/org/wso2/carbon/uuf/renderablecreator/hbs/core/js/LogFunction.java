@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.wso2.carbon.uuf.renderablecreator.hbs.impl.js;
+package org.wso2.carbon.uuf.renderablecreator.hbs.core.js;
 
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
 

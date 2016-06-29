@@ -14,14 +14,12 @@
  *  limitations under the License.
  */
 
-package org.wso2.carbon.uuf.renderablecreator.hbs.impl.js;
-
-import java.util.Map;
+package org.wso2.carbon.uuf.renderablecreator.hbs.core.js;
 
 @FunctionalInterface
-public interface GetOSGiServicesFunction {
+public interface SendRedirectFunction {
 
-    String NAME = "getOSGiServices";
+    String NAME = "sendRedirect";
 
-    Map<String, Object> call(String serviceClassName);
+    void call(String redirectUrl);
 }

@@ -14,12 +14,12 @@
  *  limitations under the License.
  */
 
-package org.wso2.carbon.uuf.renderablecreator.hbs.impl.js;
+package org.wso2.carbon.uuf.renderablecreator.hbs.core.js;
 
 @FunctionalInterface
-public interface GetAppThemeFunction {
+public interface ModuleFunction {
 
-    String NAME = "getAppTheme";
+    String NAME = "module";
 
-    String call();
+    void call(String moduleName);
 }
