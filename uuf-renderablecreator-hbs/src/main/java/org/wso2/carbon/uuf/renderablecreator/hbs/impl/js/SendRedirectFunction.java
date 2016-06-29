@@ -14,12 +14,12 @@
  *  limitations under the License.
  */
 
-package org.wso2.carbon.uuf.renderablecreator.hbs.renderable.js;
+package org.wso2.carbon.uuf.renderablecreator.hbs.impl.js;
 
 @FunctionalInterface
-public interface SendErrorFunction {
+public interface SendRedirectFunction {
 
-    String NAME = "sendError";
+    String NAME = "sendRedirect";
 
-    void call(int status, String message);
+    void call(String redirectUrl);
 }

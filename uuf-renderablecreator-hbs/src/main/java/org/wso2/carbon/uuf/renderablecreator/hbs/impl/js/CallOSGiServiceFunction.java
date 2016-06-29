@@ -14,12 +14,12 @@
  *  limitations under the License.
  */
 
-package org.wso2.carbon.uuf.renderablecreator.hbs.renderable.js;
+package org.wso2.carbon.uuf.renderablecreator.hbs.impl.js;
 
 @FunctionalInterface
-public interface ModuleFunction {
+public interface CallOSGiServiceFunction {
 
-    String NAME = "module";
+    String NAME = "callOSGiService";
 
-    void call(String moduleName);
+    Object call(String serviceClassName, String serviceMethodName, Object... args);
 }

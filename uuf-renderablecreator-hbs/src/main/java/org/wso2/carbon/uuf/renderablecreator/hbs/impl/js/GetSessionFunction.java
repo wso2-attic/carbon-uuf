@@ -14,12 +14,14 @@
  *  limitations under the License.
  */
 
-package org.wso2.carbon.uuf.renderablecreator.hbs.renderable.js;
+package org.wso2.carbon.uuf.renderablecreator.hbs.impl.js;
+
+import org.wso2.carbon.uuf.api.auth.Session;
 
 @FunctionalInterface
-public interface CallOSGiServiceFunction {
+public interface GetSessionFunction {
 
-    String NAME = "callOSGiService";
+    String NAME = "getSession";
 
-    Object call(String serviceClassName, String serviceMethodName, Object... args);
+    Session call();
 }

@@ -27,7 +27,7 @@ import org.wso2.carbon.uuf.api.Placeholder;
 import org.wso2.carbon.uuf.core.API;
 import org.wso2.carbon.uuf.core.Lookup;
 import org.wso2.carbon.uuf.core.RequestLookup;
-import org.wso2.carbon.uuf.renderablecreator.hbs.renderable.HbsPageRenderable;
+import org.wso2.carbon.uuf.renderablecreator.hbs.impl.HbsPageRenderable;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.HbsRenderable;
 
 import java.util.Collections;

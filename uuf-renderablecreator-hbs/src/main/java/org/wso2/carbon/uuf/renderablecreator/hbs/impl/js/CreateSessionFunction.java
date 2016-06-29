@@ -14,12 +14,14 @@
  *  limitations under the License.
  */
 
-package org.wso2.carbon.uuf.renderablecreator.hbs.renderable.js;
+package org.wso2.carbon.uuf.renderablecreator.hbs.impl.js;
+
+import org.wso2.carbon.uuf.api.auth.Session;
 
 @FunctionalInterface
-public interface DestroySessionFunction {
+public interface CreateSessionFunction {
 
-    String NAME = "destroySession";
+    String NAME = "createSession";
 
-    boolean call();
+    Session call(String userName);
 }

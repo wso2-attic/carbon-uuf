@@ -30,10 +30,10 @@ import org.wso2.carbon.uuf.reference.FragmentReference;
 import org.wso2.carbon.uuf.reference.LayoutReference;
 import org.wso2.carbon.uuf.reference.PageReference;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.Executable;
-import org.wso2.carbon.uuf.renderablecreator.hbs.renderable.HbsFragmentRenderable;
-import org.wso2.carbon.uuf.renderablecreator.hbs.renderable.HbsLayoutRenderable;
-import org.wso2.carbon.uuf.renderablecreator.hbs.renderable.HbsPageRenderable;
-import org.wso2.carbon.uuf.renderablecreator.hbs.renderable.js.JSExecutable;
+import org.wso2.carbon.uuf.renderablecreator.hbs.impl.HbsFragmentRenderable;
+import org.wso2.carbon.uuf.renderablecreator.hbs.impl.HbsLayoutRenderable;
+import org.wso2.carbon.uuf.renderablecreator.hbs.impl.HbsPageRenderable;
+import org.wso2.carbon.uuf.renderablecreator.hbs.impl.js.JSExecutable;
 import org.wso2.carbon.uuf.spi.RenderableCreator;
 
 import java.util.Optional;

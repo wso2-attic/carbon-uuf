@@ -14,12 +14,12 @@
  *  limitations under the License.
  */
 
-package org.wso2.carbon.uuf.renderablecreator.hbs.renderable.js;
+package org.wso2.carbon.uuf.renderablecreator.hbs.impl.js;
 
 @FunctionalInterface
-public interface SendRedirectFunction {
+public interface GetAppThemeFunction {
 
-    String NAME = "sendRedirect";
+    String NAME = "getAppTheme";
 
-    void call(String redirectUrl);
+    String call();
 }

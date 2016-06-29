@@ -14,12 +14,12 @@
  *  limitations under the License.
  */
 
-package org.wso2.carbon.uuf.renderablecreator.hbs.renderable.js;
+package org.wso2.carbon.uuf.renderablecreator.hbs.impl.js;
 
 @FunctionalInterface
-public interface CallMicroServiceFunction {
+public interface SetAppThemeFunction {
 
-    String NAME = "callMicroService";
+    String NAME = "setAppTheme";
 
-    void call();
+    void call(String themeName);
 }

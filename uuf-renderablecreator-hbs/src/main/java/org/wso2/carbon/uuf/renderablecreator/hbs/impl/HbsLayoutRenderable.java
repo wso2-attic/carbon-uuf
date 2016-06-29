@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.wso2.carbon.uuf.renderablecreator.hbs.renderable;
+package org.wso2.carbon.uuf.renderablecreator.hbs.impl;
 
 import com.github.jknack.handlebars.Context;
 import com.github.jknack.handlebars.Template;
