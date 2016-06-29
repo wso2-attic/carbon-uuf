@@ -18,7 +18,7 @@ package org.wso2.carbon.uuf.handlebars;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import org.wso2.carbon.uuf.renderablecreator.hbs.PlaceholderWriter;
+import org.wso2.carbon.uuf.renderablecreator.hbs.internal.io.PlaceholderWriter;
 
 import java.io.IOException;
 import java.util.HashMap;

@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.wso2.carbon.uuf.renderablecreator.hbs;
+package org.wso2.carbon.uuf.renderablecreator.hbs.internal.io;
 
 import java.io.IOException;
 import java.io.Writer;

@@ -18,7 +18,7 @@ package org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime;
 
 import com.github.jknack.handlebars.Helper;
 import com.github.jknack.handlebars.Options;
-import org.wso2.carbon.uuf.renderablecreator.hbs.PlaceholderWriter;
+import org.wso2.carbon.uuf.renderablecreator.hbs.internal.io.PlaceholderWriter;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.HbsRenderable;
 
 import java.io.IOException;
