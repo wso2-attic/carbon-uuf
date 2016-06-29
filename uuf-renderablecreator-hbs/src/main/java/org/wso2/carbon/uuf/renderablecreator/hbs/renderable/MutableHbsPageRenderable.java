@@ -3,10 +3,11 @@ package org.wso2.carbon.uuf.renderablecreator.hbs.renderable;
 import com.github.jknack.handlebars.Template;
 import com.github.jknack.handlebars.io.TemplateSource;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.Executable;
+import org.wso2.carbon.uuf.renderablecreator.hbs.core.MutableHbsRenderable;
 
 import java.util.Optional;
 
-public class MutableHbsPageRenderable extends HbsPageRenderable {
+public class MutableHbsPageRenderable extends HbsPageRenderable implements MutableHbsRenderable {
 
     private final String path;
     private volatile Template template;
