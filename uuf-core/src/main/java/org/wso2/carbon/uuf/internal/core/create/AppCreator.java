@@ -55,7 +55,6 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import static org.wso2.carbon.uuf.internal.util.NameUtils.getFullyQualifiedName;
-import static org.wso2.carbon.uuf.internal.util.NameUtils.getSimpleName;
 
 public class AppCreator {
 
@@ -141,7 +140,7 @@ public class AppCreator {
             // Yaml.loadAs() throws an Exception
             throw new MalformedConfigurationException(
                     "Bindings configuration '" + componentReference.getBindingsConfig().get().getRelativePath() +
-                            "' of component '" + getSimpleName(componentName) + "' is malformed.", e);
+                            "' is malformed.", e);
         }
 
         try {
@@ -154,7 +153,7 @@ public class AppCreator {
             // Yaml.loadAs() throws an Exception
             throw new MalformedConfigurationException(
                     "Configuration '" + componentReference.getConfigurations().get().getRelativePath() +
-                            "' of component '" + getSimpleName(componentName) + "' is malformed.", e);
+                            "' is malformed.", e);
         }
 
         SortedSet<Page> pages = componentReference
