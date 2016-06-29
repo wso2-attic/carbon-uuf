@@ -21,7 +21,7 @@ import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.core.API;
 import org.wso2.carbon.uuf.exception.UUFException;
-import org.wso2.carbon.uuf.renderablecreator.hbs.renderable.Executable;
+import org.wso2.carbon.uuf.renderablecreator.hbs.core.Executable;
 
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;

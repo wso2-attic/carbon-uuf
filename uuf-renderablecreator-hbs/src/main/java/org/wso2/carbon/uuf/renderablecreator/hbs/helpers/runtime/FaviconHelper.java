@@ -20,7 +20,7 @@ import com.github.jknack.handlebars.Options;
 import org.wso2.carbon.uuf.api.Placeholder;
 import org.wso2.carbon.uuf.core.RequestLookup;
 import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.FillPlaceholderHelper;
-import org.wso2.carbon.uuf.renderablecreator.hbs.renderable.HbsRenderable;
+import org.wso2.carbon.uuf.renderablecreator.hbs.core.HbsRenderable;
 
 import java.io.IOException;
 

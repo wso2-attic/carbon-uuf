@@ -2,6 +2,7 @@ package org.wso2.carbon.uuf.renderablecreator.hbs.renderable;
 
 import com.github.jknack.handlebars.Template;
 import com.github.jknack.handlebars.io.TemplateSource;
+import org.wso2.carbon.uuf.renderablecreator.hbs.core.Executable;
 
 import java.util.Optional;
 

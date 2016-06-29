@@ -20,7 +20,7 @@ import com.github.jknack.handlebars.Context;
 import com.github.jknack.handlebars.Helper;
 import com.github.jknack.handlebars.Options;
 import org.wso2.carbon.uuf.core.Lookup;
-import org.wso2.carbon.uuf.renderablecreator.hbs.renderable.HbsRenderable;
+import org.wso2.carbon.uuf.renderablecreator.hbs.core.HbsRenderable;
 
 import java.io.IOException;
 import java.util.Iterator;

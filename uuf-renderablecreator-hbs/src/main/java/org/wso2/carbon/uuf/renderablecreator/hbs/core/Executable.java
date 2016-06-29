@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.wso2.carbon.uuf.renderablecreator.hbs.renderable;
+package org.wso2.carbon.uuf.renderablecreator.hbs.core;
 
 import org.wso2.carbon.uuf.core.API;
 

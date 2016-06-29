@@ -24,6 +24,7 @@ import org.wso2.carbon.uuf.core.API;
 import org.wso2.carbon.uuf.core.Lookup;
 import org.wso2.carbon.uuf.core.RequestLookup;
 import org.wso2.carbon.uuf.exception.UUFException;
+import org.wso2.carbon.uuf.renderablecreator.hbs.core.Executable;
 import org.wso2.carbon.uuf.renderablecreator.hbs.internal.DebugUtil;
 import org.wso2.carbon.uuf.renderablecreator.hbs.model.ContextModel;
 import org.wso2.carbon.uuf.spi.model.Model;
