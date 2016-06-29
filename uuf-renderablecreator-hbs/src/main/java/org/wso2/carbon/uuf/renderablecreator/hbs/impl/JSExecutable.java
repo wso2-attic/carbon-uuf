@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.wso2.carbon.uuf.renderablecreator.hbs.impl.js;
+package org.wso2.carbon.uuf.renderablecreator.hbs.impl;
 
 import jdk.nashorn.api.scripting.NashornScriptEngine;
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
@@ -22,6 +22,20 @@ import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.core.API;
 import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.Executable;
+import org.wso2.carbon.uuf.renderablecreator.hbs.impl.js.CallMicroServiceFunction;
+import org.wso2.carbon.uuf.renderablecreator.hbs.impl.js.CallOSGiServiceFunction;
+import org.wso2.carbon.uuf.renderablecreator.hbs.impl.js.CreateSessionFunction;
+import org.wso2.carbon.uuf.renderablecreator.hbs.impl.js.DestroySessionFunction;
+import org.wso2.carbon.uuf.renderablecreator.hbs.impl.js.GetAppThemeFunction;
+import org.wso2.carbon.uuf.renderablecreator.hbs.impl.js.GetOSGiServicesFunction;
+import org.wso2.carbon.uuf.renderablecreator.hbs.impl.js.GetSessionFunction;
+import org.wso2.carbon.uuf.renderablecreator.hbs.impl.js.JSFunctionsImpl;
+import org.wso2.carbon.uuf.renderablecreator.hbs.impl.js.LogFunction;
+import org.wso2.carbon.uuf.renderablecreator.hbs.impl.js.ModuleFunction;
+import org.wso2.carbon.uuf.renderablecreator.hbs.impl.js.SendErrorFunction;
+import org.wso2.carbon.uuf.renderablecreator.hbs.impl.js.SendRedirectFunction;
+import org.wso2.carbon.uuf.renderablecreator.hbs.impl.js.SendToClientFunction;
+import org.wso2.carbon.uuf.renderablecreator.hbs.impl.js.SetAppThemeFunction;
 
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
