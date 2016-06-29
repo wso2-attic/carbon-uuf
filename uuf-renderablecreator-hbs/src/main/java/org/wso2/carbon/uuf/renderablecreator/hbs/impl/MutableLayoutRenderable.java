@@ -25,6 +25,7 @@ public class MutableLayoutRenderable extends HbsLayoutRenderable implements Muta
         return template;
     }
 
+    @Override
     public void setTemplate(Template template) {
         this.template = template;
     }

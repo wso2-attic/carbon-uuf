@@ -33,6 +33,7 @@ public class MutableHbsPageRenderable extends HbsPageRenderable implements Mutab
         return template;
     }
 
+    @Override
     public void setTemplate(Template template) {
         this.template = template;
     }
@@ -42,6 +43,7 @@ public class MutableHbsPageRenderable extends HbsPageRenderable implements Mutab
         return Optional.ofNullable(executable);
     }
 
+    @Override
     public void setExecutable(Executable executable) {
         this.executable = executable;
     }
