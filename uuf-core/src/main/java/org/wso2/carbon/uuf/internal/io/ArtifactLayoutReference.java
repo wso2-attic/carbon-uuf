@@ -17,6 +17,7 @@
 package org.wso2.carbon.uuf.internal.io;
 
 import org.apache.commons.io.FilenameUtils;
+import org.wso2.carbon.uuf.reference.ComponentReference;
 import org.wso2.carbon.uuf.reference.FileReference;
 import org.wso2.carbon.uuf.reference.LayoutReference;
 
@@ -41,5 +42,10 @@ public class ArtifactLayoutReference implements LayoutReference {
     @Override
     public FileReference getRenderingFile() {
         return new ArtifactFileReference(path, componentReference.getAppReference());
+    }
+
+    @Override
+    public ComponentReference getComponentReference() {
+        return componentReference;
     }
 }

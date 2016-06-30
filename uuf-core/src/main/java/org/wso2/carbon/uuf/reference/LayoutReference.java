@@ -21,4 +21,6 @@ public interface LayoutReference {
     String getName();
 
     FileReference getRenderingFile();
+
+    ComponentReference getComponentReference();
 }
