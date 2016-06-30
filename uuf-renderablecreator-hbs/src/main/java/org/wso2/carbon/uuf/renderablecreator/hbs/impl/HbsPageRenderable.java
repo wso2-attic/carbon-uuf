@@ -26,10 +26,10 @@ import org.wso2.carbon.uuf.core.Lookup;
 import org.wso2.carbon.uuf.core.RequestLookup;
 import org.wso2.carbon.uuf.exception.InvalidTypeException;
 import org.wso2.carbon.uuf.exception.UUFException;
-import org.wso2.carbon.uuf.renderablecreator.hbs.internal.io.PlaceholderWriter;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.Executable;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.HbsRenderable;
 import org.wso2.carbon.uuf.renderablecreator.hbs.internal.DebugUtil;
+import org.wso2.carbon.uuf.renderablecreator.hbs.internal.io.PlaceholderWriter;
 import org.wso2.carbon.uuf.spi.model.Model;
 
 import java.io.IOException;
@@ -37,7 +37,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
 public class HbsPageRenderable extends HbsRenderable {
 
@@ -73,22 +72,22 @@ public class HbsPageRenderable extends HbsRenderable {
         return template;
     }
 
-    public Optional<Executable> getExecutable() {
-        return Optional.ofNullable(executable);
+    protected Executable getExecutable() {
+        return executable;
     }
 
     @Override
     public String render(Model model, Lookup lookup, RequestLookup requestLookup, API api) {
         Context context;
-        Optional<Executable> executable = getExecutable();
-        if (executable.isPresent()) {
-            Map executeOutput = execute(executable.get(), getExecutableContext(model, lookup, requestLookup), api);
+        Executable executable = getExecutable();
+        if (executable == null) {
+            context = Context.newContext(getTemplateModel(model, lookup, requestLookup, api));
+        } else {
+            Map executeOutput = execute(executable, getExecutableContext(model, lookup, requestLookup), api);
             if (log.isDebugEnabled()) {
                 log.debug("Executable output \"" + DebugUtil.safeJsonString(executeOutput) + "\".");
             }
             context = Context.newContext(executeOutput).combine(getTemplateModel(model, lookup, requestLookup, api));
-        } else {
-            context = Context.newContext(getTemplateModel(model, lookup, requestLookup, api));
         }
 
         context.data(DATA_KEY_LOOKUP, lookup);
@@ -136,13 +135,11 @@ public class HbsPageRenderable extends HbsRenderable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(getPath(), getTemplate(), getExecutable().orElse(null));
+        return Objects.hash(getPath(), getTemplate(), getExecutable());
     }
 
     @Override
     public String toString() {
-        Optional<Executable> executable = getExecutable();
-        return executable.isPresent() ? ("{\"path\": \"" + getPath() + "\", \"js\": " + executable.get() + "}") :
-                super.toString();
+        return "{\"path\": \"" + getPath() + "\", \"js\": " + executable + "}";
     }
 }

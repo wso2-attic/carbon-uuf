@@ -31,7 +31,6 @@ import org.wso2.carbon.uuf.spi.model.Model;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.Optional;
 
 public class HbsFragmentRenderable extends HbsPageRenderable {
 
@@ -51,9 +50,16 @@ public class HbsFragmentRenderable extends HbsPageRenderable {
     @Override
     public String render(Model model, Lookup lookup, RequestLookup requestLookup, API api) {
         Context context;
-        Optional<Executable> executable = getExecutable();
-        if (executable.isPresent()) {
-            Map executeOutput = execute(executable.get(), getExecutableContext(model, lookup, requestLookup), api);
+        Executable executable = getExecutable();
+        if (executable == null) {
+            Map<String, Object> templateModel = getTemplateModel(model, lookup, requestLookup, api);
+            if (model instanceof ContextModel) {
+                context = Context.newContext(((ContextModel) model).getParentContext(), templateModel);
+            } else {
+                context = Context.newContext(templateModel);
+            }
+        } else {
+            Map executeOutput = execute(executable, getExecutableContext(model, lookup, requestLookup), api);
             if (log.isDebugEnabled()) {
                 log.debug("Executable output \"" + DebugUtil.safeJsonString(executeOutput) + "\".");
             }
@@ -63,13 +69,6 @@ public class HbsFragmentRenderable extends HbsPageRenderable {
                 context = Context.newContext(executeOutput);
             }
             context.combine(getTemplateModel(model, lookup, requestLookup, api));
-        } else {
-            Map<String, Object> templateModel = getTemplateModel(model, lookup, requestLookup, api);
-            if (model instanceof ContextModel) {
-                context = Context.newContext(((ContextModel) model).getParentContext(), templateModel);
-            } else {
-                context = Context.newContext(templateModel);
-            }
         }
 
         context.data(DATA_KEY_LOOKUP, lookup);
