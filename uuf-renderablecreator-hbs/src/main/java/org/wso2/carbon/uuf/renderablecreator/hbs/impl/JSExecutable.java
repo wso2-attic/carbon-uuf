@@ -29,13 +29,13 @@ import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.DestroySessionFunction;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.GetAppThemeFunction;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.GetOSGiServicesFunction;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.GetSessionFunction;
-import org.wso2.carbon.uuf.renderablecreator.hbs.impl.js.JSFunctionsImpl;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.LogFunction;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.ModuleFunction;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.SendErrorFunction;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.SendRedirectFunction;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.SendToClientFunction;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.SetAppThemeFunction;
+import org.wso2.carbon.uuf.renderablecreator.hbs.impl.js.JSFunctionsImpl;
 
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
@@ -182,7 +182,7 @@ public class JSExecutable implements Executable {
         public Object put(String name, Object value) {
             if (isLocked) {
                 throw new IllegalStateException(
-                        "Cannot modify global '" + name + "' variable/function in this context;");
+                        "Cannot modify global '" + name + "' variable/function in this context.");
             }
             return super.put(name, value);
         }
@@ -190,7 +190,7 @@ public class JSExecutable implements Executable {
         @Override
         public void putAll(Map<? extends String, ? extends Object> toMerge) {
             if (isLocked) {
-                throw new IllegalStateException("Cannot modify global variables/functions in this context;");
+                throw new IllegalStateException("Cannot modify global variables/functions in this context.");
             }
             super.putAll(toMerge);
         }
@@ -199,7 +199,7 @@ public class JSExecutable implements Executable {
         public Object remove(Object key) {
             if (isLocked) {
                 throw new IllegalStateException(
-                        "Cannot modify global '" + key + "' variable/function in this context;");
+                        "Cannot modify global '" + key + "' variable/function in this context.");
             }
             return super.remove(key);
         }
