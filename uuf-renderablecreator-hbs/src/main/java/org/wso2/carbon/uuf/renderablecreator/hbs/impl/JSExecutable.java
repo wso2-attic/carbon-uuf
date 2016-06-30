@@ -54,6 +54,7 @@ public class JSExecutable implements Executable {
     private final NashornScriptEngine engine;
     private final UUFBindings engineBindings;
     private final String scriptPath;
+    private final String componentPath;
 
     public JSExecutable(String scriptSource, ClassLoader componentClassLoader) {
         this(scriptSource, componentClassLoader, null, null);
@@ -62,18 +63,26 @@ public class JSExecutable implements Executable {
     public JSExecutable(String scriptSource, ClassLoader componentClassLoader, String scriptPath,
                         String componentPath) {
         this.scriptPath = scriptPath;
-        NashornScriptEngine engine = (NashornScriptEngine) SCRIPT_ENGINE_FACTORY.getScriptEngine(SCRIPT_ENGINE_ARGS,
-                                                                                                 componentClassLoader);
-        UUFBindings engineBindings = new UUFBindings();
-        engine.setBindings(engineBindings, ScriptContext.ENGINE_SCOPE);
+        this.componentPath = componentPath;
+        // Even though 'NashornScriptEngineFactory.getParameter("THREADING")' returns null, NashornScriptEngine is
+        // thread-safe. See http://stackoverflow.com/a/30159424
+        this.engine = (NashornScriptEngine) SCRIPT_ENGINE_FACTORY.getScriptEngine(SCRIPT_ENGINE_ARGS,
+                                                                                  componentClassLoader);
+        this.engineBindings = new UUFBindings();
+        this.engine.setBindings(engineBindings, ScriptContext.ENGINE_SCOPE);
+        loadScript(scriptSource);
+    }
 
-        engineBindings.put(ScriptEngine.FILENAME, this.scriptPath);
+    protected void loadScript(String scriptSource) {
+        engineBindings.unlock();
+        engineBindings.clear();
+
+        engineBindings.put(ScriptEngine.FILENAME, scriptPath);
         engineBindings.put(ModuleFunction.NAME, JSFunctionsImpl.getModuleFunction(componentPath, engine));
         try {
             engine.eval(scriptSource);
         } catch (ScriptException e) {
-            throw new UUFException("An error occurred while evaluating the JavaScript file '" + this.scriptPath + "'.",
-                                   e);
+            throw new UUFException("An error occurred while evaluating the JavaScript file '" + scriptPath + "'.", e);
         }
         engineBindings.remove(ModuleFunction.NAME); // removing 'module' function
         engineBindings.put(CallOSGiServiceFunction.NAME, JSFunctionsImpl.getCallOsgiServiceFunction());
@@ -82,11 +91,8 @@ public class JSExecutable implements Executable {
         engineBindings.put(SendErrorFunction.NAME, JSFunctionsImpl.getSendErrorFunction());
         engineBindings.put(SendRedirectFunction.NAME, JSFunctionsImpl.getSendRedirectFunction());
         engineBindings.put(LogFunction.NAME, JSFunctionsImpl.getLogFunction(LoggerFactory.getLogger("JAVASCRIPT")));
+
         engineBindings.lock();
-        // Even though 'NashornScriptEngineFactory.getParameter("THREADING")' returns null, NashornScriptEngine is
-        // thread-safe. See http://stackoverflow.com/a/30159424
-        this.engine = engine;
-        this.engineBindings = engineBindings;
     }
 
     @Override
@@ -135,6 +141,10 @@ public class JSExecutable implements Executable {
 
         public void lock() {
             isLocked = true;
+        }
+
+        public void unlock() {
+            isLocked = false;
         }
 
         @Override
