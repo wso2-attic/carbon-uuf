@@ -72,7 +72,7 @@ public abstract class HbsRenderable implements Renderable {
 
     public abstract String getPath();
 
-    public abstract Template getTemplate();
+    protected abstract Template getTemplate();
 
     protected Template compile(TemplateSource templateSource) {
         try {

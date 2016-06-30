@@ -50,7 +50,7 @@ public class HbsLayoutRenderable extends HbsRenderable {
     }
 
     @Override
-    public Template getTemplate() {
+    protected Template getTemplate() {
         return template;
     }
 

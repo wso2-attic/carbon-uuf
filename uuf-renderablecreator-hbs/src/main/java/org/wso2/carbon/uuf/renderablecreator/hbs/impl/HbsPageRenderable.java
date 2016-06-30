@@ -69,7 +69,7 @@ public class HbsPageRenderable extends HbsRenderable {
     }
 
     @Override
-    public Template getTemplate() {
+    protected Template getTemplate() {
         return template;
     }
 
