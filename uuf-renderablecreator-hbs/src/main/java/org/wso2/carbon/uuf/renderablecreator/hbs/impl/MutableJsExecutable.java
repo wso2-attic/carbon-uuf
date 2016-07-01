@@ -31,6 +31,11 @@ public class MutableJsExecutable extends JSExecutable implements MutableExecutab
     }
 
     @Override
+    public String getPath() {
+        return super.getPath();
+    }
+
+    @Override
     public void reload(String scriptSource) {
         try {
             writeLock.lock();
