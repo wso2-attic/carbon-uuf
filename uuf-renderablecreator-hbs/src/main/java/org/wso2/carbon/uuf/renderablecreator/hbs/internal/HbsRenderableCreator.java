@@ -54,9 +54,8 @@ import java.util.Set;
 @SuppressWarnings("unused")
 public class HbsRenderableCreator implements RenderableCreator {
 
-    private static final String EXTENSION_HANDLEBARS = ".hbs";
-    private static final String EXTENSION_JAVASCRIPT = ".js";
     private static final Set<String> SUPPORTED_FILE_EXTENSIONS = ImmutableSet.of("hbs");
+    private static final String EXTENSION_JAVASCRIPT = ".js";
     private static final Logger log = LoggerFactory.getLogger(HbsRenderableCreator.class);
 
     private final boolean isDebuggingEnabled;
