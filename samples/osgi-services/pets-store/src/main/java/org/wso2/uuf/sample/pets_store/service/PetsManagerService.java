@@ -17,5 +17,6 @@
 package org.wso2.uuf.sample.pets_store.service;
 
 public interface PetsManagerService {
+
     String getHelloMessage(String name);
 }
