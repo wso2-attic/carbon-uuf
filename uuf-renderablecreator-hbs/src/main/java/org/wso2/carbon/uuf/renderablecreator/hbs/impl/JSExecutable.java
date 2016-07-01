@@ -95,6 +95,10 @@ public class JSExecutable implements Executable {
         engineBindings.lock();
     }
 
+    protected String getPath() {
+        return scriptPath;
+    }
+
     @Override
     public Object execute(Object context, API api) {
         try {
