@@ -1,12 +1,32 @@
+/*
+ * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ *
+ */
+
 package org.wso2.carbon.uuf.renderablecreator.hbs.internal.io;
 
 import com.github.jknack.handlebars.io.StringTemplateSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.exception.UUFException;
+import org.wso2.carbon.uuf.reference.FileReference;
 import org.wso2.carbon.uuf.reference.FragmentReference;
 import org.wso2.carbon.uuf.reference.LayoutReference;
 import org.wso2.carbon.uuf.reference.PageReference;
+import org.wso2.carbon.uuf.renderablecreator.hbs.core.MutableExecutable;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.MutableHbsRenderable;
 
 import java.io.IOException;
@@ -31,69 +51,67 @@ public class RenderableUpdater {
     private static final Logger log = LoggerFactory.getLogger(RenderableUpdater.class);
     private final Set<Path> watchingDirectories;
     private final ConcurrentMap<Path, MutableHbsRenderable> watchingRenderables;
+    private final ConcurrentMap<Path, MutableExecutable> watchingExecutables;
     private final WatchService watcher;
-    private boolean isWatchServiceClosed;
+    private final Thread watchService;
+    private boolean isWatchServiceStopped;
 
     public RenderableUpdater() {
         this.watchingDirectories = new HashSet<>();
         this.watchingRenderables = new ConcurrentHashMap<>();
+        this.watchingExecutables = new ConcurrentHashMap<>();
         try {
             this.watcher = FileSystems.getDefault().newWatchService();
         } catch (IOException e) {
             throw new UUFException("Cannot create file watch service.", e);
         }
-        this.isWatchServiceClosed = false;
+        this.watchService = new Thread(this::run);
+        this.isWatchServiceStopped = false;
     }
 
-    private void addToWatch(Path componentPath) {
-        if (watchingDirectories.add(componentPath)) {
+    public void add(LayoutReference layoutReference, MutableHbsRenderable mutableRenderable) {
+        add(layoutReference.getRenderingFile(), mutableRenderable);
+    }
+
+    public void add(PageReference pageReference, MutableHbsRenderable mutableRenderable) {
+        add(pageReference.getRenderingFile(), mutableRenderable);
+    }
+
+    public void add(FragmentReference fragmentReference, MutableHbsRenderable mutableRenderable) {
+        add(fragmentReference.getRenderingFile(), mutableRenderable);
+    }
+
+    private void add(FileReference fileReference, MutableHbsRenderable mutableRenderable) {
+        Path renderablePath = Paths.get(fileReference.getAbsolutePath());
+        Path parentDirectory = renderablePath.getParent();
+        if (watchingDirectories.add(parentDirectory)) {
             try {
-                componentPath.register(watcher, StandardWatchEventKinds.ENTRY_MODIFY);
+                parentDirectory.register(watcher, StandardWatchEventKinds.ENTRY_MODIFY);
             } catch (ClosedWatchServiceException e) {
                 throw new UUFException("File watch service is closed.", e);
             } catch (NotDirectoryException e) {
-                throw new UUFException(
-                        "Cannot register file watch service for path'" + componentPath + "' as it is not a directory.",
-                        e);
+                throw new UUFException("Cannot register path '" + parentDirectory +
+                                               "' to file watch service as it is not a directory.", e);
             } catch (IOException e) {
-                throw new UUFException(
-                        "An IO error occurred when registering file watch service for path '" + componentPath + "'.",
-                        e);
+                throw new UUFException("An IO error occurred when registering path '" + parentDirectory +
+                                               "' to file watch service.'", e);
             }
         }
-    }
-
-    public void add(FragmentReference fragmentReference, MutableHbsRenderable fragmentRenderable) {
-        Path componentPath = Paths.get(fragmentReference.getComponentReference().getPath());
-        addToWatch(componentPath);
-        Path fragmentAbsolutePath = Paths.get(fragmentReference.getRenderingFile().getAbsolutePath());
-        watchingRenderables.put(componentPath.relativize(fragmentAbsolutePath), fragmentRenderable);
-    }
-
-    public void add(PageReference pageReference, MutableHbsRenderable pageRenderable) {
-        Path componentAbsolutePath = Paths.get(pageReference.getComponentReference().getPath());
-        addToWatch(componentAbsolutePath);
-        Path pageAbsolutePath = Paths.get(pageReference.getRenderingFile().getAbsolutePath());
-        watchingRenderables.put(componentAbsolutePath.relativize(pageAbsolutePath), pageRenderable);
-    }
-
-    public void add(LayoutReference layoutReference, MutableHbsRenderable layoutRenderable) {
-        Path componentPath = Paths.get(layoutReference.getComponentReference().getPath());
-        addToWatch(componentPath);
-        Path layoutAbsolutePath = Paths.get(layoutReference.getRenderingFile().getAbsolutePath());
-        watchingRenderables.put(componentPath.relativize(layoutAbsolutePath), layoutRenderable);
+        watchingRenderables.put(renderablePath.getFileName(), mutableRenderable);
+        mutableRenderable.getMutableExecutable()
+                .ifPresent(me -> watchingExecutables.put(Paths.get(me.getPath()).getFileName(), me));
     }
 
     public void start() {
-        if (isWatchServiceClosed) {
+        if (isWatchServiceStopped) {
             throw new IllegalStateException("Cannot start RenderableUpdater as the file watch service is closed.");
         } else {
-            new Thread(this::run).start();
+            watchService.start();
         }
     }
 
     public void finish() {
-        isWatchServiceClosed = true;
+        isWatchServiceStopped = true;
         try {
             watcher.close();
         } catch (IOException e) {
@@ -101,8 +119,9 @@ public class RenderableUpdater {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void run() {
-        while (!isWatchServiceClosed) {
+        while (!isWatchServiceStopped) {
             WatchKey watchKey;
             try {
                 watchKey = watcher.take();
@@ -116,30 +135,50 @@ public class RenderableUpdater {
 
             for (WatchEvent<?> event : watchKey.pollEvents()) {
                 if (event.kind() != StandardWatchEventKinds.ENTRY_MODIFY) {
-                    // We only watch file modify events.
-                    continue;
+                    continue; // We only watch file modify events.
                 }
-                @SuppressWarnings("unchecked")
-                Path updatedFileRelativePath = ((WatchEvent<Path>) event).context();
-                MutableHbsRenderable mutableRenderable = watchingRenderables.get(updatedFileRelativePath);
-                if (mutableRenderable == null) {
-                    // 'updatedFileRelativePath' does not represent a watching MutableHbsRenderable
-                    continue;
+
+                Path updatedDirectory = (Path) watchKey.watchable();
+                Path updatedFileName = ((WatchEvent<Path>) event).context();
+                MutableHbsRenderable mutableRenderable = watchingRenderables.get(updatedFileName);
+                if (mutableRenderable != null) {
+                    // Updated file is a MutableHbsRenderable
+                    Path updatedFileAbsolutePath = updatedDirectory.resolve(updatedFileName);
+                    String content = readFileContent(updatedFileAbsolutePath);
+                    if (content == null) {
+                        continue; // something went wrong when reading content from path 'updatedFileAbsolutePath'
+                    }
+                    mutableRenderable.setTemplateSource(new StringTemplateSource(mutableRenderable.getPath(), content));
+                    log.debug("File '" + updatedFileAbsolutePath + "' reloaded successfully.");
+                } else {
+                    MutableExecutable mutableExecutable = watchingExecutables.get(updatedFileName);
+                    if (mutableExecutable != null) {
+                        // 'Updated file is a MutableHbsRenderable
+                        Path updatedFileAbsolutePath = updatedDirectory.resolve(updatedFileName);
+                        String content = readFileContent(updatedFileAbsolutePath);
+                        if (content == null) {
+                            continue; // something went wrong when reading content from path 'updatedFileAbsolutePath'
+                        }
+                        mutableExecutable.reload(content);
+                        log.debug("File '" + updatedFileAbsolutePath + "' reloaded successfully.");
+                    }
                 }
-                String content;
-                try {
-                    content = new String(Files.readAllBytes(updatedFileRelativePath), StandardCharsets.UTF_8);
-                } catch (IOException e) {
-                    log.error("Cannot read content of updated file '" + updatedFileRelativePath + "'.", e);
-                    continue;
-                }
-                mutableRenderable.setTemplateSource(new StringTemplateSource(mutableRenderable.getPath(), content));
             }
 
             boolean valid = watchKey.reset();
             if (!valid) {
+                // Watch key cannot not be reset because watch service is already closed.
                 break;
             }
+        }
+    }
+
+    private static String readFileContent(Path filePath) {
+        try {
+            return new String(Files.readAllBytes(filePath), StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            log.error("Cannot read content of updated file '" + filePath + "'.", e);
+            return null;
         }
     }
 }
