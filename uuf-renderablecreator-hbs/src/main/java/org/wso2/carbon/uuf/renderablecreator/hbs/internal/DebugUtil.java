@@ -26,26 +26,32 @@ import com.google.gson.JsonSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.management.ManagementFactory;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.Set;
 
-// TODO: 6/27/16 refactor this class for proper debugging
 public class DebugUtil {
 
+    private static final boolean IS_DEBUGGING_ENABLED;
+    private static final Gson GSON;
     private static final Logger log = LoggerFactory.getLogger(DebugUtil.class);
-    private static final Gson gson;
 
     static {
+        IS_DEBUGGING_ENABLED = ManagementFactory.getRuntimeMXBean().getInputArguments().contains("-Xdebug");
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.registerTypeAdapter(Context.class, new HbsContextSerializer());
-        gson = gsonBuilder.create();
+        GSON = gsonBuilder.create();
+    }
+
+    public static boolean isDebuggingEnabled() {
+        return IS_DEBUGGING_ENABLED;
     }
 
     public static String safeJsonString(Object obj) {
         try {
-            return gson.toJson(obj);
+            return GSON.toJson(obj);
         } catch (Throwable e) {
             log.debug("Un-serializable object detected " + obj, e);
             return "{\"__uuf_error__\":true}";
