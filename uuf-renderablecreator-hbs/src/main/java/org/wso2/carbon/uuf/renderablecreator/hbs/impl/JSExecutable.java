@@ -70,10 +70,10 @@ public class JSExecutable implements Executable {
                                                                                   componentClassLoader);
         this.engineBindings = new UUFBindings();
         this.engine.setBindings(engineBindings, ScriptContext.ENGINE_SCOPE);
-        loadScript(scriptSource);
+        compile(scriptSource);
     }
 
-    protected void loadScript(String scriptSource) {
+    protected void compile(String scriptSource) {
         engineBindings.unlock();
         engineBindings.clear();
 

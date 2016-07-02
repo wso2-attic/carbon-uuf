@@ -55,7 +55,7 @@ public class MutableJsExecutable extends JSExecutable implements MutableExecutab
     public void reload(String scriptSource) {
         try {
             writeLock.lock();
-            loadScript(scriptSource);
+            compile(scriptSource);
         } finally {
             writeLock.unlock();
         }
