@@ -56,7 +56,7 @@ public class MutableHbsPageRenderable extends HbsPageRenderable implements Mutab
     }
 
     @Override
-    public void setTemplateSource(TemplateSource templateSource) {
+    public void reload(TemplateSource templateSource) {
         template = compile(templateSource);
     }
 

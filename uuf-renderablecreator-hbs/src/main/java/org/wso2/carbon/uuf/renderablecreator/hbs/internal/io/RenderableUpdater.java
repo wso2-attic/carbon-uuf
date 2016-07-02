@@ -148,8 +148,8 @@ public class RenderableUpdater {
                     if (content == null) {
                         continue; // something went wrong when reading content from path 'updatedFileAbsolutePath'
                     }
-                    mutableRenderable.setTemplateSource(new StringTemplateSource(mutableRenderable.getPath(), content));
-                    log.debug("File '" + updatedFileAbsolutePath + "' reloaded successfully.");
+                    mutableRenderable.reload(new StringTemplateSource(mutableRenderable.getPath(), content));
+                    log.info("File '" + updatedFileAbsolutePath + "' reloaded successfully.");
                 } else {
                     MutableExecutable mutableExecutable = watchingExecutables.get(updatedFileName);
                     if (mutableExecutable != null) {
@@ -160,7 +160,7 @@ public class RenderableUpdater {
                             continue; // something went wrong when reading content from path 'updatedFileAbsolutePath'
                         }
                         mutableExecutable.reload(content);
-                        log.debug("File '" + updatedFileAbsolutePath + "' reloaded successfully.");
+                        log.info("File '" + updatedFileAbsolutePath + "' reloaded successfully.");
                     }
                 }
             }

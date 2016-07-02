@@ -58,7 +58,7 @@ public class MutableHbsFragmentRenderable extends HbsFragmentRenderable implemen
     }
 
     @Override
-    public void setTemplateSource(TemplateSource templateSource) {
+    public void reload(TemplateSource templateSource) {
         template = compile(templateSource);
     }
 

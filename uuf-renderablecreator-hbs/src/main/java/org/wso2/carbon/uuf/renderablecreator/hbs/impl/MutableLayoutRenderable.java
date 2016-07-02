@@ -44,7 +44,7 @@ public class MutableLayoutRenderable extends HbsLayoutRenderable implements Muta
     }
 
     @Override
-    public void setTemplateSource(TemplateSource templateSource) {
+    public void reload(TemplateSource templateSource) {
         template = compile(templateSource);
     }
 
