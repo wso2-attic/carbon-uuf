@@ -144,23 +144,26 @@ public class RenderableUpdater {
                 if (mutableRenderable != null) {
                     // Updated file is a MutableHbsRenderable
                     Path updatedFileAbsolutePath = updatedDirectory.resolve(updatedFileName);
-                    String content = readFileContent(updatedFileAbsolutePath);
-                    if (content == null) {
-                        continue; // something went wrong when reading content from path 'updatedFileAbsolutePath'
+                    try {
+                        String content = readFileContent(updatedFileAbsolutePath);
+                        mutableRenderable.reload(new StringTemplateSource(mutableRenderable.getPath(), content));
+                        log.info("Handlebars template '" + updatedFileAbsolutePath + "' reloaded successfully.");
+                    } catch (UUFException e) {
+                        log.error("An error occurred while reloading Handlebars template '" + updatedFileAbsolutePath +
+                                          "'.", e);
                     }
-                    mutableRenderable.reload(new StringTemplateSource(mutableRenderable.getPath(), content));
-                    log.info("File '" + updatedFileAbsolutePath + "' reloaded successfully.");
                 } else {
                     MutableExecutable mutableExecutable = watchingExecutables.get(updatedFileName);
                     if (mutableExecutable != null) {
-                        // 'Updated file is a MutableHbsRenderable
+                        // Updated file is a MutableExecutable
                         Path updatedFileAbsolutePath = updatedDirectory.resolve(updatedFileName);
-                        String content = readFileContent(updatedFileAbsolutePath);
-                        if (content == null) {
-                            continue; // something went wrong when reading content from path 'updatedFileAbsolutePath'
+                        try {
+                            mutableExecutable.reload(readFileContent(updatedFileAbsolutePath));
+                            log.info("JavaScript file '" + updatedFileAbsolutePath + "' reloaded successfully.");
+                        } catch (UUFException e) {
+                            log.error("An error occurred while reloading JavaScript file '" + updatedFileAbsolutePath +
+                                              "'.", e);
                         }
-                        mutableExecutable.reload(content);
-                        log.info("File '" + updatedFileAbsolutePath + "' reloaded successfully.");
                     }
                 }
             }
@@ -177,8 +180,7 @@ public class RenderableUpdater {
         try {
             return new String(Files.readAllBytes(filePath), StandardCharsets.UTF_8);
         } catch (IOException e) {
-            log.error("Cannot read content of updated file '" + filePath + "'.", e);
-            return null;
+            throw new UUFException("Cannot read content of updated file '" + filePath + "'.", e);
         }
     }
 }
