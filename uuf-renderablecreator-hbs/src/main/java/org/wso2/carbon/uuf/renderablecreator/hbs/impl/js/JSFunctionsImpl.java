@@ -17,6 +17,15 @@
 package org.wso2.carbon.uuf.renderablecreator.hbs.impl.js;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
+import jdk.nashorn.api.scripting.ScriptObjectMirror;
 import org.slf4j.Logger;
 import org.wso2.carbon.uuf.api.Placeholder;
 import org.wso2.carbon.uuf.core.API;
@@ -38,6 +47,7 @@ import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.SetAppThemeFunction;
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -66,7 +76,9 @@ public class JSFunctionsImpl {
         CALL_MICRO_SERVICE_FUNCTION = API::callMicroService;
         SEND_ERROR_FUNCTION = API::sendError;
         SEND_REDIRECT_FUNCTION = API::sendRedirect;
-        GSON = new Gson();
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(ScriptObjectMirror.class, new ScriptObjectMirrorSerializer());
+        GSON = gsonBuilder.create();
     }
 
     public JSFunctionsImpl(API api) {
@@ -120,28 +132,43 @@ public class JSFunctionsImpl {
         return new LogFunction() {
             @Override
             public void call(Object... args) {
-                if (args.length == 1) {
-                    log.info(getLogMessage(args[0]));
-                } else if (args.length == 2) {
-                    String message = getLogMessage(args[1]);
-                    switch (getLogLevel(args[0])) {
-                        case INFO:
-                            log.info(message);
-                            break;
-                        case DEBUG:
-                            log.debug(message);
-                            break;
-                        case TRACE:
-                            log.trace(message);
-                            break;
-                        case WARN:
-                            log.warn(message);
-                            break;
-                        case ERROR:
-                            log.error(message);
-                    }
+                LogLevel logLevel;
+                Object obj;
+                switch (args.length) {
+                    case 1:
+                        logLevel = LogLevel.INFO;
+                        obj = args[0];
+                        break;
+                    case 2:
+                        logLevel = getLogLevel(args[0]);
+                        obj = args[1];
+                        break;
+                    default:
+                        throw new IllegalArgumentException("Incorrect number of arguments for 'log' function.");
+                }
+
+                String msg;
+                if (obj instanceof ScriptObjectMirror) {
+                    msg = GSON.toJson((ScriptObjectMirror) obj);
                 } else {
-                    throw new IllegalArgumentException("Incorrect number of arguments for 'log' function.");
+                    msg = GSON.toJson(ScriptObjectMirrorSerializer.serialize(obj));
+                }
+
+                switch (logLevel) {
+                    case INFO:
+                        log.info(msg);
+                        break;
+                    case DEBUG:
+                        log.debug(msg);
+                        break;
+                    case TRACE:
+                        log.trace(msg);
+                        break;
+                    case WARN:
+                        log.warn(msg);
+                        break;
+                    case ERROR:
+                        log.error(msg);
                 }
             }
         };
@@ -191,5 +218,77 @@ public class JSFunctionsImpl {
             };
         }
         return sendToClientFunction;
+    }
+
+    private static class ScriptObjectMirrorSerializer implements JsonSerializer<ScriptObjectMirror> {
+
+        @Override
+        public JsonElement serialize(ScriptObjectMirror jsObj, Type type,
+                                     JsonSerializationContext serializationContext) {
+            return serialize(jsObj, serializationContext);
+        }
+
+        private JsonElement serialize(ScriptObjectMirror jsObj, JsonSerializationContext serializationContext) {
+            if (jsObj == null) {
+                return JsonNull.INSTANCE;
+            }
+            if (jsObj.isFunction()) {
+                String functionSource = jsObj.toString();
+                int openCurlyBraceIndex = functionSource.indexOf('{');
+                if (openCurlyBraceIndex == -1) {
+                    return new JsonPrimitive("function ()");
+                } else {
+                    return new JsonPrimitive(functionSource.substring(0, openCurlyBraceIndex).trim());
+                }
+            }
+            if (jsObj.isArray()) {
+                JsonArray jsonArray = new JsonArray();
+                for (Object item : jsObj.values()) {
+                    if (item instanceof ScriptObjectMirror) {
+                        jsonArray.add(serialize((ScriptObjectMirror) item, serializationContext));
+                    } else {
+                        jsonArray.add(serialize(item));
+                    }
+                }
+                return jsonArray;
+            }
+            if (jsObj.isEmpty()) {
+                return new JsonObject();
+            } else {
+                JsonObject jsonObject = new JsonObject();
+                for (String key : jsObj.getOwnKeys(true)) {
+                    Object member = jsObj.getMember(key);
+                    if (member instanceof ScriptObjectMirror) {
+                        jsonObject.add(key, serialize((ScriptObjectMirror) member, serializationContext));
+                    } else {
+                        jsonObject.add(key, serialize(member));
+                    }
+                }
+                return jsonObject;
+            }
+        }
+
+        public static JsonElement serialize(Object obj) {
+            if (obj == null) {
+                return JsonNull.INSTANCE;
+            }
+            if (ScriptObjectMirror.isUndefined(obj)) {
+                return new JsonPrimitive("undefined");
+            }
+            if (obj instanceof Boolean) {
+                return new JsonPrimitive((Boolean) obj);
+            }
+            if (obj instanceof Number) {
+                return new JsonPrimitive((Number) obj);
+            }
+            if (obj instanceof Character) {
+                return new JsonPrimitive((Character) obj);
+            }
+            if (obj instanceof String) {
+                return new JsonPrimitive((String) obj);
+            } else {
+                return new JsonPrimitive("{" + obj.getClass().getName() + "}");
+            }
+        }
     }
 }
