@@ -182,14 +182,14 @@ public class ArtifactAppDeployer implements Deployer, UUFAppRegistry, RequiredCa
             }
             try {
                 app = appCreator.createApp(new ArtifactAppReference(Paths.get(artifact.getPath())));
-            } catch (UUFException e) {
-                log.error("Cannot deploy app in '" + artifact.getPath() + "'.", e);
+            } catch (Exception e) {
+                // catching any/all exception/s
                 if (Debugger.isDebuggingEnabled()) {
                     // If the server is in the debug mode, add the artifact back to the 'pendingToDeployArtifacts'
                     // map so the Dev can correct the error and attempt to re-deploy the artifact.
                     pendingToDeployArtifacts.put(contextPath, artifact);
                 }
-                return null;
+                throw new UUFException("An error occurred while deploying UUF app in '" + artifact.getPath() + "'.", e);
             }
             deployedApps.put(app.getContextPath(), app);
         }
