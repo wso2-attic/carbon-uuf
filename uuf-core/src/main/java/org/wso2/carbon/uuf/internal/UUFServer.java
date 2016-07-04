@@ -144,11 +144,13 @@ public class UUFServer {
             app = appRegistry.getApp(request.getContextPath());
             if (!app.isPresent()) {
                 requestDispatcher.serveErrorPage(request, response, STATUS_NOT_FOUND,
-                                                 "Cannot find an app for context '" + request.getContextPath() + "'.");
+                                                 "Cannot find an app for context path '" + request.getContextPath() +
+                                                         "'.");
                 return;
             }
             requestDispatcher.serve(app.get(), request, response);
         } catch (Exception e) {
+            // catching any/all exception/s
             log.error("An unexpected error occurred while serving for request '" + request + "'.", e);
             requestDispatcher.serveErrorPage((app.isPresent() ? app.get() : null), request, response,
                                              new HttpErrorException(STATUS_INTERNAL_SERVER_ERROR, e.getMessage(), e));
