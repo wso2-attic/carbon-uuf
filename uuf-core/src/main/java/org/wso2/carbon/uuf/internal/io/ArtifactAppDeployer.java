@@ -35,6 +35,7 @@ import org.wso2.carbon.uuf.core.App;
 import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.internal.core.create.AppCreator;
 import org.wso2.carbon.uuf.internal.core.create.ClassLoaderProvider;
+import org.wso2.carbon.uuf.internal.debug.Debugger;
 import org.wso2.carbon.uuf.internal.util.NameUtils;
 import org.wso2.carbon.uuf.spi.RenderableCreator;
 import org.wso2.carbon.uuf.spi.UUFAppRegistry;
@@ -179,7 +180,17 @@ public class ArtifactAppDeployer implements Deployer, UUFAppRegistry, RequiredCa
                 log.warn("Cannot deploy UUF app in '" + artifact.getPath() + "' as it does not exists anymore.");
                 return null;
             }
-            app = appCreator.createApp(new ArtifactAppReference(Paths.get(artifact.getPath())));
+            try {
+                app = appCreator.createApp(new ArtifactAppReference(Paths.get(artifact.getPath())));
+            } catch (UUFException e) {
+                log.error("Cannot deploy app in '" + artifact.getPath() + "'.", e);
+                if (Debugger.isDebuggingEnabled()) {
+                    // If the server is in the debug mode, add the artifact back to the 'pendingToDeployArtifacts'
+                    // map so the Dev can correct the error and attempt to re-deploy the artifact.
+                    pendingToDeployArtifacts.put(contextPath, artifact);
+                }
+                return null;
+            }
             deployedApps.put(app.getContextPath(), app);
         }
         log.info("UUF app '" + app.getName() + "' deployed for context path '" + app.getContextPath() + "'.");
