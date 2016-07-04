@@ -161,10 +161,12 @@ public class HbsRenderableCreator implements RenderableCreator {
                                         ComponentReference componentReference) {
         if (isDebuggingEnabled) {
             return new MutableJsExecutable(executableFileReference.getContent(), classLoader,
-                                           executableFileReference.getAbsolutePath(), componentReference.getPath());
+                                           executableFileReference.getAbsolutePath(),
+                                           executableFileReference.getRelativePath(), componentReference.getPath());
         } else {
             return new JSExecutable(executableFileReference.getContent(), classLoader,
-                                    executableFileReference.getAbsolutePath(), componentReference.getPath());
+                                    executableFileReference.getAbsolutePath(),
+                                    executableFileReference.getRelativePath(), componentReference.getPath());
         }
     }
 

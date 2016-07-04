@@ -53,16 +53,18 @@ public class JSExecutable implements Executable {
 
     private final NashornScriptEngine engine;
     private final UUFBindings engineBindings;
-    private final String scriptPath;
+    private final String absolutePath;
+    private final String relativePath;
     private final String componentPath;
 
     public JSExecutable(String scriptSource, ClassLoader componentClassLoader) {
-        this(scriptSource, componentClassLoader, null, null);
+        this(scriptSource, componentClassLoader, null, null, null);
     }
 
-    public JSExecutable(String scriptSource, ClassLoader componentClassLoader, String scriptPath,
+    public JSExecutable(String scriptSource, ClassLoader componentClassLoader, String absolutePath, String relativePath,
                         String componentPath) {
-        this.scriptPath = scriptPath;
+        this.absolutePath = absolutePath;
+        this.relativePath = relativePath;
         this.componentPath = componentPath;
         // Even though 'NashornScriptEngineFactory.getParameter("THREADING")' returns null, NashornScriptEngine is
         // thread-safe. See http://stackoverflow.com/a/30159424
@@ -77,12 +79,12 @@ public class JSExecutable implements Executable {
         engineBindings.unlock();
         engineBindings.clear();
 
-        engineBindings.put(ScriptEngine.FILENAME, scriptPath);
+        engineBindings.put(ScriptEngine.FILENAME, absolutePath);
         engineBindings.put(ModuleFunction.NAME, JSFunctionsImpl.getModuleFunction(componentPath, engine));
         try {
             engine.eval(scriptSource);
         } catch (ScriptException e) {
-            throw new UUFException("An error occurred while evaluating the JavaScript file '" + scriptPath + "'.", e);
+            throw new UUFException("An error occurred while evaluating the JavaScript file '" + absolutePath + "'.", e);
         }
         engineBindings.remove(ModuleFunction.NAME); // removing 'module' function
         engineBindings.put(CallOSGiServiceFunction.NAME, JSFunctionsImpl.getCallOsgiServiceFunction());
@@ -90,13 +92,13 @@ public class JSExecutable implements Executable {
         engineBindings.put(CallMicroServiceFunction.NAME, JSFunctionsImpl.getCallMicroServiceFunction());
         engineBindings.put(SendErrorFunction.NAME, JSFunctionsImpl.getSendErrorFunction());
         engineBindings.put(SendRedirectFunction.NAME, JSFunctionsImpl.getSendRedirectFunction());
-        engineBindings.put(LogFunction.NAME, JSFunctionsImpl.getLogFunction(LoggerFactory.getLogger("JAVASCRIPT")));
+        engineBindings.put(LogFunction.NAME, JSFunctionsImpl.getLogFunction(LoggerFactory.getLogger(relativePath)));
 
         engineBindings.lock();
     }
 
     protected String getPath() {
-        return scriptPath;
+        return absolutePath;
     }
 
     @Override
@@ -106,9 +108,9 @@ public class JSExecutable implements Executable {
             return engine.invokeFunction("onRequest", context);
         } catch (ScriptException e) {
             throw new UUFException("An error occurred when executing the 'onRequest' function in JavaScript file '" +
-                                           scriptPath + "' with context '" + context + "'.", e);
+                                           absolutePath + "' with context '" + context + "'.", e);
         } catch (NoSuchMethodException e) {
-            throw new UUFException("Cannot find the 'onRequest' function in the JavaScript file '" + scriptPath + "'.",
+            throw new UUFException("Cannot find the 'onRequest' function in the JavaScript file '" + absolutePath + "'.",
                                    e);
         } finally {
             engineBindings.removeJSFunctionProvider();
@@ -117,12 +119,12 @@ public class JSExecutable implements Executable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(scriptPath, engine);
+        return Objects.hash(absolutePath, engine);
     }
 
     @Override
     public String toString() {
-        return "{\"path\": \"" + scriptPath + "\"}";
+        return "{\"path\": \"" + absolutePath + "\"}";
     }
 
     public static class UUFBindings extends SimpleBindings {

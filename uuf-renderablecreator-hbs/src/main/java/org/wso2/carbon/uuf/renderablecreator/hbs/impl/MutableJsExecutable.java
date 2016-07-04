@@ -28,9 +28,9 @@ public class MutableJsExecutable extends JSExecutable implements MutableExecutab
     private final Lock readLock;
     private final Lock writeLock;
 
-    public MutableJsExecutable(String scriptSource, ClassLoader componentClassLoader, String scriptPath,
-                               String componentPath) {
-        super(scriptSource, componentClassLoader, scriptPath, componentPath);
+    public MutableJsExecutable(String scriptSource, ClassLoader componentClassLoader, String absolutePath,
+                               String relativePath, String componentPath) {
+        super(scriptSource, componentClassLoader, absolutePath, relativePath, componentPath);
         ReadWriteLock lock = new ReentrantReadWriteLock();
         this.readLock = lock.readLock();
         this.writeLock = lock.writeLock();
