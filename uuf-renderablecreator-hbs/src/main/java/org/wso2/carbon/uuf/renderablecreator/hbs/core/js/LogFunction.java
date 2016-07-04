@@ -16,11 +16,7 @@
 
 package org.wso2.carbon.uuf.renderablecreator.hbs.core.js;
 
-import jdk.nashorn.api.scripting.ScriptObjectMirror;
-
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Map;
 
 @FunctionalInterface
 public interface LogFunction {
@@ -32,7 +28,7 @@ public interface LogFunction {
     default LogLevel getLogLevel(Object arg0) {
         if (!(arg0 instanceof String)) {
             throw new IllegalArgumentException(
-                    "Log level must be a string " + Arrays.toString(LogLevel.values()) + ". Instead found" + " '" +
+                    "Log level must be a string " + Arrays.toString(LogLevel.values()) + ". Instead found '" +
                             arg0.getClass().getName() + "'.");
         }
         try {
@@ -40,22 +36,6 @@ public interface LogFunction {
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException(
                     "Log level must be " + Arrays.toString(LogLevel.values()) + ". Instead found '" + arg0 + "'.");
-        }
-    }
-
-    default String getLogMessage(Object arg) {
-        if (arg == null) {
-            return "null";
-        }
-        if (arg instanceof ScriptObjectMirror) {
-            ScriptObjectMirror jsObject = (ScriptObjectMirror) arg;
-            // TODO: 6/27/16 stringify jsObject correctly
-            return jsObject.toString();
-        } else if ((arg instanceof Number) || (arg instanceof Character) || (arg instanceof String) ||
-                (arg instanceof Collection) || (arg instanceof Map)) {
-            return arg.toString();
-        } else {
-            return "{" + arg.getClass().getName() + "}";
         }
     }
 
