@@ -26,7 +26,6 @@ import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
-import org.slf4j.Logger;
 import org.wso2.carbon.uuf.api.Placeholder;
 import org.wso2.carbon.uuf.core.API;
 import org.wso2.carbon.uuf.exception.UUFException;
@@ -37,7 +36,6 @@ import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.DestroySessionFunction;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.GetAppThemeFunction;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.GetOSGiServicesFunction;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.GetSessionFunction;
-import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.LogFunction;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.ModuleFunction;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.SendErrorFunction;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.SendRedirectFunction;
@@ -124,52 +122,6 @@ public class JSFunctionsImpl {
             } catch (ScriptException e) {
                 throw new UUFException("An error occurred while evaluating the JavaScript module '" + moduleName +
                                                "' in component module directory '" + modulesDirPath + ".", e);
-            }
-        };
-    }
-
-    public static LogFunction getLogFunction(Logger log) {
-        return new LogFunction() {
-            @Override
-            public void call(Object... args) {
-                LogLevel logLevel;
-                Object obj;
-                switch (args.length) {
-                    case 1:
-                        logLevel = LogLevel.INFO;
-                        obj = args[0];
-                        break;
-                    case 2:
-                        logLevel = getLogLevel(args[0]);
-                        obj = args[1];
-                        break;
-                    default:
-                        throw new IllegalArgumentException("Incorrect number of arguments for 'log' function.");
-                }
-
-                String msg;
-                if (obj instanceof ScriptObjectMirror) {
-                    msg = GSON.toJson((ScriptObjectMirror) obj);
-                } else {
-                    msg = GSON.toJson(ScriptObjectMirrorSerializer.serialize(obj));
-                }
-
-                switch (logLevel) {
-                    case INFO:
-                        log.info(msg);
-                        break;
-                    case DEBUG:
-                        log.debug(msg);
-                        break;
-                    case TRACE:
-                        log.trace(msg);
-                        break;
-                    case WARN:
-                        log.warn(msg);
-                        break;
-                    case ERROR:
-                        log.error(msg);
-                }
             }
         };
     }

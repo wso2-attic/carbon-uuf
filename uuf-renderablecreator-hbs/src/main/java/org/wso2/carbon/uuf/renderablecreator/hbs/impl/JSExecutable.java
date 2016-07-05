@@ -18,7 +18,6 @@ package org.wso2.carbon.uuf.renderablecreator.hbs.impl;
 
 import jdk.nashorn.api.scripting.NashornScriptEngine;
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
-import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.core.API;
 import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.Executable;
@@ -29,7 +28,6 @@ import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.DestroySessionFunction;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.GetAppThemeFunction;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.GetOSGiServicesFunction;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.GetSessionFunction;
-import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.LogFunction;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.ModuleFunction;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.SendErrorFunction;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.SendRedirectFunction;
@@ -92,7 +90,6 @@ public class JSExecutable implements Executable {
         engineBindings.put(CallMicroServiceFunction.NAME, JSFunctionsImpl.getCallMicroServiceFunction());
         engineBindings.put(SendErrorFunction.NAME, JSFunctionsImpl.getSendErrorFunction());
         engineBindings.put(SendRedirectFunction.NAME, JSFunctionsImpl.getSendRedirectFunction());
-        engineBindings.put(LogFunction.NAME, JSFunctionsImpl.getLogFunction(LoggerFactory.getLogger(relativePath)));
 
         engineBindings.lock();
     }
