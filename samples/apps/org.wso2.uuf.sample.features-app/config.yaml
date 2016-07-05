@@ -1,5 +1,5 @@
 appName : Features App
-theme : org.wso2.uuf.theme.default
+theme : org.wso2.uuf.sample.theme.default
 menu :
   main :
     Home : {link: "", icon: "fw-home"}

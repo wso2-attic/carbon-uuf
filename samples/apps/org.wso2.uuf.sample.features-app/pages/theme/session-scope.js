@@ -20,5 +20,5 @@ function onRequest(env) {
     if (!session) {
         session = createSession("rasika");
     }
-    session.setThemeName("org.wso2.uuf.theme.green");
+    session.setThemeName("org.wso2.uuf.sample.theme.green");
 }

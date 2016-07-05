@@ -20,12 +20,28 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.wso2.uuf</groupId>
-    <artifactId>org.wso2.uuf.theme.blue</artifactId>
+    <groupId>org.wso2.is</groupId>
+    <artifactId>org.wso2.uuf.sample.basicauth</artifactId>
     <version>1.0.0-SNAPSHOT</version>
 
-    <name>WSO2 UUF Sample - Theme - Blue</name>
+    <name>WSO2 UUF Sample - Component - Basic Auth Component</name>
     <url>http://wso2.org</url>
+
+    <properties>
+        <import.package>
+            org.wso2.msf4j,
+            org.wso2.uuf
+        </import.package>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.wso2.uuf</groupId>
+            <artifactId>org.wso2.uuf.sample.foundation</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <type>zip</type>
+        </dependency>
+    </dependencies>
 
     <build>
         <plugins>
@@ -37,7 +53,7 @@
                     <execution>
                         <phase>package</phase>
                         <goals>
-                            <goal>create-theme</goal>
+                            <goal>create-component</goal>
                         </goals>
                     </execution>
                 </executions>
