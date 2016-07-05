@@ -41,7 +41,7 @@
         <module>themes/org.wso2.uuf.theme.blue</module>
         <module>themes/org.wso2.uuf.theme.green</module>
         <module>components/org.wso2.is.uuf.basicauth</module>
-        <module>components/org.wso2.uuf.base</module>
+        <module>components/org.wso2.uuf.sample.foundation</module>
         <module>components/org.wso2.store.ui.store-common</module>
         <module>apps/org.wso2.uuf.sample.pets-store</module>
         <module>apps/org.wso2.uuf.sample.devices-store</module>
