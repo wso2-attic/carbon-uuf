@@ -20,23 +20,16 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.wso2.store</groupId>
+    <groupId>org.wso2.uuf.sample</groupId>
     <artifactId>org.wso2.uuf.sample.store-common</artifactId>
     <version>1.0.0-SNAPSHOT</version>
 
     <name>WSO2 UUF Sample - Component - Store Common Component</name>
     <url>http://wso2.org</url>
 
-    <properties>
-        <import.package>
-            org.wso2.carbon;version="1.0.0",
-            org.wso2.msf4j;version="1.0.0-SNAPSHOT"
-        </import.package>
-    </properties>
-
     <dependencies>
         <dependency>
-            <groupId>org.wso2.uuf</groupId>
+            <groupId>org.wso2.uuf.sample</groupId>
             <artifactId>org.wso2.uuf.sample.foundation</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <type>zip</type>
@@ -60,5 +53,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>
