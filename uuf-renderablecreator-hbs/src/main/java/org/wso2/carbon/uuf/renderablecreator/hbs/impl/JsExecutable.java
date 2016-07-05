@@ -45,7 +45,7 @@ import java.util.Objects;
 
 // TODO remove this SuppressWarnings
 @SuppressWarnings("PackageAccessibility")
-public class JSExecutable implements Executable {
+public class JsExecutable implements Executable {
 
     private static final NashornScriptEngineFactory SCRIPT_ENGINE_FACTORY = new NashornScriptEngineFactory();
     private static final String[] SCRIPT_ENGINE_ARGS = new String[]{"-strict", "--optimistic-types"};
@@ -56,11 +56,11 @@ public class JSExecutable implements Executable {
     private final String relativePath;
     private final String componentPath;
 
-    public JSExecutable(String scriptSource, ClassLoader componentClassLoader) {
+    public JsExecutable(String scriptSource, ClassLoader componentClassLoader) {
         this(scriptSource, componentClassLoader, null, null, null);
     }
 
-    public JSExecutable(String scriptSource, ClassLoader componentClassLoader, String absolutePath, String relativePath,
+    public JsExecutable(String scriptSource, ClassLoader componentClassLoader, String absolutePath, String relativePath,
                         String componentPath) {
         this.absolutePath = absolutePath;
         this.relativePath = relativePath;

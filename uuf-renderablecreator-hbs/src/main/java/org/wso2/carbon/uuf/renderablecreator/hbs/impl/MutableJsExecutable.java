@@ -23,7 +23,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-public class MutableJsExecutable extends JSExecutable implements MutableExecutable {
+public class MutableJsExecutable extends JsExecutable implements MutableExecutable {
 
     private final Lock readLock;
     private final Lock writeLock;

@@ -36,7 +36,7 @@ import org.wso2.carbon.uuf.renderablecreator.hbs.core.MutableHbsRenderable;
 import org.wso2.carbon.uuf.renderablecreator.hbs.impl.HbsFragmentRenderable;
 import org.wso2.carbon.uuf.renderablecreator.hbs.impl.HbsLayoutRenderable;
 import org.wso2.carbon.uuf.renderablecreator.hbs.impl.HbsPageRenderable;
-import org.wso2.carbon.uuf.renderablecreator.hbs.impl.JSExecutable;
+import org.wso2.carbon.uuf.renderablecreator.hbs.impl.JsExecutable;
 import org.wso2.carbon.uuf.renderablecreator.hbs.impl.MutableHbsFragmentRenderable;
 import org.wso2.carbon.uuf.renderablecreator.hbs.impl.MutableHbsPageRenderable;
 import org.wso2.carbon.uuf.renderablecreator.hbs.impl.MutableJsExecutable;
@@ -164,7 +164,7 @@ public class HbsRenderableCreator implements RenderableCreator {
                                            executableFileReference.getAbsolutePath(),
                                            executableFileReference.getRelativePath(), componentReference.getPath());
         } else {
-            return new JSExecutable(executableFileReference.getContent(), classLoader,
+            return new JsExecutable(executableFileReference.getContent(), classLoader,
                                     executableFileReference.getAbsolutePath(),
                                     executableFileReference.getRelativePath(), componentReference.getPath());
         }
