@@ -41,7 +41,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class JSFunctionsImpl {
+public class JsFunctionsImpl {
 
     private static final CallOSGiServiceFunction CALL_OSGI_SERVICE_FUNCTION;
     private static final GetOSGiServicesFunction GET_OSGI_SERVICES_FUNCTION;
@@ -67,7 +67,7 @@ public class JSFunctionsImpl {
         GSON = new Gson();
     }
 
-    public JSFunctionsImpl(API api) {
+    public JsFunctionsImpl(API api) {
         this.api = api;
     }
 
@@ -114,7 +114,7 @@ public class JSFunctionsImpl {
         };
     }
 
-    public static LoggerObject getLoggerObject(String name){
+    public static LoggerObject getLoggerObject(String name) {
         return new LoggerObject(name);
     }
 

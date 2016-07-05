@@ -33,7 +33,7 @@ import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.SendErrorFunction;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.SendRedirectFunction;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.SendToClientFunction;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.SetAppThemeFunction;
-import org.wso2.carbon.uuf.renderablecreator.hbs.impl.js.JSFunctionsImpl;
+import org.wso2.carbon.uuf.renderablecreator.hbs.impl.js.JsFunctionsImpl;
 import org.wso2.carbon.uuf.renderablecreator.hbs.impl.js.LoggerObject;
 
 import javax.script.ScriptContext;
@@ -79,19 +79,19 @@ public class JSExecutable implements Executable {
         engineBindings.clear();
 
         engineBindings.put(ScriptEngine.FILENAME, absolutePath);
-        engineBindings.put(ModuleFunction.NAME, JSFunctionsImpl.getModuleFunction(componentPath, engine));
+        engineBindings.put(ModuleFunction.NAME, JsFunctionsImpl.getModuleFunction(componentPath, engine));
         try {
             engine.eval(scriptSource);
         } catch (ScriptException e) {
             throw new UUFException("An error occurred while evaluating the JavaScript file '" + absolutePath + "'.", e);
         }
         engineBindings.remove(ModuleFunction.NAME); // removing 'module' function
-        engineBindings.put(CallOSGiServiceFunction.NAME, JSFunctionsImpl.getCallOsgiServiceFunction());
-        engineBindings.put(GetOSGiServicesFunction.NAME, JSFunctionsImpl.getGetOsgiServicesFunction());
-        engineBindings.put(CallMicroServiceFunction.NAME, JSFunctionsImpl.getCallMicroServiceFunction());
-        engineBindings.put(SendErrorFunction.NAME, JSFunctionsImpl.getSendErrorFunction());
-        engineBindings.put(SendRedirectFunction.NAME, JSFunctionsImpl.getSendRedirectFunction());
-        engineBindings.put(LoggerObject.NAME, JSFunctionsImpl.getLoggerObject(relativePath));
+        engineBindings.put(CallOSGiServiceFunction.NAME, JsFunctionsImpl.getCallOsgiServiceFunction());
+        engineBindings.put(GetOSGiServicesFunction.NAME, JsFunctionsImpl.getGetOsgiServicesFunction());
+        engineBindings.put(CallMicroServiceFunction.NAME, JsFunctionsImpl.getCallMicroServiceFunction());
+        engineBindings.put(SendErrorFunction.NAME, JsFunctionsImpl.getSendErrorFunction());
+        engineBindings.put(SendRedirectFunction.NAME, JsFunctionsImpl.getSendRedirectFunction());
+        engineBindings.put(LoggerObject.NAME, JsFunctionsImpl.getLoggerObject(relativePath));
 
         engineBindings.lock();
     }
@@ -103,7 +103,7 @@ public class JSExecutable implements Executable {
     @Override
     public Object execute(Object context, API api) {
         try {
-            engineBindings.setJSFunctionProvider(new JSFunctionsImpl(api));
+            engineBindings.setJSFunctionProvider(new JsFunctionsImpl(api));
             return engine.invokeFunction("onRequest", context);
         } catch (ScriptException e) {
             throw new UUFException("An error occurred when executing the 'onRequest' function in JavaScript file '" +
@@ -129,7 +129,7 @@ public class JSExecutable implements Executable {
 
     public static class UUFBindings extends SimpleBindings {
 
-        private final ThreadLocal<JSFunctionsImpl> threadLocalFunctionProvider;
+        private final ThreadLocal<JsFunctionsImpl> threadLocalFunctionProvider;
         private boolean isLocked;
 
         public UUFBindings() {
@@ -137,7 +137,7 @@ public class JSExecutable implements Executable {
             this.isLocked = false;
         }
 
-        public void setJSFunctionProvider(JSFunctionsImpl functionProvider) {
+        public void setJSFunctionProvider(JsFunctionsImpl functionProvider) {
             threadLocalFunctionProvider.set(functionProvider);
         }
 
