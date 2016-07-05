@@ -17,15 +17,6 @@
 package org.wso2.carbon.uuf.renderablecreator.hbs.impl.js;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonNull;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
-import jdk.nashorn.api.scripting.ScriptObjectMirror;
 import org.wso2.carbon.uuf.api.Placeholder;
 import org.wso2.carbon.uuf.core.API;
 import org.wso2.carbon.uuf.exception.UUFException;
@@ -45,7 +36,6 @@ import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.SetAppThemeFunction;
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -74,9 +64,7 @@ public class JSFunctionsImpl {
         CALL_MICRO_SERVICE_FUNCTION = API::callMicroService;
         SEND_ERROR_FUNCTION = API::sendError;
         SEND_REDIRECT_FUNCTION = API::sendRedirect;
-        GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.registerTypeAdapter(ScriptObjectMirror.class, new ScriptObjectMirrorSerializer());
-        GSON = gsonBuilder.create();
+        GSON = new Gson();
     }
 
     public JSFunctionsImpl(API api) {
@@ -174,77 +162,5 @@ public class JSFunctionsImpl {
             };
         }
         return sendToClientFunction;
-    }
-
-    private static class ScriptObjectMirrorSerializer implements JsonSerializer<ScriptObjectMirror> {
-
-        @Override
-        public JsonElement serialize(ScriptObjectMirror jsObj, Type type,
-                                     JsonSerializationContext serializationContext) {
-            return serialize(jsObj, serializationContext);
-        }
-
-        private JsonElement serialize(ScriptObjectMirror jsObj, JsonSerializationContext serializationContext) {
-            if (jsObj == null) {
-                return JsonNull.INSTANCE;
-            }
-            if (jsObj.isFunction()) {
-                String functionSource = jsObj.toString();
-                int openCurlyBraceIndex = functionSource.indexOf('{');
-                if (openCurlyBraceIndex == -1) {
-                    return new JsonPrimitive("function ()");
-                } else {
-                    return new JsonPrimitive(functionSource.substring(0, openCurlyBraceIndex).trim());
-                }
-            }
-            if (jsObj.isArray()) {
-                JsonArray jsonArray = new JsonArray();
-                for (Object item : jsObj.values()) {
-                    if (item instanceof ScriptObjectMirror) {
-                        jsonArray.add(serialize((ScriptObjectMirror) item, serializationContext));
-                    } else {
-                        jsonArray.add(serialize(item));
-                    }
-                }
-                return jsonArray;
-            }
-            if (jsObj.isEmpty()) {
-                return new JsonObject();
-            } else {
-                JsonObject jsonObject = new JsonObject();
-                for (String key : jsObj.getOwnKeys(true)) {
-                    Object member = jsObj.getMember(key);
-                    if (member instanceof ScriptObjectMirror) {
-                        jsonObject.add(key, serialize((ScriptObjectMirror) member, serializationContext));
-                    } else {
-                        jsonObject.add(key, serialize(member));
-                    }
-                }
-                return jsonObject;
-            }
-        }
-
-        public static JsonElement serialize(Object obj) {
-            if (obj == null) {
-                return JsonNull.INSTANCE;
-            }
-            if (ScriptObjectMirror.isUndefined(obj)) {
-                return new JsonPrimitive("undefined");
-            }
-            if (obj instanceof Boolean) {
-                return new JsonPrimitive((Boolean) obj);
-            }
-            if (obj instanceof Number) {
-                return new JsonPrimitive((Number) obj);
-            }
-            if (obj instanceof Character) {
-                return new JsonPrimitive((Character) obj);
-            }
-            if (obj instanceof String) {
-                return new JsonPrimitive((String) obj);
-            } else {
-                return new JsonPrimitive("{" + obj.getClass().getName() + "}");
-            }
-        }
     }
 }
