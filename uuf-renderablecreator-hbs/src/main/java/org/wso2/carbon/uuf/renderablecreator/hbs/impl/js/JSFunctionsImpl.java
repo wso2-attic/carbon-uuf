@@ -126,6 +126,10 @@ public class JSFunctionsImpl {
         };
     }
 
+    public static LoggerObject getLoggerObject(String name){
+        return new LoggerObject(name);
+    }
+
     public CreateSessionFunction getCreateSessionFunction() {
         if (createSessionFunction == null) {
             createSessionFunction = api::createSession;

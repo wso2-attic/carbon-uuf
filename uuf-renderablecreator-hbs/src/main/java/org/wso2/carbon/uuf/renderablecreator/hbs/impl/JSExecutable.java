@@ -34,6 +34,7 @@ import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.SendRedirectFunction;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.SendToClientFunction;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.SetAppThemeFunction;
 import org.wso2.carbon.uuf.renderablecreator.hbs.impl.js.JSFunctionsImpl;
+import org.wso2.carbon.uuf.renderablecreator.hbs.impl.js.LoggerObject;
 
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
@@ -90,6 +91,7 @@ public class JSExecutable implements Executable {
         engineBindings.put(CallMicroServiceFunction.NAME, JSFunctionsImpl.getCallMicroServiceFunction());
         engineBindings.put(SendErrorFunction.NAME, JSFunctionsImpl.getSendErrorFunction());
         engineBindings.put(SendRedirectFunction.NAME, JSFunctionsImpl.getSendRedirectFunction());
+        engineBindings.put(LoggerObject.NAME, JSFunctionsImpl.getLoggerObject(relativePath));
 
         engineBindings.lock();
     }
@@ -107,8 +109,9 @@ public class JSExecutable implements Executable {
             throw new UUFException("An error occurred when executing the 'onRequest' function in JavaScript file '" +
                                            absolutePath + "' with context '" + context + "'.", e);
         } catch (NoSuchMethodException e) {
-            throw new UUFException("Cannot find the 'onRequest' function in the JavaScript file '" + absolutePath + "'.",
-                                   e);
+            throw new UUFException(
+                    "Cannot find the 'onRequest' function in the JavaScript file '" + absolutePath + "'.",
+                    e);
         } finally {
             engineBindings.removeJSFunctionProvider();
         }
