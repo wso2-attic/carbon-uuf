@@ -168,6 +168,11 @@
                 <version>${mockito-core.version}</version>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.uuf</groupId>
+                <artifactId>org.wso2.carbon.uuf.core</artifactId>
+                <version>${carbon.uuf.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
