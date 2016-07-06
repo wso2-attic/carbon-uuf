@@ -250,9 +250,9 @@
         <javax.cache-api.version>1.0.0</javax.cache-api.version>
         <org.objectweb.asm.version>5.1</org.objectweb.asm.version>
         <equinox.osgi.version>3.10.2.v20150203-1939</equinox.osgi.version>
-        <msf4j.version>1.0.0</msf4j.version>
-        <org.wso2.carbon.messaging.version>1.0.3</org.wso2.carbon.messaging.version>
-        <org.wso2.carbon.transport.http.netty.version>2.1.0</org.wso2.carbon.transport.http.netty.version>
+        <msf4j.version>1.1.0-SNAPSHOT</msf4j.version>
+        <org.wso2.carbon.messaging.version>1.0.4-SNAPSHOT</org.wso2.carbon.messaging.version>
+        <org.wso2.carbon.transport.http.netty.version>2.1.1-SNAPSHOT</org.wso2.carbon.transport.http.netty.version>
         <rs-api.version>2.0</rs-api.version>
         <netty.version>4.0.30.Final</netty.version>
         <slf4j.version>1.7.5</slf4j.version>
