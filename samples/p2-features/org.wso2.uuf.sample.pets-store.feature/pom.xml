@@ -133,7 +133,7 @@
                                 <!--All UUF backend dependencies should be specified here-->
                                 <bundle>
                                     <symbolicName>org.wso2.uuf.sample.pets-store.bundle</symbolicName>
-                                    <version>${carbon.uuf.version}</version>
+                                    <version>1.0.0</version>
                                 </bundle>
                             </bundles>
                         </configuration>
