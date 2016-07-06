@@ -183,7 +183,7 @@
                                 <artifactItem>
                                     <groupId>org.wso2.uuf.sample</groupId>
                                     <artifactId>org.wso2.uuf.sample.pets-store</artifactId>
-                                    <version>1.0.0-SNAPSHOT</version>
+                                    <version>${project.version}</version>
                                     <type>zip</type>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>
@@ -193,7 +193,7 @@
                                 <artifactItem>
                                     <groupId>org.wso2.uuf.sample</groupId>
                                     <artifactId>org.wso2.uuf.sample.features-app</artifactId>
-                                    <version>1.0.0-SNAPSHOT</version>
+                                    <version>${project.version}</version>
                                     <type>zip</type>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>
@@ -214,7 +214,7 @@
                                 <artifactItem>
                                     <groupId>org.wso2.uuf.sample</groupId>
                                     <artifactId>org.wso2.uuf.sample.pets-store.bundle</artifactId>
-                                    <version>1.0.0-SNAPSHOT</version>
+                                    <version>${project.version}</version>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>
                                         ${basedir}/target/wso2carbon-kernel-${carbon.kernel.version}/osgi/dropins
