@@ -20,7 +20,7 @@
 
     <groupId>org.wso2.uuf.sample</groupId>
     <artifactId>org.wso2.uuf.sample.features-app</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
 
     <name>WSO2 UUF Sample - App - Features App</name>
     <url>http://wso2.org</url>
@@ -35,25 +35,25 @@
         <dependency>
             <groupId>org.wso2.uuf.sample</groupId>
             <artifactId>org.wso2.uuf.sample.foundation</artifactId>
-            <version>1.0.0</version>
+            <version>1.0.1-SNAPSHOT</version>
             <type>zip</type>
         </dependency>
         <dependency>
             <groupId>org.wso2.uuf.sample</groupId>
             <artifactId>org.wso2.uuf.sample.theme.default</artifactId>
-            <version>1.0.0</version>
+            <version>1.0.1-SNAPSHOT</version>
             <type>tar</type>
         </dependency>
         <dependency>
             <groupId>org.wso2.uuf.sample</groupId>
             <artifactId>org.wso2.uuf.sample.theme.blue</artifactId>
-            <version>1.0.0</version>
+            <version>1.0.1-SNAPSHOT</version>
             <type>tar</type>
         </dependency>
         <dependency>
             <groupId>org.wso2.uuf.sample</groupId>
             <artifactId>org.wso2.uuf.sample.theme.green</artifactId>
-            <version>1.0.0</version>
+            <version>1.0.1-SNAPSHOT</version>
             <type>tar</type>
         </dependency>
     </dependencies>
