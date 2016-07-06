@@ -28,7 +28,7 @@
     <parent>
         <groupId>org.wso2.uuf.sample</groupId>
         <artifactId>sample-parent</artifactId>
-        <version>1.0.1-SNAPSHOT</version>
+        <version>1.0.0</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -37,13 +37,13 @@
         <dependency>
             <groupId>org.wso2.uuf.sample</groupId>
             <artifactId>org.wso2.uuf.sample.pets-store</artifactId>
-            <version>1.0.1-SNAPSHOT</version>
+            <version>1.0.0</version>
         </dependency>
         <!--UUF Backend Dependencies-->
         <dependency>
             <groupId>org.wso2.uuf.sample</groupId>
             <artifactId>org.wso2.uuf.sample.pets-store.bundle</artifactId>
-            <version>1.0.1-SNAPSHOT</version>
+            <version>1.0.0</version>
         </dependency>
     </dependencies>
 
