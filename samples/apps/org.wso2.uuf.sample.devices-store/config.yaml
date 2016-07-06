@@ -1,3 +1,3 @@
 appName : Devices Store
 elementsPerPage: 10
-theme : org.wso2.uuf.theme.default
+theme : org.wso2.uuf.sample.theme.default

@@ -1,4 +1,4 @@
-{{layout "org.wso2.uuf.base.main"}}
+{{layout "org.wso2.uuf.sample.foundation.main"}}
 {{title "Session Theme Sample | " @config.appName}}
 {{#fillZone "content"}}
     <h3>Session Scoped Theme Sample.</h3>
@@ -10,7 +10,7 @@
         if (!session) {
             session = createSession("admin");
         }
-        session.setThemeName("org.wso2.uuf.theme.green");
+        session.setThemeName("org.wso2.uuf.sample.theme.green");
     </pre>
     <br />
     <h3>Notes:</h3>
