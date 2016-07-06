@@ -20,7 +20,7 @@
 
     <groupId>org.wso2.uuf.sample</groupId>
     <artifactId>org.wso2.uuf.sample.pets-store</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.0</version>
 
     <name>WSO2 UUF Sample - App - Pets Store App</name>
     <url>http://wso2.org</url>
@@ -35,25 +35,25 @@
         <dependency>
             <groupId>org.wso2.uuf.sample</groupId>
             <artifactId>org.wso2.uuf.sample.foundation</artifactId>
-            <version>1.0.1-SNAPSHOT</version>
+            <version>1.0.0</version>
             <type>zip</type>
         </dependency>
         <dependency>
             <groupId>org.wso2.uuf.sample</groupId>
             <artifactId>org.wso2.uuf.sample.basicauth</artifactId>
-            <version>1.0.1-SNAPSHOT</version>
+            <version>1.0.0</version>
             <type>zip</type>
         </dependency>
         <dependency>
             <groupId>org.wso2.uuf.sample</groupId>
             <artifactId>org.wso2.uuf.sample.store-common</artifactId>
-            <version>1.0.1-SNAPSHOT</version>
+            <version>1.0.0</version>
             <type>zip</type>
         </dependency>
         <dependency>
             <groupId>org.wso2.uuf.sample</groupId>
             <artifactId>org.wso2.uuf.sample.theme.default</artifactId>
-            <version>1.0.1-SNAPSHOT</version>
+            <version>1.0.0</version>
             <type>tar</type>
         </dependency>
     </dependencies>
