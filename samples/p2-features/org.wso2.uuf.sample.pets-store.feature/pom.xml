@@ -20,7 +20,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>org.wso2.uuf.pets-store.feature</artifactId>
+    <artifactId>org.wso2.uuf.sample.pets-store.feature</artifactId>
     <packaging>carbon-feature</packaging>
 
     <name>WSO2 UUF Sample - Pets Store - Feature</name>
