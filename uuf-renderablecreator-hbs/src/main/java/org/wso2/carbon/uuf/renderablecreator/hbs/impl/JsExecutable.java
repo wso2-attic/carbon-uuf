@@ -25,14 +25,12 @@ import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.CallMicroServiceFunctio
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.CallOSGiServiceFunction;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.CreateSessionFunction;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.DestroySessionFunction;
-import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.GetAppThemeFunction;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.GetOSGiServicesFunction;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.GetSessionFunction;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.ModuleFunction;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.SendErrorFunction;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.SendRedirectFunction;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.SendToClientFunction;
-import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.SetAppThemeFunction;
 import org.wso2.carbon.uuf.renderablecreator.hbs.impl.js.JsFunctionsImpl;
 import org.wso2.carbon.uuf.renderablecreator.hbs.impl.js.LoggerObject;
 
@@ -165,10 +163,6 @@ public class JsExecutable implements Executable {
                     return threadLocalFunctionProvider.get().getGetSessionFunction();
                 case DestroySessionFunction.NAME:
                     return threadLocalFunctionProvider.get().getDestroySessionFunction();
-                case SetAppThemeFunction.NAME:
-                    return threadLocalFunctionProvider.get().getSetAppThemeFunction();
-                case GetAppThemeFunction.NAME:
-                    return threadLocalFunctionProvider.get().getGetAppThemeFunction();
                 case SendToClientFunction.NAME:
                     return threadLocalFunctionProvider.get().getSendToClientFunction();
                 default:
@@ -185,8 +179,6 @@ public class JsExecutable implements Executable {
                 case CreateSessionFunction.NAME:
                 case GetSessionFunction.NAME:
                 case DestroySessionFunction.NAME:
-                case SetAppThemeFunction.NAME:
-                case GetAppThemeFunction.NAME:
                 case SendToClientFunction.NAME:
                     return true;
                 default:
