@@ -1,0 +1,19 @@
+appName : Features App
+theme : org.wso2.carbon.uuf.sample.theme.default
+menu :
+  main :
+    Home : {link: "", icon: "fw-home"}
+    Features :
+      Call a OSGi Service: {link: "call-osgi", icon: "fw fw-service"}
+#      Http Form POST : {link: "http-form"} #TODO un-comment after implementing POST handling
+      Send HTTP Error : {link: "send-error", icon: "fw fw-bug"}
+      Send HTTP Redirect : {link: "send-redirect"}
+      Session : {link: "session", icon: "fw fw-user"}
+      Theme :
+        this : {link: "theme"}
+        App Scope : {link: "theme/app-scope"}
+        Session Scope : {link: "theme/session-scope"}
+      Menu : {link: "menu", icon: "fw fw-list"}
+errorPages:
+  "404": /base/error/404
+  default: /base/error/default

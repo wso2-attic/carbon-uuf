@@ -181,8 +181,8 @@
                         <configuration>
                             <artifactItems>
                                 <artifactItem>
-                                    <groupId>org.wso2.uuf.sample</groupId>
-                                    <artifactId>org.wso2.uuf.sample.pets-store</artifactId>
+                                    <groupId>org.wso2.carbon.uuf.sample</groupId>
+                                    <artifactId>org.wso2.carbon.uuf.sample.pets-store</artifactId>
                                     <version>${project.version}</version>
                                     <type>zip</type>
                                     <overWrite>true</overWrite>
@@ -191,8 +191,8 @@
                                     </outputDirectory>
                                 </artifactItem>
                                 <artifactItem>
-                                    <groupId>org.wso2.uuf.sample</groupId>
-                                    <artifactId>org.wso2.uuf.sample.features-app</artifactId>
+                                    <groupId>org.wso2.carbon.uuf.sample</groupId>
+                                    <artifactId>org.wso2.carbon.uuf.sample.features-app</artifactId>
                                     <version>${project.version}</version>
                                     <type>zip</type>
                                     <overWrite>true</overWrite>
@@ -212,8 +212,8 @@
                         <configuration>
                             <artifactItems>
                                 <artifactItem>
-                                    <groupId>org.wso2.uuf.sample</groupId>
-                                    <artifactId>org.wso2.uuf.sample.pets-store.bundle</artifactId>
+                                    <groupId>org.wso2.carbon.uuf.sample</groupId>
+                                    <artifactId>org.wso2.carbon.uuf.sample.pets-store.bundle</artifactId>
                                     <version>${project.version}</version>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>
