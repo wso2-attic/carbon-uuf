@@ -1,0 +1,17 @@
+{{layout "org.wso2.carbon.uuf.sample.foundation.main"}}
+{{title @config.appName " | " @pathParams.id}}
+{{#fillZone "content"}}
+    {{css "css/pet-store.css"}}
+    <div class="col-md-8">
+        <h2>Pet Info</h2>
+        <br />
+        {{fragment "thumbnail"}}
+        <br />
+        <div class="pet-info">
+            name : {{@pathParams.id}}
+        </div>
+    </div>
+    <div class="col-md-4">
+        {{fragment "org.wso2.carbon.uuf.sample.store-common.tags"}}
+    </div>
+{{/fillZone}}
