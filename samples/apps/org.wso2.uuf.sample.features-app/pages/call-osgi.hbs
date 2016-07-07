@@ -1,15 +1,18 @@
 {{layout "org.wso2.uuf.sample.foundation.main"}}
-{{title "Call OSGi Serice Sample | " @config.appName}}
+{{title "Call OSGi Sample | " @config.appName}}
 {{#fillZone "content"}}
-    <h3>Call OSGi Service.</h3>
+    <h3>Call OSGi Bundle.</h3>
     <hr />
-    <p>You can call your back-end OSGi service using your executable.</p>
-    <p>Syntax : <code>callOSGiService(serviceClassName, serviceMethodName, [methodParameters]);</code></p>
+    <p>You can call your back-end OSGi bundle using your executable.</p>
+    <p>Syntax : <code>var SampleClass = Java.type("org.wso2.uuf.sample.SampleClass");</code></p>
+    <p>In your pom.xml;</p>
+    Same as in osgi bundles; you need to explicitly
     <p>In your JS file;</p>
     <pre>
-        function onRequest(context) {
-            var result = callOSGiService("org.wso2.uuf.sample.pets_store.service.PetsManagerService", "getHelloMessage", ["John"]);
-            return {"helloWorldText": result};
+        function onRequest(env) {
+            var PetsManagerServiceImpl = Java.type("org.wso2.uuf.sample.pets_store.bundle.impl.PetsManagerServiceImpl");
+            var service = new PetsManagerServiceImpl();
+            return {"helloWorldText" : service.getHelloMessage("John")};
         }
     </pre>
     <p>Then, you can use this variable in your handlebars;</p>

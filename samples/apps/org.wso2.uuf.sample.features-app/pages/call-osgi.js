@@ -16,7 +16,7 @@
 
 //noinspection JSUnusedGlobalSymbols
 function onRequest(env) {
-    var result = callOSGiService("org.wso2.uuf.sample.pets_store.service.PetsManagerService", "getHelloMessage",
-                                 ["John"]);
-    return {"helloWorldText": result};
+    var PetsManagerServiceImpl = Java.type("org.wso2.uuf.sample.pets_store.bundle.impl.PetsManagerServiceImpl");
+    var service = new PetsManagerServiceImpl();
+    return {"helloWorldText": service.getHelloMessage("John")};
 }
