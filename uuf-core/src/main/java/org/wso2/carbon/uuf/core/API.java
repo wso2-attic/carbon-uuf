@@ -41,7 +41,6 @@ public class API {
     private final SessionRegistry sessionRegistry;
     private final RequestLookup requestLookup;
     private Optional<Session> currentSession;
-    private String themeName;
 
     API(SessionRegistry sessionRegistry, RequestLookup requestLookup) {
         this.sessionRegistry = sessionRegistry;
@@ -184,28 +183,6 @@ public class API {
                 "; Secure; HTTPOnly";
         requestLookup.getResponse().setHeader("Set-Cookie", header);
         return true;
-    }
-
-    /**
-     * Sets the theme.
-     *
-     * @param themeName theme themeName
-     * @throws IllegalArgumentException when themeName is null or empty
-     */
-    public void setAppTheme(String themeName) {
-        if (!Theme.isValidThemeName(themeName)) {
-            throw new IllegalArgumentException("Theme name '" + themeName + "' is invalid.");
-        }
-        this.themeName = themeName;
-    }
-
-    /**
-     * Returns the theme name.
-     *
-     * @return theme name
-     */
-    public Optional<String> getAppTheme() {
-        return Optional.ofNullable(themeName);
     }
 
     private static String joinClassNames(Object[] args) {
