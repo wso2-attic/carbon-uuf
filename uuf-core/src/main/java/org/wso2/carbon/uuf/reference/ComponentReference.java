@@ -27,7 +27,7 @@ public interface ComponentReference {
     String DIR_NAME_FRAGMENTS = "fragments";
     String FILE_NAME_BINDINGS = "bindings.yaml";
     String FILE_NAME_CONFIGURATIONS = "config.yaml";
-    String FILE_NAME_OSGI_IMPORTS = "osgi-imports.properties";
+    String FILE_NAME_OSGI_IMPORTS = "osgi-imports";
 
     Stream<PageReference> getPages(Set<String> supportedExtensions);
 
