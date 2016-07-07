@@ -20,7 +20,7 @@
 
     <groupId>org.wso2.carbon.uuf.sample</groupId>
     <artifactId>org.wso2.carbon.uuf.sample.theme.green</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.0</version>
 
     <name>WSO2 UUF Sample - Theme - Green</name>
     <url>http://wso2.org</url>
@@ -28,7 +28,7 @@
     <parent>
         <groupId>org.wso2.carbon.uuf.sample</groupId>
         <artifactId>sample-parent</artifactId>
-        <version>1.0.1-SNAPSHOT</version>
+        <version>1.0.0</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
