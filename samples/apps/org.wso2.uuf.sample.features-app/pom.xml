@@ -27,12 +27,6 @@
     <name>WSO2 UUF Sample - App - Features App</name>
     <url>http://wso2.org</url>
 
-    <properties>
-        <import.package>
-            org.wso2.carbon.*
-        </import.package>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.wso2.uuf.sample</groupId>
@@ -73,6 +67,11 @@
                         <goals>
                             <goal>create-application</goal>
                         </goals>
+                        <configuration>
+                            <instructions>
+                                <Import-Package>org.wso2.uuf.sample.pets_store.bundle.impl</Import-Package>
+                            </instructions>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
