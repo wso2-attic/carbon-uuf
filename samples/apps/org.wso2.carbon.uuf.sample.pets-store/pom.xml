@@ -27,6 +27,13 @@
     <name>WSO2 UUF Sample - App - Pets Store App</name>
     <url>http://wso2.org</url>
 
+    <parent>
+        <groupId>org.wso2.carbon.uuf</groupId>
+        <artifactId>uuf-parent</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+        <relativePath>../../pom.xml</relativePath>
+    </parent>
+
     <properties>
         <import.package>
             org.wso2.carbon.*
