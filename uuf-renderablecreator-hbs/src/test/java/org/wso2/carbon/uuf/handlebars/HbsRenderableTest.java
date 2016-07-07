@@ -46,7 +46,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
-public class HbsPageRenderableTest {
+public class HbsRenderableTest {
 
     private static HbsPageRenderable createPageRenderable(String sourceStr) {
         return new HbsPageRenderable(new StringTemplateSource("<test-source-page>", sourceStr));
