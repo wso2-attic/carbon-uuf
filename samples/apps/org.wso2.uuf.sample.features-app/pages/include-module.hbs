@@ -1,0 +1,35 @@
+{{layout "org.wso2.uuf.sample.foundation.main"}}
+{{title "Include a Module | " @config.appName}}
+{{#fillZone "content"}}
+    <h3>Include a Module.</h3>
+    <hr />
+    <p>You can include a module in your executable.</p>
+    <p>Syntax : <code>module(moduleName);</code></p>
+    <p>In your module;</p>
+    <pre>
+        var deviceManager = {};
+        (function (deviceManager) {
+                deviceManager.getDevices = function (username) {
+                return [{name: "device1"}, {name: "device2"}, {name: "device3"}];
+            };
+        })(deviceManager);
+    </pre>
+    <p>In your JS file;</p>
+    <pre>
+        module("deviceManager");
+        function onRequest(env) {
+            return {"devices": deviceManager.getDevices("admin")};
+        }
+    </pre>
+    <p>Then, you can use this variable in your handlebars;</p>
+    <pre>
+        \{{#each devices}}
+            name: \{{this.name}},&nbsp;
+        \{{/each}}
+    </pre>
+    <h3>Notes:</h3>
+    The above code will print;<br/>
+    {{#each devices}}
+        <b>name</b>: {{this.name}},&nbsp;
+    {{/each}}
+{{/fillZone}}
