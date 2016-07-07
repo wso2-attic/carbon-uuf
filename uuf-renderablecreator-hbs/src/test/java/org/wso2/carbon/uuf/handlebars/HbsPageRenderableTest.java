@@ -16,20 +16,23 @@
 
 package org.wso2.carbon.uuf.handlebars;
 
+import com.github.jknack.handlebars.Context;
 import com.github.jknack.handlebars.io.StringTemplateSource;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.wso2.carbon.uuf.api.Configuration;
-import org.wso2.carbon.uuf.renderablecreator.hbs.core.Executable;
-import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.carbon.uuf.api.model.MapModel;
 import org.wso2.carbon.uuf.core.API;
 import org.wso2.carbon.uuf.core.Fragment;
 import org.wso2.carbon.uuf.core.Lookup;
 import org.wso2.carbon.uuf.core.RequestLookup;
+import org.wso2.carbon.uuf.renderablecreator.hbs.core.Executable;
+import org.wso2.carbon.uuf.renderablecreator.hbs.impl.HbsFragmentRenderable;
 import org.wso2.carbon.uuf.renderablecreator.hbs.impl.HbsPageRenderable;
+import org.wso2.carbon.uuf.renderablecreator.hbs.model.ContextModel;
+import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.carbon.uuf.spi.model.Model;
 
 import java.util.Collections;
@@ -46,13 +49,19 @@ import static org.mockito.Mockito.when;
 public class HbsPageRenderableTest {
 
     private static HbsPageRenderable createPageRenderable(String sourceStr) {
-        StringTemplateSource stringTemplateSource = new StringTemplateSource("<test-source>", sourceStr);
-        return new HbsPageRenderable(stringTemplateSource);
+        return new HbsPageRenderable(new StringTemplateSource("<test-source-page>", sourceStr));
     }
 
     private static HbsPageRenderable createPageRenderable(String sourceStr, Executable executable) {
-        StringTemplateSource stringTemplateSource = new StringTemplateSource("<test-source>", sourceStr);
-        return new HbsPageRenderable(stringTemplateSource, executable);
+        return new HbsPageRenderable(new StringTemplateSource("<test-source-page>", sourceStr), executable);
+    }
+
+    private static HbsFragmentRenderable createFragmentRenderable(String sourceStr) {
+        return new HbsFragmentRenderable(new StringTemplateSource("<test-source-fragment>", sourceStr));
+    }
+
+    private static HbsFragmentRenderable createFragmentRenderable(String sourceStr, Executable executable) {
+        return new HbsFragmentRenderable(new StringTemplateSource("<test-source-fragment>", sourceStr), executable);
     }
 
     private static Model createModel() {
@@ -78,8 +87,8 @@ public class HbsPageRenderableTest {
     }
 
     @Test
-    public void testTemplate() {
-        final String templateContent = "A Plain Handlebars template.";
+    public void testPageTemplate() {
+        final String templateContent = "A Plain Handlebars template of a page.";
         HbsPageRenderable pageRenderable = createPageRenderable(templateContent);
 
         String output = pageRenderable.render(createModel(), createLookup(), createRequestLookup(), createAPI());
@@ -87,7 +96,16 @@ public class HbsPageRenderableTest {
     }
 
     @Test
-    public void testTemplateWithExecutable() {
+    public void testPageTemplateWithModel() {
+        HbsPageRenderable pageRenderable = createPageRenderable("Hello {{@params.name}}! Have a good day.");
+        Model model = new MapModel(ImmutableMap.of("name", "Bob"));
+
+        String output = pageRenderable.render(model, createLookup(), createRequestLookup(), createAPI());
+        Assert.assertEquals(output, "Hello Bob! Have a good day.");
+    }
+
+    @Test
+    public void testPageTemplateWithExecutable() {
         Executable executable = (context, api) -> ImmutableMap.of("name", "Alice");
         HbsPageRenderable pageRenderable = createPageRenderable("Hello {{name}}! Have a good day.", executable);
         Model model = new MapModel(new HashMap<>());
@@ -97,12 +115,43 @@ public class HbsPageRenderableTest {
     }
 
     @Test
+    public void testFragmentTemplate() {
+        final String templateContent = "A Plain Handlebars template of a fragment.";
+        HbsFragmentRenderable fragmentRenderable = createFragmentRenderable(templateContent);
+
+        String output = fragmentRenderable.render(createModel(), createLookup(), createRequestLookup(), createAPI());
+        Assert.assertEquals(output, templateContent);
+    }
+
+    @Test
+    public void testFragmentTemplateWithModel() {
+        final String templateContent = "Hello {{../name}} & {{@params.name}}! Have a good day.";
+        HbsFragmentRenderable fragmentRenderable = createFragmentRenderable(templateContent);
+        Context parentContext = Context.newContext(ImmutableMap.of("name", "Alice"));
+        Model model = new ContextModel(parentContext, ImmutableMap.of("name", "Bob"));
+
+        String output = fragmentRenderable.render(model, createLookup(), createRequestLookup(), createAPI());
+        Assert.assertEquals(output, "Hello Alice & Bob! Have a good day.");
+    }
+
+    @Test
+    public void testFragmentTemplateWithExecutable() {
+        Executable executable = (context, api) -> ImmutableMap.of("name", "Alice");
+        HbsFragmentRenderable fragmentRenderable = createFragmentRenderable("Hello {{name}}! Have a good day.",
+                                                                            executable);
+        Model model = new MapModel(new HashMap<>());
+
+        String output = fragmentRenderable.render(model, createLookup(), createRequestLookup(), createAPI());
+        Assert.assertEquals(output, "Hello Alice! Have a good day.");
+    }
+
+    @Test
     public void testFragmentInclude() {
         HbsPageRenderable pageRenderable = createPageRenderable("X {{fragment \"test-fragment\"}} Y");
         Fragment fragment = mock(Fragment.class);
         when(fragment.render(any(), any(), any(), any())).thenReturn("fragment content");
         Lookup lookup = createLookup();
-        when(lookup.getFragmentIn(any(), anyString())).thenReturn(Optional.of(fragment));
+        when(lookup.getFragmentIn(any(), eq("test-fragment"))).thenReturn(Optional.of(fragment));
 
         String output = pageRenderable.render(createModel(), lookup, createRequestLookup(), createAPI());
         Assert.assertEquals(output, "X fragment content Y");
