@@ -36,15 +36,16 @@
     </parent>
 
     <properties>
-        <!--<private.package>org.wso2.uuf.internal</private.package>-->
+        <pet-store.bundle.export.version>1.0.0-SNAPSHOT</pet-store.bundle.export.version>
+        <private.package>org.wso2.uuf.sample.pets_store.bundle.internal.*</private.package>
         <import.package>
             org.osgi.framework,
             org.slf4j.*;version="${slf4j.version.range}",
-            org.apache.log4j.*
         </import.package>
-        <bundle.activator>org.wso2.uuf.sample.pets_store.Activator</bundle.activator>
+        <bundle.activator>org.wso2.uuf.sample.pets_store.bundle.internal.Activator</bundle.activator>
         <export.package>
-            org.wso2.uuf.sample.pets_store.*
+            !org.wso2.uuf.sample.pets_store.bundle.internal.*,
+            org.wso2.uuf.sample.pets_store.bundle.*;version="${pet-store.bundle.export.version}"
         </export.package>
     </properties>
 
