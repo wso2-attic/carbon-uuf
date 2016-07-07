@@ -27,6 +27,11 @@
     <name>WSO2 UUF Sample - App - Features App</name>
     <url>http://wso2.org</url>
 
+    <!--TODO 07/07/2016: Remove once updated the uuf-maven-plugin-->
+    <properties>
+        <import.package>org.wso2.uuf.sample.pets_store.bundle.impl</import.package>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.wso2.uuf.sample</groupId>
