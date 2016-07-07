@@ -46,12 +46,13 @@ public class App {
     private final Map<String, Component> components;
     private final Component rootComponent;
     private final Map<String, Theme> themes;
-    private Theme appTheme;
+    private final Theme defaultTheme;
     private final Configuration configuration;
     private final SessionRegistry sessionRegistry;
 
     public App(String name, Lookup lookup, Set<Theme> themes, SessionRegistry sessionRegistry) {
         this.name = name;
+        this.contextPath = ("/" + NameUtils.getSimpleName(name));
         this.lookup = lookup;
         this.configuration = this.lookup.getConfiguration();
         this.sessionRegistry = sessionRegistry;
@@ -59,11 +60,20 @@ public class App {
         this.components = this.lookup.getAllComponents().values().stream()
                 .collect(Collectors.toMap(Component::getContext, cmp -> cmp));
         this.rootComponent = this.components.remove(Component.ROOT_COMPONENT_CONTEXT);
-        this.contextPath = ("/" + NameUtils.getSimpleName(name));
 
         this.themes = themes.stream().collect(Collectors.toMap(Theme::getName, theme -> theme));
         String configuredThemeName = this.configuration.getThemeName();
-        this.appTheme = (configuredThemeName == null) ? null : this.themes.get(configuredThemeName);
+        if (configuredThemeName == null) {
+            this.defaultTheme = null;
+        } else {
+            Theme configuredTheme = this.themes.get(configuredThemeName);
+            if (configuredTheme == null) {
+                throw new IllegalArgumentException("Theme '" + configuredThemeName + "' which is configured for app '" +
+                                                           name + "' does not exists.");
+            } else {
+                this.defaultTheme = configuredTheme;
+            }
+        }
     }
 
     public String getName() {
@@ -100,9 +110,7 @@ public class App {
             renderingTheme.render(requestLookup);
         }
         try {
-            String html = renderPage(request.getUriWithoutContextPath(), null, requestLookup, api);
-            updateAppTheme(api);
-            return html;
+            return renderPage(request.getUriWithoutContextPath(), null, requestLookup, api);
         } catch (SessionNotFoundException e) {
             String loginPageUri = configuration.getLoginPageUri();
             if (loginPageUri == null) {
@@ -209,25 +217,13 @@ public class App {
     private Theme getRenderingTheme(API api) {
         Optional<String> sessionThemeName = api.getSession().map(Session::getThemeName);
         if (!sessionThemeName.isPresent()) {
-            return appTheme;
+            return defaultTheme;
         }
         return sessionThemeName
                 .map(themes::get)
                 .orElseThrow(() -> new IllegalArgumentException(
-                        "Theme '" + sessionThemeName.get() +
-                                "' which is set as for the current session does not exists."));
-    }
-
-    private void updateAppTheme(API api) {
-        Optional<String> appThemeName = api.getAppTheme();
-        if (!appThemeName.isPresent()) {
-            return; // Nothing to update.
-        }
-        // Update the theme of the app.
-        this.appTheme = appThemeName
-                .map(themes::get)
-                .orElseThrow(() -> new IllegalArgumentException(
-                        "Theme '" + appThemeName.get() + "' which is set for the app '" + name + "' does not exists."));
+                        "Theme '" + sessionThemeName.get() + "' which is set as for the current session of app '" +
+                                name + "' does not exists."));
     }
 
     private RequestLookup createRequestLookup(HttpRequest request, HttpResponse response) {
