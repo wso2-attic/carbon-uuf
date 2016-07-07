@@ -20,7 +20,7 @@
 
     <groupId>org.wso2.carbon.uuf</groupId>
     <artifactId>uuf-parent</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>WSO2 UUF - Parent</name>
@@ -37,7 +37,7 @@
         <url>https://github.com/wso2/carbon-uuf.git</url>
         <developerConnection>scm:git:https://github.com/wso2/carbon-uuf.git</developerConnection>
         <connection>scm:git:https://github.com/wso2/carbon-uuf.git</connection>
-        <tag>v1.0.0-tmp05</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <modules>
@@ -234,7 +234,7 @@
     </build>
 
     <properties>
-        <carbon.uuf.version>1.0.0</carbon.uuf.version>
+        <carbon.uuf.version>1.0.1-SNAPSHOT</carbon.uuf.version>
         <nashorn-osgi-fragment.version>1.0.0</nashorn-osgi-fragment.version>
 
         <!-- Dependencies for UUF -->
