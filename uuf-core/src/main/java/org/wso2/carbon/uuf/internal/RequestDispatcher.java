@@ -46,7 +46,7 @@ public class RequestDispatcher {
     private final Object lock = new Object();
     private Debugger debugger;
 
-    public void serve(App app, HttpRequest request, HttpResponse response) {
+    public void serve(App app, String appBasePath, HttpRequest request, HttpResponse response) {
         if (log.isDebugEnabled() && !request.isDebugRequest()) {
             log.debug("HTTP request received " + request);
         }
@@ -54,7 +54,7 @@ public class RequestDispatcher {
         try {
 
             if (request.isStaticResourceRequest()) {
-                staticResolver.serve(app, request, response);
+                staticResolver.serve(app, appBasePath, request, response);
                 return;
             }
             if (Debugger.isDebuggingEnabled()) {

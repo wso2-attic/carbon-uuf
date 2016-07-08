@@ -148,7 +148,8 @@ public class UUFServer {
                                                          "'.");
                 return;
             }
-            requestDispatcher.serve(app.get(), request, response);
+            String appBasePath = appRegistry.getBasePath(request.getContextPath());
+            requestDispatcher.serve(app.get(), appBasePath, request, response);
         } catch (Exception e) {
             // catching any/all exception/s
             log.error("An unexpected error occurred while serving for request '" + request + "'.", e);

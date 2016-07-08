@@ -13,15 +13,12 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+package org.wso2.carbon.uuf.exception;
 
-package org.wso2.carbon.uuf.spi;
+public class DeploymentException extends UUFException {
 
-import org.wso2.carbon.uuf.core.App;
+    public DeploymentException(String message, Throwable cause) {
+        super(message,cause);
 
-import java.util.Optional;
-
-public interface UUFAppRegistry {
-
-    Optional<App> getApp(String contextPath);
-    String getBasePath(String contextPath);
+    }
 }

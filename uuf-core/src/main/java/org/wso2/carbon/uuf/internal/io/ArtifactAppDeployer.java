@@ -32,6 +32,7 @@ import org.wso2.carbon.deployment.engine.Deployer;
 import org.wso2.carbon.deployment.engine.exception.CarbonDeploymentException;
 import org.wso2.carbon.kernel.startupresolver.RequiredCapabilityListener;
 import org.wso2.carbon.uuf.core.App;
+import org.wso2.carbon.uuf.exception.DeploymentException;
 import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.internal.core.create.AppCreator;
 import org.wso2.carbon.uuf.internal.core.create.ClassLoaderProvider;
@@ -39,14 +40,20 @@ import org.wso2.carbon.uuf.internal.debug.Debugger;
 import org.wso2.carbon.uuf.internal.util.NameUtils;
 import org.wso2.carbon.uuf.spi.RenderableCreator;
 import org.wso2.carbon.uuf.spi.UUFAppRegistry;
+import org.apache.commons.io.FilenameUtils;
+import org.wso2.carbon.kernel.utils.Utils;
 
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 /**
  * UUF app deployer.
@@ -68,11 +75,16 @@ public class ArtifactAppDeployer implements Deployer, UUFAppRegistry, RequiredCa
     private final URL location;
     private final Map<String, App> deployedApps;
     private final Map<String, Artifact> pendingToDeployArtifacts;
+    private final Map<String, String> appBasePaths;
     private final Object lock;
     private final Set<RenderableCreator> renderableCreators;
     private final ClassLoaderProvider classLoaderProvider;
     private AppCreator appCreator;
     private BundleContext bundleContext;
+    private static final String ZIP_FILE_EXTENSION = "zip";
+    private static final String TMP_FOLDER_PATH = "tmp";
+    private static final String UUFAPPS_FOLDER_PATH = "deployment" + File.separator + "uufapps";
+    private static final Path CARBON_HOME = Utils.getCarbonHome();
 
     public ArtifactAppDeployer() {
         this.artifactType = new ArtifactType<>("uufapp");
@@ -82,6 +94,7 @@ public class ArtifactAppDeployer implements Deployer, UUFAppRegistry, RequiredCa
             throw new UUFException("Cannot create URL 'file:uufapps'.", e);
         }
         this.deployedApps = new ConcurrentHashMap<>();
+        this.appBasePaths = new ConcurrentHashMap<>();
         this.pendingToDeployArtifacts = new ConcurrentHashMap<>();
         this.lock = new Object();
         this.renderableCreators = ConcurrentHashMap.newKeySet();
@@ -123,7 +136,7 @@ public class ArtifactAppDeployer implements Deployer, UUFAppRegistry, RequiredCa
         Pair<String, String> appNameContextPath = getAppNameContextPath(artifact);
         if (deployedApps.containsKey(appNameContextPath.getRight())) {
             // This artifact is already deployed.
-            App createdApp = appCreator.createApp(new ArtifactAppReference(Paths.get(artifact.getPath())));
+            App createdApp = getCreatedApp(artifact);
             deployedApps.put(createdApp.getContextPath(), createdApp);
             log.info("UUF app '" + createdApp.getName() + "' re-deployed for context path '" +
                              createdApp.getContextPath() + "'.");
@@ -163,7 +176,13 @@ public class ArtifactAppDeployer implements Deployer, UUFAppRegistry, RequiredCa
         // TODO: 6/28/16 deployment.properties can override app's context path
         // Fully qualified name of the app is equals to the name od the app directory. This is guaranteed by the UUF
         // Maven plugin.
-        String appFullyQualifiedName = Paths.get(artifact.getPath()).getFileName().toString();
+        String appFullyQualifiedName;
+        String extension = FilenameUtils.getExtension(artifact.getPath());
+        if (extension.equals(ZIP_FILE_EXTENSION)) {
+            appFullyQualifiedName = getZipFileName(artifact.getFile());
+        } else {
+            appFullyQualifiedName = Paths.get(artifact.getPath()).getFileName().toString();
+        }
         return Pair.of(appFullyQualifiedName, ("/" + NameUtils.getSimpleName(appFullyQualifiedName)));
     }
 
@@ -181,7 +200,7 @@ public class ArtifactAppDeployer implements Deployer, UUFAppRegistry, RequiredCa
                 return null;
             }
             try {
-                app = appCreator.createApp(new ArtifactAppReference(Paths.get(artifact.getPath())));
+                app = getCreatedApp(artifact);
             } catch (Exception e) {
                 // catching any/all exception/s
                 if (Debugger.isDebuggingEnabled()) {
@@ -191,10 +210,155 @@ public class ArtifactAppDeployer implements Deployer, UUFAppRegistry, RequiredCa
                 }
                 throw new UUFException("An error occurred while deploying UUF app in '" + artifact.getPath() + "'.", e);
             }
-            deployedApps.put(app.getContextPath(), app);
+            String appContextPath = app.getContextPath();
+            deployedApps.put(appContextPath, app);
         }
         log.info("UUF app '" + app.getName() + "' deployed for context path '" + app.getContextPath() + "'.");
         return app;
+    }
+
+    /**
+     * Unzip file
+     *
+     * @param file File to be unzipped
+     * @return Unzipped location
+     */
+    private String unzip(File file) {
+        String unzipLocation = CARBON_HOME + File.separator + TMP_FOLDER_PATH + File.separator;
+        File unzipFolder = new File(unzipLocation);
+        if (unzipFolder.getParentFile().exists() || unzipFolder.getParentFile().mkdirs()) {
+            if (unzipFolder.exists() || unzipFolder.mkdir()) {
+                try (
+                        ZipInputStream zipInputStream = new ZipInputStream(new FileInputStream(file));
+                ) {
+                    ZipEntry zipEntry;
+                    String entryName, directoryName;
+                    byte[] buffer = new byte[1024];
+                    int entryId = 0;
+                    while ((zipEntry = zipInputStream.getNextEntry()) != null) {
+                        entryId++;
+                        entryName = zipEntry.getName();
+                        //if a folder already exists in the tmp folder with the same app name, delete the folder before
+                        // unzipping the new app
+                        if (entryId == 1) {
+                            File firstEntry = new File(unzipFolder, entryName);
+                            if (firstEntry.exists()) {
+                                log.info("Removed the existing folder which had the same name, " + entryName +
+                                        "from tmp folder");
+                                deleteFile(firstEntry);
+                            }
+                        }
+                        if (zipEntry.isDirectory()) {
+                            createFile(unzipFolder, entryName);
+                            continue;
+                        }
+                        int hasParentDirectories = entryName.lastIndexOf(File.separatorChar);
+                        directoryName = (hasParentDirectories == -1) ?
+                                null :
+                                entryName.substring(0, hasParentDirectories);
+                        if (directoryName != null) {
+                            createFile(unzipFolder, directoryName);
+                        }
+                        try (
+                                BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(
+                                        new FileOutputStream(new File(unzipFolder, entryName)));
+                        ) {
+                            int count;
+                            while ((count = zipInputStream.read(buffer)) != -1) {
+                                bufferedOutputStream.write(buffer, 0, count);
+                            }
+                        }
+                    }
+                } catch (IOException e) {
+                    throw new DeploymentException("Error encountered while unzipping the app file", e);
+                }
+            }
+        }
+        return unzipLocation + getZipFileName(file);
+    }
+
+    /**
+     * Create a new folder
+     *
+     * @param parentDirectory Parent directory
+     * @param path            Path to new folder
+     */
+    private void createFile(File parentDirectory, String path) {
+        File file = new File(parentDirectory, path);
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+    }
+
+    /**
+     * Delete file
+     *
+     * @param file File to be deleted
+     */
+    private void deleteFile(File file) {
+        if (file.isDirectory()) {
+            File[] files = file.listFiles();
+            if (files != null) {
+                for (File tempFile : files) {
+                    if (tempFile.isDirectory()) {
+                        deleteFile(tempFile);
+                    } else {
+                        tempFile.delete();
+                    }
+                }
+            }
+        }
+        if (file.exists()) {
+            file.delete();
+        }
+    }
+
+    /**
+     * Set app deployed base directories and returns the created application
+     *
+     * @param artifact Application content
+     * @return Created application
+     */
+    private App getCreatedApp(Artifact artifact) {
+        App app;
+        if (FilenameUtils.getExtension(artifact.getPath()).equals(ZIP_FILE_EXTENSION)) {
+            //returns the application when the artifact is a zip content
+            app = appCreator.createApp(new ArtifactAppReference(Paths.get(unzip(artifact.getFile()))));
+            appBasePaths.put(app.getContextPath(), CARBON_HOME + File.separator + TMP_FOLDER_PATH);
+        } else {
+            app = appCreator.createApp(new ArtifactAppReference(Paths.get(artifact.getPath())));
+            appBasePaths.put(app.getContextPath(), CARBON_HOME + File.separator + UUFAPPS_FOLDER_PATH);
+        }
+        return app;
+    }
+
+    /**
+     * Returns the app name of a zip file
+     *
+     * @param file Zip file
+     * @return App name
+     */
+    private String getZipFileName(File file) {
+        String fileName;
+        try (ZipInputStream zipInputStream = new ZipInputStream(new FileInputStream(file))) {
+            fileName = zipInputStream.getNextEntry().getName();
+            if (fileName.endsWith(File.separator)) {
+                fileName = fileName.substring(0, fileName.length() - 1);
+            }
+        } catch (IOException e) {
+            throw new DeploymentException("Error encountered while reading the zip file name", e);
+        }
+        return fileName;
+    }
+
+    /**
+     * Returns the app deployed base path, when app context path is given
+     *
+     * @param appContextPath App context path
+     * @return App deployed base path
+     */
+    @Override public String getBasePath(String appContextPath) {
+        return appBasePaths.get(appContextPath);
     }
 
     @Override
