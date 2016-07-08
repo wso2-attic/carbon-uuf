@@ -173,6 +173,11 @@
                 <artifactId>org.wso2.carbon.uuf.core</artifactId>
                 <version>${carbon.uuf.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.osgi</groupId>
+                <artifactId>org.osgi.core</artifactId>
+                <version>${osgi.api.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -246,6 +251,7 @@
         <carbon.feature.plugin.version>2.0.0</carbon.feature.plugin.version>
         <carbon.cache.version>1.0.0</carbon.cache.version>
         <carbon.jndi.version>1.0.0</carbon.jndi.version>
+        <carbon.datasources.version>1.0.0</carbon.datasources.version>
         <carbon-uuf-maven-plugin.version>1.0.0-m4</carbon-uuf-maven-plugin.version>
         <orbit.com.github.jknack.handlebars.version>4.0.3.wso2v1</orbit.com.github.jknack.handlebars.version>
         <antlr-version>4.5.1-1</antlr-version>
@@ -270,6 +276,7 @@
         <guava.version.range>[18.0,19.0)</guava.version.range>
         <commons-io.wso2.version>2.4.0.wso2v1</commons-io.wso2.version>
         <carbon.deployment.version>5.0.0</carbon.deployment.version>
+        <carbon.metrics.version>2.0.0</carbon.metrics.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
