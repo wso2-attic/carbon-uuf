@@ -252,7 +252,7 @@
         <carbon.cache.version>1.0.0</carbon.cache.version>
         <carbon.jndi.version>1.0.0</carbon.jndi.version>
         <carbon.datasources.version>1.0.0</carbon.datasources.version>
-        <carbon-uuf-maven-plugin.version>1.0.0-m4</carbon-uuf-maven-plugin.version>
+        <carbon-uuf-maven-plugin.version>1.0.0-SNAPSHOT</carbon-uuf-maven-plugin.version>
         <orbit.com.github.jknack.handlebars.version>4.0.3.wso2v1</orbit.com.github.jknack.handlebars.version>
         <antlr-version>4.5.1-1</antlr-version>
         <org.apache.commons.commons-lang3.version>3.1</org.apache.commons.commons-lang3.version>
