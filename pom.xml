@@ -252,7 +252,7 @@
 
     <properties>
         <carbon.uuf.version>1.0.0-SNAPSHOT</carbon.uuf.version>
-        <nashorn-osgi-fragment.version>1.0.0</nashorn-osgi-fragment.version>
+        <nashorn-osgi-fragment.version>1.0.0-SNAPSHOT</nashorn-osgi-fragment.version>
 
         <!-- Dependencies for UUF -->
         <maven.bundle.plugin.version>2.5.0</maven.bundle.plugin.version>
