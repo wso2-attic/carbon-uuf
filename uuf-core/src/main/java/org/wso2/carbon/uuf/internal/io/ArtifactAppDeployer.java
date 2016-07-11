@@ -70,31 +70,35 @@ import java.util.zip.ZipInputStream;
 public class ArtifactAppDeployer implements Deployer, UUFAppRegistry, RequiredCapabilityListener {
 
     private static final Logger log = LoggerFactory.getLogger(ArtifactAppDeployer.class);
+    private static final String ZIP_FILE_EXTENSION = "zip";
+    private static final String UUFAPPS_DIR = "uufapps";
+    private static final Path PATH_TEMP_UUFAPPS_DIR;
+    private static final Path PATH_UUFAPPS_DIR;
+    private static final Path CARBON_HOME = Utils.getCarbonHome();
 
     private final ArtifactType artifactType;
     private final URL location;
-    private final Map<String, App> deployedApps;
+    private final Map<String, AppData> deployedApps;
     private final Map<String, Artifact> pendingToDeployArtifacts;
-    private final Map<String, String> appBasePaths;
     private final Object lock;
     private final Set<RenderableCreator> renderableCreators;
     private final ClassLoaderProvider classLoaderProvider;
     private AppCreator appCreator;
     private BundleContext bundleContext;
-    private static final String ZIP_FILE_EXTENSION = "zip";
-    private static final String TMP_FOLDER_PATH = "tmp";
-    private static final String UUFAPPS_FOLDER_PATH = "deployment" + File.separator + "uufapps";
-    private static final Path CARBON_HOME = Utils.getCarbonHome();
+
+    static {
+        PATH_TEMP_UUFAPPS_DIR = CARBON_HOME.resolve("tmp").resolve(UUFAPPS_DIR).toAbsolutePath();
+        PATH_UUFAPPS_DIR = CARBON_HOME.resolve("deployment").resolve(UUFAPPS_DIR).toAbsolutePath();
+    }
 
     public ArtifactAppDeployer() {
         this.artifactType = new ArtifactType<>("uufapp");
         try {
-            this.location = new URL("file:uufapps");
+            this.location = new URL("file:" + UUFAPPS_DIR);
         } catch (MalformedURLException e) {
             throw new UUFException("Cannot create URL 'file:uufapps'.", e);
         }
         this.deployedApps = new ConcurrentHashMap<>();
-        this.appBasePaths = new ConcurrentHashMap<>();
         this.pendingToDeployArtifacts = new ConcurrentHashMap<>();
         this.lock = new Object();
         this.renderableCreators = ConcurrentHashMap.newKeySet();
@@ -136,8 +140,9 @@ public class ArtifactAppDeployer implements Deployer, UUFAppRegistry, RequiredCa
         Pair<String, String> appNameContextPath = getAppNameContextPath(artifact);
         if (deployedApps.containsKey(appNameContextPath.getRight())) {
             // This artifact is already deployed.
-            App createdApp = getCreatedApp(artifact);
-            deployedApps.put(createdApp.getContextPath(), createdApp);
+            AppData appData = getAppData(artifact);
+            App createdApp = appData.getApp();
+            deployedApps.put(createdApp.getContextPath(), appData);
             log.info("UUF app '" + createdApp.getName() + "' re-deployed for context path '" +
                              createdApp.getContextPath() + "'.");
             return createdApp.getName();
@@ -152,9 +157,12 @@ public class ArtifactAppDeployer implements Deployer, UUFAppRegistry, RequiredCa
     public void undeploy(Object key) throws CarbonDeploymentException {
         String appName = (String) key;
         Optional<App> removedApp = deployedApps.values().stream()
-                .filter(app -> app.getName().equals(appName))
+                .filter(appData -> appData.getApp().getName().equals(appName))
                 .findFirst()
-                .map(removingApp -> deployedApps.remove(removingApp.getContextPath()));
+                .map(removingAppData -> {
+                    deployedApps.remove(removingAppData.getApp().getContextPath());
+                    return removingAppData.getApp();
+                });
         if (removedApp.isPresent()) {
             // App with 'appName' is deployed.
             log.info("UUF app '" + removedApp.get().getName() + "' undeployed for context '" +
@@ -188,11 +196,12 @@ public class ArtifactAppDeployer implements Deployer, UUFAppRegistry, RequiredCa
 
     private App deployApp(String contextPath) {
         App app;
+        AppData appData;
         synchronized (lock) {
             Artifact artifact = pendingToDeployArtifacts.remove(contextPath);
             if (artifact == null) {
                 // App is deployed before acquiring the lock.
-                return deployedApps.get(contextPath);
+                return deployedApps.get(contextPath).getApp();
             }
             if (!artifact.getFile().exists()) {
                 // Somehow artifact has been removed/deleted. So we cannot create an app from it.
@@ -200,7 +209,8 @@ public class ArtifactAppDeployer implements Deployer, UUFAppRegistry, RequiredCa
                 return null;
             }
             try {
-                app = getCreatedApp(artifact);
+                appData = getAppData(artifact);
+                app = appData.getApp();
             } catch (Exception e) {
                 // catching any/all exception/s
                 if (Debugger.isDebuggingEnabled()) {
@@ -211,7 +221,7 @@ public class ArtifactAppDeployer implements Deployer, UUFAppRegistry, RequiredCa
                 throw new UUFException("An error occurred while deploying UUF app in '" + artifact.getPath() + "'.", e);
             }
             String appContextPath = app.getContextPath();
-            deployedApps.put(appContextPath, app);
+            deployedApps.put(appContextPath, appData);
         }
         log.info("UUF app '" + app.getName() + "' deployed for context path '" + app.getContextPath() + "'.");
         return app;
@@ -223,17 +233,15 @@ public class ArtifactAppDeployer implements Deployer, UUFAppRegistry, RequiredCa
      * @param file File to be unzipped
      * @return Unzipped location
      */
-    private String unzip(File file) {
-        String unzipLocation = CARBON_HOME + File.separator + TMP_FOLDER_PATH + File.separator;
-        File unzipFolder = new File(unzipLocation);
+    private Path unzip(File file) {
+        File unzipFolder = Paths.get(String.valueOf(PATH_TEMP_UUFAPPS_DIR)).toFile();
         if (unzipFolder.getParentFile().exists() || unzipFolder.getParentFile().mkdirs()) {
             if (unzipFolder.exists() || unzipFolder.mkdir()) {
                 try (
                         ZipInputStream zipInputStream = new ZipInputStream(new FileInputStream(file));
                 ) {
                     ZipEntry zipEntry;
-                    String entryName, directoryName;
-                    byte[] buffer = new byte[1024];
+                    String entryName;
                     int entryId = 0;
                     while ((zipEntry = zipInputStream.getNextEntry()) != null) {
                         entryId++;
@@ -243,9 +251,9 @@ public class ArtifactAppDeployer implements Deployer, UUFAppRegistry, RequiredCa
                         if (entryId == 1) {
                             File firstEntry = new File(unzipFolder, entryName);
                             if (firstEntry.exists()) {
-                                log.info("Removed the existing folder which had the same name, " + entryName +
-                                        "from tmp folder");
                                 deleteFile(firstEntry);
+                                log.debug("Removed the existing folder which had the same name, " + entryName +
+                                        "from " + PATH_TEMP_UUFAPPS_DIR.relativize(CARBON_HOME) + "directory.");
                             }
                         }
                         if (zipEntry.isDirectory()) {
@@ -253,8 +261,7 @@ public class ArtifactAppDeployer implements Deployer, UUFAppRegistry, RequiredCa
                             continue;
                         }
                         int hasParentDirectories = entryName.lastIndexOf(File.separatorChar);
-                        directoryName = (hasParentDirectories == -1) ?
-                                null :
+                        String directoryName = (hasParentDirectories == -1) ? null :
                                 entryName.substring(0, hasParentDirectories);
                         if (directoryName != null) {
                             createFile(unzipFolder, directoryName);
@@ -264,17 +271,19 @@ public class ArtifactAppDeployer implements Deployer, UUFAppRegistry, RequiredCa
                                         new FileOutputStream(new File(unzipFolder, entryName)));
                         ) {
                             int count;
+                            byte[] buffer = new byte[1024];
                             while ((count = zipInputStream.read(buffer)) != -1) {
                                 bufferedOutputStream.write(buffer, 0, count);
                             }
                         }
                     }
                 } catch (IOException e) {
-                    throw new DeploymentException("Error encountered while unzipping the app file", e);
+                    throw new DeploymentException("Error encountered while extracting the app file, " + file.getName() +
+                            " to " + PATH_TEMP_UUFAPPS_DIR.relativize(CARBON_HOME) + " directory.", e);
                 }
             }
         }
-        return unzipLocation + getZipFileName(file);
+        return PATH_TEMP_UUFAPPS_DIR.resolve(getZipFileName(file));
     }
 
     /**
@@ -286,7 +295,9 @@ public class ArtifactAppDeployer implements Deployer, UUFAppRegistry, RequiredCa
     private void createFile(File parentDirectory, String path) {
         File file = new File(parentDirectory, path);
         if (!file.exists()) {
-            file.mkdirs();
+            if(!file.mkdirs()) {
+                throw new DeploymentException("Error encountered while creating a file at " + path + ".");
+            }
         }
     }
 
@@ -303,33 +314,38 @@ public class ArtifactAppDeployer implements Deployer, UUFAppRegistry, RequiredCa
                     if (tempFile.isDirectory()) {
                         deleteFile(tempFile);
                     } else {
-                        tempFile.delete();
+                        if (!tempFile.delete()) {
+                            throw new DeploymentException("Error occurred while deleting the file, " + file.getName() +
+                                    " from " + Paths.get(file.getAbsolutePath()).relativize(CARBON_HOME) + ".");
+                        }
                     }
                 }
             }
         }
         if (file.exists()) {
-            file.delete();
+            if (!file.delete()) {
+                throw new DeploymentException("Error occurred while deleting the file, " + file.getName() +
+                        " from " + Paths.get(file.getAbsolutePath()).relativize(CARBON_HOME) + ".");
+            }
         }
     }
 
     /**
-     * Set app deployed base directories and returns the created application
+     * Set app deployed base directories and returns the created application data object
      *
      * @param artifact Application content
-     * @return Created application
+     * @return Created appData object
      */
-    private App getCreatedApp(Artifact artifact) {
+    private AppData getAppData(Artifact artifact) {
         App app;
         if (FilenameUtils.getExtension(artifact.getPath()).equals(ZIP_FILE_EXTENSION)) {
-            //returns the application when the artifact is a zip content
-            app = appCreator.createApp(new ArtifactAppReference(Paths.get(unzip(artifact.getFile()))));
-            appBasePaths.put(app.getContextPath(), CARBON_HOME + File.separator + TMP_FOLDER_PATH);
+            //returns the application data when the artifact is a zip content
+            app = appCreator.createApp(new ArtifactAppReference(unzip(artifact.getFile())));
+            return new AppData(app, PATH_TEMP_UUFAPPS_DIR);
         } else {
             app = appCreator.createApp(new ArtifactAppReference(Paths.get(artifact.getPath())));
-            appBasePaths.put(app.getContextPath(), CARBON_HOME + File.separator + UUFAPPS_FOLDER_PATH);
+            return new AppData(app, PATH_UUFAPPS_DIR);
         }
-        return app;
     }
 
     /**
@@ -346,7 +362,7 @@ public class ArtifactAppDeployer implements Deployer, UUFAppRegistry, RequiredCa
                 fileName = fileName.substring(0, fileName.length() - 1);
             }
         } catch (IOException e) {
-            throw new DeploymentException("Error encountered while reading the zip file name", e);
+            throw new DeploymentException("Error encountered while reading the zip file name.", e);
         }
         return fileName;
     }
@@ -354,18 +370,18 @@ public class ArtifactAppDeployer implements Deployer, UUFAppRegistry, RequiredCa
     /**
      * Returns the app deployed base path, when app context path is given
      *
-     * @param appContextPath App context path
+     * @param contextPath App context path
      * @return App deployed base path
      */
-    @Override public String getBasePath(String appContextPath) {
-        return appBasePaths.get(appContextPath);
+    @Override public Path getBasePath(String contextPath) {
+        return deployedApps.get(contextPath).getBasePath();
     }
 
     @Override
     public Optional<App> getApp(String contextPath) {
-        App app = deployedApps.get(contextPath);
-        if (app != null) {
-            return Optional.of(app);
+        AppData appData = deployedApps.get(contextPath);
+        if (appData != null) {
+            return Optional.of(appData.getApp());
         } else {
             if (pendingToDeployArtifacts.containsKey(contextPath)) {
                 return Optional.ofNullable(deployApp(contextPath));
@@ -428,5 +444,36 @@ public class ArtifactAppDeployer implements Deployer, UUFAppRegistry, RequiredCa
 
         bundleContext.registerService(UUFAppRegistry.class, this, null);
         log.debug("ArtifactAppDeployer registered as an UUFAppRegistry.");
+    }
+
+    /**
+     * Inner class to keep the app object and its base path
+     */
+    private static final class AppData {
+        private final App app;
+        private final Path basePath;
+
+        private AppData(App app, Path basePath) {
+            this.app = app;
+            this.basePath = basePath;
+        }
+
+        /**
+         * Returns app object
+         *
+         * @return App object
+         */
+        private App getApp() {
+            return app;
+        }
+
+        /**
+         * Returns base path, whether the app was deployed
+         *
+         * @return Base path
+         */
+        private Path getBasePath() {
+            return basePath;
+        }
     }
 }

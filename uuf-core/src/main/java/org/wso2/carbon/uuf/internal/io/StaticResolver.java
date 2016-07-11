@@ -19,7 +19,6 @@ package org.wso2.carbon.uuf.internal.io;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.kernel.utils.Utils;
 import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.carbon.uuf.spi.HttpResponse;
 import org.wso2.carbon.uuf.core.App;
@@ -30,7 +29,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.time.Duration;
 import java.time.ZoneId;
@@ -82,17 +80,15 @@ public class StaticResolver {
         }
     }
 
-    public void serve(App app, String basePath, HttpRequest request, HttpResponse response) {
+    public void serve(App app, Path basePath, HttpRequest request, HttpResponse response) {
         Path resourcePath;
         try {
             if (request.isComponentStaticResourceRequest()) {
                 // /public/components/...
-                resourcePath = resolveResourceInComponent(app.getName(), Paths.get(basePath),
-                        request.getUriWithoutContextPath());
+                resourcePath = resolveResourceInComponent(app.getName(), basePath, request.getUriWithoutContextPath());
             } else if (request.isThemeStaticResourceRequest()) {
                 // /public/themes/...
-                resourcePath = resolveResourceInTheme(app.getName(), Paths.get(basePath),
-                        request.getUriWithoutContextPath());
+                resourcePath = resolveResourceInTheme(app.getName(), basePath, request.getUriWithoutContextPath());
             } else {
                 // /public/...
                 response.setContent(STATUS_BAD_REQUEST, "Invalid static resource URI '" + request.getUri() + "'.");

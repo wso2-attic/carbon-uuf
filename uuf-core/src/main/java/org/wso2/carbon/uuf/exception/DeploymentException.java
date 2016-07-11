@@ -17,8 +17,18 @@ package org.wso2.carbon.uuf.exception;
 
 public class DeploymentException extends UUFException {
 
+    public DeploymentException() {
+    }
+
+    public DeploymentException(String message) {
+        super(message);
+    }
+
+    public DeploymentException(Throwable cause) {
+        super(cause);
+    }
+
     public DeploymentException(String message, Throwable cause) {
         super(message,cause);
-
     }
 }

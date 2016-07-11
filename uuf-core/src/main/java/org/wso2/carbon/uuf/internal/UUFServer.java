@@ -33,6 +33,7 @@ import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.carbon.uuf.spi.HttpResponse;
 import org.wso2.carbon.uuf.spi.UUFAppRegistry;
 
+import java.nio.file.Path;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -148,7 +149,7 @@ public class UUFServer {
                                                          "'.");
                 return;
             }
-            String appBasePath = appRegistry.getBasePath(request.getContextPath());
+            Path appBasePath = appRegistry.getBasePath(request.getContextPath());
             requestDispatcher.serve(app.get(), appBasePath, request, response);
         } catch (Exception e) {
             // catching any/all exception/s

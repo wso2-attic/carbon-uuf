@@ -18,10 +18,12 @@ package org.wso2.carbon.uuf.spi;
 
 import org.wso2.carbon.uuf.core.App;
 
+import java.nio.file.Path;
 import java.util.Optional;
 
 public interface UUFAppRegistry {
 
     Optional<App> getApp(String contextPath);
-    String getBasePath(String contextPath);
+    Path getBasePath(String contextPath);
 }
+

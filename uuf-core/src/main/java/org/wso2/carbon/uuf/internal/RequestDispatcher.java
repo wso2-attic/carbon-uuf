@@ -29,6 +29,7 @@ import org.wso2.carbon.uuf.internal.io.StaticResolver;
 import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.carbon.uuf.spi.HttpResponse;
 
+import java.nio.file.Path;
 import java.util.Optional;
 
 import static org.wso2.carbon.uuf.spi.HttpResponse.CONTENT_TYPE_TEXT_HTML;
@@ -46,7 +47,7 @@ public class RequestDispatcher {
     private final Object lock = new Object();
     private Debugger debugger;
 
-    public void serve(App app, String appBasePath, HttpRequest request, HttpResponse response) {
+    public void serve(App app, Path appBasePath, HttpRequest request, HttpResponse response) {
         if (log.isDebugEnabled() && !request.isDebugRequest()) {
             log.debug("HTTP request received " + request);
         }
