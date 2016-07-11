@@ -16,7 +16,7 @@
 
 //noinspection JSUnusedGlobalSymbols
 function onRequest(env) {
-    var PetsManagerServiceImpl = Java.type("org.wso2.uuf.sample.pets_store.bundle.impl.PetsManagerServiceImpl");
+    var PetsManagerServiceImpl = Java.type("org.wso2.carbon.uuf.sample.pets_store.bundle.impl.PetsManagerServiceImpl");
     var service = new PetsManagerServiceImpl();
     return {"helloWorldText": service.getHelloMessage("John")};
 }

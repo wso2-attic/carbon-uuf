@@ -15,7 +15,7 @@
  */
 
 function onRequest(env) {
-    var result = callOSGiService("org.wso2.uuf.sample.pets_store.bundle.service.PetsManagerService", "getHelloMessage",
+    var result = callOSGiService("org.wso2.carbon.uuf.sample.pets_store.bundle.service.PetsManagerService", "getHelloMessage",
                                  ["John"]);
     return {"helloWorldText": result};
 }
