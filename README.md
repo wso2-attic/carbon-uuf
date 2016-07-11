@@ -1,5 +1,7 @@
 # Unified UI Framework
 
+[![Build Status](https://wso2.org/jenkins/buildStatus/icon?job=carbon-uuf)](https://wso2.org/jenkins/me/my-views/view/All/job/carbon-uuf/)
+
 ## Building From Source
 
 You need to build following dependencies before building 'Carbon UUF'.
