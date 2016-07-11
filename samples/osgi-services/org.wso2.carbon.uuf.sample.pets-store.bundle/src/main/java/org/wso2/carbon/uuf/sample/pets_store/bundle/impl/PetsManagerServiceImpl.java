@@ -16,13 +16,9 @@
 
 package org.wso2.carbon.uuf.sample.pets_store.bundle.impl;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.sample.pets_store.bundle.service.PetsManagerService;
 
 public class PetsManagerServiceImpl implements PetsManagerService {
-
-    Logger log = LoggerFactory.getLogger(PetsManagerServiceImpl.class);
 
     @Override
     public String getHelloMessage(String name) {
