@@ -14,11 +14,11 @@
  *  limitations under the License.
  */
 
-package org.wso2.carbon.bundle.impl;
+package org.wso2.carbon.uuf.sample.pets_store.bundle.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.bundle.service.PetsManagerService;
+import org.wso2.carbon.uuf.sample.pets_store.bundle.service.PetsManagerService;
 
 public class PetsManagerServiceImpl implements PetsManagerService {
 

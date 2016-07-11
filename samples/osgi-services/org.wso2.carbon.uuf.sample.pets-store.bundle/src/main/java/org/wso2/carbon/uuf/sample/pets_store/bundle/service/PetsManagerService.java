@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.wso2.carbon.bundle.service;
+package org.wso2.carbon.uuf.sample.pets_store.bundle.service;
 
 public interface PetsManagerService {
 

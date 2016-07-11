@@ -14,14 +14,14 @@
  *  limitations under the License.
  */
 
-package org.wso2.carbon.bundle.internal;
+package org.wso2.carbon.uuf.sample.pets_store.bundle.internal;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.bundle.impl.PetsManagerServiceImpl;
-import org.wso2.carbon.bundle.service.PetsManagerService;
+import org.wso2.carbon.uuf.sample.pets_store.bundle.impl.PetsManagerServiceImpl;
+import org.wso2.carbon.uuf.sample.pets_store.bundle.service.PetsManagerService;
 
 public class Activator implements BundleActivator {
 
