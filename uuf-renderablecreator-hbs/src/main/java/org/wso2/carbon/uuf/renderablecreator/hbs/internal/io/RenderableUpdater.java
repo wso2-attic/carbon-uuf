@@ -65,7 +65,7 @@ public class RenderableUpdater {
         } catch (IOException e) {
             throw new UUFException("Cannot create file watch service.", e);
         }
-        this.watchService = new Thread(this::run);
+        this.watchService = new Thread(this::run, RenderableUpdater.class.getName() + "-WatchService");
         this.isWatchServiceStopped = false;
     }
 

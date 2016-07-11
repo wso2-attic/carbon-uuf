@@ -22,13 +22,13 @@ import com.github.jknack.handlebars.io.StringTemplateSource;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.wso2.carbon.uuf.api.Configuration;
-import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.carbon.uuf.api.Placeholder;
 import org.wso2.carbon.uuf.core.API;
 import org.wso2.carbon.uuf.core.Lookup;
 import org.wso2.carbon.uuf.core.RequestLookup;
-import org.wso2.carbon.uuf.renderablecreator.hbs.impl.HbsPageRenderable;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.HbsRenderable;
+import org.wso2.carbon.uuf.renderablecreator.hbs.impl.HbsPageRenderable;
+import org.wso2.carbon.uuf.spi.HttpRequest;
 
 import java.util.Collections;
 import java.util.Optional;
@@ -68,9 +68,13 @@ public class HbsHelperTest {
         when(requestLookup.getPublicUri()).thenReturn("/myapp/public/component/base");
         createRenderable("{{favicon \"img/favicon.png\" type=\"image/png\"}}").render(null, createLookup(),
                                                                                       requestLookup, createAPI());
-        Assert.assertEquals(requestLookup.getPlaceholderContent(Placeholder.favicon).get(),
-                            "<link rel=\"shortcut icon\" href=\"/myapp/public/component/base/img/favicon.png\" " +
-                                    "type=\"image/png\" />\n");
+        String expected = "<link rel=\"shortcut icon\" href=\"/myapp/public/component/base/img/favicon.png\" " +
+                "type=\"image/png\" />\n";
+
+        Assert.assertEquals(requestLookup.getPlaceholderContent(Placeholder.favicon).get(), expected);
+        String output = createRenderable("X {{placeholder \"favicon\"}} Y").render(null, createLookup(), requestLookup,
+                                                                                   createAPI());
+        Assert.assertEquals(output, "X " + expected + " Y");
     }
 
     @Test
@@ -88,7 +92,12 @@ public class HbsHelperTest {
     public void testTitle() {
         RequestLookup requestLookup = createRequestLookup();
         createRenderable("{{title \"page-title\"}}").render(null, createLookup(), requestLookup, createAPI());
-        Assert.assertEquals(requestLookup.getPlaceholderContent(Placeholder.title).get(), "page-title");
+        String expected = "page-title";
+
+        Assert.assertEquals(requestLookup.getPlaceholderContent(Placeholder.title).get(), expected);
+        String output = createRenderable("X {{placeholder \"title\"}} Y").render(null, createLookup(), requestLookup,
+                                                                                 createAPI());
+        Assert.assertEquals(output, "X " + expected + " Y");
     }
 
     @Test
@@ -104,9 +113,13 @@ public class HbsHelperTest {
         RequestLookup requestLookup = createRequestLookup();
         when(requestLookup.getPublicUri()).thenReturn("/myapp/public/component/base");
         createRenderable("{{css \"css/my-styles.css\"}}").render(null, createLookup(), requestLookup, createAPI());
-        Assert.assertEquals(requestLookup.getPlaceholderContent(Placeholder.css).get(),
-                            "<link href=\"/myapp/public/component/base/css/my-styles.css\" rel=\"stylesheet\" " +
-                                    "type=\"text/css\" />\n");
+        String expected = "<link href=\"/myapp/public/component/base/css/my-styles.css\" rel=\"stylesheet\" " +
+                "type=\"text/css\" />\n";
+
+        Assert.assertEquals(requestLookup.getPlaceholderContent(Placeholder.css).get(), expected);
+        String output = createRenderable("X {{placeholder \"css\"}} Y").render(null, createLookup(), requestLookup,
+                                                                               createAPI());
+        Assert.assertEquals(output, "X " + expected + " Y");
     }
 
     @Test
@@ -125,9 +138,13 @@ public class HbsHelperTest {
         RequestLookup requestLookup = createRequestLookup();
         when(requestLookup.getPublicUri()).thenReturn("/myapp/public/component/base");
         createRenderable("{{headJs \"js/my-script.js\"}}").render(null, createLookup(), requestLookup, createAPI());
-        Assert.assertEquals(requestLookup.getPlaceholderContent(Placeholder.headJs).get(),
-                            "<script src=\"/myapp/public/component/base/js/my-script.js\" type=\"text/javascript\">" +
-                                    "</script>\n");
+        String expected = "<script src=\"/myapp/public/component/base/js/my-script.js\" type=\"text/javascript\">" +
+                "</script>\n";
+
+        Assert.assertEquals(requestLookup.getPlaceholderContent(Placeholder.headJs).get(), expected);
+        String output = createRenderable("X {{placeholder \"headJs\"}} Y").render(null, createLookup(), requestLookup,
+                                                                                  createAPI());
+        Assert.assertEquals(output, "X " + expected + " Y");
     }
 
     @Test
@@ -142,13 +159,31 @@ public class HbsHelperTest {
     }
 
     @Test
+    public void testJs() {
+        RequestLookup requestLookup = createRequestLookup();
+        when(requestLookup.getPublicUri()).thenReturn("/myapp/public/component/base");
+        createRenderable("{{js \"js/bottom-script.js\"}}").render(null, createLookup(), requestLookup, createAPI());
+        String expected = "<script src=\"/myapp/public/component/base/js/bottom-script.js\" type=\"text/javascript\">" +
+                "</script>\n";
+
+        Assert.assertEquals(requestLookup.getPlaceholderContent(Placeholder.js).get(), expected);
+        String output = createRenderable("X {{placeholder \"js\"}} Y").render(null, createLookup(), requestLookup,
+                                                                              createAPI());
+        Assert.assertEquals(output, "X " + expected + " Y");
+    }
+
+    @Test
     public void testHeadOther() {
         String content = "<meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n" +
                 "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">";
         RequestLookup requestLookup = createRequestLookup();
         createRenderable("{{#headOther}}" + content + "{{/headOther}}").render(null, createLookup(), requestLookup,
                                                                                createAPI());
+
         Assert.assertEquals(requestLookup.getPlaceholderContent(Placeholder.headOther).get(), content);
+        String output = createRenderable("X {{placeholder \"headOther\"}} Y").render(null, createLookup(),
+                                                                                     requestLookup, createAPI());
+        Assert.assertEquals(output, "X " + content + " Y");
     }
 
     @Test
@@ -169,16 +204,6 @@ public class HbsHelperTest {
         String output = createRenderable(template).render(null, createLookup(), requestLookup, createAPI());
         Assert.assertEquals(output, "<img src=\"/myapp/public/component/base/img/my-photo.png\" />");
 
-    }
-
-    @Test
-    public void testJs() {
-        RequestLookup requestLookup = createRequestLookup();
-        when(requestLookup.getPublicUri()).thenReturn("/myapp/public/component/base");
-        createRenderable("{{js \"js/my-other-script.js\"}}").render(null, createLookup(), requestLookup, createAPI());
-        Assert.assertEquals(requestLookup.getPlaceholderContent(Placeholder.js).get(),
-                            "<script src=\"/myapp/public/component/base/js/my-other-script.js\" " +
-                                    "type=\"text/javascript\"></script>\n");
     }
 
     @Test

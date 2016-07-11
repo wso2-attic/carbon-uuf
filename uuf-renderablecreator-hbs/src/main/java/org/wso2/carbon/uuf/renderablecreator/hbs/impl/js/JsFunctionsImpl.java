@@ -24,14 +24,12 @@ import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.CallMicroServiceFunctio
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.CallOSGiServiceFunction;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.CreateSessionFunction;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.DestroySessionFunction;
-import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.GetAppThemeFunction;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.GetOSGiServicesFunction;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.GetSessionFunction;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.ModuleFunction;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.SendErrorFunction;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.SendRedirectFunction;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.SendToClientFunction;
-import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.SetAppThemeFunction;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
@@ -54,8 +52,6 @@ public class JsFunctionsImpl {
     private CreateSessionFunction createSessionFunction;
     private GetSessionFunction getSessionFunction;
     private DestroySessionFunction destroySessionFunction;
-    private SetAppThemeFunction setAppThemeFunction;
-    private GetAppThemeFunction getAppThemeFunction;
     private SendToClientFunction sendToClientFunction;
 
     static {
@@ -137,20 +133,6 @@ public class JsFunctionsImpl {
             destroySessionFunction = api::destroySession;
         }
         return destroySessionFunction;
-    }
-
-    public SetAppThemeFunction getSetAppThemeFunction() {
-        if (setAppThemeFunction == null) {
-            setAppThemeFunction = api::setAppTheme;
-        }
-        return setAppThemeFunction;
-    }
-
-    public GetAppThemeFunction getGetAppThemeFunction() {
-        if (getAppThemeFunction == null) {
-            getAppThemeFunction = () -> api.getAppTheme().orElse(null);
-        }
-        return getAppThemeFunction;
     }
 
     public SendToClientFunction getSendToClientFunction() {

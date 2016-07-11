@@ -1,0 +1,3 @@
+appName : Devices Store
+elementsPerPage: 10
+theme : org.wso2.carbon.uuf.sample.theme.default

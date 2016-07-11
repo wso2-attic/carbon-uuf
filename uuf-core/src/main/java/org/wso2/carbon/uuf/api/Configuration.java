@@ -252,6 +252,7 @@ public class Configuration extends HashMap<String, Object> {
     }
 
     public void merge(Map<?, ?> rawMap) {
+        // TODO: 7/7/16 lock configuration after deploying the app
         for (Entry<?, ?> entry : rawMap.entrySet()) {
             if (entry.getKey() instanceof String) {
                 super.compute((String) entry.getKey(), (key, oldValue) -> {

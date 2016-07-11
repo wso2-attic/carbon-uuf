@@ -1,17 +1,20 @@
 # Unified UI Framework
 
+[![Build Status](https://wso2.org/jenkins/buildStatus/icon?job=carbon-uuf)](https://wso2.org/jenkins/me/my-views/view/All/job/carbon-uuf/)
+
 ## Building From Source
 
 You need to build following dependencies before building 'Carbon UUF'.
 
 - Build 'Carbon UUF Maven Plugin' (for [samples](samples/sample4))
   1. Clone [carbon-uuf-maven-plugin](https://github.com/wso2/carbon-uuf-maven-plugin) repository.<br/>`git clone https://github.com/wso2/carbon-uuf-maven-plugin.git`
-  2. Checkout *v1.0.0-m4* tag.<br/>`git checkout v1.0.0-m4`
-  3. Build and install using Maven.<br/> `mvn clean install`
+  2. Build and install using Maven.<br/> `mvn clean install`
 
 Then clone this repository (`git clone https://github.com/wso2/carbon-uuf.git`) and use Maven to build (`mvn clean install`). Built artifact can be found in `product/target/wso2uuf-1.0.0-SNAPSHOT.zip` path.
 
 ## How to run ?
+
+Make sure you are running JDK8 update 40 or latest.
 
 1. Extract `wso2uuf-1.0.0-SNAPSHOT.zip` archive.
 2. Go to `wso2uuf-1.0.0-SNAPSHOT/bin` direcotry.
