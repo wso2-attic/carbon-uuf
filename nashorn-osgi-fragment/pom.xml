@@ -21,7 +21,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>nashorn-osgi-fragment</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.0-SNAPSHOT</version>
     <packaging>bundle</packaging>
 
     <name>Nashorn Scripting OSGi Fragment</name>
@@ -41,7 +41,7 @@
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
-                <version>2.5.4</version>
+                <!--version>2.5.4</version-->
                 <extensions>true</extensions>
                 <executions>
                     <execution>
