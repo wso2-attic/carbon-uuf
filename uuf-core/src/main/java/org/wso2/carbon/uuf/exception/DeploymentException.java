@@ -13,6 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+
 package org.wso2.carbon.uuf.exception;
 
 public class DeploymentException extends UUFException {
@@ -32,3 +33,4 @@ public class DeploymentException extends UUFException {
         super(message,cause);
     }
 }
+
