@@ -281,9 +281,11 @@
         <orbit.org.yaml.version>1.16.0.wso2v1</orbit.org.yaml.version>
         <org.objectweb.asm.version>5.1</org.objectweb.asm.version>
 
-        <!-- UUF Server Product -->
+        <!-- UUF Product -->
         <carbon.datasources.version>1.0.0</carbon.datasources.version>
         <carbon.metrics.version>2.0.0</carbon.metrics.version>
+        <carbon.messaging.version>1.0.4</carbon.messaging.version>
+        <carbon.transport.http.netty.version>2.1.1</carbon.transport.http.netty.version>
 
         <!-- Handlebars -->
         <orbit.com.github.jknack.handlebars.version>4.0.3.wso2v1</orbit.com.github.jknack.handlebars.version>
@@ -291,10 +293,6 @@
 
         <!-- MSF4J -->
         <msf4j.version>2.0.0-SNAPSHOT</msf4j.version>
-        <carbon.messaging.version>1.0.4</carbon.messaging.version>
-        <carbon.transport.http.netty.version>2.1.1</carbon.transport.http.netty.version>
-        <netty.version>4.0.30.Final</netty.version>
-        <rs-api.version>2.0</rs-api.version>
 
         <!-- Maven Plugins -->
         <carbon.feature.plugin.version>2.0.0</carbon.feature.plugin.version>
@@ -305,13 +303,13 @@
         <testng.version>6.9.4</testng.version>
         <mockito-core.version>2.0.44-beta</mockito-core.version>
 
-        <!-- Source and target java version -->
+        <!-- Source and target Java version -->
         <wso2.maven.compiler.source>1.8</wso2.maven.compiler.source>
         <wso2.maven.compiler.target>1.8</wso2.maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <!-- Can't run tests from intellij without this. -->
-        <!-- As a result, you need to explicitly define this on bundle pom.xml to add resources into osgi bundle -->
+        <!-- Can't run tests from IntelliJ IDEA without this. -->
+        <!-- One need to explicitly define this on bundle's pom.xml to add resources into its OSGi bundle. -->
         <include.resource />
 
         <!-- Release plugin ID for github-->
