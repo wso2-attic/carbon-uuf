@@ -16,6 +16,8 @@
 
 package org.wso2.carbon.uuf.internal.io;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
@@ -49,12 +51,20 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
+
+import static javafx.scene.input.KeyCode.C;
+import static javafx.scene.input.KeyCode.D;
+import static javafx.scene.input.KeyCode.R;
 
 /**
  * UUF app deployer.
@@ -235,65 +245,68 @@ public class ArtifactAppDeployer implements Deployer, UUFAppRegistry, RequiredCa
      * @return Unzipped location
      */
     private Path unzip(File file) {
+        ZipFile zipFile;
+        int entryCount = 0;
+        String entryName;
+        String firstEntryName = null;
         File unzipFolder = Paths.get(String.valueOf(DIR_TEMP_UUFAPPS)).toFile();
-        if(!Files.exists(DIR_TEMP_UUFAPPS)){
-            if(!unzipFolder.mkdir()) {
+
+        if (!Files.exists(DIR_TEMP_UUFAPPS)) {
+            if (!unzipFolder.mkdir()) {
                 new DeploymentException("Error occurred while creating the folder " +
                         DIR_TEMP_UUFAPPS.relativize(CARBON_HOME) + ".");
             }
         }
-        try (
-                ZipInputStream zipInputStream = new ZipInputStream(new FileInputStream(file));
-        ) {
-            ZipEntry zipEntry;
-            String entryName;
-            int entryId = 0;
-            while ((zipEntry = zipInputStream.getNextEntry()) != null) {
-                entryId++;
-                entryName = zipEntry.getName();
-                // If a folder already exists in the tmp folder with the same app name, delete the folder before
-                // unzipping the new app.
-                if (entryId == 1) {
-                    Path appDirectory = DIR_TEMP_UUFAPPS.resolve(entryName);
-                    if (Files.exists(appDirectory)) {
-                        Files.walk(appDirectory).forEach(deletingPath -> {
-                            try {
-                                Files.delete(deletingPath);
-                            } catch (IOException e) {
-                                throw new DeploymentException("Error occurred while deleting the file, " +
-                                        file.getName() + " from " + Paths.get(file.getAbsolutePath())
-                                        .relativize(CARBON_HOME) + ".");
-                            }
-                        });
-                        log.debug("Removed the existing folder which had the same name, " + entryName +
-                                "from " + DIR_TEMP_UUFAPPS.relativize(CARBON_HOME) + "directory.");
+        try {
+            zipFile = new ZipFile(file);
+        } catch (IOException e) {
+            throw new DeploymentException("Error encountered while opening the zip file, " + file.getName() + ".", e);
+        }
+
+        Enumeration<? extends ZipEntry> zipEntries = zipFile.entries();
+        while (zipEntries.hasMoreElements()) {
+            ZipEntry zipEntry = zipEntries.nextElement();
+            entryName = zipEntry.getName();
+            // If a folder already exists in the tmp folder with the same app name, delete the folder before unzipping
+            // the new app.
+            if (++entryCount == 1) {
+                Path appDirectory = DIR_TEMP_UUFAPPS.resolve(entryName);
+                firstEntryName = entryName;
+                if (Files.exists(appDirectory)) {
+                    try {
+                        FileUtils.deleteDirectory(appDirectory.toFile());
+                    } catch (IOException e) {
+                        throw new DeploymentException(
+                                "Error occurred while deleting the directory, " + appDirectory.relativize(CARBON_HOME)
+                                        + ".");
                     }
-                }
-                if (zipEntry.isDirectory()) {
-                    createFile(unzipFolder, entryName);
-                    continue;
-                }
-                int hasParentDirectories = entryName.lastIndexOf(File.separatorChar);
-                String directoryName = (hasParentDirectories == -1) ? null :
-                        entryName.substring(0, hasParentDirectories);
-                if (directoryName != null) {
-                    createFile(unzipFolder, directoryName);
-                }
-                try (BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(
-                        new FileOutputStream(new File(unzipFolder, entryName)));
-                ) {
-                    int count;
-                    byte[] buffer = new byte[1024];
-                    while ((count = zipInputStream.read(buffer)) != -1) {
-                        bufferedOutputStream.write(buffer, 0, count);
-                    }
+                    log.debug("Removed the existing folder which had the same name, " + entryName + "from "
+                            + DIR_TEMP_UUFAPPS.relativize(CARBON_HOME) + "directory.");
                 }
             }
-        } catch (IOException e) {
-            throw new DeploymentException("Error encountered while extracting the app file, " + file.getName() +
-                    " to " + DIR_TEMP_UUFAPPS.relativize(CARBON_HOME) + " directory.", e);
+            if (zipEntry.isDirectory()) {
+                createFile(unzipFolder, entryName);
+                continue;
+            }
+            int hasParentDirectories = entryName.lastIndexOf(File.separatorChar);
+            String directoryName = (hasParentDirectories == -1) ? null : entryName.substring(0, hasParentDirectories);
+            if (directoryName != null) {
+                createFile(unzipFolder, directoryName);
+            }
+            try (InputStream inputStream = zipFile.getInputStream(zipEntry);
+                    BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(
+                            new FileOutputStream(DIR_TEMP_UUFAPPS.resolve(entryName).toFile()));) {
+                int count;
+                while ((count = inputStream.read()) != -1) {
+                    bufferedOutputStream.write(count);
+                }
+            } catch (IOException e) {
+                throw new DeploymentException(
+                        "Error occurred extracting the zip file, " + file.getName() + " into " + DIR_TEMP_UUFAPPS
+                                .relativize(CARBON_HOME) + "directory.");
+            }
         }
-        return DIR_TEMP_UUFAPPS.resolve(getZipFileName(file));
+        return DIR_TEMP_UUFAPPS.resolve(firstEntryName);
     }
 
     /**
@@ -336,14 +349,30 @@ public class ArtifactAppDeployer implements Deployer, UUFAppRegistry, RequiredCa
      * @return App name
      */
     private String getZipFileName(File file) {
-        String fileName;
-        try (ZipInputStream zipInputStream = new ZipInputStream(new FileInputStream(file))) {
-            fileName = zipInputStream.getNextEntry().getName();
-            if (fileName.endsWith(File.separator)) {
-                fileName = fileName.substring(0, fileName.length() - 1);
+        ZipFile zipFile = null;
+        Optional<? extends ZipEntry> firstEntry;
+        try {
+            zipFile = new ZipFile(file);
+            firstEntry = zipFile.stream().findFirst();
+            if (firstEntry.get() == null) {
+                throw new DeploymentException(
+                        "Error encountered while reading the first entry of the zip file," + file.getName() + ".");
             }
         } catch (IOException e) {
-            throw new DeploymentException("Error encountered while reading the zip file name.", e);
+            throw new DeploymentException("Error encountered while opening the zip file, " + file.getName() + ".", e);
+        } finally {
+            if (zipFile != null) {
+                try {
+                    zipFile.close();
+                } catch (IOException e) {
+                    throw new DeploymentException(
+                            "Error encountered while closing the zip file, " + file.getName() + ".", e);
+                }
+            }
+        }
+        String fileName = firstEntry.get().getName();
+        if (fileName.endsWith(File.separator)) {
+            fileName = fileName.substring(0, fileName.length() - 1);
         }
         return fileName;
     }
