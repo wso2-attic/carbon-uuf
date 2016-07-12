@@ -16,6 +16,6 @@
 
 //noinspection JSUnusedGlobalSymbols
 function onRequest(env) {
-    var hellotext = "";
-    return {"hellotext": hellotext};
+    var name = env.request.formParams['name'];
+    return {"prevName": name};
 }
