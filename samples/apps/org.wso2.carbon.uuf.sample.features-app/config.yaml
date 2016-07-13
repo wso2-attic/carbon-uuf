@@ -16,5 +16,5 @@ menu :
         Session Scope : {link: "theme/session-scope"}
       Menu : {link: "menu", icon: "fw fw-list"}
 errorPages:
-  "404": /base/error/404
-  default: /base/error/default
+  "404": /foundation/error/404
+  default: /foundation/error/default
