@@ -21,7 +21,7 @@ import java.util.Map;
 
 public class PetsStoreDAO {
 
-    public Map<String, String> getPets(String petId) {
+    public Map<String, String> getPet(String petId) {
         Map<String, String> petDummyData = new HashMap<>();
         petDummyData.put("id", petId);
         petDummyData.put("name", "Snowball");
