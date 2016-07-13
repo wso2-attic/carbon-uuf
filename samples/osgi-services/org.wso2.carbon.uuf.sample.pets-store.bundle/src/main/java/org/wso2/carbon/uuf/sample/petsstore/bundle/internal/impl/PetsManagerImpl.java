@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.wso2.carbon.uuf.sample.petsstore.bundle.impl;
+package org.wso2.carbon.uuf.sample.petsstore.bundle.internal.impl;
 
 import org.wso2.carbon.uuf.sample.petsstore.bundle.service.PetsManager;
 

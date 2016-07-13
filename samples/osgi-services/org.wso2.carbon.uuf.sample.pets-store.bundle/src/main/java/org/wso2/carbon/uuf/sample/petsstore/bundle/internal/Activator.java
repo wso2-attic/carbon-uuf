@@ -20,7 +20,7 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.uuf.sample.petsstore.bundle.impl.PetsManagerImpl;
+import org.wso2.carbon.uuf.sample.petsstore.bundle.internal.impl.PetsManagerImpl;
 import org.wso2.carbon.uuf.sample.petsstore.bundle.service.PetsManager;
 
 public class Activator implements BundleActivator {
