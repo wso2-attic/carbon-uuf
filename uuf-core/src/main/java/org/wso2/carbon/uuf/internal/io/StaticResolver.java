@@ -19,7 +19,6 @@ package org.wso2.carbon.uuf.internal.io;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.kernel.utils.Utils;
 import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.carbon.uuf.spi.HttpResponse;
 import org.wso2.carbon.uuf.core.App;
@@ -57,8 +56,6 @@ public class StaticResolver {
     private static final ZoneId GMT_TIME_ZONE;
     private static final Logger log = LoggerFactory.getLogger(StaticResolver.class);
 
-    private final Path appsHome;
-
     static {
         // See https://tools.ietf.org/html/rfc7231#section-7.1.1.1
         HTTP_DATE_FORMATTER = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss zzz");
@@ -66,14 +63,10 @@ public class StaticResolver {
     }
 
     /**
-     * This constructor will assume uufHome as $PRODUCT_HOME/deployment/uufapps
+     * The constructor of StaticResolver class
      */
     public StaticResolver() {
-        this(Utils.getCarbonHome().resolve("deployment").resolve("uufapps"));
-    }
 
-    public StaticResolver(Path appsHome) {
-        this.appsHome = appsHome.normalize();
     }
 
     public void serveDefaultFavicon(HttpRequest request, HttpResponse response) {
@@ -87,15 +80,15 @@ public class StaticResolver {
         }
     }
 
-    public void serve(App app, HttpRequest request, HttpResponse response) {
+    public void serve(App app, Path basePath, HttpRequest request, HttpResponse response) {
         Path resourcePath;
         try {
             if (request.isComponentStaticResourceRequest()) {
                 // /public/components/...
-                resourcePath = resolveResourceInComponent(app.getName(), request.getUriWithoutContextPath());
+                resourcePath = resolveResourceInComponent(app.getName(), basePath, request.getUriWithoutContextPath());
             } else if (request.isThemeStaticResourceRequest()) {
                 // /public/themes/...
-                resourcePath = resolveResourceInTheme(app.getName(), request.getUriWithoutContextPath());
+                resourcePath = resolveResourceInTheme(app.getName(), basePath, request.getUriWithoutContextPath());
             } else {
                 // /public/...
                 response.setContent(STATUS_BAD_REQUEST, "Invalid static resource URI '" + request.getUri() + "'.");
@@ -141,7 +134,7 @@ public class StaticResolver {
         response.setContent(resourcePath, getContentType(request, resourcePath));
     }
 
-    private Path resolveResourceInComponent(String appName, String uriWithoutContextPath) {
+    private Path resolveResourceInComponent(String appName, Path appBasePath, String uriWithoutContextPath) {
         // Correct 'uriWithoutContextPath' value must be in either
         // "/public/components/{component-simple-name}/{fragment-simple-name}/{sub-directory}/{rest-of-the-path}"
         // format or in
@@ -168,7 +161,7 @@ public class StaticResolver {
             throw new IllegalArgumentException("Invalid static resource URI '" + uriWithoutContextPath + "'.");
         }
 
-        Path staticFilePath = appsHome.resolve(appName).resolve(DIR_NAME_COMPONENTS);
+        Path staticFilePath = appBasePath.resolve(appName).resolve(DIR_NAME_COMPONENTS);
         String componentSimpleName = uriWithoutContextPath.substring(thirdSlashIndex + 1, fourthSlashIndex);
         staticFilePath = staticFilePath.resolve(componentSimpleName);
         String fragmentSimpleName = uriWithoutContextPath.substring(fourthSlashIndex + 1, fifthSlashIndex);
@@ -184,7 +177,7 @@ public class StaticResolver {
         return staticFilePath.resolve(relativePathString);
     }
 
-    private Path resolveResourceInTheme(String appName, String uriWithoutContextPath) {
+    private Path resolveResourceInTheme(String appName, Path appBasePath, String uriWithoutContextPath) {
         // Correct 'uriWithoutContextPath' value must be in
         // "/public/themes/{theme-name}/{sub-directory}/{rest-of-the-path}" format.
         // So there should be at least 5 slashes. Don't worry about multiple consecutive slashes. They  are covered
@@ -210,8 +203,8 @@ public class StaticResolver {
         String themeSimpleName = uriWithoutContextPath.substring(thirdSlashIndex + 1, fourthSlashIndex);
         // {sub-directory}/{rest-of-the-path}
         String relativePathString = uriWithoutContextPath.substring(fourthSlashIndex + 1, uriWithoutContextPath.length());
-        return appsHome.resolve(appName).resolve(DIR_NAME_THEMES)
-                .resolve(themeSimpleName).resolve(DIR_NAME_PUBLIC_RESOURCES).resolve(relativePathString);
+        return appBasePath.resolve(appName).resolve(DIR_NAME_THEMES).resolve(themeSimpleName)
+                .resolve(DIR_NAME_PUBLIC_RESOURCES).resolve(relativePathString);
 
     }
 
