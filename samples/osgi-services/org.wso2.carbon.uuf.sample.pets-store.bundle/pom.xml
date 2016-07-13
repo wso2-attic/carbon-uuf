@@ -42,7 +42,7 @@
             org.osgi.framework,
             org.slf4j.*;version="${slf4j.version.range}",
         </import.package>
-        <bundle.activator>org.wso2.carbon.uuf.sample.pets_store.bundle.internal.Activator</bundle.activator>
+        <bundle.activator>org.wso2.carbon.uuf.sample.petsstore.bundle.internal.Activator</bundle.activator>
         <export.package>
             !org.wso2.carbon.uuf.sample.pets_store.bundle.internal.*,
             org.wso2.carbon.uuf.sample.pets_store.bundle.*;version="${pet-store.bundle.export.version}"

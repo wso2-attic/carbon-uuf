@@ -14,18 +14,14 @@
  * limitations under the License.
  */
 
-package org.wso2.carbon.uuf.sample.pets_store.bundle;
+package org.wso2.carbon.uuf.sample.petsstore.bundle.impl;
 
-import java.util.HashMap;
-import java.util.Map;
+import org.wso2.carbon.uuf.sample.petsstore.bundle.service.PetsManager;
 
-public class PetsStoreDAO {
+public class PetsManagerImpl implements PetsManager {
 
-    public Map<String, String> getPets(String petId) {
-        Map<String, String> petDummyData = new HashMap<>();
-        petDummyData.put("id", petId);
-        petDummyData.put("name", "Snowball");
-        petDummyData.put("home", "Colombo");
-        return petDummyData;
+    @Override
+    public String getHelloMessage(String name) {
+        return "Hello " + name + "!";
     }
 }
