@@ -20,7 +20,7 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.uuf.sample.pets_store.bundle.impl.PetsManagerServiceImpl;
+import org.wso2.carbon.uuf.sample.pets_store.bundle.impl.PetsManagerImpl;
 import org.wso2.carbon.uuf.sample.pets_store.bundle.service.PetsManager;
 
 public class Activator implements BundleActivator {
@@ -29,7 +29,7 @@ public class Activator implements BundleActivator {
 
     @Override
     public void start(BundleContext bundleContext) throws Exception {
-        bundleContext.registerService(PetsManager.class.getName(), new PetsManagerServiceImpl(), null);
+        bundleContext.registerService(PetsManager.class.getName(), new PetsManagerImpl(), null);
         if (log.isDebugEnabled()) {
             log.debug("Pet-Store BE Bundle Started.");
         }

@@ -18,7 +18,7 @@ package org.wso2.carbon.uuf.sample.pets_store.bundle.impl;
 
 import org.wso2.carbon.uuf.sample.pets_store.bundle.service.PetsManager;
 
-public class PetsManagerServiceImpl implements PetsManager {
+public class PetsManagerImpl implements PetsManager {
 
     @Override
     public String getHelloMessage(String name) {
