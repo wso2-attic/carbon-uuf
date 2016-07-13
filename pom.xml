@@ -368,7 +368,7 @@
             </releases>
         </repository>
         <repository>
-            <id>wso2.releases</id>
+            <id>wso2-releases</id>
             <name>WSO2 internal Repository</name>
             <url>http://maven.wso2.org/nexus/content/repositories/releases/</url>
             <releases>
@@ -378,7 +378,7 @@
             </releases>
         </repository>
         <repository>
-            <id>wso2.snapshots</id>
+            <id>wso2-snapshots</id>
             <name>WSO2 Snapshot Repository</name>
             <url>http://maven.wso2.org/nexus/content/repositories/snapshots/</url>
             <snapshots>
@@ -388,11 +388,6 @@
             <releases>
                 <enabled>false</enabled>
             </releases>
-        </repository>
-        <repository>
-            <id>gcm-server-repository</id>
-            <name>GCM Server repository - GitHub</name>
-            <url>https://github.com/slorber/gcm-server-repository/raw/master/releases/</url>
         </repository>
     </repositories>
 </project>

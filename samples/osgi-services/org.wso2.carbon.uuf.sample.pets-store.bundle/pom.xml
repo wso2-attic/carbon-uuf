@@ -35,20 +35,6 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <properties>
-        <pet-store.bundle.export.version>1.0.0-SNAPSHOT</pet-store.bundle.export.version>
-        <private.package>org.wso2.carbon.uuf.sample.pets_store.bundle.internal.*</private.package>
-        <import.package>
-            org.osgi.framework,
-            org.slf4j.*;version="${slf4j.version.range}",
-        </import.package>
-        <bundle.activator>org.wso2.carbon.uuf.sample.pets_store.bundle.internal.Activator</bundle.activator>
-        <export.package>
-            !org.wso2.carbon.uuf.sample.pets_store.bundle.internal.*,
-            org.wso2.carbon.uuf.sample.pets_store.bundle.*;version="${pet-store.bundle.export.version}"
-        </export.package>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.osgi</groupId>
@@ -63,5 +49,30 @@
             <artifactId>slf4j-log4j12</artifactId>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Import-Package>
+                            org.osgi.framework,
+                            org.slf4j.*;version="${slf4j.version.range}",
+                        </Import-Package>
+                        <Private-Package>org.wso2.carbon.uuf.sample.petsstore.bundle.internal.*</Private-Package>
+                        <Export-Package>
+                            !org.wso2.carbon.uuf.sample.petsstore.bundle.internal.*,
+                            org.wso2.carbon.uuf.sample.petsstore.bundle.*;version="${version}"
+                        </Export-Package>
+                        <Bundle-Activator>
+                            org.wso2.carbon.uuf.sample.petsstore.bundle.internal.Activator
+                        </Bundle-Activator>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

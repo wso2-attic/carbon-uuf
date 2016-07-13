@@ -3,15 +3,14 @@
 {{#fillZone "content"}}
     <h3>HTTP Form Sample.</h3>
     <hr />
-    {{#if hellotext}}
-        {{hellotext}}
-    {{else}}
     <form method="post">
         <div class="form-group">
             <label for="inputName">Name</label>
-            <input type="text" class="form-control" id="inputName" placeholder="Name">
+            <input type="text" name="name" id="inputName" class="form-control" placeholder="Name" />
         </div>
         <input type="submit" value="Submit" />
     </form>
+    {{#if prevName}}
+        Submitted name: {{prevName}}
     {{/if}}
 {{/fillZone}}

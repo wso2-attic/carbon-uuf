@@ -27,7 +27,6 @@ import org.wso2.carbon.uuf.httpconnector.msf4j.MicroserviceHttpResponse;
 import org.wso2.carbon.uuf.spi.HttpConnector;
 import org.wso2.msf4j.Microservice;
 import org.wso2.msf4j.Request;
-import org.wso2.msf4j.formparam.FormParamIterator;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -35,6 +34,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
 /**
@@ -71,8 +71,9 @@ public class UUFMicroservice implements Microservice, HttpConnector {
     @POST
     @Path(".*")
     @Consumes({MediaType.APPLICATION_FORM_URLENCODED, MediaType.MULTIPART_FORM_DATA})
-    public Response post(@Context Request request, @Context FormParamIterator formParamIterator) {
-        MicroserviceHttpRequest httpRequest = new MicroserviceHttpRequest(request, formParamIterator);
+    public Response post(@Context Request request, @Context MultivaluedMap multivaluedMap) {
+        @SuppressWarnings("unchecked")
+        MicroserviceHttpRequest httpRequest = new MicroserviceHttpRequest(request, multivaluedMap);
         MicroserviceHttpResponse httpResponse = new MicroserviceHttpResponse();
         serverConnection.serve(httpRequest, httpResponse);
         return httpResponse.build();

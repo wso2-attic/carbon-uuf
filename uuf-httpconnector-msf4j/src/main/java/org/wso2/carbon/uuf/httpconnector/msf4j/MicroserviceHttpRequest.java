@@ -19,22 +19,18 @@ package org.wso2.carbon.uuf.httpconnector.msf4j;
 import io.netty.handler.codec.http.QueryStringDecoder;
 import io.netty.handler.codec.http.cookie.Cookie;
 import io.netty.handler.codec.http.cookie.ServerCookieDecoder;
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.msf4j.Request;
-import org.wso2.msf4j.formparam.FormItem;
-import org.wso2.msf4j.formparam.FormParamIterator;
-import org.wso2.msf4j.formparam.exception.FormUploadException;
-import org.wso2.msf4j.formparam.util.StreamUtil;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.HttpHeaders;
-import java.io.IOException;
-import java.io.InputStream;
+import javax.ws.rs.core.MultivaluedMap;
+import java.io.File;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -63,7 +59,7 @@ public class MicroserviceHttpRequest implements HttpRequest {
         this(request, null);
     }
 
-    public MicroserviceHttpRequest(Request request, FormParamIterator formParamIterator) {
+    public MicroserviceHttpRequest(Request request, MultivaluedMap<String, ?> postParams) {
         this.url = null; // MSF4J Request does not have a 'getUrl()' method.
         this.method = request.getHttpMethod();
         this.protocol = request.getProperty(PROPERTY_KEY_HTTP_VERSION).toString();
@@ -86,38 +82,31 @@ public class MicroserviceHttpRequest implements HttpRequest {
         this.queryString = rawQueryString; // Query string is not very useful, so we don't bother to decode it.
         if (rawQueryString != null) {
             HashMap<String, Object> map = new HashMap<>();
-            new QueryStringDecoder(rawQueryString, false).parameters().forEach(
-                    (key, value) -> map.put(key, (value.size() == 1) ? value.get(0) : value));
+            new QueryStringDecoder(rawQueryString, false).parameters()
+                    .forEach((key, value) -> map.put(key, (value.size() == 1) ? value.get(0) : value));
             this.queryParams = map;
         } else {
             this.queryParams = Collections.emptyMap();
         }
 
         // POST form params
-        if (formParamIterator != null) {
-            this.formParams = new HashMap<>();
-            this.files = new HashMap<>();
-            while (formParamIterator.hasNext()) {
-                FormItem item = formParamIterator.next();
-                InputStream inputStream = null;
-                try {
-                    inputStream = item.openStream();
-                    if (item.isFormField()) {
-                        this.formParams.put(item.getFieldName(), StreamUtil.asString(inputStream));
-                    } else {
-                        this.files.put(item.getName(), inputStream);
-                    }
-                } catch (FormUploadException | IOException e) {
-                    // respond back to client without further processing
-                    throw new WebApplicationException(
-                            "An error occurred while processing POST param '" + item.getFieldName() + "'.", e);
-                } finally {
-                    IOUtils.closeQuietly(inputStream);
-                }
-            }
-        } else {
+        if (postParams == null) {
             this.formParams = Collections.emptyMap();
             this.files = Collections.emptyMap();
+        } else {
+            this.formParams = new HashMap<>();
+            this.files = new HashMap<>();
+            for (Map.Entry<String, ? extends List<?>> entry : postParams.entrySet()) {
+                List<?> values = entry.getValue();
+                if (values.isEmpty()) {
+                    continue;
+                }
+                if (values.get(0) instanceof File) {
+                    this.files.put(entry.getKey(), (values.size() == 1) ? values.get(0) : values);
+                } else {
+                    this.formParams.put(entry.getKey(), (values.size() == 1) ? values.get(0) : values);
+                }
+            }
         }
 
         // process content length
