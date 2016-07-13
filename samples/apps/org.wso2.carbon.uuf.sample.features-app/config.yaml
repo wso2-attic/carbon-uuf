@@ -4,8 +4,8 @@ menu :
   main :
     Home : {link: "", icon: "fw-home"}
     Features :
-      Call a OSGi: {link: "call-osgi", icon: "fw fw-service"}
-      Call a OSGi Service: {link: "call-osgi-service", icon: "fw fw-service"}
+      Call a Java class: {link: "osgi/call-class"}
+      Call an OSGi Service: {link: "osgi/call-service", icon: "fw fw-service"}
       Include a Module: {link: "include-module", icon: "fw fw-use"}
       Http Form POST : {link: "http-form"}
       Send HTTP Error : {link: "send-error", icon: "fw fw-bug"}
