@@ -1,10 +1,10 @@
 {{layout "org.wso2.carbon.uuf.sample.foundation.main"}}
-{{title "Call OSGi Serice Sample | " @config.appName}}
+{{title "Call OSGi Service Sample | " @config.appName}}
 {{#fillZone "content"}}
     <h3>Call OSGi Service.</h3>
     <hr />
-    <p>You can call your back-end OSGi service using your executable.</p>
-    <p>Syntax : <code>callOSGiService(serviceClassName, serviceMethodName, [methodParameters]);</code></p>
+    <p>You can call your back-end OSGi services.</p>
+    <p>Syntax : <code>callOSGiService(serviceClassName, serviceMethodName, methodParameters[]);</code></p>
     <p>In your JS file;</p>
     <pre>
         function onRequest(env) {
@@ -16,6 +16,6 @@
     <pre>
         \{{helloWorldText}}
     </pre>
-    <h3>Notes:</h3>
-    The above code will print "{{helloWorldText}}".
+    <h3>Output:</h3>
+    "{{helloWorldText}}".
 {{/fillZone}}
