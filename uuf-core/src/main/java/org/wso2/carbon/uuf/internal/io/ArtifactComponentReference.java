@@ -26,7 +26,9 @@ import org.wso2.carbon.uuf.reference.PageReference;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -136,5 +138,10 @@ public class ArtifactComponentReference implements ComponentReference {
 
     ArtifactAppReference getAppReference() {
         return appReference;
+    }
+
+    @Override
+    public Map<String, Properties> getI18nFiles(){
+        return;
     }
 }

@@ -18,6 +18,7 @@ package org.wso2.carbon.uuf.core;
 
 import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.carbon.uuf.spi.HttpResponse;
+import org.apache.commons.lang3.LocaleUtils;
 import org.wso2.carbon.uuf.api.Placeholder;
 import org.wso2.carbon.uuf.internal.util.NameUtils;
 
@@ -25,6 +26,7 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
@@ -38,6 +40,8 @@ public class RequestLookup {
     private final Deque<String> publicUriStack;
     private final EnumMap<Placeholder, StringBuilder> placeholderBuffers;
     private final Map<String, String> zoneContents;
+    private final Locale locale;
+    private final String localeHeader = "Accept-Language";
 
     public RequestLookup(String contextPath, HttpRequest request, HttpResponse response) {
         this.contextPath = (contextPath == null) ? request.getContextPath() : contextPath;
@@ -47,6 +51,7 @@ public class RequestLookup {
         this.publicUriStack = new ArrayDeque<>();
         this.placeholderBuffers = new EnumMap<>(Placeholder.class);
         this.zoneContents = new HashMap<>();
+        this.locale = LocaleUtils.toLocale(request.getHeaders().get(localeHeader));
     }
 
     public String getContextPath() {
@@ -63,6 +68,10 @@ public class RequestLookup {
 
     public Map<String, String> getPathParams() {
         return pathParams;
+    }
+    
+    public Locale getLocale(){
+    	return locale;
     }
 
     void setPathParams(Map<String, String> pathParams) {
