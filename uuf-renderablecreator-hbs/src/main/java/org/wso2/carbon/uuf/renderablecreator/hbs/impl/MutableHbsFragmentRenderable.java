@@ -66,4 +66,9 @@ public class MutableHbsFragmentRenderable extends HbsFragmentRenderable implemen
     public Optional<MutableExecutable> getMutableExecutable() {
         return Optional.ofNullable(mutableExecutable);
     }
+
+    @Override
+    public String toString(){
+        return "{\"path\": \"" + getPath() + "\", \"js\": " + mutableExecutable + "}";
+    }
 }
