@@ -43,15 +43,7 @@ import org.wso2.carbon.uuf.reference.ThemeReference;
 import org.wso2.carbon.uuf.spi.RenderableCreator;
 import org.yaml.snakeyaml.Yaml;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.wso2.carbon.uuf.internal.util.NameUtils.getFullyQualifiedName;
@@ -155,6 +147,10 @@ public class AppCreator {
                     "Configuration '" + componentReference.getConfigurations().get().getRelativePath() +
                             "' is malformed.", e);
         }
+
+        //get lang for the component
+        //Map<String, Properties> i18nConfiguration = componentReference.getI18nFiles();
+        lookup.getAllI18nResources().putAll(componentReference.getI18nFiles());
 
         SortedSet<Page> pages = componentReference
                 .getPages(supportedExtensions)

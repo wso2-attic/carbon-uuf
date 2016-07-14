@@ -126,7 +126,7 @@ public class Lookup {
         return configuration;
     }
 
-    Map<String, Properties> getAllI18nResources() {
+    public Map<String, Properties> getAllI18nResources() {
         return i18nResources;
     }
 }

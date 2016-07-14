@@ -24,13 +24,13 @@ import org.wso2.carbon.uuf.reference.LayoutReference;
 import org.wso2.carbon.uuf.reference.PageReference;
 
 import java.io.IOException;
+import java.nio.file.DirectoryIteratorException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Properties;
-import java.util.Set;
+import java.nio.file.DirectoryStream;
+import java.util.*;
 import java.util.stream.Stream;
+import java.io.FileReader;
 
 public class ArtifactComponentReference implements ComponentReference {
 
@@ -142,6 +142,24 @@ public class ArtifactComponentReference implements ComponentReference {
 
     @Override
     public Map<String, Properties> getI18nFiles(){
-        return;
+        Path lang = path.resolve(DIR_NAME_LANGUAGE);
+        Map<String, Properties> i18n = new HashMap<>();
+        if (Files.exists(lang)) {
+            //list all lang files within dir
+            try (DirectoryStream<Path> stream = Files.newDirectoryStream(lang, "*.{properties}")) {
+                for (Path entry: stream) {
+                    Properties props = new Properties();
+                    props.load(new FileReader(entry.toString()));
+                    i18n.put(entry.toString().split(".")[0], props);
+                }
+            } catch (DirectoryIteratorException ex) {
+                // I/O error encounted during the iteration, the cause is an IOException
+                //throw ex.getCause();
+            } catch (IOException ex) {
+            // I/O error encounted during the iteration, the cause is an IOException
+            //throw ex.getCause();
+            }
+        }
+        return i18n;
     }
 }
