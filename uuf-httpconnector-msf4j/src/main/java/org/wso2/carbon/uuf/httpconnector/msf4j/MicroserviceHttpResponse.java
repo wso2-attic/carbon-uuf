@@ -75,6 +75,12 @@ public class MicroserviceHttpResponse implements HttpResponse {
     }
 
     @Override
+    public void setContent(Object content, String contentType) {
+        this.content = content;
+        this.contentType = contentType;
+    }
+
+    @Override
     public Object getContent() {
         return content;
     }

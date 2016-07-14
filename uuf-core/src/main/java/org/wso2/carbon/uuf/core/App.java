@@ -25,6 +25,7 @@ import org.wso2.carbon.uuf.exception.PageNotFoundException;
 import org.wso2.carbon.uuf.exception.PageRedirectException;
 import org.wso2.carbon.uuf.exception.SessionNotFoundException;
 import org.wso2.carbon.uuf.internal.core.auth.SessionRegistry;
+import org.wso2.carbon.uuf.internal.debug.DebugConnector;
 import org.wso2.carbon.uuf.internal.util.NameUtils;
 import org.wso2.carbon.uuf.internal.util.UriUtils;
 import org.wso2.carbon.uuf.spi.HttpRequest;
@@ -82,14 +83,6 @@ public class App {
 
     public String getContextPath() {
         return contextPath;
-    }
-
-    public Map<String, Component> getComponents() {
-        return components;
-    }
-
-    public Map<String, Fragment> getFragments() {
-        return lookup.getAllFragments();
     }
 
     public Map<String, Theme> getThemes() {
@@ -229,6 +222,15 @@ public class App {
     private RequestLookup createRequestLookup(HttpRequest request, HttpResponse response) {
         String clientContextPath = configuration.getContextPath();
         return new RequestLookup((clientContextPath == null ? contextPath : clientContextPath), request, response);
+    }
+
+    public void connectDebugger(DebugConnector debugConnector) {
+        components.values().forEach(debugConnector::addComponent);
+        debugConnector.addComponent(rootComponent);
+        lookup.getAllFragments().values().forEach(debugConnector::addFragment);
+        lookup.getAllLayouts().values().forEach(debugConnector::addLayout);
+        themes.values().forEach(debugConnector::addTheme);
+        debugConnector.setConfiguration(configuration);
     }
 
     @Override

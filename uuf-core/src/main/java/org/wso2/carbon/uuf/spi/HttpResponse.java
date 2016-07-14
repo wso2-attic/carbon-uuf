@@ -55,6 +55,8 @@ public interface HttpResponse {
 
     void setContent(File content, String contentType);
 
+    void setContent(Object content, String contentType);
+
     default void setContent(Path content) {
         setContent(content.toFile());
     }

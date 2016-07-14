@@ -58,16 +58,16 @@ public class RequestDispatcher {
                 staticResolver.serve(app, appBasePath, request, response);
                 return;
             }
-            if (Debugger.isDebuggingEnabled()) {
-                if (request.isDebugRequest() && (this.debugger == null)) {
+            if (Debugger.isDebuggingEnabled() && request.isDebugRequest()) {
+                if (this.debugger == null) {
                     synchronized (lock) {
                         if (this.debugger == null) {
                             this.debugger = new Debugger(); // Create a debugger.
                         }
                     }
-                    debugger.serve(app, request, response);
-                    return;
                 }
+                debugger.serve(app, request, response);
+                return;
             }
             String html;
             if (request.isFragmentRequest()) {

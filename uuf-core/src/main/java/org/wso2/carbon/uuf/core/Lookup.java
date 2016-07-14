@@ -115,6 +115,10 @@ public class Lookup {
         }
     }
 
+    Map<String, Layout> getAllLayouts(){
+        return layouts;
+    }
+
     public Configuration getConfiguration() {
         return configuration;
     }
