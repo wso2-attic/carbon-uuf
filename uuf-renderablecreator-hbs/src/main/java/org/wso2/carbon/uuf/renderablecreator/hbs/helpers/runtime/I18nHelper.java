@@ -19,38 +19,49 @@ package org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime;
 import java.io.IOException;
 
 import java.util.Locale;
-import java.util.ResourceBundle; 
+import java.util.Properties;
+
+import com.github.jknack.handlebars.Helper;
+import org.apache.commons.lang3.LocaleUtils;
 
 import org.wso2.carbon.uuf.api.Placeholder;
+import org.wso2.carbon.uuf.core.Lookup;
 import org.wso2.carbon.uuf.core.RequestLookup;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.HbsRenderable;
 import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.FillPlaceholderHelper;
 
 import com.github.jknack.handlebars.Options;
 
-public class I18nHelper extends FillPlaceholderHelper<String>{
+public class I18nHelper implements Helper<String> {
 	
     public static final String HELPER_NAME = "t";
+    private final String localeHeader = "Accept-Language";
 
-	protected I18nHelper() {
+	/*//public I18nHelper() {
 		super(Placeholder.t);
 	}
-
+*/
 	@Override
 	public CharSequence apply(String key, Options options) throws IOException {
         if (key == null) {
             throw new IllegalArgumentException("Key of a translating string cannot be null.");
 
-        }		
-        Locale currentLocale = ((RequestLookup) options.data(HbsRenderable.DATA_KEY_REQUEST_LOOKUP)).getLocale();
-        //get string from locale file
-        ResourceBundle messages = ResourceBundle.getBundle("MessagesBundle", currentLocale);
-        StringBuilder buffer = new StringBuilder(messages.getString(key));
+        }
+        RequestLookup requestLookup = options.data(HbsRenderable.DATA_KEY_REQUEST_LOOKUP);
+        Locale currentLocale = new Locale.Builder().setLanguageTag(requestLookup.getRequest().getHeaders()
+                .get(localeHeader).split(",")[0]).build();
+        //LocaleUtils.toLocale(requestLookup.getRequest().getHeaders().get(localeHeader).split(",")[0]);
+        Lookup lookup = options.data(HbsRenderable.DATA_KEY_LOOKUP);
+        Properties props = lookup.getAllI18nResources().get(currentLocale.toString());
+
+        String value = props != null? props.getProperty(key, key) : key;
+        StringBuilder buffer = new StringBuilder(value);
+
         for (Object param : options.params) {
             buffer.append(param);
         }
-        addToPlaceholder(buffer.toString(), options);
-        return "";
+        //addToPlaceholder(buffer.toString(), options);
+        return buffer.toString();
 	}
 
 }

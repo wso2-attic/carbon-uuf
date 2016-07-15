@@ -150,7 +150,9 @@ public class AppCreator {
 
         //get lang for the component
         //Map<String, Properties> i18nConfiguration = componentReference.getI18nFiles();
-        lookup.getAllI18nResources().putAll(componentReference.getI18nFiles());
+        //lookup.getAllI18nResources().putAll(componentReference.getI18nFiles());
+
+        lookup.add(componentReference.getI18nFiles());
 
         SortedSet<Page> pages = componentReference
                 .getPages(supportedExtensions)

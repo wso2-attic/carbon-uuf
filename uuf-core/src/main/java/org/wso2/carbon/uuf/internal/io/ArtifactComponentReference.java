@@ -16,6 +16,9 @@
 
 package org.wso2.carbon.uuf.internal.io;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.reference.ComponentReference;
 import org.wso2.carbon.uuf.reference.FileReference;
@@ -23,12 +26,16 @@ import org.wso2.carbon.uuf.reference.FragmentReference;
 import org.wso2.carbon.uuf.reference.LayoutReference;
 import org.wso2.carbon.uuf.reference.PageReference;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.DirectoryIteratorException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.DirectoryStream;
 import java.util.*;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.io.FileReader;
 
@@ -144,13 +151,21 @@ public class ArtifactComponentReference implements ComponentReference {
     public Map<String, Properties> getI18nFiles(){
         Path lang = path.resolve(DIR_NAME_LANGUAGE);
         Map<String, Properties> i18n = new HashMap<>();
-        if (Files.exists(lang)) {
+
+        if (!Files.exists(lang)) {
+            return i18n;
+        }
+
+       //if (Files.exists(lang)) {
             //list all lang files within dir
             try (DirectoryStream<Path> stream = Files.newDirectoryStream(lang, "*.{properties}")) {
                 for (Path entry: stream) {
-                    Properties props = new Properties();
-                    props.load(new FileReader(entry.toString()));
-                    i18n.put(entry.toString().split(".")[0], props);
+                    if(Files.isRegularFile(entry)){
+                        Properties props = new Properties();
+                        props.load(new FileReader(entry.toString()));
+
+                        i18n.put(entry.getFileName().toString().substring(0,entry.getFileName().toString().indexOf('.')), props);
+                    }
                 }
             } catch (DirectoryIteratorException ex) {
                 // I/O error encounted during the iteration, the cause is an IOException
@@ -159,7 +174,9 @@ public class ArtifactComponentReference implements ComponentReference {
             // I/O error encounted during the iteration, the cause is an IOException
             //throw ex.getCause();
             }
-        }
-        return i18n;
+        //}
+
+
+       return i18n;
     }
 }

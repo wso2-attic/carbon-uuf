@@ -55,8 +55,8 @@ public class Lookup {
         fragments.put(fragment.getName(), fragment);
     }
 
-    public void add(String locale, Properties properties){
-        i18nResources.put(locale, properties);
+    public void add(Map<String, Properties> i18nConfiguration){
+        i18nResources.putAll(i18nConfiguration);
     }
 
     public void addBinding(String zoneName, Fragment fragment) {
