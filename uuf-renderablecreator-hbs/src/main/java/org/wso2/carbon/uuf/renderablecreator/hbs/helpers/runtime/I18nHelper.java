@@ -22,13 +22,10 @@ import java.util.Locale;
 import java.util.Properties;
 
 import com.github.jknack.handlebars.Helper;
-import org.apache.commons.lang3.LocaleUtils;
 
-import org.wso2.carbon.uuf.api.Placeholder;
 import org.wso2.carbon.uuf.core.Lookup;
 import org.wso2.carbon.uuf.core.RequestLookup;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.HbsRenderable;
-import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.FillPlaceholderHelper;
 
 import com.github.jknack.handlebars.Options;
 
@@ -50,7 +47,6 @@ public class I18nHelper implements Helper<String> {
         RequestLookup requestLookup = options.data(HbsRenderable.DATA_KEY_REQUEST_LOOKUP);
         Locale currentLocale = new Locale.Builder().setLanguageTag(requestLookup.getRequest().getHeaders()
                 .get(localeHeader).split(",")[0]).build();
-        //LocaleUtils.toLocale(requestLookup.getRequest().getHeaders().get(localeHeader).split(",")[0]);
         Lookup lookup = options.data(HbsRenderable.DATA_KEY_LOOKUP);
         Properties props = lookup.getAllI18nResources().get(currentLocale.toString());
 
