@@ -7,7 +7,7 @@
     {{#placeholder "favicon"}}
         <link rel="shortcut icon" href="{{public "images/default-favicon.png"}}" type="image/png" />
     {{/placeholder}}
-    <title>{{#placeholder "title"}}UUF FOundation{{/placeholder}}</title>
+    <title>{{#placeholder "title"}}UUF Foundation{{/placeholder}}</title>
     {{placeholder "css"}}
     {{placeholder "headJs"}}
     {{placeholder "headOther"}}
@@ -23,9 +23,7 @@
             </a>
         </div>
         <div class="pull-right auth float-remove-xs text-center-xs">
-            <ul class="nav navbar-nav navbar-right">
-                <li><a href="{{@contextPath}}/basicauth/login">Login</a></li>
-            </ul>
+            {{defineZone "usermenu"}}
         </div>
     </div>
 </header>
