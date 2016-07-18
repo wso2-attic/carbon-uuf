@@ -7,7 +7,7 @@
 You need to build following dependencies before building 'Carbon UUF'.
 
 - Build 'Carbon UUF Maven Plugin' (for [samples](samples/sample4))
-  1. Clone [carbon-uuf-maven-plugin](https://github.com/wso2/carbon-uuf-maven-plugin) repository.<br/>`git clone https://github.com/wso2/carbon-uuf-maven-plugin.git`
+  1. Clone [carbon-uuf-maven-plugin](https://github.com/wso2/carbon-uuf-maven-tools) repository.<br/>`git clone https://github.com/wso2/carbon-uuf-maven-tools.git`
   2. Build and install using Maven.<br/> `mvn clean install`
 
 Then clone this repository (`git clone https://github.com/wso2/carbon-uuf.git`) and use Maven to build (`mvn clean install`). Built artifact can be found in `product/target/wso2uuf-1.0.0-SNAPSHOT.zip` path.

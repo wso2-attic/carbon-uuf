@@ -75,7 +75,7 @@ public class Theme {
 
     @Override
     public String toString() {
-        return "{\"name\": \"" + name + "}";
+        return "{\"name\": \"" + name + "\"}";
     }
 
     public static boolean isValidThemeName(String themeName) {
