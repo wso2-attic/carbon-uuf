@@ -1,0 +1,9 @@
+appName : Performance Benchmark App
+elementsPerPage: 10
+theme : org.wso2.carbon.uuf.sample.theme.default
+menu :
+  main :
+    Home : {link: "", icon: "fw-home"}
+errorPages:
+  "404": /foundation/error/404
+  default: /foundation/error/default
