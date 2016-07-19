@@ -1,6 +1,8 @@
 {{layout "org.wso2.carbon.uuf.sample.foundation.main"}}
-{{title @config.appName " | " @pathParams.name}}
+{{title "Home | " @config.appName}}
+
 {{#fillZone "content"}}
+    <h2>{{name}}</h2>
     <div class="row">
         <div class="col-md-8">
             <h2>This page is sample page for ~10kb</h2>
@@ -73,9 +75,6 @@
                nisi. Praesent nec nisl a purus blandit viverra. Praesent ac massa at ligula laoreet iaculis. Nulla
                neque dolor, sagittis eget, iaculis quis, molestie non, velit.
             </p>
-        </div>
-        <div class="col-md-4">
-            {{fragment "org.wso2.carbon.uuf.sample.store-common.tags"}}
         </div>
     </div>
 {{/fillZone}}

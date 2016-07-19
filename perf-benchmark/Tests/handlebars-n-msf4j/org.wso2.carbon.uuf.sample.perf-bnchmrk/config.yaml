@@ -1,5 +1,4 @@
 appName : Performance Benchmark App
-elementsPerPage: 10
 theme : org.wso2.carbon.uuf.sample.theme.default
 menu :
   main :
