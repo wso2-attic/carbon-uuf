@@ -18,7 +18,6 @@ package org.wso2.carbon.uuf.internal.core.create;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
-import org.apache.commons.lang3.tuple.Pair;
 import org.wso2.carbon.uuf.api.Placeholder;
 import org.wso2.carbon.uuf.core.App;
 import org.wso2.carbon.uuf.core.Component;
@@ -54,6 +53,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
+import static org.wso2.carbon.uuf.internal.core.create.DependencyTreeParser.ComponentData;
 import static org.wso2.carbon.uuf.internal.util.NameUtils.getFullyQualifiedName;
 
 public class AppCreator {
@@ -78,19 +78,19 @@ public class AppCreator {
         DependencyTreeParser.Result result = DependencyTreeParser.parse(appReference.getDependencies());
 
         Lookup lookup = new Lookup(result.getFlattenedDependencies());
-        List<Set<Pair<String, String>>> leveledDependencies = result.getLeveledDependencies();
+        List<Set<ComponentData>> leveledDependencies = result.getLeveledDependencies();
         Map<String, Component> createdComponents = new HashMap<>();
         String appName = null;
 
         for (int i = (leveledDependencies.size() - 1); i >= 0; i--) {
-            Set<Pair<String, String>> dependencies = leveledDependencies.get(i); // dependencies at level i
-            for (Pair<String, String> componentNameVersion : dependencies) {
-                String componentName = componentNameVersion.getLeft();
+            Set<ComponentData> dependencies = leveledDependencies.get(i); // dependencies at level i
+            for (ComponentData componentNameVersion : dependencies) {
+                String componentName = componentNameVersion.getName();
                 if (createdComponents.containsKey(componentName)) {
                     continue; // Component 'componentName' is already created.
                 }
 
-                String componentVersion = componentNameVersion.getRight();
+                String componentVersion = componentNameVersion.getVersion();
                 String componentSimpleName, componentContext;
                 if (i == 0) {
                     // This happens only once, because when (i == 0) then (dependencies.size() == 1).
