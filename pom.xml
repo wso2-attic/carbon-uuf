@@ -51,6 +51,7 @@
         <module>product/p2-features/org.wso2.carbon.uuf.renderablecreator.hbs.feature</module>
         <module>product/p2-features/org.wso2.carbon.uuf.httpconnector.msf4j.feature</module>
         <module>samples</module>
+        <module>perf-benchmark/Tests/handlebars-n-msf4j/org.wso2.carbon.uuf.sample.perf-bnchmrk</module>
         <module>product</module>
     </modules>
 
