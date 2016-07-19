@@ -8,7 +8,7 @@ warmUpConc=200
 warmUpLoop=50000
 
 tmpDir="$baseDir/tmp"
-testsLoc="$baseDir/Tests"
+testsLoc="$baseDir/tests"
 payload="$baseDir/target/1kb_rand_data.txt"
 timeStmp=$(date +%s)
 

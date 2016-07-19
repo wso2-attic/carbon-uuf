@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 baseDir=$(dirname "$0")
-testsLoc="$baseDir/Tests"
+testsLoc="$baseDir/tests"
 
 function cleanup(){
     local tests=$(ls "$testsLoc")
