@@ -45,5 +45,10 @@ public enum Placeholder {
     /**
      * Placeholder for JavScript {@code <script>} tags that will be at the bottom of the {@code <body>} tag.
      */
-    js
+    js,
+    /**
+     * Placeholder for i18n (t) tags.
+     * 
+     */
+    t
 }
