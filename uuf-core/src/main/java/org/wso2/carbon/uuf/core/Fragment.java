@@ -52,8 +52,15 @@ public class Fragment {
 
     public String render(Model model, Lookup lookup, RequestLookup requestLookup, API api) {
         if (isSecured && !api.getSession().isPresent()) {
-            throw new SessionNotFoundException(
-                    "Fragment '" + name + "' is secured and required an user session to render.");
+            if (requestLookup.tracker().isInPage() || requestLookup.tracker().isInFragment() ||
+                    requestLookup.tracker().isInFragment()) {
+                // This fragment is included in a page/fragment/layout which is not secured.
+                return "";
+            } else {
+                // This fragment is called directly.
+                throw new SessionNotFoundException(
+                        "Fragment '" + name + "' is secured and required an user session to render.");
+            }
         }
 
         // Rendering flow tracking in.
