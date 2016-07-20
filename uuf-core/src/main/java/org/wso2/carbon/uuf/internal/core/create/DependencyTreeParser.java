@@ -142,6 +142,7 @@ public class DependencyTreeParser {
     }
 
     public static class ComponentData {
+
         private final String name;
         private final String version;
 

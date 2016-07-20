@@ -115,7 +115,7 @@ public class Lookup {
         }
     }
 
-    Map<String, Layout> getAllLayouts(){
+    Map<String, Layout> getAllLayouts() {
         return layouts;
     }
 
