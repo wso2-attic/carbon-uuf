@@ -52,7 +52,7 @@ public class Fragment {
 
     public String render(Model model, Lookup lookup, RequestLookup requestLookup, API api) {
         if (isSecured && !api.getSession().isPresent()) {
-            if (requestLookup.tracker().isInPage() || requestLookup.tracker().isInFragment() ||
+            if (requestLookup.tracker().isInPage() || requestLookup.tracker().isInLayout() ||
                     requestLookup.tracker().isInFragment()) {
                 // This fragment is included in a page/fragment/layout which is not secured.
                 return "";
