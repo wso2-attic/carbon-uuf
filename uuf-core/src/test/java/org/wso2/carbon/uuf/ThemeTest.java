@@ -33,23 +33,23 @@ public class ThemeTest {
         List<String> cssRelativePaths = ImmutableList.of("css/main-styles.css");
         List<String> headJsRelativePaths = ImmutableList.of("js/main-script.css");
         List<String> bodyJsRelativePaths = ImmutableList.of("js/last-script.css");
-        Theme theme = new Theme("test.theme", cssRelativePaths, headJsRelativePaths, bodyJsRelativePaths);
-        RequestLookup requestLookup = new RequestLookup("/contextPath", null, null);
+        Theme theme = new Theme("theme-name", cssRelativePaths, headJsRelativePaths, bodyJsRelativePaths);
+        RequestLookup requestLookup = new RequestLookup("/context-path", null, null);
         theme.render(requestLookup);
 
         Optional<String> css = requestLookup.getPlaceholderContent(Placeholder.css);
         Assert.assertTrue(css.isPresent());
-        Assert.assertEquals(css.get(), "<link href=\"/contextPath/public/themes/test.theme/" + cssRelativePaths.get(0) +
-                "\" rel=\"stylesheet\" type=\"text/css\" />");
+        Assert.assertEquals(css.get(), "<link href=\"/context-path/public/themes/theme-name/" +
+                cssRelativePaths.get(0) + "\" rel=\"stylesheet\" type=\"text/css\" />");
 
         Optional<String> headJs = requestLookup.getPlaceholderContent(Placeholder.headJs);
         Assert.assertTrue(headJs.isPresent());
-        Assert.assertEquals(headJs.get(), "<script src=\"/contextPath/public/themes/test.theme/" +
+        Assert.assertEquals(headJs.get(), "<script src=\"/context-path/public/themes/theme-name/" +
                 headJsRelativePaths.get(0) + "\" type=\"text/javascript\"></script>");
 
         Optional<String> js = requestLookup.getPlaceholderContent(Placeholder.js);
         Assert.assertTrue(js.isPresent());
-        Assert.assertEquals(js.get(), "<script src=\"/contextPath/public/themes/test.theme/" +
+        Assert.assertEquals(js.get(), "<script src=\"/context-path/public/themes/theme-name/" +
                 bodyJsRelativePaths.get(0) + "\" type=\"text/javascript\"></script>");
     }
 }

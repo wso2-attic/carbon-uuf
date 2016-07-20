@@ -41,14 +41,14 @@ public class ComponentTest {
     }
 
     private static RequestLookup createRequestLookup() {
-        return new RequestLookup("/contextPath", null, null);
+        return new RequestLookup("/context-path", null, null);
     }
 
     @Test
     public void testRenderExistingPage() {
         Page p1 = createPage("/test/page/one", "Hello world from test page one!");
         Page p2 = createPage("/test/page/two", "Hello world from test page two!");
-        Component component = new Component("componentName", null, null, ImmutableSortedSet.of(p1, p2));
+        Component component = new Component("test.component-name", null, null, ImmutableSortedSet.of(p1, p2), null);
 
         Optional<String> output = component.renderPage("/test/page/one", null, null, createRequestLookup(), null);
         Assert.assertEquals(output.get(), "Hello world from test page one!");
@@ -58,7 +58,7 @@ public class ComponentTest {
     public void testRenderExistingPageWithWildcard() {
         Page p1 = createPage("/test/page/{wildcard}/one", "Hello world from test page one!");
         Page p2 = createPage("/test/page/no-wildcard/two", "Hello world from test page two!");
-        Component component = new Component("componentName", null, null, ImmutableSortedSet.of(p1, p2));
+        Component component = new Component("test.component-name", null, null, ImmutableSortedSet.of(p1, p2), null);
 
         Optional<String> output = component.renderPage("/test/page/wildcard-value/one", null, null,
                                                        createRequestLookup(), null);
@@ -69,7 +69,7 @@ public class ComponentTest {
     public void testRenderNonExistingPage() {
         Page p1 = createPage("/test/page/one", null);
         Page p2 = createPage("/test/page/two", null);
-        Component component = new Component("componentName", null, null, ImmutableSortedSet.of(p1, p2));
+        Component component = new Component("test.component-name", null, null, ImmutableSortedSet.of(p1, p2), null);
 
         Optional<String> output = component.renderPage("/test/page/three", null, null, createRequestLookup(), null);
         Assert.assertFalse(output.isPresent());
