@@ -23,17 +23,18 @@ import org.wso2.carbon.uuf.reference.FragmentReference;
 import org.wso2.carbon.uuf.reference.LayoutReference;
 import org.wso2.carbon.uuf.reference.PageReference;
 
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.file.DirectoryIteratorException;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.DirectoryStream;
 import java.util.*;
 import java.util.stream.Stream;
-import java.io.FileReader;
 
 public class ArtifactComponentReference implements ComponentReference {
 
+    private final String CHAR_ENCODING = "UTF-8";
     private final Path path;
     private final ArtifactAppReference appReference;
 
@@ -153,13 +154,12 @@ public class ArtifactComponentReference implements ComponentReference {
             for (Path entry: stream) {
                 if(Files.isRegularFile(entry)){
                     Properties props = new Properties();
-                    props.load(new FileReader(entry.toString()));
+                    //props.load(new FileReader(entry.toString()));
+                    props.load(new InputStreamReader(new FileInputStream(entry.toString()), CHAR_ENCODING));
                     String fileName = entry.getFileName().toString();
                     i18n.put(fileName.substring(0,fileName.indexOf('.')), props);
                 }
             }
-        } catch (DirectoryIteratorException e) {
-            throw new UUFException("An error occurred while reading locale file in '" + lang + "'.", e);
         } catch (IOException e) {
             throw new UUFException("An error occurred while reading locale file in '" + lang + "'.", e);
         }

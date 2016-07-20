@@ -227,4 +227,8 @@ public class HbsHelperTest {
         }
 
     }
+
+    //TODO
+    @Test
+    public void testI18n() {}
 }

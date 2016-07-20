@@ -32,12 +32,9 @@ import com.github.jknack.handlebars.Options;
 public class I18nHelper implements Helper<String> {
 	
     public static final String HELPER_NAME = "t";
+    private static final String DEFAULT_LOCALE = "en-US";
     private final String localeHeader = "Accept-Language";
 
-	/*//public I18nHelper() {
-		super(Placeholder.t);
-	}
-*/
 	@Override
 	public CharSequence apply(String key, Options options) throws IOException {
         if (key == null) {
@@ -45,8 +42,22 @@ public class I18nHelper implements Helper<String> {
 
         }
         RequestLookup requestLookup = options.data(HbsRenderable.DATA_KEY_REQUEST_LOOKUP);
-        Locale currentLocale = new Locale.Builder().setLanguageTag(requestLookup.getRequest().getHeaders()
-                .get(localeHeader).split(",")[0]).build();
+
+        Object localParam = options.hash.get("locale");
+        Object localeRequest= requestLookup.getRequest().getHeaders().get(localeHeader).split(",")[0];
+        Locale currentLocale;
+
+        if(localParam != null){
+            //Locale.Builder().setLanguageTag expects locale to be in "en-US" format (Note: - instead of _)
+            //But enabling users to provide en_US is more intuitive hence using following approach
+            String[] localeArry = localParam.toString().split("_");
+            currentLocale  = new Locale(localeArry[0], localeArry[1]);
+        } else if (localeRequest != null){
+            currentLocale = new Locale.Builder().setLanguageTag(localeRequest.toString()).build();
+        } else {
+            currentLocale = new Locale.Builder().setLanguageTag(DEFAULT_LOCALE).build();
+        }
+
         Lookup lookup = options.data(HbsRenderable.DATA_KEY_LOOKUP);
         Properties props = lookup.getAllI18nResources().get(currentLocale.toString());
 

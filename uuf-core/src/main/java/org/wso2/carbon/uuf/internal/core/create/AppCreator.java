@@ -152,7 +152,9 @@ public class AppCreator {
         //Map<String, Properties> i18nConfiguration = componentReference.getI18nFiles();
         //lookup.getAllI18nResources().putAll(componentReference.getI18nFiles());
 
-        lookup.add(componentReference.getI18nFiles());
+        if(componentReference.getI18nFiles().size() > 0){
+            lookup.add(componentReference.getI18nFiles());
+        }
 
         SortedSet<Page> pages = componentReference
                 .getPages(supportedExtensions)
