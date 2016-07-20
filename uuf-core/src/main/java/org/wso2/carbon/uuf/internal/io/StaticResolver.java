@@ -21,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.core.App;
 import org.wso2.carbon.uuf.core.Component;
+import org.wso2.carbon.uuf.core.Theme;
 import org.wso2.carbon.uuf.exception.ResourceNotFoundException;
 import org.wso2.carbon.uuf.internal.debug.Debugger;
 import org.wso2.carbon.uuf.internal.util.MimeMapper;
@@ -45,7 +46,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static org.wso2.carbon.uuf.reference.AppReference.DIR_NAME_THEMES;
 import static org.wso2.carbon.uuf.reference.ComponentReference.DIR_NAME_FRAGMENTS;
 import static org.wso2.carbon.uuf.spi.HttpResponse.CONTENT_TYPE_IMAGE_PNG;
 import static org.wso2.carbon.uuf.spi.HttpResponse.CONTENT_TYPE_WILDCARD;
@@ -76,6 +76,7 @@ public class StaticResolver {
      */
     public StaticResolver() {
         if (Debugger.isDebuggingEnabled()) {
+            // In the developer mode, we do not cache last modified dates of serving static resources.
             this.resourcesLastModifiedDates = new AbstractMap<Path, ZonedDateTime>() {
                 @Override
                 public Set<Entry<Path, ZonedDateTime>> entrySet() {
@@ -84,7 +85,7 @@ public class StaticResolver {
 
                 @Override
                 public ZonedDateTime put(Path key, ZonedDateTime value) {
-                    return value;
+                    return value; // Do nothing as this is a dummy Map.
                 }
             };
         } else {
@@ -112,7 +113,7 @@ public class StaticResolver {
                 resourcePath = resolveResourceInComponent(app, request.getUriWithoutContextPath());
             } else if (request.isThemeStaticResourceRequest()) {
                 // /public/themes/...
-                resourcePath = resolveResourceInTheme(app.getName(), basePath, request.getUriWithoutContextPath());
+                resourcePath = resolveResourceInTheme(app, request.getUriWithoutContextPath());
             } else {
                 // /public/...
                 response.setContent(STATUS_BAD_REQUEST, "Invalid static resource URI '" + request.getUri() + "'.");
@@ -185,7 +186,7 @@ public class StaticResolver {
         if (component == null) {
             throw new ResourceNotFoundException(
                     "Component for context path '" + componentContextPath + "' found in URI '" + uriWithoutContextPath +
-                            "' does not exists.");
+                            "' does not exists in app '" + app.getName() + "'.");
         }
 
         // {fragment-simple-name} OR 'base'
@@ -203,7 +204,7 @@ public class StaticResolver {
         }
     }
 
-    private Path resolveResourceInTheme(String appName, Path appBasePath, String uriWithoutContextPath) {
+    private Path resolveResourceInTheme(App app, String uriWithoutContextPath) {
         // Correct 'uriWithoutContextPath' value must be in
         // "/public/themes/{theme-name}/{sub-directory}/{rest-of-the-path}" format.
         // So there should be at least 5 slashes. Don't worry about multiple consecutive slashes. They  are covered
@@ -225,14 +226,17 @@ public class StaticResolver {
         if (slashesCount != 5) {
             throw new IllegalArgumentException("Invalid static resource URI '" + uriWithoutContextPath + "'.");
         }
+        String themeName = uriWithoutContextPath.substring(thirdSlashIndex + 1, fourthSlashIndex);
+        Theme theme = app.getThemes().get(themeName);
+        if (theme == null) {
+            throw new ResourceNotFoundException("Theme '" + themeName + "' found in URI '" + uriWithoutContextPath +
+                                                        "' does not exists in app '" + app.getName() + "'.");
+        }
 
-        String themeSimpleName = uriWithoutContextPath.substring(thirdSlashIndex + 1, fourthSlashIndex);
         // {sub-directory}/{rest-of-the-path}
         String relativePathString = uriWithoutContextPath.substring(fourthSlashIndex + 1,
                                                                     uriWithoutContextPath.length());
-        return appBasePath.resolve(appName).resolve(DIR_NAME_THEMES).resolve(themeSimpleName)
-                .resolve(DIR_NAME_PUBLIC_RESOURCES).resolve(relativePathString);
-
+        return Paths.get(theme.getPath(), DIR_NAME_PUBLIC_RESOURCES, relativePathString);
     }
 
     private ZonedDateTime getLastModifiedDate(Path resourcePath) {
