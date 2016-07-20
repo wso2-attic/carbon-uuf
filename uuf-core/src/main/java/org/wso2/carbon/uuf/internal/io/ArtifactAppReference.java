@@ -57,7 +57,7 @@ public class ArtifactAppReference implements AppReference {
             return Files
                     .list(themes)
                     .filter(Files::isDirectory)
-                    .map(theme -> new ArtifactThemeReference(theme, this));
+                    .map(path -> new ArtifactThemeReference(path, this));
         } catch (IOException e) {
             throw new UUFException("An error occurred while listing themes in '" + themes + "'.", e);
         }

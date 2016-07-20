@@ -35,7 +35,7 @@ public class ArtifactThemeReference implements ThemeReference {
 
     @Override
     public String getName() {
-        Path fileName = path.getFileName();
+        Path fileName = path.getFileName(); // Name of the theme is the name of the directory.
         return (fileName == null) ? "" : fileName.toString();
     }
 

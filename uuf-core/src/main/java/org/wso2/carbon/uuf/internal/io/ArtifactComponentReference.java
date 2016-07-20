@@ -16,6 +16,7 @@
 
 package org.wso2.carbon.uuf.internal.io;
 
+import org.apache.commons.io.FilenameUtils;
 import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.reference.ComponentReference;
 import org.wso2.carbon.uuf.reference.FileReference;
@@ -49,11 +50,10 @@ public class ArtifactComponentReference implements ComponentReference {
         try {
             return Files
                     .walk(pages)
-                    .filter(path -> Files.isRegularFile(path) &&
-                            supportedExtensions.contains(getExtension(path.getFileName().toString())))
+                    .filter(path -> Files.isRegularFile(path) && supportedExtensions.contains(getExtension(path)))
                     .map(path -> new ArtifactPageReference(path, this));
         } catch (IOException e) {
-            throw new UUFException("An error occurred while listing pages in '" + path + "'.", e);
+            throw new UUFException("An error occurred while listing pages in '" + pages + "'.", e);
         }
     }
 
@@ -66,17 +66,15 @@ public class ArtifactComponentReference implements ComponentReference {
         try {
             return Files
                     .list(layouts)
-                    .filter(path -> Files.isRegularFile(path) &&
-                            supportedExtensions.contains(getExtension(path.getFileName().toString())))
+                    .filter(path -> Files.isRegularFile(path) && supportedExtensions.contains(getExtension(path)))
                     .map(path -> new ArtifactLayoutReference(path, this));
         } catch (IOException e) {
-            throw new UUFException("An error occurred while listing layouts in '" + path + "'.", e);
+            throw new UUFException("An error occurred while listing layouts in '" + layouts + "'.", e);
         }
     }
 
-    private String getExtension(String fileName) {
-        int lastDotIndex = fileName.lastIndexOf('.');
-        return (lastDotIndex == -1) ? "" : fileName.substring(lastDotIndex + 1);
+    private String getExtension(Path filePath) {
+        return FilenameUtils.getExtension(filePath.getFileName().toString());
     }
 
     @Override
@@ -91,7 +89,7 @@ public class ArtifactComponentReference implements ComponentReference {
                     .filter(Files::isDirectory)
                     .map(path -> new ArtifactFragmentReference(path, this, supportedExtensions));
         } catch (IOException e) {
-            throw new UUFException("An error occurred while listing fragments in '" + path + "'.", e);
+            throw new UUFException("An error occurred while listing fragments in '" + fragments + "'.", e);
         }
     }
 

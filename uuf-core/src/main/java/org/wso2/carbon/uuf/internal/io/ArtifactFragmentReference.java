@@ -40,7 +40,7 @@ public class ArtifactFragmentReference implements FragmentReference {
 
     @Override
     public String getName() {
-        Path fileName = path.getFileName();
+        Path fileName = path.getFileName(); // Name of the fragment is the name of the directory.
         return (fileName == null) ? "" : fileName.toString();
     }
 
