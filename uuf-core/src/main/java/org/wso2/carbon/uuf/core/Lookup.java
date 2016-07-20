@@ -29,9 +29,21 @@ import java.util.Set;
 public class Lookup {
 
     private final SetMultimap<String, String> flattenedDependencies;
+    /**
+     * All components in this lookup. key = fully qualified name (except for root component), value = component
+     */
     private final Map<String, Component> components;
+    /**
+     * All fragments in this lookup. key = fully qualified name , value = fragment
+     */
     private final Map<String, Fragment> fragments;
+    /**
+     * All bindings of this lookup. key = fully qualified name of the zone, value = pushed fragments set
+     */
     private final SetMultimap<String, Fragment> bindings;
+    /**
+     * All layouts of this lookup. key = fully qualified name, value = layout
+     */
     private final Map<String, Layout> layouts;
     private final Configuration configuration;
 
