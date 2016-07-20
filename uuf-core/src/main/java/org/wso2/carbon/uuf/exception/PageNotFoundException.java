@@ -20,6 +20,10 @@ import org.wso2.carbon.uuf.spi.HttpResponse;
 
 public class PageNotFoundException extends HttpErrorException {
 
+    public PageNotFoundException() {
+        super(HttpResponse.STATUS_NOT_FOUND);
+    }
+
     public PageNotFoundException(String message) {
         super(HttpResponse.STATUS_NOT_FOUND, message);
     }
