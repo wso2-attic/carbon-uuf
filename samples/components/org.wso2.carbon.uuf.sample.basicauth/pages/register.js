@@ -15,29 +15,23 @@
  */
 
 function onRequest(env) {
-    var session = getSession();
-    if (session) {
-        sendRedirect(env.contextPath + env.config['loginRedirectUri']);
-    }
-
     if (env.request.method == "POST") {
-        var username = env.request.formParams['username'];
-        var password = env.request.formParams['password'];
-        // calling dummy authentication service
-        var result = authenticate(username, password);
+        var password = env.request.formParams['input-password'];
+        var confirmPassword = env.request.formParams['input-confirm-password'];
+        var result = validateData(password, confirmPassword);
         if (result.success) {
-            //configure login redirect uri
-            sendRedirect(env.contextPath + env.config['loginRedirectUri']);
+            sendRedirect(env.contextPath + env.config['registerRedirectUri']);
         } else {
             return {errorMessage: result.message};
         }
     }
 }
 
-function authenticate(username, password) {
-    if (username == "admin" && password == "admin") {
-        createSession(username);
-        return {success: true, message: "success"}
+function validateData(password, confirmPassowrd) {
+    if (password == '') {
+        return {success: false, message: "Please enter a password to continue registration."};
+    } else if (password != confirmPassowrd) {
+        return {success: false, message: "Incorrect password confirmation."};
     }
-    return {success: false, message: "Incorrect username and password combination."};
+    return {success: true, message: "success"}
 }
