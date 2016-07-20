@@ -29,10 +29,12 @@ public class Theme {
     private final List<String> cssTagSuffixes;
     private final List<String> headJsTagSuffixes;
     private final List<String> bodyJsTagSuffixes;
+    private final String path;
 
     public Theme(String name, List<String> cssRelativePaths, List<String> headJsRelativePaths,
-                 List<String> bodyJsRelativePaths) {
+                 List<String> bodyJsRelativePaths, String path) {
         this.name = name;
+        this.path = path;
 
         String uriPrefix = UriUtils.getPublicUri(this) + "/";
         this.cssTagSuffixes = cssRelativePaths.stream()
@@ -48,6 +50,10 @@ public class Theme {
 
     public String getName() {
         return name;
+    }
+
+    public String getPath() {
+        return path;
     }
 
     public void render(RequestLookup requestLookup) {
@@ -75,7 +81,7 @@ public class Theme {
 
     @Override
     public String toString() {
-        return "{\"name\": \"" + name + "\"}";
+        return "{\"name\": \"" + name + ", \"path\": \"" + path + "\"}";
     }
 
     public static boolean isValidThemeName(String themeName) {

@@ -33,7 +33,7 @@ public class ThemeTest {
         List<String> cssRelativePaths = ImmutableList.of("css/main-styles.css");
         List<String> headJsRelativePaths = ImmutableList.of("js/main-script.css");
         List<String> bodyJsRelativePaths = ImmutableList.of("js/last-script.css");
-        Theme theme = new Theme("theme-name", cssRelativePaths, headJsRelativePaths, bodyJsRelativePaths);
+        Theme theme = new Theme("theme-name", cssRelativePaths, headJsRelativePaths, bodyJsRelativePaths, null);
         RequestLookup requestLookup = new RequestLookup("/context-path", null, null);
         theme.render(requestLookup);
 

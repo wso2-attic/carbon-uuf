@@ -308,7 +308,9 @@ public class AppCreator {
             }
 
         }
+
         return new Theme(themeReference.getName(), config.get(Placeholder.css.name()),
-                         config.get(Placeholder.headJs.name()), config.get(Placeholder.js.name()));
+                         config.get(Placeholder.headJs.name()), config.get(Placeholder.js.name()),
+                         themeReference.getPath());
     }
 }
