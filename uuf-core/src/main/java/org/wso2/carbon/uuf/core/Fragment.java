@@ -65,8 +65,9 @@ public class Fragment {
 
         // Rendering flow tracking in.
         requestLookup.tracker().in(this);
-        Component currentComponent = lookup.getComponent(requestLookup.tracker().getCurrentComponentName()).get();
-        requestLookup.pushToPublicUriStack(UriUtils.getPublicUri(currentComponent, this));
+        lookup.getComponent(requestLookup.tracker().getCurrentComponentName())
+                .map(component -> UriUtils.getPublicUri(component, this)) // Compute public URI for this fragment.
+                .ifPresent(requestLookup::pushToPublicUriStack); // Push it to the public URi stack.
         String output = renderer.render(model, lookup, requestLookup, api);
         // Rendering flow tracking out.
         requestLookup.popPublicUriStack();

@@ -54,8 +54,9 @@ public class Page implements Comparable<Page> {
 
         // Rendering flow tracking in.
         requestLookup.tracker().in(this);
-        Component currentComponent = lookup.getComponent(requestLookup.tracker().getCurrentComponentName()).get();
-        requestLookup.pushToPublicUriStack(UriUtils.getPublicUri(currentComponent, this));
+        lookup.getComponent(requestLookup.tracker().getCurrentComponentName())
+                .map(component -> UriUtils.getPublicUri(component, this)) // Compute public URI for this page.
+                .ifPresent(requestLookup::pushToPublicUriStack); // Push it to the public URi stack.
         String output = renderer.render(model, lookup, requestLookup, api);
         if (layout != null) {
             output = layout.render(lookup, requestLookup, api);
