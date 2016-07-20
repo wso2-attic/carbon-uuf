@@ -32,7 +32,7 @@ public class ArtifactAppReference implements AppReference {
     private final Path path;
 
     public ArtifactAppReference(Path path) {
-        this.path = path;
+        this.path = path.normalize().toAbsolutePath();
     }
 
     @Override
