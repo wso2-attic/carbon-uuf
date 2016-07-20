@@ -19,24 +19,23 @@ function onRequest(env) {
     if (session) {
         sendRedirect(env.contextPath + env.config['loginRedirectUri']);
     }
-    if (env.request.method === "POST") {
+
+    if (env.request.method == "POST") {
         var username = env.request.formParams['username'];
         var password = env.request.formParams['password'];
-        // calling dummy authenticate service
+        // calling dummy authentication service
         var result = authenticate(username, password);
         if (result.success) {
             //configure login redirect uri
-            //sendRedirect(env.contextPath + env.config['loginRedirectUri'] + '?username=' + username);
             sendRedirect(env.contextPath + env.config['loginRedirectUri']);
         } else {
-            // {success: true, message: ""};
-            return {login: result};
+            return {errorMessage: result.message};
         }
     }
 }
 
 function authenticate(username, password) {
-    if (username === "admin" && password === "admin") {
+    if (username == "admin" && password == "admin") {
         createSession(username);
         return {success: true, message: "success"}
     }

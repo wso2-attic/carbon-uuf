@@ -15,22 +15,22 @@
  */
 
 function onRequest(env) {
-    if (env.request.method === "POST") {
+    if (env.request.method == "POST") {
         var password = env.request.formParams['input-password'];
         var confirmPassword = env.request.formParams['input-confirm-password'];
         var result = validateData(password, confirmPassword);
-        if(result.success) {
+        if (result.success) {
             sendRedirect(env.contextPath + env.config['registerRedirectUri']);
         } else {
-            return {register: result};
+            return {errorMessage: result.message};
         }
     }
 }
 
 function validateData(password, confirmPassowrd) {
-    if(password === '') {
+    if (password == '') {
         return {success: false, message: "Please enter a password to continue registration."};
-    } else if(password !== confirmPassowrd){
+    } else if (password != confirmPassowrd) {
         return {success: false, message: "Incorrect password confirmation."};
     }
     return {success: true, message: "success"}

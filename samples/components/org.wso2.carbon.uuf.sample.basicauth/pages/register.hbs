@@ -1,17 +1,17 @@
 {{layout "org.wso2.carbon.uuf.sample.foundation.main"}}
 {{css "css/login.css"}}
 {{#fillZone "content"}}
-    {{#unless register.success}}
+    {{#if errorMessage}}
         <div class="alert alert-danger" role="alert">
             <i class="icon fw fw-error"></i><strong>Registration Error!</strong>
-            {{register.message}}
+            {{errorMessage}}
             <button type="button" class="close" aria-label="close" data-dismiss="alert">
                 <span aria-hidden="true">
                     <i class="fw fw-cancel"></i>
                 </span>
             </button>
         </div>
-    {{/unless}}
+    {{/if}}
     <div class="page-content-wrapper">
         <div class="container">
             <div class="signup-form-wrapper">
@@ -65,7 +65,8 @@
                                 </div>
                                 <div class="form-group">
                                     <div class="col-xs-12 col-sm-12 col-md-5 col-lg-5">
-                                        <label for="input-sec-questions" class="control-label">Security Question:</label>
+                                        <label for="input-sec-questions" class="control-label">Security
+                                                                                               Question:</label>
                                         <select id="input-sec-questions" class="form-control">
                                             <option>Please select a security question</option>
                                             <option>What is your favourite pet's name?</option>
@@ -82,13 +83,18 @@
                                 </div>
                                 <div class="form-group add-margin-top-5x">
                                     <div class="col-xs-12 col-sm-12 col-md-5 col-lg-5">
-                                        <button type="submit" class="btn btn-default btn-primary add-margin-right-2x">Register</button>
-                                        <button type="button" class="btn btn-default btn-secondary hidden-xs hidden-sm"><a href="{{@contextPath}}/basicauth/login">Cancel</a></button>
+                                        <button type="submit" class="btn btn-default btn-primary add-margin-right-2x">
+                                            Register
+                                        </button>
+                                        <button type="button"
+                                                class="btn btn-default btn-secondary hidden-xs hidden-sm cancel-btn-font">
+                                            <a href="{{@contextPath}}/basicauth/login">Cancel</a></button>
                                     </div>
                                 </div>
                             </form>
                         </div>
-                        <p class="visible-xs visible-sm add-margin-2x text-center">Don't have an account? <a href="{{@contextPath}}/basicauth/register">Register Now</a></p>
+                        <p class="visible-xs visible-sm add-margin-2x text-center">Don't have an account? <a
+                                href="{{@contextPath}}/basicauth/register">Register Now</a></p>
                     </div>
                 </div>
             </div>
