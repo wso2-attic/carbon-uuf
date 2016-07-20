@@ -17,6 +17,7 @@
 package org.wso2.carbon.uuf.internal.io;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.osgi.framework.BundleContext;
@@ -33,6 +34,7 @@ import org.wso2.carbon.deployment.engine.ArtifactType;
 import org.wso2.carbon.deployment.engine.Deployer;
 import org.wso2.carbon.deployment.engine.exception.CarbonDeploymentException;
 import org.wso2.carbon.kernel.startupresolver.RequiredCapabilityListener;
+import org.wso2.carbon.kernel.utils.Utils;
 import org.wso2.carbon.uuf.core.App;
 import org.wso2.carbon.uuf.exception.DeploymentException;
 import org.wso2.carbon.uuf.exception.UUFException;
@@ -42,8 +44,6 @@ import org.wso2.carbon.uuf.internal.debug.Debugger;
 import org.wso2.carbon.uuf.internal.util.NameUtils;
 import org.wso2.carbon.uuf.spi.RenderableCreator;
 import org.wso2.carbon.uuf.spi.UUFAppRegistry;
-import org.apache.commons.io.FilenameUtils;
-import org.wso2.carbon.kernel.utils.Utils;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -209,7 +209,6 @@ public class ArtifactAppDeployer implements Deployer, UUFAppRegistry, RequiredCa
     }
 
     private App deployApp(String contextPath) {
-        App app;
         AppData appData;
         synchronized (lock) {
             Artifact artifact = pendingToDeployArtifacts.remove(contextPath);
@@ -224,7 +223,6 @@ public class ArtifactAppDeployer implements Deployer, UUFAppRegistry, RequiredCa
             }
             try {
                 appData = getAppData(artifact);
-                app = appData.getApp();
             } catch (Exception e) {
                 // catching any/all exception/s
                 if (Debugger.isDebuggingEnabled()) {
@@ -234,9 +232,9 @@ public class ArtifactAppDeployer implements Deployer, UUFAppRegistry, RequiredCa
                 }
                 throw new UUFException("An error occurred while deploying UUF app in '" + artifact.getPath() + "'.", e);
             }
-            String appContextPath = app.getContextPath();
-            deployedApps.put(appContextPath, appData);
+            deployedApps.put(appData.getApp().getContextPath(), appData);
         }
+        App app = appData.getApp();
         log.info("UUF app '" + app.getName() + "' deployed for context path '" + app.getContextPath() + "'.");
         return app;
     }
@@ -256,8 +254,8 @@ public class ArtifactAppDeployer implements Deployer, UUFAppRegistry, RequiredCa
 
         if (!Files.exists(DIR_TEMP_UUFAPPS)) {
             if (!unzipFolder.mkdir()) {
-                new DeploymentException("Error occurred while creating the folder " +
-                                                DIR_TEMP_UUFAPPS.relativize(CARBON_HOME) + ".");
+                throw new DeploymentException(
+                        "Error occurred while creating the folder " + DIR_TEMP_UUFAPPS.relativize(CARBON_HOME) + ".");
             }
         }
         try {

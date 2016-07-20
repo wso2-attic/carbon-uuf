@@ -158,5 +158,4 @@ public class UUFServer {
                                              new HttpErrorException(STATUS_INTERNAL_SERVER_ERROR, e.getMessage(), e));
         }
     }
-
 }

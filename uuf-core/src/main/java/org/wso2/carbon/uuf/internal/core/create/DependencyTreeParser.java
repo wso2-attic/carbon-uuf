@@ -27,15 +27,20 @@ import java.util.Deque;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 public class DependencyTreeParser {
 
     public static Result parse(List<String> dependencyTreeLines) {
-        // Flattened dependency map. key = component name, value = all dependencies of the 'key'
+        // Flattened dependencies map.
+        // key   = component name
+        // value = all dependencies of the 'key'
         SetMultimap<String, String> flattenedDependencies = HashMultimap.create();
-        // Leveled dependencies. index = dependency level. index 0 == root component's dependencies
-        List<Set<Pair<String, String>>> leveledDependencies = new ArrayList<>(6);
+        // Leveled dependencies list.
+        // index       = dependency level, index 0 == root component's dependencies
+        // List.get(i) = set of dependencies in level i
+        List<Set<ComponentData>> leveledDependencies = new ArrayList<>(6);
 
         int previousLevel = 0;
         String previousComponentName = null;
@@ -45,39 +50,40 @@ public class DependencyTreeParser {
             String line = dependencyTreeLines.get(i);
             int level = countLevel(line);
             int jump = (level - previousLevel);
-            Pair<String, String> componentNameVersion = getComponentNameVersion(line);
+            ComponentData currentComponent = getComponentData(line);
 
             if (level < leveledDependencies.size()) {
-                leveledDependencies.get(level).add(componentNameVersion);
+                leveledDependencies.get(level).add(currentComponent);
             } else {
-                Set<Pair<String, String>> set = new HashSet<>();
-                set.add(componentNameVersion);
+                Set<ComponentData> set = new HashSet<>();
+                set.add(currentComponent);
                 leveledDependencies.add(level, set);
             }
 
             if (i == 0) {
-                previousComponentName = componentNameVersion.getLeft();
+                // Very first leaf dependency.
+                previousComponentName = currentComponent.name;
                 continue;
             }
             if (jump < 0) {
-                // Level decreased, so remove entries from the stack.
+                // Dependency level decreased, so remove entries from the stack.
                 for (int j = Math.abs(jump); j > 0; j--) {
                     Pair<String, List<String>> entry = parentNodesStack.removeLast();
                     flattenedDependencies.putAll(entry.getKey(), entry.getValue());
                 }
             } else if (jump > 0) { // jump == 1
-                // Level increased, so add an entry to the stack.
+                // Dependency level increased, so add an entry to the stack.
                 parentNodesStack.add(new ImmutablePair<>(previousComponentName, new ArrayList<>(3)));
             }
-            // (jump == 0): same level, nothing to do.
+            // (jump == 0): Same dependency level, no need to change the stack.
 
-            // Add current componentName to all parent nodes as a dependency.
+            // Add current component name to all parent nodes as a dependency.
             for (Pair<String, List<String>> entry : parentNodesStack) {
-                entry.getValue().add(componentNameVersion.getLeft());
+                entry.getValue().add(currentComponent.name);
             }
 
             previousLevel = level;
-            previousComponentName = componentNameVersion.getLeft();
+            previousComponentName = currentComponent.name;
         }
         // If there is any remaining stack elements, add them to the flattenedDependencies.
         for (Pair<String, List<String>> entry : parentNodesStack) {
@@ -100,7 +106,7 @@ public class DependencyTreeParser {
         return (indent <= 1) ? indent : (indent / 2);
     }
 
-    private static Pair<String, String> getComponentNameVersion(String dependencyLine) {
+    private static ComponentData getComponentData(String dependencyLine) {
         /* dependencyLine string should be in one of following formats.
          *  <group ID>:<artifact ID>:<artifact type>:<artifact version>
          *  <group ID>:<artifact ID>:<artifact type>:<artifact version>:compile
@@ -112,16 +118,16 @@ public class DependencyTreeParser {
                     "Format of the dependency line '" + dependencyLine + "' is incorrect.");
         }
         // component name = <artifact ID> (2nd part), component version = <artifact version> (4th part)
-        return Pair.of(parts[1], parts[3]);
+        return new ComponentData(parts[1], parts[3]);
     }
 
     public static class Result {
 
         private final SetMultimap<String, String> flattenedDependencies;
-        private final List<Set<Pair<String, String>>> leveledDependencies;
+        private final List<Set<ComponentData>> leveledDependencies;
 
         public Result(SetMultimap<String, String> flattenedDependencies,
-                      List<Set<Pair<String, String>>> leveledDependencies) {
+                      List<Set<ComponentData>> leveledDependencies) {
             this.flattenedDependencies = flattenedDependencies;
             this.leveledDependencies = leveledDependencies;
         }
@@ -130,8 +136,40 @@ public class DependencyTreeParser {
             return flattenedDependencies;
         }
 
-        public List<Set<Pair<String, String>>> getLeveledDependencies() {
+        public List<Set<ComponentData>> getLeveledDependencies() {
             return leveledDependencies;
+        }
+    }
+
+    public static class ComponentData {
+        private final String name;
+        private final String version;
+
+        public ComponentData(String name, String version) {
+            this.name = name;
+            this.version = version;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getVersion() {
+            return version;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(name, version);
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if ((obj != null) && (obj instanceof ComponentData)) {
+                ComponentData other = (ComponentData) obj;
+                return Objects.equals(this.name, other.name) && Objects.equals(this.version, other.version);
+            }
+            return false;
         }
     }
 }

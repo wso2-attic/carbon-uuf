@@ -17,7 +17,6 @@
 package org.wso2.carbon.uuf;
 
 import com.google.common.collect.SetMultimap;
-import org.apache.commons.lang3.tuple.Pair;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.wso2.carbon.uuf.internal.core.create.DependencyTreeParser;
@@ -26,6 +25,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
+
+import static org.wso2.carbon.uuf.internal.core.create.DependencyTreeParser.ComponentData;
 
 public class DependencyTreeParserTest {
 
@@ -56,16 +57,17 @@ public class DependencyTreeParserTest {
         Assert.assertEquals(flattenedDependencies.get("testng").size(), 2);
         Assert.assertEquals(flattenedDependencies.get("mockito-core").size(), 2);
 
-        List<Set<Pair<String, String>>> leveledDependencies = result.getLeveledDependencies();
+        List<Set<ComponentData>> leveledDependencies = result.getLeveledDependencies();
         Assert.assertEquals(leveledDependencies.get(0).size(), 1);
-        Assert.assertTrue(leveledDependencies.get(0).contains(Pair.of("org.wso2.carbon.uuf.core", "1.0.0-SNAPSHOT")));
+        Assert.assertTrue(leveledDependencies.get(0).contains(new ComponentData("org.wso2.carbon.uuf.core",
+                                                                                "1.0.0-SNAPSHOT")));
         Assert.assertEquals(leveledDependencies.get(1).size(), 21);
         Assert.assertEquals(leveledDependencies.get(2).size(), 15);
         Assert.assertEquals(leveledDependencies.get(3).size(), 5);
-        Assert.assertTrue(leveledDependencies.get(3).contains(Pair.of("org.wso2.carbon.core", "5.0.0")));
-        Assert.assertTrue(leveledDependencies.get(3).contains(Pair.of("commons-logging", "1.1.1")));
-        Assert.assertTrue(leveledDependencies.get(3).contains(Pair.of("jcip-annotations", "1.0")));
-        Assert.assertTrue(leveledDependencies.get(3).contains(Pair.of("json-smart", "1.1.1")));
-        Assert.assertTrue(leveledDependencies.get(3).contains(Pair.of("bcprov-jdk15on", "1.50")));
+        Assert.assertTrue(leveledDependencies.get(3).contains(new ComponentData("org.wso2.carbon.core", "5.0.0")));
+        Assert.assertTrue(leveledDependencies.get(3).contains(new ComponentData("commons-logging", "1.1.1")));
+        Assert.assertTrue(leveledDependencies.get(3).contains(new ComponentData("jcip-annotations", "1.0")));
+        Assert.assertTrue(leveledDependencies.get(3).contains(new ComponentData("json-smart", "1.1.1")));
+        Assert.assertTrue(leveledDependencies.get(3).contains(new ComponentData("bcprov-jdk15on", "1.50")));
     }
 }
