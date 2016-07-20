@@ -95,7 +95,7 @@ public class AppCreator {
                 if (i == 0) {
                     // This happens only once, because when (i == 0) then (dependencies.size() == 1).
                     appName = componentName; // Name of the root component is the fully qualified app name.
-                    componentName = componentSimpleName = Component.ROOT_COMPONENT_NAME;
+                    componentSimpleName = Component.ROOT_COMPONENT_NAME;
                     componentContextPath = Component.ROOT_COMPONENT_CONTEXT_PATH;
                 } else {
                     componentSimpleName = NameUtils.getSimpleName(componentName);
