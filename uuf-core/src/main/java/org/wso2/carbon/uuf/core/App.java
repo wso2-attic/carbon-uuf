@@ -53,14 +53,14 @@ public class App {
 
     public App(String name, Lookup lookup, Set<Theme> themes, SessionRegistry sessionRegistry) {
         this.name = name;
-        this.contextPath = ("/" + NameUtils.getSimpleName(name));
+        this.contextPath = "/" + NameUtils.getSimpleName(name);
         this.lookup = lookup;
         this.configuration = this.lookup.getConfiguration();
         this.sessionRegistry = sessionRegistry;
 
         this.components = this.lookup.getAllComponents().values().stream()
-                .collect(Collectors.toMap(Component::getContext, cmp -> cmp));
-        this.rootComponent = this.components.remove(Component.ROOT_COMPONENT_CONTEXT);
+                .collect(Collectors.toMap(Component::getContextPath, cmp -> cmp));
+        this.rootComponent = this.components.remove(Component.ROOT_COMPONENT_CONTEXT_PATH);
 
         this.themes = themes.stream().collect(Collectors.toMap(Theme::getName, theme -> theme));
         String configuredThemeName = this.configuration.getThemeName();

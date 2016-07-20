@@ -31,17 +31,17 @@ public class UriUtils {
     public static final String FRAGMENTS_URI_PREFIX = "/fragments/";
 
     public static String getPublicUri(Component component, Page page) {
-        return COMPONENT_STATIC_RESOURCES_URI_PREFIX + component.getContext() + "/" +
+        return COMPONENT_STATIC_RESOURCES_URI_PREFIX + component.getContextPath() + "/" +
                 StaticResolver.DIR_NAME_COMPONENT_RESOURCES;
     }
 
     public static String getPublicUri(Component component, Layout layout) {
-        return COMPONENT_STATIC_RESOURCES_URI_PREFIX + component.getContext() + "/" +
+        return COMPONENT_STATIC_RESOURCES_URI_PREFIX + component.getContextPath() + "/" +
                 StaticResolver.DIR_NAME_COMPONENT_RESOURCES;
     }
 
     public static String getPublicUri(Component component, Fragment fragment) {
-        return COMPONENT_STATIC_RESOURCES_URI_PREFIX + component.getContext() + "/" + fragment.getSimpleName();
+        return COMPONENT_STATIC_RESOURCES_URI_PREFIX + component.getContextPath() + "/" + fragment.getSimpleName();
     }
 
     public static String getPublicUri(Theme theme) {
