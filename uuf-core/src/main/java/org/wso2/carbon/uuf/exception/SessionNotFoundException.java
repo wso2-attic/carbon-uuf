@@ -16,15 +16,19 @@
 
 package org.wso2.carbon.uuf.exception;
 
+import org.wso2.carbon.uuf.spi.HttpResponse;
+
 public class SessionNotFoundException extends HttpErrorException {
 
-    private static final int HTTP_STATUS_UNAUTHORIZED = 401;
+    public SessionNotFoundException() {
+        super(HttpResponse.STATUS_UNAUTHORIZED);
+    }
 
     public SessionNotFoundException(String message) {
-        super(HTTP_STATUS_UNAUTHORIZED, message);
+        super(HttpResponse.STATUS_UNAUTHORIZED, message);
     }
 
     public SessionNotFoundException(String message, Throwable cause) {
-        super(HTTP_STATUS_UNAUTHORIZED, message, cause);
+        super(HttpResponse.STATUS_UNAUTHORIZED, message, cause);
     }
 }
