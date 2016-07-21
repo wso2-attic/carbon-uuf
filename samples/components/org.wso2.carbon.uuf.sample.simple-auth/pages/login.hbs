@@ -1,5 +1,8 @@
 {{layout "main"}}
+{{favicon "images/favicon.png" type="image/png"}}
+{{title "Login | " @config.appName}}
 {{css "css/login.css"}}
+
 {{#fillZone "content"}}
     {{#if errorMessage}}
         <div class="alert alert-danger" role="alert">
@@ -55,11 +58,11 @@
                                         </button>
                                     </div>
                                 </div>
-                                <a href="{{@contextPath}}/basicauth/register"
+                                <a href="{{@contextPath}}/simple-auth/register"
                                    class="add-margin-bottom-5x remove-margin-lg remove-margin-md">Forgot
                                                                                                   Password</a>
                                 <p class="hidden-xs hidden-sm">Don't have an account? <a
-                                        href="{{@contextPath}}/basicauth/register">Register Now</a></p>
+                                        href="{{@contextPath}}/simple-auth/register">Register Now</a></p>
                             </form>
                         </div>
                         <p class="visible-xs visible-sm add-margin-2x text-center">Don't have an account? <a href="#">

@@ -1,5 +1,8 @@
 {{layout "main"}}
+{{favicon "images/favicon.png" type="image/png"}}
+{{title "Register | " @config.appName}}
 {{css "css/login.css"}}
+
 {{#fillZone "content"}}
     {{#if errorMessage}}
         <div class="alert alert-danger" role="alert">
@@ -20,7 +23,7 @@
                         <div class="brand-container add-margin-bottom-5x">
                             <div class="row">
                                 <div class="col-xs-6 col-sm-3 col-md-9 col-lg-9 center-block float-remove-sm float-remove-xs pull-right-md pull-right-lg">
-                                    <img class="img-responsive brand-spacer" src="{{public "images/logo-white.png"}}">
+                                    <img class="img-responsive brand-spacer" src="{{public "images/logo-white.png"}}" />
                                 </div>
                             </div>
                             <h2 class="text-center-sm text-center-xs text-center-md text-right">{{@config.appName}}</h2>
