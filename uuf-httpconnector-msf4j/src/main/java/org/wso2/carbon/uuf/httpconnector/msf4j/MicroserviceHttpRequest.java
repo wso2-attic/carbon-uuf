@@ -68,18 +68,18 @@ public class MicroserviceHttpRequest implements HttpRequest {
         this.protocol = request.getProperty(PROPERTY_KEY_HTTP_VERSION).toString();
         this.headers = request.getHeaders();
 
-        //process hostname
+        // Process hostname
         String hostHeader = headers.get(HttpHeaders.HOST);
         this.hostName = ((hostHeader == null) ? "localhost" : hostHeader);
 
-        //process cookies
+        // Process cookies
         String cookieHeader = headers.get(HttpHeaders.COOKIE);
         this.cookies = (cookieHeader == null) ? Collections.emptyMap() :
                 ServerCookieDecoder.STRICT.decode(cookieHeader).stream().collect(
                         Collectors.toMap(Cookie::name, c -> c)
                 );
 
-        // process URI
+        // Process URI
         String rawUri = request.getUri();
         int uriPathEndIndex = rawUri.indexOf('?');
         String rawUriPath, rawQueryString;
@@ -123,7 +123,7 @@ public class MicroserviceHttpRequest implements HttpRequest {
             }
         }
 
-        // process content length
+        // Process content length
         String contentLengthHeaderVal = this.headers.get(HTTP_HEADER_CONTENT_LENGTH);
         try {
             this.contentLength = (contentLengthHeaderVal == null) ? 0 : Integer.parseInt(contentLengthHeaderVal);
