@@ -43,7 +43,7 @@
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.uuf.sample</groupId>
-            <artifactId>org.wso2.carbon.uuf.sample.basicauth</artifactId>
+            <artifactId>org.wso2.carbon.uuf.sample.simple-auth</artifactId>
             <version>${carbon.uuf.version}</version>
             <type>zip</type>
         </dependency>

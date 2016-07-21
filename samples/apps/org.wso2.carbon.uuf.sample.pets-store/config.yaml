@@ -1,5 +1,4 @@
 appName : Pet Store
-elementsPerPage: 10
 theme : org.wso2.carbon.uuf.sample.theme.default
 menu :
   main :
@@ -11,5 +10,5 @@ menu :
 errorPages:
   "404": /foundation/error/404
   default: /foundation/error/default
-loginPageUri: "basicauth/login"
+loginPageUri: "simple-auth/login"
 loginRedirectUri: "/pets"
