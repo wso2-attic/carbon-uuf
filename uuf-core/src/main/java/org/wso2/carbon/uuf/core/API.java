@@ -50,6 +50,7 @@ public class API {
 
     /**
      * Returns the request lookup.
+     *
      * @return RequestLookup
      */
     public RequestLookup getRequestLookup() {

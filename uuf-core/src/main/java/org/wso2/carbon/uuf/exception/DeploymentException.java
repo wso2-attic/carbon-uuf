@@ -30,7 +30,7 @@ public class DeploymentException extends UUFException {
     }
 
     public DeploymentException(String message, Throwable cause) {
-        super(message,cause);
+        super(message, cause);
     }
 }
 

@@ -41,6 +41,7 @@ public class RequestLookup {
 
     /**
      * Constructs a new {@code RequestLookup} with given parameters.
+     *
      * @param contextPath context path for URLs
      * @param request     HTTP request
      * @param response    HTTP response
