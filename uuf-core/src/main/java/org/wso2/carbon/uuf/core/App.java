@@ -25,6 +25,7 @@ import org.wso2.carbon.uuf.exception.PageNotFoundException;
 import org.wso2.carbon.uuf.exception.PageRedirectException;
 import org.wso2.carbon.uuf.exception.SessionNotFoundException;
 import org.wso2.carbon.uuf.internal.core.auth.SessionRegistry;
+import org.wso2.carbon.uuf.internal.debug.DebugConnector;
 import org.wso2.carbon.uuf.internal.util.NameUtils;
 import org.wso2.carbon.uuf.internal.util.UriUtils;
 import org.wso2.carbon.uuf.spi.HttpRequest;
@@ -52,14 +53,14 @@ public class App {
 
     public App(String name, Lookup lookup, Set<Theme> themes, SessionRegistry sessionRegistry) {
         this.name = name;
-        this.contextPath = ("/" + NameUtils.getSimpleName(name));
+        this.contextPath = "/" + NameUtils.getSimpleName(name);
         this.lookup = lookup;
         this.configuration = this.lookup.getConfiguration();
         this.sessionRegistry = sessionRegistry;
 
         this.components = this.lookup.getAllComponents().values().stream()
-                .collect(Collectors.toMap(Component::getContext, cmp -> cmp));
-        this.rootComponent = this.components.remove(Component.ROOT_COMPONENT_CONTEXT);
+                .collect(Collectors.toMap(Component::getContextPath, cmp -> cmp));
+        this.rootComponent = this.components.get(Component.ROOT_COMPONENT_CONTEXT_PATH);
 
         this.themes = themes.stream().collect(Collectors.toMap(Theme::getName, theme -> theme));
         String configuredThemeName = this.configuration.getThemeName();
@@ -90,6 +91,10 @@ public class App {
 
     public Map<String, Fragment> getFragments() {
         return lookup.getAllFragments();
+    }
+
+    public Map<String, Layout> getLayouts() {
+        return lookup.getAllLayouts();
     }
 
     public Map<String, Theme> getThemes() {
@@ -229,6 +234,15 @@ public class App {
     private RequestLookup createRequestLookup(HttpRequest request, HttpResponse response) {
         String clientContextPath = configuration.getContextPath();
         return new RequestLookup((clientContextPath == null ? contextPath : clientContextPath), request, response);
+    }
+
+    public void connectDebugger(DebugConnector debugConnector) {
+        components.values().forEach(debugConnector::addComponent);
+        debugConnector.addComponent(rootComponent);
+        lookup.getAllFragments().values().forEach(debugConnector::addFragment);
+        lookup.getAllLayouts().values().forEach(debugConnector::addLayout);
+        themes.values().forEach(debugConnector::addTheme);
+        debugConnector.setConfiguration(configuration);
     }
 
     @Override

@@ -65,7 +65,7 @@ public class RenderableUpdater {
         } catch (IOException e) {
             throw new UUFException("Cannot create file watch service.", e);
         }
-        this.watchService = new Thread(this::run);
+        this.watchService = new Thread(this::run, RenderableUpdater.class.getName() + "-WatchService");
         this.isWatchServiceStopped = false;
     }
 
@@ -119,7 +119,6 @@ public class RenderableUpdater {
         }
     }
 
-    @SuppressWarnings("unchecked")
     private void run() {
         while (!isWatchServiceStopped) {
             WatchKey watchKey;
@@ -139,6 +138,7 @@ public class RenderableUpdater {
                 }
 
                 Path updatedDirectory = (Path) watchKey.watchable();
+                @SuppressWarnings("unchecked")
                 Path updatedFileName = ((WatchEvent<Path>) event).context();
                 MutableHbsRenderable mutableRenderable = watchingRenderables.get(updatedFileName);
                 if (mutableRenderable != null) {

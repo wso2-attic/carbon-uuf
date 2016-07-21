@@ -19,23 +19,20 @@ package org.wso2.carbon.uuf.httpconnector.msf4j;
 import io.netty.handler.codec.http.QueryStringDecoder;
 import io.netty.handler.codec.http.cookie.Cookie;
 import io.netty.handler.codec.http.cookie.ServerCookieDecoder;
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.msf4j.Request;
-import org.wso2.msf4j.formparam.FormItem;
-import org.wso2.msf4j.formparam.FormParamIterator;
-import org.wso2.msf4j.formparam.exception.FormUploadException;
-import org.wso2.msf4j.formparam.util.StreamUtil;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.HttpHeaders;
-import java.io.IOException;
-import java.io.InputStream;
+import javax.ws.rs.core.MultivaluedMap;
+import java.io.File;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * UUF HttpRequest implementation based on MSF4J request.
@@ -49,6 +46,8 @@ public class MicroserviceHttpRequest implements HttpRequest {
     private final String url;
     private final String method;
     private final String protocol;
+    private final String hostName;
+    private final Map<String, Cookie> cookies;
     private final Map<String, String> headers;
     private final String uri;
     private final String contextPath;
@@ -63,13 +62,24 @@ public class MicroserviceHttpRequest implements HttpRequest {
         this(request, null);
     }
 
-    public MicroserviceHttpRequest(Request request, FormParamIterator formParamIterator) {
+    public MicroserviceHttpRequest(Request request, MultivaluedMap<String, ?> postParams) {
         this.url = null; // MSF4J Request does not have a 'getUrl()' method.
         this.method = request.getHttpMethod();
         this.protocol = request.getProperty(PROPERTY_KEY_HTTP_VERSION).toString();
         this.headers = request.getHeaders();
 
-        // process URI
+        // Process hostname
+        String hostHeader = headers.get(HttpHeaders.HOST);
+        this.hostName = ((hostHeader == null) ? "localhost" : hostHeader);
+
+        // Process cookies
+        String cookieHeader = headers.get(HttpHeaders.COOKIE);
+        this.cookies = (cookieHeader == null) ? Collections.emptyMap() :
+                ServerCookieDecoder.STRICT.decode(cookieHeader).stream().collect(
+                        Collectors.toMap(Cookie::name, c -> c)
+                );
+
+        // Process URI
         String rawUri = request.getUri();
         int uriPathEndIndex = rawUri.indexOf('?');
         String rawUriPath, rawQueryString;
@@ -86,41 +96,34 @@ public class MicroserviceHttpRequest implements HttpRequest {
         this.queryString = rawQueryString; // Query string is not very useful, so we don't bother to decode it.
         if (rawQueryString != null) {
             HashMap<String, Object> map = new HashMap<>();
-            new QueryStringDecoder(rawQueryString, false).parameters().forEach(
-                    (key, value) -> map.put(key, (value.size() == 1) ? value.get(0) : value));
+            new QueryStringDecoder(rawQueryString, false).parameters()
+                    .forEach((key, value) -> map.put(key, (value.size() == 1) ? value.get(0) : value));
             this.queryParams = map;
         } else {
             this.queryParams = Collections.emptyMap();
         }
 
         // POST form params
-        if (formParamIterator != null) {
-            this.formParams = new HashMap<>();
-            this.files = new HashMap<>();
-            while (formParamIterator.hasNext()) {
-                FormItem item = formParamIterator.next();
-                InputStream inputStream = null;
-                try {
-                    inputStream = item.openStream();
-                    if (item.isFormField()) {
-                        this.formParams.put(item.getFieldName(), StreamUtil.asString(inputStream));
-                    } else {
-                        this.files.put(item.getName(), inputStream);
-                    }
-                } catch (FormUploadException | IOException e) {
-                    // respond back to client without further processing
-                    throw new WebApplicationException(
-                            "An error occurred while processing POST param '" + item.getFieldName() + "'.", e);
-                } finally {
-                    IOUtils.closeQuietly(inputStream);
-                }
-            }
-        } else {
+        if (postParams == null) {
             this.formParams = Collections.emptyMap();
             this.files = Collections.emptyMap();
+        } else {
+            this.formParams = new HashMap<>();
+            this.files = new HashMap<>();
+            for (Map.Entry<String, ? extends List<?>> entry : postParams.entrySet()) {
+                List<?> values = entry.getValue();
+                if (values.isEmpty()) {
+                    continue;
+                }
+                if (values.get(0) instanceof File) {
+                    this.files.put(entry.getKey(), (values.size() == 1) ? values.get(0) : values);
+                } else {
+                    this.formParams.put(entry.getKey(), (values.size() == 1) ? values.get(0) : values);
+                }
+            }
         }
 
-        // process content length
+        // Process content length
         String contentLengthHeaderVal = this.headers.get(HTTP_HEADER_CONTENT_LENGTH);
         try {
             this.contentLength = (contentLengthHeaderVal == null) ? 0 : Integer.parseInt(contentLengthHeaderVal);
@@ -156,20 +159,13 @@ public class MicroserviceHttpRequest implements HttpRequest {
 
     @Override
     public String getHostName() {
-        String hostHeader = headers.get(HttpHeaders.HOST);
-        return "//" + ((hostHeader == null) ? "localhost" : hostHeader);
+        return hostName;
     }
 
     @Override
     public String getCookieValue(String cookieName) {
-        String cookieHeader = headers.get(HttpHeaders.COOKIE);
-        if (cookieHeader == null) {
-            return null;
-        }
-        return ServerCookieDecoder.STRICT.decode(cookieHeader).stream()
-                .filter(cookie -> cookie.name().equals(cookieName))
-                .findFirst()
-                .map(Cookie::value).orElse(null);
+        Cookie cookie = cookies.get(cookieName);
+        return (cookie == null) ? null : cookie.value();
     }
 
     @Override

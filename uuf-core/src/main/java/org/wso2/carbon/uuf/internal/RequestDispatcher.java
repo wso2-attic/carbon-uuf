@@ -29,6 +29,7 @@ import org.wso2.carbon.uuf.internal.io.StaticResolver;
 import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.carbon.uuf.spi.HttpResponse;
 
+import java.nio.file.Path;
 import java.util.Optional;
 
 import static org.wso2.carbon.uuf.spi.HttpResponse.CONTENT_TYPE_TEXT_HTML;
@@ -46,7 +47,7 @@ public class RequestDispatcher {
     private final Object lock = new Object();
     private Debugger debugger;
 
-    public void serve(App app, HttpRequest request, HttpResponse response) {
+    public void serve(App app, Path appBasePath, HttpRequest request, HttpResponse response) {
         if (log.isDebugEnabled() && !request.isDebugRequest()) {
             log.debug("HTTP request received " + request);
         }
@@ -54,19 +55,19 @@ public class RequestDispatcher {
         try {
 
             if (request.isStaticResourceRequest()) {
-                staticResolver.serve(app, request, response);
+                staticResolver.serve(app, appBasePath, request, response);
                 return;
             }
-            if (Debugger.isDebuggingEnabled()) {
-                if (request.isDebugRequest() && (this.debugger == null)) {
+            if (Debugger.isDebuggingEnabled() && request.isDebugRequest()) {
+                if (this.debugger == null) {
                     synchronized (lock) {
                         if (this.debugger == null) {
                             this.debugger = new Debugger(); // Create a debugger.
                         }
                     }
-                    debugger.serve(app, request, response);
-                    return;
                 }
+                debugger.serve(app, request, response);
+                return;
             }
             String html;
             if (request.isFragmentRequest()) {
@@ -78,11 +79,15 @@ public class RequestDispatcher {
                 } catch (PageNotFoundException e) {
                     // See https://googlewebmastercentral.blogspot.com/2010/04/to-slash-or-not-to-slash.html
                     // If the tailing '/' is extra or a it is missing, then send 301 with corrected URL.
-                    String uri = request.getUri();
-                    String correctedUri = uri.endsWith("/") ? uri.substring(0, uri.length() - 1) : uri + "/";
-                    if (app.hasPage(correctedUri)) {
+                    String uriWithoutContextPath = request.getUriWithoutContextPath();
+                    String correctedUriWithoutContextPath = uriWithoutContextPath.endsWith("/") ?
+                            uriWithoutContextPath.substring(0, uriWithoutContextPath.length() - 1) :
+                            uriWithoutContextPath + "/";
+                    if (app.hasPage(correctedUriWithoutContextPath)) {
                         response.setStatus(STATUS_MOVED_PERMANENTLY);
-                        response.setHeader(HEADER_LOCATION, request.getHostName() + correctedUri);
+                        String correctedUrl =
+                                request.getHostName() + request.getContextPath() + correctedUriWithoutContextPath;
+                        response.setHeader(HEADER_LOCATION, correctedUrl);
                         return;
                     }
                     throw e;

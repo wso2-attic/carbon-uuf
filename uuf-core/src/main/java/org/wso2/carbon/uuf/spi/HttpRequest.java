@@ -185,7 +185,7 @@ public interface HttpRequest {
         int secondSlash = uri.indexOf('/', 1); // An URI must start with a slash.
         if (secondSlash == -1) {
             // There is only one slash in the URI.
-            return null;
+            return uri;
         } else {
             return uri.substring(0, secondSlash);
         }
@@ -195,7 +195,7 @@ public interface HttpRequest {
         int secondSlash = uri.indexOf('/', 1); // An URI must start with a slash.
         if (secondSlash == -1) {
             // There is only one slash in the URI.
-            return null;
+            return "";
         } else {
             return uri.substring(secondSlash, uri.length());
         }

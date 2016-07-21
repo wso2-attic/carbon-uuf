@@ -16,8 +16,9 @@
 
 package org.wso2.carbon.uuf.internal.io;
 
-import org.wso2.carbon.uuf.reference.FileReference;
+import org.apache.commons.io.FilenameUtils;
 import org.wso2.carbon.uuf.exception.UUFException;
+import org.wso2.carbon.uuf.reference.FileReference;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -43,9 +44,7 @@ public class ArtifactFileReference implements FileReference {
 
     @Override
     public String getExtension() {
-        String fileName = getName();
-        int lastDotIndex = fileName.lastIndexOf('.');
-        return (lastDotIndex == -1) ? "" : fileName.substring(lastDotIndex + 1);
+        return FilenameUtils.getExtension(getName());
     }
 
     @Override

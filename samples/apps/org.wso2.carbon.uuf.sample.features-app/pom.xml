@@ -34,11 +34,6 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <!--TODO 07/07/2016: Remove once updated the uuf-maven-plugin-->
-    <properties>
-        <import.package>org.wso2.uuf.sample.pets_store.bundle.impl</import.package>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.wso2.carbon.uuf.sample</groupId>
@@ -81,7 +76,7 @@
                         </goals>
                         <configuration>
                             <instructions>
-                                <Import-Package>org.wso2.uuf.sample.pets_store.bundle.impl</Import-Package>
+                                <Import-Package>org.wso2.carbon.uuf.sample.petsstore.bundle</Import-Package>
                             </instructions>
                         </configuration>
                     </execution>

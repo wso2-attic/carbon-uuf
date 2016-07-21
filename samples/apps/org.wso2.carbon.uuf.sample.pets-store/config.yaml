@@ -1,5 +1,4 @@
 appName : Pet Store
-elementsPerPage: 10
 theme : org.wso2.carbon.uuf.sample.theme.default
 menu :
   main :
@@ -9,5 +8,7 @@ menu :
       Add a new pets : {link: "pets/new", icon: "fw fw-add"}
       Pet of the month : {link: "pets/snowball" }
 errorPages:
-  "404": /base/error/404
-  default: /base/error/default
+  "404": /foundation/error/404
+  default: /foundation/error/default
+loginPageUri: "simple-auth/login"
+loginRedirectUri: "/pets"

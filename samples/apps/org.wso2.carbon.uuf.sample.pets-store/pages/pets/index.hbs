@@ -1,2 +1,30 @@
-list all pets
-(to be implemented)
+{{secured}}
+{{layout "org.wso2.carbon.uuf.sample.foundation.main"}}
+{{favicon "images/favicon.png" type="image/png"}}
+{{title "Pets | " @config.appName}}
+{{#fillZone "content"}}
+    <div class="page-header">
+        <h1>List of available pets</h1>
+        <p class="lead">You can find our amazing pets here</p>
+    </div>
+    <table class="table table-responsive table-striped" id="members">
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>Pet's Name</th>
+            <th>Category</th>
+            <th>Pet's Color</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{#each pets}}
+            <tr>
+                <td>{{id}}</td>
+                <td>{{name}}</td>
+                <td>{{category}}</td>
+                <td>{{color}}</td>
+            </tr>
+        {{/each}}
+        </tbody>
+    </table>
+{{/fillZone}}

@@ -30,9 +30,21 @@ import java.util.Properties;
 public class Lookup {
 
     private final SetMultimap<String, String> flattenedDependencies;
+    /**
+     * All components in this lookup. key = fully qualified name (except for root component), value = component
+     */
     private final Map<String, Component> components;
+    /**
+     * All fragments in this lookup. key = fully qualified name , value = fragment
+     */
     private final Map<String, Fragment> fragments;
+    /**
+     * All bindings of this lookup. key = fully qualified name of the zone, value = pushed fragments set
+     */
     private final SetMultimap<String, Fragment> bindings;
+    /**
+     * All layouts of this lookup. key = fully qualified name, value = layout
+     */
     private final Map<String, Layout> layouts;
     private final Configuration configuration;
     private final Map<String, Properties> i18nResources;
@@ -130,6 +142,10 @@ public class Lookup {
             // Component 'dependencyComponentName' is NOT a dependency of component 'componentName'.
             return Optional.<Layout>empty();
         }
+    }
+
+    Map<String, Layout> getAllLayouts() {
+        return layouts;
     }
 
     public Configuration getConfiguration() {

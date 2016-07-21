@@ -67,10 +67,6 @@
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-        </dependency>
     </dependencies>
 
     <build>
@@ -90,7 +86,6 @@
                             com.google.gson.*;version="${gson.version}",
                             org.slf4j.*;version="${slf4j.version.range}",
                             org.apache.commons.io,
-                            org.apache.commons.lang3.*,
                             org.yaml.snakeyaml
                         </Import-Package>
                         <Private-Package>org.wso2.carbon.uuf.renderablecreator.hbs.internal.*</Private-Package>

@@ -4,10 +4,10 @@ menu :
   main :
     Home : {link: "", icon: "fw-home"}
     Features :
-      Call a OSGi: {link: "call-osgi", icon: "fw fw-service"}
-      Call a OSGi Service: {link: "call-osgi-service", icon: "fw fw-service"}
+      Call a Java class: {link: "osgi/call-class"}
+      Call an OSGi Service: {link: "osgi/call-service", icon: "fw fw-service"}
       Include a Module: {link: "include-module", icon: "fw fw-use"}
-#      Http Form POST : {link: "http-form"} #TODO un-comment after implementing POST handling
+      Http Form POST : {link: "http-form"}
       Send HTTP Error : {link: "send-error", icon: "fw fw-bug"}
       Send HTTP Redirect : {link: "send-redirect"}
       Session : {link: "session", icon: "fw fw-user"}
@@ -16,5 +16,5 @@ menu :
         Session Scope : {link: "theme/session-scope"}
       Menu : {link: "menu", icon: "fw fw-list"}
 errorPages:
-  "404": /base/error/404
-  default: /base/error/default
+  "404": /foundation/error/404
+  default: /foundation/error/default

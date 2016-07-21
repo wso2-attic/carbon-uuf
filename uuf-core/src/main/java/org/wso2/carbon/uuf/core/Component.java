@@ -28,32 +28,38 @@ import java.util.SortedSet;
 
 public class Component {
 
-    public static final String ROOT_COMPONENT_SIMPLE_NAME = "root";
-    public static final String ROOT_COMPONENT_CONTEXT = "/root";
+    public static final String ROOT_COMPONENT_NAME = "root";
+    public static final String ROOT_COMPONENT_CONTEXT_PATH = "/root";
     private static final Logger log = LoggerFactory.getLogger(Component.class);
 
     private final String name;
     private final String version;
-    private final String context;
+    private final String contextPath;
     private final SortedSet<Page> pages;
+    private final String path;
 
-    public Component(String name, String version, String context, SortedSet<Page> pages) {
+    public Component(String name, String version, String contextPath, SortedSet<Page> pages, String path) {
         this.name = name;
         this.version = version;
-        this.context = context;
+        this.contextPath = contextPath;
         this.pages = pages;
+        this.path = path;
     }
 
     public String getName() {
         return name;
     }
 
-    public String getVersion() {
-        return version;
+    public String getContextPath() {
+        return contextPath;
     }
 
-    public String getContext() {
-        return context;
+    public Set<Page> getPages() {
+        return pages;
+    }
+
+    public String getPath() {
+        return path;
     }
 
     public Optional<String> renderPage(String pageUri, Model model, Lookup lookup, RequestLookup requestLookup,
@@ -87,27 +93,24 @@ public class Component {
         return pages.stream().filter(page -> page.getUriPatten().matches(pageUri)).findFirst().isPresent();
     }
 
-    public Set<Page> getPages() {
-        return pages;
-    }
-
     @Override
     public int hashCode() {
-        return Objects.hash(name, version, context);
+        return Objects.hash(name, version, path);
     }
 
     @Override
     public boolean equals(Object obj) {
         if ((obj != null) && (obj instanceof Component)) {
             Component other = (Component) obj;
-            return this.name.equals(other.name) && this.version.equals(other.version) &&
-                    this.context.equals(other.context);
+            return Objects.equals(this.name, other.name) && Objects.equals(this.version, other.version) &&
+                    Objects.equals(this.path, other.path);
         }
         return false;
     }
 
     @Override
     public String toString() {
-        return "{\"name\":\"" + name + "\", \"version\": \"" + version + "\", \"context\": \"" + context + "\"}";
+        return "{\"name\":\"" + name + "\", \"version\": \"" + version + "\", \"contextPath\": \"" + contextPath +
+                "\", \"path\": \"" + path + "\"}";
     }
 }
