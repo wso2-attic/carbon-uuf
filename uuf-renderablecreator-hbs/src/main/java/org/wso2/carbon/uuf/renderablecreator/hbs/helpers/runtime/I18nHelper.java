@@ -36,7 +36,7 @@ public class I18nHelper implements Helper<String> {
 
 	@Override
 	public CharSequence apply(String key, Options options) throws IOException {
-        if ( key == null ) {
+        if (key == null) {
             throw new IllegalArgumentException("Key of a translating string cannot be null.");
         }
         RequestLookup requestLookup = options.data(HbsRenderable.DATA_KEY_REQUEST_LOOKUP);
