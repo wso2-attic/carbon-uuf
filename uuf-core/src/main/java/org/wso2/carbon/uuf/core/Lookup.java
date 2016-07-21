@@ -56,19 +56,17 @@ public class Lookup {
     }
 
     public void add(Map<String, Properties> i18nConfiguration){
-
-        for ( String key : i18nConfiguration.keySet() ) {
-            Properties tmpProps = i18nConfiguration.get(key);
-            Properties i18nProps = i18nResources.get(key);
-            if( tmpProps.size() > 0){
-                if(i18nProps == null){
-                    i18nResources.put(key, tmpProps);
+        for (Map.Entry<String, Properties> entry : i18nConfiguration.entrySet()) {
+            Properties tmpProps = entry.getValue();
+            Properties i18nProps = i18nResources.get(entry.getKey());
+            if (!tmpProps.isEmpty()) {
+                if (i18nProps == null) {
+                    i18nResources.put(entry.getKey(), tmpProps);
                 } else {
                     i18nProps.putAll(tmpProps);
                 }
             }
         }
-
     }
 
     public void addBinding(String zoneName, Fragment fragment) {

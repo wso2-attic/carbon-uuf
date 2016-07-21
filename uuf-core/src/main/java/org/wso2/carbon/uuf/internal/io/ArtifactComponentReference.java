@@ -29,7 +29,11 @@ import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.DirectoryStream;
-import java.util.*;
+import java.util.Optional;
+import java.util.Set;
+import java.util.Properties;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.stream.Stream;
 
 public class ArtifactComponentReference implements ComponentReference {
@@ -152,9 +156,8 @@ public class ArtifactComponentReference implements ComponentReference {
 
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(lang, "*.{properties}")) {
             for (Path entry: stream) {
-                if(Files.isRegularFile(entry)){
+                if (Files.isRegularFile(entry)) {
                     Properties props = new Properties();
-                    //props.load(new FileReader(entry.toString()));
                     props.load(new InputStreamReader(new FileInputStream(entry.toString()), CHAR_ENCODING));
                     String fileName = entry.getFileName().toString();
                     i18n.put(fileName.substring(0,fileName.indexOf('.')), props);
@@ -163,7 +166,6 @@ public class ArtifactComponentReference implements ComponentReference {
         } catch (IOException e) {
             throw new UUFException("An error occurred while reading locale file in '" + lang + "'.", e);
         }
-
         return i18n;
     }
 }

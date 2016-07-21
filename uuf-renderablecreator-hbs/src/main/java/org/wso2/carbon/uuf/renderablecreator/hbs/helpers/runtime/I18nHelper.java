@@ -17,8 +17,6 @@
 package org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime;
 
 import java.io.IOException;
-
-import java.util.Locale;
 import java.util.Properties;
 
 import com.github.jknack.handlebars.Helper;
@@ -33,42 +31,31 @@ public class I18nHelper implements Helper<String> {
 	
     public static final String HELPER_NAME = "t";
     private static final String DEFAULT_LOCALE = "en-US";
-    private final String localeHeader = "Accept-Language";
+    private static final String LOCALE_HEADER = "Accept-Language";
+    private static final String LOCALE = "locale";
 
 	@Override
 	public CharSequence apply(String key, Options options) throws IOException {
-        if (key == null) {
+        if ( key == null ) {
             throw new IllegalArgumentException("Key of a translating string cannot be null.");
-
         }
         RequestLookup requestLookup = options.data(HbsRenderable.DATA_KEY_REQUEST_LOOKUP);
+        Object localParam = options.hash.get(LOCALE);
+        Object localeRequest= requestLookup.getRequest().getHeaders().get(LOCALE_HEADER).split(",")[0]
+                .replace("-", "_");
+        String currentLocale;
 
-        Object localParam = options.hash.get("locale");
-        Object localeRequest= requestLookup.getRequest().getHeaders().get(localeHeader).split(",")[0];
-        Locale currentLocale;
-
-        if(localParam != null){
-            //Locale.Builder().setLanguageTag expects locale to be in "en-US" format (Note: - instead of _)
-            //But enabling users to provide en_US is more intuitive hence using following approach
-            String[] localeArry = localParam.toString().split("_");
-            currentLocale  = new Locale(localeArry[0], localeArry[1]);
-        } else if (localeRequest != null){
-            currentLocale = new Locale.Builder().setLanguageTag(localeRequest.toString()).build();
+        if ( localParam != null ) {
+            currentLocale = localParam.toString();
+        } else if ( localeRequest != null ) {
+            currentLocale = localeRequest.toString();
         } else {
-            currentLocale = new Locale.Builder().setLanguageTag(DEFAULT_LOCALE).build();
+            currentLocale = DEFAULT_LOCALE;
         }
 
         Lookup lookup = options.data(HbsRenderable.DATA_KEY_LOOKUP);
-        Properties props = lookup.getAllI18nResources().get(currentLocale.toString());
-
-        String value = props != null? props.getProperty(key, key) : key;
-        StringBuilder buffer = new StringBuilder(value);
-
-        for (Object param : options.params) {
-            buffer.append(param);
-        }
-        //addToPlaceholder(buffer.toString(), options);
-        return buffer.toString();
+        Properties props = lookup.getAllI18nResources().get(currentLocale);
+        return props != null? props.getProperty(key, key) : key;
 	}
 
 }
