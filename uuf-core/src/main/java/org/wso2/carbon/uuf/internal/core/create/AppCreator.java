@@ -156,6 +156,10 @@ public class AppCreator {
                             "' is malformed.", e);
         }
 
+        if (!componentReference.getI18nFiles().isEmpty()) {
+            lookup.add(componentReference.getI18nFiles());
+        }
+
         SortedSet<Page> pages = componentReference
                 .getPages(supportedExtensions)
                 .parallel()

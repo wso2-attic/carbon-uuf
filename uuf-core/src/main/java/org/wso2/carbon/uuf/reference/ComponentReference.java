@@ -18,6 +18,8 @@ package org.wso2.carbon.uuf.reference;
 
 import java.util.Optional;
 import java.util.Set;
+import java.util.Map;
+import java.util.Properties;
 import java.util.stream.Stream;
 
 public interface ComponentReference {
@@ -25,6 +27,7 @@ public interface ComponentReference {
     String DIR_NAME_PAGES = "pages";
     String DIR_NAME_LAYOUTS = "layouts";
     String DIR_NAME_FRAGMENTS = "fragments";
+    String DIR_NAME_LANGUAGE = "lang";
     String FILE_NAME_BINDINGS = "bindings.yaml";
     String FILE_NAME_CONFIGURATIONS = "config.yaml";
     String FILE_NAME_OSGI_IMPORTS = "osgi-imports";
@@ -42,4 +45,6 @@ public interface ComponentReference {
     Optional<FileReference> getOsgiImportsConfig();
 
     String getPath();
+
+    Map<String, Properties> getI18nFiles();
 }
