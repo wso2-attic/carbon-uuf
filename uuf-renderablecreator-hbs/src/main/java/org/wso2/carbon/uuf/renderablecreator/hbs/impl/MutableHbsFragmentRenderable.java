@@ -68,7 +68,7 @@ public class MutableHbsFragmentRenderable extends HbsFragmentRenderable implemen
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return "{\"path\": \"" + getPath() + "\", \"js\": " + mutableExecutable + "}";
     }
 }
