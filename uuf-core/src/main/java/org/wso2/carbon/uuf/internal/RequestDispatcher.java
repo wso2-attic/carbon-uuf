@@ -79,11 +79,15 @@ public class RequestDispatcher {
                 } catch (PageNotFoundException e) {
                     // See https://googlewebmastercentral.blogspot.com/2010/04/to-slash-or-not-to-slash.html
                     // If the tailing '/' is extra or a it is missing, then send 301 with corrected URL.
-                    String uri = request.getUri();
-                    String correctedUri = uri.endsWith("/") ? uri.substring(0, uri.length() - 1) : uri + "/";
-                    if (app.hasPage(correctedUri)) {
+                    String uriWithoutContextPath = request.getUriWithoutContextPath();
+                    String correctedUriWithoutContextPath = uriWithoutContextPath.endsWith("/") ?
+                            uriWithoutContextPath.substring(0, uriWithoutContextPath.length() - 1) :
+                            uriWithoutContextPath + "/";
+                    if (app.hasPage(correctedUriWithoutContextPath)) {
                         response.setStatus(STATUS_MOVED_PERMANENTLY);
-                        response.setHeader(HEADER_LOCATION, request.getHostName() + correctedUri);
+                        String correctedUrl =
+                                request.getHostName() + request.getContextPath() + correctedUriWithoutContextPath;
+                        response.setHeader(HEADER_LOCATION, correctedUrl);
                         return;
                     }
                     throw e;
