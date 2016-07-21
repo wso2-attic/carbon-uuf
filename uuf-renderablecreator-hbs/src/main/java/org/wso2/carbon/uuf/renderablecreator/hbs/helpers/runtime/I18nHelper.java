@@ -17,6 +17,7 @@
 package org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Properties;
 
 import com.github.jknack.handlebars.Helper;
@@ -30,7 +31,7 @@ import com.github.jknack.handlebars.Options;
 public class I18nHelper implements Helper<String> {
 	
     public static final String HELPER_NAME = "t";
-    private static final String DEFAULT_LOCALE = "en-US";
+    private static final String DEFAULT_LOCALE = "en_US";
     private static final String LOCALE_HEADER = "Accept-Language";
     private static final String LOCALE = "locale";
 
@@ -40,20 +41,30 @@ public class I18nHelper implements Helper<String> {
             throw new IllegalArgumentException("Key of a translating string cannot be null.");
         }
         RequestLookup requestLookup = options.data(HbsRenderable.DATA_KEY_REQUEST_LOOKUP);
+        Lookup lookup = options.data(HbsRenderable.DATA_KEY_LOOKUP);
         Object localParam = options.hash.get(LOCALE);
-        Object localeRequest= requestLookup.getRequest().getHeaders().get(LOCALE_HEADER).split(",")[0]
-                .replace("-", "_");
+        Object localeRequest;
         String currentLocale;
 
         if (localParam != null) {
             currentLocale = localParam.toString();
-        } else if (localeRequest != null) {
-            currentLocale = localeRequest.toString();
+        } else if ((localeRequest = requestLookup.getRequest().getHeaders().get(LOCALE_HEADER)) != null) {
+            //example: en,en-US;q=0.7,en-AU;q=0.3
+            // https://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.4
+            String locale = localeRequest.toString().split(",")[0].replace("-", "_");
+            if (locale.contains("_")) {
+                currentLocale = locale;
+            } else {
+                currentLocale = lookup.getAllI18nResources().entrySet().stream()
+                        .filter(e -> e.getKey().startsWith(locale))
+                        .map(Map.Entry::getKey)
+                        .findFirst()
+                        .orElse(DEFAULT_LOCALE);
+            }
         } else {
             currentLocale = DEFAULT_LOCALE;
         }
 
-        Lookup lookup = options.data(HbsRenderable.DATA_KEY_LOOKUP);
         Properties props = lookup.getAllI18nResources().get(currentLocale);
         return props != null? props.getProperty(key, key) : key;
 	}
