@@ -2,12 +2,12 @@
 {{favicon "images/favicon.png" type="image/png"}}
 {{title @config.appName " | Home"}}
 {{#fillZone "content"}}
-    <h2>Welcome to pet store</h2>
-    <h4>your new best friend awaits</h4>
+    <h2>{{t "pets-store.welcome"}}</h2>
+    <h4>{{t "pets-store.welcome.msg"}}</h4>
     <hr/>
-    <a href="{{@contextPath}}/pets">See all our amazing pets</a>
+    <a href="{{@contextPath}}/pets">{{t "pets-store.all"}}</a>
     <br/>
-    <a href="{{@contextPath}}/pets/new">Add a new pets</a>
+    <a href="{{@contextPath}}/pets/new">{{t "pets-store.add"}}</a>
     <br/>
-    <a href="{{@contextPath}}/pets/snowball">Pet of the month</a>
+    <a href="{{@contextPath}}/pets/snowball">{{t "pets-store.petOfTheMonth"}}</a>
 {{/fillZone}}
