@@ -45,9 +45,9 @@ public class I18nHelper implements Helper<String> {
                 .replace("-", "_");
         String currentLocale;
 
-        if ( localParam != null ) {
+        if (localParam != null) {
             currentLocale = localParam.toString();
-        } else if ( localeRequest != null ) {
+        } else if (localeRequest != null) {
             currentLocale = localeRequest.toString();
         } else {
             currentLocale = DEFAULT_LOCALE;
