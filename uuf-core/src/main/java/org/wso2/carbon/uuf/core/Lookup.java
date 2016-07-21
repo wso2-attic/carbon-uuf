@@ -25,7 +25,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.Properties;
 
 public class Lookup {
 
@@ -35,7 +34,6 @@ public class Lookup {
     private final SetMultimap<String, Fragment> bindings;
     private final Map<String, Layout> layouts;
     private final Configuration configuration;
-    private final Map<String, Properties> i18nResources;
 
     public Lookup(SetMultimap<String, String> flattenedDependencies) {
         this.flattenedDependencies = flattenedDependencies;
@@ -44,7 +42,6 @@ public class Lookup {
         this.fragments = new HashMap<>();
         this.bindings = HashMultimap.create();
         this.configuration = Configuration.emptyConfiguration();
-        this.i18nResources = new HashMap<>();
     }
 
     public void add(Component component) {
@@ -53,22 +50,6 @@ public class Lookup {
 
     public void add(Fragment fragment) {
         fragments.put(fragment.getName(), fragment);
-    }
-
-    public void add(Map<String, Properties> i18nConfiguration){
-
-        for ( String key : i18nConfiguration.keySet() ) {
-            Properties tmpProps = i18nConfiguration.get(key);
-            Properties i18nProps = i18nResources.get(key);
-            if( tmpProps.size() > 0){
-                if(i18nProps == null){
-                    i18nResources.put(key, tmpProps);
-                } else {
-                    i18nProps.putAll(tmpProps);
-                }
-            }
-        }
-
     }
 
     public void addBinding(String zoneName, Fragment fragment) {
@@ -140,9 +121,5 @@ public class Lookup {
 
     public Configuration getConfiguration() {
         return configuration;
-    }
-
-    public Map<String, Properties> getAllI18nResources() {
-        return i18nResources;
     }
 }

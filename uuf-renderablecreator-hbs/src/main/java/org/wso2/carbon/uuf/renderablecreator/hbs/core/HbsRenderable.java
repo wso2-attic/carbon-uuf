@@ -23,7 +23,20 @@ import org.wso2.carbon.uuf.core.API;
 import org.wso2.carbon.uuf.core.Lookup;
 import org.wso2.carbon.uuf.core.RequestLookup;
 import org.wso2.carbon.uuf.exception.UUFException;
-import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.*;
+import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.CssHelper;
+import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.DefinePlaceholderHelper;
+import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.DefineZoneHelper;
+import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.FaviconHelper;
+import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.FillZoneHelper;
+import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.FragmentHelper;
+import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.HeadJsHelper;
+import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.HeadOtherHelper;
+import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.JsHelper;
+import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.MenuHelper;
+import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.MissingHelper;
+import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.PublicHelper;
+import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.SecuredHelper;
+import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.TitleHelper;
 import org.wso2.carbon.uuf.spi.Renderable;
 import org.wso2.carbon.uuf.spi.model.Model;
 
@@ -55,7 +68,6 @@ public abstract class HbsRenderable implements Renderable {
         HANDLEBARS.registerHelper(HeadOtherHelper.HELPER_NAME, new HeadOtherHelper());
         HANDLEBARS.registerHelper(JsHelper.HELPER_NAME, new JsHelper());
         HANDLEBARS.registerHelperMissing(new MissingHelper());
-        HANDLEBARS.registerHelper(I18nHelper.HELPER_NAME, new I18nHelper());
     }
 
     public abstract String getPath();
