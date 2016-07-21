@@ -1,0 +1,28 @@
+{{layout "org.wso2.carbon.uuf.sample.foundation.main"}}
+{{title "File Upload POST Request Sample | " @config.appName}}
+{{#fillZone "content"}}
+    <div class="page-header">
+        <h1>File upload sample</h1>
+    </div>
+    {{#if message}}
+        <div class="alert alert-success" role="alert">
+            <i class="icon fw fw-success"></i><strong>Success!</strong>
+            {{message}}
+            <button type="button" class="close" aria-label="close" data-dismiss="alert">
+                <span aria-hidden="true">
+                    <i class="fw fw-cancel"></i>
+                </span>
+            </button>
+        </div>
+    {{/if}}
+    <form class="form-horizontal" method="post" enctype="multipart/form-data">
+        <label class="control-label">Select your file here.</label>
+        <input type="file" name="file-name" />
+        <div class="input-group-btn">
+            <button class="btn btn-default btn-primary" type="submit" title="Upload">
+                <i class="fw fw-upload" aria-hidden="true"></i>
+                <span class="hidden-xs">Upload</span>
+            </button>
+        </div>
+    </form>
+{{/fillZone}}
