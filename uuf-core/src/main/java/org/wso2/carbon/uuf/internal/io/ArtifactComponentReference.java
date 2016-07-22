@@ -17,6 +17,7 @@
 package org.wso2.carbon.uuf.internal.io;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.reference.ComponentReference;
 import org.wso2.carbon.uuf.reference.FileReference;
@@ -39,7 +40,7 @@ import java.util.stream.Stream;
 
 public class ArtifactComponentReference implements ComponentReference {
 
-    private final String CHAR_ENCODING = "UTF-8";
+    private static final String CHAR_ENCODING = "UTF-8";
     private final Path path;
     private final ArtifactAppReference appReference;
 
@@ -147,7 +148,7 @@ public class ArtifactComponentReference implements ComponentReference {
     public Map<String, Properties> getI18nFiles(){
         Path lang = path.resolve(DIR_NAME_LANGUAGE);
         Map<String, Properties> i18n = new HashMap<>();
-
+        InputStreamReader is = null;
         if (!Files.exists(lang)) {
             return i18n;
         }
@@ -156,13 +157,19 @@ public class ArtifactComponentReference implements ComponentReference {
             for (Path entry: stream) {
                 if (Files.isRegularFile(entry)) {
                     Properties props = new Properties();
-                    props.load(new InputStreamReader(new FileInputStream(entry.toString()), CHAR_ENCODING));
-                    String fileName = entry.getFileName().toString();
-                    i18n.put(fileName.substring(0,fileName.indexOf('.')), props);
+                    is = new InputStreamReader(new FileInputStream(entry.toString()), CHAR_ENCODING);
+                    props.load(is);
+                    Path path = entry.getFileName();
+                    if (path != null) {
+                        String fileName = path.toString();
+                        i18n.put(fileName.substring(0,fileName.indexOf('.')), props);
+                    }
                 }
             }
         } catch (IOException e) {
             throw new UUFException("An error occurred while reading locale file in '" + lang + "'.", e);
+        } finally {
+            IOUtils.closeQuietly(is);
         }
         return i18n;
     }
