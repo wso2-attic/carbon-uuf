@@ -33,7 +33,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.management.ManagementFactory;
 
-import static org.wso2.carbon.uuf.spi.HttpResponse.CONTENT_TYPE_TEXT_PLAIN;
+import static org.wso2.carbon.uuf.spi.HttpResponse.CONTENT_TYPE_APPLICATION_JSON;
 import static org.wso2.carbon.uuf.spi.HttpResponse.CONTENT_TYPE_WILDCARD;
 import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_BAD_REQUEST;
 import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_INTERNAL_SERVER_ERROR;
@@ -83,32 +83,28 @@ public class Debugger {
                         content.add(component.getContextPath(), pages);
                     }
             );
-            //TODO: 13/07/2016 change content-type to application/json once msf4j bug fixed
-            response.setContent(content, CONTENT_TYPE_TEXT_PLAIN);
+            response.setContent(content, CONTENT_TYPE_APPLICATION_JSON);
             return;
         }
 
         if (URI_PATTEN_API_LAYOUTS.matches(uriWithoutContextPath)) {
             JsonArray jsonArray = new JsonArray();
             debugConnector.getLayouts().forEach(layout -> jsonArray.add(JSON_PARSER.parse(layout.toString())));
-            //TODO: 13/07/2016 change content-type to application/json once msf4j bug fixed
-            response.setContent(jsonArray, CONTENT_TYPE_TEXT_PLAIN);
+            response.setContent(jsonArray, CONTENT_TYPE_APPLICATION_JSON);
             return;
         }
 
         if (URI_PATTEN_API_FRAGMENTS.matches(uriWithoutContextPath)) {
             JsonArray jsonArray = new JsonArray();
             debugConnector.getFragments().forEach(fragment -> jsonArray.add(JSON_PARSER.parse(fragment.toString())));
-            //TODO: 13/07/2016 change content-type to application/json once msf4j bug fixed
-            response.setContent(jsonArray, CONTENT_TYPE_TEXT_PLAIN);
+            response.setContent(jsonArray, CONTENT_TYPE_APPLICATION_JSON);
             return;
         }
 
         if (URI_PATTEN_API_THEMES.matches(uriWithoutContextPath)) {
             JsonArray jsonArray = new JsonArray();
             debugConnector.getThemes().forEach(theme -> jsonArray.add(JSON_PARSER.parse(theme.toString())));
-            //TODO: 13/07/2016 change content-type to application/json once msf4j bug fixed
-            response.setContent(jsonArray, CONTENT_TYPE_TEXT_PLAIN);
+            response.setContent(jsonArray, CONTENT_TYPE_APPLICATION_JSON);
             return;
         }
 
