@@ -25,15 +25,29 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.Properties;
 
 public class Lookup {
 
     private final SetMultimap<String, String> flattenedDependencies;
+    /**
+     * All components in this lookup. key = fully qualified name (except for root component), value = component
+     */
     private final Map<String, Component> components;
+    /**
+     * All fragments in this lookup. key = fully qualified name , value = fragment
+     */
     private final Map<String, Fragment> fragments;
+    /**
+     * All bindings of this lookup. key = fully qualified name of the zone, value = pushed fragments set
+     */
     private final SetMultimap<String, Fragment> bindings;
+    /**
+     * All layouts of this lookup. key = fully qualified name, value = layout
+     */
     private final Map<String, Layout> layouts;
     private final Configuration configuration;
+    private final Map<String, Properties> i18nResources;
 
     public Lookup(SetMultimap<String, String> flattenedDependencies) {
         this.flattenedDependencies = flattenedDependencies;
@@ -42,6 +56,7 @@ public class Lookup {
         this.fragments = new HashMap<>();
         this.bindings = HashMultimap.create();
         this.configuration = Configuration.emptyConfiguration();
+        this.i18nResources = new HashMap<>();
     }
 
     public void add(Component component) {
@@ -50,6 +65,20 @@ public class Lookup {
 
     public void add(Fragment fragment) {
         fragments.put(fragment.getName(), fragment);
+    }
+
+    public void add(Map<String, Properties> i18nConfiguration){
+        for (Map.Entry<String, Properties> entry : i18nConfiguration.entrySet()) {
+            Properties tmpProps = entry.getValue();
+            Properties i18nProps = i18nResources.get(entry.getKey());
+            if (!tmpProps.isEmpty()) {
+                if (i18nProps == null) {
+                    i18nResources.put(entry.getKey(), tmpProps);
+                } else {
+                    i18nProps.putAll(tmpProps);
+                }
+            }
+        }
     }
 
     public void addBinding(String zoneName, Fragment fragment) {
@@ -115,11 +144,15 @@ public class Lookup {
         }
     }
 
-    Map<String, Layout> getAllLayouts(){
+    Map<String, Layout> getAllLayouts() {
         return layouts;
     }
 
     public Configuration getConfiguration() {
         return configuration;
+    }
+
+    public Map<String, Properties> getAllI18nResources() {
+        return i18nResources;
     }
 }

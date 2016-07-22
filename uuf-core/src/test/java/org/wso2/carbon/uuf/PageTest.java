@@ -16,7 +16,6 @@
 
 package org.wso2.carbon.uuf;
 
-import com.google.common.collect.ImmutableSetMultimap;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.wso2.carbon.uuf.core.Component;
@@ -26,6 +25,11 @@ import org.wso2.carbon.uuf.core.RequestLookup;
 import org.wso2.carbon.uuf.spi.Renderable;
 
 import java.util.Collections;
+import java.util.Optional;
+
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class PageTest {
 
@@ -33,10 +37,10 @@ public class PageTest {
     public void testRenderPage() {
         final String content = "Hello world from a page!";
         Renderable renderable = (model, componentLookup, requestLookup, api) -> content;
-        Component component = new Component(null, null, "/componentContext", Collections.emptySortedSet());
-        Lookup lookup = new Lookup(ImmutableSetMultimap.of());
-        lookup.add(component);
-        RequestLookup requestLookup = new RequestLookup("/contextPath", null, null);
+        Component component = new Component(null, null, null, Collections.emptySortedSet(), null);
+        Lookup lookup = mock(Lookup.class);
+        when(lookup.getComponent(any())).thenReturn(Optional.of(component));
+        RequestLookup requestLookup = new RequestLookup("/context-path", null, null);
         Page page = new Page(null, renderable, false);
 
         String output = page.render(null, lookup, requestLookup, null);

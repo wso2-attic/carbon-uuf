@@ -2,7 +2,7 @@
 <ul class="nav navbar-right float-remove-xs text-center-xs">
     {{#if enableLogin}}
         <li class="login-label">
-            <a href="{{@contextPath}}/basicauth/login">
+            <a href="{{@contextPath}}/simple-auth/login">
                 <span class="hidden-xs">Login</span>
             </a>
         </li>
@@ -19,7 +19,7 @@
                 role="menu">
                 <li class="dropdown-header visible-xs">{{username}}<span class="caret"></span></li>
                 <li class="divider visible-xs"></li>
-                <li><a href="{{@contextPath}}/basicauth/logout">Logout</a></li>
+                <li><a href="{{@contextPath}}/simple-auth/logout">Logout</a></li>
             </ul>
         </li>
     {{/if}}

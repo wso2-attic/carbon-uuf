@@ -53,14 +53,14 @@ public class App {
 
     public App(String name, Lookup lookup, Set<Theme> themes, SessionRegistry sessionRegistry) {
         this.name = name;
-        this.contextPath = ("/" + NameUtils.getSimpleName(name));
+        this.contextPath = "/" + NameUtils.getSimpleName(name);
         this.lookup = lookup;
         this.configuration = this.lookup.getConfiguration();
         this.sessionRegistry = sessionRegistry;
 
         this.components = this.lookup.getAllComponents().values().stream()
-                .collect(Collectors.toMap(Component::getContext, cmp -> cmp));
-        this.rootComponent = this.components.remove(Component.ROOT_COMPONENT_CONTEXT);
+                .collect(Collectors.toMap(Component::getContextPath, cmp -> cmp));
+        this.rootComponent = this.components.get(Component.ROOT_COMPONENT_CONTEXT_PATH);
 
         this.themes = themes.stream().collect(Collectors.toMap(Theme::getName, theme -> theme));
         String configuredThemeName = this.configuration.getThemeName();
@@ -83,6 +83,18 @@ public class App {
 
     public String getContextPath() {
         return contextPath;
+    }
+
+    public Map<String, Component> getComponents() {
+        return components;
+    }
+
+    public Map<String, Fragment> getFragments() {
+        return lookup.getAllFragments();
+    }
+
+    public Map<String, Layout> getLayouts() {
+        return lookup.getAllLayouts();
     }
 
     public Map<String, Theme> getThemes() {

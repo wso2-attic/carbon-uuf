@@ -80,7 +80,7 @@ public class Debugger {
                     (component) -> {
                         JsonArray pages = new JsonArray();
                         component.getPages().forEach(page -> pages.add(JSON_PARSER.parse(page.toString())));
-                        content.add(component.getContext(), pages);
+                        content.add(component.getContextPath(), pages);
                     }
             );
             //TODO: 13/07/2016 change content-type to application/json once msf4j bug fixed

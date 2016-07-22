@@ -23,4 +23,6 @@ public interface ThemeReference {
     String getName();
 
     FileReference getThemeConfig();
+
+    String getPath();
 }

@@ -16,10 +16,10 @@
 
 package org.wso2.carbon.uuf.core;
 
-import org.wso2.carbon.uuf.spi.HttpRequest;
-import org.wso2.carbon.uuf.spi.HttpResponse;
 import org.wso2.carbon.uuf.api.Placeholder;
 import org.wso2.carbon.uuf.internal.util.NameUtils;
+import org.wso2.carbon.uuf.spi.HttpRequest;
+import org.wso2.carbon.uuf.spi.HttpResponse;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -39,6 +39,13 @@ public class RequestLookup {
     private final EnumMap<Placeholder, StringBuilder> placeholderBuffers;
     private final Map<String, String> zoneContents;
 
+    /**
+     * Constructs a new {@code RequestLookup} with given parameters.
+     *
+     * @param contextPath context path for URLs
+     * @param request     HTTP request
+     * @param response    HTTP response
+     */
     public RequestLookup(String contextPath, HttpRequest request, HttpResponse response) {
         this.contextPath = (contextPath == null) ? request.getContextPath() : contextPath;
         this.request = request;

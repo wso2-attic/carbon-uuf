@@ -37,6 +37,7 @@ import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.MissingHelper;
 import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.PublicHelper;
 import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.SecuredHelper;
 import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.TitleHelper;
+import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.I18nHelper;
 import org.wso2.carbon.uuf.spi.Renderable;
 import org.wso2.carbon.uuf.spi.model.Model;
 
@@ -68,6 +69,7 @@ public abstract class HbsRenderable implements Renderable {
         HANDLEBARS.registerHelper(HeadOtherHelper.HELPER_NAME, new HeadOtherHelper());
         HANDLEBARS.registerHelper(JsHelper.HELPER_NAME, new JsHelper());
         HANDLEBARS.registerHelperMissing(new MissingHelper());
+        HANDLEBARS.registerHelper(I18nHelper.HELPER_NAME, new I18nHelper());
     }
 
     public abstract String getPath();

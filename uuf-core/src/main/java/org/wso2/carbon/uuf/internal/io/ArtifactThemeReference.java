@@ -16,9 +16,9 @@
 
 package org.wso2.carbon.uuf.internal.io;
 
+import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.reference.FileReference;
 import org.wso2.carbon.uuf.reference.ThemeReference;
-import org.wso2.carbon.uuf.exception.UUFException;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -35,7 +35,7 @@ public class ArtifactThemeReference implements ThemeReference {
 
     @Override
     public String getName() {
-        Path fileName = path.getFileName();
+        Path fileName = path.getFileName(); // Name of the theme is the name of the directory.
         return (fileName == null) ? "" : fileName.toString();
     }
 
@@ -47,5 +47,10 @@ public class ArtifactThemeReference implements ThemeReference {
         } else {
             throw new UUFException("Theme '" + getName() + "' of app '" + appReference.getPath() + "' is empty.");
         }
+    }
+
+    @Override
+    public String getPath() {
+        return path.toString();
     }
 }

@@ -16,6 +16,7 @@
 
 package org.wso2.carbon.uuf.internal.io;
 
+import org.apache.commons.io.FilenameUtils;
 import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.reference.ComponentReference;
 import org.wso2.carbon.uuf.reference.FileReference;
@@ -23,15 +24,22 @@ import org.wso2.carbon.uuf.reference.FragmentReference;
 import org.wso2.carbon.uuf.reference.LayoutReference;
 import org.wso2.carbon.uuf.reference.PageReference;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.DirectoryStream;
 import java.util.Optional;
 import java.util.Set;
+import java.util.Properties;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.stream.Stream;
 
 public class ArtifactComponentReference implements ComponentReference {
 
+    private final String CHAR_ENCODING = "UTF-8";
     private final Path path;
     private final ArtifactAppReference appReference;
 
@@ -49,11 +57,10 @@ public class ArtifactComponentReference implements ComponentReference {
         try {
             return Files
                     .walk(pages)
-                    .filter(path -> Files.isRegularFile(path) &&
-                            supportedExtensions.contains(getExtension(path.getFileName().toString())))
+                    .filter(path -> Files.isRegularFile(path) && supportedExtensions.contains(getExtension(path)))
                     .map(path -> new ArtifactPageReference(path, this));
         } catch (IOException e) {
-            throw new UUFException("An error occurred while listing pages in '" + path + "'.", e);
+            throw new UUFException("An error occurred while listing pages in '" + pages + "'.", e);
         }
     }
 
@@ -66,17 +73,15 @@ public class ArtifactComponentReference implements ComponentReference {
         try {
             return Files
                     .list(layouts)
-                    .filter(path -> Files.isRegularFile(path) &&
-                            supportedExtensions.contains(getExtension(path.getFileName().toString())))
+                    .filter(path -> Files.isRegularFile(path) && supportedExtensions.contains(getExtension(path)))
                     .map(path -> new ArtifactLayoutReference(path, this));
         } catch (IOException e) {
-            throw new UUFException("An error occurred while listing layouts in '" + path + "'.", e);
+            throw new UUFException("An error occurred while listing layouts in '" + layouts + "'.", e);
         }
     }
 
-    private String getExtension(String fileName) {
-        int lastDotIndex = fileName.lastIndexOf('.');
-        return (lastDotIndex == -1) ? "" : fileName.substring(lastDotIndex + 1);
+    private String getExtension(Path filePath) {
+        return FilenameUtils.getExtension(filePath.getFileName().toString());
     }
 
     @Override
@@ -91,7 +96,7 @@ public class ArtifactComponentReference implements ComponentReference {
                     .filter(Files::isDirectory)
                     .map(path -> new ArtifactFragmentReference(path, this, supportedExtensions));
         } catch (IOException e) {
-            throw new UUFException("An error occurred while listing fragments in '" + path + "'.", e);
+            throw new UUFException("An error occurred while listing fragments in '" + fragments + "'.", e);
         }
     }
 
@@ -136,5 +141,29 @@ public class ArtifactComponentReference implements ComponentReference {
 
     ArtifactAppReference getAppReference() {
         return appReference;
+    }
+
+    @Override
+    public Map<String, Properties> getI18nFiles(){
+        Path lang = path.resolve(DIR_NAME_LANGUAGE);
+        Map<String, Properties> i18n = new HashMap<>();
+
+        if (!Files.exists(lang)) {
+            return i18n;
+        }
+
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(lang, "*.{properties}")) {
+            for (Path entry: stream) {
+                if (Files.isRegularFile(entry)) {
+                    Properties props = new Properties();
+                    props.load(new InputStreamReader(new FileInputStream(entry.toString()), CHAR_ENCODING));
+                    String fileName = entry.getFileName().toString();
+                    i18n.put(fileName.substring(0,fileName.indexOf('.')), props);
+                }
+            }
+        } catch (IOException e) {
+            throw new UUFException("An error occurred while reading locale file in '" + lang + "'.", e);
+        }
+        return i18n;
     }
 }

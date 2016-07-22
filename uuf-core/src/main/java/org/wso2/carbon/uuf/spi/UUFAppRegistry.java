@@ -24,6 +24,7 @@ import java.util.Optional;
 public interface UUFAppRegistry {
 
     Optional<App> getApp(String contextPath);
+
     Path getBasePath(String contextPath);
 }
 

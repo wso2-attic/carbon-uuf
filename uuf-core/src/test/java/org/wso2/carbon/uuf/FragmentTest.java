@@ -33,11 +33,11 @@ public class FragmentTest {
     public void testRenderFragment() {
         final String content = "Hello world from a fragment!";
         Renderable renderable = (model, componentLookup, requestLookup, api) -> content;
-        Component component = new Component("componentName", null, "/componentContext", Collections.emptySortedSet());
+        Component component = new Component("test.component-name", null, null, Collections.emptySortedSet(), null);
         Lookup lookup = new Lookup(ImmutableSetMultimap.of());
         lookup.add(component);
-        RequestLookup requestLookup = new RequestLookup("/contextPath", null, null);
-        Fragment fragment = new Fragment("componentName.fragmentName", renderable, false);
+        RequestLookup requestLookup = new RequestLookup("/context-path", null, null);
+        Fragment fragment = new Fragment("test.component-name.fragmentName", renderable, false);
 
         String output = fragment.render(null, lookup, requestLookup, null);
         Assert.assertEquals(output, content);

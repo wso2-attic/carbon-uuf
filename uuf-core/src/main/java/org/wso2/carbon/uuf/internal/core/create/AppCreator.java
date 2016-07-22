@@ -84,28 +84,28 @@ public class AppCreator {
 
         for (int i = (leveledDependencies.size() - 1); i >= 0; i--) {
             Set<ComponentData> dependencies = leveledDependencies.get(i); // dependencies at level i
-            for (ComponentData componentNameVersion : dependencies) {
-                String componentName = componentNameVersion.getName();
+            for (ComponentData componentData : dependencies) {
+                String componentName = componentData.getName();
                 if (createdComponents.containsKey(componentName)) {
                     continue; // Component 'componentName' is already created.
                 }
 
-                String componentVersion = componentNameVersion.getVersion();
-                String componentSimpleName, componentContext;
+                String componentVersion = componentData.getVersion();
+                String componentSimpleName, componentContextPath;
                 if (i == 0) {
                     // This happens only once, because when (i == 0) then (dependencies.size() == 1).
-                    componentSimpleName = Component.ROOT_COMPONENT_SIMPLE_NAME;
-                    componentContext = Component.ROOT_COMPONENT_CONTEXT;
                     appName = componentName; // Name of the root component is the fully qualified app name.
+                    componentSimpleName = Component.ROOT_COMPONENT_NAME;
+                    componentContextPath = Component.ROOT_COMPONENT_CONTEXT_PATH;
                 } else {
                     componentSimpleName = NameUtils.getSimpleName(componentName);
-                    componentContext = "/" + componentSimpleName;
+                    componentContextPath = "/" + componentSimpleName;
                 }
 
                 ComponentReference componentReference = appReference.getComponentReference(componentSimpleName);
                 ClassLoader classLoader = classLoaderProvider.getClassLoader(componentName, componentVersion,
                                                                              componentReference);
-                Component component = createComponent(componentName, componentVersion, componentContext,
+                Component component = createComponent(componentName, componentVersion, componentContextPath,
                                                       componentReference, classLoader, lookup);
                 lookup.add(component);
                 createdComponents.put(componentName, component);
@@ -117,7 +117,7 @@ public class AppCreator {
         return new App(appName, lookup, themes, new SessionRegistry(appName));
     }
 
-    private Component createComponent(String componentName, String componentVersion, String componentContext,
+    private Component createComponent(String componentName, String componentVersion, String componentContextPath,
                                       ComponentReference componentReference, ClassLoader classLoader,
                                       Lookup lookup) {
         componentReference.getLayouts(supportedExtensions)
@@ -156,12 +156,18 @@ public class AppCreator {
                             "' is malformed.", e);
         }
 
+        if (!componentReference.getI18nFiles().isEmpty()) {
+            lookup.add(componentReference.getI18nFiles());
+        }
+
         SortedSet<Page> pages = componentReference
                 .getPages(supportedExtensions)
                 .parallel()
                 .map(pageReference -> createPage(pageReference, componentName, lookup, classLoader))
                 .collect(Collectors.toCollection(TreeSet::new));
-        return new Component(componentName, componentVersion, componentContext, pages);
+
+        return new Component(componentName, componentVersion, componentContextPath, pages,
+                             componentReference.getPath());
     }
 
     private Layout createLayout(LayoutReference layoutReference, String componentName) {
@@ -306,7 +312,9 @@ public class AppCreator {
             }
 
         }
+
         return new Theme(themeReference.getName(), config.get(Placeholder.css.name()),
-                         config.get(Placeholder.headJs.name()), config.get(Placeholder.js.name()));
+                         config.get(Placeholder.headJs.name()), config.get(Placeholder.js.name()),
+                         themeReference.getPath());
     }
 }

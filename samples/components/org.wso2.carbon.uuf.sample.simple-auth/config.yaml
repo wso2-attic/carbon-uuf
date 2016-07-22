@@ -1,0 +1,4 @@
+appName: Simple Auth
+loginRedirectUri: "/"
+registerRedirectUri: "/"
+logoutRedirectUri: "/simple-auth/login"

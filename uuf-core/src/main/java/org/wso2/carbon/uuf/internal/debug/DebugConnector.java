@@ -83,6 +83,7 @@ public class DebugConnector {
 
     /**
      * Returns a set of themes.
+     *
      * @return a set of themes
      */
     public Set<Theme> getThemes() {
@@ -91,6 +92,7 @@ public class DebugConnector {
 
     /**
      * Setting app configuration.
+     *
      * @param configuration configuration object
      */
     public void setConfiguration(Configuration configuration) {
@@ -99,6 +101,7 @@ public class DebugConnector {
 
     /**
      * Returns app configuration.
+     *
      * @return current app configuration
      */
     public Configuration getConfiguration() {
@@ -107,6 +110,7 @@ public class DebugConnector {
 
     /**
      * Adding this layout.
+     *
      * @param layout layout object
      */
     public void addLayout(Layout layout) {
@@ -115,6 +119,7 @@ public class DebugConnector {
 
     /**
      * Returns set of layouts.
+     *
      * @return a set of layouts
      */
     public Set<Layout> getLayouts() {

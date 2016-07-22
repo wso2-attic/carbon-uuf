@@ -20,6 +20,10 @@ import org.wso2.carbon.uuf.spi.HttpResponse;
 
 public class FragmentNotFoundException extends HttpErrorException {
 
+    public FragmentNotFoundException() {
+        super(HttpResponse.STATUS_NOT_FOUND);
+    }
+
     public FragmentNotFoundException(String message) {
         super(HttpResponse.STATUS_NOT_FOUND, message);
     }

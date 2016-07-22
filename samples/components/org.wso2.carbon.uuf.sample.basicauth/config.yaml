@@ -1,3 +1,0 @@
-loginRedirectUri: "/"
-registerRedirectUri: "/"
-logoutRedirectUri: "/basicauth/login"
