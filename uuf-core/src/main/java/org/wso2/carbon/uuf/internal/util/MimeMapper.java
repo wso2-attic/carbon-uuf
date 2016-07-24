@@ -16,8 +16,7 @@
 
 package org.wso2.carbon.uuf.internal.util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.wso2.carbon.uuf.exception.FileOperationException;
 import org.wso2.carbon.uuf.exception.MalformedConfigurationException;
 import org.wso2.carbon.uuf.exception.UUFException;
 
@@ -31,36 +30,32 @@ import java.util.Properties;
  */
 public class MimeMapper {
 
+    private static final String MIME_PROPERTY_FILE = "mime-map.properties";
     private static volatile Properties MIME_MAP = null;
-    private static final Logger log = LoggerFactory.getLogger(MimeMapper.class);
+
+    private MimeMapper() {
+    }
 
     private static Properties loadMimeMap() {
         Properties mimeMap = new Properties();
-        String mimePropertyFileName = "mime-map.properties";
-        InputStream inputStream = MimeMapper.class.getClassLoader().getResourceAsStream(mimePropertyFileName);
-        if (inputStream == null) {
-            throw new UUFException("Cannot find MIME types property file '" + mimePropertyFileName + "'");
-        }
-        try {
+        try (InputStream inputStream = MimeMapper.class.getClassLoader().getResourceAsStream(MIME_PROPERTY_FILE)) {
+            if (inputStream == null) {
+                throw new UUFException("Cannot find MIME types property file '" + MIME_PROPERTY_FILE + "'");
+            }
             mimeMap.load(inputStream);
         } catch (IllegalArgumentException e) {
             throw new MalformedConfigurationException(
-                    "MIME types property file is '" + mimePropertyFileName + "' is invalid.", e);
+                    "MIME types property file is '" + MIME_PROPERTY_FILE + "' is invalid.", e);
         } catch (IOException e) {
-            throw new UUFException("Cannot read MIME types property file '" + mimePropertyFileName + "'.", e);
-        }
-        try {
-            inputStream.close();
-        } catch (IOException e) {
-            log.warn("Could not close input stream of MIME types property file '" + mimePropertyFileName + "'.", e);
+            throw new FileOperationException("Cannot read MIME types property file '" + MIME_PROPERTY_FILE + "'.", e);
         }
         return mimeMap;
     }
 
     public static Optional<String> getMimeType(String extension) {
         if (MIME_MAP == null) {
-            // Here, class object 'MimeMapper.class' is used as the synchronization lock
-            // because 'getMimeType()' is the only is public method.
+            /* Here, class object 'MimeMapper.class' is used as the synchronization lock because 'getMimeType()' is
+            the only is public method. */
             synchronized (MimeMapper.class) {
                 if (MIME_MAP == null) {
                     MIME_MAP = loadMimeMap();
