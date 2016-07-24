@@ -29,42 +29,50 @@ import java.util.stream.Stream;
 
 public class ArtifactAppReference implements AppReference {
 
-    private final Path path;
+    private final Path appDirectory;
+    private final Path componentsDirectory;
+    private final Path customizationsDirectory;
+    private final Path themesDirectory;
 
-    public ArtifactAppReference(Path path) {
-        this.path = path.normalize().toAbsolutePath();
+    public ArtifactAppReference(Path appDirectory) {
+        this.appDirectory = appDirectory.normalize().toAbsolutePath();
+        this.componentsDirectory = this.appDirectory.resolve(DIR_NAME_COMPONENTS);
+        this.customizationsDirectory = this.appDirectory.resolve(DIR_NAME_CUSTOMIZATIONS);
+        this.themesDirectory = this.appDirectory.resolve(DIR_NAME_THEMES);
     }
 
     @Override
     public String getName() {
-        Path fileName = path.getFileName();
+        Path fileName = appDirectory.getFileName();
         return (fileName == null) ? "" : fileName.toString();
     }
 
     @Override
     public ComponentReference getComponentReference(String componentSimpleName) {
-        Path componentPath = path.resolve(DIR_NAME_COMPONENTS).resolve(componentSimpleName);
-        return new ArtifactComponentReference(componentPath, this);
+        Path componentDirectory = customizationsDirectory.resolve(componentSimpleName);
+        if (!Files.exists(componentDirectory)) {
+            componentDirectory = componentsDirectory.resolve(componentSimpleName);
+        }
+        return new ArtifactComponentReference(componentDirectory, this);
     }
 
     @Override
     public Stream<ThemeReference> getThemeReferences() {
-        Path themes = path.resolve(DIR_NAME_THEMES);
-        if (!Files.exists(themes)) {
+        if (!Files.exists(themesDirectory)) {
             return Stream.<ThemeReference>empty();
         }
         try {
-            return Files.list(themes)
+            return Files.list(themesDirectory)
                     .filter(Files::isDirectory)
                     .map(path -> new ArtifactThemeReference(path, this));
         } catch (IOException e) {
-            throw new FileOperationException("An error occurred while listing themes in '" + themes + "'.", e);
+            throw new FileOperationException("An error occurred while listing themes in '" + themesDirectory + "'.", e);
         }
     }
 
     @Override
     public List<String> getDependencies() {
-        Path dependencyTreeFile = path.resolve(DIR_NAME_COMPONENTS).resolve(FILE_NAME_DEPENDENCY_TREE);
+        Path dependencyTreeFile = componentsDirectory.resolve(FILE_NAME_DEPENDENCY_TREE);
         try {
             return Files.readAllLines(dependencyTreeFile);
         } catch (IOException e) {
@@ -75,10 +83,10 @@ public class ArtifactAppReference implements AppReference {
 
     @Override
     public String getPath() {
-        return path.toString();
+        return appDirectory.toString();
     }
 
     Path getFilePath() {
-        return path;
+        return appDirectory;
     }
 }
