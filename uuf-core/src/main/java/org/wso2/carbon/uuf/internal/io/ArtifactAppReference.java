@@ -16,7 +16,7 @@
 
 package org.wso2.carbon.uuf.internal.io;
 
-import org.wso2.carbon.uuf.exception.UUFException;
+import org.wso2.carbon.uuf.exception.FileOperationException;
 import org.wso2.carbon.uuf.reference.AppReference;
 import org.wso2.carbon.uuf.reference.ComponentReference;
 import org.wso2.carbon.uuf.reference.ThemeReference;
@@ -54,12 +54,11 @@ public class ArtifactAppReference implements AppReference {
             return Stream.<ThemeReference>empty();
         }
         try {
-            return Files
-                    .list(themes)
+            return Files.list(themes)
                     .filter(Files::isDirectory)
                     .map(path -> new ArtifactThemeReference(path, this));
         } catch (IOException e) {
-            throw new UUFException("An error occurred while listing themes in '" + themes + "'.", e);
+            throw new FileOperationException("An error occurred while listing themes in '" + themes + "'.", e);
         }
     }
 
@@ -69,7 +68,7 @@ public class ArtifactAppReference implements AppReference {
         try {
             return Files.readAllLines(dependencyTreeFile);
         } catch (IOException e) {
-            throw new UUFException(
+            throw new FileOperationException(
                     "An error occurred while reading dependencies from file '" + dependencyTreeFile + "'.", e);
         }
     }

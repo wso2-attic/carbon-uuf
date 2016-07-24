@@ -18,7 +18,6 @@ package org.wso2.carbon.uuf.internal.util;
 
 import org.wso2.carbon.uuf.exception.FileOperationException;
 import org.wso2.carbon.uuf.exception.MalformedConfigurationException;
-import org.wso2.carbon.uuf.exception.UUFException;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,7 +39,7 @@ public class MimeMapper {
         Properties mimeMap = new Properties();
         try (InputStream inputStream = MimeMapper.class.getClassLoader().getResourceAsStream(MIME_PROPERTY_FILE)) {
             if (inputStream == null) {
-                throw new UUFException("Cannot find MIME types property file '" + MIME_PROPERTY_FILE + "'");
+                throw new FileOperationException("Cannot find MIME types property file '" + MIME_PROPERTY_FILE + "'");
             }
             mimeMap.load(inputStream);
         } catch (IllegalArgumentException e) {

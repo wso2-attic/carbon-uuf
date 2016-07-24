@@ -22,8 +22,8 @@ import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.core.App;
 import org.wso2.carbon.uuf.core.Component;
 import org.wso2.carbon.uuf.core.Theme;
+import org.wso2.carbon.uuf.exception.FileOperationException;
 import org.wso2.carbon.uuf.exception.ResourceNotFoundException;
-import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.internal.debug.Debugger;
 import org.wso2.carbon.uuf.internal.util.MimeMapper;
 import org.wso2.carbon.uuf.spi.HttpRequest;
@@ -131,7 +131,7 @@ public class StaticResolver {
             response.setContent(STATUS_NOT_FOUND, "Requested resource '" + request.getUri() + "' does not exists.");
             return;
         } catch (Exception e) {
-            // UUFException, IOException or any other Exception that might occur.
+            // FileOperationException, IOException or any other Exception that might occur.
             log.error("An error occurred when manipulating paths for request '" + request + "'.", e);
             response.setContent(STATUS_INTERNAL_SERVER_ERROR,
                                 "A server occurred while serving for static resource request '" + request + "'.");
@@ -258,7 +258,8 @@ public class StaticResolver {
             throw new ResourceNotFoundException("Static resource file '" + resourcePath + "' does not exists.", e);
         } catch (Exception e) {
             // UnsupportedOperationException, IOException or any other Exception that might occur.
-            throw new UUFException("Cannot read file attributes from static resource file '" + resourcePath + "'.", e);
+            throw new FileOperationException(
+                    "Cannot read file attributes from static resource file '" + resourcePath + "'.", e);
         }
         if (fileAttributes.isRegularFile()) {
             return ZonedDateTime.ofInstant(fileAttributes.lastModifiedTime().toInstant(), GMT_TIME_ZONE);

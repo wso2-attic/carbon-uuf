@@ -18,7 +18,7 @@ package org.wso2.carbon.uuf.internal.io;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
-import org.wso2.carbon.uuf.exception.UUFException;
+import org.wso2.carbon.uuf.exception.FileOperationException;
 import org.wso2.carbon.uuf.reference.ComponentReference;
 import org.wso2.carbon.uuf.reference.FileReference;
 import org.wso2.carbon.uuf.reference.FragmentReference;
@@ -28,14 +28,14 @@ import org.wso2.carbon.uuf.reference.PageReference;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.DirectoryStream;
-import java.util.Optional;
-import java.util.Set;
-import java.util.Properties;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Properties;
+import java.util.Set;
 import java.util.stream.Stream;
 
 public class ArtifactComponentReference implements ComponentReference {
@@ -56,12 +56,11 @@ public class ArtifactComponentReference implements ComponentReference {
             return Stream.<PageReference>empty();
         }
         try {
-            return Files
-                    .walk(pages)
+            return Files.walk(pages)
                     .filter(path -> Files.isRegularFile(path) && supportedExtensions.contains(getExtension(path)))
                     .map(path -> new ArtifactPageReference(path, this));
         } catch (IOException e) {
-            throw new UUFException("An error occurred while listing pages in '" + pages + "'.", e);
+            throw new FileOperationException("An error occurred while listing pages in '" + pages + "'.", e);
         }
     }
 
@@ -72,12 +71,11 @@ public class ArtifactComponentReference implements ComponentReference {
             return Stream.<LayoutReference>empty();
         }
         try {
-            return Files
-                    .list(layouts)
+            return Files.list(layouts)
                     .filter(path -> Files.isRegularFile(path) && supportedExtensions.contains(getExtension(path)))
                     .map(path -> new ArtifactLayoutReference(path, this));
         } catch (IOException e) {
-            throw new UUFException("An error occurred while listing layouts in '" + layouts + "'.", e);
+            throw new FileOperationException("An error occurred while listing layouts in '" + layouts + "'.", e);
         }
     }
 
@@ -92,12 +90,11 @@ public class ArtifactComponentReference implements ComponentReference {
             return Stream.<FragmentReference>empty();
         }
         try {
-            return Files
-                    .list(fragments)
+            return Files.list(fragments)
                     .filter(Files::isDirectory)
                     .map(path -> new ArtifactFragmentReference(path, this, supportedExtensions));
         } catch (IOException e) {
-            throw new UUFException("An error occurred while listing fragments in '" + fragments + "'.", e);
+            throw new FileOperationException("An error occurred while listing fragments in '" + fragments + "'.", e);
         }
     }
 
@@ -145,7 +142,7 @@ public class ArtifactComponentReference implements ComponentReference {
     }
 
     @Override
-    public Map<String, Properties> getI18nFiles(){
+    public Map<String, Properties> getI18nFiles() {
         Path lang = path.resolve(DIR_NAME_LANGUAGE);
         Map<String, Properties> i18n = new HashMap<>();
         InputStreamReader is = null;
@@ -154,7 +151,7 @@ public class ArtifactComponentReference implements ComponentReference {
         }
 
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(lang, "*.{properties}")) {
-            for (Path entry: stream) {
+            for (Path entry : stream) {
                 if (Files.isRegularFile(entry)) {
                     Properties props = new Properties();
                     is = new InputStreamReader(new FileInputStream(entry.toString()), CHAR_ENCODING);
@@ -162,12 +159,12 @@ public class ArtifactComponentReference implements ComponentReference {
                     Path path = entry.getFileName();
                     if (path != null) {
                         String fileName = path.toString();
-                        i18n.put(fileName.substring(0,fileName.indexOf('.')), props);
+                        i18n.put(fileName.substring(0, fileName.indexOf('.')), props);
                     }
                 }
             }
         } catch (IOException e) {
-            throw new UUFException("An error occurred while reading locale file in '" + lang + "'.", e);
+            throw new FileOperationException("An error occurred while reading locale files in '" + lang + "'.", e);
         } finally {
             IOUtils.closeQuietly(is);
         }
