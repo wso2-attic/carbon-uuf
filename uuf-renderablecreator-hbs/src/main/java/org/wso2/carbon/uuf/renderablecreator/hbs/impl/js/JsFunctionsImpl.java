@@ -19,6 +19,7 @@ package org.wso2.carbon.uuf.renderablecreator.hbs.impl.js;
 import com.google.gson.Gson;
 import org.wso2.carbon.uuf.api.Placeholder;
 import org.wso2.carbon.uuf.core.API;
+import org.wso2.carbon.uuf.exception.FileOperationException;
 import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.CallMicroServiceFunction;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.CallOSGiServiceFunction;
@@ -101,8 +102,8 @@ public class JsFunctionsImpl {
                 String content = new String(Files.readAllBytes(jsFilePath), StandardCharsets.UTF_8);
                 engine.eval(content);
             } catch (IOException e) {
-                throw new UUFException("Cannot read content of JavaScript module '" + moduleName +
-                                               "' in component module directory '" + modulesDirPath + ".", e);
+                throw new FileOperationException("Cannot read content of JavaScript module '" + moduleName +
+                                                         "' in component module directory '" + modulesDirPath + ".", e);
             } catch (ScriptException e) {
                 throw new UUFException("An error occurred while evaluating the JavaScript module '" + moduleName +
                                                "' in component module directory '" + modulesDirPath + ".", e);
