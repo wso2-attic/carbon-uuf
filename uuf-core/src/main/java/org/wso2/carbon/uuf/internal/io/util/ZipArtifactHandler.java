@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.wso2.carbon.uuf.internal.io;
+package org.wso2.carbon.uuf.internal.io.util;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;

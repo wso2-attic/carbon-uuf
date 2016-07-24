@@ -25,7 +25,7 @@ import org.wso2.carbon.uuf.core.Theme;
 import org.wso2.carbon.uuf.exception.FileOperationException;
 import org.wso2.carbon.uuf.exception.ResourceNotFoundException;
 import org.wso2.carbon.uuf.internal.debug.Debugger;
-import org.wso2.carbon.uuf.internal.util.MimeMapper;
+import org.wso2.carbon.uuf.internal.io.util.MimeMapper;
 import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.carbon.uuf.spi.HttpResponse;
 
