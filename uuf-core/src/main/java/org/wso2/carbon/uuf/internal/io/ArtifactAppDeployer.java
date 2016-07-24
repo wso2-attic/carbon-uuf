@@ -133,7 +133,7 @@ public class ArtifactAppDeployer implements Deployer, UUFAppRegistry, RequiredCa
             Pair<String, String> appNameContextPath = getAppNameContextPath(artifact);
             if (deployedApps.containsKey(appNameContextPath.getRight())) {
                 // This artifact is already deployed.
-                App createdApp = createApp(appNameContextPath.getLeft(), artifact);
+                App createdApp = createApp(appNameContextPath.getLeft(), appNameContextPath.getRight(), artifact);
                 deployedApps.put(createdApp.getContextPath(), createdApp);
                 log.info("UUF app '" + createdApp.getName() + "' re-deployed for context path '" +
                                  createdApp.getContextPath() + "'.");
@@ -216,7 +216,7 @@ public class ArtifactAppDeployer implements Deployer, UUFAppRegistry, RequiredCa
                 return null;
             }
             try {
-                createdApp = createApp(appArtifact.appName, artifact);
+                createdApp = createApp(appArtifact.appName, contextPath, artifact);
             } catch (Exception e) {
                 // catching any/all exception/s
                 if (Debugger.isDebuggingEnabled()) {
@@ -233,12 +233,14 @@ public class ArtifactAppDeployer implements Deployer, UUFAppRegistry, RequiredCa
         return createdApp;
     }
 
-    private App createApp(String appName, Artifact artifact) {
+    private App createApp(String appName, String appContextPath, Artifact artifact) {
+        ArtifactAppReference appReference;
         if (ZipArtifactHandler.isZipArtifact(artifact)) {
-            return appCreator.createApp(new ArtifactAppReference(ZipArtifactHandler.unzip(artifact, appName)));
+            appReference = new ArtifactAppReference(ZipArtifactHandler.unzip(artifact, appName));
         } else {
-            return appCreator.createApp(new ArtifactAppReference(Paths.get(artifact.getPath())));
+            appReference = new ArtifactAppReference(Paths.get(artifact.getPath()));
         }
+        return appCreator.createApp(appReference, appContextPath);
     }
 
     /**

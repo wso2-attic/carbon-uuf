@@ -74,7 +74,7 @@ public class AppCreator {
         this.classLoaderProvider = classLoaderProvider;
     }
 
-    public App createApp(AppReference appReference) {
+    public App createApp(AppReference appReference, String appContextPath) {
         DependencyTreeParser.Result result = DependencyTreeParser.parse(appReference.getDependencies());
 
         Lookup lookup = new Lookup(result.getFlattenedDependencies());
@@ -114,18 +114,16 @@ public class AppCreator {
 
         Set<Theme> themes = appReference.getThemeReferences().map(this::createTheme).collect(Collectors.toSet());
 
-        return new App(appName, lookup, themes, new SessionRegistry(appName));
+        return new App(appName, appContextPath, lookup, themes, new SessionRegistry(appName));
     }
 
     private Component createComponent(String componentName, String componentVersion, String componentContextPath,
                                       ComponentReference componentReference, ClassLoader classLoader,
                                       Lookup lookup) {
         componentReference.getLayouts(supportedExtensions)
-                .parallel()
                 .map(layoutReference -> createLayout(layoutReference, componentName))
                 .forEach(lookup::add);
         componentReference.getFragments(supportedExtensions)
-                .parallel()
                 .map((fragmentReference) -> createFragment(fragmentReference, componentName, classLoader))
                 .forEach(lookup::add);
 
@@ -160,9 +158,7 @@ public class AppCreator {
             lookup.add(componentReference.getI18nFiles());
         }
 
-        SortedSet<Page> pages = componentReference
-                .getPages(supportedExtensions)
-                .parallel()
+        SortedSet<Page> pages = componentReference.getPages(supportedExtensions)
                 .map(pageReference -> createPage(pageReference, componentName, lookup, classLoader))
                 .collect(Collectors.toCollection(TreeSet::new));
 

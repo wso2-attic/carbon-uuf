@@ -51,9 +51,9 @@ public class App {
     private final Configuration configuration;
     private final SessionRegistry sessionRegistry;
 
-    public App(String name, Lookup lookup, Set<Theme> themes, SessionRegistry sessionRegistry) {
+    public App(String name, String contextPath, Lookup lookup, Set<Theme> themes, SessionRegistry sessionRegistry) {
         this.name = name;
-        this.contextPath = "/" + NameUtils.getSimpleName(name);
+        this.contextPath = contextPath;
         this.lookup = lookup;
         this.configuration = this.lookup.getConfiguration();
         this.sessionRegistry = sessionRegistry;
