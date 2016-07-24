@@ -85,7 +85,7 @@ public class ArtifactAppReference implements AppReference {
         return appDirectory.toString();
     }
 
-    Path getFilePath() {
+    Path getDirectory() {
         return appDirectory;
     }
 }
