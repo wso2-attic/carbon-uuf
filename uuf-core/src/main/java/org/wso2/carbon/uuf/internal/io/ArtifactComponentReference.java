@@ -41,17 +41,17 @@ import java.util.stream.Stream;
 public class ArtifactComponentReference implements ComponentReference {
 
     private static final String CHAR_ENCODING = "UTF-8";
-    private final Path path;
+    private final Path componentDirectory;
     private final ArtifactAppReference appReference;
 
-    public ArtifactComponentReference(Path path, ArtifactAppReference appReference) {
-        this.path = path;
+    public ArtifactComponentReference(Path componentDirectory, ArtifactAppReference appReference) {
+        this.componentDirectory = componentDirectory;
         this.appReference = appReference;
     }
 
     @Override
     public Stream<PageReference> getPages(Set<String> supportedExtensions) {
-        Path pages = path.resolve(DIR_NAME_PAGES);
+        Path pages = componentDirectory.resolve(DIR_NAME_PAGES);
         if (!Files.exists(pages)) {
             return Stream.<PageReference>empty();
         }
@@ -66,7 +66,7 @@ public class ArtifactComponentReference implements ComponentReference {
 
     @Override
     public Stream<LayoutReference> getLayouts(Set<String> supportedExtensions) {
-        Path layouts = path.resolve(DIR_NAME_LAYOUTS);
+        Path layouts = componentDirectory.resolve(DIR_NAME_LAYOUTS);
         if (!Files.exists(layouts)) {
             return Stream.<LayoutReference>empty();
         }
@@ -85,7 +85,7 @@ public class ArtifactComponentReference implements ComponentReference {
 
     @Override
     public Stream<FragmentReference> getFragments(Set<String> supportedExtensions) {
-        Path fragments = path.resolve(DIR_NAME_FRAGMENTS);
+        Path fragments = componentDirectory.resolve(DIR_NAME_FRAGMENTS);
         if (!Files.exists(fragments)) {
             return Stream.<FragmentReference>empty();
         }
@@ -100,7 +100,7 @@ public class ArtifactComponentReference implements ComponentReference {
 
     @Override
     public Optional<FileReference> getBindingsConfig() {
-        Path bindingsConfiguration = path.resolve(FILE_NAME_BINDINGS);
+        Path bindingsConfiguration = componentDirectory.resolve(FILE_NAME_BINDINGS);
         if (Files.exists(bindingsConfiguration)) {
             return Optional.of(new ArtifactFileReference(bindingsConfiguration, appReference));
         } else {
@@ -110,7 +110,7 @@ public class ArtifactComponentReference implements ComponentReference {
 
     @Override
     public Optional<FileReference> getConfigurations() {
-        Path configuration = path.resolve(FILE_NAME_CONFIGURATIONS);
+        Path configuration = componentDirectory.resolve(FILE_NAME_CONFIGURATIONS);
         if (Files.exists(configuration)) {
             return Optional.of(new ArtifactFileReference(configuration, appReference));
         } else {
@@ -120,7 +120,7 @@ public class ArtifactComponentReference implements ComponentReference {
 
     @Override
     public Optional<FileReference> getOsgiImportsConfig() {
-        Path binding = path.resolve(FILE_NAME_OSGI_IMPORTS);
+        Path binding = componentDirectory.resolve(FILE_NAME_OSGI_IMPORTS);
         if (Files.exists(binding)) {
             return Optional.of(new ArtifactFileReference(binding, appReference));
         } else {
@@ -129,21 +129,8 @@ public class ArtifactComponentReference implements ComponentReference {
     }
 
     @Override
-    public String getPath() {
-        return path.toString();
-    }
-
-    Path getFilePath() {
-        return path;
-    }
-
-    ArtifactAppReference getAppReference() {
-        return appReference;
-    }
-
-    @Override
     public Map<String, Properties> getI18nFiles() {
-        Path lang = path.resolve(DIR_NAME_LANGUAGE);
+        Path lang = componentDirectory.resolve(DIR_NAME_LANGUAGE);
         Map<String, Properties> i18n = new HashMap<>();
         InputStreamReader is = null;
         if (!Files.exists(lang)) {
@@ -169,5 +156,18 @@ public class ArtifactComponentReference implements ComponentReference {
             IOUtils.closeQuietly(is);
         }
         return i18n;
+    }
+
+    @Override
+    public String getPath() {
+        return componentDirectory.toString();
+    }
+
+    Path getFilePath() {
+        return componentDirectory;
+    }
+
+    ArtifactAppReference getAppReference() {
+        return appReference;
     }
 }

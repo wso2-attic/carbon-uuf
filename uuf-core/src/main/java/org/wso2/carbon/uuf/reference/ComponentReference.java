@@ -44,7 +44,7 @@ public interface ComponentReference {
 
     Optional<FileReference> getOsgiImportsConfig();
 
-    String getPath();
-
     Map<String, Properties> getI18nFiles();
+
+    String getPath();
 }

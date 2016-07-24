@@ -25,23 +25,23 @@ import java.nio.file.Path;
 
 public class ArtifactThemeReference implements ThemeReference {
 
-    private final Path path;
+    private final Path themeDirectory;
     private final ArtifactAppReference appReference;
 
-    public ArtifactThemeReference(Path path, ArtifactAppReference appReference) {
-        this.path = path;
+    public ArtifactThemeReference(Path themeDirectory, ArtifactAppReference appReference) {
+        this.themeDirectory = themeDirectory;
         this.appReference = appReference;
     }
 
     @Override
     public String getName() {
-        Path fileName = path.getFileName(); // Name of the theme is the name of the directory.
+        Path fileName = themeDirectory.getFileName(); // Name of the theme is the name of the directory.
         return (fileName == null) ? "" : fileName.toString();
     }
 
     @Override
     public FileReference getThemeConfig() {
-        Path themeConfig = path.resolve(FILE_NAME_THEME);
+        Path themeConfig = themeDirectory.resolve(FILE_NAME_THEME);
         if (Files.exists(themeConfig)) {
             return new ArtifactFileReference(themeConfig, appReference);
         } else {
@@ -51,6 +51,6 @@ public class ArtifactThemeReference implements ThemeReference {
 
     @Override
     public String getPath() {
-        return path.toString();
+        return themeDirectory.toString();
     }
 }

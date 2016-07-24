@@ -25,23 +25,23 @@ import java.nio.file.Path;
 
 public class ArtifactLayoutReference implements LayoutReference {
 
-    private final Path path;
+    private final Path layoutFile;
     private final ArtifactComponentReference componentReference;
 
-    public ArtifactLayoutReference(Path path, ArtifactComponentReference componentReference) {
-        this.path = path;
+    public ArtifactLayoutReference(Path layoutFile, ArtifactComponentReference componentReference) {
+        this.layoutFile = layoutFile;
         this.componentReference = componentReference;
     }
 
     @Override
     public String getName() {
-        Path fileName = path.getFileName();
+        Path fileName = layoutFile.getFileName();
         return (fileName == null) ? "" : FilenameUtils.removeExtension(fileName.toString());
     }
 
     @Override
     public FileReference getRenderingFile() {
-        return new ArtifactFileReference(path, componentReference.getAppReference());
+        return new ArtifactFileReference(layoutFile, componentReference.getAppReference());
     }
 
     @Override

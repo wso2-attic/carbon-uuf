@@ -27,20 +27,20 @@ import java.util.Set;
 
 public class ArtifactFragmentReference implements FragmentReference {
 
-    private final Path path;
+    private final Path fragmentDirectory;
     private final ArtifactComponentReference componentReference;
     private final Set<String> supportedExtensions;
 
-    public ArtifactFragmentReference(Path path, ArtifactComponentReference componentReference,
+    public ArtifactFragmentReference(Path fragmentDirectory, ArtifactComponentReference componentReference,
                                      Set<String> supportedExtensions) {
-        this.path = path;
+        this.fragmentDirectory = fragmentDirectory;
         this.componentReference = componentReference;
         this.supportedExtensions = supportedExtensions;
     }
 
     @Override
     public String getName() {
-        Path fileName = path.getFileName(); // Name of the fragment is the name of the directory.
+        Path fileName = fragmentDirectory.getFileName(); // Name of the fragment is the name of the directory.
         return (fileName == null) ? "" : fileName.toString();
     }
 
@@ -48,7 +48,7 @@ public class ArtifactFragmentReference implements FragmentReference {
     public FileReference getRenderingFile() {
         String fragmentName = getName();
         for (String extension : supportedExtensions) {
-            Path renderingFilePath = path.resolve(fragmentName + "." + extension);
+            Path renderingFilePath = fragmentDirectory.resolve(fragmentName + "." + extension);
             if (Files.isRegularFile(renderingFilePath)) {
                 return new ArtifactFileReference(renderingFilePath, componentReference.getAppReference());
             }

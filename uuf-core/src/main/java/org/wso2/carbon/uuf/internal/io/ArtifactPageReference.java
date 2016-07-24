@@ -27,18 +27,18 @@ import static org.wso2.carbon.uuf.reference.ComponentReference.DIR_NAME_PAGES;
 
 public class ArtifactPageReference implements PageReference {
 
-    private final Path path;
+    private final Path pageFile;
     private final ArtifactComponentReference componentReference;
 
-    public ArtifactPageReference(Path path, ArtifactComponentReference componentReference) {
-        this.path = path;
+    public ArtifactPageReference(Path pageFile, ArtifactComponentReference componentReference) {
+        this.pageFile = pageFile;
         this.componentReference = componentReference;
     }
 
     @Override
     public String getPathPattern() {
         StringBuilder sb = new StringBuilder();
-        Path pagesDirectory = componentReference.getFilePath().resolve(DIR_NAME_PAGES).relativize(path);
+        Path pagesDirectory = componentReference.getFilePath().resolve(DIR_NAME_PAGES).relativize(pageFile);
         for (Path path : pagesDirectory) {
             sb.append('/').append(FilenameUtils.removeExtension(path.toString()));
         }
@@ -47,7 +47,7 @@ public class ArtifactPageReference implements PageReference {
 
     @Override
     public FileReference getRenderingFile() {
-        return new ArtifactFileReference(path, componentReference.getAppReference());
+        return new ArtifactFileReference(pageFile, componentReference.getAppReference());
     }
 
     @Override

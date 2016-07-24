@@ -32,13 +32,11 @@ public class ArtifactAppReference implements AppReference {
     private final Path appDirectory;
     private final Path componentsDirectory;
     private final Path customizationsDirectory;
-    private final Path themesDirectory;
 
     public ArtifactAppReference(Path appDirectory) {
         this.appDirectory = appDirectory.normalize().toAbsolutePath();
         this.componentsDirectory = this.appDirectory.resolve(DIR_NAME_COMPONENTS);
         this.customizationsDirectory = this.appDirectory.resolve(DIR_NAME_CUSTOMIZATIONS);
-        this.themesDirectory = this.appDirectory.resolve(DIR_NAME_THEMES);
     }
 
     @Override
@@ -58,6 +56,7 @@ public class ArtifactAppReference implements AppReference {
 
     @Override
     public Stream<ThemeReference> getThemeReferences() {
+        Path themesDirectory = this.appDirectory.resolve(DIR_NAME_THEMES);
         if (!Files.exists(themesDirectory)) {
             return Stream.<ThemeReference>empty();
         }
