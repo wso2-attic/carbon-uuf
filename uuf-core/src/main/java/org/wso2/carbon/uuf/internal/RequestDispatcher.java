@@ -29,7 +29,6 @@ import org.wso2.carbon.uuf.internal.io.StaticResolver;
 import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.carbon.uuf.spi.HttpResponse;
 
-import java.nio.file.Path;
 import java.util.Optional;
 
 import static org.wso2.carbon.uuf.spi.HttpResponse.CONTENT_TYPE_TEXT_HTML;
@@ -47,15 +46,14 @@ public class RequestDispatcher {
     private final Object lock = new Object();
     private Debugger debugger;
 
-    public void serve(App app, Path appBasePath, HttpRequest request, HttpResponse response) {
+    public void serve(App app, HttpRequest request, HttpResponse response) {
         if (log.isDebugEnabled() && !request.isDebugRequest()) {
             log.debug("HTTP request received " + request);
         }
 
         try {
-
             if (request.isStaticResourceRequest()) {
-                staticResolver.serve(app, appBasePath, request, response);
+                staticResolver.serve(app, request, response);
                 return;
             }
             if (Debugger.isDebuggingEnabled() && request.isDebugRequest()) {
@@ -82,7 +80,7 @@ public class RequestDispatcher {
                     String uriWithoutContextPath = request.getUriWithoutContextPath();
                     String correctedUriWithoutContextPath = uriWithoutContextPath.endsWith("/") ?
                             uriWithoutContextPath.substring(0, uriWithoutContextPath.length() - 1) :
-                            uriWithoutContextPath + "/";
+                            (uriWithoutContextPath + "/");
                     if (app.hasPage(correctedUriWithoutContextPath)) {
                         response.setStatus(STATUS_MOVED_PERMANENTLY);
                         String correctedUrl =

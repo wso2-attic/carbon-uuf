@@ -194,17 +194,6 @@ public class ArtifactAppDeployer implements Deployer, UUFAppRegistry, RequiredCa
         return Pair.of(appFullyQualifiedName, ("/" + NameUtils.getSimpleName(appFullyQualifiedName)));
     }
 
-    /**
-     * Returns the app deployed base path, when app context path is given
-     *
-     * @param contextPath App context path
-     * @return App deployed base path
-     */
-    @Override
-    public Path getBasePath(String contextPath) {
-        return null;
-    }
-
     @Override
     public Optional<App> getApp(String contextPath) {
         App app = deployedApps.get(contextPath);

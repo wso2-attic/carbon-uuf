@@ -106,7 +106,7 @@ public class StaticResolver {
         }
     }
 
-    public void serve(App app, Path basePath, HttpRequest request, HttpResponse response) {
+    public void serve(App app, HttpRequest request, HttpResponse response) {
         Path resourcePath;
         ZonedDateTime lastModifiedDate;
         try {
