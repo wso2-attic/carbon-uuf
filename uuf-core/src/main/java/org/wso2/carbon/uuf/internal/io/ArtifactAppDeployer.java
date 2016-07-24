@@ -31,7 +31,6 @@ import org.wso2.carbon.deployment.engine.ArtifactType;
 import org.wso2.carbon.deployment.engine.Deployer;
 import org.wso2.carbon.deployment.engine.exception.CarbonDeploymentException;
 import org.wso2.carbon.kernel.startupresolver.RequiredCapabilityListener;
-import org.wso2.carbon.kernel.utils.Utils;
 import org.wso2.carbon.uuf.core.App;
 import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.internal.core.create.AppCreator;
@@ -43,7 +42,6 @@ import org.wso2.carbon.uuf.spi.UUFAppRegistry;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Optional;
@@ -62,11 +60,9 @@ import java.util.concurrent.ConcurrentMap;
                 "componentName=wso2-uuf-deployer"
         }
 )
-//@SuppressWarnings("unused")
+@SuppressWarnings("unused")
 public class ArtifactAppDeployer implements Deployer, UUFAppRegistry, RequiredCapabilityListener {
 
-    private static final String DIR_UUFAPPS = "uufapps";
-    private static final Path DIR_TEMP_UUFAPPS;
     private static final Logger log = LoggerFactory.getLogger(ArtifactAppDeployer.class);
 
     private final ArtifactType artifactType;
@@ -79,14 +75,10 @@ public class ArtifactAppDeployer implements Deployer, UUFAppRegistry, RequiredCa
     private AppCreator appCreator;
     private BundleContext bundleContext;
 
-    static {
-        DIR_TEMP_UUFAPPS = Utils.getCarbonHome().resolve("tmp").resolve(DIR_UUFAPPS).toAbsolutePath();
-    }
-
     public ArtifactAppDeployer() {
         this.artifactType = new ArtifactType<>("uufapp");
         try {
-            this.location = new URL("file:" + DIR_UUFAPPS);
+            this.location = new URL("file:uufapps");
         } catch (MalformedURLException e) {
             throw new UUFException("Cannot create URL 'file:uufapps'.", e);
         }
