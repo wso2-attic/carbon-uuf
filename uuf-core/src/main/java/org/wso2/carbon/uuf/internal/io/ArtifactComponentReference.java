@@ -163,7 +163,7 @@ public class ArtifactComponentReference implements ComponentReference {
         return componentDirectory.toString();
     }
 
-    Path getFilePath() {
+    Path getDirectory() {
         return componentDirectory;
     }
 
