@@ -43,13 +43,13 @@
     </scm>
 
     <modules>
-        <module>nashorn-osgi-fragment</module>
-        <module>uuf-core</module>
-        <module>uuf-renderablecreator-hbs</module>
-        <module>uuf-httpconnector-msf4j</module>
-        <module>product/p2-features/org.wso2.carbon.uuf.core.feature</module>
-        <module>product/p2-features/org.wso2.carbon.uuf.renderablecreator.hbs.feature</module>
-        <module>product/p2-features/org.wso2.carbon.uuf.httpconnector.msf4j.feature</module>
+        <module>components/nashorn-osgi-fragment</module>
+        <module>components/uuf-core</module>
+        <module>components/uuf-renderablecreator-hbs</module>
+        <module>components/uuf-httpconnector-msf4j</module>
+        <module>features/org.wso2.carbon.uuf.core.feature</module>
+        <module>features/org.wso2.carbon.uuf.renderablecreator.hbs.feature</module>
+        <module>features/org.wso2.carbon.uuf.httpconnector.msf4j.feature</module>
         <module>samples</module>
         <module>perf-benchmark/tests/handlebars-n-msf4j/org.wso2.carbon.uuf.sample.perf-bnchmrk</module>
         <module>product</module>
