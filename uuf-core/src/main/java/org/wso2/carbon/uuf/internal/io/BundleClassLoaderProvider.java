@@ -25,6 +25,7 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.wiring.BundleWiring;
+import org.wso2.carbon.uuf.exception.FileOperationException;
 import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.internal.core.create.ClassLoaderProvider;
 import org.wso2.carbon.uuf.reference.ComponentReference;
@@ -80,8 +81,8 @@ public class BundleClassLoaderProvider implements ClassLoaderProvider {
         try {
             return createBundle(componentName, getBundleVersion(componentVersion), getImports(componentReference));
         } catch (IOException e) {
-            throw new UUFException("Error while creating the OSGi bundle for component '" + componentName + "-" +
-                                           componentVersion + "'.", e);
+            throw new FileOperationException("Error while creating the OSGi bundle for component '" + componentName +
+                                                     "-" + componentVersion + "'.", e);
         } catch (BundleException e) {
             throw new UUFException("Error while installing the OSGi bundle of component '" + componentName + "-" +
                                            componentVersion + "'.", e);
@@ -121,7 +122,7 @@ public class BundleClassLoaderProvider implements ClassLoaderProvider {
         InputStream bundleInputStream = createBundleStream(bundleName, bundleKey, bundleVersion, imports);
         bundle = bundleContext.installBundle(bundleKey, bundleInputStream);
         bundle.start();
-        //InputStream will be eventually consumed by org.eclipse.osgi.storage.StorageUtil hence cannot close it here.
+        // InputStream will be eventually consumed by org.eclipse.osgi.storage.StorageUtil hence cannot close it here.
         return bundle;
     }
 

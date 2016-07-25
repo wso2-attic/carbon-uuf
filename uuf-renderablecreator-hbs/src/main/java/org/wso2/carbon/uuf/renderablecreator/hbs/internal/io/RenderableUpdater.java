@@ -19,8 +19,10 @@
 package org.wso2.carbon.uuf.renderablecreator.hbs.internal.io;
 
 import com.github.jknack.handlebars.io.StringTemplateSource;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.uuf.exception.FileOperationException;
 import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.reference.FileReference;
 import org.wso2.carbon.uuf.reference.FragmentReference;
@@ -63,7 +65,7 @@ public class RenderableUpdater {
         try {
             this.watcher = FileSystems.getDefault().newWatchService();
         } catch (IOException e) {
-            throw new UUFException("Cannot create file watch service.", e);
+            throw new FileOperationException("Cannot create file watch service.", e);
         }
         this.watchService = new Thread(this::run, RenderableUpdater.class.getName() + "-WatchService");
         this.isWatchServiceStopped = false;
@@ -90,11 +92,11 @@ public class RenderableUpdater {
             } catch (ClosedWatchServiceException e) {
                 throw new UUFException("File watch service is closed.", e);
             } catch (NotDirectoryException e) {
-                throw new UUFException("Cannot register path '" + parentDirectory +
+                throw new FileOperationException("Cannot register path '" + parentDirectory +
                                                "' to file watch service as it is not a directory.", e);
             } catch (IOException e) {
-                throw new UUFException("An IO error occurred when registering path '" + parentDirectory +
-                                               "' to file watch service.'", e);
+                throw new FileOperationException("An IO error occurred when registering path '" + parentDirectory +
+                                                         "' to file watch service.'", e);
             }
         }
         watchingRenderables.put(renderablePath.getFileName(), mutableRenderable);
@@ -112,11 +114,7 @@ public class RenderableUpdater {
 
     public void finish() {
         isWatchServiceStopped = true;
-        try {
-            watcher.close();
-        } catch (IOException e) {
-            log.warn("Cannot close file watch service.", e);
-        }
+        IOUtils.closeQuietly(watcher);
     }
 
     private void run() {
@@ -180,7 +178,7 @@ public class RenderableUpdater {
         try {
             return new String(Files.readAllBytes(filePath), StandardCharsets.UTF_8);
         } catch (IOException e) {
-            throw new UUFException("Cannot read content of updated file '" + filePath + "'.", e);
+            throw new FileOperationException("Cannot read content of updated file '" + filePath + "'.", e);
         }
     }
 }

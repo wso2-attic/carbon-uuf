@@ -17,7 +17,8 @@
 package org.wso2.carbon.uuf.internal.io;
 
 import org.apache.commons.io.FilenameUtils;
-import org.wso2.carbon.uuf.exception.UUFException;
+import org.apache.commons.io.IOUtils;
+import org.wso2.carbon.uuf.exception.FileOperationException;
 import org.wso2.carbon.uuf.reference.ComponentReference;
 import org.wso2.carbon.uuf.reference.FileReference;
 import org.wso2.carbon.uuf.reference.FragmentReference;
@@ -27,56 +28,54 @@ import org.wso2.carbon.uuf.reference.PageReference;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.DirectoryStream;
-import java.util.Optional;
-import java.util.Set;
-import java.util.Properties;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Properties;
+import java.util.Set;
 import java.util.stream.Stream;
 
 public class ArtifactComponentReference implements ComponentReference {
 
-    private final String CHAR_ENCODING = "UTF-8";
-    private final Path path;
+    private static final String CHAR_ENCODING = "UTF-8";
+    private final Path componentDirectory;
     private final ArtifactAppReference appReference;
 
-    public ArtifactComponentReference(Path path, ArtifactAppReference appReference) {
-        this.path = path;
+    public ArtifactComponentReference(Path componentDirectory, ArtifactAppReference appReference) {
+        this.componentDirectory = componentDirectory;
         this.appReference = appReference;
     }
 
     @Override
     public Stream<PageReference> getPages(Set<String> supportedExtensions) {
-        Path pages = path.resolve(DIR_NAME_PAGES);
+        Path pages = componentDirectory.resolve(DIR_NAME_PAGES);
         if (!Files.exists(pages)) {
             return Stream.<PageReference>empty();
         }
         try {
-            return Files
-                    .walk(pages)
+            return Files.walk(pages)
                     .filter(path -> Files.isRegularFile(path) && supportedExtensions.contains(getExtension(path)))
                     .map(path -> new ArtifactPageReference(path, this));
         } catch (IOException e) {
-            throw new UUFException("An error occurred while listing pages in '" + pages + "'.", e);
+            throw new FileOperationException("An error occurred while listing pages in '" + pages + "'.", e);
         }
     }
 
     @Override
     public Stream<LayoutReference> getLayouts(Set<String> supportedExtensions) {
-        Path layouts = path.resolve(DIR_NAME_LAYOUTS);
+        Path layouts = componentDirectory.resolve(DIR_NAME_LAYOUTS);
         if (!Files.exists(layouts)) {
             return Stream.<LayoutReference>empty();
         }
         try {
-            return Files
-                    .list(layouts)
+            return Files.list(layouts)
                     .filter(path -> Files.isRegularFile(path) && supportedExtensions.contains(getExtension(path)))
                     .map(path -> new ArtifactLayoutReference(path, this));
         } catch (IOException e) {
-            throw new UUFException("An error occurred while listing layouts in '" + layouts + "'.", e);
+            throw new FileOperationException("An error occurred while listing layouts in '" + layouts + "'.", e);
         }
     }
 
@@ -86,23 +85,22 @@ public class ArtifactComponentReference implements ComponentReference {
 
     @Override
     public Stream<FragmentReference> getFragments(Set<String> supportedExtensions) {
-        Path fragments = path.resolve(DIR_NAME_FRAGMENTS);
+        Path fragments = componentDirectory.resolve(DIR_NAME_FRAGMENTS);
         if (!Files.exists(fragments)) {
             return Stream.<FragmentReference>empty();
         }
         try {
-            return Files
-                    .list(fragments)
+            return Files.list(fragments)
                     .filter(Files::isDirectory)
                     .map(path -> new ArtifactFragmentReference(path, this, supportedExtensions));
         } catch (IOException e) {
-            throw new UUFException("An error occurred while listing fragments in '" + fragments + "'.", e);
+            throw new FileOperationException("An error occurred while listing fragments in '" + fragments + "'.", e);
         }
     }
 
     @Override
     public Optional<FileReference> getBindingsConfig() {
-        Path bindingsConfiguration = path.resolve(FILE_NAME_BINDINGS);
+        Path bindingsConfiguration = componentDirectory.resolve(FILE_NAME_BINDINGS);
         if (Files.exists(bindingsConfiguration)) {
             return Optional.of(new ArtifactFileReference(bindingsConfiguration, appReference));
         } else {
@@ -112,7 +110,7 @@ public class ArtifactComponentReference implements ComponentReference {
 
     @Override
     public Optional<FileReference> getConfigurations() {
-        Path configuration = path.resolve(FILE_NAME_CONFIGURATIONS);
+        Path configuration = componentDirectory.resolve(FILE_NAME_CONFIGURATIONS);
         if (Files.exists(configuration)) {
             return Optional.of(new ArtifactFileReference(configuration, appReference));
         } else {
@@ -122,7 +120,7 @@ public class ArtifactComponentReference implements ComponentReference {
 
     @Override
     public Optional<FileReference> getOsgiImportsConfig() {
-        Path binding = path.resolve(FILE_NAME_OSGI_IMPORTS);
+        Path binding = componentDirectory.resolve(FILE_NAME_OSGI_IMPORTS);
         if (Files.exists(binding)) {
             return Optional.of(new ArtifactFileReference(binding, appReference));
         } else {
@@ -131,39 +129,45 @@ public class ArtifactComponentReference implements ComponentReference {
     }
 
     @Override
-    public String getPath() {
-        return path.toString();
-    }
-
-    Path getFilePath() {
-        return path;
-    }
-
-    ArtifactAppReference getAppReference() {
-        return appReference;
-    }
-
-    @Override
-    public Map<String, Properties> getI18nFiles(){
-        Path lang = path.resolve(DIR_NAME_LANGUAGE);
+    public Map<String, Properties> getI18nFiles() {
+        Path lang = componentDirectory.resolve(DIR_NAME_LANGUAGE);
         Map<String, Properties> i18n = new HashMap<>();
-
+        InputStreamReader is = null;
         if (!Files.exists(lang)) {
             return i18n;
         }
 
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(lang, "*.{properties}")) {
-            for (Path entry: stream) {
+            for (Path entry : stream) {
                 if (Files.isRegularFile(entry)) {
                     Properties props = new Properties();
-                    props.load(new InputStreamReader(new FileInputStream(entry.toString()), CHAR_ENCODING));
-                    String fileName = entry.getFileName().toString();
-                    i18n.put(fileName.substring(0,fileName.indexOf('.')), props);
+                    is = new InputStreamReader(new FileInputStream(entry.toString()), CHAR_ENCODING);
+                    props.load(is);
+                    Path path = entry.getFileName();
+                    if (path != null) {
+                        String fileName = path.toString();
+                        i18n.put(fileName.substring(0, fileName.indexOf('.')), props);
+                    }
                 }
             }
         } catch (IOException e) {
-            throw new UUFException("An error occurred while reading locale file in '" + lang + "'.", e);
+            throw new FileOperationException("An error occurred while reading locale files in '" + lang + "'.", e);
+        } finally {
+            IOUtils.closeQuietly(is);
         }
         return i18n;
+    }
+
+    @Override
+    public String getPath() {
+        return componentDirectory.toString();
+    }
+
+    Path getDirectory() {
+        return componentDirectory;
+    }
+
+    ArtifactAppReference getAppReference() {
+        return appReference;
     }
 }

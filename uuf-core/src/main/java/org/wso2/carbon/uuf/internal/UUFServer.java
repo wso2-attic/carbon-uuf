@@ -33,7 +33,6 @@ import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.carbon.uuf.spi.HttpResponse;
 import org.wso2.carbon.uuf.spi.UUFAppRegistry;
 
-import java.nio.file.Path;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -149,12 +148,11 @@ public class UUFServer {
                                                          "'.");
                 return;
             }
-            Path appBasePath = appRegistry.getBasePath(request.getContextPath());
-            requestDispatcher.serve(app.get(), appBasePath, request, response);
+            requestDispatcher.serve(app.get(), request, response);
         } catch (Exception e) {
             // catching any/all exception/s
             log.error("An unexpected error occurred while serving for request '" + request + "'.", e);
-            requestDispatcher.serveErrorPage((app.isPresent() ? app.get() : null), request, response,
+            requestDispatcher.serveErrorPage(app.orElse(null), request, response,
                                              new HttpErrorException(STATUS_INTERNAL_SERVER_ERROR, e.getMessage(), e));
         }
     }

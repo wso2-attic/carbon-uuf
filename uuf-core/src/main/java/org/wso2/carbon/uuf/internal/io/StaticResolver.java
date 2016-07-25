@@ -22,15 +22,17 @@ import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.core.App;
 import org.wso2.carbon.uuf.core.Component;
 import org.wso2.carbon.uuf.core.Theme;
+import org.wso2.carbon.uuf.exception.FileOperationException;
 import org.wso2.carbon.uuf.exception.ResourceNotFoundException;
 import org.wso2.carbon.uuf.internal.debug.Debugger;
-import org.wso2.carbon.uuf.internal.util.MimeMapper;
+import org.wso2.carbon.uuf.internal.io.util.MimeMapper;
 import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.carbon.uuf.spi.HttpResponse;
 
-import java.io.IOException;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -104,7 +106,7 @@ public class StaticResolver {
         }
     }
 
-    public void serve(App app, Path basePath, HttpRequest request, HttpResponse response) {
+    public void serve(App app, HttpRequest request, HttpResponse response) {
         Path resourcePath;
         ZonedDateTime lastModifiedDate;
         try {
@@ -129,7 +131,7 @@ public class StaticResolver {
             response.setContent(STATUS_NOT_FOUND, "Requested resource '" + request.getUri() + "' does not exists.");
             return;
         } catch (Exception e) {
-            // IOException or any other Exception that might occur.
+            // FileOperationException, IOException or any other Exception that might occur.
             log.error("An error occurred when manipulating paths for request '" + request + "'.", e);
             response.setContent(STATUS_INTERNAL_SERVER_ERROR,
                                 "A server occurred while serving for static resource request '" + request + "'.");
@@ -156,12 +158,14 @@ public class StaticResolver {
     }
 
     private Path resolveResourceInComponent(App app, String uriWithoutContextPath) {
-        // Correct 'uriWithoutContextPath' value must be in
-        // "/public/components/{component-context-path}/{fragment-simple-name}/{sub-directory}/{rest-of-the-path}"
-        // format or in
-        // "/public/components/{component-context-path}/base/{sub-directory}/{rest-of-the-path}" format.
-        // So there should be at least 6 slashes. Don't worry about multiple consecutive slashes. They  are covered
-        // in RequestUtil.isValid(HttpRequest) method which is called before this method.
+        /*
+         * Correct 'uriWithoutContextPath' value must be in
+         * "/public/components/{component-context-path}/{fragment-simple-name}/{sub-directory}/{rest-of-the-path}"
+         * format or in
+         * "/public/components/{component-context-path}/base/{sub-directory}/{rest-of-the-path}" format.
+         * So there should be at least 6 slashes. Don't worry about multiple consecutive slashes. They  are covered in
+         * HttpRequest.isValid(HttpRequest) method which is called before this method.
+         */
 
         int slashesCount = 0, thirdSlashIndex = -1, fourthSlashIndex = -1, fifthSlashIndex = -1;
         for (int i = 0; i < uriWithoutContextPath.length(); i++) {
@@ -205,10 +209,12 @@ public class StaticResolver {
     }
 
     private Path resolveResourceInTheme(App app, String uriWithoutContextPath) {
-        // Correct 'uriWithoutContextPath' value must be in
-        // "/public/themes/{theme-name}/{sub-directory}/{rest-of-the-path}" format.
-        // So there should be at least 5 slashes. Don't worry about multiple consecutive slashes. They  are covered
-        // in RequestUtil.isValid(HttpRequest) method which is called before this method.
+        /*
+         * Correct 'uriWithoutContextPath' value must be in
+         * "/public/themes/{theme-name}/{sub-directory}/{rest-of-the-path}" format.
+         * So there should be at least 5 slashes. Don't worry about multiple consecutive slashes. They  are covered
+         * in HttpRequest.isValid(HttpRequest) method which is called before this method.
+         */
 
         int slashesCount = 0, thirdSlashIndex = -1, fourthSlashIndex = -1;
         for (int i = 0; i < uriWithoutContextPath.length(); i++) {
@@ -240,14 +246,21 @@ public class StaticResolver {
     }
 
     private ZonedDateTime getLastModifiedDate(Path resourcePath) {
+        if (!Files.isReadable(resourcePath)) {
+            throw new ResourceNotFoundException("Static resource file '" + resourcePath + "' is not readable.");
+        }
+
         BasicFileAttributes fileAttributes;
         try {
             fileAttributes = Files.readAttributes(resourcePath, BasicFileAttributes.class);
-        } catch (IOException e) {
-            log.error("Cannot read file attributes from static resource file '" + resourcePath + "'.", e);
-            return null;
+        } catch (NoSuchFileException | FileNotFoundException e) {
+            // This shouldn't be happening because we checked the file's readability before. But just in case.
+            throw new ResourceNotFoundException("Static resource file '" + resourcePath + "' does not exists.", e);
+        } catch (Exception e) {
+            // UnsupportedOperationException, IOException or any other Exception that might occur.
+            throw new FileOperationException(
+                    "Cannot read file attributes from static resource file '" + resourcePath + "'.", e);
         }
-
         if (fileAttributes.isRegularFile()) {
             return ZonedDateTime.ofInstant(fileAttributes.lastModifiedTime().toInstant(), GMT_TIME_ZONE);
         } else {
@@ -259,7 +272,7 @@ public class StaticResolver {
              *      as long as the link resolves to a regular file.
              * Hence, checking 'isRegularFile' of a file is enough to determine its existence and not being a directory.
              */
-            throw new ResourceNotFoundException("Static resource file '" + resourcePath + "' does not exists.");
+            throw new ResourceNotFoundException("Static resource file '" + resourcePath + "' is not a regular file.");
         }
     }
 

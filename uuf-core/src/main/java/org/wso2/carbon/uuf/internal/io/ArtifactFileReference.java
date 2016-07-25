@@ -17,7 +17,7 @@
 package org.wso2.carbon.uuf.internal.io;
 
 import org.apache.commons.io.FilenameUtils;
-import org.wso2.carbon.uuf.exception.UUFException;
+import org.wso2.carbon.uuf.exception.FileOperationException;
 import org.wso2.carbon.uuf.reference.FileReference;
 
 import java.io.IOException;
@@ -52,14 +52,14 @@ public class ArtifactFileReference implements FileReference {
         try {
             return new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
         } catch (IOException e) {
-            throw new UUFException("Cannot read content of file '" + path + "'.", e);
+            throw new FileOperationException("Cannot read content of file '" + path + "'.", e);
         }
     }
 
     @Override
     public String getRelativePath() {
-        // Here 'appReference.getFilePath().getParent()' never null.
-        return appReference.getFilePath().getParent().relativize(path).toString();
+        // Here 'appReference.getDirectory().getParent()' never null.
+        return appReference.getDirectory().getParent().relativize(path).toString();
     }
 
     @Override
