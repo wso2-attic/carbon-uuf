@@ -1,0 +1,31 @@
+{{secured}}
+{{layout "org.wso2.carbon.uuf.sample.foundation.main"}}
+{{favicon "images/favicon.png" type="image/png"}}
+{{title "Manage Users | " @config.appName}}
+
+{{#fillZone "content"}}
+    <div class="page-header">
+        <h1>List of available users</h1>
+        <p class="lead">You can find all users here</p>
+    </div>
+    <table class="table table-responsive table-striped" id="members">
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Email Address</th>
+            <th>Organization</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{#each users}}
+            <tr>
+                <td>{{@index}}</td>
+                <td>{{name}}</td>
+                <td>{{email}}</td>
+                <td>{{organization}}</td>
+            </tr>
+        {{/each}}
+        </tbody>
+    </table>
+{{/fillZone}}
