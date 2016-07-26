@@ -149,6 +149,14 @@
             <version>${msf4j.version}</version>
             <type>zip</type>
         </dependency>
+
+        <!-- Authentication -->
+        <dependency>
+            <groupId>org.wso2.carbon.security.caas</groupId>
+            <artifactId>org.wso2.carbon.security.caas.feature</artifactId>
+            <version>${carbon.security.caas.version}</version>
+            <type>zip</type>
+        </dependency>
     </dependencies>
 
     <build>
@@ -252,6 +260,15 @@
                                         ${basedir}/target/wso2carbon-kernel-${carbon.kernel.version}/osgi/dropins
                                     </outputDirectory>
                                 </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.wso2.carbon.uuf.sample</groupId>
+                                    <artifactId>org.wso2.carbon.uuf.sample.simple-auth.bundle</artifactId>
+                                    <version>${project.version}</version>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>
+                                        ${basedir}/target/wso2carbon-kernel-${carbon.kernel.version}/osgi/dropins
+                                    </outputDirectory>
+                                </artifactItem>
                             </artifactItems>
                         </configuration>
                     </execution>
@@ -334,6 +351,10 @@
                                 <feature>
                                     <id>org.wso2.carbon.datasource.core.feature</id>
                                     <version>${carbon.datasources.version}</version>
+                                </feature>
+                                <feature>
+                                    <id>org.wso2.carbon.security.caas.feature</id>
+                                    <version>${carbon.security.caas.version}</version>
                                 </feature>
                             </features>
                         </configuration>
@@ -442,6 +463,10 @@
                                 <feature>
                                     <id>org.wso2.carbon.datasource.core.feature.group</id>
                                     <version>${carbon.datasources.version}</version>
+                                </feature>
+                                <feature>
+                                    <id>org.wso2.carbon.security.caas.feature.group</id>
+                                    <version>${carbon.security.caas.version}</version>
                                 </feature>
                             </features>
                         </configuration>

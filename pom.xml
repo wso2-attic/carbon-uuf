@@ -182,6 +182,13 @@
                 <version>${carbon.transport.http.netty.version}</version>
             </dependency>
 
+            <!-- Sample Authentication -->
+            <dependency>
+                <groupId>org.wso2.carbon.security.caas</groupId>
+                <artifactId>org.wso2.carbon.security.caas</artifactId>
+                <version>${carbon.security.caas.version}</version>
+            </dependency>
+
             <!-- Test -->
             <dependency>
                 <groupId>org.testng</groupId>
@@ -294,6 +301,9 @@
 
         <!-- MSF4J -->
         <msf4j.version>2.0.0</msf4j.version>
+
+        <!-- Sample Authentication -->
+        <carbon.security.caas.version>1.0.0-m2</carbon.security.caas.version>
 
         <!-- Maven Plugins -->
         <carbon.feature.plugin.version>2.0.0</carbon.feature.plugin.version>
