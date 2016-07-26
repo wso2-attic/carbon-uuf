@@ -2,3 +2,7 @@ appName: Simple Auth
 loginRedirectUri: "/"
 registerRedirectUri: "/"
 logoutRedirectUri: "/simple-auth/login"
+menu :
+  main :
+    Home : {link: "", icon: "fw-home"}
+    Users : {link: "users", icon: "fw-user"}
