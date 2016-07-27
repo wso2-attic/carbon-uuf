@@ -22,12 +22,24 @@ import org.wso2.carbon.uuf.core.RequestLookup;
 import org.wso2.carbon.uuf.spi.Renderable;
 import org.wso2.carbon.uuf.spi.model.Model;
 
+import java.nio.file.Path;
+
 public class HtmlRenderable implements Renderable {
 
     private String htmlFileContent;
+    private Path filePath;
 
-    public HtmlRenderable(String htmlFileContent) {
+    public HtmlRenderable(Path filePath, String htmlFileContent) {
+        this.filePath = filePath;
         this.htmlFileContent = htmlFileContent;
+    }
+
+    public Path getFilePath() {
+        return filePath;
+    }
+
+    public void setHtmlFileContent(String content) {
+        this.htmlFileContent = content;
     }
 
     @Override

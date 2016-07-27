@@ -22,14 +22,17 @@ import org.osgi.service.component.annotations.Deactivate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.google.common.collect.ImmutableSet;
-import org.wso2.carbon.uuf.exception.NotSupportedException;
+import org.wso2.carbon.uuf.reference.FileReference;
 import org.wso2.carbon.uuf.reference.FragmentReference;
 import org.wso2.carbon.uuf.reference.LayoutReference;
 import org.wso2.carbon.uuf.reference.PageReference;
 import org.wso2.carbon.uuf.renderablecreator.html.impl.HtmlRenderable;
+import org.wso2.carbon.uuf.renderablecreator.html.internal.io.HtmlRenderableUpdater;
 import org.wso2.carbon.uuf.spi.Renderable;
 import org.wso2.carbon.uuf.spi.RenderableCreator;
 
+import java.lang.management.ManagementFactory;
+import java.nio.file.Paths;
 import java.util.Set;
 
 @Component(name = "org.wso2.carbon.uuf.renderablecreator.html.internal.HtmlRenderableCreator",
@@ -41,14 +44,32 @@ public class HtmlRenderableCreator implements RenderableCreator {
     private static final Set<String> SUPPORTED_FILE_EXTENSIONS = ImmutableSet.of("html");
     private static final Logger log = LoggerFactory.getLogger(HtmlRenderableCreator.class);
 
+    private final boolean isDebuggingEnabled;
+    private final HtmlRenderableUpdater updater;
+
+    public HtmlRenderableCreator() {
+        this.isDebuggingEnabled = ManagementFactory.getRuntimeMXBean().getInputArguments().contains("-Xdebug");
+        if (this.isDebuggingEnabled) {
+            updater = new HtmlRenderableUpdater();
+        } else {
+            updater = null;
+        }
+    }
+
     @Activate
     protected void activate() {
         log.debug("HtmlRenderableCreator activated.");
+        if (isDebuggingEnabled) {
+            updater.start();
+        }
     }
 
     @Deactivate
     protected void deactivate() {
         log.debug("HtmlRenderableCreator deactivated.");
+        if (isDebuggingEnabled) {
+            updater.finish();
+        }
     }
 
     @Override
@@ -59,19 +80,27 @@ public class HtmlRenderableCreator implements RenderableCreator {
     @Override
     public FragmentRenderableData createFragmentRenderable(FragmentReference fragmentReference,
                                                            ClassLoader classLoader) {
-        Renderable renderable = new HtmlRenderable(fragmentReference.getRenderingFile().getContent());
-        return new RenderableCreator.FragmentRenderableData(renderable, false);
+        return new RenderableCreator.FragmentRenderableData(getHtmlRenderable(fragmentReference.getRenderingFile()),
+                                                            false);
     }
 
     @Override
     public PageRenderableData createPageRenderable(PageReference pageReference,
                                                    ClassLoader classLoader) {
-        Renderable renderable = new HtmlRenderable(pageReference.getRenderingFile().getContent());
-        return new RenderableCreator.PageRenderableData(renderable, false);
+        return new RenderableCreator.PageRenderableData(getHtmlRenderable(pageReference.getRenderingFile()), false);
     }
 
     @Override
     public LayoutRenderableData createLayoutRenderable(LayoutReference layoutReference) {
-        throw new NotSupportedException("Layouts are not supported for html file content");
+        throw new UnsupportedOperationException("Layouts are not supported for html file content");
+    }
+
+    private Renderable getHtmlRenderable(FileReference fileReference) {
+        HtmlRenderable htmlRenderable = new HtmlRenderable(Paths.get(fileReference.getAbsolutePath()),
+                                                           fileReference.getContent());
+        if (isDebuggingEnabled) {
+            updater.add(htmlRenderable);
+        }
+        return htmlRenderable;
     }
 }
