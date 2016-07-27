@@ -246,16 +246,6 @@
                                         ${basedir}/target/wso2carbon-kernel-${carbon.kernel.version}/deployment/uufapps
                                     </outputDirectory>
                                 </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.wso2.carbon.uuf.sample</groupId>
-                                    <artifactId>org.wso2.carbon.uuf.sample.hello-world</artifactId>
-                                    <version>${project.version}</version>
-                                    <type>zip</type>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>
-                                        ${basedir}/target/wso2carbon-kernel-${carbon.kernel.version}/deployment/uufapps
-                                    </outputDirectory>
-                                </artifactItem>
                             </artifactItems>
                         </configuration>
                     </execution>
