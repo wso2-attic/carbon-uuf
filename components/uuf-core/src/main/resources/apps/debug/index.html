@@ -12,94 +12,85 @@
     <!-- bootstrap -->
     <link href="public/lib/bootstrap-3.3.6/css/bootstrap.min.css" rel="stylesheet">
     
-    <!-- font-awesome -->
-    <link href="public/lib/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet">
-    
     <!-- custom css -->
     <link href="public/css/debug.css" rel="stylesheet">
 
 </head>
 
-<body>
-    
-    <div id="wrapper">
-        
-        <!-- Sidebar -->
-        <div id="sidebar-wrapper">
-            <div class="header-logo">
-                <a id="logo" href="/doc"></a>
-                <h1>WSO2 UUF</h1>
-            </div>
-            <ul class="sidebar-nav">
-                <li class="active">
-                    <a title="Pages" href="#pages">
-                        <i class="fa fa-file-o fa-fw"></i>
-                        <span>Pages</span>
-                    </a>
-                </li>
-                <li>
-                    <a title="Fragments" href="#fragments">
-                        <i class="fa fa-clone fa-fw"></i>
-                        <span>Fragments</span>
-                    </a>
-                </li>
-                <li>
-                    <a title="Logs" href="#logs">
-                        <i class="fa fa-list fa-fw"></i>
-                        <span>Logs</span>
-                    </a>
-                </li>
-                <li>
-                    <a title="Trace" href="#trace">
-                        <i class="fa fa-sitemap  fa-fw"></i>
-                        <span>Trace</span>
-                    </a>
-                </li>
-                <li>
-                    <a title="Network" href="#network">
-                        <i class="fa fa-exchange fa-fw"></i>
-                        <span>Network</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
-        <!-- /#sidebar-wrapper -->
-        
-        <!-- page-header -->
-        <div class="page-header">
-            <div class="container-fluid clearfix">
-                <a href="#menu-toggle" class="sidebar-toggle-button pull-left" id="menu-toggle">
-                    <span class="icon fa-stack">
-                        <i class="fa fa-bars fa-stack-1x"></i>
-                    </span>
-                </a>
-                <div class="page-title pull-left">
-                    <h1>Debug <a href="/pet-store">pet-store</a></h1>
-                </div>
-                <a class="git-link pull-right" href="https://github.com/wso2-incubator/uuf-samples/tree/master/sample-apps/sample-1/pet-store-non-working">
-                    <i class="fa fa-github fa-fw"></i><span>git</span>
-                </a>
-            </div>
-        </div>
-        <!-- /page-header -->
-        
-        <!-- #page-content-wrapper -->
-        <div id="page-content-wrapper">
-            <div id="content" class="container-fluid container-limited"></div>
-        </div>
-        <!-- /#page-content-wrapper -->
 
+<body class="sticky-footer">
+
+<!-- header -->
+<header class="header header-default">
+    <div class="container-fluid">
+        <div class="pull-left brand float-remove-xs text-center-xs">
+            <a href="#">
+                <img src="../public/components/foundation/base/images/logo.png" alt="wso2" title="wso2" class="logo">
+                <h1 class="display-block-xs">WSO2 UUF Debugger</h1>
+            </a>
+        </div>
     </div>
-    <!-- /#wrapper -->
-    
-    <!-- jquery -->
-    <script src="public/lib/jquery-2.2.1/js/jquery-2.2.1.min.js"></script>
+</header>
 
-    <!-- bootstrap core javaScript -->
-    <script src="public/lib/bootstrap-3.3.6/js/bootstrap.min.js"></script>
 
-    <!-- app script -->
-    <script src="public/js/app.js"></script>
-        
+<!-- #page-content-wrapper -->
+<div class="page-content-wrapper" style="padding-left:300px;">
+
+    <!-- .left-sidebar -->
+    <div class="sidebar-wrapper sidebar-nav" id="left-sidebar" data-side="left" data-width="300"
+         data-fixed-offset-top="0" data-spy="affix" data-offset-top="80" style="width: 300px; left: 0px;">
+        <ul class="nav nav-pills nav-stacked pages">
+            <li class="active"><a data-href="pages">Pages</a></li>
+            <li class=""><a data-href="fragments">Fragments</a></li>
+            <li class=""><a data-href="layouts">Layouts</a></li>
+            <li class=""><a data-href="themes">Themes</a></li>
+        </ul>
+    </div>
+    <!-- /.left-sidebar -->
+
+
+    <!-- page content -->
+    <div class="container-fluid">
+
+        <div class="body-wrapper">
+
+            <div class="page-header">
+                <h1>UUF Debugger</h1>
+                <p class="lead">Pages</p>
+            </div>
+            <div class="container-wrapper">
+                <div class="preloader"></div>
+                <div id="pages" class="info-container"><pre><code></code></pre></div>
+                <div id="fragments" class="info-container"><pre><code ></code></pre></div>
+                <div id="layouts" class="info-container"><pre><code></code></pre></div>
+                <div id="themes" class="info-container"><pre><code></code></pre></div>
+            </div>
+        </div>
+    </div>
+    <!-- /page content -->
+
+</div>
+<!-- /#page-content-wrapper -->
+
+<!-- footer -->
+<footer class="footer">
+    <div class="container-fluid">
+        <p>Theme WSO2 v1.0.0 | &copy;
+            <script>document.write(new Date().getFullYear());</script>
+            <a href="http://wso2.com/" target="_blank"><i class="icon fw fw-wso2"></i> Inc</a>.
+        </p>
+    </div>
+</footer>
+
+
+<!-- /#wrapper -->
+
+<!-- jquery -->
+<script src="public/lib/jquery-2.2.1/js/jquery-2.2.1.min.js"></script>
+
+<!-- app script -->
+<script src="public/js/app.js"></script>
+<script src="public/js/debug.js"></script>
+
 </body>
 </html>
