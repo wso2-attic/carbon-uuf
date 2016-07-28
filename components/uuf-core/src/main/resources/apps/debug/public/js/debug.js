@@ -15,8 +15,6 @@ $( document ).ready(function() {
 
 });
 
-
-
 function showPages(){
     requestUtil.makeRequest("GET", "/pages/", null, function(data) {
         $(".info-container").hide();
@@ -26,6 +24,7 @@ function showPages(){
         $(".lead").text("Pages");
     });
 }
+
 function showFragments(){
     requestUtil.makeRequest("GET", "/fragments/", null, function(data) {
         $(".info-container").hide();
@@ -35,6 +34,7 @@ function showFragments(){
         $(".lead").text("Fragments");
     });
 }
+
 function showLayouts(){
     requestUtil.makeRequest("GET", "/layouts/", null, function(data) {
         $(".info-container").hide();
@@ -44,6 +44,7 @@ function showLayouts(){
         $(".lead").text("Layouts");
     });
 }
+
 function showThemes(){
     requestUtil.makeRequest("GET", "/themes/", null, function(data) {
         $(".info-container").hide();
@@ -56,7 +57,7 @@ function showThemes(){
 
 requestUtil = new function() {
     this.makeRequest = function(type, url, data, callback) {
-        var requestUrl  = "https://localhost:9292/features-app/debug/api" + url
+        var requestUrl = window.location.href + "api" + url;
         $.ajax({
             type: type,
             url: requestUrl,
@@ -68,7 +69,7 @@ requestUtil = new function() {
             }
         });
     };
-}
+};
 
 //preloader
 (function($) {
