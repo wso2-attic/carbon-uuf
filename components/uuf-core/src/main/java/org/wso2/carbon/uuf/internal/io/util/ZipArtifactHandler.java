@@ -59,7 +59,12 @@ public class ZipArtifactHandler {
                     .findFirst()
                     .orElseThrow(() -> new FileOperationException("Cannot find app directory in zip artifact '" +
                                                                           zipArtifact.getPath() + "'."));
-            return Paths.get(firstEntry.getName()).getFileName().toString();
+            if (firstEntry.isDirectory()) {
+                return Paths.get(firstEntry.getName()).getFileName().toString();
+            } else {
+                throw new FileOperationException(
+                        "Cannot find an app directory inside the zip artifact '" + zipArtifact.getPath() + "'.");
+            }
         } catch (IOException e) {
             throw new FileOperationException(
                     "An error occurred when opening zip artifact '" + zipArtifact.getPath() + "'.", e);
