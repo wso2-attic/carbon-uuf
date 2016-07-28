@@ -83,28 +83,28 @@ public class Debugger {
                         content.add(component.getContextPath(), pages);
                     }
             );
-            response.setContent(content, CONTENT_TYPE_APPLICATION_JSON);
+            response.setContent(content.toString(), CONTENT_TYPE_APPLICATION_JSON);
             return;
         }
 
         if (URI_PATTEN_API_LAYOUTS.matches(uriWithoutContextPath)) {
             JsonArray jsonArray = new JsonArray();
             debugConnector.getLayouts().forEach(layout -> jsonArray.add(JSON_PARSER.parse(layout.toString())));
-            response.setContent(jsonArray, CONTENT_TYPE_APPLICATION_JSON);
+            response.setContent(jsonArray.toString(), CONTENT_TYPE_APPLICATION_JSON);
             return;
         }
 
         if (URI_PATTEN_API_FRAGMENTS.matches(uriWithoutContextPath)) {
             JsonArray jsonArray = new JsonArray();
             debugConnector.getFragments().forEach(fragment -> jsonArray.add(JSON_PARSER.parse(fragment.toString())));
-            response.setContent(jsonArray, CONTENT_TYPE_APPLICATION_JSON);
+            response.setContent(jsonArray.toString(), CONTENT_TYPE_APPLICATION_JSON);
             return;
         }
 
         if (URI_PATTEN_API_THEMES.matches(uriWithoutContextPath)) {
             JsonArray jsonArray = new JsonArray();
             debugConnector.getThemes().forEach(theme -> jsonArray.add(JSON_PARSER.parse(theme.toString())));
-            response.setContent(jsonArray, CONTENT_TYPE_APPLICATION_JSON);
+            response.setContent(jsonArray.toString(), CONTENT_TYPE_APPLICATION_JSON);
             return;
         }
 
