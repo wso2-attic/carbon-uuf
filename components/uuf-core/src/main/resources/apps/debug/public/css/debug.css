@@ -7663,6 +7663,50 @@ ul.sidebar-messages > li {
   min-height: 300px;
 }
 
+/* ========================================================================
+ * Sidebar secondary nav
+ * ======================================================================== */
+.sidebar-wrapper .nav i {
+  margin: 0px 10px 2px 10px;
+}
+
+.sidebar-wrapper .nav > li > a:focus, .sidebar-wrapper .nav > li > a:hover, .secondary-nav-active {
+  text-decoration: none;
+  background-color: #242932;
+}
+
+.secondary-nav li {
+  text-indent: 10px;
+  float: none;
+}
+
+.secondary-nav-toggle {
+  float: right;
+  vertical-align: middle;
+  display: block;
+  margin: 9px 10px 2px 10px !important;
+}
+
+.sidebar-nav li {
+  min-height: 40px;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 400;
+}
+
+.sidebar-nav li a {
+  padding: 5px 15px;
+  line-height: 29px;
+}
+
+.nav-stacked > li + li {
+  margin-top: 0px;
+}
+
+.sidebar-nav li {
+  border-bottom: 1px solid #242932;
+}
+
 .preloader{
     padding:0px;
     margin:0px auto;
