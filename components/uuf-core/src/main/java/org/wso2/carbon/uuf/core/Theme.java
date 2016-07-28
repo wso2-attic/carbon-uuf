@@ -81,7 +81,7 @@ public class Theme {
 
     @Override
     public String toString() {
-        return "{\"name\": \"" + name + ", \"path\": \"" + path + "\"}";
+        return "{\"name\": \"" + name + "\", \"path\": \"" + path + "\"}";
     }
 
     public static boolean isValidThemeName(String themeName) {
