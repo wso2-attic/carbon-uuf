@@ -132,17 +132,25 @@ public class ArtifactComponentReference implements ComponentReference {
     public Map<String, Properties> getI18nFiles() {
         Path lang = componentDirectory.resolve(DIR_NAME_LANGUAGE);
         Map<String, Properties> i18n = new HashMap<>();
-        InputStreamReader is = null;
+        DirectoryStream<Path> stream = null;
         if (!Files.exists(lang)) {
             return i18n;
         }
 
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(lang, "*.{properties}")) {
+        try {
+            stream = Files.newDirectoryStream(lang, "*.{properties}");
             for (Path entry : stream) {
                 if (Files.isRegularFile(entry)) {
                     Properties props = new Properties();
-                    is = new InputStreamReader(new FileInputStream(entry.toString()), CHAR_ENCODING);
-                    props.load(is);
+                    InputStreamReader is = null;
+                    String file = entry.toString();
+                    try {
+                        is = new InputStreamReader(new FileInputStream(file), CHAR_ENCODING);
+                        props.load(is);
+                    } finally {
+                        IOUtils.closeQuietly(is);
+                    }
+
                     Path path = entry.getFileName();
                     if (path != null) {
                         String fileName = path.toString();
@@ -153,7 +161,7 @@ public class ArtifactComponentReference implements ComponentReference {
         } catch (IOException e) {
             throw new FileOperationException("An error occurred while reading locale files in '" + lang + "'.", e);
         } finally {
-            IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(stream);
         }
         return i18n;
     }
