@@ -46,9 +46,11 @@
         <module>components/nashorn-osgi-fragment</module>
         <module>components/uuf-core</module>
         <module>components/uuf-renderablecreator-hbs</module>
+        <module>components/uuf-renderablecreator-html</module>
         <module>components/uuf-httpconnector-msf4j</module>
         <module>features/org.wso2.carbon.uuf.core.feature</module>
         <module>features/org.wso2.carbon.uuf.renderablecreator.hbs.feature</module>
+        <module>features/org.wso2.carbon.uuf.renderablecreator.html.feature</module>
         <module>features/org.wso2.carbon.uuf.httpconnector.msf4j.feature</module>
         <module>samples</module>
         <module>perf-benchmark/tests/handlebars-n-msf4j/org.wso2.carbon.uuf.sample.perf-bnchmrk</module>
@@ -182,6 +184,13 @@
                 <version>${carbon.transport.http.netty.version}</version>
             </dependency>
 
+            <!-- Sample Authentication -->
+            <dependency>
+                <groupId>org.wso2.carbon.security.caas</groupId>
+                <artifactId>org.wso2.carbon.security.caas</artifactId>
+                <version>${carbon.security.caas.version}</version>
+            </dependency>
+
             <!-- Test -->
             <dependency>
                 <groupId>org.testng</groupId>
@@ -294,6 +303,9 @@
 
         <!-- MSF4J -->
         <msf4j.version>2.0.0</msf4j.version>
+
+        <!-- Sample Authentication -->
+        <carbon.security.caas.version>1.0.0-m2</carbon.security.caas.version>
 
         <!-- Maven Plugins -->
         <carbon.feature.plugin.version>2.0.0</carbon.feature.plugin.version>

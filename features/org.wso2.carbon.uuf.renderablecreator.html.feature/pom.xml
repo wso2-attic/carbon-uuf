@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>org.wso2.carbon.uuf.renderablecreator.html.feature</artifactId>
+    <packaging>carbon-feature</packaging>
+
+    <name>WSO2 UUF - Renderable Creator - HTML - Feature</name>
+    <description>This feature contains the HTML Renderable Creator for UUF server</description>
+    <url>http://wso2.org</url>
+
+    <parent>
+        <artifactId>uuf-parent</artifactId>
+        <groupId>org.wso2.carbon.uuf</groupId>
+        <version>1.0.0-SNAPSHOT</version>
+        <relativePath>../../pom.xml</relativePath>
+    </parent>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.wso2.carbon.uuf</groupId>
+            <artifactId>org.wso2.carbon.uuf.renderablecreator.html</artifactId>
+            <version>${carbon.uuf.version}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.wso2.carbon.maven</groupId>
+                <artifactId>carbon-feature-plugin</artifactId>
+                <extensions>true</extensions>
+                <executions>
+                    <execution>
+                        <id>1-p2-feature-generation</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <propertyFile>../etc/feature.properties</propertyFile>
+                            <adviceFileContents>
+                                <advice>
+                                    <name>org.wso2.carbon.p2.category.type</name>
+                                    <value>server</value>
+                                </advice>
+                                <advice>
+                                    <name>org.eclipse.equinox.p2.type.group</name>
+                                    <value>false</value>
+                                </advice>
+                            </adviceFileContents>
+                            <bundles>
+                                <bundle>
+                                    <symbolicName>org.wso2.carbon.uuf.renderablecreator.html</symbolicName>
+                                    <version>${carbon.uuf.version}</version>
+                                </bundle>
+                                <bundle>
+                                    <symbolicName>org.antlr.antlr4-runtime-osgi</symbolicName>
+                                    <version>${antlr-version}</version>
+                                </bundle>
+                            </bundles>
+                            <importFeatures>
+                                <feature>
+                                    <id>org.wso2.carbon.uuf.core.feature</id>
+                                    <version>${carbon.uuf.version}</version>
+                                </feature>
+                            </importFeatures>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

@@ -46,6 +46,7 @@
         <module>apps/org.wso2.carbon.uuf.sample.devices-store</module>
         <module>apps/org.wso2.carbon.uuf.sample.features-app</module>
         <module>osgi-services/org.wso2.carbon.uuf.sample.pets-store.bundle</module>
+        <module>osgi-services/org.wso2.carbon.uuf.sample.simple-auth.bundle</module>
         <module>p2-features/org.wso2.carbon.uuf.sample.pets-store.feature</module>
     </modules>
 

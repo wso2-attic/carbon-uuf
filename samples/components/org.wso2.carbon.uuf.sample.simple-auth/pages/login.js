@@ -35,9 +35,13 @@ function onRequest(env) {
 }
 
 function authenticate(username, password) {
-    if (username == "admin" && password == "admin") {
+    try {
+        // Calling dummy osgi authentication service
+        var SimpleAuthHandler = Java.type("org.wso2.carbon.uuf.sample.simpleauth.bundle.SimpleAuthHandler");
+        SimpleAuthHandler.authenticate(username, password);
         createSession(username);
         return {success: true, message: "success"}
+    } catch (e) {
+        return {success: false, message: e.message};
     }
-    return {success: false, message: "Incorrect username and password combination."};
 }

@@ -93,15 +93,15 @@ public class RenderableUpdater {
                 throw new UUFException("File watch service is closed.", e);
             } catch (NotDirectoryException e) {
                 throw new FileOperationException("Cannot register path '" + parentDirectory +
-                                               "' to file watch service as it is not a directory.", e);
+                                                         "' to file watch service as it is not a directory.", e);
             } catch (IOException e) {
                 throw new FileOperationException("An IO error occurred when registering path '" + parentDirectory +
                                                          "' to file watch service.'", e);
             }
         }
-        watchingRenderables.put(renderablePath.getFileName(), mutableRenderable);
+        watchingRenderables.put(renderablePath, mutableRenderable);
         mutableRenderable.getMutableExecutable()
-                .ifPresent(me -> watchingExecutables.put(Paths.get(me.getPath()).getFileName(), me));
+                .ifPresent(me -> watchingExecutables.put(Paths.get(me.getPath()), me));
     }
 
     public void start() {
@@ -138,10 +138,10 @@ public class RenderableUpdater {
                 Path updatedDirectory = (Path) watchKey.watchable();
                 @SuppressWarnings("unchecked")
                 Path updatedFileName = ((WatchEvent<Path>) event).context();
-                MutableHbsRenderable mutableRenderable = watchingRenderables.get(updatedFileName);
+                Path updatedFileAbsolutePath = updatedDirectory.resolve(updatedFileName);
+                MutableHbsRenderable mutableRenderable = watchingRenderables.get(updatedFileAbsolutePath);
                 if (mutableRenderable != null) {
                     // Updated file is a MutableHbsRenderable
-                    Path updatedFileAbsolutePath = updatedDirectory.resolve(updatedFileName);
                     try {
                         String content = readFileContent(updatedFileAbsolutePath);
                         mutableRenderable.reload(new StringTemplateSource(mutableRenderable.getPath(), content));
@@ -151,10 +151,9 @@ public class RenderableUpdater {
                                           "'.", e);
                     }
                 } else {
-                    MutableExecutable mutableExecutable = watchingExecutables.get(updatedFileName);
+                    MutableExecutable mutableExecutable = watchingExecutables.get(updatedFileAbsolutePath);
                     if (mutableExecutable != null) {
                         // Updated file is a MutableExecutable
-                        Path updatedFileAbsolutePath = updatedDirectory.resolve(updatedFileName);
                         try {
                             mutableExecutable.reload(readFileContent(updatedFileAbsolutePath));
                             log.info("JavaScript file '" + updatedFileAbsolutePath + "' reloaded successfully.");
