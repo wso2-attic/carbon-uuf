@@ -16,7 +16,11 @@
 
 package org.wso2.carbon.uuf.sample.simpleauth.bundle;
 
+import org.osgi.framework.BundleContext;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
 import org.wso2.carbon.kernel.context.PrivilegedCarbonContext;
+import org.wso2.carbon.kernel.utils.Utils;
 import org.wso2.carbon.messaging.CarbonMessage;
 import org.wso2.carbon.messaging.DefaultCarbonMessage;
 import org.wso2.carbon.security.caas.api.ProxyCallbackHandler;
@@ -25,20 +29,20 @@ import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
 import java.util.Base64;
 
+@Component(
+        name = "org.wso2.carbon.uuf.sample.simpleauth.bundle.SimpleAuthHandler",
+        immediate = true
+)
 public class SimpleAuthHandler {
 
-    /**
-     * Authenticate a user with this user name and password.
-     *
-     * @param userName user-name
-     * @param password password
-     * @throws LoginException
-     */
-    public static void authenticate(String userName, String password) throws LoginException {
-        // TODO: 2016/07/25 Change this to call JAAS API
-        if (!(userName.equals("admin") && password.equals("admin"))) {
-            throw new LoginException("Incorrect username and password combination.");
-        }
+    @Activate
+    public void activate(BundleContext bundleContext) {
+        // This config property will be read by Carbon-Security-Component only once at @Activate.
+        // Hence need to set before activating Carbon-Security-Component.
+        //TODO: Check once carbon-security component is adapted Startup-Order-Resolver
+        System.setProperty("java.security.auth.login.config",
+                           Utils.getCarbonConfigHome().resolve("security").resolve("carbon-jaas.config").toString()
+        );
     }
 
     /**
@@ -48,7 +52,7 @@ public class SimpleAuthHandler {
      * @param password password
      * @throws LoginException
      */
-    public static void authenticateByCaas(String userName, String password) throws LoginException {
+    public static void authenticate(String userName, String password) throws LoginException {
         PrivilegedCarbonContext.destroyCurrentContext();
         CarbonMessage carbonMessage = new DefaultCarbonMessage();
         carbonMessage.setHeader("Authorization", "Basic " + Base64.getEncoder()
