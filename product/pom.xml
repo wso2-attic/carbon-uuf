@@ -150,11 +150,17 @@
             <type>zip</type>
         </dependency>
 
-        <!-- Authentication -->
+        <!-- Sample Application -->
         <dependency>
-            <groupId>org.wso2.carbon.security.caas</groupId>
-            <artifactId>org.wso2.carbon.security.caas.feature</artifactId>
-            <version>${carbon.security.caas.version}</version>
+            <groupId>org.wso2.carbon.uuf.sample</groupId>
+            <artifactId>org.wso2.carbon.uuf.pets-store.feature</artifactId>
+            <version>${carbon.uuf.version}</version>
+            <type>zip</type>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.uuf.sample</groupId>
+            <artifactId>org.wso2.carbon.uuf.simple-auth.feature</artifactId>
+            <version>${carbon.uuf.version}</version>
             <type>zip</type>
         </dependency>
     </dependencies>
@@ -201,73 +207,6 @@
                                     <type>zip</type>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>target</outputDirectory>
-                                </artifactItem>
-                            </artifactItems>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <inherited>false</inherited>
-                <executions>
-                    <execution>
-                        <id>1-unpack-samples</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>unpack</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>org.wso2.carbon.uuf.sample</groupId>
-                                    <artifactId>org.wso2.carbon.uuf.sample.pets-store</artifactId>
-                                    <version>${project.version}</version>
-                                    <type>zip</type>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>
-                                        ${basedir}/target/wso2carbon-kernel-${carbon.kernel.version}/deployment/uufapps
-                                    </outputDirectory>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.wso2.carbon.uuf.sample</groupId>
-                                    <artifactId>org.wso2.carbon.uuf.sample.features-app</artifactId>
-                                    <version>${project.version}</version>
-                                    <type>zip</type>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>
-                                        ${basedir}/target/wso2carbon-kernel-${carbon.kernel.version}/deployment/uufapps
-                                    </outputDirectory>
-                                </artifactItem>
-                            </artifactItems>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>copy-sample-bundle</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>org.wso2.carbon.uuf.sample</groupId>
-                                    <artifactId>org.wso2.carbon.uuf.sample.pets-store.bundle</artifactId>
-                                    <version>${project.version}</version>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>
-                                        ${basedir}/target/wso2carbon-kernel-${carbon.kernel.version}/osgi/dropins
-                                    </outputDirectory>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.wso2.carbon.uuf.sample</groupId>
-                                    <artifactId>org.wso2.carbon.uuf.sample.simple-auth.bundle</artifactId>
-                                    <version>${project.version}</version>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>
-                                        ${basedir}/target/wso2carbon-kernel-${carbon.kernel.version}/osgi/dropins
-                                    </outputDirectory>
                                 </artifactItem>
                             </artifactItems>
                         </configuration>
@@ -353,8 +292,12 @@
                                     <version>${carbon.datasources.version}</version>
                                 </feature>
                                 <feature>
-                                    <id>org.wso2.carbon.security.caas.feature</id>
-                                    <version>${carbon.security.caas.version}</version>
+                                    <id>org.wso2.carbon.uuf.pets-store.feature</id>
+                                    <version>${carbon.uuf.version}</version>
+                                </feature>
+                                <feature>
+                                    <id>org.wso2.carbon.uuf.simple-auth.feature</id>
+                                    <version>${carbon.uuf.version}</version>
                                 </feature>
                             </features>
                         </configuration>
@@ -465,8 +408,12 @@
                                     <version>${carbon.datasources.version}</version>
                                 </feature>
                                 <feature>
-                                    <id>org.wso2.carbon.security.caas.feature.group</id>
-                                    <version>${carbon.security.caas.version}</version>
+                                    <id>org.wso2.carbon.uuf.pets-store.feature.group</id>
+                                    <version>${carbon.uuf.version}</version>
+                                </feature>
+                                <feature>
+                                    <id>org.wso2.carbon.uuf.simple-auth.feature.group</id>
+                                    <version>${carbon.uuf.version}</version>
                                 </feature>
                             </features>
                         </configuration>
