@@ -17,6 +17,7 @@
 package org.wso2.carbon.uuf.osgi.utils;
 
 import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.options.UrlProvisionOption;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.kernel.Constants;
@@ -45,65 +46,6 @@ public class OSGiTestUtils {
     private static final Logger logger = LoggerFactory.getLogger(OSGiTestUtils.class);
 
     /**
-     * Returns an array of default PAX-EXAM options.
-     *
-     * @return array of Options
-     */
-    public static Option[] getDefaultPaxOptions() {
-        return options(
-                repositories("http://maven.wso2.org/nexus/content/groups/wso2-public"),
-                systemProperty("carbon.home").value(System.getProperty("carbon.home")),
-                systemProperty(Constants.START_TIME).value(System.getProperty(Constants.START_TIME)),
-                url(mavenBundle().artifactId("testng").groupId("org.testng").versionAsInProject().getURL()),
-                url(mavenBundle().artifactId("org.eclipse.osgi.services").groupId("org.wso2.eclipse.osgi").
-                        versionAsInProject().getURL()),
-                url(mavenBundle().artifactId("pax-logging-api").groupId("org.ops4j.pax.logging").
-                        versionAsInProject().getURL()),
-                url(mavenBundle().artifactId("pax-logging-log4j2").groupId("org.ops4j.pax.logging").
-                        versionAsInProject().getURL()),
-                url(mavenBundle().artifactId("org.eclipse.equinox.simpleconfigurator")
-                            .groupId("org.wso2.eclipse.equinox")
-                            .versionAsInProject().getURL()),
-                url(mavenBundle().artifactId("org.apache.felix.gogo.command").groupId("org.apache.felix").
-                        versionAsInProject().getURL()),
-                url(mavenBundle().artifactId("org.apache.felix.gogo.runtime").groupId("org.apache.felix").
-                        versionAsInProject().getURL()),
-                url(mavenBundle().artifactId("org.apache.felix.gogo.shell").groupId("org.apache.felix").
-                        versionAsInProject().getURL()),
-                url(mavenBundle().artifactId("org.eclipse.equinox.app").groupId("org.wso2.eclipse.equinox").
-                        versionAsInProject().getURL()),
-                url(mavenBundle().artifactId("org.eclipse.equinox.common").groupId("org.wso2.eclipse.equinox").
-                        versionAsInProject().getURL()),
-                url(mavenBundle().artifactId("org.eclipse.equinox.concurrent").groupId("org.wso2.eclipse.equinox").
-                        versionAsInProject().getURL()),
-                url(mavenBundle().artifactId("org.eclipse.equinox.console").groupId("org.wso2.eclipse.equinox").
-                        versionAsInProject().getURL()),
-                url(mavenBundle().artifactId("org.eclipse.equinox.ds").groupId("org.wso2.eclipse.equinox").
-                        versionAsInProject().getURL()),
-                url(mavenBundle().artifactId("org.eclipse.equinox.frameworkadmin").groupId("org.wso2.eclipse.equinox").
-                        versionAsInProject().getURL()),
-                url(mavenBundle().artifactId("org.eclipse.equinox.frameworkadmin.equinox").
-                        groupId("org.wso2.eclipse.equinox").versionAsInProject().getURL()),
-                url(mavenBundle().artifactId("org.eclipse.equinox.launcher").groupId("org.wso2.eclipse.equinox").
-                        versionAsInProject().getURL()),
-                url(mavenBundle().artifactId("org.eclipse.equinox.preferences").groupId("org.wso2.eclipse.equinox").
-                        versionAsInProject().getURL()),
-                url(mavenBundle().artifactId("org.eclipse.equinox.registry").groupId("org.wso2.eclipse.equinox").//
-                        versionAsInProject().getURL()),
-                url(mavenBundle().artifactId("org.eclipse.equinox.simpleconfigurator.manipulator").
-                        groupId("org.wso2.eclipse.equinox").versionAsInProject().getURL()),
-                url(mavenBundle().artifactId("org.eclipse.equinox.util").groupId("org.wso2.eclipse.equinox").
-                        versionAsInProject().getURL()),
-                url(mavenBundle().artifactId("org.eclipse.equinox.cm").groupId("org.wso2.eclipse.equinox").
-                        versionAsInProject().getURL()),
-                url(mavenBundle().artifactId("snakeyaml").groupId("org.wso2.orbit.org.yaml").
-                        versionAsInProject().getURL()),
-                url(mavenBundle().artifactId("org.wso2.carbon.core").groupId("org.wso2.carbon").versionAsInProject()
-                            .getURL())
-        );
-    }
-
-    /**
      * Returns a merged array of user specified options and default options.
      *
      * @param options custom options.
@@ -120,11 +62,43 @@ public class OSGiTestUtils {
     public static void setEnv() {
         setCarbonHome();
         setStartupTime();
-        copyCarbonYAML();
-        copyLog4jXMLFile();
-        copyLaunchPropertiesFile();
-        copyDeploymentYmlFile();
-        copyDeploymentFile();
+        copyFiles();
+    }
+
+    /**
+     * Returns an array of default PAX-EXAM options.
+     *
+     * @return array of Options
+     */
+    private static Option[] getDefaultPaxOptions() {
+        return options(
+                repositories("http://maven.wso2.org/nexus/content/groups/wso2-public"),
+                systemProperty("carbon.home").value(System.getProperty("carbon.home")),
+                systemProperty(Constants.START_TIME).value(System.getProperty(Constants.START_TIME)),
+                getUrlProvisionOption("testng", "org.testng"),
+                getUrlProvisionOption("org.eclipse.osgi.services", "org.wso2.eclipse.osgi"),
+                getUrlProvisionOption("pax-logging-api", "org.ops4j.pax.logging"),
+                getUrlProvisionOption("pax-logging-log4j2", "org.ops4j.pax.logging"),
+                getUrlProvisionOption("org.eclipse.equinox.simpleconfigurator", "org.wso2.eclipse.equinox"),
+                getUrlProvisionOption("org.apache.felix.gogo.command", "org.apache.felix"),
+                getUrlProvisionOption("org.apache.felix.gogo.runtime", "org.apache.felix"),
+                getUrlProvisionOption("org.apache.felix.gogo.shell", "org.apache.felix"),
+                getUrlProvisionOption("org.eclipse.equinox.app", "org.wso2.eclipse.equinox"),
+                getUrlProvisionOption("org.eclipse.equinox.common", "org.wso2.eclipse.equinox"),
+                getUrlProvisionOption("org.eclipse.equinox.concurrent", "org.wso2.eclipse.equinox"),
+                getUrlProvisionOption("org.eclipse.equinox.console", "org.wso2.eclipse.equinox"),
+                getUrlProvisionOption("org.eclipse.equinox.ds", "org.wso2.eclipse.equinox"),
+                getUrlProvisionOption("org.eclipse.equinox.frameworkadmin", "org.wso2.eclipse.equinox"),
+                getUrlProvisionOption("org.eclipse.equinox.frameworkadmin.equinox", "org.wso2.eclipse.equinox"),
+                getUrlProvisionOption("org.eclipse.equinox.launcher", "org.wso2.eclipse.equinox"),
+                getUrlProvisionOption("org.eclipse.equinox.preferences", "org.wso2.eclipse.equinox"),
+                getUrlProvisionOption("org.eclipse.equinox.registry", "org.wso2.eclipse.equinox"),
+                getUrlProvisionOption("org.eclipse.equinox.simpleconfigurator.manipulator", "org.wso2.eclipse.equinox"),
+                getUrlProvisionOption("org.eclipse.equinox.util", "org.wso2.eclipse.equinox"),
+                getUrlProvisionOption("org.eclipse.equinox.cm", "org.wso2.eclipse.equinox"),
+                getUrlProvisionOption("snakeyaml", "org.wso2.orbit.org.yaml"),
+                getUrlProvisionOption("org.wso2.carbon.core", "org.wso2.carbon")
+        );
     }
 
     /**
@@ -145,45 +119,23 @@ public class OSGiTestUtils {
         }
     }
 
-    /**
-     * Replace the existing carbon.yml file with populated carbon.yml file.
-     */
-    private static void copyCarbonYAML() {
+    private static void copyFiles() {
+        //Replace the existing carbon.yml file with populated carbon.yml file.
         copy(Paths.get("src", "test", "resources", "conf", "carbon.yml"),
-             Paths.get(System.getProperty("carbon.home"),
-                       "conf", "carbon.yml"));
-    }
+             Paths.get(System.getProperty("carbon.home"), "conf", "carbon.yml"));
 
-    /**
-     * Replace the existing log4j2.xml file with populated log4j2.xml file.
-     */
-    private static void copyLog4jXMLFile() {
-        copy(Paths.get("src", "test", "resources", "conf", "log4j2.xml"),
-             Paths.get("conf", "log4j2.xml"));
-    }
+        //Replace the existing log4j2.xml file with populated log4j2.xml file.
+        copy(Paths.get("src", "test", "resources", "conf", "log4j2.xml"), Paths.get("conf", "log4j2.xml"));
 
-    /**
-     * Replace the existing launch.properties file with populated launch.properties file.
-     */
-    private static void copyLaunchPropertiesFile() {
+        //Replace the existing launch.properties file with populated launch.properties file.
         copy(Paths.get("src", "test", "resources", "conf", "osgi", "launch.properties"),
              Paths.get("conf", "osgi", "launch.properties"));
-    }
 
-    /**
-     * Copy deployment.yaml file
-     */
-    private static void copyDeploymentYmlFile() {
-        copy(Paths.get("src", "test", "resources", "conf", "deployment.yml"),
-             Paths.get("conf", "deployment.yml"));
-    }
+        //Copy deployment.yaml file
+        copy(Paths.get("src", "test", "resources", "conf", "deployment.yml"), Paths.get("conf", "deployment.yml"));
 
-    /**
-     * Replace the existing "README.txt file with populated "README.txt file.
-     */
-    private static void copyDeploymentFile() {
-        copy(Paths.get("src", "test", "resources", "deployment", "README.txt"),
-             Paths.get("deployment", "README.txt"));
+        //Replace the existing "README.txt file with populated "README.txt file.
+        copy(Paths.get("src", "test", "resources", "deployment", "README.txt"), Paths.get("deployment", "README.txt"));
     }
 
     /**
@@ -192,7 +144,7 @@ public class OSGiTestUtils {
      * @param sourcePath      Path for source
      * @param destinationPath Path for destination
      */
-    public static void copy(Path sourcePath, Path destinationPath) {
+    private static void copy(Path sourcePath, Path destinationPath) {
         String basedir = System.getProperty("basedir");
         if (basedir == null) {
             basedir = Paths.get(".").toString();
@@ -213,14 +165,25 @@ public class OSGiTestUtils {
     /**
      * Create the directory structure.
      *
-     * @param destFileLocation
+     * @param destinationPath Path to destination file location
      */
-    private static void createOutputFolderStructure(Path destFileLocation) {
-        Path parentPath = destFileLocation.getParent();
+    private static void createOutputFolderStructure(Path destinationPath) {
+        Path parentPath = destinationPath.getParent();
         try {
             Files.createDirectories(parentPath);
         } catch (IOException e) {
             logger.error("Error occurred while creating the directory structure.", e);
         }
+    }
+
+    /**
+     * Return Url provision option of a particular maven bundle
+     *
+     * @param artifactId Bundle artifact id
+     * @param groupId    Bundle group id
+     * @return Url provision option
+     */
+    private static UrlProvisionOption getUrlProvisionOption(String artifactId, String groupId) {
+        return url(mavenBundle().artifactId(artifactId).groupId(groupId).versionAsInProject().getURL());
     }
 }
