@@ -36,6 +36,8 @@ import org.wso2.carbon.uuf.sample.petsstore.bundle.service.PetsManager;
 
 import javax.inject.Inject;
 
+import java.util.Map;
+
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 
 
@@ -62,8 +64,7 @@ public class OSGiServicesTest {
                 getBundleOption("org.wso2.carbon.deployment.notifier", "org.wso2.carbon.deployment", "5.1.0-SNAPSHOT"),
                 getBundleOption("geronimo-jms_1.1_spec", "org.apache.geronimo.specs", "1.1.1"),
                 getBundleOption("commons-pool", "commons-pool.wso2", "1.5.6.wso2v1"),
-                getBundleOption("org.wso2.carbon.uuf.sample.pets-store.bundle", "org.wso2.carbon.uuf.sample",
-                                "1.0.0-SNAPSHOT"),
+                getBundleOption("org.wso2.carbon.uuf.sample.pets-store.bundle", "org.wso2.carbon.uuf.sample"),
                 getBundleOption("commons-io", "commons-io.wso2", "2.4.0.wso2v1"),
                 getBundleOption("org.wso2.carbon.jndi", "org.wso2.carbon.jndi", "1.0.0"),
                 getBundleOption("org.wso2.carbon.caching", "org.wso2.carbon.caching", "1.0.0"),
@@ -71,8 +72,8 @@ public class OSGiServicesTest {
                 getBundleOption("guava", "com.google.guava", "18.0"),
                 getBundleOption("commons-lang3", "org.apache.commons", "3.1"),
                 getBundleOption("asm", "org.ow2.asm", "5.1"),
-                getBundleOption("org.wso2.carbon.uuf.renderablecreator.html", "org.wso2.carbon.uuf", "1.0.0-SNAPSHOT"),
-                getBundleOption("org.wso2.carbon.uuf.core", "org.wso2.carbon.uuf", "1.0.0-SNAPSHOT")
+                getBundleOption("org.wso2.carbon.uuf.renderablecreator.html", "org.wso2.carbon.uuf"),
+                getBundleOption("org.wso2.carbon.uuf.core", "org.wso2.carbon.uuf")
         );
         return OSGiTestUtils.getDefaultPaxOptions(options);
     }
@@ -83,28 +84,51 @@ public class OSGiServicesTest {
 
         //Check for 'Pets Store' service reference
         ServiceReference serviceReference = bundleContext.getServiceReference(PetsManager.class.getName());
-        Assert.assertNotNull(serviceReference, "Pets Store Service Reference is null");
+        Assert.assertNotNull(serviceReference, "Pets Store Service Reference is null.");
 
         //Check for the availability of 'Pets Store' service
         PetsManager petsManager = (PetsManager) bundleContext.getService(serviceReference);
-        Assert.assertNotNull(petsManager, "Pets Store Service is null");
+        Assert.assertNotNull(petsManager, "Pets Store Service is null.");
 
         //Directly call 'Pets Store' OSGi service
         String serviceOutput = petsManager.getHelloMessage("Alice");
         Assert.assertEquals(serviceOutput, "Hello Alice!",
-                            "Pets Store Service, getHelloMessage is not working properly");
+                            "Pets Store Service, getHelloMessage is not working properly.");
 
         //Call 'Pets Store' service through UUF API
         String APIOutput = API.callOSGiService("org.wso2.carbon.uuf.sample.petsstore.bundle.service.PetsManager",
                                                "getHelloMessage", "Bob").toString();
         Assert.assertEquals(APIOutput, "Hello Bob!");
+
+        //Check for PetsManagerImpl service through getOSGiServices method
+        Map<String, Object> OSGiServices = API.getOSGiServices(
+                "org.wso2.carbon.uuf.sample.petsstore.bundle.service.PetsManager");
+        Object PetsManagerImplService = OSGiServices.get(
+                "org.wso2.carbon.uuf.sample.petsstore.bundle.internal.impl.PetsManagerImpl");
+        Assert.assertNotNull(PetsManagerImplService,
+                             "PetsManagerImpl service wasn't retrieved from getOSGiServices method.");
         serviceRegistration.unregister();
     }
 
+    /**
+     * Returns the maven bundle option for pax-exam container
+     *
+     * @param artifactId Bundle artifact id
+     * @param groupId    Bundle group id
+     * @param version    Bundle version
+     * @return Maven bundle option
+     */
     private Option getBundleOption(String artifactId, String groupId, String version) {
         return mavenBundle().artifactId(artifactId).groupId(groupId).version(version);
     }
 
+    /**
+     * Returns the maven bundle option for pax-exam container
+     *
+     * @param artifactId Bundle artifact id
+     * @param groupId    Bundle group id
+     * @return Maven bundle option
+     */
     private Option getBundleOption(String artifactId, String groupId) {
         return mavenBundle().artifactId(artifactId).groupId(groupId).versionAsInProject();
     }
