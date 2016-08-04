@@ -3,10 +3,14 @@
 {{favicon "images/favicon.png" type="image/png"}}
 {{title "Pets | " @config.appName}}
 {{#fillZone "content"}}
+
+
+    {{#secured "admin/device" "edit"}}
     <div class="page-header">
         <h1>{{t "pets-store.list"}}</h1>
         <p class="lead">{{t "pets-store.info"}}</p>
     </div>
+    {{/secured}}
     <table class="table table-responsive table-striped" id="members">
         <thead>
         <tr>

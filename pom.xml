@@ -305,7 +305,7 @@
         <msf4j.version>2.0.0</msf4j.version>
 
         <!-- Sample Authentication -->
-        <carbon.security.caas.version>1.0.0-m2</carbon.security.caas.version>
+        <carbon.security.caas.version>1.0.0-SNAPSHOT</carbon.security.caas.version>
 
         <!-- Maven Plugins -->
         <carbon.feature.plugin.version>2.0.0</carbon.feature.plugin.version>
