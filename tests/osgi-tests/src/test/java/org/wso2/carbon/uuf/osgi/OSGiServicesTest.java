@@ -16,7 +16,6 @@
 
 package org.wso2.carbon.uuf.osgi;
 
-import org.testng.annotations.Listeners;
 import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.CoreOptions;
 import org.ops4j.pax.exam.Option;
@@ -27,6 +26,7 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
 import org.testng.Assert;
+import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 import org.wso2.carbon.kernel.utils.CarbonServerInfo;
 import org.wso2.carbon.uuf.core.API;
@@ -34,7 +34,6 @@ import org.wso2.carbon.uuf.osgi.utils.OSGiTestUtils;
 import org.wso2.carbon.uuf.sample.petsstore.bundle.service.PetsManager;
 
 import javax.inject.Inject;
-
 import java.util.Map;
 
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
@@ -56,21 +55,21 @@ public class OSGiServicesTest {
      * @return Options list of pax exam container
      */
     @Configuration
-    public Option[] createConfiguration() {
+    public Option[] createConfiguration() throws Exception{
         OSGiTestUtils.setEnv();
         Option[] options = CoreOptions.options(
                 getBundleOption("org.wso2.carbon.deployment.engine", "org.wso2.carbon.deployment"),
-                getBundleOption("org.wso2.carbon.deployment.notifier", "org.wso2.carbon.deployment", "5.1.0-SNAPSHOT"),
-                getBundleOption("geronimo-jms_1.1_spec", "org.apache.geronimo.specs", "1.1.1"),
-                getBundleOption("commons-pool", "commons-pool.wso2", "1.5.6.wso2v1"),
+                getBundleOption("org.wso2.carbon.deployment.notifier", "org.wso2.carbon.deployment"),
+                getBundleOption("geronimo-jms_1.1_spec", "org.apache.geronimo.specs"),
+                getBundleOption("commons-pool", "commons-pool.wso2"),
                 getBundleOption("org.wso2.carbon.uuf.sample.pets-store.bundle", "org.wso2.carbon.uuf.sample"),
-                getBundleOption("commons-io", "commons-io.wso2", "2.4.0.wso2v1"),
-                getBundleOption("org.wso2.carbon.jndi", "org.wso2.carbon.jndi", "1.0.0"),
-                getBundleOption("org.wso2.carbon.caching", "org.wso2.carbon.caching", "1.0.0"),
-                getBundleOption("gson", "com.google.code.gson", "2.6.2"),
-                getBundleOption("guava", "com.google.guava", "18.0"),
-                getBundleOption("commons-lang3", "org.apache.commons", "3.1"),
-                getBundleOption("asm", "org.ow2.asm", "5.1"),
+                getBundleOption("commons-io", "commons-io.wso2"),
+                getBundleOption("org.wso2.carbon.jndi", "org.wso2.carbon.jndi"),
+                getBundleOption("org.wso2.carbon.caching", "org.wso2.carbon.caching"),
+                getBundleOption("gson", "com.google.code.gson"),
+                getBundleOption("guava", "com.google.guava"),
+                getBundleOption("commons-lang3", "org.apache.commons"),
+                getBundleOption("asm", "org.ow2.asm"),
                 getBundleOption("org.wso2.carbon.uuf.renderablecreator.html", "org.wso2.carbon.uuf"),
                 getBundleOption("org.wso2.carbon.uuf.core", "org.wso2.carbon.uuf")
         );
@@ -112,18 +111,6 @@ public class OSGiServicesTest {
         String petsManagerOutput = ((PetsManager) petsManagerImplService).getHelloMessage("Alice");
         Assert.assertEquals(petsManagerOutput, "Hello Alice!");
         serviceRegistration.unregister();
-    }
-
-    /**
-     * Returns the maven bundle option for pax-exam container
-     *
-     * @param artifactId Bundle artifact id
-     * @param groupId    Bundle group id
-     * @param version    Bundle version
-     * @return Maven bundle option
-     */
-    private Option getBundleOption(String artifactId, String groupId, String version) {
-        return mavenBundle().artifactId(artifactId).groupId(groupId).version(version);
     }
 
     /**

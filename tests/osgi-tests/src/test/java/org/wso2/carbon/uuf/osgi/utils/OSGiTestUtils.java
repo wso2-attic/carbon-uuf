@@ -18,8 +18,6 @@ package org.wso2.carbon.uuf.osgi.utils;
 
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.options.UrlProvisionOption;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.wso2.carbon.kernel.Constants;
 
 import java.io.IOException;
@@ -43,8 +41,6 @@ import static org.ops4j.pax.exam.CoreOptions.url;
  */
 public class OSGiTestUtils {
 
-    private static final Logger logger = LoggerFactory.getLogger(OSGiTestUtils.class);
-
     /**
      * Returns a merged array of user specified options and default options.
      *
@@ -59,7 +55,7 @@ public class OSGiTestUtils {
     /**
      * Set the environment prior to tests.
      */
-    public static void setEnv() {
+    public static void setEnv() throws IOException {
         setCarbonHome();
         setStartupTime();
         copyFiles();
@@ -119,7 +115,7 @@ public class OSGiTestUtils {
         }
     }
 
-    private static void copyFiles() {
+    private static void copyFiles() throws IOException {
         //Replace the existing carbon.yml file with populated carbon.yml file.
         copy(Paths.get("src", "test", "resources", "conf", "carbon.yml"),
              Paths.get(System.getProperty("carbon.home"), "conf", "carbon.yml"));
@@ -144,7 +140,7 @@ public class OSGiTestUtils {
      * @param sourcePath      Path for source
      * @param destinationPath Path for destination
      */
-    private static void copy(Path sourcePath, Path destinationPath) {
+    private static void copy(Path sourcePath, Path destinationPath) throws IOException {
         String basedir = System.getProperty("basedir");
         if (basedir == null) {
             basedir = Paths.get(".").toString();
@@ -157,7 +153,7 @@ public class OSGiTestUtils {
         try {
             Files.copy(sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
-            logger.error("Error occurred while copying the file.", e);
+            throw new IOException("Error occurred while copying " + sourcePath + " file.", e);
         }
     }
 
@@ -167,12 +163,12 @@ public class OSGiTestUtils {
      *
      * @param destinationPath Path to destination file location
      */
-    private static void createOutputFolderStructure(Path destinationPath) {
+    private static void createOutputFolderStructure(Path destinationPath) throws IOException {
         Path parentPath = destinationPath.getParent();
         try {
             Files.createDirectories(parentPath);
         } catch (IOException e) {
-            logger.error("Error occurred while creating the directory structure.", e);
+            throw new IOException("Error occurred while creating " + parentPath + " directory structure.", e);
         }
     }
 
