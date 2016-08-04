@@ -32,6 +32,7 @@ import org.wso2.carbon.deployment.engine.exception.CarbonDeploymentException;
 import org.wso2.carbon.kernel.utils.CarbonServerInfo;
 import org.wso2.carbon.uuf.core.API;
 import org.wso2.carbon.uuf.osgi.utils.OSGiTestUtils;
+import org.wso2.carbon.uuf.sample.petsstore.bundle.internal.impl.PetsManagerImpl;
 import org.wso2.carbon.uuf.sample.petsstore.bundle.service.PetsManager;
 
 import javax.inject.Inject;
@@ -96,18 +97,18 @@ public class OSGiServicesTest {
                             "Pets Store Service, getHelloMessage is not working properly.");
 
         //Call 'Pets Store' service through UUF API
-        String APIOutput = API.callOSGiService("org.wso2.carbon.uuf.sample.petsstore.bundle.service.PetsManager",
-                                               "getHelloMessage", "Bob").toString();
-        Assert.assertEquals(APIOutput, "Hello Bob!");
+        String apiOutput = API.callOSGiService(
+                "org.wso2.carbon.uuf.sample.petsstore.bundle.service.PetsManager",
+                "getHelloMessage", "Bob").toString();
+        Assert.assertEquals(apiOutput, "Hello Bob!");
 
-        //Check for PetsManagerImpl service through getOSGiServices method
-        Map<String, Object> OSGiServices = API.getOSGiServices(
+        //Check for PetsManagerImpl service through availability getOSGiServices method
+        Map<String, Object> osgiServices = API.getOSGiServices(
                 "org.wso2.carbon.uuf.sample.petsstore.bundle.service.PetsManager");
-        Object PetsManagerImplService = OSGiServices.get(
+        Object petsManagerImplService = osgiServices.get(
                 "org.wso2.carbon.uuf.sample.petsstore.bundle.internal.impl.PetsManagerImpl");
-        Assert.assertNotNull(PetsManagerImplService,
+        Assert.assertNotNull(petsManagerImplService,
                              "PetsManagerImpl service wasn't retrieved from getOSGiServices method.");
-        serviceRegistration.unregister();
     }
 
     /**
