@@ -50,33 +50,15 @@
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/*</include>
+                </includes>
+            </resource>
+        </resources>
         <plugins>
-            <plugin>
-                <artifactId>maven-resources-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <!--Copying p2.inf and build properties-->
-                        <id>copy-resources</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>src/main/resources</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>resources</directory>
-                                    <includes>
-                                        <include>build.properties</include>
-                                        <include>p2.inf</include>
-                                    </includes>
-                                </resource>
-                            </resources>
-                            <overwrite>true</overwrite>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
@@ -97,7 +79,7 @@
                                     <type>zip</type>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>
-                                        ${project.build.directory}/maven-shared-archive-resources/uufapps/pets-store
+                                        ${project.build.directory}/maven-shared-archive-resources/uufapps/
                                     </outputDirectory>
                                     <includes>**/*</includes>
                                 </artifactItem>
