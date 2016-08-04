@@ -1,4 +1,3 @@
-package org.wso2.carbon.uuf.osgi.utils;
 /*
  *  Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
@@ -14,6 +13,8 @@ package org.wso2.carbon.uuf.osgi.utils;
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+
+package org.wso2.carbon.uuf.osgi.utils;
 
 import org.ops4j.pax.exam.Option;
 import org.slf4j.Logger;
