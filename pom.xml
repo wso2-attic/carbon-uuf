@@ -238,6 +238,12 @@
             </dependency>
             <dependency>
                 <groupId>org.ops4j.pax.exam</groupId>
+                <artifactId>maven-paxexam-plugin</artifactId>
+                <version>${maven.paxexam.plugin.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.ops4j.pax.exam</groupId>
                 <artifactId>pax-exam-link-mvn</artifactId>
                 <version>${pax.exam.link.mvn.version}</version>
                 <scope>test</scope>
@@ -252,12 +258,6 @@
                 <groupId>org.ow2.spec.ee</groupId>
                 <artifactId>ow2-jta-1.1-spec</artifactId>
                 <version>${ow2.jta.spec.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>javax.inject</groupId>
-                <artifactId>javax.inject</artifactId>
-                <version>${javax.inject.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -371,24 +371,6 @@
                 <groupId>org.wso2.eclipse.osgi</groupId>
                 <artifactId>org.eclipse.osgi</artifactId>
                 <version>${equinox.osgi.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.geronimo.specs</groupId>
-                <artifactId>geronimo-jms_1.1_spec</artifactId>
-                <version>${org.apache.geronimo.specs.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>commons-io.wso2</groupId>
-                <artifactId>commons-io</artifactId>
-                <version>${commons-io.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>commons-pool.wso2</groupId>
-                <artifactId>commons-pool</artifactId>
-                <version>${commons-pool.version}</version>
                 <scope>test</scope>
             </dependency>
         </dependencies>
@@ -530,16 +512,9 @@
         </equinox.simpleconfigurator.manipulator.version>
         <equinox.util.version>1.0.500.v20130404-1337</equinox.util.version>
         <org.eclipse.equinox.cm.version>1.1.0.v20131021-1936</org.eclipse.equinox.cm.version>
-        <org.snakeyaml.version>1.16.0.wso2v1</org.snakeyaml.version>
         <equinox.osgi.version>3.10.2.v20150203-1939</equinox.osgi.version>
         <org.wso2.eclipse.osgi.version>3.4.0.v20140312-2051</org.wso2.eclipse.osgi.version>
         <ow2.jta.spec.version>1.0.12</ow2.jta.spec.version>
-        <javax.inject.version>1</javax.inject.version>
-        <jacoco.version>0.7.5.201505241946</jacoco.version>
-        <apache.felix.framework.version>5.0.1</apache.felix.framework.version>
-        <org.apache.geronimo.specs.version>1.1.1</org.apache.geronimo.specs.version>
-        <commons-io.version>2.4.0.wso2v1</commons-io.version>
-        <commons-pool.version>1.5.6.wso2v1</commons-pool.version>
 
         <!-- Source and target Java version -->
         <wso2.maven.compiler.source>1.8</wso2.maven.compiler.source>

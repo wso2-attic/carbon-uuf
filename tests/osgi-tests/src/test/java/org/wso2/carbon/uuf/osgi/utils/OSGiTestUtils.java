@@ -54,6 +54,8 @@ public class OSGiTestUtils {
 
     /**
      * Set the environment prior to tests.
+     *
+     * @throws IOException
      */
     public static void setEnv() throws IOException {
         setCarbonHome();
@@ -115,6 +117,11 @@ public class OSGiTestUtils {
         }
     }
 
+    /**
+     * Copying resource files to the carbon home location.
+     *
+     * @throws IOException
+     */
     private static void copyFiles() throws IOException {
         //Replace the existing carbon.yml file with populated carbon.yml file.
         copy(Paths.get("src", "test", "resources", "conf", "carbon.yml"),
@@ -139,6 +146,7 @@ public class OSGiTestUtils {
      *
      * @param sourcePath      Path for source
      * @param destinationPath Path for destination
+     * @throws IOException
      */
     private static void copy(Path sourcePath, Path destinationPath) throws IOException {
         String basedir = System.getProperty("basedir");
@@ -157,11 +165,11 @@ public class OSGiTestUtils {
         }
     }
 
-
     /**
      * Create the directory structure.
      *
-     * @param destinationPath Path to destination file location
+     * @param destinationPath Path to file copying destination
+     * @throws IOException
      */
     private static void createOutputFolderStructure(Path destinationPath) throws IOException {
         Path parentPath = destinationPath.getParent();
@@ -173,7 +181,7 @@ public class OSGiTestUtils {
     }
 
     /**
-     * Return Url provision option of a particular maven bundle
+     * Return Url provision option of a particular maven bundle.
      *
      * @param artifactId Bundle artifact id
      * @param groupId    Bundle group id

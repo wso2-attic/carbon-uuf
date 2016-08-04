@@ -50,12 +50,13 @@ public class OSGiServicesTest {
     private CarbonServerInfo carbonServerInfo;
 
     /**
-     * Adding all the required OSGi bundles bundles into pax exam container
+     * Adding all the required OSGi bundles bundles into pax exam container.
      *
      * @return Options list of pax exam container
+     * @throws Exception
      */
     @Configuration
-    public Option[] createConfiguration() throws Exception{
+    public Option[] createConfiguration() throws Exception {
         OSGiTestUtils.setEnv();
         Option[] options = CoreOptions.options(
                 getBundleOption("org.wso2.carbon.deployment.engine", "org.wso2.carbon.deployment"),
@@ -114,7 +115,7 @@ public class OSGiServicesTest {
     }
 
     /**
-     * Returns the maven bundle option for pax-exam container
+     * Returns the maven bundle option for pax-exam container.
      *
      * @param artifactId Bundle artifact id
      * @param groupId    Bundle group id
