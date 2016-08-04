@@ -44,6 +44,14 @@
             <groupId>org.wso2.carbon.messaging</groupId>
             <artifactId>org.wso2.carbon.messaging</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.security.userstore</groupId>
+            <artifactId>org.wso2.carbon.security.userstore.jdbc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.uuf</groupId>
+            <artifactId>org.wso2.carbon.uuf.core</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -55,9 +63,12 @@
                     <instructions>
                         <Import-Package>
                             org.wso2.carbon.security.caas.api.*,
+                            org.wso2.carbon.security.caas.user.core.*,
                             org.wso2.carbon.kernel.utils,
                             org.wso2.carbon.kernel.context; version="${carbon.kernel.version.range}",
-                            org.wso2.carbon.messaging;version="${carbon.messaging.version}"
+                            org.wso2.carbon.messaging;version="${carbon.messaging.version}",
+                            org.wso2.carbon.uuf.api.auth.*,
+                            org.wso2.carbon.uuf.spi.auth.*,
                         </Import-Package>
                         <Private-Package>org.wso2.carbon.uuf.sample.simpleauth.bundle.internal.*</Private-Package>
                         <Export-Package>

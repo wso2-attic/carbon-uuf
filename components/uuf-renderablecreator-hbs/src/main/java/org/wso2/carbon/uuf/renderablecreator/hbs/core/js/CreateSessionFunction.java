@@ -17,11 +17,12 @@
 package org.wso2.carbon.uuf.renderablecreator.hbs.core.js;
 
 import org.wso2.carbon.uuf.api.auth.Session;
+import org.wso2.carbon.uuf.spi.auth.User;
 
 @FunctionalInterface
 public interface CreateSessionFunction {
 
     String NAME = "createSession";
 
-    Session call(String userName);
+    Session call(User userName);
 }

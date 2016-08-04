@@ -12,15 +12,18 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- */
+ *//*
+
 
 package org.wso2.carbon.uuf.api.auth;
 
 import java.io.Serializable;
 
+*/
 /**
  * Represents a user object. This class is being used for constructing a new {@link Session}.
- */
+ *//*
+
 public class User implements Serializable {
 
     private final String username;
@@ -38,3 +41,4 @@ public class User implements Serializable {
         return "{\"username\": \"" + username + "\"}";
     }
 }
+*/

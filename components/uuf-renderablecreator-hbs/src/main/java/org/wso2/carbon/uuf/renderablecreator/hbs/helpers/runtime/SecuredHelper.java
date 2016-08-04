@@ -18,17 +18,10 @@ package org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime;
 
 import com.github.jknack.handlebars.Helper;
 import com.github.jknack.handlebars.Options;
-import org.wso2.carbon.security.caas.api.CarbonPrincipal;
-import org.wso2.carbon.security.caas.user.core.bean.Permission;
-import org.wso2.carbon.security.caas.user.core.bean.User;
-import org.wso2.carbon.security.caas.user.core.exception.AuthorizationStoreException;
-import org.wso2.carbon.security.caas.user.core.exception.IdentityStoreException;
+
 import org.wso2.carbon.uuf.api.auth.Session;
 import org.wso2.carbon.uuf.core.API;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.HbsRenderable;
-
-import org.wso2.carbon.kernel.context.PrivilegedCarbonContext;
-
 
 import java.io.IOException;
 
@@ -45,21 +38,9 @@ public class SecuredHelper implements Helper<Object> {
 
         if (context instanceof String) {
             // {{#secured permissionUri permissionAction}} ... {{/secured}}
-            // TODO: 6/6/16 implement this with carbon-security C5
-            CarbonPrincipal cp= (CarbonPrincipal) PrivilegedCarbonContext.getCurrentContext().getUserPrincipal();
-
-            //CarbonPrincipal cp = new CarbonPrincipal();
-            User user = cp.getUser();
-            Permission permission = new Permission(context.toString(),options.param(0));
-            try {
-                //if
-                user.isAuthorized(permission);
-            } catch (AuthorizationStoreException e) {
-                e.printStackTrace();
-            } catch (IdentityStoreException e) {
-                e.printStackTrace();
-            }
-            return options.fn().toString();
+            API api = options.data(HbsRenderable.DATA_KEY_API);
+            return api.getSession().map(Session::getUser).get().hasPermission(context.toString(),options.param(0)) ?
+                    options.fn().toString() : options.inverse();
         } else {
             // {{#secured}} ... {{/secured}}
             API api = options.data(HbsRenderable.DATA_KEY_API);

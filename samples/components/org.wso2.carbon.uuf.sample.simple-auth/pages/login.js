@@ -38,8 +38,8 @@ function authenticate(username, password) {
     try {
         // Calling dummy osgi authentication service
         var SimpleAuthHandler = Java.type("org.wso2.carbon.uuf.sample.simpleauth.bundle.SimpleAuthHandler");
-        SimpleAuthHandler.authenticate(username, password);
-        createSession(username);
+        var user = SimpleAuthHandler.authenticate(username, password);
+        createSession(user);
         return {success: true, message: "success"}
     } catch (e) {
         return {success: false, message: e.message};
