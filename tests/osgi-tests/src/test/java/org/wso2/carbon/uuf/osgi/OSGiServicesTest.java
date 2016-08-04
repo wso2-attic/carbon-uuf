@@ -28,11 +28,9 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import org.wso2.carbon.deployment.engine.exception.CarbonDeploymentException;
 import org.wso2.carbon.kernel.utils.CarbonServerInfo;
 import org.wso2.carbon.uuf.core.API;
 import org.wso2.carbon.uuf.osgi.utils.OSGiTestUtils;
-import org.wso2.carbon.uuf.sample.petsstore.bundle.internal.impl.PetsManagerImpl;
 import org.wso2.carbon.uuf.sample.petsstore.bundle.service.PetsManager;
 
 import javax.inject.Inject;
