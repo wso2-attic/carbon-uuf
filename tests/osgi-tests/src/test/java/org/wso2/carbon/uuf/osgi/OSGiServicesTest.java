@@ -80,7 +80,7 @@ public class OSGiServicesTest {
     }
 
     @Test
-    public void testDeploymentService() throws CarbonDeploymentException {
+    public void testCallingOSGiServices() {
         ServiceRegistration serviceRegistration = bundleContext.registerService(PetsManager.class, name -> null, null);
 
         //Check for 'Pets Store' service reference
@@ -109,6 +109,11 @@ public class OSGiServicesTest {
                 "org.wso2.carbon.uuf.sample.petsstore.bundle.internal.impl.PetsManagerImpl");
         Assert.assertNotNull(petsManagerImplService,
                              "PetsManagerImpl service wasn't retrieved from getOSGiServices method.");
+
+        //Call PetsManagerImpl service through UUF API
+        String petsManagerOutput = ((PetsManager) petsManagerImplService).getHelloMessage("Alice");
+        Assert.assertEquals(petsManagerOutput, "Hello Alice!");
+        serviceRegistration.unregister();
     }
 
     /**
