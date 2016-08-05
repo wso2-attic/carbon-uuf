@@ -87,7 +87,6 @@ public class OSGiServicesTest {
         String serviceOutput = petsStoreService.getHelloMessage("Alice");
         Assert.assertEquals(serviceOutput, "Hello Alice!",
                             "Pets Store Service, getHelloMessage is not working properly.");
-
     }
 
     @Test
