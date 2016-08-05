@@ -57,7 +57,7 @@ public class OSGiTestUtils {
      *
      * @throws IOException
      */
-    public static void setEnv() throws IOException {
+    public static void setEnv() throws Exception {
         setCarbonHome();
         setStartupTime();
         copyFiles();
@@ -122,7 +122,7 @@ public class OSGiTestUtils {
      *
      * @throws IOException
      */
-    private static void copyFiles() throws IOException {
+    private static void copyFiles() throws Exception {
         //Replace the existing carbon.yml file with populated carbon.yml file.
         copy(Paths.get("src", "test", "resources", "conf", "carbon.yml"),
              Paths.get(System.getProperty("carbon.home"), "conf", "carbon.yml"));
@@ -148,7 +148,7 @@ public class OSGiTestUtils {
      * @param destinationPath Path for destination
      * @throws IOException
      */
-    private static void copy(Path sourcePath, Path destinationPath) throws IOException {
+    private static void copy(Path sourcePath, Path destinationPath) throws Exception {
         String basedir = System.getProperty("basedir");
         if (basedir == null) {
             basedir = Paths.get(".").toString();
@@ -161,7 +161,7 @@ public class OSGiTestUtils {
         try {
             Files.copy(sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
-            throw new IOException("Error occurred while copying " + sourcePath + " file.", e);
+            throw new Exception("Error occurred while copying " + sourcePath + " file to " + destinationPath + ".", e);
         }
     }
 
@@ -171,12 +171,12 @@ public class OSGiTestUtils {
      * @param destinationPath Path to file copying destination
      * @throws IOException
      */
-    private static void createOutputFolderStructure(Path destinationPath) throws IOException {
+    private static void createOutputFolderStructure(Path destinationPath) throws Exception {
         Path parentPath = destinationPath.getParent();
         try {
             Files.createDirectories(parentPath);
         } catch (IOException e) {
-            throw new IOException("Error occurred while creating " + parentPath + " directory structure.", e);
+            throw new Exception("Error occurred while creating the directory, " + parentPath + ".", e);
         }
     }
 
