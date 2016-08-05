@@ -61,7 +61,7 @@ public class Session implements Serializable {
     public String getThemeName() {
         return themeName;
     }
-    
+
     public void setThemeName(String themeName) {
         if (!Theme.isValidThemeName(themeName)) {
             throw new IllegalArgumentException("Theme name '" + themeName + "' is invalid.");

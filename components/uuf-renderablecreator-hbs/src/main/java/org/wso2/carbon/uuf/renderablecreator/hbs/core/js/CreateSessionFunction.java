@@ -24,5 +24,5 @@ public interface CreateSessionFunction {
 
     String NAME = "createSession";
 
-    Session call(User userName);
+    Session call(User user);
 }

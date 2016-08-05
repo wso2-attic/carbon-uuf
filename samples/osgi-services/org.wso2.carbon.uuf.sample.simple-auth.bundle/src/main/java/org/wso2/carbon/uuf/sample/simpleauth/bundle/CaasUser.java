@@ -22,7 +22,6 @@ import org.wso2.carbon.security.caas.user.core.exception.AuthorizationStoreExcep
 import org.wso2.carbon.security.caas.user.core.exception.IdentityStoreException;
 import org.wso2.carbon.uuf.spi.auth.User;
 
-
 public class CaasUser implements User {
 
     private final String username;
@@ -33,12 +32,10 @@ public class CaasUser implements User {
         this.principal = principal;
     }
 
-
     @Override
     public String getUsername() {
         return username;
     }
-
 
     @Override
     public boolean hasPermission(String resourceUri, String action) {
