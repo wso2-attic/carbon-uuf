@@ -23,6 +23,7 @@ import java.security.SecureRandom;
 import java.util.Base64;
 import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
+import org.wso2.carbon.uuf.spi.auth.User;
 
 /**
  * Provides a way to identify a user across more than one page request or visit to a Web site and to store information

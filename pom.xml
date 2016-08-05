@@ -191,6 +191,12 @@
                 <version>${carbon.security.caas.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>org.wso2.carbon.security.userstore</groupId>
+                <artifactId>org.wso2.carbon.security.userstore.jdbc</artifactId>
+                <version>${carbon.security.userstore.jdbc.version}</version>
+            </dependency>
+
             <!-- Test -->
             <dependency>
                 <groupId>org.testng</groupId>
@@ -305,10 +311,10 @@
         <msf4j.version>2.0.0</msf4j.version>
 
         <!-- Sample Authentication -->
-        <carbon.security.caas.version>1.0.0-m2</carbon.security.caas.version>
-
+        <carbon.security.caas.version>1.0.0-SNAPSHOT</carbon.security.caas.version>
+        <carbon.security.userstore.jdbc.version>1.0.0-SNAPSHOT</carbon.security.userstore.jdbc.version>
         <!-- Maven Plugins -->
-        <carbon.feature.plugin.version>2.0.0</carbon.feature.plugin.version>
+        <carbon.feature.plugin.version>2.0.1</carbon.feature.plugin.version>
         <carbon-uuf-maven-plugin.version>1.0.0-SNAPSHOT</carbon-uuf-maven-plugin.version>
         <maven.bundle.plugin.version>2.5.0</maven.bundle.plugin.version>
 

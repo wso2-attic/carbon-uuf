@@ -18,6 +18,7 @@ package org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime;
 
 import com.github.jknack.handlebars.Helper;
 import com.github.jknack.handlebars.Options;
+
 import org.wso2.carbon.uuf.api.auth.Session;
 import org.wso2.carbon.uuf.core.API;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.HbsRenderable;
@@ -37,8 +38,9 @@ public class SecuredHelper implements Helper<Object> {
 
         if (context instanceof String) {
             // {{#secured permissionUri permissionAction}} ... {{/secured}}
-            // TODO: 6/6/16 implement this with carbon-security C5
-            return null;
+            API api = options.data(HbsRenderable.DATA_KEY_API);
+            return api.getSession().map(Session::getUser).get().hasPermission(context.toString(),options.param(0)) ?
+                    options.fn().toString() : options.inverse();
         } else {
             // {{#secured}} ... {{/secured}}
             API api = options.data(HbsRenderable.DATA_KEY_API);

@@ -19,7 +19,7 @@ package org.wso2.carbon.uuf.core;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.wso2.carbon.uuf.api.auth.Session;
-import org.wso2.carbon.uuf.api.auth.User;
+import org.wso2.carbon.uuf.spi.auth.User;
 import org.wso2.carbon.uuf.exception.HttpErrorException;
 import org.wso2.carbon.uuf.exception.PageRedirectException;
 import org.wso2.carbon.uuf.exception.UUFException;
@@ -148,9 +148,9 @@ public class API {
      * @param userName user name
      * @return newly created session
      */
-    public Session createSession(String userName) {
-        // TODO: 5/31/16 if exists, remove current session form SessionRegistry before creating a new one
-        Session session = new Session(new User(userName));
+    public Session createSession(User user) {
+        destroySession();
+        Session session = new Session(user);
         sessionRegistry.addSession(session);
         String header = SessionRegistry.SESSION_COOKIE_NAME + "=" + session.getSessionId() + "; Path=" +
                 requestLookup.getContextPath() + "; Secure; HTTPOnly";

@@ -38,7 +38,7 @@
 
     <!-- .left-sidebar -->
     <div class="sidebar-wrapper sidebar-nav" id="left-sidebar" data-side="left" data-width="300"
-         data-fixed-offset-top="0" data-spy="affix" data-offset-top="80" style="width: 300px; left: 0px;">
+         data-fixed-offset-top="0" data-spy="affix" data-offset-top="50" style="width: 300px; left: 0px;">
         <ul class="nav nav-pills nav-stacked pages">
             <li class="active"><a data-href="pages">Pages</a></li>
             <li class=""><a data-href="fragments">Fragments</a></li>
@@ -56,14 +56,94 @@
 
             <div class="page-header">
                 <h1>UUF Debugger</h1>
-                <p class="lead">Pages</p>
+                <p id="main-lead" class="lead">Pages</p>
             </div>
             <div class="container-wrapper">
                 <div class="preloader"></div>
-                <div id="pages" class="info-container"><pre><code></code></pre></div>
-                <div id="fragments" class="info-container"><pre><code ></code></pre></div>
-                <div id="layouts" class="info-container"><pre><code></code></pre></div>
-                <div id="themes" class="info-container"><pre><code></code></pre></div>
+                <div id="pages" class="info-container">
+
+                    <!-- Nav tabs -->
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li role="presentation" class="active"><a data-target="#pages-details" aria-controls="pages-details" role="tab" data-toggle="tab">Details</a></li>
+                        <li role="presentation"><a data-target="#pages-json" aria-controls="pages-json" role="tab" data-toggle="tab">JSON</a></li>
+                    </ul>
+
+                    <!-- Tab panes -->
+                    <div class="tab-content">
+                        <div id="pages-details" class="tab-pane active" role="tabpanel">
+                            <div class="page-header">
+                                <p class="lead">/foundation</p>
+                            </div>
+                            <ul id="pages-tree0" class="tree-view tree-view-lines"></ul>
+                            <div class="page-header">
+                                <p class="lead">/</p>
+                            </div>
+                            <ul id="pages-tree1" class="tree-view tree-view-lines"></ul>
+                            <div class="page-header">
+                                <p class="lead">/simple-auth</p>
+                            </div>
+                            <ul id="pages-tree2" class="tree-view tree-view-lines"></ul>
+                            <div class="page-header">
+                                <p class="lead">/store-common</p>
+                            </div>
+                            <ul id="pages-tree3" class="tree-view tree-view-lines"></ul>
+                        </div>
+                        <div id="pages-json" class="tab-pane" role="tabpanel"><pre><code></code></pre></div>
+                    </div>
+
+                </div>
+
+                <div id="fragments" class="info-container">
+
+                    <!-- Nav tabs -->
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li role="presentation" class="active"><a data-target="#fragments-details" aria-controls="fragments-details" role="tab" data-toggle="tab">Details</a></li>
+                        <li role="presentation"><a data-target="#fragments-json" aria-controls="fragments-json" role="tab" data-toggle="tab">JSON</a></li>
+                    </ul>
+
+                    <!-- Tab panes -->
+                    <div class="tab-content">
+                        <div id="fragments-details" class="tab-pane active" role="tabpanel">
+                            <ul id="fragments-tree" class="tree-view tree-view-lines"></ul>
+                        </div>
+                        <div id="fragments-json"  class="tab-pane" role="tabpanel"><pre><code></code></pre></div>
+                    </div>
+
+                </div>
+                <div id="layouts" class="info-container">
+
+                    <!-- Nav tabs -->
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li role="presentation" class="active"><a data-target="#layouts-details" aria-controls="layouts-details" role="tab" data-toggle="tab">Details</a></li>
+                        <li role="presentation"><a data-target="#layouts-json" aria-controls="layouts-json" role="tab" data-toggle="tab">JSON</a></li>
+                    </ul>
+
+                    <!-- Tab panes -->
+                    <div class="tab-content">
+                        <div id="layouts-details" class="tab-pane active" role="tabpanel">
+                            <ul id="layouts-tree" class="tree-view tree-view-lines"></ul>
+                        </div>
+                        <div id="layouts-json"  class="tab-pane" role="tabpanel"><pre><code></code></pre></div>
+                    </div>
+
+                </div>
+                <div id="themes" class="info-container">
+
+                    <!-- Nav tabs -->
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li role="presentation" class="active"><a data-target="#themes-details" aria-controls="themes-details" role="tab" data-toggle="tab">Details</a></li>
+                        <li role="presentation"><a data-target="#themes-json" aria-controls="themes-json" role="tab" data-toggle="tab">JSON</a></li>
+                    </ul>
+
+                    <!-- Tab panes -->
+                    <div class="tab-content">
+                        <div id="themes-details" class="tab-pane active" role="tabpanel">
+                            <ul id="themes-tree" class="tree-view tree-view-lines"></ul>
+                        </div>
+                        <div id="themes-json"  class="tab-pane" role="tabpanel"><pre><code></code></pre></div>
+                    </div>
+
+                </div>
             </div>
         </div>
     </div>
@@ -87,6 +167,7 @@
 
 <!-- jquery -->
 <script src="public/lib/jquery-2.2.1/js/jquery-2.2.1.min.js"></script>
+<script src="public/lib/bootstrap-3.3.6/js/bootstrap.min.js"></script>
 
 <!-- app script -->
 <script src="public/js/app.js"></script>
