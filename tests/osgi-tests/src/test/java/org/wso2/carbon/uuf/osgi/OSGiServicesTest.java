@@ -24,14 +24,13 @@ import org.ops4j.pax.exam.spi.reactors.PerClass;
 import org.ops4j.pax.exam.testng.listener.PaxExam;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
-import org.osgi.framework.ServiceRegistration;
 import org.testng.Assert;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 import org.wso2.carbon.kernel.utils.CarbonServerInfo;
 import org.wso2.carbon.uuf.core.API;
 import org.wso2.carbon.uuf.osgi.utils.OSGiTestUtils;
-import org.wso2.carbon.uuf.sample.petsstore.bundle.service.PetsManager;
+import org.wso2.carbon.uuf.sample.petsstore.bundle.service.PetsStoreService;
 
 import javax.inject.Inject;
 import java.util.Map;
@@ -78,40 +77,35 @@ public class OSGiServicesTest {
     }
 
     @Test
-    public void testCallingOSGiServices() {
-        ServiceRegistration serviceRegistration = bundleContext.registerService(PetsManager.class, name -> null, null);
-
-        //Check for 'Pets Store' service reference
-        ServiceReference serviceReference = bundleContext.getServiceReference(PetsManager.class.getName());
+    public void testPetsStoreService() {
+        ServiceReference serviceReference = bundleContext.getServiceReference(PetsStoreService.class.getName());
         Assert.assertNotNull(serviceReference, "Pets Store Service Reference is null.");
 
-        //Check for the availability of 'Pets Store' service
-        PetsManager petsManager = (PetsManager) bundleContext.getService(serviceReference);
-        Assert.assertNotNull(petsManager, "Pets Store Service is null.");
+        PetsStoreService petsStoreService = (PetsStoreService) bundleContext.getService(serviceReference);
+        Assert.assertNotNull(petsStoreService, "Pets Store Service is null.");
 
-        //Directly call 'Pets Store' OSGi service
-        String serviceOutput = petsManager.getHelloMessage("Alice");
+        String serviceOutput = petsStoreService.getHelloMessage("Alice");
         Assert.assertEquals(serviceOutput, "Hello Alice!",
                             "Pets Store Service, getHelloMessage is not working properly.");
 
-        //Call 'Pets Store' service through UUF API
-        String apiOutput = API.callOSGiService(
-                "org.wso2.carbon.uuf.sample.petsstore.bundle.service.PetsManager",
-                "getHelloMessage", "Bob").toString();
-        Assert.assertEquals(apiOutput, "Hello Bob!");
+    }
 
-        //Check for PetsManagerImpl service through availability getOSGiServices method
+    @Test
+    public void testOSGiServicesAPI() {
+        String outputForCallOSGiService = API.callOSGiService(
+                "org.wso2.carbon.uuf.sample.petsstore.bundle.service.PetsStoreService",
+                "getHelloMessage", "Bob").toString();
+        Assert.assertEquals(outputForCallOSGiService, "Hello Bob!");
+
         Map<String, Object> osgiServices = API.getOSGiServices(
-                "org.wso2.carbon.uuf.sample.petsstore.bundle.service.PetsManager");
-        Object petsManagerImplService = osgiServices.get(
+                "org.wso2.carbon.uuf.sample.petsstore.bundle.service.PetsStoreService");
+        Object petsStoreService = osgiServices.get(
                 "org.wso2.carbon.uuf.sample.petsstore.bundle.internal.impl.PetsManagerImpl");
-        Assert.assertNotNull(petsManagerImplService,
+        Assert.assertNotNull(petsStoreService,
                              "PetsManagerImpl service wasn't retrieved from getOSGiServices method.");
 
-        //Call PetsManagerImpl service through UUF API
-        String petsManagerOutput = ((PetsManager) petsManagerImplService).getHelloMessage("Alice");
-        Assert.assertEquals(petsManagerOutput, "Hello Alice!");
-        serviceRegistration.unregister();
+        String serviceOutput = ((PetsStoreService) petsStoreService).getHelloMessage("Alice");
+        Assert.assertEquals(serviceOutput, "Hello Alice!");
     }
 
     /**
