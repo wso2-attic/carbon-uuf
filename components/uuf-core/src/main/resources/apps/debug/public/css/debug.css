@@ -7813,3 +7813,7 @@ ul.sidebar-messages > li {
 .tree-view .radio-inline input[type=radio] {
   margin-top: 6px;
 }
+
+.branch .badge{
+    font-weight:normal;
+}

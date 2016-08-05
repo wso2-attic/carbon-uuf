@@ -82,7 +82,7 @@ function populateFragments(d){
     $.each(d, function(k,v){
         if (v !== null && typeof v === 'object'){
             stringMid += '<li aria-expanded="true" class="branch">';
-            stringMid += '</i><a href="#"><span class="badge add-margin-right-2x">'+ (k+1) +'</span>'+ v.name +'</a>';
+            stringMid += '</i><a href="#"><span class="badge add-margin-right-1x">'+ (k+1) +'</span>'+ v.name +'</a>';
             stringMid += '<ul>';
             if (v.renderer !== null && typeof v.renderer === 'object'){
                 stringMid += '<li aria-expanded="true" class="branch">';
@@ -131,7 +131,7 @@ function populateLayouts(d){
     $.each(d, function(k,v){
         if (v !== null && typeof v === 'object'){
             stringMid += '<li aria-expanded="true" class="branch">';
-            stringMid += '</i><a href="#">'+ v.name +'</a>';
+            stringMid += '</i><a href="#"><span class="badge add-margin-right-1x">'+ (k+1) +'</span>'+ v.name +'</a>';
             stringMid += '<ul>';
             if (v.renderer !== null && typeof v.renderer === 'object'){
                 stringMid += '<li aria-expanded="true" class="branch">';
@@ -166,7 +166,7 @@ function populateThemes(d){
     $.each(d, function(k,v){
         if (v !== null && typeof v === 'object'){
             stringMid += '<li aria-expanded="true" class="branch">';
-            stringMid += '</i><a href="#">'+ v.name +'</a>';
+            stringMid += '</i><a href="#"><span class="badge add-margin-right-1x">'+ (k+1) +'</span>'+ v.name +'</a>';
             stringMid += '<ul>';
             stringMid += '<li><b>path: </b>'+ v.path +'</li>';
             stringMid += '</ul>';
