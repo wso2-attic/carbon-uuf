@@ -17,32 +17,28 @@
 package org.wso2.carbon.uuf.internal.debug;
 
 import org.wso2.carbon.uuf.api.Configuration;
+import org.wso2.carbon.uuf.core.App;
 import org.wso2.carbon.uuf.core.Component;
 import org.wso2.carbon.uuf.core.Fragment;
 import org.wso2.carbon.uuf.core.Layout;
+import org.wso2.carbon.uuf.core.Page;
 import org.wso2.carbon.uuf.core.Theme;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * This class acts as a bridge between {@link Debugger} and {@link org.wso2.carbon.uuf.core.App}.
  */
 public class DebugConnector {
 
-    private Set<Component> components = new HashSet<>();
-    private Set<Fragment> fragments = new HashSet<>();
-    private Set<Theme> themes = new HashSet<>();
-    private Set<Layout> layouts = new HashSet<>();
-    private Configuration configuration;
+    private final App app;
 
-    /**
-     * Adding this component.
-     *
-     * @param component component object
-     */
-    public void addComponent(Component component) {
-        this.components.add(component);
+    public DebugConnector(App connectingApp) {
+        this.app = connectingApp;
+        // Since DebugConnector is instantiated per request, there is no point of pre-calculating Component, Pages etc.
     }
 
     /**
@@ -51,70 +47,14 @@ public class DebugConnector {
      * @return components
      */
     public Set<Component> getComponents() {
+        Set<Component> components = new HashSet<>(app.getComponents().values());
+        components.add(app.getRootComponent()); // Add root component
         return components;
     }
 
-    /**
-     * Adding this fragment.
-     *
-     * @param fragment fragment object
-     */
-    public void addFragment(Fragment fragment) {
-        this.fragments.add(fragment);
-    }
-
-    /**
-     * Returns a set of components.
-     *
-     * @return components
-     */
-    public Set<Fragment> getFragments() {
-        return fragments;
-    }
-
-    /**
-     * Adding this theme
-     *
-     * @param theme theme object.
-     */
-    public void addTheme(Theme theme) {
-        this.themes.add(theme);
-    }
-
-    /**
-     * Returns a set of themes.
-     *
-     * @return a set of themes
-     */
-    public Set<Theme> getThemes() {
-        return themes;
-    }
-
-    /**
-     * Setting app configuration.
-     *
-     * @param configuration configuration object
-     */
-    public void setConfiguration(Configuration configuration) {
-        this.configuration = configuration;
-    }
-
-    /**
-     * Returns app configuration.
-     *
-     * @return current app configuration
-     */
-    public Configuration getConfiguration() {
-        return configuration;
-    }
-
-    /**
-     * Adding this layout.
-     *
-     * @param layout layout object
-     */
-    public void addLayout(Layout layout) {
-        this.layouts.add(layout);
+    public Map<String, Set<Page>> getPages() {
+        return app.getComponents().values().stream().collect(Collectors.toMap(Component::getContextPath,
+                                                                              Component::getPages));
     }
 
     /**
@@ -123,6 +63,33 @@ public class DebugConnector {
      * @return a set of layouts
      */
     public Set<Layout> getLayouts() {
-        return layouts;
+        return app.getLayouts().values().stream().collect(Collectors.toSet());
+    }
+
+    /**
+     * Returns a set of components.
+     *
+     * @return components
+     */
+    public Set<Fragment> getFragments() {
+        return app.getFragments().values().stream().collect(Collectors.toSet());
+    }
+
+    /**
+     * Returns a set of themes.
+     *
+     * @return a set of themes
+     */
+    public Set<Theme> getThemes() {
+        return app.getThemes().values().stream().collect(Collectors.toSet());
+    }
+
+    /**
+     * Returns app configuration.
+     *
+     * @return current app configuration
+     */
+    public Configuration getConfiguration() {
+        return app.getConfiguration();
     }
 }
