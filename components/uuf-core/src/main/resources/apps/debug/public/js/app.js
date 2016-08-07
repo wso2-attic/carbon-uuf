@@ -32,8 +32,7 @@ $(function () {
 
 });
 
-
-$.sidebar_toggle = function(action, target, container) {
+$.sidebar_toggle = function (action, target, container) {
     var elem = '[data-toggle=sidebar]',
         button,
         container,
@@ -49,49 +48,50 @@ $.sidebar_toggle = function(action, target, container) {
         buttonParent;
 
     var sidebar_window = {
-        update: function(target, container, button){
+        update: function (target, container, button) {
             conrainerOffsetLeft = $(container).data('offset-left') ? $(container).data('offset-left') : 0,
-            conrainerOffsetRight = $(container).data('offset-right') ? $(container).data('offset-right') : 0,
-            targetOffsetLeft = $(target).data('offset-left') ? $(target).data('offset-left') : 0,
-            targetOffsetRight = $(target).data('offset-right') ? $(target).data('offset-right') : 0,
-            targetWidth = $(target).data('width'),
-            targetSide = $(target).data("side"),
-            pushType = $(container).parent().is('body') == true ? 'padding' : 'margin';
+                conrainerOffsetRight = $(container).data('offset-right') ? $(container).data('offset-right') : 0,
+                targetOffsetLeft = $(target).data('offset-left') ? $(target).data('offset-left') : 0,
+                targetOffsetRight = $(target).data('offset-right') ? $(target).data('offset-right') : 0,
+                targetWidth = $(target).data('width'),
+                targetSide = $(target).data("side"),
+                pushType = $(container).parent().is('body') == true ? 'padding' : 'margin';
 
-            if(button !== undefined){
+            if (button !== undefined) {
                 relationship = button.attr('rel') ? button.attr('rel') : '';
                 buttonParent = $(button).parent();
             }
         },
-        show: function(){
+        show: function () {
 
-            if($(target).data('sidebar-fixed') == true) {
+            if ($(target).data('sidebar-fixed') == true) {
                 $(target).height($(window).height() - $(target).data('fixed-offset'));
             }
 
             $(target).trigger('show.sidebar');
-            if(targetWidth !== undefined) {
+            if (targetWidth !== undefined) {
                 $(target).css('width', targetWidth);
             }
             $(target).addClass('toggled');
 
-            if(button !== undefined){
-                if(relationship !== ''){
+            if (button !== undefined) {
+                if (relationship !== '') {
                     // Removing active class from all relative buttons
-                    $(elem+'[rel='+relationship+']:not([data-handle=close])').removeClass("active");
-                    $(elem+'[rel='+relationship+']:not([data-handle=close])').attr('aria-expanded', 'false');
+                    $(elem + '[rel=' + relationship + ']:not([data-handle=close])').removeClass("active");
+                    $(elem + '[rel=' + relationship + ']:not([data-handle=close])').attr('aria-expanded', 'false');
                 }
 
                 // Adding active class to button
-                if(button.attr('data-handle') !== 'close'){
+                if (button.attr('data-handle') !== 'close') {
                     button.addClass("active");
                     button.attr('aria-expanded', 'true');
                 }
 
-                if(buttonParent.is('li')) {
-                    if(relationship !== ''){
-                        $(elem+'[rel='+relationship+']:not([data-handle=close])').parent().removeClass("active");
-                        $(elem+'[rel='+relationship+']:not([data-handle=close])').parent().attr('aria-expanded', 'false');
+                if (buttonParent.is('li')) {
+                    if (relationship !== '') {
+                        $(elem + '[rel=' + relationship + ']:not([data-handle=close])').parent().removeClass("active");
+                        $(elem + '[rel=' + relationship + ']:not([data-handle=close])').parent().attr('aria-expanded',
+                                                                                                      'false');
                     }
                     buttonParent.addClass("active");
                     buttonParent.attr('aria-expanded', 'true');
@@ -99,56 +99,57 @@ $.sidebar_toggle = function(action, target, container) {
             }
 
             // Sidebar open function
-            if (targetSide == 'left'){
-                if((button !== undefined) && (button.attr('data-container-divide'))){
-                    $(container).css(pushType+'-'+targetSide, targetWidth + targetOffsetLeft);
+            if (targetSide == 'left') {
+                if ((button !== undefined) && (button.attr('data-container-divide'))) {
+                    $(container).css(pushType + '-' + targetSide, targetWidth + targetOffsetLeft);
                 }
                 $(target).css(targetSide, targetOffsetLeft);
             }
-            else if (targetSide == 'right'){
-                if((button !== undefined) && (button.attr('data-container-divide'))){
-                    $(container).css(pushType+'-'+targetSide, targetWidth + targetOffsetRight);
+            else if (targetSide == 'right') {
+                if ((button !== undefined) && (button.attr('data-container-divide'))) {
+                    $(container).css(pushType + '-' + targetSide, targetWidth + targetOffsetRight);
                 }
                 $(target).css(targetSide, targetOffsetRight);
             }
 
             $(target).trigger('shown.sidebar');
         },
-        hide: function(){
+        hide: function () {
 
             $(target).trigger('hide.sidebar');
             $(target).removeClass('toggled');
 
-            if(button !== undefined){
-                if(relationship !== ''){
+            if (button !== undefined) {
+                if (relationship !== '') {
                     // Removing active class from all relative buttons
-                    $(elem+'[rel='+relationship+']:not([data-handle=close])').removeClass("active");
-                    $(elem+'[rel='+relationship+']:not([data-handle=close])').attr('aria-expanded', 'false');
+                    $(elem + '[rel=' + relationship + ']:not([data-handle=close])').removeClass("active");
+                    $(elem + '[rel=' + relationship + ']:not([data-handle=close])').attr('aria-expanded', 'false');
                 }
                 // Removing active class from button
-                if(button.attr('data-handle') !== 'close'){
+                if (button.attr('data-handle') !== 'close') {
                     button.removeClass("active");
                     button.attr('aria-expanded', 'false');
                 }
 
-                if($(button).parent().is('li')){
-                    if(relationship !== ''){
-                        $(elem+'[rel='+relationship+']:not([data-handle=close])').parent().removeClass("active");
-                        $(elem+'[rel='+relationship+']:not([data-handle=close])').parent().attr('aria-expanded', 'false');
+                if ($(button).parent().is('li')) {
+                    if (relationship !== '') {
+                        $(elem + '[rel=' + relationship + ']:not([data-handle=close])').parent().removeClass("active");
+                        $(elem + '[rel=' + relationship + ']:not([data-handle=close])').parent().attr('aria-expanded',
+                                                                                                      'false');
                     }
                 }
             }
 
             // Sidebar close function
-            if (targetSide == 'left'){
-                if((button !== undefined) && (button.attr('data-container-divide'))){
-                    $(container).css(pushType+'-'+targetSide, targetOffsetLeft);
+            if (targetSide == 'left') {
+                if ((button !== undefined) && (button.attr('data-container-divide'))) {
+                    $(container).css(pushType + '-' + targetSide, targetOffsetLeft);
                 }
                 $(target).css(targetSide, -Math.abs(targetWidth + targetOffsetLeft));
             }
-            else if (targetSide == 'right'){
-                if((button !== undefined) && (button.attr('data-container-divide'))){
-                    $(container).css(pushType+'-'+targetSide, targetOffsetRight);
+            else if (targetSide == 'right') {
+                if ((button !== undefined) && (button.attr('data-container-divide'))) {
+                    $(container).css(pushType + '-' + targetSide, targetOffsetRight);
                 }
                 $(target).css(targetSide, -Math.abs(targetWidth + targetOffsetRight));
             }
@@ -168,7 +169,7 @@ $.sidebar_toggle = function(action, target, container) {
 
     // binding click function
     $('body').off('click', elem);
-    $('body').on('click', elem, function(e) {
+    $('body').on('click', elem, function (e) {
         e.preventDefault();
 
         button = $(this);
@@ -181,7 +182,7 @@ $.sidebar_toggle = function(action, target, container) {
          * Sidebar function on data container divide
          * @return {Null}
          */
-        if(button.attr('aria-expanded') == 'false'){
+        if (button.attr('aria-expanded') == 'false') {
             sidebar_window.show();
         }
         else if (button.attr('aria-expanded') == 'true') {
@@ -191,24 +192,24 @@ $.sidebar_toggle = function(action, target, container) {
     });
 };
 
-$('.sidebar-wrapper[data-fixed-offset-top]').on('affix.bs.affix', function() {
+$('.sidebar-wrapper[data-fixed-offset-top]').on('affix.bs.affix', function () {
     $(this).css('top', $(this).data('fixed-offset-top'));
 });
 
-$(window).resize(function() {
-    $('.sidebar-wrapper').each(function(){
+$(window).resize(function () {
+    $('.sidebar-wrapper').each(function () {
         $(this).height($(window).height() - ($(this).offset().top - $(window).scrollTop()));
     });
 });
 
-$(window).load(function() {
-    $('.sidebar-wrapper').each(function(){
+$(window).load(function () {
+    $('.sidebar-wrapper').each(function () {
         $(this).height($(window).height() - ($(this).offset().top - $(window).scrollTop()));
     });
 });
 
 $(window).scroll(function () {
-    $('.sidebar-wrapper').each(function(){
+    $('.sidebar-wrapper').each(function () {
         $(this).height($(window).height() - ($(this).offset().top - $(window).scrollTop()));
     });
 });
@@ -219,13 +220,14 @@ $(window).scroll(function () {
  * @param  {String} val     Value to be matched
  * @param  {String} val2    Value to be replaced with
  */
-$.fn.toggleAttr = function(attr, val, val2) {
-    return this.each(function() {
+$.fn.toggleAttr = function (attr, val, val2) {
+    return this.each(function () {
         var self = $(this);
-        if (self.attr(attr) == val)
+        if (self.attr(attr) == val) {
             self.attr(attr, val2);
-        else
+        } else {
             self.attr(attr, val);
+        }
     });
 };
 
@@ -233,13 +235,13 @@ $.fn.toggleAttr = function(attr, val, val2) {
  * Tree view function
  * @return {Null}
  */
-$.fn.tree_view = function() {
+$.fn.tree_view = function () {
     var tree = $(this);
-    tree.find('li').has("ul").each(function() {
+    tree.find('li').has("ul").each(function () {
         var branch = $(this); //li with children ul
         branch.prepend('<i class="icon"></i>');
         branch.addClass('branch');
-        branch.on('click', function(e) {
+        branch.on('click', function (e) {
             if (this == e.target) {
                 var icon = $(this).children('i:first');
                 icon.closest('li').toggleAttr('aria-expanded', 'true', 'false');
@@ -247,21 +249,21 @@ $.fn.tree_view = function() {
         });
     });
 
-    tree.find('.branch .icon').each(function() {
-        $(this).on('click', function() {
+    tree.find('.branch .icon').each(function () {
+        $(this).on('click', function () {
             $(this).closest('li').click();
         });
     });
 
-    tree.find('.branch > a').each(function() {
-        $(this).on('click', function(e) {
+    tree.find('.branch > a').each(function () {
+        $(this).on('click', function (e) {
             $(this).closest('li').click();
             e.preventDefault();
         });
     });
 
-    tree.find('.branch > button').each(function() {
-        $(this).on('click', function(e) {
+    tree.find('.branch > button').each(function () {
+        $(this).on('click', function (e) {
             $(this).closest('li').click();
             e.preventDefault();
         });
