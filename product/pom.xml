@@ -23,7 +23,7 @@
     <artifactId>wso2uuf</artifactId>
     <packaging>pom</packaging>
 
-    <name>WSO2 UUF Server - Distribution</name>
+    <name>WSO2 UUF Server Distribution</name>
     <description>WSO2 UUF Server</description>
     <url>http://wso2.org</url>
 
@@ -169,6 +169,7 @@
             <version>${carbon.uuf.version}</version>
             <type>zip</type>
         </dependency>
+        <!-- Sample Simple Authentication Component -->
         <dependency>
             <groupId>org.wso2.carbon.security.userstore</groupId>
             <artifactId>org.wso2.carbon.security.userstore.jdbc.feature</artifactId>
