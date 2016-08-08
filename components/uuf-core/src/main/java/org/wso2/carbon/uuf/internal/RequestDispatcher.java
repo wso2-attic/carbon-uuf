@@ -31,7 +31,6 @@ import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.carbon.uuf.spi.HttpResponse;
 
 import java.util.Optional;
-import java.util.concurrent.ExecutionException;
 
 import static org.wso2.carbon.uuf.spi.HttpResponse.CONTENT_TYPE_TEXT_HTML;
 import static org.wso2.carbon.uuf.spi.HttpResponse.HEADER_LOCATION;
