@@ -17,7 +17,6 @@
 package org.wso2.carbon.uuf.renderablecreator.hbs.impl;
 
 import com.github.jknack.handlebars.Context;
-import com.github.jknack.handlebars.Template;
 import com.github.jknack.handlebars.io.TemplateSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,9 +41,6 @@ public class HbsPageRenderable extends HbsRenderable {
 
     private static final Logger log = LoggerFactory.getLogger(HbsPageRenderable.class);
 
-    private final Template template;
-    private final String absolutePath;
-    private final String relativePath;
     private final Executable executable;
 
     public HbsPageRenderable(TemplateSource templateSource) {
@@ -61,25 +57,8 @@ public class HbsPageRenderable extends HbsRenderable {
 
     public HbsPageRenderable(TemplateSource templateSource, String absolutePath, String relativePath,
                              Executable executable) {
-        this.template = compile(templateSource);
-        this.absolutePath = absolutePath;
-        this.relativePath = relativePath;
+        super(templateSource, absolutePath, relativePath);
         this.executable = executable;
-    }
-
-    @Override
-    protected Template getTemplate() {
-        return template;
-    }
-
-    @Override
-    protected String getAbsolutePath() {
-        return absolutePath;
-    }
-
-    @Override
-    protected String getRelativePath() {
-        return relativePath;
     }
 
     protected Executable getExecutable() {
@@ -121,13 +100,13 @@ public class HbsPageRenderable extends HbsRenderable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(absolutePath, getTemplate(), getExecutable());
+        return Objects.hash(getAbsolutePath(), getTemplate(), getExecutable());
     }
 
     @Override
     public String toString() {
-        return "{\"path\": {\"absolute\": \"" + absolutePath + "\", \"relative\": \"" + relativePath + "\"}, \"js\": " +
-                getExecutable() + "}";
+        return "{\"path\": {\"absolute\": \"" + getAbsolutePath() + "\", \"relative\": \"" + getRelativePath() +
+                "\"}, \"js\": " + getExecutable() + "}";
     }
 
     protected static Map<String, Object> getExecutableContext(Model model, Lookup lookup, RequestLookup requestLookup) {
