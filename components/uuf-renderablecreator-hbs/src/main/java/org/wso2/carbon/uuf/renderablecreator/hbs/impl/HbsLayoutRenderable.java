@@ -17,7 +17,6 @@
 package org.wso2.carbon.uuf.renderablecreator.hbs.impl;
 
 import com.github.jknack.handlebars.Context;
-import com.github.jknack.handlebars.Template;
 import com.github.jknack.handlebars.io.TemplateSource;
 import org.wso2.carbon.uuf.core.API;
 import org.wso2.carbon.uuf.core.Lookup;
@@ -31,10 +30,6 @@ import java.io.IOException;
 
 public class HbsLayoutRenderable extends HbsRenderable {
 
-    private final Template template;
-    private final String absolutePath;
-    private final String relativePath;
-
     public HbsLayoutRenderable(TemplateSource templateSource) {
         this(templateSource, null, null);
     }
@@ -44,24 +39,7 @@ public class HbsLayoutRenderable extends HbsRenderable {
     }
 
     public HbsLayoutRenderable(TemplateSource templateSource, String absolutePath, String relativePath) {
-        this.template = compile(templateSource);
-        this.absolutePath = absolutePath;
-        this.relativePath = relativePath;
-    }
-
-    @Override
-    protected Template getTemplate() {
-        return template;
-    }
-
-    @Override
-    protected String getAbsolutePath() {
-        return absolutePath;
-    }
-
-    @Override
-    protected String getRelativePath() {
-        return relativePath;
+        super(templateSource, absolutePath, relativePath);
     }
 
     @Override
