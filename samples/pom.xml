@@ -49,6 +49,7 @@
         <module>osgi-services/org.wso2.carbon.uuf.sample.simple-auth.bundle</module>
         <module>p2-features/org.wso2.carbon.uuf.sample.pets-store.feature</module>
         <module>p2-features/org.wso2.carbon.uuf.sample.simple-auth.feature</module>
+        <module>p2-features/org.wso2.carbon.uuf.sample.Features-app.feature</module>
     </modules>
 
 </project>

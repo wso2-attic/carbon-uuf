@@ -21,6 +21,7 @@ import com.github.jknack.handlebars.Options;
 
 import org.wso2.carbon.uuf.api.auth.Session;
 import org.wso2.carbon.uuf.core.API;
+import org.wso2.carbon.uuf.exception.UnauthorizedException;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.HbsRenderable;
 
 import java.io.IOException;
@@ -31,16 +32,22 @@ public class SecuredHelper implements Helper<Object> {
 
     @Override
     public CharSequence apply(Object context, Options options) throws IOException {
-        if (options.tagType.inline()) {
-            // Is a {{secured}} inline helper, not the block version.
-            return "";
-        }
-
+        //TODO support dynamic parameters eg:- {{secure “jms://{topicPath}” ”jms:view”}}
         if (context instanceof String) {
-            // {{#secured permissionUri permissionAction}} ... {{/secured}}
+            // {{#secured permissionUri permissionAction}} ... {{/secured}} || {{secured permissionUri permissionAction}}
             API api = options.data(HbsRenderable.DATA_KEY_API);
-            return api.getSession().map(Session::getUser).get().hasPermission(context.toString(),options.param(0)) ?
-                    options.fn().toString() : options.inverse();
+            boolean hasPermission = api.getSession().map(Session::getUser).get().
+                    hasPermission(context.toString(),options.param(0));
+
+            if (options.tagType.inline()) {
+                if (hasPermission) {
+                    return options.fn().toString();
+                } else {
+                    throw new UnauthorizedException("You don't have permission to access " + context.toString());
+                }
+            } else {
+                return hasPermission ? options.fn().toString() : options.inverse();
+            }
         } else {
             // {{#secured}} ... {{/secured}}
             API api = options.data(HbsRenderable.DATA_KEY_API);

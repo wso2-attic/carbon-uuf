@@ -70,9 +70,7 @@ public class Debugger {
 
     public void serve(App app, HttpRequest request, HttpResponse response) {
         String uriWithoutContextPath = request.getUriWithoutContextPath();
-
-        DebugConnector debugConnector = new DebugConnector();
-        app.connectDebugger(debugConnector);
+        DebugConnector debugConnector = new DebugConnector(app);
 
         if (URI_PATTEN_API_PAGES.matches(uriWithoutContextPath)) {
             JsonObject content = new JsonObject();

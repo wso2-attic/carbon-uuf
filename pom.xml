@@ -43,11 +43,11 @@
     </scm>
 
     <modules>
-        <module>components/nashorn-osgi-fragment</module>
         <module>components/uuf-core</module>
-        <module>components/uuf-renderablecreator-hbs</module>
-        <module>components/uuf-renderablecreator-html</module>
         <module>components/uuf-httpconnector-msf4j</module>
+        <module>components/uuf-renderablecreator-html</module>
+        <module>components/uuf-renderablecreator-hbs</module>
+        <module>components/nashorn-osgi-fragment</module>
         <module>features/org.wso2.carbon.uuf.core.feature</module>
         <module>features/org.wso2.carbon.uuf.renderablecreator.hbs.feature</module>
         <module>features/org.wso2.carbon.uuf.renderablecreator.html.feature</module>
@@ -184,13 +184,12 @@
                 <version>${carbon.transport.http.netty.version}</version>
             </dependency>
 
-            <!-- Sample Authentication -->
+            <!-- Authentication and Authorization -->
             <dependency>
                 <groupId>org.wso2.carbon.security.caas</groupId>
                 <artifactId>org.wso2.carbon.security.caas</artifactId>
                 <version>${carbon.security.caas.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>org.wso2.carbon.security.userstore</groupId>
                 <artifactId>org.wso2.carbon.security.userstore.jdbc</artifactId>
@@ -274,7 +273,6 @@
 
     <properties>
         <carbon.uuf.version>1.0.0-SNAPSHOT</carbon.uuf.version>
-        <nashorn-osgi-fragment.version>1.0.0-SNAPSHOT</nashorn-osgi-fragment.version>
 
         <!-- UUF -->
         <carbon.kernel.version>5.1.0</carbon.kernel.version>
@@ -306,16 +304,19 @@
         <!-- Handlebars -->
         <orbit.com.github.jknack.handlebars.version>4.0.3.wso2v1</orbit.com.github.jknack.handlebars.version>
         <antlr-version>4.5.1-1</antlr-version>
+        <!--Nashorn-->
+        <nashorn-osgi-fragment.version>1.0.0-SNAPSHOT</nashorn-osgi-fragment.version>
 
         <!-- MSF4J -->
         <msf4j.version>2.0.0</msf4j.version>
 
-        <!-- Sample Authentication -->
+        <!-- Authentication and Authorization -->
         <carbon.security.caas.version>1.0.0-SNAPSHOT</carbon.security.caas.version>
         <carbon.security.userstore.jdbc.version>1.0.0-SNAPSHOT</carbon.security.userstore.jdbc.version>
+
         <!-- Maven Plugins -->
-        <carbon.feature.plugin.version>2.0.1</carbon.feature.plugin.version>
         <carbon-uuf-maven-plugin.version>1.0.0-SNAPSHOT</carbon-uuf-maven-plugin.version>
+        <carbon.feature.plugin.version>2.0.1</carbon.feature.plugin.version>
         <maven.bundle.plugin.version>2.5.0</maven.bundle.plugin.version>
 
         <!-- Test -->
@@ -358,7 +359,7 @@
         </pluginRepository>
         <pluginRepository>
             <id>wso2-snapshots</id>
-            <name>Apache Snapshot Repository</name>
+            <name>WSO2 Snapshot Repository</name>
             <url>http://maven.wso2.org/nexus/content/repositories/snapshots/</url>
             <snapshots>
                 <enabled>true</enabled>

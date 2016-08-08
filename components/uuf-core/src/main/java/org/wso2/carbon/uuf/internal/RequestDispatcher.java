@@ -23,6 +23,7 @@ import org.wso2.carbon.uuf.exception.FragmentNotFoundException;
 import org.wso2.carbon.uuf.exception.HttpErrorException;
 import org.wso2.carbon.uuf.exception.PageNotFoundException;
 import org.wso2.carbon.uuf.exception.PageRedirectException;
+import org.wso2.carbon.uuf.exception.UnauthorizedException;
 import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.internal.debug.Debugger;
 import org.wso2.carbon.uuf.internal.io.StaticResolver;
@@ -67,32 +68,8 @@ public class RequestDispatcher {
                 debugger.serve(app, request, response);
                 return;
             }
-            String html;
-            if (request.isFragmentRequest()) {
-                html = app.renderFragment(request, response);
-            } else {
-                // Request for a page.
-                try {
-                    html = app.renderPage(request, response);
-                } catch (PageNotFoundException e) {
-                    // See https://googlewebmastercentral.blogspot.com/2010/04/to-slash-or-not-to-slash.html
-                    // If the tailing '/' is extra or a it is missing, then send 301 with corrected URL.
-                    String uriWithoutContextPath = request.getUriWithoutContextPath();
-                    String correctedUriWithoutContextPath = uriWithoutContextPath.endsWith("/") ?
-                            uriWithoutContextPath.substring(0, uriWithoutContextPath.length() - 1) :
-                            (uriWithoutContextPath + "/");
-                    if (app.hasPage(correctedUriWithoutContextPath)) {
-                        response.setStatus(STATUS_MOVED_PERMANENTLY);
-                        String correctedUrl =
-                                request.getHostName() + request.getContextPath() + correctedUriWithoutContextPath;
-                        response.setHeader(HEADER_LOCATION, correctedUrl);
-                        return;
-                    }
-                    throw e;
-                }
-            }
-            response.setContent(STATUS_OK, html, CONTENT_TYPE_TEXT_HTML);
-        } catch (PageNotFoundException e) {
+            serveApp(app, request, response);
+        } catch (PageNotFoundException | UnauthorizedException e) {
             serveErrorPage(app, request, response, e);
         } catch (FragmentNotFoundException e) {
             response.setContent(e.getHttpStatusCode(), e.getMessage());
@@ -139,6 +116,45 @@ public class RequestDispatcher {
             // Another exception occurred when rendering the error page for HttpErrorException ex.
             log.error("An error occurred when rendering the error page for exception '" + ex + "'.", e);
             response.setContent(ex.getHttpStatusCode(), ex.getMessage());
+        }
+    }
+
+    private void serveApp(App app, HttpRequest request, HttpResponse response){
+        String html;
+        try {
+            if (request.isFragmentRequest()) {
+                html = app.renderFragment(request, response);
+            } else {
+                // Request for a page.
+                try {
+                    html = app.renderPage(request, response);
+                } catch (PageNotFoundException e) {
+                    // See https://googlewebmastercentral.blogspot.com/2010/04/to-slash-or-not-to-slash.html
+                    // If the tailing '/' is extra or a it is missing, then send 301 with corrected URL.
+                    String uriWithoutContextPath = request.getUriWithoutContextPath();
+                    String correctedUriWithoutContextPath = uriWithoutContextPath.endsWith("/") ?
+                            uriWithoutContextPath.substring(0, uriWithoutContextPath.length() - 1) :
+                            (uriWithoutContextPath + "/");
+                    if (app.hasPage(correctedUriWithoutContextPath)) {
+                        response.setStatus(STATUS_MOVED_PERMANENTLY);
+                        String correctedUrl =
+                                request.getHostName() + request.getContextPath() + correctedUriWithoutContextPath;
+                        response.setHeader(HEADER_LOCATION, correctedUrl);
+                        return;
+                    }
+                    throw e;
+                }
+            }
+            response.setContent(STATUS_OK, html, CONTENT_TYPE_TEXT_HTML);
+        } catch (Exception e) {
+            // this is to unwrap hadlebarsException and throw UUFException(Eg: UnauthorizedException from helper)
+            Throwable th;
+            while ((th = e.getCause()) != null) {
+                if (th instanceof UUFException) {
+                    throw (UUFException) th;
+                }
+            }
+            throw e;
         }
     }
 }

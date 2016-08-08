@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="description" content="">
@@ -11,10 +10,8 @@
     
     <!-- bootstrap -->
     <link href="public/lib/bootstrap-3.3.6/css/bootstrap.min.css" rel="stylesheet">
-    
     <!-- custom css -->
     <link href="public/css/debug.css" rel="stylesheet">
-
 </head>
 
 
@@ -32,7 +29,6 @@
     </div>
 </header>
 
-
 <!-- #page-content-wrapper -->
 <div class="page-content-wrapper" style="padding-left:300px;">
 
@@ -48,15 +44,13 @@
     </div>
     <!-- /.left-sidebar -->
 
-
     <!-- page content -->
     <div class="container-fluid">
 
         <div class="body-wrapper">
 
             <div class="page-header">
-                <h1>UUF Debugger</h1>
-                <p id="main-lead" class="lead">Pages</p>
+                <h1 id="main-header">Pages</h1>
             </div>
             <div class="container-wrapper">
                 <div class="preloader"></div>
@@ -64,41 +58,39 @@
 
                     <!-- Nav tabs -->
                     <ul class="nav nav-tabs" role="tablist">
-                        <li role="presentation" class="active"><a data-target="#pages-details" aria-controls="pages-details" role="tab" data-toggle="tab">Details</a></li>
-                        <li role="presentation"><a data-target="#pages-json" aria-controls="pages-json" role="tab" data-toggle="tab">JSON</a></li>
+                        <li role="presentation" class="active">
+                            <a data-target="#pages-details" aria-controls="pages-details" role="tab" data-toggle="tab">
+                                Details
+                            </a>
+                        </li>
+                        <li role="presentation">
+                            <a data-target="#pages-json" aria-controls="pages-json" role="tab" data-toggle="tab">
+                                JSON
+                            </a>
+                        </li>
                     </ul>
 
                     <!-- Tab panes -->
                     <div class="tab-content">
-                        <div id="pages-details" class="tab-pane active" role="tabpanel">
-                            <div class="page-header">
-                                <p class="lead">/foundation</p>
-                            </div>
-                            <ul id="pages-tree0" class="tree-view tree-view-lines"></ul>
-                            <div class="page-header">
-                                <p class="lead">/</p>
-                            </div>
-                            <ul id="pages-tree1" class="tree-view tree-view-lines"></ul>
-                            <div class="page-header">
-                                <p class="lead">/simple-auth</p>
-                            </div>
-                            <ul id="pages-tree2" class="tree-view tree-view-lines"></ul>
-                            <div class="page-header">
-                                <p class="lead">/store-common</p>
-                            </div>
-                            <ul id="pages-tree3" class="tree-view tree-view-lines"></ul>
-                        </div>
+                        <div id="pages-details" class="tab-pane active" role="tabpanel"></div>
                         <div id="pages-json" class="tab-pane" role="tabpanel"><pre><code></code></pre></div>
                     </div>
 
                 </div>
 
                 <div id="fragments" class="info-container">
-
                     <!-- Nav tabs -->
                     <ul class="nav nav-tabs" role="tablist">
-                        <li role="presentation" class="active"><a data-target="#fragments-details" aria-controls="fragments-details" role="tab" data-toggle="tab">Details</a></li>
-                        <li role="presentation"><a data-target="#fragments-json" aria-controls="fragments-json" role="tab" data-toggle="tab">JSON</a></li>
+                        <li role="presentation" class="active">
+                            <a data-target="#fragments-details" aria-controls="fragments-details" role="tab" data-toggle="tab">
+                                Details
+                            </a>
+                        </li>
+                        <li role="presentation">
+                            <a data-target="#fragments-json" aria-controls="fragments-json" role="tab" data-toggle="tab">
+                                JSON
+                            </a>
+                        </li>
                     </ul>
 
                     <!-- Tab panes -->
@@ -106,16 +98,24 @@
                         <div id="fragments-details" class="tab-pane active" role="tabpanel">
                             <ul id="fragments-tree" class="tree-view tree-view-lines"></ul>
                         </div>
-                        <div id="fragments-json"  class="tab-pane" role="tabpanel"><pre><code></code></pre></div>
+                        <div id="fragments-json"  class="tab-pane" role="tabpanel">
+                            <pre><code></code></pre>
+                        </div>
                     </div>
-
                 </div>
                 <div id="layouts" class="info-container">
-
                     <!-- Nav tabs -->
                     <ul class="nav nav-tabs" role="tablist">
-                        <li role="presentation" class="active"><a data-target="#layouts-details" aria-controls="layouts-details" role="tab" data-toggle="tab">Details</a></li>
-                        <li role="presentation"><a data-target="#layouts-json" aria-controls="layouts-json" role="tab" data-toggle="tab">JSON</a></li>
+                        <li role="presentation" class="active">
+                            <a data-target="#layouts-details" aria-controls="layouts-details" role="tab" data-toggle="tab">
+                                Details
+                            </a>
+                        </li>
+                        <li role="presentation">
+                            <a data-target="#layouts-json" aria-controls="layouts-json" role="tab" data-toggle="tab">
+                                JSON
+                            </a>
+                        </li>
                     </ul>
 
                     <!-- Tab panes -->
@@ -123,16 +123,24 @@
                         <div id="layouts-details" class="tab-pane active" role="tabpanel">
                             <ul id="layouts-tree" class="tree-view tree-view-lines"></ul>
                         </div>
-                        <div id="layouts-json"  class="tab-pane" role="tabpanel"><pre><code></code></pre></div>
+                        <div id="layouts-json"  class="tab-pane" role="tabpanel">
+                            <pre><code></code></pre>
+                        </div>
                     </div>
-
                 </div>
                 <div id="themes" class="info-container">
-
                     <!-- Nav tabs -->
                     <ul class="nav nav-tabs" role="tablist">
-                        <li role="presentation" class="active"><a data-target="#themes-details" aria-controls="themes-details" role="tab" data-toggle="tab">Details</a></li>
-                        <li role="presentation"><a data-target="#themes-json" aria-controls="themes-json" role="tab" data-toggle="tab">JSON</a></li>
+                        <li role="presentation" class="active">
+                            <a data-target="#themes-details" aria-controls="themes-details" role="tab" data-toggle="tab">
+                                Details
+                            </a>
+                        </li>
+                        <li role="presentation">
+                            <a data-target="#themes-json" aria-controls="themes-json" role="tab" data-toggle="tab">
+                                JSON
+                            </a>
+                        </li>
                     </ul>
 
                     <!-- Tab panes -->
@@ -140,9 +148,10 @@
                         <div id="themes-details" class="tab-pane active" role="tabpanel">
                             <ul id="themes-tree" class="tree-view tree-view-lines"></ul>
                         </div>
-                        <div id="themes-json"  class="tab-pane" role="tabpanel"><pre><code></code></pre></div>
+                        <div id="themes-json"  class="tab-pane" role="tabpanel">
+                            <pre><code></code></pre>
+                        </div>
                     </div>
-
                 </div>
             </div>
         </div>
@@ -155,20 +164,16 @@
 <!-- footer -->
 <footer class="footer">
     <div class="container-fluid">
-        <p>UUF Debugger v1.0.0 | &copy;
-            <script>document.write(new Date().getFullYear());</script>
+        <p>
+            UUF Debugger v1.0.0 | &copy; <script>document.write(new Date().getFullYear());</script>
             <a href="http://wso2.com/" target="_blank">WSO2 Inc</a>.
         </p>
     </div>
 </footer>
 
-
-<!-- /#wrapper -->
-
 <!-- jquery -->
 <script src="public/lib/jquery-2.2.1/js/jquery-2.2.1.min.js"></script>
 <script src="public/lib/bootstrap-3.3.6/js/bootstrap.min.js"></script>
-
 <!-- app script -->
 <script src="public/js/app.js"></script>
 <script src="public/js/debug.js"></script>
