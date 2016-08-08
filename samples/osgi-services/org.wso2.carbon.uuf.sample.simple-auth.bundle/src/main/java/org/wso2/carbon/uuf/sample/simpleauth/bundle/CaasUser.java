@@ -18,8 +18,6 @@ package org.wso2.carbon.uuf.sample.simpleauth.bundle;
 
 import org.wso2.carbon.security.caas.api.CarbonPrincipal;
 import org.wso2.carbon.security.caas.user.core.bean.Permission;
-import org.wso2.carbon.security.caas.user.core.exception.AuthorizationStoreException;
-import org.wso2.carbon.security.caas.user.core.exception.IdentityStoreException;
 import org.wso2.carbon.uuf.spi.auth.User;
 
 public class CaasUser implements User {
@@ -42,10 +40,8 @@ public class CaasUser implements User {
         Permission permission = new Permission(resourceUri, action);
         try {
             return principal.getUser().isAuthorized(permission);
-        } catch (AuthorizationStoreException e) {
-            //throw new UUFException("Error occurred, while checking permission.", e);
-        } catch (IdentityStoreException e) {
-            //throw new UUFException("Error occurred, while checking permission.", e);
+         //TODO catch generic carbon-security exception once confirmed by the identity team
+        } catch (Exception e) {
         }
         return false;
     }
