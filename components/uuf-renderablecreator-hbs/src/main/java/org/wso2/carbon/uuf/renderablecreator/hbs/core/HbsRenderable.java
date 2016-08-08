@@ -72,11 +72,27 @@ public abstract class HbsRenderable implements Renderable {
         HANDLEBARS.registerHelperMissing(new MissingHelper());
     }
 
-    protected abstract Template getTemplate();
+    private final Template template;
+    private final String absolutePath;
+    private final String relativePath;
 
-    protected abstract String getAbsolutePath();
+    public HbsRenderable(TemplateSource templateSource, String absolutePath, String relativePath) {
+        this.template = (templateSource != null) ? compile(templateSource) : null;
+        this.absolutePath = absolutePath;
+        this.relativePath = relativePath;
+    }
 
-    protected abstract String getRelativePath();
+    protected Template getTemplate() {
+        return template;
+    }
+
+    protected String getAbsolutePath() {
+        return absolutePath;
+    }
+
+    protected String getRelativePath() {
+        return relativePath;
+    }
 
     @Override
     public int hashCode() {
