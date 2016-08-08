@@ -42,47 +42,72 @@ function showPages() {
         $("#main-lead").text("Pages");
     });
 }
-
-function populatePages(d) {
-    var string0 = '';
-    var string1 = '';
-    var string2 = '';
-    var string3 = '';
-    var subjArr = [];
-    $.each(d, function (k, v) {
-        if (v !== null && typeof v === 'object') {
-            subjArr.push(v);
+function populatePages(d){
+    $.each(d, function(k,v){
+        if(k == "/foundation"){
+           populatePageHelper(v,"#pages-tree0");
+        }else if(k == "/root"){
+            populatePageHelper(v,"#pages-tree1");
+        }else if(k == "/simple-auth"){
+            populatePageHelper(v,"#pages-tree2");
+        }else if(k == "/store-common"){
+            $("#pages-tree3").html('<li aria-expanded="false" class="branch"></i><i class="icon"></i><a href="#">[  ]</a>');
+        }else{
+            v = null;
         }
     });
-    $.each(subjArr[0], function (k, v) {
-        if (v !== null && typeof v === 'object') {
-            string0 += '<li class="branch">';
-            string0 += '</i><a href="#">' + v.layout.name + '</a>';
-            string0 += '<ul>';
-            if (v.layout !== null && typeof v.layout === 'object') {
-                string0 += '<li class="branch">';
-                string0 += '<a href="#">renderer</a>';
-                string0 += '<ul>';
-                if (v.layout.renderer !== null && typeof v.layout.renderer === 'object') {
-                    string0 += '<li><b>path: </b>' + v.layout.renderer.path + '</li>';
-                }
-                string0 += '</ul>';
-                string0 += '</li>';
-                string0 += '<li><b>renderer: </b>' + v.renderer + '</li>';
-                string0 += '<li><b>secured: </b>' + v.secured + '</li>';
-                string0 += '<li><b>uriPattern: </b>' + v.uriPattern + '</li>';
-            }
+    $('#pages-tree0,#pages-tree1,#pages-tree2,#pages-tree3').tree_view();
 
-            string0 += '</ul>';
-            string0 += '</li>';
-        }
-    });
-    $('#pages-tree0').html(string0);
-    $('#pages-tree0').tree_view();
 }
 
-function showFragments() {
-    requestUtil.makeRequest("GET", "/fragments/", null, function (data) {
+
+function populatePageHelper(co,tree){
+    var string0 = '';
+    $.each(co, function(k,v){
+        if (v !== null && typeof v === 'object'){
+            string0 += '<li aria-expanded="true" class="branch">';
+            string0 += '</i><a href="#"><span class="badge add-margin-right-1x">'+ (k+1) +'</span></a>';
+            string0 += '<ul>';
+            if ((v.layout !== null && typeof v.layout === 'object') || typeof v.layout !== 'undefined'){
+                string0 += '<li class="branch">';
+                string0 += '</i><a href="#">layout</a>';
+                string0 += '<ul>';
+                string0 += '<li><b>name: </b>'+ v.layout.name +'</li>';
+                if (v.layout.renderer !== null && typeof v.layout.renderer === 'object'){
+                    string0 += '<li class="branch">';
+                    string0 += '<a href="#">renderer</a>';
+                    string0 += '<ul>';
+                    string0 += '<li><b>path: </b>'+ v.layout.renderer.path +'</li>';
+                    string0 += '</ul>';
+                    string0 += '</li>';
+                }
+                string0 += '</ul>';
+            }
+            if (v.renderer !== null && typeof v.renderer === 'object'){
+                string0 += '<li class="branch">';
+                string0 += '</i><a href="#">renderer</a>';
+                string0 += '<ul>';
+                string0 += '<li><b>js: </b>'+ v.renderer.js +'</li>';
+                string0 += '<li><b>path: </b>'+ v.renderer.path +'</li>';
+                string0 += '</ul>';
+            }
+            string0 += '<li><b>secured: </b>'+ v.secured +'</li>';
+            if (v.uriPattern !== null && typeof v.uriPattern === 'object'){
+                string0 += '<li class="branch">';
+                string0 += '</i><a href="#">uriPattern</a>';
+                string0 += '<ul>';
+                string0 += '<li><b>pattern: </b>'+ v.uriPattern.pattern +'</li>';
+                string0 += '<li><b>regex: </b>'+ v.uriPattern.regex +'</li>';
+                string0 += '</ul>';
+            }
+            string0 += '</ul>';
+        }
+    });
+    $(tree).html(string0);
+}
+
+function showFragments(){
+    requestUtil.makeRequest("GET", "/fragments/", null, function(data) {
         $(".info-container").hide();
         $(".preloader").preloader("hide");
         populateFragments(data);

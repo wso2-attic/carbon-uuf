@@ -7816,4 +7816,6 @@ ul.sidebar-messages > li {
 
 .branch .badge{
     font-weight:normal;
+    background:#e2e2e2;
+    color:#666;
 }
