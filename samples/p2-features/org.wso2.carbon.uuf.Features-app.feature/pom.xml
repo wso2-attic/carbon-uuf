@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <!-- TODO: change the module name to org.wso2.carbon.uuf.features-app.feature
-     after carbon-maven-plugins repository bug is fixed and allowed to have the name "feature" in a p2 feature
+     after fixing the JIRA: https://wso2.org/jira/browse/CMVNPLG-13
     -->
     <artifactId>org.wso2.carbon.uuf.Features-app.feature</artifactId>
     <packaging>carbon-feature</packaging>
