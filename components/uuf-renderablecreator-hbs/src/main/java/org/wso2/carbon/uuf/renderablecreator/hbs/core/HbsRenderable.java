@@ -78,25 +78,6 @@ public abstract class HbsRenderable implements Renderable {
 
     protected abstract String getRelativePath();
 
-    protected Template compile(TemplateSource templateSource) {
-        try {
-            return HANDLEBARS.compile(templateSource);
-        } catch (IOException e) {
-            throw new UUFException("Cannot compile Handlebars template '" + templateSource.filename() + "'.", e);
-        }
-    }
-
-    protected Map<String, Object> getTemplateModel(Model model, Lookup lookup, RequestLookup requestLookup, API api) {
-        Map<String, Object> context = new HashMap<>();
-        context.put("@contextPath", requestLookup.getContextPath());
-        context.put("@config", lookup.getConfiguration());
-        context.put("@user", api.getSession().map(session -> (Object) session.getUser()).orElse(false));
-        context.put("@pathParams", requestLookup.getPathParams());
-        context.put("@queryParams", requestLookup.getRequest().getQueryParams());
-        context.put("@params", ((model == null) ? false : model.toMap()));
-        return context;
-    }
-
     @Override
     public int hashCode() {
         return Objects.hash(getAbsolutePath(), getTemplate());
@@ -105,5 +86,25 @@ public abstract class HbsRenderable implements Renderable {
     @Override
     public String toString() {
         return "{\"path\": {\"absolute\": \"" + getAbsolutePath() + "\", \"relative\": \"" + getRelativePath() + "\"}}";
+    }
+
+    protected static Template compile(TemplateSource templateSource) {
+        try {
+            return HANDLEBARS.compile(templateSource);
+        } catch (IOException e) {
+            throw new UUFException("Cannot compile Handlebars template '" + templateSource.filename() + "'.", e);
+        }
+    }
+
+    protected static Map<String, Object> getTemplateModel(Model model, Lookup lookup, RequestLookup requestLookup,
+                                                          API api) {
+        Map<String, Object> context = new HashMap<>();
+        context.put("@contextPath", requestLookup.getContextPath());
+        context.put("@config", lookup.getConfiguration());
+        context.put("@user", api.getSession().map(session -> (Object) session.getUser()).orElse(false));
+        context.put("@pathParams", requestLookup.getPathParams());
+        context.put("@queryParams", requestLookup.getRequest().getQueryParams());
+        context.put("@params", ((model == null) ? false : model.toMap()));
+        return context;
     }
 }
