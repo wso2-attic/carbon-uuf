@@ -37,9 +37,9 @@ import org.wso2.carbon.uuf.renderablecreator.hbs.impl.HbsLayoutRenderable;
 import org.wso2.carbon.uuf.renderablecreator.hbs.impl.HbsPageRenderable;
 import org.wso2.carbon.uuf.renderablecreator.hbs.impl.JsExecutable;
 import org.wso2.carbon.uuf.renderablecreator.hbs.impl.MutableHbsFragmentRenderable;
+import org.wso2.carbon.uuf.renderablecreator.hbs.impl.MutableHbsLayoutRenderable;
 import org.wso2.carbon.uuf.renderablecreator.hbs.impl.MutableHbsPageRenderable;
 import org.wso2.carbon.uuf.renderablecreator.hbs.impl.MutableJsExecutable;
-import org.wso2.carbon.uuf.renderablecreator.hbs.impl.MutableHbsLayoutRenderable;
 import org.wso2.carbon.uuf.renderablecreator.hbs.internal.io.RenderableUpdater;
 import org.wso2.carbon.uuf.spi.Renderable;
 import org.wso2.carbon.uuf.spi.RenderableCreator;
@@ -105,7 +105,8 @@ public class HbsRenderableCreator implements RenderableCreator {
             fragmentRenderable = mfr;
             updater.add(fragmentReference, mfr);
         } else {
-            fragmentRenderable = new HbsFragmentRenderable(templateSource, executable);
+            fragmentRenderable = new HbsFragmentRenderable(templateSource, file.getAbsolutePath(),
+                                                           file.getRelativePath(), executable);
         }
         boolean isSecured = new HbsPreprocessor(templateSource).isSecured();
         return new RenderableCreator.FragmentRenderableData(fragmentRenderable, isSecured);
@@ -124,7 +125,8 @@ public class HbsRenderableCreator implements RenderableCreator {
             pageRenderable = mpr;
             updater.add(pageReference, mpr);
         } else {
-            pageRenderable = new HbsPageRenderable(templateSource, executable);
+            pageRenderable = new HbsPageRenderable(templateSource, file.getAbsolutePath(), file.getRelativePath(),
+                                                   executable);
         }
         HbsPreprocessor preprocessor = new HbsPreprocessor(templateSource);
         String layoutName = preprocessor.getLayoutName().orElse(null);
