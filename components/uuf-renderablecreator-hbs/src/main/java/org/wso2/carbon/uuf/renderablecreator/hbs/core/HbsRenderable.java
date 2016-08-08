@@ -44,6 +44,7 @@ import org.wso2.carbon.uuf.spi.model.Model;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public abstract class HbsRenderable implements Renderable {
 
@@ -73,6 +74,10 @@ public abstract class HbsRenderable implements Renderable {
 
     protected abstract Template getTemplate();
 
+    protected abstract String getAbsolutePath();
+
+    protected abstract String getRelativePath();
+
     protected Template compile(TemplateSource templateSource) {
         try {
             return HANDLEBARS.compile(templateSource);
@@ -90,5 +95,15 @@ public abstract class HbsRenderable implements Renderable {
         context.put("@queryParams", requestLookup.getRequest().getQueryParams());
         context.put("@params", ((model == null) ? false : model.toMap()));
         return context;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getAbsolutePath(), getTemplate());
+    }
+
+    @Override
+    public String toString() {
+        return "{\"path\": {\"absolute\": \"" + getAbsolutePath() + "\", \"relative\": \"" + getRelativePath() + "\"}}";
     }
 }

@@ -28,7 +28,6 @@ import org.wso2.carbon.uuf.renderablecreator.hbs.internal.io.PlaceholderWriter;
 import org.wso2.carbon.uuf.spi.model.Model;
 
 import java.io.IOException;
-import java.util.Objects;
 
 public class HbsLayoutRenderable extends HbsRenderable {
 
@@ -55,10 +54,12 @@ public class HbsLayoutRenderable extends HbsRenderable {
         return template;
     }
 
+    @Override
     protected String getAbsolutePath() {
         return absolutePath;
     }
 
+    @Override
     protected String getRelativePath() {
         return relativePath;
     }
@@ -75,20 +76,10 @@ public class HbsLayoutRenderable extends HbsRenderable {
             getTemplate().apply(context, writer);
         } catch (IOException e) {
             throw new UUFException("An error occurred when rendering the compiled Handlebars template of layout '" +
-                                           absolutePath + "'.", e);
+                                           getAbsolutePath() + "'.", e);
         }
         String out = writer.toString(requestLookup.getPlaceholderContents());
         writer.close();
         return out;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(absolutePath, getTemplate());
-    }
-
-    @Override
-    public String toString() {
-        return "{\"path\": {\"absolute\": \"" + absolutePath + "\", \"relative\": \"" + relativePath + "\"}}";
     }
 }
