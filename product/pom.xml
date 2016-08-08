@@ -176,6 +176,12 @@
             <version>${carbon.security.userstore.jdbc.version}</version>
             <type>zip</type>
         </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.uuf.sample</groupId>
+            <artifactId>org.wso2.carbon.uuf.Features-app.feature</artifactId>
+            <version>${carbon.uuf.version}</version>
+            <type>zip</type>
+        </dependency>
     </dependencies>
 
     <build>
@@ -309,16 +315,21 @@
                                     <version>${carbon.datasources.version}</version>
                                 </feature>
                                 <feature>
+                                    <id>org.wso2.carbon.security.userstore.jdbc.feature</id>
+                                    <version>${carbon.security.userstore.jdbc.version}</version>
+                                </feature>
+                                <!-- Sample Applications -->
+                                <feature>
                                     <id>org.wso2.carbon.uuf.pets-store.feature</id>
+                                    <version>${carbon.uuf.version}</version>
+                                </feature>
+                                <feature>
+                                    <id>org.wso2.carbon.uuf.Features-app.feature</id>
                                     <version>${carbon.uuf.version}</version>
                                 </feature>
                                 <feature>
                                     <id>org.wso2.carbon.uuf.simple-auth.feature</id>
                                     <version>${carbon.uuf.version}</version>
-                                </feature>
-                                <feature>
-                                    <id>org.wso2.carbon.security.userstore.jdbc.feature</id>
-                                    <version>${carbon.security.userstore.jdbc.version}</version>
                                 </feature>
                             </features>
                         </configuration>
@@ -434,6 +445,10 @@
                                 </feature>
                                 <feature>
                                     <id>org.wso2.carbon.uuf.pets-store.feature.group</id>
+                                    <version>${carbon.uuf.version}</version>
+                                </feature>
+                                <feature>
+                                    <id>org.wso2.carbon.uuf.Features-app.feature.group</id>
                                     <version>${carbon.uuf.version}</version>
                                 </feature>
                                 <feature>
