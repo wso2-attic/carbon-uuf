@@ -88,10 +88,6 @@ public class App {
         return components;
     }
 
-    public Component getRootComponent() {
-        return rootComponent;
-    }
-
     public Map<String, Fragment> getFragments() {
         return lookup.getAllFragments();
     }
