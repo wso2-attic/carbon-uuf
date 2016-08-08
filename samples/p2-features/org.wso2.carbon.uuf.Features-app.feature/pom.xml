@@ -65,7 +65,7 @@
                 <extensions>true</extensions>
                 <executions>
                     <execution>
-                        <id>2-p2-feature-generation</id>
+                        <id>p2-feature-generation</id>
                         <phase>package</phase>
                         <goals>
                             <goal>generate</goal>
