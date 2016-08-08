@@ -119,7 +119,18 @@ public class HbsPageRenderable extends HbsRenderable {
         return out;
     }
 
-    protected Map<String, Object> getExecutableContext(Model model, Lookup lookup, RequestLookup requestLookup) {
+    @Override
+    public int hashCode() {
+        return Objects.hash(absolutePath, getTemplate(), getExecutable());
+    }
+
+    @Override
+    public String toString() {
+        return "{\"path\": {\"absolute\": \"" + absolutePath + "\", \"relative\": \"" + relativePath + "\"}, \"js\": " +
+                getExecutable() + "}";
+    }
+
+    protected static Map<String, Object> getExecutableContext(Model model, Lookup lookup, RequestLookup requestLookup) {
         Map<String, Object> context = new HashMap<>();
         context.put("contextPath", requestLookup.getContextPath());
         context.put("config", lookup.getConfiguration());
@@ -130,7 +141,7 @@ public class HbsPageRenderable extends HbsRenderable {
         return context;
     }
 
-    protected Map execute(Executable executable, Object context, API api) {
+    protected static Map execute(Executable executable, Object context, API api) {
         Object executableOutput = executable.execute(context, api);
         if (executableOutput == null) {
             return Collections.emptyMap();
@@ -141,16 +152,5 @@ public class HbsPageRenderable extends HbsRenderable {
             throw new InvalidTypeException("Expected a Map as the output from executing the executable '" + executable +
                                                    "'. Instead found '" + executableOutput.getClass().getName() + "'.");
         }
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(absolutePath, getTemplate(), getExecutable());
-    }
-
-    @Override
-    public String toString() {
-        return "{\"path\": {\"absolute\": \"" + absolutePath + "\", \"relative\": \"" + relativePath + "\"}, \"js\": " +
-                getExecutable() + "}";
     }
 }
