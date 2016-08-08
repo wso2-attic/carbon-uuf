@@ -155,14 +155,24 @@ public class OSGiTestUtils {
         }
 
         sourcePath = Paths.get(basedir).resolve(sourcePath);
-        destinationPath = Paths.get(System.getProperty("carbon.home")).resolve(destinationPath);
+        destinationPath = getCarbonHome().resolve(destinationPath);
 
         createOutputFolderStructure(destinationPath);
         try {
             Files.copy(sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
-            throw new Exception("Error occurred while copying " + sourcePath + " file to " + destinationPath + ".", e);
+            throw new Exception("Error occurred while copying '" + sourcePath + "' file to " + destinationPath + ".",
+                                e);
         }
+    }
+
+    /**
+     * Return carbon home path
+     *
+     * @return Path for carbon home
+     */
+    private static Path getCarbonHome() {
+        return Paths.get(System.getProperty("carbon.home"));
     }
 
     /**
@@ -176,7 +186,7 @@ public class OSGiTestUtils {
         try {
             Files.createDirectories(parentPath);
         } catch (IOException e) {
-            throw new Exception("Error occurred while creating the directory, " + parentPath + ".", e);
+            throw new Exception("Error occurred while creating the directory '" + parentPath + "'.", e);
         }
     }
 
