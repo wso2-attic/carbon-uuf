@@ -23,11 +23,11 @@ import org.wso2.carbon.uuf.renderablecreator.hbs.core.MutableHbsRenderable;
 
 import java.util.Optional;
 
-public class MutableLayoutRenderable extends HbsLayoutRenderable implements MutableHbsRenderable {
+public class MutableHbsLayoutRenderable extends HbsLayoutRenderable implements MutableHbsRenderable {
 
     private volatile Template template;
 
-    public MutableLayoutRenderable(TemplateSource templateSource, String absolutePath, String relativePath) {
+    public MutableHbsLayoutRenderable(TemplateSource templateSource, String absolutePath, String relativePath) {
         super(null, absolutePath, relativePath);
         this.template = compile(templateSource);
     }

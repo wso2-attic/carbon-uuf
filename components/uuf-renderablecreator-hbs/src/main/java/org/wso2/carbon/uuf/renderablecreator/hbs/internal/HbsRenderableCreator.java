@@ -39,7 +39,7 @@ import org.wso2.carbon.uuf.renderablecreator.hbs.impl.JsExecutable;
 import org.wso2.carbon.uuf.renderablecreator.hbs.impl.MutableHbsFragmentRenderable;
 import org.wso2.carbon.uuf.renderablecreator.hbs.impl.MutableHbsPageRenderable;
 import org.wso2.carbon.uuf.renderablecreator.hbs.impl.MutableJsExecutable;
-import org.wso2.carbon.uuf.renderablecreator.hbs.impl.MutableLayoutRenderable;
+import org.wso2.carbon.uuf.renderablecreator.hbs.impl.MutableHbsLayoutRenderable;
 import org.wso2.carbon.uuf.renderablecreator.hbs.internal.io.RenderableUpdater;
 import org.wso2.carbon.uuf.spi.Renderable;
 import org.wso2.carbon.uuf.spi.RenderableCreator;
@@ -137,11 +137,10 @@ public class HbsRenderableCreator implements RenderableCreator {
         TemplateSource templateSource = createTemplateSource(file);
         Renderable layoutRenderable;
         if (isDebuggingEnabled) {
-            MutableLayoutRenderable mutableLayoutRenderable = new MutableLayoutRenderable(templateSource,
-                                                                                          file.getAbsolutePath(),
-                                                                                          file.getRelativePath());
-            updater.add(layoutReference, mutableLayoutRenderable);
-            layoutRenderable = mutableLayoutRenderable;
+            MutableHbsLayoutRenderable mlr = new MutableHbsLayoutRenderable(templateSource, file.getAbsolutePath(),
+                                                                            file.getRelativePath());
+            updater.add(layoutReference, mlr);
+            layoutRenderable = mlr;
         } else {
             layoutRenderable = new HbsLayoutRenderable(templateSource, file.getAbsolutePath(), file.getRelativePath());
         }
