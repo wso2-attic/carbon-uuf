@@ -145,12 +145,12 @@ public class HbsPageRenderable extends HbsRenderable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(getAbsolutePath(), getTemplate(), getExecutable());
+        return Objects.hash(absolutePath, getTemplate(), getExecutable());
     }
 
     @Override
     public String toString() {
-        return "{\"path\": {\"absolute\": \"" + getAbsolutePath() + "\", \"relative\": \"" + getRelativePath() +
-                "\"}, \"js\": " + getExecutable() + "}";
+        return "{\"path\": {\"absolute\": \"" + absolutePath + "\", \"relative\": \"" + relativePath + "\"}, \"js\": " +
+                getExecutable() + "}";
     }
 }
