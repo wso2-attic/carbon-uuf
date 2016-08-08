@@ -28,30 +28,39 @@ import org.wso2.carbon.uuf.renderablecreator.hbs.internal.io.PlaceholderWriter;
 import org.wso2.carbon.uuf.spi.model.Model;
 
 import java.io.IOException;
+import java.util.Objects;
 
 public class HbsLayoutRenderable extends HbsRenderable {
 
-    private final String path;
     private final Template template;
-
-    protected HbsLayoutRenderable() {
-        this.path = null;
-        this.template = null;
-    }
+    private final String absolutePath;
+    private final String relativePath;
 
     public HbsLayoutRenderable(TemplateSource templateSource) {
-        this.path = templateSource.filename();
-        this.template = compile(templateSource);
+        this(templateSource, null, null);
     }
 
-    @Override
-    public String getPath() {
-        return path;
+    public HbsLayoutRenderable(TemplateSource templateSource, String path) {
+        this(templateSource, path, null);
+    }
+
+    public HbsLayoutRenderable(TemplateSource templateSource, String absolutePath, String relativePath) {
+        this.template = compile(templateSource);
+        this.absolutePath = absolutePath;
+        this.relativePath = relativePath;
     }
 
     @Override
     protected Template getTemplate() {
         return template;
+    }
+
+    protected String getAbsolutePath() {
+        return absolutePath;
+    }
+
+    protected String getRelativePath() {
+        return relativePath;
     }
 
     @Override
@@ -66,10 +75,20 @@ public class HbsLayoutRenderable extends HbsRenderable {
             getTemplate().apply(context, writer);
         } catch (IOException e) {
             throw new UUFException("An error occurred when rendering the compiled Handlebars template of layout '" +
-                                           getPath() + "'.", e);
+                                           absolutePath + "'.", e);
         }
         String out = writer.toString(requestLookup.getPlaceholderContents());
         writer.close();
         return out;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(absolutePath, getTemplate());
+    }
+
+    @Override
+    public String toString() {
+        return "{\"path\": {\"absolute\": \"" + absolutePath + "\", \"relative\": \"" + relativePath + "\"}}";
     }
 }

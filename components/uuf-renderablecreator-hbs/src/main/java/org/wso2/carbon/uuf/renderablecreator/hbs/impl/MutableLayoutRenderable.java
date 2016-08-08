@@ -25,17 +25,16 @@ import java.util.Optional;
 
 public class MutableLayoutRenderable extends HbsLayoutRenderable implements MutableHbsRenderable {
 
-    private final String path;
     private volatile Template template;
 
-    public MutableLayoutRenderable(TemplateSource templateSource) {
+    public MutableLayoutRenderable(TemplateSource templateSource, String absolutePath, String relativePath) {
+        super(null, absolutePath, relativePath);
         this.template = compile(templateSource);
-        this.path = templateSource.filename();
     }
 
     @Override
     public String getPath() {
-        return path;
+        return getAbsolutePath();
     }
 
     @Override

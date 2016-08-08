@@ -125,13 +125,17 @@ public class HbsRenderableCreator implements RenderableCreator {
 
     @Override
     public LayoutRenderableData createLayoutRenderable(LayoutReference layoutReference) {
-        TemplateSource templateSource = createTemplateSource(layoutReference.getRenderingFile());
+        FileReference file = layoutReference.getRenderingFile();
+        TemplateSource templateSource = createTemplateSource(file);
         Renderable layoutRenderable;
         if (isDebuggingEnabled) {
-            layoutRenderable = new MutableLayoutRenderable(templateSource);
-            updater.add(layoutReference, (MutableHbsRenderable) layoutRenderable);
+            MutableLayoutRenderable mutableLayoutRenderable = new MutableLayoutRenderable(templateSource,
+                                                                                          file.getAbsolutePath(),
+                                                                                          file.getRelativePath());
+            updater.add(layoutReference, mutableLayoutRenderable);
+            layoutRenderable = mutableLayoutRenderable;
         } else {
-            layoutRenderable = new HbsLayoutRenderable(templateSource);
+            layoutRenderable = new HbsLayoutRenderable(templateSource, file.getAbsolutePath(), file.getRelativePath());
         }
         return new RenderableCreator.LayoutRenderableData(layoutRenderable);
     }
