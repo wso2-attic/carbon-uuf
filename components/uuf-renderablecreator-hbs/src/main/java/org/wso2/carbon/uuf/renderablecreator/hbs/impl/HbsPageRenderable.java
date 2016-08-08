@@ -42,34 +42,44 @@ public class HbsPageRenderable extends HbsRenderable {
 
     private static final Logger log = LoggerFactory.getLogger(HbsPageRenderable.class);
 
-    private final String path;
     private final Template template;
+    private final String absolutePath;
+    private final String relativePath;
     private final Executable executable;
 
-    protected HbsPageRenderable() {
-        this.path = null;
-        this.template = null;
-        this.executable = null;
+    public HbsPageRenderable(TemplateSource templateSource) {
+        this(templateSource, null, null, null);
     }
 
-    public HbsPageRenderable(TemplateSource templateSource) {
-        this(templateSource, null);
+    public HbsPageRenderable(TemplateSource templateSource, String path) {
+        this(templateSource, path, null, null);
     }
 
     public HbsPageRenderable(TemplateSource templateSource, Executable executable) {
-        this.path = templateSource.filename();
-        this.template = compile(templateSource);
-        this.executable = executable;
+        this(templateSource, null, null, executable);
     }
 
-    @Override
-    public String getPath() {
-        return path;
+    public HbsPageRenderable(TemplateSource templateSource, String absolutePath, String relativePath,
+                             Executable executable) {
+        this.template = compile(templateSource);
+        this.absolutePath = absolutePath;
+        this.relativePath = relativePath;
+        this.executable = executable;
     }
 
     @Override
     protected Template getTemplate() {
         return template;
+    }
+
+    @Override
+    protected String getAbsolutePath() {
+        return absolutePath;
+    }
+
+    @Override
+    protected String getRelativePath() {
+        return relativePath;
     }
 
     protected Executable getExecutable() {
@@ -135,11 +145,12 @@ public class HbsPageRenderable extends HbsRenderable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(getPath(), getTemplate(), getExecutable());
+        return Objects.hash(getAbsolutePath(), getTemplate(), getExecutable());
     }
 
     @Override
     public String toString() {
-        return "{\"path\": \"" + getPath() + "\", \"js\": " + executable + "}";
+        return "{\"path\": {\"absolute\": \"" + getAbsolutePath() + "\", \"relative\": \"" + getRelativePath() +
+                "\"}, \"js\": " + getExecutable() + "}";
     }
 }
