@@ -32,7 +32,6 @@ import org.wso2.carbon.uuf.reference.LayoutReference;
 import org.wso2.carbon.uuf.reference.PageReference;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.Executable;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.MutableExecutable;
-import org.wso2.carbon.uuf.renderablecreator.hbs.core.MutableHbsRenderable;
 import org.wso2.carbon.uuf.renderablecreator.hbs.impl.HbsFragmentRenderable;
 import org.wso2.carbon.uuf.renderablecreator.hbs.impl.HbsLayoutRenderable;
 import org.wso2.carbon.uuf.renderablecreator.hbs.impl.HbsPageRenderable;
@@ -114,12 +113,16 @@ public class HbsRenderableCreator implements RenderableCreator {
 
     @Override
     public PageRenderableData createPageRenderable(PageReference pageReference, ClassLoader classLoader) {
-        TemplateSource templateSource = createTemplateSource(pageReference.getRenderingFile());
+        FileReference file = pageReference.getRenderingFile();
+        TemplateSource templateSource = createTemplateSource(file);
         Executable executable = createExecutable(pageReference, classLoader);
         Renderable pageRenderable;
         if (isDebuggingEnabled) {
-            pageRenderable = new MutableHbsPageRenderable(templateSource, (MutableExecutable) executable);
-            updater.add(pageReference, (MutableHbsRenderable) pageRenderable);
+            MutableHbsPageRenderable mpr = new MutableHbsPageRenderable(templateSource, file.getAbsolutePath(),
+                                                                        file.getRelativePath(),
+                                                                        (MutableExecutable) executable);
+            pageRenderable = mpr;
+            updater.add(pageReference, mpr);
         } else {
             pageRenderable = new HbsPageRenderable(templateSource, executable);
         }
