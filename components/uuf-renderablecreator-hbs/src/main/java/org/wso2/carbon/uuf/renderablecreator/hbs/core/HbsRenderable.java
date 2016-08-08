@@ -31,20 +31,19 @@ import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.FillZoneHelper;
 import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.FragmentHelper;
 import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.HeadJsHelper;
 import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.HeadOtherHelper;
+import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.I18nHelper;
 import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.JsHelper;
 import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.MenuHelper;
 import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.MissingHelper;
 import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.PublicHelper;
 import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.SecuredHelper;
 import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.TitleHelper;
-import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.I18nHelper;
 import org.wso2.carbon.uuf.spi.Renderable;
 import org.wso2.carbon.uuf.spi.model.Model;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 public abstract class HbsRenderable implements Renderable {
 
@@ -68,11 +67,9 @@ public abstract class HbsRenderable implements Renderable {
         HANDLEBARS.registerHelper(HeadJsHelper.HELPER_NAME, new HeadJsHelper());
         HANDLEBARS.registerHelper(HeadOtherHelper.HELPER_NAME, new HeadOtherHelper());
         HANDLEBARS.registerHelper(JsHelper.HELPER_NAME, new JsHelper());
-        HANDLEBARS.registerHelperMissing(new MissingHelper());
         HANDLEBARS.registerHelper(I18nHelper.HELPER_NAME, new I18nHelper());
+        HANDLEBARS.registerHelperMissing(new MissingHelper());
     }
-
-    public abstract String getPath();
 
     protected abstract Template getTemplate();
 
@@ -93,15 +90,5 @@ public abstract class HbsRenderable implements Renderable {
         context.put("@queryParams", requestLookup.getRequest().getQueryParams());
         context.put("@params", ((model == null) ? false : model.toMap()));
         return context;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getPath(), getTemplate());
-    }
-
-    @Override
-    public String toString() {
-        return "{\"path\": \"" + getPath() + "\"}";
     }
 }
