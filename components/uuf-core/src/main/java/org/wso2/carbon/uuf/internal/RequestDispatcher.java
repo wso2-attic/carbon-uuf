@@ -68,7 +68,7 @@ public class RequestDispatcher {
                 debugger.serve(app, request, response);
                 return;
             }
-            setContent(app, request, response);
+            serveApp(app, request, response);
         } catch (PageNotFoundException | UnauthorizedException e) {
             serveErrorPage(app, request, response, e);
         } catch (FragmentNotFoundException e) {
@@ -119,7 +119,7 @@ public class RequestDispatcher {
         }
     }
 
-    private void setContent(App app, HttpRequest request, HttpResponse response){
+    private void serveApp(App app, HttpRequest request, HttpResponse response){
         String html;
         try {
             if (request.isFragmentRequest()) {
