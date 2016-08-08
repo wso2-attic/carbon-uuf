@@ -20,8 +20,6 @@ $(document).ready(function () {
                 showThemes();
                 $(this).parent().addClass("active");
                 break;
-            default:
-                break;
         }
         e.preventDefault();
     });
@@ -36,27 +34,25 @@ function showPages() {
     requestUtil.makeRequest("GET", "/pages/", null, function (data) {
         $(".info-container").hide();
         $(".preloader").preloader("hide");
+        $("#pages-details").html('');
         populatePages(data);
         $("#pages-json pre code").text(JSON.stringify(data, null, ' '));
         $("#pages").show();
-        $("#main-lead").text("Pages");
+        $("#main-header").text("Pages");
     });
 }
-function populatePages(d){
-    $.each(d, function(k,v){
-        if(k == "/foundation"){
-           populatePageHelper(v,"#pages-tree0");
-        }else if(k == "/root"){
-            populatePageHelper(v,"#pages-tree1");
-        }else if(k == "/simple-auth"){
-            populatePageHelper(v,"#pages-tree2");
-        }else if(k == "/store-common"){
-            $("#pages-tree3").html('<li aria-expanded="false" class="branch"></i><i class="icon"></i><a href="#">[  ]</a>');
-        }else{
-            v = null;
+function populatePages(dataForPages){
+    Object.keys(dataForPages).forEach(function(key,index) {
+        var value = dataForPages[key];
+        if(key == "/root"){
+            key = "/"
         }
+        var sections = '<div class="page-header"><p class="lead">'+ key +'</p></div><ul id="pages-tree'+ index +'" class="tree-view tree-view-lines add-margin-bottom-5x"></ul>';
+        var treeId = "#pages-tree"+ index;
+        $("#pages-details").append(sections);
+        populatePageHelper(value,treeId);
+        $(treeId).tree_view();
     });
-    $('#pages-tree0,#pages-tree1,#pages-tree2,#pages-tree3').tree_view();
 
 }
 
@@ -65,7 +61,7 @@ function populatePageHelper(co,tree){
     var string0 = '';
     $.each(co, function(k,v){
         if (v !== null && typeof v === 'object'){
-            string0 += '<li aria-expanded="true" class="branch">';
+            string0 += '<li class="branch">';
             string0 += '</i><a href="#"><span class="badge add-margin-right-1x">'+ (k+1) +'</span></a>';
             string0 += '<ul>';
             if ((v.layout !== null && typeof v.layout === 'object') || typeof v.layout !== 'undefined'){
@@ -103,6 +99,7 @@ function populatePageHelper(co,tree){
             string0 += '</ul>';
         }
     });
+
     $(tree).html(string0);
 }
 
@@ -113,7 +110,7 @@ function showFragments(){
         populateFragments(data);
         $("#fragments-json pre code").text(JSON.stringify(data, null, ' '));
         $("#fragments").show();
-        $("#main-lead").text("Fragments");
+        $("#main-header").text("Fragments");
     });
 }
 
@@ -163,7 +160,7 @@ function showLayouts() {
         populateLayouts(data);
         $("#layouts pre code").text(JSON.stringify(data, null, ' '));
         $("#layouts").show();
-        $("#main-lead").text("Layouts");
+        $("#main-header").text("Layouts");
     });
 }
 
@@ -200,7 +197,7 @@ function showThemes() {
         populateThemes(data);
         $("#themes pre code").text(JSON.stringify(data, null, ' ')).show();
         $("#themes").show();
-        $("#main-lead").text("Themes");
+        $("#main-header").text("Themes");
     });
 }
 
