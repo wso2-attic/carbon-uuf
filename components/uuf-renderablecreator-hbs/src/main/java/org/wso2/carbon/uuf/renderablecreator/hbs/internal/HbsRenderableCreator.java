@@ -94,12 +94,17 @@ public class HbsRenderableCreator implements RenderableCreator {
     @Override
     public FragmentRenderableData createFragmentRenderable(FragmentReference fragmentReference,
                                                            ClassLoader classLoader) {
-        TemplateSource templateSource = createTemplateSource(fragmentReference.getRenderingFile());
+        FileReference file = fragmentReference.getRenderingFile();
+        TemplateSource templateSource = createTemplateSource(file);
         Executable executable = createExecutable(fragmentReference, classLoader);
         Renderable fragmentRenderable;
         if (isDebuggingEnabled) {
-            fragmentRenderable = new MutableHbsFragmentRenderable(templateSource, (MutableExecutable) executable);
-            updater.add(fragmentReference, (MutableHbsRenderable) fragmentRenderable);
+            MutableHbsFragmentRenderable mfr = new MutableHbsFragmentRenderable(templateSource,
+                                                                                file.getAbsolutePath(),
+                                                                                file.getRelativePath(),
+                                                                                (MutableExecutable) executable);
+            fragmentRenderable = mfr;
+            updater.add(fragmentReference, mfr);
         } else {
             fragmentRenderable = new HbsFragmentRenderable(templateSource, executable);
         }
