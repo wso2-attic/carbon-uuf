@@ -48,7 +48,7 @@ public class MutableJsExecutable extends JsExecutable implements MutableExecutab
 
     @Override
     public String getPath() {
-        return super.getPath();
+        return getAbsolutePath();
     }
 
     @Override
