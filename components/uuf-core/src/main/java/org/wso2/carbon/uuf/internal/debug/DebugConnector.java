@@ -36,58 +36,66 @@ public class DebugConnector {
 
     private final App app;
 
+    /**
+     * Creates a new debug connector for the specified app.
+     *
+     * @param connectingApp connecting app
+     */
     public DebugConnector(App connectingApp) {
         this.app = connectingApp;
-        // Since DebugConnector is instantiated per request, there is no point of pre-calculating Component, Pages etc.
+        // Since DebugConnector is instantiated per request, there is no point of pre-computing Components, Pages etc.
     }
 
     /**
-     * Returns a set of components.
+     * Components of the connected App.
      *
-     * @return components
+     * @return components of the connected App
      */
     public Set<Component> getComponents() {
-        Set<Component> components = new HashSet<>(app.getComponents().values());
-        components.add(app.getRootComponent()); // Add root component
-        return components;
+        return new HashSet<>(app.getComponents().values());
     }
 
+    /**
+     * Pages in the connected App.
+     *
+     * @return pages in the connected App
+     */
     public Map<String, Set<Page>> getPages() {
         return app.getComponents().values().stream().collect(Collectors.toMap(Component::getContextPath,
                                                                               Component::getPages));
     }
 
     /**
-     * Returns set of layouts.
+     * Layouts in the connected app.
      *
-     * @return a set of layouts
+     * @return layouts in the connected App
      */
     public Set<Layout> getLayouts() {
         return app.getLayouts().values().stream().collect(Collectors.toSet());
     }
 
     /**
-     * Returns a set of components.
+     * Fragments in the connected App.
      *
-     * @return components
+     * @return fragments in the connected App
      */
     public Set<Fragment> getFragments() {
         return app.getFragments().values().stream().collect(Collectors.toSet());
     }
 
     /**
-     * Returns a set of themes.
+     * Themes of the connected App.
      *
-     * @return a set of themes
+     * @return themes of the connected App
      */
     public Set<Theme> getThemes() {
         return app.getThemes().values().stream().collect(Collectors.toSet());
     }
 
     /**
-     * Returns app configuration.
+     * Configuration of the connected App.
      *
-     * @return current app configuration
+     * @return configuration of the connected App
      */
     public Configuration getConfiguration() {
         return app.getConfiguration();
