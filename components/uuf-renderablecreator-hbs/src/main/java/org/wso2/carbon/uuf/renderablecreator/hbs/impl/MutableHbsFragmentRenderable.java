@@ -28,23 +28,19 @@ import java.util.Optional;
 
 public class MutableHbsFragmentRenderable extends HbsFragmentRenderable implements MutableHbsRenderable {
 
-    private final String path;
     private volatile Template template;
     private final MutableExecutable mutableExecutable;
 
-    public MutableHbsFragmentRenderable(TemplateSource templateSource) {
-        this(templateSource, null);
-    }
-
-    public MutableHbsFragmentRenderable(TemplateSource templateSource, MutableExecutable mutableExecutable) {
+    public MutableHbsFragmentRenderable(TemplateSource templateSource, String absolutePath, String relativePath,
+                                        MutableExecutable mutableExecutable) {
+        super(null, absolutePath, relativePath, null);
         this.template = compile(templateSource);
-        this.path = templateSource.filename();
         this.mutableExecutable = mutableExecutable;
     }
 
     @Override
     public String getPath() {
-        return path;
+        return getAbsolutePath();
     }
 
     @Override
@@ -65,10 +61,5 @@ public class MutableHbsFragmentRenderable extends HbsFragmentRenderable implemen
     @Override
     public Optional<MutableExecutable> getMutableExecutable() {
         return Optional.ofNullable(mutableExecutable);
-    }
-
-    @Override
-    public String toString() {
-        return "{\"path\": \"" + getPath() + "\", \"js\": " + mutableExecutable + "}";
     }
 }

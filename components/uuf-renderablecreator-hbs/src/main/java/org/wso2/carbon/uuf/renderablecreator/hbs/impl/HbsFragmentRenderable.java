@@ -36,15 +36,21 @@ public class HbsFragmentRenderable extends HbsPageRenderable {
 
     private static final Logger log = LoggerFactory.getLogger(HbsFragmentRenderable.class);
 
-    protected HbsFragmentRenderable() {
+    public HbsFragmentRenderable(TemplateSource templateSource) {
+        super(templateSource);
     }
 
-    public HbsFragmentRenderable(TemplateSource template) {
-        super(template);
+    public HbsFragmentRenderable(TemplateSource templateSource, String path) {
+        super(templateSource, path);
     }
 
-    public HbsFragmentRenderable(TemplateSource template, Executable executable) {
-        super(template, executable);
+    public HbsFragmentRenderable(TemplateSource templateSource, Executable executable) {
+        super(templateSource, executable);
+    }
+
+    public HbsFragmentRenderable(TemplateSource templateSource, String absolutePath, String relativePath,
+                                 Executable executable) {
+        super(templateSource, absolutePath, relativePath, executable);
     }
 
     @Override

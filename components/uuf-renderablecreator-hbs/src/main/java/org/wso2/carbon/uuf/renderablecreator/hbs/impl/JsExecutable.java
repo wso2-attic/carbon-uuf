@@ -94,8 +94,12 @@ public class JsExecutable implements Executable {
         engineBindings.lock();
     }
 
-    protected String getPath() {
+    protected String getAbsolutePath() {
         return absolutePath;
+    }
+
+    protected String getRelativePath() {
+        return relativePath;
     }
 
     @Override
@@ -122,7 +126,7 @@ public class JsExecutable implements Executable {
 
     @Override
     public String toString() {
-        return "{\"path\": \"" + absolutePath + "\"}";
+        return "{\"path\": {\"absolute\": \"" + absolutePath + "\", \"relative\": \"" + relativePath + "\"}}";
     }
 
     public static class UUFBindings extends SimpleBindings {

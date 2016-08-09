@@ -23,19 +23,18 @@ import org.wso2.carbon.uuf.renderablecreator.hbs.core.MutableHbsRenderable;
 
 import java.util.Optional;
 
-public class MutableLayoutRenderable extends HbsLayoutRenderable implements MutableHbsRenderable {
+public class MutableHbsLayoutRenderable extends HbsLayoutRenderable implements MutableHbsRenderable {
 
-    private final String path;
     private volatile Template template;
 
-    public MutableLayoutRenderable(TemplateSource templateSource) {
+    public MutableHbsLayoutRenderable(TemplateSource templateSource, String absolutePath, String relativePath) {
+        super(null, absolutePath, relativePath);
         this.template = compile(templateSource);
-        this.path = templateSource.filename();
     }
 
     @Override
     public String getPath() {
-        return path;
+        return getAbsolutePath();
     }
 
     @Override

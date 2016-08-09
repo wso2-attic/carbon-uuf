@@ -26,23 +26,19 @@ import java.util.Optional;
 
 public class MutableHbsPageRenderable extends HbsPageRenderable implements MutableHbsRenderable {
 
-    private final String path;
     private volatile Template template;
     private final MutableExecutable mutableExecutable;
 
-    public MutableHbsPageRenderable(TemplateSource templateSource) {
-        this(templateSource, null);
-    }
-
-    public MutableHbsPageRenderable(TemplateSource templateSource, MutableExecutable mutableExecutable) {
+    public MutableHbsPageRenderable(TemplateSource templateSource, String absolutePath, String relativePath,
+                                    MutableExecutable mutableExecutable) {
+        super(null, absolutePath, relativePath, null);
         this.template = compile(templateSource);
-        this.path = templateSource.filename();
         this.mutableExecutable = mutableExecutable;
     }
 
     @Override
     public String getPath() {
-        return path;
+        return getAbsolutePath();
     }
 
     @Override

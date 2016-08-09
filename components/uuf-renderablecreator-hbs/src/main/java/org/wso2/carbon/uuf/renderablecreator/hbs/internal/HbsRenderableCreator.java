@@ -32,15 +32,14 @@ import org.wso2.carbon.uuf.reference.LayoutReference;
 import org.wso2.carbon.uuf.reference.PageReference;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.Executable;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.MutableExecutable;
-import org.wso2.carbon.uuf.renderablecreator.hbs.core.MutableHbsRenderable;
 import org.wso2.carbon.uuf.renderablecreator.hbs.impl.HbsFragmentRenderable;
 import org.wso2.carbon.uuf.renderablecreator.hbs.impl.HbsLayoutRenderable;
 import org.wso2.carbon.uuf.renderablecreator.hbs.impl.HbsPageRenderable;
 import org.wso2.carbon.uuf.renderablecreator.hbs.impl.JsExecutable;
 import org.wso2.carbon.uuf.renderablecreator.hbs.impl.MutableHbsFragmentRenderable;
+import org.wso2.carbon.uuf.renderablecreator.hbs.impl.MutableHbsLayoutRenderable;
 import org.wso2.carbon.uuf.renderablecreator.hbs.impl.MutableHbsPageRenderable;
 import org.wso2.carbon.uuf.renderablecreator.hbs.impl.MutableJsExecutable;
-import org.wso2.carbon.uuf.renderablecreator.hbs.impl.MutableLayoutRenderable;
 import org.wso2.carbon.uuf.renderablecreator.hbs.internal.io.RenderableUpdater;
 import org.wso2.carbon.uuf.spi.Renderable;
 import org.wso2.carbon.uuf.spi.RenderableCreator;
@@ -94,14 +93,20 @@ public class HbsRenderableCreator implements RenderableCreator {
     @Override
     public FragmentRenderableData createFragmentRenderable(FragmentReference fragmentReference,
                                                            ClassLoader classLoader) {
-        TemplateSource templateSource = createTemplateSource(fragmentReference.getRenderingFile());
+        FileReference file = fragmentReference.getRenderingFile();
+        TemplateSource templateSource = createTemplateSource(file);
         Executable executable = createExecutable(fragmentReference, classLoader);
         Renderable fragmentRenderable;
         if (isDebuggingEnabled) {
-            fragmentRenderable = new MutableHbsFragmentRenderable(templateSource, (MutableExecutable) executable);
-            updater.add(fragmentReference, (MutableHbsRenderable) fragmentRenderable);
+            MutableHbsFragmentRenderable mfr = new MutableHbsFragmentRenderable(templateSource,
+                                                                                file.getAbsolutePath(),
+                                                                                file.getRelativePath(),
+                                                                                (MutableExecutable) executable);
+            fragmentRenderable = mfr;
+            updater.add(fragmentReference, mfr);
         } else {
-            fragmentRenderable = new HbsFragmentRenderable(templateSource, executable);
+            fragmentRenderable = new HbsFragmentRenderable(templateSource, file.getAbsolutePath(),
+                                                           file.getRelativePath(), executable);
         }
         boolean isSecured = new HbsPreprocessor(templateSource).isSecured();
         return new RenderableCreator.FragmentRenderableData(fragmentRenderable, isSecured);
@@ -109,14 +114,19 @@ public class HbsRenderableCreator implements RenderableCreator {
 
     @Override
     public PageRenderableData createPageRenderable(PageReference pageReference, ClassLoader classLoader) {
-        TemplateSource templateSource = createTemplateSource(pageReference.getRenderingFile());
+        FileReference file = pageReference.getRenderingFile();
+        TemplateSource templateSource = createTemplateSource(file);
         Executable executable = createExecutable(pageReference, classLoader);
         Renderable pageRenderable;
         if (isDebuggingEnabled) {
-            pageRenderable = new MutableHbsPageRenderable(templateSource, (MutableExecutable) executable);
-            updater.add(pageReference, (MutableHbsRenderable) pageRenderable);
+            MutableHbsPageRenderable mpr = new MutableHbsPageRenderable(templateSource, file.getAbsolutePath(),
+                                                                        file.getRelativePath(),
+                                                                        (MutableExecutable) executable);
+            pageRenderable = mpr;
+            updater.add(pageReference, mpr);
         } else {
-            pageRenderable = new HbsPageRenderable(templateSource, executable);
+            pageRenderable = new HbsPageRenderable(templateSource, file.getAbsolutePath(), file.getRelativePath(),
+                                                   executable);
         }
         HbsPreprocessor preprocessor = new HbsPreprocessor(templateSource);
         String layoutName = preprocessor.getLayoutName().orElse(null);
@@ -125,13 +135,16 @@ public class HbsRenderableCreator implements RenderableCreator {
 
     @Override
     public LayoutRenderableData createLayoutRenderable(LayoutReference layoutReference) {
-        TemplateSource templateSource = createTemplateSource(layoutReference.getRenderingFile());
+        FileReference file = layoutReference.getRenderingFile();
+        TemplateSource templateSource = createTemplateSource(file);
         Renderable layoutRenderable;
         if (isDebuggingEnabled) {
-            layoutRenderable = new MutableLayoutRenderable(templateSource);
-            updater.add(layoutReference, (MutableHbsRenderable) layoutRenderable);
+            MutableHbsLayoutRenderable mlr = new MutableHbsLayoutRenderable(templateSource, file.getAbsolutePath(),
+                                                                            file.getRelativePath());
+            updater.add(layoutReference, mlr);
+            layoutRenderable = mlr;
         } else {
-            layoutRenderable = new HbsLayoutRenderable(templateSource);
+            layoutRenderable = new HbsLayoutRenderable(templateSource, file.getAbsolutePath(), file.getRelativePath());
         }
         return new RenderableCreator.LayoutRenderableData(layoutRenderable);
     }

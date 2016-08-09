@@ -17,7 +17,6 @@
 package org.wso2.carbon.uuf.renderablecreator.hbs.impl;
 
 import com.github.jknack.handlebars.Context;
-import com.github.jknack.handlebars.Template;
 import com.github.jknack.handlebars.io.TemplateSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,34 +41,24 @@ public class HbsPageRenderable extends HbsRenderable {
 
     private static final Logger log = LoggerFactory.getLogger(HbsPageRenderable.class);
 
-    private final String path;
-    private final Template template;
     private final Executable executable;
 
-    protected HbsPageRenderable() {
-        this.path = null;
-        this.template = null;
-        this.executable = null;
+    public HbsPageRenderable(TemplateSource templateSource) {
+        this(templateSource, null, null, null);
     }
 
-    public HbsPageRenderable(TemplateSource templateSource) {
-        this(templateSource, null);
+    public HbsPageRenderable(TemplateSource templateSource, String path) {
+        this(templateSource, path, null, null);
     }
 
     public HbsPageRenderable(TemplateSource templateSource, Executable executable) {
-        this.path = templateSource.filename();
-        this.template = compile(templateSource);
+        this(templateSource, null, null, executable);
+    }
+
+    public HbsPageRenderable(TemplateSource templateSource, String absolutePath, String relativePath,
+                             Executable executable) {
+        super(templateSource, absolutePath, relativePath);
         this.executable = executable;
-    }
-
-    @Override
-    public String getPath() {
-        return path;
-    }
-
-    @Override
-    protected Template getTemplate() {
-        return template;
     }
 
     protected Executable getExecutable() {
@@ -109,7 +98,18 @@ public class HbsPageRenderable extends HbsRenderable {
         return out;
     }
 
-    protected Map<String, Object> getExecutableContext(Model model, Lookup lookup, RequestLookup requestLookup) {
+    @Override
+    public int hashCode() {
+        return Objects.hash(getAbsolutePath(), getTemplate(), getExecutable());
+    }
+
+    @Override
+    public String toString() {
+        return "{\"path\": {\"absolute\": \"" + getAbsolutePath() + "\", \"relative\": \"" + getRelativePath() +
+                "\"}, \"js\": " + getExecutable() + "}";
+    }
+
+    protected static Map<String, Object> getExecutableContext(Model model, Lookup lookup, RequestLookup requestLookup) {
         Map<String, Object> context = new HashMap<>();
         context.put("contextPath", requestLookup.getContextPath());
         context.put("config", lookup.getConfiguration());
@@ -120,7 +120,7 @@ public class HbsPageRenderable extends HbsRenderable {
         return context;
     }
 
-    protected Map execute(Executable executable, Object context, API api) {
+    protected static Map execute(Executable executable, Object context, API api) {
         Object executableOutput = executable.execute(context, api);
         if (executableOutput == null) {
             return Collections.emptyMap();
@@ -131,15 +131,5 @@ public class HbsPageRenderable extends HbsRenderable {
             throw new InvalidTypeException("Expected a Map as the output from executing the executable '" + executable +
                                                    "'. Instead found '" + executableOutput.getClass().getName() + "'.");
         }
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getPath(), getTemplate(), getExecutable());
-    }
-
-    @Override
-    public String toString() {
-        return "{\"path\": \"" + getPath() + "\", \"js\": " + executable + "}";
     }
 }
