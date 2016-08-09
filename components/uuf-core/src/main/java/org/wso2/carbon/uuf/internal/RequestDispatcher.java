@@ -146,6 +146,8 @@ public class RequestDispatcher {
                 }
             }
             response.setContent(STATUS_OK, html, CONTENT_TYPE_TEXT_HTML);
+        } catch (UUFException e){
+            throw e;
         } catch (Exception e) {
             // this is to unwrap hadlebarsException and throw UUFException(Eg: UnauthorizedException from helper)
             Throwable th;
