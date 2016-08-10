@@ -50,57 +50,61 @@ function populatePages(dataForPages){
         var sections = '<div class="page-header"><p class="lead">'+ key +'</p></div><ul id="pages-tree'+ index +'" class="tree-view tree-view-lines add-margin-bottom-5x"></ul>';
         var treeId = "#pages-tree"+ index;
         $("#pages-details").append(sections);
-        populatePageHelper(value,treeId);
+        createPagesTree(value,treeId);
         $(treeId).tree_view();
     });
 
 }
 
 
-function populatePageHelper(co,tree){
-    var string0 = '';
-    $.each(co, function(k,v){
+function createPagesTree(treeData,treeId){
+    var pagesTreeString = '';
+    $.each(treeData, function(k,v){
         if (v !== null && typeof v === 'object'){
-            string0 += '<li class="branch">';
-            string0 += '</i><a href="#"><span class="badge add-margin-right-1x">'+ (k+1) +'</span></a>';
-            string0 += '<ul>';
+            pagesTreeString += '<li class="branch">';
+            pagesTreeString += '</i><a href="#"><span class="badge add-margin-right-1x">'+ (k+1) +'</span></a>';
+            pagesTreeString += '<ul>';
             if ((v.layout !== null && typeof v.layout === 'object') || typeof v.layout !== 'undefined'){
-                string0 += '<li class="branch">';
-                string0 += '</i><a href="#">layout</a>';
-                string0 += '<ul>';
-                string0 += '<li><b>name: </b>'+ v.layout.name +'</li>';
+                pagesTreeString += '<li class="branch">';
+                pagesTreeString += '</i><a href="#">layout</a>';
+                pagesTreeString += '<ul>';
+                pagesTreeString += '<li><b>name: </b>'+ v.layout.name +'</li>';
                 if (v.layout.renderer !== null && typeof v.layout.renderer === 'object'){
-                    string0 += '<li class="branch">';
-                    string0 += '<a href="#">renderer</a>';
-                    string0 += '<ul>';
-                    string0 += '<li><b>path: </b>'+ v.layout.renderer.path +'</li>';
-                    string0 += '</ul>';
-                    string0 += '</li>';
+                    pagesTreeString += '<li class="branch">';
+                    pagesTreeString += '<a href="#">renderer</a>';
+                    pagesTreeString += '<ul>';
+                    pagesTreeString += '<li><b>path: </b><a title="Click to view" target="_blank" href="file://'+ v.layout.renderer.path.absolute +'">'+ v.layout.renderer.path.relative +'</a></li>';
+                    pagesTreeString += '</ul>';
+                    pagesTreeString += '</li>';
                 }
-                string0 += '</ul>';
+                pagesTreeString += '</ul>';
             }
             if (v.renderer !== null && typeof v.renderer === 'object'){
-                string0 += '<li class="branch">';
-                string0 += '</i><a href="#">renderer</a>';
-                string0 += '<ul>';
-                string0 += '<li><b>js: </b>'+ v.renderer.js +'</li>';
-                string0 += '<li><b>path: </b>'+ v.renderer.path +'</li>';
-                string0 += '</ul>';
+                pagesTreeString += '<li class="branch">';
+                pagesTreeString += '</i><a href="#">renderer</a>';
+                pagesTreeString += '<ul>';
+                if (v.renderer.js){
+                    pagesTreeString += '<li><b>js: </b><a title="Click to view" target="_blank" href="file://'+ v.renderer.js.path.absolute +'">'+ v.renderer.js.path.relative +'</a></li>';
+                }else{
+                    pagesTreeString += '<li><b>js: </b> - </li>';
+                }
+                pagesTreeString += '<li><b>path: </b><a title="Click to view" target="_blank" href="file://'+ v.renderer.path.absolute +'">'+ v.renderer.path.relative +'</a></li>';
+                pagesTreeString += '</ul>';
             }
-            string0 += '<li><b>secured: </b>'+ v.secured +'</li>';
+            pagesTreeString += '<li><b>secured: </b>'+ v.secured +'</li>';
             if (v.uriPattern !== null && typeof v.uriPattern === 'object'){
-                string0 += '<li class="branch">';
-                string0 += '</i><a href="#">uriPattern</a>';
-                string0 += '<ul>';
-                string0 += '<li><b>pattern: </b>'+ v.uriPattern.pattern +'</li>';
-                string0 += '<li><b>regex: </b>'+ v.uriPattern.regex +'</li>';
-                string0 += '</ul>';
+                pagesTreeString += '<li class="branch">';
+                pagesTreeString += '</i><a href="#">uriPattern</a>';
+                pagesTreeString += '<ul>';
+                pagesTreeString += '<li><b>pattern: </b>'+ v.uriPattern.pattern +'</li>';
+                pagesTreeString += '<li><b>regex: </b>'+ v.uriPattern.regex +'</li>';
+                pagesTreeString += '</ul>';
             }
-            string0 += '</ul>';
+            pagesTreeString += '</ul>';
         }
     });
 
-    $(tree).html(string0);
+    $(treeId).html(pagesTreeString);
 }
 
 function showFragments(){
@@ -114,42 +118,35 @@ function showFragments(){
     });
 }
 
-function populateFragments(d) {
-    var stringMid = '';
-    $.each(d, function (k, v) {
+function populateFragments(treeData) {
+    var fragmentsTreeString = '';
+    $.each(treeData, function (k, v) {
         if (v !== null && typeof v === 'object') {
-            stringMid += '<li aria-expanded="true" class="branch">';
-            stringMid +=
-                '</i><a href="#"><span class="badge add-margin-right-1x">' + (k + 1) + '</span>' + v.name + '</a>';
-            stringMid += '<ul>';
+            fragmentsTreeString += '<li aria-expanded="true" class="branch">';
+            fragmentsTreeString += '</i><a href="#"><span class="badge add-margin-right-1x">' + (k + 1) + '</span>' + v.name + '</a>';
+            fragmentsTreeString += '<ul>';
             if (v.renderer !== null && typeof v.renderer === 'object') {
-                stringMid += '<li aria-expanded="true" class="branch">';
-                stringMid += '<a href="#">renderer</a>';
-                stringMid += '<ul>';
-                if (v.renderer.js !== null && typeof v.renderer.js === 'object') {
-                    stringMid += '<li aria-expanded="true" class="branch">';
-                    stringMid += '<a href="#">js</a>';
-                    stringMid += '<ul>';
-                    stringMid += '<li><b>path: </b>' + v.renderer.js.path + '</li>';
-                    stringMid += '</ul>';
-                    stringMid += '</li>';
-                    stringMid += '<li><b>path: </b>' + v.renderer.path + '</li>';
-                } else {
-                    stringMid += '<li><b>js: </b>' + v.renderer.js + '</li>';
-                    stringMid += '<li><b>path: </b>' + v.renderer.path + '</li>';
+                fragmentsTreeString += '<li aria-expanded="true" class="branch">';
+                fragmentsTreeString += '<a href="#">renderer</a>';
+                fragmentsTreeString += '<ul>';
+                if (v.renderer.js){
+                    fragmentsTreeString += '<li><b>js: </b><a title="Click to view" target="_blank" href="file://'+ v.renderer.js.path.absolute +'">'+ v.renderer.js.path.relative +'</a></li>';
+                }else{
+                    fragmentsTreeString += '<li><b>js: </b> - </li>';
                 }
-                stringMid += '</ul>';
-                stringMid += '</li>';
-                stringMid += '<li><b>secured: </b>' + v.secured + '</li>';
+                fragmentsTreeString += '<li><b>path: </b><a title="Click to view" target="_blank" href="file://'+ v.renderer.path.absolute +'">'+ v.renderer.path.relative +'</a></li>';
+                fragmentsTreeString += '</ul>';
+                fragmentsTreeString += '</li>';
+                fragmentsTreeString += '<li><b>secured: </b>' + v.secured + '</li>';
             } else {
-                stringMid += '<li><b>renderer: </b>' + v.renderer + '</li>';
-                stringMid += '<li><b>secured: </b>' + v.secured + '</li>';
+                fragmentsTreeString += '<li><b>renderer: </b>' + v.renderer + '</li>';
+                fragmentsTreeString += '<li><b>secured: </b>' + v.secured + '</li>';
             }
-            stringMid += '</ul>';
-            stringMid += '</li>';
+            fragmentsTreeString += '</ul>';
+            fragmentsTreeString += '</li>';
         }
     });
-    $('#fragments-tree').html(stringMid);
+    $('#fragments-tree').html(fragmentsTreeString);
     $('#fragments-tree').tree_view();
 }
 
@@ -164,29 +161,26 @@ function showLayouts() {
     });
 }
 
-function populateLayouts(d) {
-    var stringMid = '';
-    $.each(d, function (k, v) {
+function populateLayouts(treeData) {
+    var layoutsTreeString = '';
+    $.each(treeData, function (k, v) {
         if (v !== null && typeof v === 'object') {
-            stringMid += '<li aria-expanded="true" class="branch">';
-            stringMid +=
-                '</i><a href="#"><span class="badge add-margin-right-1x">' + (k + 1) + '</span>' + v.name + '</a>';
-            stringMid += '<ul>';
+            layoutsTreeString += '<li aria-expanded="true" class="branch">';
+            layoutsTreeString += '</i><a href="#"><span class="badge add-margin-right-1x">' + (k + 1) + '</span>' + v.name + '</a>';
+            layoutsTreeString += '<ul>';
             if (v.renderer !== null && typeof v.renderer === 'object') {
-                stringMid += '<li aria-expanded="true" class="branch">';
-                stringMid += '<a href="#">renderer</a>';
-                stringMid += '<ul>';
-                stringMid += '<li><b>path: </b>' + v.renderer.path + '</li>';
-                stringMid += '</ul>';
-                stringMid += '</li>';
+                layoutsTreeString += '<li aria-expanded="true" class="branch">';
+                layoutsTreeString += '<a href="#">renderer</a>';
+                layoutsTreeString += '<ul>';
+                layoutsTreeString += '<li><b>path: </b><a title="Click to view" target="_blank" href="file://'+ v.renderer.path.absolute +'">'+ v.renderer.path.relative +'</a></li>';
             } else {
-                stringMid += '<li><b>renderer: </b>' + v.renderer + '</li>';
+                layoutsTreeString += '<li><b>renderer: </b>' + v.renderer + '</li>';
             }
-            stringMid += '</ul>';
-            stringMid += '</li>';
+            layoutsTreeString += '</ul>';
+            layoutsTreeString += '</li>';
         }
     });
-    $('#layouts-tree').html(stringMid);
+    $('#layouts-tree').html(layoutsTreeString);
     $('#layouts-tree').tree_view();
 }
 
@@ -201,20 +195,19 @@ function showThemes() {
     });
 }
 
-function populateThemes(d) {
-    var stringMid = '';
-    $.each(d, function (k, v) {
+function populateThemes(treeData) {
+    var themesTreeString = '';
+    $.each(treeData, function (k, v) {
         if (v !== null && typeof v === 'object') {
-            stringMid += '<li aria-expanded="true" class="branch">';
-            stringMid +=
-                '</i><a href="#"><span class="badge add-margin-right-1x">' + (k + 1) + '</span>' + v.name + '</a>';
-            stringMid += '<ul>';
-            stringMid += '<li><b>path: </b>' + v.path + '</li>';
-            stringMid += '</ul>';
-            stringMid += '</li>';
+            themesTreeString += '<li aria-expanded="true" class="branch">';
+            themesTreeString += '</i><a href="#"><span class="badge add-margin-right-1x">' + (k + 1) + '</span>' + v.name + '</a>';
+            themesTreeString += '<ul>';
+            themesTreeString += '<li><b>path: </b>' + v.path + '</li>';
+            themesTreeString += '</ul>';
+            themesTreeString += '</li>';
         }
     });
-    $('#themes-tree').html(stringMid);
+    $('#themes-tree').html(themesTreeString);
     $('#themes-tree').tree_view();
 }
 
@@ -223,16 +216,15 @@ requestUtil = new function () {
         var currentUrl = '';
         currentUrl = currentUrl.replace(/#[^#]*$/, "").replace(/\?[^\?]*$/, "").replace(/^https:/, "http:");
         var requestUrl = currentUrl + "api" + url;
-        //console.log(requestUrl);
         $.ajax({
-                   type: type,
-                   url: requestUrl,
-                   data: data,
-                   success: callback,
-                   beforeSend: function (request) {
-                       $(".preloader").preloader("show");
-                   }
-               });
+           type: type,
+           url: requestUrl,
+           data: data,
+           success: callback,
+           beforeSend: function (request) {
+               $(".preloader").preloader("show");
+           }
+        });
     };
 };
 
