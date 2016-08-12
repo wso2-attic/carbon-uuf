@@ -16,7 +16,7 @@
 
 package org.wso2.carbon.uuf.sample.petsstore.bundle.service;
 
-public interface PetsManager {
+public interface PetsStoreService {
 
     String getHelloMessage(String name);
 }

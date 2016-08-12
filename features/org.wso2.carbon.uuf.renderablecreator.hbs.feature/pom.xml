@@ -40,6 +40,11 @@
             <artifactId>org.wso2.carbon.uuf.renderablecreator.hbs</artifactId>
             <version>${carbon.uuf.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.uuf</groupId>
+            <artifactId>nashorn-osgi-fragment</artifactId>
+            <version>${nashorn-osgi-fragment.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -78,6 +83,10 @@
                                 <bundle>
                                     <symbolicName>org.antlr.antlr4-runtime-osgi</symbolicName>
                                     <version>${antlr-version}</version>
+                                </bundle>
+                                <bundle>
+                                    <symbolicName>nashorn-osgi-fragment</symbolicName>
+                                    <version>${nashorn-osgi-fragment.version}</version>
                                 </bundle>
                             </bundles>
                             <importFeatures>

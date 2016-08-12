@@ -40,11 +40,6 @@
             <artifactId>org.wso2.carbon.uuf.core</artifactId>
             <version>${carbon.uuf.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon.uuf</groupId>
-            <artifactId>nashorn-osgi-fragment</artifactId>
-            <version>${nashorn-osgi-fragment.version}</version>
-        </dependency>
     </dependencies>
 
     <build>
@@ -83,10 +78,6 @@
                                 <bundle>
                                     <symbolicName>org.objectweb.asm</symbolicName>
                                     <version>${org.objectweb.asm.version}</version>
-                                </bundle>
-                                <bundle>
-                                    <symbolicName>nashorn-osgi-fragment</symbolicName>
-                                    <version>${nashorn-osgi-fragment.version}</version>
                                 </bundle>
                                 <bundle>
                                     <symbolicName>org.apache.commons.lang3</symbolicName>
