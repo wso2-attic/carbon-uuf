@@ -23,4 +23,9 @@ public interface User {
 
     boolean hasPermission(String resourceUri, String action);
 
+    int hashCode();
+
+    boolean equals(Object obj);
+
+    String toString();
 }
