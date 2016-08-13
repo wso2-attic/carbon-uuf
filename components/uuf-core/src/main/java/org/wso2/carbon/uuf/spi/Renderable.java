@@ -24,4 +24,10 @@ import org.wso2.carbon.uuf.spi.model.Model;
 public interface Renderable {
 
     String render(Model model, Lookup lookup, RequestLookup requestLookup, API api);
+
+    int hashCode();
+
+    boolean equals(Object obj);
+
+    String toString();
 }
