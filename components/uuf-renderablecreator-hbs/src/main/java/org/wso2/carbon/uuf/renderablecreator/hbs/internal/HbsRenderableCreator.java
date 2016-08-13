@@ -44,6 +44,7 @@ import org.wso2.carbon.uuf.renderablecreator.hbs.internal.io.RenderableUpdater;
 import org.wso2.carbon.uuf.spi.Renderable;
 import org.wso2.carbon.uuf.spi.RenderableCreator;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -185,7 +186,7 @@ public class HbsRenderableCreator implements RenderableCreator {
 
     @Override
     public int hashCode() {
-        return getSupportedFileExtensions().hashCode();
+        return Objects.hash(getSupportedFileExtensions().hashCode());
     }
 
     @Override
