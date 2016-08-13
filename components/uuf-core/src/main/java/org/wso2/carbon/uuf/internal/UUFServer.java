@@ -49,7 +49,12 @@ import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_NOT_FOUND;
 @SuppressWarnings("unused")
 public class UUFServer {
 
+    private static final boolean DEV_MODE_ENABLED;
     private static final Logger log = LoggerFactory.getLogger(UUFServer.class);
+
+    static {
+        DEV_MODE_ENABLED = Boolean.parseBoolean(System.getProperties().getProperty("devmode", "false"));
+    }
 
     private final AtomicInteger count = new AtomicInteger(0);
     private final RequestDispatcher requestDispatcher;
@@ -155,5 +160,11 @@ public class UUFServer {
             requestDispatcher.serveErrorPage(app.orElse(null), request, response,
                                              new HttpErrorException(STATUS_INTERNAL_SERVER_ERROR, e.getMessage(), e));
         }
+    }
+
+    @Deprecated
+    public static boolean isDevModeEnabled() {
+        // TODO: 8/13/16 Remove this when Carbon 'Utils.isDevModeEnabled()' is available in C5.20
+        return DEV_MODE_ENABLED;
     }
 }

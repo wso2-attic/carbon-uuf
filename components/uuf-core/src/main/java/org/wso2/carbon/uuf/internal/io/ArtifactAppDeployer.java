@@ -33,9 +33,9 @@ import org.wso2.carbon.deployment.engine.exception.CarbonDeploymentException;
 import org.wso2.carbon.kernel.startupresolver.RequiredCapabilityListener;
 import org.wso2.carbon.uuf.core.App;
 import org.wso2.carbon.uuf.exception.UUFException;
+import org.wso2.carbon.uuf.internal.UUFServer;
 import org.wso2.carbon.uuf.internal.core.create.AppCreator;
 import org.wso2.carbon.uuf.internal.core.create.ClassLoaderProvider;
-import org.wso2.carbon.uuf.internal.debug.Debugger;
 import org.wso2.carbon.uuf.internal.io.util.ZipArtifactHandler;
 import org.wso2.carbon.uuf.internal.util.NameUtils;
 import org.wso2.carbon.uuf.spi.RenderableCreator;
@@ -219,7 +219,7 @@ public class ArtifactAppDeployer implements Deployer, UUFAppRegistry, RequiredCa
                 createdApp = createApp(appArtifact.appName, contextPath, artifact);
             } catch (Exception e) {
                 // catching any/all exception/s
-                if (Debugger.isDebuggingEnabled()) {
+                if (UUFServer.isDevModeEnabled()) {
                     /* If the server is in the developer mode, add the artifact back to the 'pendingToDeployArtifacts'
                     map so the developer can correct the error and attempt to re-deploy the artifact. */
                     pendingToDeployArtifacts.put(contextPath, appArtifact);

@@ -24,7 +24,7 @@ import org.wso2.carbon.uuf.core.Component;
 import org.wso2.carbon.uuf.core.Theme;
 import org.wso2.carbon.uuf.exception.FileOperationException;
 import org.wso2.carbon.uuf.exception.ResourceNotFoundException;
-import org.wso2.carbon.uuf.internal.debug.Debugger;
+import org.wso2.carbon.uuf.internal.UUFServer;
 import org.wso2.carbon.uuf.internal.io.util.MimeMapper;
 import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.carbon.uuf.spi.HttpResponse;
@@ -77,17 +77,21 @@ public class StaticResolver {
      * The constructor of StaticResolver class
      */
     public StaticResolver() {
-        if (Debugger.isDebuggingEnabled()) {
-            // In the developer mode, we do not cache last modified dates of serving static resources.
+        if (UUFServer.isDevModeEnabled()) {
+            /*
+             * When the dev mode is enabled, we do not cache last modified dates of serving static resources. This is
+             * achieved by setting a dummy map to the 'resourcesLastModifiedDates' field. Dummy map does not store any
+             * values and it size is always zero.
+             */
             this.resourcesLastModifiedDates = new AbstractMap<Path, ZonedDateTime>() {
                 @Override
                 public Set<Entry<Path, ZonedDateTime>> entrySet() {
-                    return Collections.emptySet();
+                    return Collections.emptySet(); // No entries in this dummy map.
                 }
 
                 @Override
                 public ZonedDateTime put(Path key, ZonedDateTime value) {
-                    return value; // Do nothing as this is a dummy Map.
+                    return value; // Do not store in this is dummy Map.
                 }
             };
         } else {
@@ -158,13 +162,12 @@ public class StaticResolver {
     }
 
     private Path resolveResourceInComponent(App app, String uriWithoutContextPath) {
-        /*
-         * Correct 'uriWithoutContextPath' value must be in
+        /* Correct 'uriWithoutContextPath' value must be in
          * "/public/components/{component-context-path}/{fragment-simple-name}/{sub-directory}/{rest-of-the-path}"
          * format or in
          * "/public/components/{component-context-path}/base/{sub-directory}/{rest-of-the-path}" format.
          * So there should be at least 6 slashes. Don't worry about multiple consecutive slashes. They  are covered in
-         * HttpRequest.isValid(HttpRequest) method which is called before this method.
+         * HttpRequest.isValid() method which is called before this method.
          */
 
         int slashesCount = 0, thirdSlashIndex = -1, fourthSlashIndex = -1, fifthSlashIndex = -1;
@@ -209,11 +212,10 @@ public class StaticResolver {
     }
 
     private Path resolveResourceInTheme(App app, String uriWithoutContextPath) {
-        /*
-         * Correct 'uriWithoutContextPath' value must be in
+        /* Correct 'uriWithoutContextPath' value must be in
          * "/public/themes/{theme-name}/{sub-directory}/{rest-of-the-path}" format.
          * So there should be at least 5 slashes. Don't worry about multiple consecutive slashes. They  are covered
-         * in HttpRequest.isValid(HttpRequest) method which is called before this method.
+         * in HttpRequest.isValid() method which is called before this method.
          */
 
         int slashesCount = 0, thirdSlashIndex = -1, fourthSlashIndex = -1;
