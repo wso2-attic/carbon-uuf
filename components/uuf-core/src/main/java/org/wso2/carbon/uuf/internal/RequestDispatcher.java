@@ -43,9 +43,17 @@ public class RequestDispatcher {
 
     private static final Logger log = LoggerFactory.getLogger(RequestDispatcher.class);
 
-    private final StaticResolver staticResolver = new StaticResolver();
-    private final Object lock = new Object();
-    private Debugger debugger;
+    private final StaticResolver staticResolver;
+    private final Debugger debugger;
+
+    public RequestDispatcher() {
+        this(new StaticResolver(), (Debugger.isDebuggingEnabled() ? new Debugger() : null));
+    }
+
+    public RequestDispatcher(StaticResolver staticResolver, Debugger debugger) {
+        this.staticResolver = staticResolver;
+        this.debugger = debugger;
+    }
 
     public void serve(App app, HttpRequest request, HttpResponse response) {
         if (log.isDebugEnabled() && !request.isDebugRequest()) {
@@ -56,13 +64,6 @@ public class RequestDispatcher {
             if (request.isStaticResourceRequest()) {
                 staticResolver.serve(app, request, response);
             } else if (Debugger.isDebuggingEnabled() && request.isDebugRequest()) {
-                if (this.debugger == null) {
-                    synchronized (lock) {
-                        if (this.debugger == null) {
-                            this.debugger = new Debugger(); // Create a debugger.
-                        }
-                    }
-                }
                 debugger.serve(app, request, response);
             } else {
                 serveApp(app, request, response);
