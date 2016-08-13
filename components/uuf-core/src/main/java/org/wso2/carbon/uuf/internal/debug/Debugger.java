@@ -42,25 +42,23 @@ import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_OK;
 
 public class Debugger {
 
-    private static final Logger log = LoggerFactory.getLogger(Debugger.class);
-
-    public static final UriPatten URI_PATTEN_API_PAGES = new UriPatten("/debug/api/pages/");
-    public static final UriPatten URI_PATTEN_API_LAYOUTS = new UriPatten("/debug/api/layouts/");
-    public static final UriPatten URI_PATTEN_API_FRAGMENTS = new UriPatten("/debug/api/fragments/");
-    public static final UriPatten URI_PATTEN_API_THEMES = new UriPatten("/debug/api/themes/");
-    public static final UriPatten URI_PATTEN_API_LOGS = new UriPatten("/debug/api/logs/");
-    public static final UriPatten URI_PATTEN_PAGE_INDEX = new UriPatten("/debug/");
-    public static final UriPatten URI_PATTEN_RESOURCES = new UriPatten("/debug/{+resource}");
-    private static final boolean IS_DEBUGGING_ENABLED;
-
+    private static final UriPatten URI_PATTEN_API_PAGES = new UriPatten("/debug/api/pages/");
+    private static final UriPatten URI_PATTEN_API_LAYOUTS = new UriPatten("/debug/api/layouts/");
+    private static final UriPatten URI_PATTEN_API_FRAGMENTS = new UriPatten("/debug/api/fragments/");
+    private static final UriPatten URI_PATTEN_API_THEMES = new UriPatten("/debug/api/themes/");
+    private static final UriPatten URI_PATTEN_API_LOGS = new UriPatten("/debug/api/logs/");
+    private static final UriPatten URI_PATTEN_PAGE_INDEX = new UriPatten("/debug/");
+    private static final UriPatten URI_PATTEN_RESOURCES = new UriPatten("/debug/{+resource}");
     private final static JsonParser JSON_PARSER = new JsonParser();
-
-    // TODO: 12/07/2016 uncomment this once osgi issue solved for DebugAppender
-    //private final DebugAppender debugAppender;
+    private static final Logger log = LoggerFactory.getLogger(Debugger.class);
+    private static final boolean IS_DEBUGGING_ENABLED;
 
     static {
         IS_DEBUGGING_ENABLED = ManagementFactory.getRuntimeMXBean().getInputArguments().contains("-Xdebug");
     }
+
+    // TODO: 12/07/2016 uncomment this once osgi issue solved for DebugAppender
+    //private final DebugAppender debugAppender;
 
     public Debugger() {
         // TODO: 12/07/2016 uncomment this once osgi issue solved for DebugAppender
