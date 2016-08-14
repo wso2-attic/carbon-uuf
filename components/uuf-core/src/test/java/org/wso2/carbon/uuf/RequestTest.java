@@ -49,11 +49,6 @@ public class RequestTest {
     public void testIsValid(String uri, boolean expectedResult) throws Exception {
         HttpRequest request = new HttpRequest() {
             @Override
-            public String getUrl() {
-                return null;
-            }
-
-            @Override
             public String getMethod() {
                 return null;
             }
@@ -64,17 +59,12 @@ public class RequestTest {
             }
 
             @Override
-            public Map<String, String> getHeaders() {
-                return null;
+            public boolean isSecure() {
+                return false;
             }
 
             @Override
-            public String getHostName() {
-                return null;
-            }
-
-            @Override
-            public String getCookieValue(String cookieName) {
+            public String getUrl() {
                 return null;
             }
 
@@ -104,8 +94,23 @@ public class RequestTest {
             }
 
             @Override
+            public Map<String, String> getHeaders() {
+                return null;
+            }
+
+            @Override
+            public String getCookieValue(String cookieName) {
+                return null;
+            }
+
+            @Override
             public String getContentType() {
                 return null;
+            }
+
+            @Override
+            public long getContentLength() {
+                return 0;
             }
 
             @Override
@@ -119,22 +124,22 @@ public class RequestTest {
             }
 
             @Override
-            public long getContentLength() {
-                return 0;
-            }
-
-            @Override
-            public boolean isSecure() {
-                return false;
-            }
-
-            @Override
-            public String getRemoteAddr() {
+            public String getLocalAddress() {
                 return null;
             }
 
             @Override
             public int getLocalPort() {
+                return 0;
+            }
+
+            @Override
+            public String getRemoteAddress() {
+                return null;
+            }
+
+            @Override
+            public int getRemotePort() {
                 return 0;
             }
         };
