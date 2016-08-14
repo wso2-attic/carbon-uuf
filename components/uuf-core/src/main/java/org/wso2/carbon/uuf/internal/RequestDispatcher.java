@@ -136,9 +136,11 @@ public class RequestDispatcher {
                             (uriWithoutContextPath + "/");
                     if (app.hasPage(correctedUriWithoutContextPath)) {
                         response.setStatus(STATUS_MOVED_PERMANENTLY);
-                        String correctedUrl =
-                                request.getHostName() + request.getContextPath() + correctedUriWithoutContextPath;
-                        response.setHeader(HEADER_LOCATION, correctedUrl);
+                        String correctedUri = request.getContextPath() + correctedUriWithoutContextPath;
+                        if (request.getQueryString() != null) {
+                            correctedUri = correctedUri + '?' + request.getQueryString();
+                        }
+                        response.setHeader(HEADER_LOCATION, correctedUri);
                         return;
                     }
                     throw e;
