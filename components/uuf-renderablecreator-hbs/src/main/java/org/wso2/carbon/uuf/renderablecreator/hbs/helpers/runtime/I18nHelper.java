@@ -16,30 +16,29 @@
 
 package org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime;
 
-import java.io.IOException;
-import java.util.Map;
-import java.util.Properties;
-
 import com.github.jknack.handlebars.Helper;
-
+import com.github.jknack.handlebars.Options;
 import org.wso2.carbon.uuf.core.Lookup;
 import org.wso2.carbon.uuf.core.RequestLookup;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.HbsRenderable;
 
-import com.github.jknack.handlebars.Options;
+import java.io.IOException;
+import java.util.Map;
+import java.util.Properties;
 
 public class I18nHelper implements Helper<String> {
-	
+
     public static final String HELPER_NAME = "t";
     private static final String DEFAULT_LOCALE = "en_US";
     private static final String LOCALE_HEADER = "Accept-Language";
     private static final String LOCALE = "locale";
 
-	@Override
-	public CharSequence apply(String key, Options options) throws IOException {
+    @Override
+    public CharSequence apply(String key, Options options) throws IOException {
         if (key == null) {
             throw new IllegalArgumentException("Key of a translating string cannot be null.");
         }
+
         RequestLookup requestLookup = options.data(HbsRenderable.DATA_KEY_REQUEST_LOOKUP);
         Lookup lookup = options.data(HbsRenderable.DATA_KEY_LOOKUP);
         Object localParam = options.hash.get(LOCALE);
@@ -49,7 +48,7 @@ public class I18nHelper implements Helper<String> {
         if (localParam != null) {
             currentLocale = localParam.toString();
         } else if ((localeRequest = requestLookup.getRequest().getHeaders().get(LOCALE_HEADER)) != null) {
-            //example: en,en-US;q=0.7,en-AU;q=0.3
+            // example: en,en-US;q=0.7,en-AU;q=0.3
             // https://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.4
             String locale = localeRequest.toString().split(",")[0].replace("-", "_");
             if (locale.contains("_")) {
@@ -66,7 +65,7 @@ public class I18nHelper implements Helper<String> {
         }
 
         Properties props = lookup.getAllI18nResources().get(currentLocale);
-        return props != null? props.getProperty(key, key) : key;
-	}
+        return props != null ? props.getProperty(key, key) : key;
+    }
 
 }
