@@ -151,8 +151,8 @@ public class RequestDispatcher {
             throw e;
         } catch (Exception e) {
             // May be an UUFException cause this 'e' Exception. Let's unwrap 'e' and find out.
-            Throwable th;
-            while ((th = e.getCause()) != null) {
+            Throwable th = e;
+            while ((th = th.getCause()) != null) {
                 if (th instanceof UUFException) {
                     // Cause of 'e' is an UUFException. Throw 'th' so that we can handle it properly.
                     throw (UUFException) th;
