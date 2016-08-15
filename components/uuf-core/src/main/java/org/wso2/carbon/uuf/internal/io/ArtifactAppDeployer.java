@@ -77,6 +77,10 @@ public class ArtifactAppDeployer implements Deployer, UUFAppRegistry, RequiredCa
     private BundleContext bundleContext;
 
     public ArtifactAppDeployer() {
+        this(new BundleClassLoaderProvider());
+    }
+
+    public ArtifactAppDeployer(ClassLoaderProvider classLoaderProvider) {
         this.artifactType = new ArtifactType<>("uufapp");
         try {
             this.location = new URL("file:uufapps");
@@ -87,7 +91,7 @@ public class ArtifactAppDeployer implements Deployer, UUFAppRegistry, RequiredCa
         this.pendingToDeployArtifacts = new ConcurrentHashMap<>();
         this.lock = new Object();
         this.renderableCreators = ConcurrentHashMap.newKeySet();
-        this.classLoaderProvider = new BundleClassLoaderProvider();
+        this.classLoaderProvider = classLoaderProvider;
     }
 
     @Override
