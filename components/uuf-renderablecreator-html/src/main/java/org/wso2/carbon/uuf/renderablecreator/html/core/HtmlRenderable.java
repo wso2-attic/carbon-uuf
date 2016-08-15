@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.wso2.carbon.uuf.renderablecreator.html.impl;
+package org.wso2.carbon.uuf.renderablecreator.html.core;
 
 import org.wso2.carbon.uuf.core.API;
 import org.wso2.carbon.uuf.core.Lookup;
@@ -22,45 +22,41 @@ import org.wso2.carbon.uuf.core.RequestLookup;
 import org.wso2.carbon.uuf.spi.Renderable;
 import org.wso2.carbon.uuf.spi.model.Model;
 
-import java.nio.file.Path;
 import java.util.Objects;
 
 public class HtmlRenderable implements Renderable {
-    private final Path absoluteFilePath;
-    private final String htmlFileContent;
-    private final Path relativeFilePath;
 
-    public HtmlRenderable(Path absoluteFilePath, Path relativeFilePath, String htmlFileContent) {
+    private final String html;
+    private final String absoluteFilePath;
+    private final String relativeFilePath;
+
+    public HtmlRenderable(String html) {
+        this(html, null, null);
+    }
+
+    public HtmlRenderable(String html, String absoluteFilePath, String relativeFilePath) {
         this.absoluteFilePath = absoluteFilePath;
         this.relativeFilePath = relativeFilePath;
-        this.htmlFileContent = htmlFileContent;
+        this.html = html;
     }
 
-    public Path getAbsoluteFilePath() {
+    public String getAbsoluteFilePath() {
         return absoluteFilePath;
-    }
-
-    private Path getRelativeFilePath() {
-        return relativeFilePath;
-    }
-
-    private String getHtmlFileContent() {
-        return htmlFileContent;
     }
 
     @Override
     public String render(Model model, Lookup lookup, RequestLookup requestLookup, API api) {
-        return htmlFileContent;
+        return html;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getAbsoluteFilePath(), getHtmlFileContent());
+        return Objects.hash(absoluteFilePath, html);
     }
 
     @Override
     public String toString() {
-        return "{\"path\": {\"absolute\": \"" + getAbsoluteFilePath() + "\", \"relative\": \"" + getRelativeFilePath() +
+        return "{\"path\": {\"absolute\": \"" + absoluteFilePath + "\", \"relative\": \"" + relativeFilePath +
                 "\"}}";
     }
 }

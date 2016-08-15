@@ -26,14 +26,13 @@ import org.wso2.carbon.uuf.reference.FileReference;
 import org.wso2.carbon.uuf.reference.FragmentReference;
 import org.wso2.carbon.uuf.reference.LayoutReference;
 import org.wso2.carbon.uuf.reference.PageReference;
-import org.wso2.carbon.uuf.renderablecreator.html.impl.HtmlRenderable;
-import org.wso2.carbon.uuf.renderablecreator.html.impl.MutableHtmlRenderable;
+import org.wso2.carbon.uuf.renderablecreator.html.core.HtmlRenderable;
+import org.wso2.carbon.uuf.renderablecreator.html.core.MutableHtmlRenderable;
 import org.wso2.carbon.uuf.renderablecreator.html.internal.io.HtmlRenderableUpdater;
 import org.wso2.carbon.uuf.spi.Renderable;
 import org.wso2.carbon.uuf.spi.RenderableCreator;
 
 import java.lang.management.ManagementFactory;
-import java.nio.file.Paths;
 import java.util.Set;
 
 @Component(name = "org.wso2.carbon.uuf.renderablecreator.html.internal.HtmlRenderableCreator",
@@ -99,16 +98,14 @@ public class HtmlRenderableCreator implements RenderableCreator {
     private Renderable getHtmlRenderable(FileReference fileReference) {
 
         if (isDebuggingEnabled) {
-            MutableHtmlRenderable mutableHtmlRenderable = new MutableHtmlRenderable(
-                    Paths.get(fileReference.getAbsolutePath()),
-                    Paths.get(fileReference.getRelativePath()),
-                    fileReference.getContent());
+            MutableHtmlRenderable mutableHtmlRenderable = new MutableHtmlRenderable(fileReference.getContent(),
+                                                                                    fileReference.getAbsolutePath(),
+                                                                                    fileReference.getRelativePath());
             updater.add(mutableHtmlRenderable);
             return mutableHtmlRenderable;
         } else {
-            return new HtmlRenderable(Paths.get(fileReference.getAbsolutePath()),
-                                      Paths.get(fileReference.getRelativePath()),
-                                      fileReference.getContent());
+            return new HtmlRenderable(fileReference.getContent(), fileReference.getAbsolutePath(),
+                                      fileReference.getRelativePath());
         }
     }
 }

@@ -14,30 +14,28 @@
  *  limitations under the License.
  */
 
-package org.wso2.carbon.uuf.renderablecreator.html.impl;
+package org.wso2.carbon.uuf.renderablecreator.html.core;
 
 import org.wso2.carbon.uuf.core.API;
 import org.wso2.carbon.uuf.core.Lookup;
 import org.wso2.carbon.uuf.core.RequestLookup;
 import org.wso2.carbon.uuf.spi.model.Model;
 
-import java.nio.file.Path;
-
 public class MutableHtmlRenderable extends HtmlRenderable {
-    private volatile String htmlFileContent;
 
-    public MutableHtmlRenderable(Path absoluteFilePath, Path relativeFilePath, String htmlFileContent) {
-        super(absoluteFilePath, relativeFilePath, htmlFileContent);
-        this.htmlFileContent = htmlFileContent;
+    private volatile String html;
+
+    public MutableHtmlRenderable(String html, String absoluteFilePath, String relativeFilePath) {
+        super(html, absoluteFilePath, relativeFilePath);
+        this.html = html;
     }
 
-    public void setHtmlFileContent(String content) {
-        this.htmlFileContent = content;
+    public void setHtml(String content) {
+        this.html = content;
     }
 
     @Override
     public String render(Model model, Lookup lookup, RequestLookup requestLookup, API api) {
-        return htmlFileContent;
+        return html;
     }
-
 }

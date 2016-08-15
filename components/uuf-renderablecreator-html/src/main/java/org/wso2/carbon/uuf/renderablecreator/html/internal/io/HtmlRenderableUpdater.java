@@ -21,7 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.exception.FileOperationException;
 import org.wso2.carbon.uuf.exception.UUFException;
-import org.wso2.carbon.uuf.renderablecreator.html.impl.MutableHtmlRenderable;
+import org.wso2.carbon.uuf.renderablecreator.html.core.MutableHtmlRenderable;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -30,6 +30,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.NotDirectoryException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardWatchEventKinds;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
@@ -40,7 +41,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 public class HtmlRenderableUpdater {
+
     private static final Logger log = LoggerFactory.getLogger(HtmlRenderableUpdater.class);
+
     private final Set<Path> watchingDirectories;
     private final ConcurrentMap<Path, MutableHtmlRenderable> watchingRenderables;
     private final WatchService watchService;
@@ -60,7 +63,7 @@ public class HtmlRenderableUpdater {
     }
 
     public void add(MutableHtmlRenderable mutableHtmlRenderable) {
-        Path renderablePath = mutableHtmlRenderable.getAbsoluteFilePath();
+        Path renderablePath = Paths.get(mutableHtmlRenderable.getAbsoluteFilePath());
         Path parentDirectory = renderablePath.getParent();
         if (watchingDirectories.add(parentDirectory)) {
             try {
@@ -122,8 +125,8 @@ public class HtmlRenderableUpdater {
                         if (mutableHtmlRenderable != null) {
                             String content = new String(Files.readAllBytes(updatedFileAbsolutePath),
                                                         StandardCharsets.UTF_8);
-                            mutableHtmlRenderable.setHtmlFileContent(content);
-                            log.info("Html template '" + updatedFileAbsolutePath + "' reloaded successfully.");
+                            mutableHtmlRenderable.setHtml(content);
+                            log.info("HTML template '" + updatedFileAbsolutePath + "' reloaded successfully.");
                         }
                     } catch (IOException e) {
                         throw new FileOperationException(
