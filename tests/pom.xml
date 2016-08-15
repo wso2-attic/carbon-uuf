@@ -23,8 +23,9 @@
     <artifactId>tests</artifactId>
     <packaging>pom</packaging>
 
-    <name>WSO2 UUF Tests Module</name>
+    <name>WSO2 UUF Tests - Parent</name>
     <url>http://wso2.org</url>
+
     <description>UUF Tests for OSGI bundles</description>
 
     <parent>
