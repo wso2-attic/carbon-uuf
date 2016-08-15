@@ -96,12 +96,12 @@ public abstract class HbsRenderable implements Renderable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(getAbsolutePath(), getTemplate());
+        return Objects.hash(absolutePath, getTemplate());
     }
 
     @Override
     public String toString() {
-        return "{\"path\": {\"absolute\": \"" + getAbsolutePath() + "\", \"relative\": \"" + getRelativePath() + "\"}}";
+        return "{\"path\": {\"absolute\": \"" + absolutePath + "\", \"relative\": \"" + relativePath + "\"}}";
     }
 
     protected static Template compile(TemplateSource templateSource) {
