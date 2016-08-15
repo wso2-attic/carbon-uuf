@@ -19,33 +19,20 @@ package org.wso2.carbon.uuf.renderablecreator.html.impl;
 import org.wso2.carbon.uuf.core.API;
 import org.wso2.carbon.uuf.core.Lookup;
 import org.wso2.carbon.uuf.core.RequestLookup;
-import org.wso2.carbon.uuf.spi.Renderable;
 import org.wso2.carbon.uuf.spi.model.Model;
 
 import java.nio.file.Path;
-import java.util.Objects;
 
-public class HtmlRenderable implements Renderable {
-    private final Path absoluteFilePath;
-    private final String htmlFileContent;
-    private final Path relativeFilePath;
+public class MutableHtmlRenderable extends HtmlRenderable {
+    private volatile String htmlFileContent;
 
-    public HtmlRenderable(Path absoluteFilePath, Path relativeFilePath, String htmlFileContent) {
-        this.absoluteFilePath = absoluteFilePath;
-        this.relativeFilePath = relativeFilePath;
+    public MutableHtmlRenderable(Path absoluteFilePath, Path relativeFilePath, String htmlFileContent) {
+        super(absoluteFilePath, relativeFilePath, htmlFileContent);
         this.htmlFileContent = htmlFileContent;
     }
 
-    public Path getAbsoluteFilePath() {
-        return absoluteFilePath;
-    }
-
-    private Path getRelativeFilePath() {
-        return relativeFilePath;
-    }
-
-    private String getHtmlFileContent() {
-        return htmlFileContent;
+    public void setHtmlFileContent(String content) {
+        this.htmlFileContent = content;
     }
 
     @Override
@@ -53,14 +40,4 @@ public class HtmlRenderable implements Renderable {
         return htmlFileContent;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(getAbsoluteFilePath(), getHtmlFileContent());
-    }
-
-    @Override
-    public String toString() {
-        return "{\"path\": {\"absolute\": \"" + getAbsoluteFilePath() + "\", \"relative\": \"" + getRelativeFilePath() +
-                "\"}}";
-    }
 }

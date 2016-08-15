@@ -21,7 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.exception.FileOperationException;
 import org.wso2.carbon.uuf.exception.UUFException;
-import org.wso2.carbon.uuf.renderablecreator.html.impl.HtmlRenderable;
+import org.wso2.carbon.uuf.renderablecreator.html.impl.MutableHtmlRenderable;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -42,7 +42,7 @@ import java.util.concurrent.ConcurrentMap;
 public class HtmlRenderableUpdater {
     private static final Logger log = LoggerFactory.getLogger(HtmlRenderableUpdater.class);
     private final Set<Path> watchingDirectories;
-    private final ConcurrentMap<Path, HtmlRenderable> watchingRenderables;
+    private final ConcurrentMap<Path, MutableHtmlRenderable> watchingRenderables;
     private final WatchService watchService;
     private final Thread watchServiceThread;
     private boolean isWatchServiceStopped;
@@ -59,8 +59,8 @@ public class HtmlRenderableUpdater {
         this.isWatchServiceStopped = false;
     }
 
-    public void add(HtmlRenderable htmlRenderable) {
-        Path renderablePath = htmlRenderable.getFilePath();
+    public void add(MutableHtmlRenderable mutableHtmlRenderable) {
+        Path renderablePath = mutableHtmlRenderable.getAbsoluteFilePath();
         Path parentDirectory = renderablePath.getParent();
         if (watchingDirectories.add(parentDirectory)) {
             try {
@@ -75,7 +75,7 @@ public class HtmlRenderableUpdater {
                                                          "' to file watch service.'", e);
             }
         }
-        watchingRenderables.put(renderablePath, htmlRenderable);
+        watchingRenderables.put(renderablePath, mutableHtmlRenderable);
     }
 
     public void start() {
@@ -117,18 +117,19 @@ public class HtmlRenderableUpdater {
                 Path updatedFileAbsolutePath = updatedDirectory.resolve(updatedFileName);
                 if (Files.exists(updatedFileAbsolutePath)) {
                     try {
-                        HtmlRenderable htmlRenderable = watchingRenderables.get(updatedFileAbsolutePath);
-                        if (htmlRenderable != null) {
+                        MutableHtmlRenderable
+                                mutableHtmlRenderable = watchingRenderables.get(updatedFileAbsolutePath);
+                        if (mutableHtmlRenderable != null) {
                             String content = new String(Files.readAllBytes(updatedFileAbsolutePath),
                                                         StandardCharsets.UTF_8);
-                            htmlRenderable.setHtmlFileContent(content);
+                            mutableHtmlRenderable.setHtmlFileContent(content);
                             log.info("Html template '" + updatedFileAbsolutePath + "' reloaded successfully.");
                         }
                     } catch (IOException e) {
                         throw new FileOperationException(
                                 "Cannot read content of updated file '" + updatedFileAbsolutePath + "'.", e);
                     } catch (UUFException e) {
-                        log.error("An error occurred while reloading Handlebars template '" + updatedFileAbsolutePath +
+                        log.error("An error occurred while reloading HTML template '" + updatedFileAbsolutePath +
                                           "'.", e);
                     }
                 }

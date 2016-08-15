@@ -16,17 +16,18 @@
 
 package org.wso2.carbon.uuf.renderablecreator.html.internal;
 
+import com.google.common.collect.ImmutableSet;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.google.common.collect.ImmutableSet;
 import org.wso2.carbon.uuf.reference.FileReference;
 import org.wso2.carbon.uuf.reference.FragmentReference;
 import org.wso2.carbon.uuf.reference.LayoutReference;
 import org.wso2.carbon.uuf.reference.PageReference;
 import org.wso2.carbon.uuf.renderablecreator.html.impl.HtmlRenderable;
+import org.wso2.carbon.uuf.renderablecreator.html.impl.MutableHtmlRenderable;
 import org.wso2.carbon.uuf.renderablecreator.html.internal.io.HtmlRenderableUpdater;
 import org.wso2.carbon.uuf.spi.Renderable;
 import org.wso2.carbon.uuf.spi.RenderableCreator;
@@ -96,11 +97,18 @@ public class HtmlRenderableCreator implements RenderableCreator {
     }
 
     private Renderable getHtmlRenderable(FileReference fileReference) {
-        HtmlRenderable htmlRenderable = new HtmlRenderable(Paths.get(fileReference.getAbsolutePath()),
-                                                           fileReference.getContent());
+
         if (isDebuggingEnabled) {
-            updater.add(htmlRenderable);
+            MutableHtmlRenderable mutableHtmlRenderable = new MutableHtmlRenderable(
+                    Paths.get(fileReference.getAbsolutePath()),
+                    Paths.get(fileReference.getRelativePath()),
+                    fileReference.getContent());
+            updater.add(mutableHtmlRenderable);
+            return mutableHtmlRenderable;
+        } else {
+            return new HtmlRenderable(Paths.get(fileReference.getAbsolutePath()),
+                                      Paths.get(fileReference.getRelativePath()),
+                                      fileReference.getContent());
         }
-        return htmlRenderable;
     }
 }
