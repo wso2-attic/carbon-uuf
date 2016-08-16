@@ -115,6 +115,9 @@ public class App {
         // If exists, render Theme.
         Theme renderingTheme = getRenderingTheme(api);
         if (renderingTheme != null) {
+            // TODO: This is misleading, it looks as if theme is rendered first and
+            //       then the page. But what really happens is theme passes some
+            //       info to render page.
             renderingTheme.render(requestLookup);
         }
         try {
