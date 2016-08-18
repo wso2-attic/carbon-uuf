@@ -143,14 +143,14 @@ public class AppCreator {
 
         try {
             Map<?, ?> rawConfigurations = componentReference
-                    .getConfigurations()
+                    .getConfiguration()
                     .map(fileReference -> yaml.loadAs(fileReference.getContent(), Map.class))
                     .orElse(new HashMap<>(0));
             lookup.getConfiguration().merge(rawConfigurations);
         } catch (Exception e) {
             // Yaml.loadAs() throws an Exception
             throw new MalformedConfigurationException(
-                    "Configuration '" + componentReference.getConfigurations().get().getRelativePath() +
+                    "Configuration '" + componentReference.getConfiguration().get().getRelativePath() +
                             "' is malformed.", e);
         }
 

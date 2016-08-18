@@ -109,7 +109,7 @@ public class ArtifactComponentReference implements ComponentReference {
     }
 
     @Override
-    public Optional<FileReference> getConfigurations() {
+    public Optional<FileReference> getConfiguration() {
         Path configuration = componentDirectory.resolve(FILE_NAME_CONFIGURATIONS);
         if (Files.exists(configuration)) {
             return Optional.of(new ArtifactFileReference(configuration, appReference));
