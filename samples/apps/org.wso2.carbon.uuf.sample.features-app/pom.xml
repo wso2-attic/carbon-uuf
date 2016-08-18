@@ -76,7 +76,8 @@
                         </goals>
                         <configuration>
                             <instructions>
-                                <Import-Package>org.wso2.carbon.uuf.sample.petsstore.bundle,
+                                <Import-Package>
+                                    org.wso2.carbon.uuf.sample.petsstore.bundle,
                                     org.wso2.carbon.uuf.sample.simpleauth.bundle
                                 </Import-Package>
                             </instructions>
