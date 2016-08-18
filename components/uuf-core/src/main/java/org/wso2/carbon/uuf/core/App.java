@@ -146,9 +146,9 @@ public class App {
     private String renderPage(String pageUri, Model model, RequestLookup requestLookup, API api, Theme theme) {
         // If theme exists, append theme information to the requestLookup
         if(theme != null) {
-            theme.appendPlaceHolderInfo(requestLookup);
+            theme.addPlaceHolderValues(requestLookup);
         }
-        // First try to appendPlaceHolderInfo the page with 'root' component.
+        // First try to addPlaceHolderValues the page with 'root' component.
         Optional<String> output = rootComponent.renderPage(pageUri, model, lookup, requestLookup, api);
         if (output.isPresent()) {
             return output.get();

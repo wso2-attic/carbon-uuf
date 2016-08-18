@@ -56,7 +56,7 @@ public class Theme {
         return path;
     }
 
-    public void appendPlaceHolderInfo(RequestLookup requestLookup) {
+    public void addPlaceHolderValues(RequestLookup requestLookup) {
         String contextPath = requestLookup.getContextPath();
         for (String cssTagSuffix : cssTagSuffixes) {
             requestLookup.addToPlaceholder(Placeholder.css, "<link href=\"" + contextPath + cssTagSuffix);
