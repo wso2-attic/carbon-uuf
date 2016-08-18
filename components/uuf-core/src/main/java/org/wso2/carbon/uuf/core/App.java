@@ -144,7 +144,7 @@ public class App {
     }
 
     private String renderPage(String pageUri, Model model, RequestLookup requestLookup, API api, Theme theme) {
-        // If theme exists, append theme information to the requestLookup
+        // If theme exists, add theme values to the requestLookup
         if(theme != null) {
             theme.addPlaceHolderValues(requestLookup);
         }
