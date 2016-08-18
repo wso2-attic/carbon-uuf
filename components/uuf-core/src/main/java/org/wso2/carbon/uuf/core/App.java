@@ -112,16 +112,9 @@ public class App {
     public String renderPage(HttpRequest request, HttpResponse response) {
         RequestLookup requestLookup = createRequestLookup(request, response);
         API api = new API(sessionRegistry, requestLookup);
-        // If exists, render Theme.
-        Theme renderingTheme = getRenderingTheme(api);
-        if (renderingTheme != null) {
-            // TODO: This is misleading, it looks as if theme is rendered first and
-            //       then the page. But what really happens is theme passes some
-            //       info to render page.
-            renderingTheme.render(requestLookup);
-        }
+        Theme theme = getRenderingTheme(api);
         try {
-            return renderPage(request.getUriWithoutContextPath(), null, requestLookup, api);
+            return renderPage(request.getUriWithoutContextPath(), null, requestLookup, api, theme);
         } catch (SessionNotFoundException e) {
             String loginPageUri = configuration.getLoginPageUri();
             if (loginPageUri == null) {
@@ -142,20 +135,20 @@ public class App {
 
         RequestLookup requestLookup = createRequestLookup(request, response);
         API api = new API(sessionRegistry, requestLookup);
-        // If exists, render Theme.
-        Theme renderingTheme = getRenderingTheme(api);
-        if (renderingTheme != null) {
-            renderingTheme.render(requestLookup);
-        }
+        Theme theme = getRenderingTheme(api);
         // Create Model with HTTP status code and error message.
         Map<String, Object> modelMap = new HashMap<>(2);
         modelMap.put("status", ex.getHttpStatusCode());
         modelMap.put("message", ex.getMessage());
-        return Optional.of(renderPage(errorPageUri, new MapModel(modelMap), requestLookup, api));
+        return Optional.of(renderPage(errorPageUri, new MapModel(modelMap), requestLookup, api, theme));
     }
 
-    private String renderPage(String pageUri, Model model, RequestLookup requestLookup, API api) {
-        // First try to render the page with 'root' component.
+    private String renderPage(String pageUri, Model model, RequestLookup requestLookup, API api, Theme theme) {
+        // If theme exists, add theme values to the requestLookup
+        if(theme != null) {
+            theme.addPlaceHolderValues(requestLookup);
+        }
+        // First try to addPlaceHolderValues the page with 'root' component.
         Optional<String> output = rootComponent.renderPage(pageUri, model, lookup, requestLookup, api);
         if (output.isPresent()) {
             return output.get();
