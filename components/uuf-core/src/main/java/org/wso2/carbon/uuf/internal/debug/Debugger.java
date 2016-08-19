@@ -42,6 +42,8 @@ import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_OK;
 
 public class Debugger {
 
+    private static final UriPatten URI_PATTEN_API_APP = new UriPatten("/debug/api/app/");
+    private static final UriPatten URI_PATTEN_API_COMPONENTS = new UriPatten("/debug/api/components/");
     private static final UriPatten URI_PATTEN_API_PAGES = new UriPatten("/debug/api/pages/");
     private static final UriPatten URI_PATTEN_API_LAYOUTS = new UriPatten("/debug/api/layouts/");
     private static final UriPatten URI_PATTEN_API_FRAGMENTS = new UriPatten("/debug/api/fragments/");
@@ -69,6 +71,21 @@ public class Debugger {
     public void serve(App app, HttpRequest request, HttpResponse response) {
         String uriWithoutContextPath = request.getUriWithoutContextPath();
         DebugConnector debugConnector = new DebugConnector(app);
+
+        if (URI_PATTEN_API_APP.matches(uriWithoutContextPath)) {
+            JsonObject appContent = new JsonObject();
+            appContent.add(app.getContextPath(), JSON_PARSER.parse(app.toString()));
+            response.setContent(appContent.toString(), CONTENT_TYPE_APPLICATION_JSON);
+            return;
+        }
+
+        if (URI_PATTEN_API_COMPONENTS.matches(uriWithoutContextPath)) {
+            JsonArray components = new JsonArray();
+            debugConnector.getComponents().forEach(
+                    (component -> components.add(JSON_PARSER.parse(component.toString()))));
+            response.setContent(components.toString(), CONTENT_TYPE_APPLICATION_JSON);
+            return;
+        }
 
         if (URI_PATTEN_API_PAGES.matches(uriWithoutContextPath)) {
             JsonObject content = new JsonObject();
