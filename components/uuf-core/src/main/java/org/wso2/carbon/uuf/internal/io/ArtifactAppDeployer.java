@@ -109,6 +109,21 @@ public class ArtifactAppDeployer implements Deployer, UUFAppRegistry, RequiredCa
         return location;
     }
 
+    UUFServer uufServer;
+    @Reference(name = "uufServer",
+             service = UUFServer.class,
+             cardinality = ReferenceCardinality.AT_LEAST_ONE,
+             policy = ReferencePolicy.DYNAMIC,
+             unbind = "unset")
+    private void temp(UUFServer uufServer) {
+        this.uufServer = uufServer;
+        uufServer.registerHttpConnectors("/abc");
+    }
+
+    private void unset() {
+        this.uufServer = null;
+    }
+
     @Override
     public Object deploy(Artifact artifact) throws CarbonDeploymentException {
         Pair<String, String> appNameContextPath;
