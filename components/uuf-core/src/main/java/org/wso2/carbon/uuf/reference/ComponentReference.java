@@ -40,7 +40,7 @@ public interface ComponentReference {
 
     Optional<FileReference> getBindingsConfig();
 
-    Optional<FileReference> getConfigurations();
+    Optional<FileReference> getConfiguration();
 
     Optional<FileReference> getOsgiImportsConfig();
 

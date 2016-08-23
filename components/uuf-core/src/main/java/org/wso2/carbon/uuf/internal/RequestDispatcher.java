@@ -23,8 +23,8 @@ import org.wso2.carbon.uuf.exception.FragmentNotFoundException;
 import org.wso2.carbon.uuf.exception.HttpErrorException;
 import org.wso2.carbon.uuf.exception.PageNotFoundException;
 import org.wso2.carbon.uuf.exception.PageRedirectException;
-import org.wso2.carbon.uuf.exception.UnauthorizedException;
 import org.wso2.carbon.uuf.exception.UUFException;
+import org.wso2.carbon.uuf.exception.UnauthorizedException;
 import org.wso2.carbon.uuf.internal.debug.Debugger;
 import org.wso2.carbon.uuf.internal.io.StaticResolver;
 import org.wso2.carbon.uuf.spi.HttpRequest;
@@ -43,9 +43,17 @@ public class RequestDispatcher {
 
     private static final Logger log = LoggerFactory.getLogger(RequestDispatcher.class);
 
-    private final StaticResolver staticResolver = new StaticResolver();
-    private final Object lock = new Object();
-    private Debugger debugger;
+    private final StaticResolver staticResolver;
+    private final Debugger debugger;
+
+    public RequestDispatcher() {
+        this(new StaticResolver(), (Debugger.isDebuggingEnabled() ? new Debugger() : null));
+    }
+
+    public RequestDispatcher(StaticResolver staticResolver, Debugger debugger) {
+        this.staticResolver = staticResolver;
+        this.debugger = debugger;
+    }
 
     public void serve(App app, HttpRequest request, HttpResponse response) {
         if (log.isDebugEnabled() && !request.isDebugRequest()) {
@@ -55,20 +63,11 @@ public class RequestDispatcher {
         try {
             if (request.isStaticResourceRequest()) {
                 staticResolver.serve(app, request, response);
-                return;
-            }
-            if (Debugger.isDebuggingEnabled() && request.isDebugRequest()) {
-                if (this.debugger == null) {
-                    synchronized (lock) {
-                        if (this.debugger == null) {
-                            this.debugger = new Debugger(); // Create a debugger.
-                        }
-                    }
-                }
+            } else if (Debugger.isDebuggingEnabled() && request.isDebugRequest()) {
                 debugger.serve(app, request, response);
-                return;
+            } else {
+                serveApp(app, request, response);
             }
-            serveApp(app, request, response);
         } catch (PageNotFoundException | UnauthorizedException e) {
             serveErrorPage(app, request, response, e);
         } catch (FragmentNotFoundException e) {
@@ -119,9 +118,9 @@ public class RequestDispatcher {
         }
     }
 
-    private void serveApp(App app, HttpRequest request, HttpResponse response){
-        String html;
+    private void serveApp(App app, HttpRequest request, HttpResponse response) {
         try {
+            String html;
             if (request.isFragmentRequest()) {
                 html = app.renderFragment(request, response);
             } else {
@@ -137,25 +136,29 @@ public class RequestDispatcher {
                             (uriWithoutContextPath + "/");
                     if (app.hasPage(correctedUriWithoutContextPath)) {
                         response.setStatus(STATUS_MOVED_PERMANENTLY);
-                        String correctedUrl =
-                                request.getHostName() + request.getContextPath() + correctedUriWithoutContextPath;
-                        response.setHeader(HEADER_LOCATION, correctedUrl);
+                        String correctedUri = request.getContextPath() + correctedUriWithoutContextPath;
+                        if (request.getQueryString() != null) {
+                            correctedUri = correctedUri + '?' + request.getQueryString();
+                        }
+                        response.setHeader(HEADER_LOCATION, correctedUri);
                         return;
                     }
                     throw e;
                 }
             }
             response.setContent(STATUS_OK, html, CONTENT_TYPE_TEXT_HTML);
-        } catch (UUFException e){
+        } catch (UUFException e) {
             throw e;
         } catch (Exception e) {
-            // this is to unwrap hadlebarsException and throw UUFException(Eg: UnauthorizedException from helper)
-            Throwable th;
-            while ((th = e.getCause()) != null) {
+            // May be an UUFException cause this 'e' Exception. Let's unwrap 'e' and find out.
+            Throwable th = e;
+            while ((th = th.getCause()) != null) {
                 if (th instanceof UUFException) {
+                    // Cause of 'e' is an UUFException. Throw 'th' so that we can handle it properly.
                     throw (UUFException) th;
                 }
             }
+            // Cause of 'e' is not an UUFException.
             throw e;
         }
     }

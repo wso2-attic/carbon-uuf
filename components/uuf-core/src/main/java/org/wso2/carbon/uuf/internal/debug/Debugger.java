@@ -42,25 +42,25 @@ import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_OK;
 
 public class Debugger {
 
-    private static final Logger log = LoggerFactory.getLogger(Debugger.class);
-
-    public static final UriPatten URI_PATTEN_API_PAGES = new UriPatten("/debug/api/pages/");
-    public static final UriPatten URI_PATTEN_API_LAYOUTS = new UriPatten("/debug/api/layouts/");
-    public static final UriPatten URI_PATTEN_API_FRAGMENTS = new UriPatten("/debug/api/fragments/");
-    public static final UriPatten URI_PATTEN_API_THEMES = new UriPatten("/debug/api/themes/");
-    public static final UriPatten URI_PATTEN_API_LOGS = new UriPatten("/debug/api/logs/");
-    public static final UriPatten URI_PATTEN_PAGE_INDEX = new UriPatten("/debug/");
-    public static final UriPatten URI_PATTEN_RESOURCES = new UriPatten("/debug/{+resource}");
-    private static final boolean IS_DEBUGGING_ENABLED;
-
+    private static final UriPatten URI_PATTEN_API_APP = new UriPatten("/debug/api/app/");
+    private static final UriPatten URI_PATTEN_API_COMPONENTS = new UriPatten("/debug/api/components/");
+    private static final UriPatten URI_PATTEN_API_PAGES = new UriPatten("/debug/api/pages/");
+    private static final UriPatten URI_PATTEN_API_LAYOUTS = new UriPatten("/debug/api/layouts/");
+    private static final UriPatten URI_PATTEN_API_FRAGMENTS = new UriPatten("/debug/api/fragments/");
+    private static final UriPatten URI_PATTEN_API_THEMES = new UriPatten("/debug/api/themes/");
+    private static final UriPatten URI_PATTEN_API_LOGS = new UriPatten("/debug/api/logs/");
+    private static final UriPatten URI_PATTEN_PAGE_INDEX = new UriPatten("/debug/");
+    private static final UriPatten URI_PATTEN_RESOURCES = new UriPatten("/debug/{+resource}");
     private final static JsonParser JSON_PARSER = new JsonParser();
-
-    // TODO: 12/07/2016 uncomment this once osgi issue solved for DebugAppender
-    //private final DebugAppender debugAppender;
+    private static final Logger log = LoggerFactory.getLogger(Debugger.class);
+    private static final boolean IS_DEBUGGING_ENABLED;
 
     static {
         IS_DEBUGGING_ENABLED = ManagementFactory.getRuntimeMXBean().getInputArguments().contains("-Xdebug");
     }
+
+    // TODO: 12/07/2016 uncomment this once osgi issue solved for DebugAppender
+    //private final DebugAppender debugAppender;
 
     public Debugger() {
         // TODO: 12/07/2016 uncomment this once osgi issue solved for DebugAppender
@@ -71,6 +71,21 @@ public class Debugger {
     public void serve(App app, HttpRequest request, HttpResponse response) {
         String uriWithoutContextPath = request.getUriWithoutContextPath();
         DebugConnector debugConnector = new DebugConnector(app);
+
+        if (URI_PATTEN_API_APP.matches(uriWithoutContextPath)) {
+            JsonObject appContent = new JsonObject();
+            appContent.add(app.getContextPath(), JSON_PARSER.parse(app.toString()));
+            response.setContent(appContent.toString(), CONTENT_TYPE_APPLICATION_JSON);
+            return;
+        }
+
+        if (URI_PATTEN_API_COMPONENTS.matches(uriWithoutContextPath)) {
+            JsonArray components = new JsonArray();
+            debugConnector.getComponents().forEach(
+                    (component -> components.add(JSON_PARSER.parse(component.toString()))));
+            response.setContent(components.toString(), CONTENT_TYPE_APPLICATION_JSON);
+            return;
+        }
 
         if (URI_PATTEN_API_PAGES.matches(uriWithoutContextPath)) {
             JsonObject content = new JsonObject();

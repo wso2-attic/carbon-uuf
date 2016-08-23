@@ -35,7 +35,7 @@ public class ThemeTest {
         List<String> bodyJsRelativePaths = ImmutableList.of("js/last-script.css");
         Theme theme = new Theme("theme-name", cssRelativePaths, headJsRelativePaths, bodyJsRelativePaths, null);
         RequestLookup requestLookup = new RequestLookup("/context-path", null, null);
-        theme.render(requestLookup);
+        theme.addPlaceHolderValues(requestLookup);
 
         Optional<String> css = requestLookup.getPlaceholderContent(Placeholder.css);
         Assert.assertTrue(css.isPresent());

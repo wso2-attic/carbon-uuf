@@ -19,12 +19,9 @@ package org.wso2.carbon.uuf.httpconnector.msf4j;
 import io.netty.handler.codec.http.QueryStringDecoder;
 import io.netty.handler.codec.http.cookie.Cookie;
 import io.netty.handler.codec.http.cookie.ServerCookieDecoder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.msf4j.Request;
 
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MultivaluedMap;
 import java.io.File;
@@ -39,14 +36,15 @@ import java.util.stream.Collectors;
  */
 public class MicroserviceHttpRequest implements HttpRequest {
 
-    public static final String PROPERTY_KEY_HTTP_VERSION = "HTTP_VERSION";
-    public static final String HTTP_HEADER_CONTENT_LENGTH = "Content-Length";
-    private static final Logger log = LoggerFactory.getLogger(MicroserviceHttpRequest.class);
+    private static final String PROPERTY_HTTP_VERSION = "HTTP_VERSION";
+    private static final String PROPERTY_LOCAL_NAME = "LOCAL_NAME";
+    private static final String PROPERTY_IS_SECURED_CONNECTION = "IS_SECURED_CONNECTION";
+    private static final String PROPERTY_LISTENER_PORT = "LISTENER_PORT";
+    private static final String PROPERTY_REMOTE_HOST = "REMOTE_HOST";
+    private static final String PROPERTY_REMOTE_PORT = "REMOTE_PORT";
 
-    private final String url;
+    private final Request msf4jRequest;
     private final String method;
-    private final String protocol;
-    private final String hostName;
     private final Map<String, Cookie> cookies;
     private final Map<String, String> headers;
     private final String uri;
@@ -54,7 +52,6 @@ public class MicroserviceHttpRequest implements HttpRequest {
     private final String uriWithoutContextPath;
     private final String queryString;
     private final Map<String, Object> queryParams;
-    private final int contentLength;
     private final Map<String, Object> formParams;
     private final Map<String, Object> files;
 
@@ -63,23 +60,10 @@ public class MicroserviceHttpRequest implements HttpRequest {
     }
 
     public MicroserviceHttpRequest(Request request, MultivaluedMap<String, ?> postParams) {
-        this.url = null; // MSF4J Request does not have a 'getUrl()' method.
+        this.msf4jRequest = request;
         this.method = request.getHttpMethod();
-        this.protocol = request.getProperty(PROPERTY_KEY_HTTP_VERSION).toString();
-        this.headers = request.getHeaders();
 
-        // Process hostname
-        String hostHeader = headers.get(HttpHeaders.HOST);
-        this.hostName = ((hostHeader == null) ? "localhost" : hostHeader);
-
-        // Process cookies
-        String cookieHeader = headers.get(HttpHeaders.COOKIE);
-        this.cookies = (cookieHeader == null) ? Collections.emptyMap() :
-                ServerCookieDecoder.STRICT.decode(cookieHeader).stream().collect(
-                        Collectors.toMap(Cookie::name, c -> c)
-                );
-
-        // Process URI
+        // process URI
         String rawUri = request.getUri();
         int uriPathEndIndex = rawUri.indexOf('?');
         String rawUriPath, rawQueryString;
@@ -103,7 +87,14 @@ public class MicroserviceHttpRequest implements HttpRequest {
             this.queryParams = Collections.emptyMap();
         }
 
-        // POST form params
+        // process headers and cookies
+        this.headers = request.getHeaders();
+        String cookieHeader = this.headers.get(HttpHeaders.COOKIE);
+        this.cookies = (cookieHeader == null) ? Collections.emptyMap() :
+                ServerCookieDecoder.STRICT.decode(cookieHeader).stream().collect(Collectors.toMap(Cookie::name,
+                                                                                                  c -> c));
+
+        // process form POST form data
         if (postParams == null) {
             this.formParams = Collections.emptyMap();
             this.files = Collections.emptyMap();
@@ -122,24 +113,6 @@ public class MicroserviceHttpRequest implements HttpRequest {
                 }
             }
         }
-
-        // Process content length
-        String contentLengthHeaderVal = this.headers.get(HTTP_HEADER_CONTENT_LENGTH);
-        try {
-            this.contentLength = (contentLengthHeaderVal == null) ? 0 : Integer.parseInt(contentLengthHeaderVal);
-        } catch (NumberFormatException e) {
-            throw new WebApplicationException(
-                    "Cannot parse 'Content-Length' header value '" + contentLengthHeaderVal + "' as an integer.", e);
-        }
-    }
-
-    private String constructUrl(boolean isSecured, String localAddr, String localPort, String uri) {
-        return "http" + ((isSecured) ? "s" : "") + "://" + localAddr + ":" + localPort + uri;
-    }
-
-    @Override
-    public String getUrl() {
-        return url;
     }
 
     @Override
@@ -149,23 +122,17 @@ public class MicroserviceHttpRequest implements HttpRequest {
 
     @Override
     public String getProtocol() {
-        return protocol;
+        return (String) msf4jRequest.getProperty(PROPERTY_HTTP_VERSION);
     }
 
     @Override
-    public Map<String, String> getHeaders() {
-        return headers;
+    public boolean isSecure() {
+        return (Boolean) msf4jRequest.getProperty(PROPERTY_IS_SECURED_CONNECTION);
     }
 
     @Override
-    public String getHostName() {
-        return hostName;
-    }
-
-    @Override
-    public String getCookieValue(String cookieName) {
-        Cookie cookie = cookies.get(cookieName);
-        return (cookie == null) ? null : cookie.value();
+    public String getUrl() {
+        throw new UnsupportedOperationException("To be implemented");
     }
 
     @Override
@@ -194,8 +161,25 @@ public class MicroserviceHttpRequest implements HttpRequest {
     }
 
     @Override
+    public Map<String, String> getHeaders() {
+        return headers;
+    }
+
+    @Override
+    public String getCookieValue(String cookieName) {
+        Cookie cookie = cookies.get(cookieName);
+        return (cookie == null) ? null : cookie.value();
+    }
+
+    @Override
     public String getContentType() {
-        return headers.get(HttpHeaders.CONTENT_TYPE);
+        return headers.get(HEADER_CONTENT_TYPE);
+    }
+
+    @Override
+    public long getContentLength() {
+        String contentLengthHeader = headers.get(HEADER_CONTENT_LENGTH);
+        return (contentLengthHeader == null) ? -1 : Long.parseLong(contentLengthHeader);
     }
 
     @Override
@@ -209,28 +193,28 @@ public class MicroserviceHttpRequest implements HttpRequest {
     }
 
     @Override
-    public long getContentLength() {
-        return contentLength;
-    }
-
-    @Override
-    public boolean isSecure() {
-        throw new UnsupportedOperationException("Netty HttpRequest does not have enough information.");
-    }
-
-    @Override
-    public String getRemoteAddr() {
-        throw new UnsupportedOperationException("Netty HttpRequest does not have enough information.");
+    public String getLocalAddress() {
+        return (String) msf4jRequest.getProperty(PROPERTY_LOCAL_NAME);
     }
 
     @Override
     public int getLocalPort() {
-        throw new UnsupportedOperationException("Netty HttpRequest does not have enough information.");
+        return (Integer) msf4jRequest.getProperty(PROPERTY_LISTENER_PORT);
+    }
+
+    @Override
+    public String getRemoteAddress() {
+        return (String) msf4jRequest.getProperty(PROPERTY_REMOTE_HOST);
+    }
+
+    @Override
+    public int getRemotePort() {
+        return (Integer) msf4jRequest.getProperty(PROPERTY_REMOTE_PORT);
     }
 
     @Override
     public String toString() {
-        return "{\"method\": \"" + method + "\", \"protocol\": \"" + protocol + "\", \"uri\": \"" + uri +
-                "\", \"queryString\": \"" + queryString + "\"}";
+        return "{\"method\": \"" + method + "\", \"uri\": \"" + uri + "\", \"query\": \"" + queryString +
+                "\", \"protocol\": \"" + getProtocol() + "\"}";
     }
 }

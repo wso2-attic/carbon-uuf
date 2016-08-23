@@ -27,7 +27,6 @@ public class UriUtils {
 
     public static final String COMPONENT_STATIC_RESOURCES_URI_PREFIX = "/public/components";
     public static final String THEMES_STATIC_RESOURCES_URI_PREFIX = "/public/themes/";
-    public static final String DEBUG_APP_URI_PREFIX = "/debug/";
     public static final String FRAGMENTS_URI_PREFIX = "/fragments/";
 
     public static String getPublicUri(Component component, Page page) {

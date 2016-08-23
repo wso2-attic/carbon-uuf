@@ -21,9 +21,43 @@ import org.wso2.carbon.uuf.internal.util.UriUtils;
 import java.util.Map;
 
 /**
- * Provides a common interface to provide request information.
+ * Represent a HTTP request.
  */
 public interface HttpRequest {
+
+    String HEADER_CONTENT_TYPE = "Content-Type";
+    String HEADER_CONTENT_LENGTH = "Content-Length";
+
+    /**
+     * Returns the name of the HTTP method with which this request was made, for example, GET, POST.
+     *
+     * @return a {@code String} specifying the name of the method with which this request was made
+     */
+    String getMethod();
+
+    /**
+     * Returns the name and version of the protocol the request uses in the form <i>protocol/majorVersion
+     * .minorVersion</i>, for example, HTTP/1.1.
+     *
+     * @return a {@code String} containing the protocol name and version number
+     */
+    String getProtocol();
+
+    /**
+     * Returns a boolean indicating whether this request was made using a secure channel, i.e. HTTPS.
+     *
+     * @return {@code true} when HTTPS, otherwise {@code false}
+     */
+    boolean isSecure();
+
+    /**
+     * Returns the name of the scheme used to make this request.
+     *
+     * @return either "{@code http}" or "{@code https}"
+     */
+    default String getScheme() {
+        return (isSecure() ? "https" : "http");
+    }
 
     /**
      * Reconstructs the URL the client used to make the request.
@@ -33,109 +67,134 @@ public interface HttpRequest {
     String getUrl();
 
     /**
-     * Returns the method of the request
+     * Returns the part of this request's URL from the protocol name up to the query string in the first line of the
+     * HTTP request. For example:
+     * <p>
+     * <table summary="Examples of Returned Values"> <tr align=left> <th>First line of HTTP request</th> <th>Returned
+     * Value</th> </tr> <tr> <td>GET http://foo.bar/a/b.html HTTP/1.0</td> <td>/a/b.html</td> </tr> <tr> <td>GET
+     * https://192.168.1.1:9292/foo/bar?x=y HTTP/1.1</td> <td>/foo/bar</td> </tr> <tr> <td>POST /some/path.html
+     * HTTP/1.1</td> <td>/some/path.html</td> </tr> </table>
+     * <p>
+     * Returned URI string is decoded.
      *
-     * @return http method
+     * @return a decoded {@code String} containing the part of the URL from the protocol name up to the query string
      */
-    String getMethod();
+    String getUri();
 
     /**
-     * Returns the protocol of the request
+     * Returns the part of this request's URI from the first forward slash up to the second forward slash but not
+     * including. For example.
+     * <p>
+     * <table summary="Examples of Returned Values"> <tr align=left> <th>URI</th> <th>Returned Value</th> </tr> <tr>
+     * <td>/a/b.html</td> <td>/a</td> </tr> <tr> <td>/foo/bar?x=y</td> <td>/foo</td> </tr> <tr> <td>/some/path.html</td>
+     * <td>/some</td> </tr> </table>
      *
-     * @return protocol
+     * @return a {@code String} containing the part of the URI from the first forward slash up to the second forward
+     * slash
+     * @see #getUri()
      */
-    String getProtocol();
+    String getContextPath();
 
     /**
-     * Retrieves the map of headers.
+     * Returns the part of this request's URI from the second forward slash to the end. For example:
+     * <p>
+     * <table summary="Examples of Returned Values"> <tr align=left> <th>URI</th> <th>Returned Value</th> </tr> <tr>
+     * <td>/a/b.html</td> <td>/b.html</td> </tr> <tr> <td>/foo/bar?x=y</td> <td>/bar</td> </tr> <tr>
+     * <td>/some/path.html</td> <td>/path.html</td> </tr> </table>
      *
-     * @return
+     * @return a {@code String} that contains the remaining of the URI after removing the context path from it
+     * @see #getUri()
+     * @see #getContextPath()
+     */
+    String getUriWithoutContextPath();
+
+    /**
+     * Returns the query string that is contained in the request URL after the path. This method returns {@code null} if
+     * the URL does not have a query string.
+     *
+     * @return an un-decoded {@code String} containing the query string or {@code null} if the URL contains no query
+     * string.
+     * @see #getUri()
+     */
+    String getQueryString();
+
+    /**
+     * Returns query parameters of this request. All keys and values of the returned map are decoded.
+     *
+     * @return a map containing parameter names as keys and parameter values as map values
+     */
+    Map<String, Object> getQueryParams();
+
+    /**
+     * Returns all HTTP headers of this request.
+     *
+     * @return HTTP headers
      */
     Map<String, String> getHeaders();
 
     /**
-     * Returns hostname. If host header is not found, returns //localhost
+     * Retuns the value of the specified Cookie.
      *
-     * @return
+     * @param cookieName name of the Cookie
+     * @return value of the Cookie or {@code null} if a Cookie with the specified name doesn't exist
      */
-    String getHostName();
-
     String getCookieValue(String cookieName);
 
     /**
-     * Returns the part of this request's URL from the protocol name up to the query String in the first line of the
-     * HTTP request.
+     * Returns the MIME type of the body of the request, or {@code null} if the type is not known. Return value is
+     * computed from the "Content-Type" HTTP header.
      *
-     * @return request uri
-     */
-    String getUri();
-
-    String getContextPath();
-
-    String getUriWithoutContextPath();
-
-    /**
-     * Returns the query String of the request
-     *
-     * @return query string
-     */
-    String getQueryString();
-
-    Map<String, Object> getQueryParams();
-
-    /**
-     * Returns the content Type of the request.
-     *
-     * @return content type
+     * @return a {@code String} containing the name of the MIME type of the request, or {@code null} if the type is not
+     * known
      */
     String getContentType();
 
     /**
-     * Returns map of form fields
+     * Returns the length, in bytes, of the request body or -1 if the length is not known. Return value is computed from
+     * the "Content-Length" HTTP header.
      *
-     * @return
-     */
-    Map<String, Object> getFormParams();
-
-    /**
-     * Returns map of uploaded files
-     *
-     * @return
-     */
-    Map<String, Object> getFiles();
-
-    /**
-     * Returns the content length of the request.
-     *
-     * @return content length
+     * @return the length of the request body or -1 if the length is not known
      */
     long getContentLength();
 
-    /**
-     * Returns true when https is used.
-     *
-     * @return true when https, false otherwise
-     */
-    boolean isSecure();
+    Map<String, Object> getFormParams();
+
+    Map<String, Object> getFiles();
 
     /**
-     * Returns the Internet Protocol (IP) address of the client that sent the request.
+     * Returns the Internet Protocol (IP) address of the interface on which the request was received.
      *
-     * @return client ip address
+     * @return a {@code String} containing the IP address on which the request was received.
      */
-    String getRemoteAddr();
+    String getLocalAddress();
 
     /**
-     * Returns the request local port number.
+     * Returns the Internet Protocol (IP) port number of the interface on which the request was received.
      *
-     * @return port number
+     * @return an integer specifying the port number
      */
     int getLocalPort();
+
+    /**
+     * Returns the Internet Protocol (IP) address of the client or last proxy that sent the request.
+     *
+     * @return a <code>String</code> containing the IP address of the client that sent the request
+     */
+    String getRemoteAddress();
+
+    /**
+     * Returns the Internet Protocol (IP) source port of the client or last proxy that sent the request.
+     *
+     * @return an integer specifying the port number
+     */
+    int getRemotePort();
+
+    String toString();
 
     default boolean isValid() {
         String uri = getUri();
 
-        // An URI must begin with '/ & it should have at least two characters.
+        // An URI must begin with '/' & it should have at least two characters.
         if ((uri.length() < 2) || (uri.charAt(0) != '/')) {
             return false;
         }
@@ -170,7 +229,7 @@ public interface HttpRequest {
     }
 
     default boolean isDebugRequest() {
-        return getUriWithoutContextPath().startsWith(UriUtils.DEBUG_APP_URI_PREFIX);
+        return getUriWithoutContextPath().startsWith("/debug/");
     }
 
     default boolean isFragmentRequest() {
