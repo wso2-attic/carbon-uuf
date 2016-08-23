@@ -23,4 +23,6 @@ public interface HttpConnector {
     void setServerConnection(ServerConnection serverConnection);
 
     ServerConnection getServerConnection();
+
+    void registerContextPath(String contextPath);
 }

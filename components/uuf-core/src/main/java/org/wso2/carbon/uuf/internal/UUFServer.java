@@ -33,7 +33,9 @@ import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.carbon.uuf.spi.HttpResponse;
 import org.wso2.carbon.uuf.spi.UUFAppRegistry;
 
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_BAD_REQUEST;
@@ -51,6 +53,7 @@ public class UUFServer {
 
     private static final boolean DEV_MODE_ENABLED;
     private static final Logger log = LoggerFactory.getLogger(UUFServer.class);
+    private static Set<HttpConnector> httpConnectors = new HashSet<>();
 
     static {
         DEV_MODE_ENABLED = Boolean.parseBoolean(System.getProperties().getProperty("devmode", "false"));
@@ -85,6 +88,7 @@ public class UUFServer {
             MDC.remove("uuf-request");
             return response;
         });
+        httpConnectors.add(connector);
         log.info("HttpConnector '" + connector.getClass().getName() + "' registered.");
     }
 
@@ -160,6 +164,13 @@ public class UUFServer {
             requestDispatcher.serveErrorPage(app.orElse(null), request, response,
                                              new HttpErrorException(STATUS_INTERNAL_SERVER_ERROR, e.getMessage(), e));
         }
+    }
+
+    public void registerHthtConnectors(String contextPath) {
+        //registering each http connector for the context path
+        httpConnectors.forEach(httpConnector -> {
+            httpConnector.registerContextPath(contextPath);
+        });
     }
 
     @Deprecated
