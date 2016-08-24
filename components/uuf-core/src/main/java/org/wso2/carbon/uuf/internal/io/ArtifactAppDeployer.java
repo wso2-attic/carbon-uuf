@@ -39,7 +39,7 @@ import org.wso2.carbon.uuf.internal.core.create.ClassLoaderProvider;
 import org.wso2.carbon.uuf.internal.io.util.ZipArtifactHandler;
 import org.wso2.carbon.uuf.internal.util.NameUtils;
 import org.wso2.carbon.uuf.spi.RenderableCreator;
-import org.wso2.carbon.uuf.spi.UUFAppRegistry;
+import org.wso2.carbon.uuf.spi.UUFAppDeployer;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -62,7 +62,7 @@ import java.util.concurrent.ConcurrentMap;
         }
 )
 @SuppressWarnings("unused")
-public class ArtifactAppDeployer extends UUFAppRegistry implements Deployer, RequiredCapabilityListener {
+public class ArtifactAppDeployer extends UUFAppDeployer implements Deployer, RequiredCapabilityListener {
 
     private static final Logger log = LoggerFactory.getLogger(ArtifactAppDeployer.class);
 
@@ -300,8 +300,8 @@ public class ArtifactAppDeployer extends UUFAppRegistry implements Deployer, Req
         bundleContext.registerService(Deployer.class, this, null);
         log.info("UUF ArtifactAppDeployer registered as a Carbon artifact deployer.");
 
-        bundleContext.registerService(UUFAppRegistry.class, this, null);
-        log.debug("ArtifactAppDeployer registered as an UUFAppRegistry.");
+        bundleContext.registerService(UUFAppDeployer.class, this, null);
+        log.debug("ArtifactAppDeployer registered as an UUFAppDeployer.");
     }
 
     private static class AppArtifact {

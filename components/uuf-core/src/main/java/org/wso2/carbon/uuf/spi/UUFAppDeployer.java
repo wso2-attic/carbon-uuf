@@ -21,7 +21,7 @@ import org.wso2.carbon.uuf.core.App;
 import java.util.Observable;
 import java.util.Optional;
 
-public abstract class UUFAppRegistry extends Observable{
+public abstract class UUFAppDeployer extends Observable{
 
     public abstract Optional<App> getApp(String contextPath);
 }

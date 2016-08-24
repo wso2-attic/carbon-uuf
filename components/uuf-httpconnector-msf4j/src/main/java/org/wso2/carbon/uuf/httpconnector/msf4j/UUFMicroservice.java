@@ -32,7 +32,6 @@ import javax.ws.rs.core.Response;
 /**
  * UUF Connector for MSF4J.
  */
-@Path("/")
 public class UUFMicroservice implements Microservice {
     private ServerConnection serverConnection;
 

@@ -31,7 +31,7 @@ import org.wso2.carbon.uuf.exception.HttpErrorException;
 import org.wso2.carbon.uuf.spi.HttpConnector;
 import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.carbon.uuf.spi.HttpResponse;
-import org.wso2.carbon.uuf.spi.UUFAppRegistry;
+import org.wso2.carbon.uuf.spi.UUFAppDeployer;
 
 import java.util.HashSet;
 import java.util.Observable;
@@ -63,7 +63,7 @@ public class UUFServer implements Observer {
 
     private final AtomicInteger count = new AtomicInteger(0);
     private final RequestDispatcher requestDispatcher;
-    private UUFAppRegistry appRegistry;
+    private UUFAppDeployer appDeployer;
 
     public UUFServer() {
         this(new RequestDispatcher());
@@ -105,29 +105,29 @@ public class UUFServer implements Observer {
     }
 
     /**
-     * This bind method is invoked by OSGi framework whenever a new UUFAppRegistry is registered.
+     * This bind method is invoked by OSGi framework whenever a new UUFAppDeployer is registered.
      *
-     * @param uufAppRegistry registered uuf app registry creator
+     * @param uufAppDeployer registered uuf app registry creator
      */
-    @Reference(name = "uufAppRegistry",
-               service = UUFAppRegistry.class,
+    @Reference(name = "uufAppDeployer",
+               service = UUFAppDeployer.class,
                cardinality = ReferenceCardinality.MANDATORY,
                policy = ReferencePolicy.DYNAMIC,
                unbind = "unsetUUFAppRegistry")
-    public void setUUFAppRegistry(UUFAppRegistry uufAppRegistry) {
-        this.appRegistry = uufAppRegistry;
-        this.appRegistry.addObserver(this);
-        log.debug("UUFAppRegistry '" + uufAppRegistry.getClass().getName() + "' registered.");
+    public void setUUFAppRegistry(UUFAppDeployer uufAppDeployer) {
+        this.appDeployer = uufAppDeployer;
+        this.appDeployer.addObserver(this);
+        log.debug("UUFAppDeployer '" + uufAppDeployer.getClass().getName() + "' registered.");
     }
 
     /**
-     * This bind method is invoked by OSGi framework whenever a UUFAppRegistry is left.
+     * This bind method is invoked by OSGi framework whenever a UUFAppDeployer is left.
      *
-     * @param uufAppRegistry unregistered uuf app registry
+     * @param uufAppDeployer unregistered uuf app registry
      */
-    public void unsetUUFAppRegistry(UUFAppRegistry uufAppRegistry) {
-        this.appRegistry = null;
-        log.debug("UUFAppRegistry " + uufAppRegistry.getClass().getName() + " unregistered.");
+    public void unsetUUFAppRegistry(UUFAppDeployer uufAppDeployer) {
+        this.appDeployer = null;
+        log.debug("UUFAppDeployer " + uufAppDeployer.getClass().getName() + " unregistered.");
     }
 
     @Activate
@@ -153,7 +153,7 @@ public class UUFServer implements Observer {
                 return;
             }
 
-            app = appRegistry.getApp(request.getContextPath());
+            app = appDeployer.getApp(request.getContextPath());
             if (!app.isPresent()) {
                 requestDispatcher.serveErrorPage(request, response, STATUS_NOT_FOUND,
                                                  "Cannot find an app for context path '" + request.getContextPath() +
