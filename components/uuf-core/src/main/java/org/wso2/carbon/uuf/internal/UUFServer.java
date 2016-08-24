@@ -51,7 +51,7 @@ import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_NOT_FOUND;
            immediate = true
 )
 @SuppressWarnings("unused")
-public class UUFServer implements Observer{
+public class UUFServer implements Observer {
 
     private static final boolean DEV_MODE_ENABLED;
     private static final Logger log = LoggerFactory.getLogger(UUFServer.class);
@@ -116,7 +116,7 @@ public class UUFServer implements Observer{
                unbind = "unsetUUFAppRegistry")
     public void setUUFAppRegistry(UUFAppRegistry uufAppRegistry) {
         this.appRegistry = uufAppRegistry;
-        appRegistry.addObserver(this);
+        this.appRegistry.addObserver(this);
         log.debug("UUFAppRegistry '" + uufAppRegistry.getClass().getName() + "' registered.");
     }
 
@@ -167,13 +167,6 @@ public class UUFServer implements Observer{
             requestDispatcher.serveErrorPage(app.orElse(null), request, response,
                                              new HttpErrorException(STATUS_INTERNAL_SERVER_ERROR, e.getMessage(), e));
         }
-    }
-
-    public void registerHttpConnectors(String contextPath) {
-        //registering each http connector for the context path
-        httpConnectors.forEach(httpConnector -> {
-            httpConnector.registerContextPath(contextPath);
-        });
     }
 
     @Deprecated

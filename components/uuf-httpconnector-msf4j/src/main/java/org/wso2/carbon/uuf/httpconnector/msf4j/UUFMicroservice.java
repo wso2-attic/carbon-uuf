@@ -16,15 +16,7 @@
 
 package org.wso2.carbon.uuf.httpconnector.msf4j;
 
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.api.ServerConnection;
-import org.wso2.carbon.uuf.httpconnector.msf4j.MicroserviceHttpRequest;
-import org.wso2.carbon.uuf.httpconnector.msf4j.MicroserviceHttpResponse;
-import org.wso2.carbon.uuf.spi.HttpConnector;
 import org.wso2.msf4j.Microservice;
 import org.wso2.msf4j.Request;
 
@@ -42,8 +34,11 @@ import javax.ws.rs.core.Response;
  */
 @Path("/")
 public class UUFMicroservice implements Microservice {
-
     private ServerConnection serverConnection;
+
+    public UUFMicroservice(ServerConnection serverConnection) {
+        this.serverConnection = serverConnection;
+    }
 
     @GET
     @Path(".*")
@@ -58,18 +53,9 @@ public class UUFMicroservice implements Microservice {
     @Path(".*")
     @Consumes({MediaType.APPLICATION_FORM_URLENCODED, MediaType.MULTIPART_FORM_DATA})
     public Response post(@Context Request request, @Context MultivaluedMap multivaluedMap) {
-        @SuppressWarnings("unchecked")
         MicroserviceHttpRequest httpRequest = new MicroserviceHttpRequest(request, multivaluedMap);
         MicroserviceHttpResponse httpResponse = new MicroserviceHttpResponse();
         serverConnection.serve(httpRequest, httpResponse);
         return httpResponse.build();
-    }
-
-    public void setServerConnection(ServerConnection serverConnection) {
-        this.serverConnection = serverConnection;
-    }
-
-    public ServerConnection getServerConnection() {
-        return serverConnection;
     }
 }

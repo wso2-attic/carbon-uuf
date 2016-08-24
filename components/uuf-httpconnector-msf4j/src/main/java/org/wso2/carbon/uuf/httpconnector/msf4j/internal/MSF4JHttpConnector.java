@@ -13,7 +13,6 @@ import org.wso2.carbon.uuf.httpconnector.msf4j.UUFMicroservice;
 import org.wso2.carbon.uuf.spi.HttpConnector;
 import org.wso2.msf4j.Microservice;
 
-
 import java.util.Dictionary;
 import java.util.Hashtable;
 
@@ -21,6 +20,7 @@ import java.util.Hashtable;
            service = {HttpConnector.class},
            immediate = true)
 public class MSF4JHttpConnector implements HttpConnector {
+
     private static final Logger log = LoggerFactory.getLogger(UUFMicroservice.class);
     private ServerConnection serverConnection;
     private BundleContext bundleContext;
@@ -43,17 +43,9 @@ public class MSF4JHttpConnector implements HttpConnector {
     }
 
     @Override
-    public ServerConnection getServerConnection() {
-        return serverConnection;
-    }
-
-    @Override
     public void registerContextPath(String contextPath) {
-        //call msf4j api
         Dictionary dictionary = new Hashtable<>();
         dictionary.put("contextPath", contextPath);
-        //UUFMicroservice httpConnector = new UUFMicroservice();
-        //new MicroservicesRunner().deploy(httpConnector).start();
-        bundleContext.registerService(Microservice.class, new UUFMicroservice(), dictionary);
+        bundleContext.registerService(Microservice.class, new UUFMicroservice(serverConnection), dictionary);
     }
 }
