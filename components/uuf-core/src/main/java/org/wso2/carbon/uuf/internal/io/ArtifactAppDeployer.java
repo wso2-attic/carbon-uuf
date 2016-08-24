@@ -109,20 +109,20 @@ public class ArtifactAppDeployer implements Deployer, UUFAppRegistry, RequiredCa
         return location;
     }
 
-    UUFServer uufServer;
-    @Reference(name = "uufServer",
-             service = UUFServer.class,
-             cardinality = ReferenceCardinality.AT_LEAST_ONE,
-             policy = ReferencePolicy.DYNAMIC,
-             unbind = "unset")
-    private void temp(UUFServer uufServer) {
-        this.uufServer = uufServer;
-        uufServer.registerHttpConnectors("/abc");
-    }
-
-    private void unset() {
-        this.uufServer = null;
-    }
+//    UUFServer uufServer;
+//    @Reference(name = "uufServer",
+//             service = UUFServer.class,
+//             cardinality = ReferenceCardinality.AT_LEAST_ONE,
+//             policy = ReferencePolicy.DYNAMIC,
+//             unbind = "unset")
+//    private void temp(UUFServer uufServer) {
+//        this.uufServer = uufServer;
+//        uufServer.registerHttpConnectors("/abc");
+//    }
+//
+//    private void unset() {
+//        this.uufServer = null;
+//    }
 
     @Override
     public Object deploy(Artifact artifact) throws CarbonDeploymentException {
@@ -140,6 +140,7 @@ public class ArtifactAppDeployer implements Deployer, UUFAppRegistry, RequiredCa
                             "' as another app is already registered for the same context path.");
         }
 
+        UUFServer.registerHttpConnectors(appNameContextPath.getLeft());
         pendingToDeployArtifacts.put(appNameContextPath.getRight(), new AppArtifact(appNameContextPath.getLeft(),
                                                                                     artifact));
         log.debug("UUF app '" + appNameContextPath.getLeft() + "' added to the pending deployments list.");

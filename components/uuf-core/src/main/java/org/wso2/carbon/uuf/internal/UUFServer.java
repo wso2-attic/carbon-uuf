@@ -166,7 +166,7 @@ public class UUFServer {
         }
     }
 
-    public void registerHttpConnectors(String contextPath) {
+    public static void registerHttpConnectors(String contextPath) {
         //registering each http connector for the context path
         httpConnectors.forEach(httpConnector -> {
             httpConnector.registerContextPath(contextPath);
