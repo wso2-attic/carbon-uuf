@@ -45,6 +45,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -62,7 +64,7 @@ import java.util.concurrent.ConcurrentMap;
         }
 )
 @SuppressWarnings("unused")
-public class ArtifactAppDeployer implements Deployer, UUFAppRegistry, RequiredCapabilityListener {
+public class ArtifactAppDeployer extends UUFAppRegistry implements Deployer, RequiredCapabilityListener {
 
     private static final Logger log = LoggerFactory.getLogger(ArtifactAppDeployer.class);
 
@@ -109,21 +111,6 @@ public class ArtifactAppDeployer implements Deployer, UUFAppRegistry, RequiredCa
         return location;
     }
 
-//    UUFServer uufServer;
-//    @Reference(name = "uufServer",
-//             service = UUFServer.class,
-//             cardinality = ReferenceCardinality.AT_LEAST_ONE,
-//             policy = ReferencePolicy.DYNAMIC,
-//             unbind = "unset")
-//    private void temp(UUFServer uufServer) {
-//        this.uufServer = uufServer;
-//        uufServer.registerHttpConnectors("/abc");
-//    }
-//
-//    private void unset() {
-//        this.uufServer = null;
-//    }
-
     @Override
     public Object deploy(Artifact artifact) throws CarbonDeploymentException {
         Pair<String, String> appNameContextPath;
@@ -140,7 +127,8 @@ public class ArtifactAppDeployer implements Deployer, UUFAppRegistry, RequiredCa
                             "' as another app is already registered for the same context path.");
         }
 
-        UUFServer.registerHttpConnectors(appNameContextPath.getLeft());
+        hasChanged();
+        notifyObservers(appNameContextPath.getRight());
         pendingToDeployArtifacts.put(appNameContextPath.getRight(), new AppArtifact(appNameContextPath.getLeft(),
                                                                                     artifact));
         log.debug("UUF app '" + appNameContextPath.getLeft() + "' added to the pending deployments list.");

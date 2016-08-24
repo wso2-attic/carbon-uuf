@@ -18,10 +18,12 @@ package org.wso2.carbon.uuf.spi;
 
 import org.wso2.carbon.uuf.core.App;
 
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Optional;
 
-public interface UUFAppRegistry {
+public abstract class UUFAppRegistry extends Observable{
 
-    Optional<App> getApp(String contextPath);
+    public abstract Optional<App> getApp(String contextPath);
 }
 

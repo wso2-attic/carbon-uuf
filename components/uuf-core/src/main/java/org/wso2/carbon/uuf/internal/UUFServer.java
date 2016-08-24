@@ -34,6 +34,8 @@ import org.wso2.carbon.uuf.spi.HttpResponse;
 import org.wso2.carbon.uuf.spi.UUFAppRegistry;
 
 import java.util.HashSet;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -49,7 +51,7 @@ import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_NOT_FOUND;
            immediate = true
 )
 @SuppressWarnings("unused")
-public class UUFServer {
+public class UUFServer implements Observer{
 
     private static final boolean DEV_MODE_ENABLED;
     private static final Logger log = LoggerFactory.getLogger(UUFServer.class);
@@ -114,6 +116,7 @@ public class UUFServer {
                unbind = "unsetUUFAppRegistry")
     public void setUUFAppRegistry(UUFAppRegistry uufAppRegistry) {
         this.appRegistry = uufAppRegistry;
+        appRegistry.addObserver(this);
         log.debug("UUFAppRegistry '" + uufAppRegistry.getClass().getName() + "' registered.");
     }
 
@@ -166,7 +169,7 @@ public class UUFServer {
         }
     }
 
-    public static void registerHttpConnectors(String contextPath) {
+    public void registerHttpConnectors(String contextPath) {
         //registering each http connector for the context path
         httpConnectors.forEach(httpConnector -> {
             httpConnector.registerContextPath(contextPath);
@@ -177,5 +180,14 @@ public class UUFServer {
     public static boolean isDevModeEnabled() {
         // TODO: 8/13/16 Remove this when Carbon 'Utils.isDevModeEnabled()' is available in C5.20
         return DEV_MODE_ENABLED;
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        String contextPath = arg.toString();
+        //registering each http connector for the context path
+        httpConnectors.forEach(httpConnector -> {
+            httpConnector.registerContextPath(contextPath);
+        });
     }
 }
