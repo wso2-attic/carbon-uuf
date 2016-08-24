@@ -127,7 +127,7 @@ public class ArtifactAppDeployer extends UUFAppRegistry implements Deployer, Req
                             "' as another app is already registered for the same context path.");
         }
 
-        hasChanged();
+        setChanged();
         notifyObservers(appNameContextPath.getRight());
         pendingToDeployArtifacts.put(appNameContextPath.getRight(), new AppArtifact(appNameContextPath.getLeft(),
                                                                                     artifact));
