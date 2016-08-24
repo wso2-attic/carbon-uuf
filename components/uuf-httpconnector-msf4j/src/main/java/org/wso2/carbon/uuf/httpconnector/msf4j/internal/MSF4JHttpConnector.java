@@ -44,7 +44,7 @@ public class MSF4JHttpConnector implements HttpConnector {
 
     @Override
     public void registerContextPath(String contextPath) {
-        Dictionary dictionary = new Hashtable<>();
+        Dictionary<String, String> dictionary = new Hashtable<>();
         dictionary.put("contextPath", contextPath);
         bundleContext.registerService(Microservice.class, new UUFMicroservice(serverConnection), dictionary);
     }
