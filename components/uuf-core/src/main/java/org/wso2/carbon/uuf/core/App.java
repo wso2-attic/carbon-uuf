@@ -114,12 +114,8 @@ public class App {
         try {
             return renderPage(request.getUriWithoutContextPath(), null, requestLookup, api, theme);
         } catch (SessionNotFoundException e) {
-            String loginPageUri = configuration.getLoginPageUri();
-            if (loginPageUri == null) {
-                throw (HttpErrorException) e;
-            } else {
-                throw new PageRedirectException(loginPageUri);
-            }
+            String loginPageUri = configuration.getLoginPageUri().orElseThrow(() -> e);
+            throw new PageRedirectException(loginPageUri, e);
         }
     }
 

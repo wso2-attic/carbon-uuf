@@ -83,10 +83,10 @@ public class Configuration extends HashMap<String, Object> {
         return Optional.of(themeName);
     }
 
-    public String getLoginPageUri() {
+    public Optional<String> getLoginPageUri() {
         Object loginPageUriObj = get(KEY_LOGIN_PAGE_URI);
         if (loginPageUriObj == null) {
-            return null;
+            return Optional.<String>empty();
         }
         if (!(loginPageUriObj instanceof String)) {
             throw new InvalidTypeException(
@@ -102,7 +102,7 @@ public class Configuration extends HashMap<String, Object> {
                     "Value of 'loginPageUri' in the app configuration must start with a '/'. Instead found '" +
                             loginPageUri.charAt(0) + "' at the beginning.");
         }
-        return loginPageUri;
+        return Optional.of(loginPageUri);
     }
 
     /**
