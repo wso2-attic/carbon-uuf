@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.wso2.carbon.uuf.spi;
+package org.wso2.carbon.uuf.internal;
 
 public interface Listener {
 

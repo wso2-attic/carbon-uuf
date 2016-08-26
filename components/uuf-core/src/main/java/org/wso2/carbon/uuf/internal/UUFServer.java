@@ -31,7 +31,6 @@ import org.wso2.carbon.uuf.exception.HttpErrorException;
 import org.wso2.carbon.uuf.spi.HttpConnector;
 import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.carbon.uuf.spi.HttpResponse;
-import org.wso2.carbon.uuf.spi.Listener;
 import org.wso2.carbon.uuf.spi.UUFAppDeployer;
 
 import java.util.HashSet;

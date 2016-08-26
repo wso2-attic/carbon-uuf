@@ -17,6 +17,7 @@
 package org.wso2.carbon.uuf.spi;
 
 import org.wso2.carbon.uuf.core.App;
+import org.wso2.carbon.uuf.internal.Listener;
 
 import java.util.Set;
 import java.util.Optional;
