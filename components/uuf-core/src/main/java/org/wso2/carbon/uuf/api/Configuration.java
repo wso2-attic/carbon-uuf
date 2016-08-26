@@ -117,7 +117,7 @@ public class Configuration extends HashMap<String, Object> {
         // Validate menu property.
         Object menuObj = super.get(KEY_MENU);
         if (menuObj == null) {
-            return null;
+            return Collections.<String, Map>emptyMap();
         } else if (!(menuObj instanceof Map)) {
             throw new InvalidTypeException(
                     "Value of 'menu' in the configurations must be a Map<String, Map>. Instead found " +
@@ -126,7 +126,7 @@ public class Configuration extends HashMap<String, Object> {
         // Validate requested menu.
         Object menuMapObj = ((Map) menuObj).get(name);
         if (menuMapObj == null) {
-            return null;
+            return Collections.<String, Map>emptyMap();
         } else if (!(menuMapObj instanceof Map)) {
             throw new InvalidTypeException("Menu '" + name + "' must be a Map<String, Map>. Instead found " +
                                                    menuObj.getClass().getName() + ".");
