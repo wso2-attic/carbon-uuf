@@ -38,12 +38,14 @@ import org.wso2.carbon.uuf.internal.core.create.AppCreator;
 import org.wso2.carbon.uuf.internal.core.create.ClassLoaderProvider;
 import org.wso2.carbon.uuf.internal.io.util.ZipArtifactHandler;
 import org.wso2.carbon.uuf.internal.util.NameUtils;
+import org.wso2.carbon.uuf.spi.Listener;
 import org.wso2.carbon.uuf.spi.RenderableCreator;
 import org.wso2.carbon.uuf.spi.UUFAppDeployer;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Paths;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -62,7 +64,7 @@ import java.util.concurrent.ConcurrentMap;
         }
 )
 @SuppressWarnings("unused")
-public class ArtifactAppDeployer extends UUFAppDeployer implements Deployer, RequiredCapabilityListener {
+public class ArtifactAppDeployer implements Deployer, UUFAppDeployer, RequiredCapabilityListener {
 
     private static final Logger log = LoggerFactory.getLogger(ArtifactAppDeployer.class);
 
@@ -73,6 +75,7 @@ public class ArtifactAppDeployer extends UUFAppDeployer implements Deployer, Req
     private final Object lock;
     private final Set<RenderableCreator> renderableCreators;
     private final ClassLoaderProvider classLoaderProvider;
+    private final Set<Listener> listeners = new HashSet<>();
     private AppCreator appCreator;
     private BundleContext bundleContext;
 
@@ -125,8 +128,7 @@ public class ArtifactAppDeployer extends UUFAppDeployer implements Deployer, Req
                             "' as another app is already registered for the same context path.");
         }
 
-        setChanged();
-        notifyObservers(appNameContextPath.getRight());
+        this.listeners.forEach(listener -> listener.notifyListeners(appNameContextPath.getRight()));
         pendingToDeployArtifacts.put(appNameContextPath.getRight(), new AppArtifact(appNameContextPath.getLeft(),
                                                                                     artifact));
         log.debug("UUF app '" + appNameContextPath.getLeft() + "' added to the pending deployments list.");
@@ -302,6 +304,11 @@ public class ArtifactAppDeployer extends UUFAppDeployer implements Deployer, Req
 
         bundleContext.registerService(UUFAppDeployer.class, this, null);
         log.debug("ArtifactAppDeployer registered as an UUFAppDeployer.");
+    }
+
+    @Override
+    public Set<Listener> getListeners() {
+        return listeners;
     }
 
     private static class AppArtifact {

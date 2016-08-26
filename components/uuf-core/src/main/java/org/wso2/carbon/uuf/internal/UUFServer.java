@@ -31,11 +31,10 @@ import org.wso2.carbon.uuf.exception.HttpErrorException;
 import org.wso2.carbon.uuf.spi.HttpConnector;
 import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.carbon.uuf.spi.HttpResponse;
+import org.wso2.carbon.uuf.spi.Listener;
 import org.wso2.carbon.uuf.spi.UUFAppDeployer;
 
 import java.util.HashSet;
-import java.util.Observable;
-import java.util.Observer;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -51,11 +50,10 @@ import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_NOT_FOUND;
            immediate = true
 )
 @SuppressWarnings("unused")
-public class UUFServer implements Observer {
+public class UUFServer implements Listener {
 
     private static final boolean DEV_MODE_ENABLED;
     private static final Logger log = LoggerFactory.getLogger(UUFServer.class);
-    private static Set<HttpConnector> httpConnectors = new HashSet<>();
 
     static {
         DEV_MODE_ENABLED = Boolean.parseBoolean(System.getProperties().getProperty("devmode", "false"));
@@ -63,6 +61,7 @@ public class UUFServer implements Observer {
 
     private final AtomicInteger count = new AtomicInteger(0);
     private final RequestDispatcher requestDispatcher;
+    private final Set<HttpConnector> httpConnectors = new HashSet<>();
     private UUFAppDeployer appDeployer;
 
     public UUFServer() {
@@ -116,7 +115,7 @@ public class UUFServer implements Observer {
                unbind = "unsetUUFAppRegistry")
     public void setUUFAppRegistry(UUFAppDeployer uufAppDeployer) {
         this.appDeployer = uufAppDeployer;
-        this.appDeployer.addObserver(this);
+        this.appDeployer.getListeners().add(this);
         log.debug("UUFAppDeployer '" + uufAppDeployer.getClass().getName() + "' registered.");
     }
 
@@ -176,8 +175,7 @@ public class UUFServer implements Observer {
     }
 
     @Override
-    public void update(Observable o, Object arg) {
-        String contextPath = arg.toString();
+    public void notifyListeners(String contextPath) {
         //registering each http connector for the context path
         httpConnectors.forEach(httpConnector -> {
             httpConnector.registerContextPath(contextPath);

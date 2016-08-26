@@ -16,15 +16,6 @@
 
 package org.wso2.carbon.uuf.spi;
 
-import org.wso2.carbon.uuf.core.App;
-
-import java.util.Set;
-import java.util.Optional;
-
-public interface UUFAppDeployer {
-
-    Optional<App> getApp(String contextPath);
-
-    Set<Listener> getListeners();
+public interface Listener {
+    void notifyListeners(String contextPath);
 }
-
