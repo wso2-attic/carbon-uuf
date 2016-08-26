@@ -128,7 +128,7 @@ public class ArtifactAppDeployer implements Deployer, UUFAppDeployer, RequiredCa
                             "' as another app is already registered for the same context path.");
         }
 
-        this.listeners.forEach(listener -> listener.notifyListeners(appNameContextPath.getRight()));
+        this.listeners.forEach(listener -> listener.notifyListener(appNameContextPath.getRight()));
         pendingToDeployArtifacts.put(appNameContextPath.getRight(), new AppArtifact(appNameContextPath.getLeft(),
                                                                                     artifact));
         log.debug("UUF app '" + appNameContextPath.getLeft() + "' added to the pending deployments list.");

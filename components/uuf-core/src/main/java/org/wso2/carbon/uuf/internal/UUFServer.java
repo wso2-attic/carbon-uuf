@@ -175,7 +175,7 @@ public class UUFServer implements Listener {
     }
 
     @Override
-    public void notifyListeners(String contextPath) {
+    public void notifyListener(String contextPath) {
         //registering each http connector for the context path
         httpConnectors.forEach(httpConnector -> {
             httpConnector.registerContextPath(contextPath);

@@ -17,5 +17,6 @@
 package org.wso2.carbon.uuf.spi;
 
 public interface Listener {
-    void notifyListeners(String contextPath);
+
+    void notifyListener(String contextPath);
 }
