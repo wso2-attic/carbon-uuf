@@ -34,6 +34,7 @@ import java.util.Hashtable;
 @Component(name = "MSF4JHttpConnector",
            service = {HttpConnector.class},
            immediate = true)
+@SuppressWarnings("unused")
 public class MSF4JHttpConnector implements HttpConnector {
 
     private static final Logger log = LoggerFactory.getLogger(UUFMicroservice.class);
