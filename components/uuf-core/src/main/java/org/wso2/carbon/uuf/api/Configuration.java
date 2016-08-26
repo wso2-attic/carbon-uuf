@@ -176,22 +176,6 @@ public class Configuration extends HashMap<String, Object> {
         }
     }
 
-    public String getAsString(String key) {
-        Object value = super.get(key);
-        if ((value == null) || (value instanceof String)) {
-            return (String) value;
-        } else {
-            throw new InvalidTypeException(
-                    "Value of '" + key + "' in the configuration must be a string. Instead found '" +
-                            value.getClass().getName() + "'.");
-        }
-    }
-
-    public String getAsStringOrDefault(String key, String defaultValue) {
-        String value = getAsString(key);
-        return (value == null) ? defaultValue : value;
-    }
-
     @Override
     public Object put(String key, Object value) {
         throw new UnsupportedOperationException("Cannot change Configuration.");
