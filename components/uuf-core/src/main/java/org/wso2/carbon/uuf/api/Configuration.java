@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -46,10 +47,10 @@ public class Configuration extends HashMap<String, Object> {
         super(initialCapacity);
     }
 
-    public String getContextPath() {
+    public Optional<String> getContextPath() {
         Object contextPathObj = get(KEY_CONTEXT_PATH);
         if (contextPathObj == null) {
-            return null;
+            return Optional.<String>empty();
         }
         if (!(contextPathObj instanceof String)) {
             throw new InvalidTypeException(
@@ -62,7 +63,7 @@ public class Configuration extends HashMap<String, Object> {
         } else if (contextPath.charAt(0) != '/') {
             throw new IllegalArgumentException("Value of 'contextPath' in the app configuration must start with '/'.");
         }
-        return contextPath;
+        return Optional.of(contextPath);
     }
 
     public String getThemeName() {

@@ -231,8 +231,7 @@ public class App {
     }
 
     private RequestLookup createRequestLookup(HttpRequest request, HttpResponse response) {
-        String clientContextPath = configuration.getContextPath();
-        return new RequestLookup((clientContextPath == null ? contextPath : clientContextPath), request, response);
+        return new RequestLookup((configuration.getContextPath().orElse(contextPath)), request, response);
     }
 
     @Override
