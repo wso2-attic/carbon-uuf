@@ -66,10 +66,10 @@ public class Configuration extends HashMap<String, Object> {
         return Optional.of(contextPath);
     }
 
-    public String getThemeName() {
+    public Optional<String> getThemeName() {
         Object themeNameObj = get(KEY_THEME);
         if (themeNameObj == null) {
-            return null;
+            return Optional.<String>empty();
         }
         if (!(themeNameObj instanceof String)) {
             throw new InvalidTypeException(
@@ -80,7 +80,7 @@ public class Configuration extends HashMap<String, Object> {
         if (themeName.isEmpty()) {
             throw new IllegalArgumentException("Value of 'theme' in the app configuration cannot be empty.");
         }
-        return themeName;
+        return Optional.of(themeName);
     }
 
     public String getLoginPageUri() {

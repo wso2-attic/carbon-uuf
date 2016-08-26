@@ -62,18 +62,16 @@ public class App {
         this.rootComponent = this.components.get(Component.ROOT_COMPONENT_CONTEXT_PATH);
 
         this.themes = themes.stream().collect(Collectors.toMap(Theme::getName, theme -> theme));
-        String configuredThemeName = this.configuration.getThemeName();
-        if (configuredThemeName == null) {
-            this.defaultTheme = null;
-        } else {
-            Theme configuredTheme = this.themes.get(configuredThemeName);
-            if (configuredTheme == null) {
-                throw new IllegalArgumentException("Theme '" + configuredThemeName + "' which is configured for app '" +
-                                                           name + "' does not exists.");
-            } else {
-                this.defaultTheme = configuredTheme;
-            }
-        }
+        this.defaultTheme = this.configuration.getThemeName()
+                .map(configuredThemeName -> {
+                    Theme configuredTheme = App.this.themes.get(configuredThemeName);
+                    if (configuredTheme == null) {
+                        throw new IllegalArgumentException(
+                                "Theme '" + configuredThemeName + "' which is configured for app '" + name +
+                                        "' does not exists. Available themes: " + themes);
+                    }
+                    return configuredTheme;
+                }).orElse(null);
     }
 
     public String getName() {
@@ -145,7 +143,7 @@ public class App {
 
     private String renderPage(String pageUri, Model model, RequestLookup requestLookup, API api, Theme theme) {
         // If theme exists, add theme values to the requestLookup
-        if(theme != null) {
+        if (theme != null) {
             theme.addPlaceHolderValues(requestLookup);
         }
         // First try to addPlaceHolderValues the page with 'root' component.
