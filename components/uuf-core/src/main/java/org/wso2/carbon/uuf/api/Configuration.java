@@ -30,11 +30,11 @@ import java.util.Optional;
 public class Configuration {
 
     // TODO: 6/8/16 Cache values of 'contextPath', 'theme', 'loginPageUri', 'menu', 'errorPages' configs
-    public static final String KEY_CONTEXT_PATH = "contextPath";
-    public static final String KEY_THEME = "theme";
-    public static final String KEY_LOGIN_PAGE_URI = "loginPageUri";
-    public static final String KEY_MENU = "menu";
-    public static final String KEY_ERROR_PAGES = "errorPages";
+    private static final String KEY_CONTEXT_PATH = "contextPath";
+    private static final String KEY_THEME = "theme";
+    private static final String KEY_LOGIN_PAGE_URI = "loginPageUri";
+    private static final String KEY_MENU = "menu";
+    private static final String KEY_ERROR_PAGES = "errorPages";
 
     private final Map<String, Object> map;
     private final Map<String, Object> unmodifiableMap;
