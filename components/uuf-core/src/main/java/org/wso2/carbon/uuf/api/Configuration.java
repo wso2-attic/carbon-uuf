@@ -23,13 +23,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 
 /**
  * Represents a Configuration object of a particular UUF component.
  */
-public class Configuration extends HashMap<String, Object> {
+public class Configuration {
 
     // TODO: 6/8/16 Cache values of 'contextPath', 'theme', 'loginPageUri', 'menu', 'errorPages' configs
     public static final String KEY_CONTEXT_PATH = "contextPath";
@@ -38,17 +36,21 @@ public class Configuration extends HashMap<String, Object> {
     public static final String KEY_MENU = "menu";
     public static final String KEY_ERROR_PAGES = "errorPages";
 
+    private final Map<String, Object> map;
+    private final Map<String, Object> unmodifiableMap;
+
+    public Configuration() {
+        this.map = new HashMap<>();
+        this.unmodifiableMap = Collections.unmodifiableMap(this.map);
+    }
+
     public Configuration(Map<?, ?> rawMap) {
-        this(rawMap.size());
+        this();
         merge(rawMap);
     }
 
-    private Configuration(int initialCapacity) {
-        super(initialCapacity);
-    }
-
     public Optional<String> getContextPath() {
-        Object contextPathObj = get(KEY_CONTEXT_PATH);
+        Object contextPathObj = map.get(KEY_CONTEXT_PATH);
         if (contextPathObj == null) {
             return Optional.<String>empty();
         }
@@ -67,7 +69,7 @@ public class Configuration extends HashMap<String, Object> {
     }
 
     public Optional<String> getThemeName() {
-        Object themeNameObj = get(KEY_THEME);
+        Object themeNameObj = map.get(KEY_THEME);
         if (themeNameObj == null) {
             return Optional.<String>empty();
         }
@@ -84,7 +86,7 @@ public class Configuration extends HashMap<String, Object> {
     }
 
     public Optional<String> getLoginPageUri() {
-        Object loginPageUriObj = get(KEY_LOGIN_PAGE_URI);
+        Object loginPageUriObj = map.get(KEY_LOGIN_PAGE_URI);
         if (loginPageUriObj == null) {
             return Optional.<String>empty();
         }
@@ -115,7 +117,7 @@ public class Configuration extends HashMap<String, Object> {
     @SuppressWarnings("unchecked")
     public Map<String, Map> getMenu(String name) {
         // Validate menu property.
-        Object menuObj = super.get(KEY_MENU);
+        Object menuObj = map.get(KEY_MENU);
         if (menuObj == null) {
             return Collections.<String, Map>emptyMap();
         } else if (!(menuObj instanceof Map)) {
@@ -149,13 +151,13 @@ public class Configuration extends HashMap<String, Object> {
 
     @SuppressWarnings("unchecked")
     public Map<String, String> getErrorPages() {
-        Object errorPagesObj = get(KEY_ERROR_PAGES);
+        Object errorPagesObj = map.get(KEY_ERROR_PAGES);
         if (errorPagesObj == null) {
             return Collections.<String, String>emptyMap();
         }
         if (errorPagesObj instanceof Map) {
             Map<?, ?> errorPagesMap = (Map) errorPagesObj;
-            for (Entry<?, ?> entry : errorPagesMap.entrySet()) {
+            for (Map.Entry<?, ?> entry : errorPagesMap.entrySet()) {
                 if (!(entry.getKey() instanceof String)) {
                     throw new InvalidTypeException(
                             "Value of 'errorPages' in the app configuration must be a Map<String, String>." +
@@ -176,71 +178,11 @@ public class Configuration extends HashMap<String, Object> {
         }
     }
 
-    @Override
-    public Object put(String key, Object value) {
-        throw new UnsupportedOperationException("Cannot change Configuration.");
-    }
-
-    @Override
-    public void putAll(Map<? extends String, ?> m) {
-        throw new UnsupportedOperationException("Cannot change Configuration.");
-    }
-
-    @Override
-    public Object putIfAbsent(String key, Object value) {
-        throw new UnsupportedOperationException("Cannot change Configuration.");
-    }
-
-    @Override
-    public Object remove(Object key) {
-        throw new UnsupportedOperationException("Cannot change Configuration.");
-    }
-
-    @Override
-    public boolean remove(Object key, Object value) {
-        throw new UnsupportedOperationException("Cannot change Configuration.");
-    }
-
-    @Override
-    public Object replace(String key, Object value) {
-        throw new UnsupportedOperationException("Cannot change Configuration.");
-    }
-
-    @Override
-    public boolean replace(String key, Object oldValue, Object newValue) {
-        throw new UnsupportedOperationException("Cannot change Configuration.");
-    }
-
-    @Override
-    public void replaceAll(BiFunction<? super String, ? super Object, ?> function) {
-        throw new UnsupportedOperationException("Cannot change Configuration.");
-    }
-
-    @Override
-    public Object compute(String key, BiFunction<? super String, ? super Object, ?> remappingFunction) {
-        throw new UnsupportedOperationException("Cannot change Configuration.");
-    }
-
-    @Override
-    public Object computeIfPresent(String key, BiFunction<? super String, ? super Object, ?> remappingFunction) {
-        throw new UnsupportedOperationException("Cannot change Configuration.");
-    }
-
-    @Override
-    public Object computeIfAbsent(String key, Function<? super String, ?> mappingFunction) {
-        throw new UnsupportedOperationException("Cannot change Configuration.");
-    }
-
-    @Override
-    public Object merge(String key, Object value, BiFunction<? super Object, ? super Object, ?> remappingFunction) {
-        throw new UnsupportedOperationException("Cannot change Configuration.");
-    }
-
     public void merge(Map<?, ?> rawMap) {
         // TODO: 7/7/16 lock configuration after deploying the app
-        for (Entry<?, ?> entry : rawMap.entrySet()) {
+        for (Map.Entry<?, ?> entry : rawMap.entrySet()) {
             if (entry.getKey() instanceof String) {
-                super.compute((String) entry.getKey(), (key, oldValue) -> {
+                map.compute((String) entry.getKey(), (key, oldValue) -> {
                     Object newValue = entry.getValue();
                     if (oldValue == null) {
                         return newValue; // Add the new value.
@@ -261,7 +203,7 @@ public class Configuration extends HashMap<String, Object> {
     }
 
     @SuppressWarnings("unchecked")
-    private static Map deepMergeMap(Map oldMap, Map newMap) {
+    private Map deepMergeMap(Map oldMap, Map newMap) {
         for (Object key : newMap.keySet()) {
             Object newValueObj = newMap.get(key);
             Object oldValueObj = oldMap.get(key);
@@ -277,7 +219,7 @@ public class Configuration extends HashMap<String, Object> {
     }
 
     @SuppressWarnings("unchecked")
-    private static List deepMergeList(List oldList, List newList) {
+    private List deepMergeList(List oldList, List newList) {
         for (Object newItemObj : newList) {
             int oldIndex = oldList.indexOf(newItemObj);
             if (oldIndex != -1) {
@@ -296,7 +238,17 @@ public class Configuration extends HashMap<String, Object> {
         return oldList;
     }
 
-    public static Configuration emptyConfiguration() {
-        return new Configuration(0);
+    /**
+     * Returns this Configuration object as a Map.
+     *
+     * @return unmodifiable map
+     */
+    public Map<String, Object> asMap() {
+        return unmodifiableMap;
+    }
+
+    @Override
+    public String toString() {
+        return map.toString();
     }
 }

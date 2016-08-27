@@ -52,6 +52,6 @@ public class ConfigurationTest {
         Map<String, Map> sideMenu = configuration.getMenu("side");
         Assert.assertEquals(sideMenu.size(), 1);
 
-        Assert.assertEquals(configuration.get("appName"), "test app 2");
+        Assert.assertEquals(configuration.asMap().get("appName"), "test app 2");
     }
 }

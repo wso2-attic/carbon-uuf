@@ -70,7 +70,7 @@ public class HbsRenderableTest {
 
     private static Lookup createLookup() {
         Lookup lookup = mock(Lookup.class);
-        when(lookup.getConfiguration()).thenReturn(Configuration.emptyConfiguration());
+        when(lookup.getConfiguration()).thenReturn(new Configuration());
         return lookup;
     }
 
