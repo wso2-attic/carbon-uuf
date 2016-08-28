@@ -24,6 +24,7 @@ import org.wso2.carbon.uuf.exception.HttpErrorException;
 import org.wso2.carbon.uuf.exception.PageNotFoundException;
 import org.wso2.carbon.uuf.exception.PageRedirectException;
 import org.wso2.carbon.uuf.exception.SessionNotFoundException;
+import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.internal.core.auth.SessionRegistry;
 import org.wso2.carbon.uuf.internal.util.NameUtils;
 import org.wso2.carbon.uuf.internal.util.UriUtils;
@@ -112,31 +113,30 @@ public class App {
         API api = new API(sessionRegistry, requestLookup);
         Theme theme = getRenderingTheme(api);
         try {
-            return renderPage(request.getUriWithoutContextPath(), null, requestLookup, api, theme);
+            return renderPageUri(request.getUriWithoutContextPath(), null, requestLookup, api, theme);
         } catch (SessionNotFoundException e) {
             String loginPageUri = configuration.getLoginPageUri().orElseThrow(() -> e);
-            throw new PageRedirectException(loginPageUri, e);
+            throw new PageRedirectException(loginPageUri, e); // Redirect to the login page.
+        } catch (HttpErrorException e) {
+            return renderErrorPage(e, requestLookup, api, theme);
+        } catch (UUFException e) {
+            return renderErrorPage(new HttpErrorException(HttpResponse.STATUS_INTERNAL_SERVER_ERROR, e.getMessage(), e),
+                                   requestLookup, api, theme);
         }
     }
 
-    public Optional<String> renderErrorPage(HttpErrorException ex, HttpRequest request, HttpResponse response) {
-        String errorPageUri = configuration.getErrorPageUri(ex.getHttpStatusCode())
-                .orElse(configuration.getDefaultErrorPageUri().orElse(null));
-        if (errorPageUri == null) {
-            return Optional.<String>empty();
-        }
+    private String renderErrorPage(HttpErrorException e, RequestLookup requestLookup, API api, Theme theme) {
+        String errorPageUri = configuration.getErrorPageUri(e.getHttpStatusCode())
+                .orElse(configuration.getDefaultErrorPageUri().orElseThrow(() -> e));
 
-        RequestLookup requestLookup = createRequestLookup(request, response);
-        API api = new API(sessionRegistry, requestLookup);
-        Theme theme = getRenderingTheme(api);
         // Create Model with HTTP status code and error message.
         Map<String, Object> modelMap = new HashMap<>(2);
-        modelMap.put("status", ex.getHttpStatusCode());
-        modelMap.put("message", ex.getMessage());
-        return Optional.of(renderPage(errorPageUri, new MapModel(modelMap), requestLookup, api, theme));
+        modelMap.put("status", e.getHttpStatusCode());
+        modelMap.put("message", e.getMessage());
+        return renderPageUri(errorPageUri, new MapModel(modelMap), requestLookup, api, theme);
     }
 
-    private String renderPage(String pageUri, Model model, RequestLookup requestLookup, API api, Theme theme) {
+    private String renderPageUri(String pageUri, Model model, RequestLookup requestLookup, API api, Theme theme) {
         // If theme exists, add theme values to the requestLookup
         if (theme != null) {
             theme.addPlaceHolderValues(requestLookup);

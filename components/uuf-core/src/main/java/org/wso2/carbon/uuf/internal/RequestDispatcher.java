@@ -19,18 +19,14 @@ package org.wso2.carbon.uuf.internal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.core.App;
-import org.wso2.carbon.uuf.exception.FragmentNotFoundException;
 import org.wso2.carbon.uuf.exception.HttpErrorException;
 import org.wso2.carbon.uuf.exception.PageNotFoundException;
 import org.wso2.carbon.uuf.exception.PageRedirectException;
 import org.wso2.carbon.uuf.exception.UUFException;
-import org.wso2.carbon.uuf.exception.UnauthorizedException;
 import org.wso2.carbon.uuf.internal.debug.Debugger;
 import org.wso2.carbon.uuf.internal.io.StaticResolver;
 import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.carbon.uuf.spi.HttpResponse;
-
-import java.util.Optional;
 
 import static org.wso2.carbon.uuf.spi.HttpResponse.CONTENT_TYPE_TEXT_HTML;
 import static org.wso2.carbon.uuf.spi.HttpResponse.HEADER_LOCATION;
@@ -68,23 +64,17 @@ public class RequestDispatcher {
             } else {
                 serveApp(app, request, response);
             }
-        } catch (PageNotFoundException | UnauthorizedException e) {
-            serveErrorPage(app, request, response, e);
-        } catch (FragmentNotFoundException e) {
-            response.setContent(e.getHttpStatusCode(), e.getMessage());
         } catch (PageRedirectException e) {
             response.setStatus(STATUS_FOUND);
             response.setHeader(HEADER_LOCATION, e.getRedirectUrl());
         } catch (HttpErrorException e) {
-            serveErrorPage(app, request, response, e);
+            serveDefaultErrorPage(e.getHttpStatusCode(), e.getMessage(), response);
         } catch (UUFException e) {
             log.error("A server error occurred while serving for request '" + request + "'.", e);
-            serveErrorPage(app, request, response,
-                           new HttpErrorException(STATUS_INTERNAL_SERVER_ERROR, e.getMessage(), e));
+            serveDefaultErrorPage(STATUS_INTERNAL_SERVER_ERROR, e.getMessage(), response);
         } catch (Exception e) {
             log.error("An unexpected error occurred while serving for request '" + request + "'.", e);
-            serveErrorPage(app, request, response,
-                           new HttpErrorException(STATUS_INTERNAL_SERVER_ERROR, e.getMessage(), e));
+            serveDefaultErrorPage(STATUS_INTERNAL_SERVER_ERROR, e.getMessage(), response);
         }
     }
 
@@ -92,30 +82,8 @@ public class RequestDispatcher {
         staticResolver.serveDefaultFavicon(request, response);
     }
 
-    public void serveErrorPage(HttpRequest request, HttpResponse response, int httpStatus, String message) {
-        serveErrorPage(null, request, response, new HttpErrorException(httpStatus, message));
-    }
-
-    public void serveErrorPage(App app, HttpRequest request, HttpResponse response, HttpErrorException ex) {
-        if (app == null) {
-            // Exception occurred before creating/retrieving the app. So we cannot render configured error pages.
-            response.setContent(ex.getHttpStatusCode(), ex.getMessage());
-            return;
-        }
-
-        try {
-            Optional<String> html = app.renderErrorPage(ex, request, response);
-            if (html.isPresent()) {
-                response.setContent(STATUS_OK, html.get(), CONTENT_TYPE_TEXT_HTML);
-            } else {
-                // Error page is not configured.
-                response.setContent(ex.getHttpStatusCode(), ex.getMessage());
-            }
-        } catch (Exception e) {
-            // Another exception occurred when rendering the error page for HttpErrorException ex.
-            log.error("An error occurred when rendering the error page for exception '" + ex + "'.", e);
-            response.setContent(ex.getHttpStatusCode(), ex.getMessage());
-        }
+    public void serveDefaultErrorPage(int httpStatusCode, String content, HttpResponse response) {
+        response.setContent(httpStatusCode, content);
     }
 
     private void serveApp(App app, HttpRequest request, HttpResponse response) {
