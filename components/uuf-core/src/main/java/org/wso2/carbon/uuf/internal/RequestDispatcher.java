@@ -70,11 +70,13 @@ public class RequestDispatcher {
         } catch (HttpErrorException e) {
             serveDefaultErrorPage(e.getHttpStatusCode(), e.getMessage(), response);
         } catch (UUFException e) {
-            log.error("A server error occurred while serving for request '" + request + "'.", e);
-            serveDefaultErrorPage(STATUS_INTERNAL_SERVER_ERROR, e.getMessage(), response);
+            String msg = "A server error occurred while serving for request '" + request + "'.";
+            log.error(msg, e);
+            serveDefaultErrorPage(STATUS_INTERNAL_SERVER_ERROR, msg, response);
         } catch (Exception e) {
-            log.error("An unexpected error occurred while serving for request '" + request + "'.", e);
-            serveDefaultErrorPage(STATUS_INTERNAL_SERVER_ERROR, e.getMessage(), response);
+            String msg = "An unexpected error occurred while serving for request '" + request + "'.";
+            log.error(msg, e);
+            serveDefaultErrorPage(STATUS_INTERNAL_SERVER_ERROR, msg, response);
         }
     }
 
