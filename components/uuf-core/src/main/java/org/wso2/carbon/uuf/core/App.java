@@ -234,6 +234,11 @@ public class App {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        return (obj != null) && (obj instanceof App) && (this.name.equals(((App) obj).name));
+    }
+
+    @Override
     public String toString() {
         return "{\"name\": \"" + name + "\", \"context\": \"" + contextPath + "\"}";
     }
