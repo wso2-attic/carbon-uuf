@@ -223,6 +223,14 @@ public class RequestLookup {
             rendererStack.removeLast();
         }
 
+        void reset() {
+            componentNamesStack.clear();
+            pageStack.clear();
+            fragmentStack.clear();
+            layoutStack.clear();
+            rendererStack.clear();
+        }
+
         void finish() {
             if (componentNamesStack.size() != 1) {
                 throw new IllegalStateException("Not where you started");

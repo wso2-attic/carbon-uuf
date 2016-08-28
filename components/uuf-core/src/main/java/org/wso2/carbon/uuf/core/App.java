@@ -133,6 +133,7 @@ public class App {
         Map<String, Object> modelMap = new HashMap<>(2);
         modelMap.put("status", e.getHttpStatusCode());
         modelMap.put("message", e.getMessage());
+        requestLookup.tracker().reset(); // reset rendering tracking
         return renderPageUri(errorPageUri, new MapModel(modelMap), requestLookup, api, theme);
     }
 
