@@ -62,7 +62,7 @@ public class RequestDispatcher {
             } else if (Debugger.isDebuggingEnabled() && request.isDebugRequest()) {
                 debugger.serve(app, request, response);
             } else {
-                serveApp(app, request, response);
+                servePageOrFragment(app, request, response);
             }
         } catch (PageRedirectException e) {
             response.setStatus(STATUS_FOUND);
@@ -78,15 +78,7 @@ public class RequestDispatcher {
         }
     }
 
-    public void serveDefaultFavicon(HttpRequest request, HttpResponse response) {
-        staticResolver.serveDefaultFavicon(request, response);
-    }
-
-    public void serveDefaultErrorPage(int httpStatusCode, String content, HttpResponse response) {
-        response.setContent(httpStatusCode, content);
-    }
-
-    private void serveApp(App app, HttpRequest request, HttpResponse response) {
+    private void servePageOrFragment(App app, HttpRequest request, HttpResponse response) {
         try {
             String html;
             if (request.isFragmentRequest()) {
@@ -129,5 +121,13 @@ public class RequestDispatcher {
             // Cause of 'e' is not an UUFException.
             throw e;
         }
+    }
+
+    public void serveDefaultErrorPage(int httpStatusCode, String content, HttpResponse response) {
+        response.setContent(httpStatusCode, content);
+    }
+
+    public void serveDefaultFavicon(HttpRequest request, HttpResponse response) {
+        staticResolver.serveDefaultFavicon(request, response);
     }
 }
