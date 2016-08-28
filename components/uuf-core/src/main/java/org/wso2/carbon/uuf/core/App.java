@@ -120,9 +120,8 @@ public class App {
     }
 
     public Optional<String> renderErrorPage(HttpErrorException ex, HttpRequest request, HttpResponse response) {
-        Map<String, String> errorPages = configuration.getErrorPages();
-        String errorPageUri = errorPages.getOrDefault(String.valueOf(ex.getHttpStatusCode()),
-                                                      errorPages.get("default"));
+        String errorPageUri = configuration.getErrorPageUri(ex.getHttpStatusCode())
+                .orElse(configuration.getDefaultErrorPageUri().orElse(null));
         if (errorPageUri == null) {
             return Optional.<String>empty();
         }
