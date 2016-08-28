@@ -27,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.wso2.carbon.uuf.core.App;
+import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.spi.HttpConnector;
 import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.carbon.uuf.spi.HttpResponse;
@@ -145,10 +146,14 @@ public class UUFServer {
         App app = null;
         try {
             app = appRegistry.getApp(request.getContextPath()).orElse(null);
+        } catch (UUFException e) {
+            String msg = "A server error occurred while serving for request '" + request + "'.";
+            log.error(msg, e);
+            requestDispatcher.serveDefaultErrorPage(STATUS_INTERNAL_SERVER_ERROR, msg, response);
         } catch (Exception e) {
-            // Something went wrong when getting the app.
-            log.error("An unexpected error occurred while serving for request '" + request + "'.", e);
-            requestDispatcher.serveDefaultErrorPage(STATUS_INTERNAL_SERVER_ERROR, e.getMessage(), response);
+            String msg = "An unexpected error occurred while serving for request '" + request + "'.";
+            log.error(msg, e);
+            requestDispatcher.serveDefaultErrorPage(STATUS_INTERNAL_SERVER_ERROR, msg, response);
         }
 
         if (app == null) {
