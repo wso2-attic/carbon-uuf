@@ -17,7 +17,6 @@
 package org.wso2.carbon.uuf.httpconnector.msf4j.internal;
 
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.FrameworkUtil;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -42,8 +41,8 @@ public class MSF4JHttpConnector implements HttpConnector {
     private BundleContext bundleContext;
 
     @Activate
-    protected void activate() {
-        this.bundleContext = FrameworkUtil.getBundle(MSF4JHttpConnector.class).getBundleContext();
+    protected void activate(BundleContext bundleContext) {
+        this.bundleContext = bundleContext;
         log.debug("MSF4JHttpConnector activated.");
     }
 

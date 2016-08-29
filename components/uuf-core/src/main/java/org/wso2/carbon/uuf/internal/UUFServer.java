@@ -17,7 +17,6 @@
 package org.wso2.carbon.uuf.internal;
 
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.FrameworkUtil;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -58,7 +57,6 @@ public class UUFServer {
 
     private final AtomicInteger count = new AtomicInteger(0);
     private final RequestDispatcher requestDispatcher;
-    private final HttpConnectorTracker<HttpConnector> httpConnectorTracker;
     private UUFAppDeployer appDeployer;
 
     public UUFServer() {
@@ -67,10 +65,6 @@ public class UUFServer {
 
     public UUFServer(RequestDispatcher requestDispatcher) {
         this.requestDispatcher = requestDispatcher;
-        this.httpConnectorTracker = new HttpConnectorTracker<>(
-                FrameworkUtil.getBundle(UUFServer.class).getBundleContext(),
-                HttpConnector.class);
-        httpConnectorTracker.open();
     }
 
     /**
@@ -115,7 +109,6 @@ public class UUFServer {
                unbind = "unsetUUFAppRegistry")
     public void setUUFAppRegistry(UUFAppDeployer uufAppDeployer) {
         this.appDeployer = uufAppDeployer;
-        this.appDeployer.SetHttpConnectorTracker(httpConnectorTracker);
         log.debug("UUFAppDeployer '" + uufAppDeployer.getClass().getName() + "' registered.");
     }
 
@@ -136,7 +129,6 @@ public class UUFServer {
 
     @Deactivate
     protected void deactivate(BundleContext bundleContext) {
-        httpConnectorTracker.close();
         log.debug("UUFServer service deactivated.");
     }
 

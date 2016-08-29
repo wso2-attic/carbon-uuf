@@ -17,15 +17,11 @@
 package org.wso2.carbon.uuf.spi;
 
 import org.wso2.carbon.uuf.core.App;
-import org.wso2.carbon.uuf.internal.HttpConnectorService;
 
 import java.util.Optional;
 
 public interface UUFAppDeployer {
 
     Optional<App> getApp(String contextPath);
-
-    void SetHttpConnectorTracker(HttpConnectorService<HttpConnector> httpConnectorService);
-
 }
 
