@@ -33,19 +33,19 @@ import org.wso2.carbon.deployment.engine.exception.CarbonDeploymentException;
 import org.wso2.carbon.kernel.startupresolver.RequiredCapabilityListener;
 import org.wso2.carbon.uuf.core.App;
 import org.wso2.carbon.uuf.exception.UUFException;
+import org.wso2.carbon.uuf.internal.HttpConnectorServiceAccess;
 import org.wso2.carbon.uuf.internal.UUFServer;
 import org.wso2.carbon.uuf.internal.core.create.AppCreator;
 import org.wso2.carbon.uuf.internal.core.create.ClassLoaderProvider;
 import org.wso2.carbon.uuf.internal.io.util.ZipArtifactHandler;
 import org.wso2.carbon.uuf.internal.util.NameUtils;
-import org.wso2.carbon.uuf.internal.Listener;
+import org.wso2.carbon.uuf.spi.HttpConnector;
 import org.wso2.carbon.uuf.spi.RenderableCreator;
 import org.wso2.carbon.uuf.spi.UUFAppDeployer;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Paths;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -75,7 +75,7 @@ public class ArtifactAppDeployer implements Deployer, UUFAppDeployer, RequiredCa
     private final Object lock;
     private final Set<RenderableCreator> renderableCreators;
     private final ClassLoaderProvider classLoaderProvider;
-    private final Set<Listener> listeners = new HashSet<>();
+    HttpConnectorServiceAccess<HttpConnector> httpConnectorServiceAccess;
     private AppCreator appCreator;
     private BundleContext bundleContext;
 
@@ -96,6 +96,7 @@ public class ArtifactAppDeployer implements Deployer, UUFAppDeployer, RequiredCa
         this.renderableCreators = ConcurrentHashMap.newKeySet();
         this.classLoaderProvider = classLoaderProvider;
     }
+
 
     @Override
     public void init() {
@@ -128,7 +129,9 @@ public class ArtifactAppDeployer implements Deployer, UUFAppDeployer, RequiredCa
                             "' as another app is already registered for the same context path.");
         }
 
-        this.listeners.forEach(listener -> listener.notifyListener(appNameContextPath.getRight()));
+        this.httpConnectorServiceAccess.forAllServices((httpConnector) -> {
+            httpConnector.registerContextPath(appNameContextPath.getRight());
+        });
         pendingToDeployArtifacts.put(appNameContextPath.getRight(), new AppArtifact(appNameContextPath.getLeft(),
                                                                                     artifact));
         log.debug("UUF app '" + appNameContextPath.getLeft() + "' added to the pending deployments list.");
@@ -307,8 +310,8 @@ public class ArtifactAppDeployer implements Deployer, UUFAppDeployer, RequiredCa
     }
 
     @Override
-    public Set<Listener> getListeners() {
-        return listeners;
+    public void SetHttpConnectorTracker(HttpConnectorServiceAccess<HttpConnector> httpConnectorServiceAccess) {
+        this.httpConnectorServiceAccess = httpConnectorServiceAccess;
     }
 
     private static class AppArtifact {

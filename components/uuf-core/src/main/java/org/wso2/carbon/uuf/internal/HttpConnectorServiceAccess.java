@@ -16,7 +16,9 @@
 
 package org.wso2.carbon.uuf.internal;
 
-public interface Listener {
+import java.util.function.Consumer;
 
-    void notifyListener(String contextPath);
+public interface HttpConnectorServiceAccess<S> {
+
+    void forAllServices(Consumer<S> func);
 }

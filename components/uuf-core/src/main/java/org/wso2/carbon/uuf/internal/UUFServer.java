@@ -17,6 +17,7 @@
 package org.wso2.carbon.uuf.internal;
 
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -33,9 +34,6 @@ import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.carbon.uuf.spi.HttpResponse;
 import org.wso2.carbon.uuf.spi.UUFAppDeployer;
 
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_BAD_REQUEST;
@@ -49,7 +47,7 @@ import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_NOT_FOUND;
            immediate = true
 )
 @SuppressWarnings("unused")
-public class UUFServer implements Listener {
+public class UUFServer {
 
     private static final boolean DEV_MODE_ENABLED;
     private static final Logger log = LoggerFactory.getLogger(UUFServer.class);
@@ -60,7 +58,7 @@ public class UUFServer implements Listener {
 
     private final AtomicInteger count = new AtomicInteger(0);
     private final RequestDispatcher requestDispatcher;
-    private final Set<HttpConnector> httpConnectors = new HashSet<>();
+    private final HttpConnectorTracker<?> httpConnectorTracker;
     private UUFAppDeployer appDeployer;
 
     public UUFServer() {
@@ -69,6 +67,10 @@ public class UUFServer implements Listener {
 
     public UUFServer(RequestDispatcher requestDispatcher) {
         this.requestDispatcher = requestDispatcher;
+        this.httpConnectorTracker = new HttpConnectorTracker<>(
+                FrameworkUtil.getBundle(UUFServer.class).getBundleContext(),
+                HttpConnector.class);
+        httpConnectorTracker.open();
     }
 
     /**
@@ -88,7 +90,6 @@ public class UUFServer implements Listener {
             MDC.remove("uuf-request");
             return response;
         });
-        httpConnectors.add(connector);
         log.info("HttpConnector '" + connector.getClass().getName() + "' registered.");
     }
 
@@ -114,7 +115,7 @@ public class UUFServer implements Listener {
                unbind = "unsetUUFAppRegistry")
     public void setUUFAppRegistry(UUFAppDeployer uufAppDeployer) {
         this.appDeployer = uufAppDeployer;
-        this.appDeployer.getListeners().add(this);
+        this.appDeployer.SetHttpConnectorTracker((HttpConnectorServiceAccess<HttpConnector>) httpConnectorTracker);
         log.debug("UUFAppDeployer '" + uufAppDeployer.getClass().getName() + "' registered.");
     }
 
@@ -135,6 +136,7 @@ public class UUFServer implements Listener {
 
     @Deactivate
     protected void deactivate(BundleContext bundleContext) {
+        httpConnectorTracker.close();
         log.debug("UUFServer service deactivated.");
     }
 
@@ -174,13 +176,5 @@ public class UUFServer implements Listener {
     public static boolean isDevModeEnabled() {
         // TODO: 8/13/16 Remove this when Carbon 'Utils.isDevModeEnabled()' is available in C5.20
         return DEV_MODE_ENABLED;
-    }
-
-    @Override
-    public void notifyListener(String contextPath) {
-        //registering each http connector for the context path
-        httpConnectors.forEach(httpConnector -> {
-            httpConnector.registerContextPath(contextPath);
-        });
     }
 }
