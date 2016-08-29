@@ -55,7 +55,7 @@ public class Lookup {
         this.layouts = new HashMap<>();
         this.fragments = new HashMap<>();
         this.bindings = HashMultimap.create();
-        this.configuration = Configuration.emptyConfiguration();
+        this.configuration = new Configuration();
         this.i18nResources = new HashMap<>();
     }
 
