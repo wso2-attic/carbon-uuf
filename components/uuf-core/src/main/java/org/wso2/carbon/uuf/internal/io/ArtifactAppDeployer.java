@@ -33,7 +33,7 @@ import org.wso2.carbon.deployment.engine.exception.CarbonDeploymentException;
 import org.wso2.carbon.kernel.startupresolver.RequiredCapabilityListener;
 import org.wso2.carbon.uuf.core.App;
 import org.wso2.carbon.uuf.exception.UUFException;
-import org.wso2.carbon.uuf.internal.HttpConnectorServiceAccess;
+import org.wso2.carbon.uuf.internal.HttpConnectorService;
 import org.wso2.carbon.uuf.internal.UUFServer;
 import org.wso2.carbon.uuf.internal.core.create.AppCreator;
 import org.wso2.carbon.uuf.internal.core.create.ClassLoaderProvider;
@@ -75,7 +75,7 @@ public class ArtifactAppDeployer implements Deployer, UUFAppDeployer, RequiredCa
     private final Object lock;
     private final Set<RenderableCreator> renderableCreators;
     private final ClassLoaderProvider classLoaderProvider;
-    HttpConnectorServiceAccess<HttpConnector> httpConnectorServiceAccess;
+    HttpConnectorService<HttpConnector> httpConnectorService;
     private AppCreator appCreator;
     private BundleContext bundleContext;
 
@@ -129,7 +129,7 @@ public class ArtifactAppDeployer implements Deployer, UUFAppDeployer, RequiredCa
                             "' as another app is already registered for the same context path.");
         }
 
-        this.httpConnectorServiceAccess.forAllServices((httpConnector) -> {
+        this.httpConnectorService.forEachHttpConnector((httpConnector) -> {
             httpConnector.registerContextPath(appNameContextPath.getRight());
         });
         pendingToDeployArtifacts.put(appNameContextPath.getRight(), new AppArtifact(appNameContextPath.getLeft(),
@@ -310,8 +310,8 @@ public class ArtifactAppDeployer implements Deployer, UUFAppDeployer, RequiredCa
     }
 
     @Override
-    public void SetHttpConnectorTracker(HttpConnectorServiceAccess<HttpConnector> httpConnectorServiceAccess) {
-        this.httpConnectorServiceAccess = httpConnectorServiceAccess;
+    public void SetHttpConnectorTracker(HttpConnectorService<HttpConnector> httpConnectorService) {
+        this.httpConnectorService = httpConnectorService;
     }
 
     private static class AppArtifact {

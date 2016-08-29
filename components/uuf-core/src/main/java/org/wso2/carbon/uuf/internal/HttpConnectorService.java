@@ -18,7 +18,8 @@ package org.wso2.carbon.uuf.internal;
 
 import java.util.function.Consumer;
 
-public interface HttpConnectorServiceAccess<S> {
+public interface HttpConnectorService<S> {
 
-    void forAllServices(Consumer<S> func);
+    void forEachHttpConnector(Consumer<S> func);
 }
+

@@ -58,7 +58,7 @@ public class UUFServer {
 
     private final AtomicInteger count = new AtomicInteger(0);
     private final RequestDispatcher requestDispatcher;
-    private final HttpConnectorTracker<?> httpConnectorTracker;
+    private final HttpConnectorTracker<HttpConnector> httpConnectorTracker;
     private UUFAppDeployer appDeployer;
 
     public UUFServer() {
@@ -115,7 +115,7 @@ public class UUFServer {
                unbind = "unsetUUFAppRegistry")
     public void setUUFAppRegistry(UUFAppDeployer uufAppDeployer) {
         this.appDeployer = uufAppDeployer;
-        this.appDeployer.SetHttpConnectorTracker((HttpConnectorServiceAccess<HttpConnector>) httpConnectorTracker);
+        this.appDeployer.SetHttpConnectorTracker(httpConnectorTracker);
         log.debug("UUFAppDeployer '" + uufAppDeployer.getClass().getName() + "' registered.");
     }
 
