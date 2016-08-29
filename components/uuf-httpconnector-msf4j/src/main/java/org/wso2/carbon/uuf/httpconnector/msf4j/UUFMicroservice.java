@@ -42,6 +42,12 @@ public class UUFMicroservice implements Microservice {
     @GET
     @Path(".*")
     public Response get(@Context Request request) {
+        return getImpl(request);
+    }
+
+    @GET
+    @Path("")
+    public Response getImpl(@Context Request request) {
         MicroserviceHttpRequest httpRequest = new MicroserviceHttpRequest(request);
         MicroserviceHttpResponse httpResponse = new MicroserviceHttpResponse();
         serverConnection.serve(httpRequest, httpResponse);
@@ -52,6 +58,13 @@ public class UUFMicroservice implements Microservice {
     @Path(".*")
     @Consumes({MediaType.APPLICATION_FORM_URLENCODED, MediaType.MULTIPART_FORM_DATA})
     public Response post(@Context Request request, @Context MultivaluedMap multivaluedMap) {
+        return postImpl(request, multivaluedMap);
+    }
+
+    @POST
+    @Path("")
+    @Consumes({MediaType.APPLICATION_FORM_URLENCODED, MediaType.MULTIPART_FORM_DATA})
+    public Response postImpl(@Context Request request, @Context MultivaluedMap multivaluedMap) {
         MicroserviceHttpRequest httpRequest = new MicroserviceHttpRequest(request, multivaluedMap);
         MicroserviceHttpResponse httpResponse = new MicroserviceHttpResponse();
         serverConnection.serve(httpRequest, httpResponse);

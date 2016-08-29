@@ -18,14 +18,13 @@ package org.wso2.carbon.uuf.internal;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.util.tracker.ServiceTracker;
-import org.wso2.carbon.uuf.spi.HttpConnector;
 
 public class EventPublisher {
 
     private ServiceTracker serviceTracker;
 
-    public EventPublisher(BundleContext bundleContext) {
-        this.serviceTracker = new ServiceTracker<>(bundleContext, HttpConnector.class, null);
+    public EventPublisher(BundleContext bundleContext, Object httpConnector) {
+        this.serviceTracker = new ServiceTracker<>(bundleContext, httpConnector.getClass(), null);
     }
 
     public ServiceTracker getServiceTracker() {

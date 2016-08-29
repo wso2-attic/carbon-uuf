@@ -18,7 +18,6 @@ package org.wso2.carbon.uuf.internal.io;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.FrameworkUtil;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -291,7 +290,7 @@ public class ArtifactAppDeployer implements Deployer, UUFAppDeployer, RequiredCa
     @Activate
     protected void activate(BundleContext bundleContext) {
         this.bundleContext = bundleContext;
-        eventPublisher = new EventPublisher(bundleContext);
+        eventPublisher = new EventPublisher(bundleContext, HttpConnector.class);
         eventPublisher.getServiceTracker().open();
         log.debug("ArtifactAppDeployer service activated.");
     }
