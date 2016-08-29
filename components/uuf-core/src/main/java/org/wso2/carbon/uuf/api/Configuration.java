@@ -22,77 +22,98 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiFunction;
-import java.util.function.Function;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Represents a Configuration object of a particular UUF component.
+ * Represents a Configuration of a particular UUF App.
  */
-public class Configuration extends HashMap<String, Object> {
+public class Configuration {
 
-    // TODO: 6/8/16 Cache values of 'contextPath', 'theme', 'loginPageUri', 'menu', 'errorPages' configs
-    public static final String KEY_CONTEXT_PATH = "contextPath";
-    public static final String KEY_THEME = "theme";
-    public static final String KEY_LOGIN_PAGE_URI = "loginPageUri";
-    public static final String KEY_MENU = "menu";
-    public static final String KEY_ERROR_PAGES = "errorPages";
+    private static final String KEY_CONTEXT_PATH = "contextPath";
+    private static final String KEY_THEME = "theme";
+    private static final String KEY_LOGIN_PAGE_URI = "loginPageUri";
+    private static final String KEY_MENU = "menu";
+    private static final String KEY_ERROR_PAGES = "errorPages";
+
+    private final Map<String, Object> map = new HashMap<>();
+    private final Map<String, Object> unmodifiableMap = Collections.unmodifiableMap(map);
+    // We cache following values to avoid extracting them from 'map' and validating them over and over again.
+    private String cachedContextPath;
+    private String cachedThemeName;
+    private String cachedLoginPageUri;
+    private Map<String, Map<String, Map>> cachedMenus = new ConcurrentHashMap<>();
+    private Map<Integer, String> cachedErrorPageUris = new ConcurrentHashMap<>();
+    private String cachedDefaultErrorPageUri;
+
+    public Configuration() {
+    }
 
     public Configuration(Map<?, ?> rawMap) {
-        this(rawMap.size());
         merge(rawMap);
     }
 
-    private Configuration(int initialCapacity) {
-        super(initialCapacity);
-    }
-
-    public String getContextPath() {
-        Object contextPathObj = get(KEY_CONTEXT_PATH);
-        if (contextPathObj == null) {
-            return null;
+    public Optional<String> getContextPath() {
+        if (cachedContextPath != null) {
+            return Optional.of(cachedContextPath); // Return cached value.
         }
-        if (!(contextPathObj instanceof String)) {
+
+        Object contextPathObj = map.get(KEY_CONTEXT_PATH);
+        if (contextPathObj == null) {
+            return Optional.<String>empty();
+        } else if (!(contextPathObj instanceof String)) {
             throw new InvalidTypeException(
                     "Value of 'contextPath' in the app configuration must be a string. Instead found '" +
                             contextPathObj.getClass().getName() + "'.");
         }
         String contextPath = (String) contextPathObj;
+        // Validate 'contextPath'
         if (contextPath.isEmpty()) {
             throw new IllegalArgumentException("Value of 'contextPath' in the app configuration cannot be empty.");
         } else if (contextPath.charAt(0) != '/') {
             throw new IllegalArgumentException("Value of 'contextPath' in the app configuration must start with '/'.");
         }
-        return contextPath;
+        cachedContextPath = contextPath; // Cache computed value.
+        return Optional.of(contextPath);
     }
 
-    public String getThemeName() {
-        Object themeNameObj = get(KEY_THEME);
-        if (themeNameObj == null) {
-            return null;
+    public Optional<String> getThemeName() {
+        if (cachedThemeName != null) {
+            return Optional.of(cachedThemeName); // Return cached value.
         }
-        if (!(themeNameObj instanceof String)) {
+
+        Object themeNameObj = map.get(KEY_THEME);
+        if (themeNameObj == null) {
+            return Optional.<String>empty();
+        } else if (!(themeNameObj instanceof String)) {
             throw new InvalidTypeException(
                     "Value of 'theme' in the app configuration must be a string. Instead found '" +
                             themeNameObj.getClass().getName() + "'.");
         }
         String themeName = (String) themeNameObj;
+        // Validate 'themeName'
         if (themeName.isEmpty()) {
             throw new IllegalArgumentException("Value of 'theme' in the app configuration cannot be empty.");
         }
-        return themeName;
+        cachedThemeName = themeName; // Cache computed value.
+        return Optional.of(themeName);
     }
 
-    public String getLoginPageUri() {
-        Object loginPageUriObj = get(KEY_LOGIN_PAGE_URI);
-        if (loginPageUriObj == null) {
-            return null;
+    public Optional<String> getLoginPageUri() {
+        if (cachedLoginPageUri != null) {
+            return Optional.of(cachedLoginPageUri); // Return cached value.
         }
-        if (!(loginPageUriObj instanceof String)) {
+
+        Object loginPageUriObj = map.get(KEY_LOGIN_PAGE_URI);
+        if (loginPageUriObj == null) {
+            return Optional.<String>empty();
+        } else if (!(loginPageUriObj instanceof String)) {
             throw new InvalidTypeException(
                     "Value of 'loginPageUri' in the app configuration must be a string. Instead found '" +
                             loginPageUriObj.getClass().getName() + "'.");
         }
         String loginPageUri = (String) loginPageUriObj;
+        // Validate 'loginPageUri'
         if (loginPageUri.isEmpty()) {
             throw new IllegalArgumentException("Value of 'loginPageUri' in the app configuration cannot be empty.");
         }
@@ -101,7 +122,36 @@ public class Configuration extends HashMap<String, Object> {
                     "Value of 'loginPageUri' in the app configuration must start with a '/'. Instead found '" +
                             loginPageUri.charAt(0) + "' at the beginning.");
         }
-        return loginPageUri;
+        cachedLoginPageUri = loginPageUri; // Cache computed value.
+        return Optional.of(loginPageUri);
+    }
+
+    @SuppressWarnings("unchecked")
+    public Map<String, Map> getMenus() {
+        Object menusMapObj = map.get(KEY_MENU);
+        if (menusMapObj == null) {
+            return Collections.<String, Map>emptyMap();
+        } else if (!(menusMapObj instanceof Map)) {
+            throw new InvalidTypeException(
+                    "Value of 'menu' in the configurations must be a Map<String, Map<String, Map>. Instead found " +
+                            menusMapObj.getClass().getName() + ".");
+        }
+        Map<?, ?> menusMap = (Map) menusMapObj;
+        // Validate 'menusMap'
+        for (Map.Entry<?, ?> entry : menusMap.entrySet()) {
+            if (!(entry.getKey() instanceof String)) {
+                throw new InvalidTypeException(
+                        "Value of 'menu' in the app configuration must be a Map<String, Map<String, Map>." +
+                                "Instead found a '" + entry.getKey().getClass().getName() + "' key.");
+            }
+            if (!(entry.getValue() instanceof Map)) {
+                throw new InvalidTypeException(
+                        "Value of 'menu' in the app configuration must be a Map<String, Map<String, Map>. " +
+                                "Instead found a '" + entry.getValue().getClass().getName() + "' value at key '" +
+                                entry.getKey() + "'.");
+            }
+        }
+        return (Map<String, Map>) menusMap;
     }
 
     /**
@@ -113,25 +163,16 @@ public class Configuration extends HashMap<String, Object> {
      */
     @SuppressWarnings("unchecked")
     public Map<String, Map> getMenu(String name) {
-        // Validate menu property.
-        Object menuObj = super.get(KEY_MENU);
-        if (menuObj == null) {
-            return null;
-        } else if (!(menuObj instanceof Map)) {
-            throw new InvalidTypeException(
-                    "Value of 'menu' in the configurations must be a Map<String, Map>. Instead found " +
-                            menuObj.getClass().getName() + ".");
+        Map<String, Map> cachedMenu = cachedMenus.get(name);
+        if (cachedMenu != null) {
+            return cachedMenu; // Return cached value.
         }
-        // Validate requested menu.
-        Object menuMapObj = ((Map) menuObj).get(name);
-        if (menuMapObj == null) {
-            return null;
-        } else if (!(menuMapObj instanceof Map)) {
-            throw new InvalidTypeException("Menu '" + name + "' must be a Map<String, Map>. Instead found " +
-                                                   menuObj.getClass().getName() + ".");
+
+        Map<?, ?> menuMap = getMenus().get(name);
+        if (menuMap == null) {
+            return Collections.<String, Map>emptyMap(); // Menu 'name' does not exits.
         }
-        Map<?, ?> menuMap = (Map) menuMapObj;
-        // Validate menu items.
+        // Validate menu items in 'menuMap'
         for (Map.Entry entry : menuMap.entrySet()) {
             if (!(entry.getKey() instanceof String)) {
                 throw new InvalidTypeException("Menu '" + name + "' must be a Map<String, Map>. Instead found a '" +
@@ -143,119 +184,83 @@ public class Configuration extends HashMap<String, Object> {
                                                        entry.getKey() + "'.");
             }
         }
-        return (Map<String, Map>) menuMap;
+        Map<String, Map> menu = (Map<String, Map>) menuMap;
+        cachedMenus.put(name, menu); // Cache computed value.
+        return menu;
     }
 
     @SuppressWarnings("unchecked")
-    public Map<String, String> getErrorPages() {
-        Object errorPagesObj = get(KEY_ERROR_PAGES);
+    public Map<String, String> getErrorPageUris() {
+        Object errorPagesObj = map.get(KEY_ERROR_PAGES);
         if (errorPagesObj == null) {
             return Collections.<String, String>emptyMap();
-        }
-        if (errorPagesObj instanceof Map) {
-            Map<?, ?> errorPagesMap = (Map) errorPagesObj;
-            for (Entry<?, ?> entry : errorPagesMap.entrySet()) {
-                if (!(entry.getKey() instanceof String)) {
-                    throw new InvalidTypeException(
-                            "Value of 'errorPages' in the app configuration must be a Map<String, String>." +
-                                    " Instead found a '" + entry.getKey().getClass().getName() + "' key.");
-                }
-                if (!(entry.getValue() instanceof String)) {
-                    throw new InvalidTypeException(
-                            "Value of 'errorPages' in the app configuration must be a Map<String, String> " +
-                                    "Instead found a '" + entry.getValue().getClass().getName() + "' value at key '" +
-                                    entry.getKey() + "'.");
-                }
-            }
-            return (Map<String, String>) errorPagesMap;
-        } else {
+        } else if (!(errorPagesObj instanceof Map)) {
             throw new InvalidTypeException(
                     "Value of 'errorPages' in the app configuration must be a Map<String, String>. " +
                             "Instead found '" + errorPagesObj.getClass().getName() + "'.");
         }
-    }
-
-    public String getAsString(String key) {
-        Object value = super.get(key);
-        if ((value == null) || (value instanceof String)) {
-            return (String) value;
-        } else {
-            throw new InvalidTypeException(
-                    "Value of '" + key + "' in the configuration must be a string. Instead found '" +
-                            value.getClass().getName() + "'.");
+        Map<?, ?> errorPagesMap = (Map) errorPagesObj;
+        // Validate 'errorPagesMap'
+        for (Map.Entry<?, ?> entry : errorPagesMap.entrySet()) {
+            if (!(entry.getKey() instanceof String)) {
+                throw new InvalidTypeException(
+                        "Value of 'errorPages' in the app configuration must be a Map<String, String>." +
+                                " Instead found a '" + entry.getKey().getClass().getName() + "' key.");
+            }
+            if (!(entry.getValue() instanceof String)) {
+                throw new InvalidTypeException(
+                        "Value of 'errorPages' in the app configuration must be a Map<String, String>. " +
+                                "Instead found a '" + entry.getValue().getClass().getName() + "' value at key '" +
+                                entry.getKey() + "'.");
+            }
         }
+        return (Map<String, String>) errorPagesMap;
     }
 
-    public String getAsStringOrDefault(String key, String defaultValue) {
-        String value = getAsString(key);
-        return (value == null) ? defaultValue : value;
+    public Optional<String> getErrorPageUri(int httpStatusCode) {
+        String cachedErrorPageUri = cachedErrorPageUris.get(httpStatusCode);
+        if (cachedErrorPageUri != null) {
+            return Optional.of(cachedErrorPageUri); // Return cached value.
+        }
+        String errorPageUri = getErrorPageUris().get(Integer.toString(httpStatusCode));
+        if (errorPageUri == null) {
+            return Optional.<String>empty();
+        }
+        // Validate 'errorPageUri'
+        if (errorPageUri.isEmpty()) {
+            throw new IllegalArgumentException("Error page URI for HTTP status code '" + httpStatusCode +
+                                                       "' in the app configuration cannot be empty.");
+        } else if (errorPageUri.charAt(0) != '/') {
+            throw new IllegalArgumentException("Error page URI for HTTP status code '" + httpStatusCode +
+                                                       "' in the app configuration must start with '/'.");
+        }
+        cachedErrorPageUris.put(httpStatusCode, errorPageUri); // Cache computed value.
+        return Optional.of(errorPageUri);
     }
 
-    @Override
-    public Object put(String key, Object value) {
-        throw new UnsupportedOperationException("Cannot change Configuration.");
-    }
-
-    @Override
-    public void putAll(Map<? extends String, ?> m) {
-        throw new UnsupportedOperationException("Cannot change Configuration.");
-    }
-
-    @Override
-    public Object putIfAbsent(String key, Object value) {
-        throw new UnsupportedOperationException("Cannot change Configuration.");
-    }
-
-    @Override
-    public Object remove(Object key) {
-        throw new UnsupportedOperationException("Cannot change Configuration.");
-    }
-
-    @Override
-    public boolean remove(Object key, Object value) {
-        throw new UnsupportedOperationException("Cannot change Configuration.");
-    }
-
-    @Override
-    public Object replace(String key, Object value) {
-        throw new UnsupportedOperationException("Cannot change Configuration.");
-    }
-
-    @Override
-    public boolean replace(String key, Object oldValue, Object newValue) {
-        throw new UnsupportedOperationException("Cannot change Configuration.");
-    }
-
-    @Override
-    public void replaceAll(BiFunction<? super String, ? super Object, ?> function) {
-        throw new UnsupportedOperationException("Cannot change Configuration.");
-    }
-
-    @Override
-    public Object compute(String key, BiFunction<? super String, ? super Object, ?> remappingFunction) {
-        throw new UnsupportedOperationException("Cannot change Configuration.");
-    }
-
-    @Override
-    public Object computeIfPresent(String key, BiFunction<? super String, ? super Object, ?> remappingFunction) {
-        throw new UnsupportedOperationException("Cannot change Configuration.");
-    }
-
-    @Override
-    public Object computeIfAbsent(String key, Function<? super String, ?> mappingFunction) {
-        throw new UnsupportedOperationException("Cannot change Configuration.");
-    }
-
-    @Override
-    public Object merge(String key, Object value, BiFunction<? super Object, ? super Object, ?> remappingFunction) {
-        throw new UnsupportedOperationException("Cannot change Configuration.");
+    public Optional<String> getDefaultErrorPageUri() {
+        if (cachedDefaultErrorPageUri != null) {
+            return Optional.of(cachedDefaultErrorPageUri); // Return cached value.
+        }
+        String defaultErrorPageUri = getErrorPageUris().get("default");
+        if (defaultErrorPageUri == null) {
+            return Optional.<String>empty();
+        }
+        // Validate 'defaultErrorPageUri'
+        if (defaultErrorPageUri.isEmpty()) {
+            throw new IllegalArgumentException("Default error page URI in the app configuration cannot be empty.");
+        } else if (defaultErrorPageUri.charAt(0) != '/') {
+            throw new IllegalArgumentException("Default error page URI in the app configuration must start with '/'.");
+        }
+        cachedDefaultErrorPageUri = defaultErrorPageUri; // Cache computed value.
+        return Optional.of(defaultErrorPageUri);
     }
 
     public void merge(Map<?, ?> rawMap) {
         // TODO: 7/7/16 lock configuration after deploying the app
-        for (Entry<?, ?> entry : rawMap.entrySet()) {
+        for (Map.Entry<?, ?> entry : rawMap.entrySet()) {
             if (entry.getKey() instanceof String) {
-                super.compute((String) entry.getKey(), (key, oldValue) -> {
+                map.compute((String) entry.getKey(), (key, oldValue) -> {
                     Object newValue = entry.getValue();
                     if (oldValue == null) {
                         return newValue; // Add the new value.
@@ -276,7 +281,7 @@ public class Configuration extends HashMap<String, Object> {
     }
 
     @SuppressWarnings("unchecked")
-    private static Map deepMergeMap(Map oldMap, Map newMap) {
+    private Map deepMergeMap(Map oldMap, Map newMap) {
         for (Object key : newMap.keySet()) {
             Object newValueObj = newMap.get(key);
             Object oldValueObj = oldMap.get(key);
@@ -292,7 +297,7 @@ public class Configuration extends HashMap<String, Object> {
     }
 
     @SuppressWarnings("unchecked")
-    private static List deepMergeList(List oldList, List newList) {
+    private List deepMergeList(List oldList, List newList) {
         for (Object newItemObj : newList) {
             int oldIndex = oldList.indexOf(newItemObj);
             if (oldIndex != -1) {
@@ -311,7 +316,17 @@ public class Configuration extends HashMap<String, Object> {
         return oldList;
     }
 
-    public static Configuration emptyConfiguration() {
-        return new Configuration(0);
+    /**
+     * Returns this Configuration object as a Map.
+     *
+     * @return unmodifiable map
+     */
+    public Map<String, Object> asMap() {
+        return unmodifiableMap;
+    }
+
+    @Override
+    public String toString() {
+        return map.toString();
     }
 }
