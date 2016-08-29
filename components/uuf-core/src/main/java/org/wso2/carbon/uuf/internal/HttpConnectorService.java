@@ -22,4 +22,3 @@ public interface HttpConnectorService<S> {
 
     void forEachHttpConnector(Consumer<S> func);
 }
-

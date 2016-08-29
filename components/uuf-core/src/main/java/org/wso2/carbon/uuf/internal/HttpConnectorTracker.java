@@ -35,4 +35,3 @@ class HttpConnectorTracker<S> extends ServiceTracker<S, S> implements
         }
     }
 }
-
