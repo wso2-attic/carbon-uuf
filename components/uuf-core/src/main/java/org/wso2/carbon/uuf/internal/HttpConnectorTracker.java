@@ -21,11 +21,11 @@ import org.osgi.util.tracker.ServiceTracker;
 
 import java.util.function.Consumer;
 
-public class HttpConnectorTracker<S> extends ServiceTracker<S, S> implements
-                                                                  HttpConnectorServiceAccess<S> {
+class HttpConnectorTracker<S> extends ServiceTracker<S, S> implements
+                                                           HttpConnectorServiceAccess<S> {
 
-    public HttpConnectorTracker(BundleContext bundleContext, Class<S> classes) {
-        super(bundleContext, classes, null);
+    HttpConnectorTracker(BundleContext bundleContext, Class<S> trackerClass) {
+        super(bundleContext, trackerClass, null);
     }
 
     /**
@@ -34,7 +34,7 @@ public class HttpConnectorTracker<S> extends ServiceTracker<S, S> implements
      * @param func the closure to be called for this service (receives the service as argument)
      */
     public void forAllServices(Consumer<S> func) {
-        S[] services = this.getServices((S[]) new Object[0]);
+        S[] services = (S[]) this.getServices();
         for (S service : services) {
             func.accept(service);
         }
