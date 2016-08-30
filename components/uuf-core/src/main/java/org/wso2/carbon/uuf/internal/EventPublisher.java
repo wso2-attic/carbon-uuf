@@ -23,8 +23,8 @@ public class EventPublisher {
 
     private ServiceTracker serviceTracker;
 
-    public EventPublisher(BundleContext bundleContext, Object listenerType) {
-        this.serviceTracker = new ServiceTracker<>(bundleContext, listenerType.getClass(), null);
+    public EventPublisher(BundleContext bundleContext, Class listenerType) {
+        this.serviceTracker = new ServiceTracker<>(bundleContext, listenerType, null);
     }
 
     public ServiceTracker getServiceTracker() {
