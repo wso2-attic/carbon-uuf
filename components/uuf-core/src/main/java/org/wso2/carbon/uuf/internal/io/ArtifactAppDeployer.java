@@ -31,10 +31,11 @@ import org.wso2.carbon.deployment.engine.ArtifactType;
 import org.wso2.carbon.deployment.engine.Deployer;
 import org.wso2.carbon.deployment.engine.exception.CarbonDeploymentException;
 import org.wso2.carbon.kernel.startupresolver.RequiredCapabilityListener;
+import org.wso2.carbon.uuf.api.ServerConnection;
 import org.wso2.carbon.uuf.core.App;
+import org.wso2.carbon.uuf.core.AppArtifact;
 import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.internal.EventPublisher;
-import org.wso2.carbon.uuf.internal.UUFServer;
 import org.wso2.carbon.uuf.internal.core.create.AppCreator;
 import org.wso2.carbon.uuf.internal.core.create.ClassLoaderProvider;
 import org.wso2.carbon.uuf.internal.io.util.ZipArtifactHandler;
@@ -67,6 +68,11 @@ import java.util.concurrent.ConcurrentMap;
 public class ArtifactAppDeployer implements Deployer, UUFAppDeployer, RequiredCapabilityListener {
 
     private static final Logger log = LoggerFactory.getLogger(ArtifactAppDeployer.class);
+    private static final boolean DEV_MODE_ENABLED;
+
+    static {
+        DEV_MODE_ENABLED = Boolean.parseBoolean(System.getProperties().getProperty("devmode", "false"));
+    }
 
     private final ArtifactType artifactType;
     private final URL location;
@@ -129,13 +135,15 @@ public class ArtifactAppDeployer implements Deployer, UUFAppDeployer, RequiredCa
                             "' as another app is already registered for the same context path.");
         }
 
+        AppArtifact appArtifact = new AppArtifact(appNameContextPath.getLeft(), artifact, this);
+
         for (Object o : eventPublisher.getServiceTracker().getServices()) {
             HttpConnector httpConnector = (HttpConnector) o;
-            httpConnector.registerContextPath(appNameContextPath.getRight());
+            ServerConnection serverConnection = new ServerConnection(appArtifact, appNameContextPath.getRight());
+            httpConnector.registerConnection(serverConnection);
         }
 
-        pendingToDeployArtifacts.put(appNameContextPath.getRight(), new AppArtifact(appNameContextPath.getLeft(),
-                                                                                    artifact));
+        pendingToDeployArtifacts.put(appNameContextPath.getRight(), appArtifact);
         log.debug("UUF app '" + appNameContextPath.getLeft() + "' added to the pending deployments list.");
         return appNameContextPath.getLeft();
     }
@@ -179,9 +187,9 @@ public class ArtifactAppDeployer implements Deployer, UUFAppDeployer, RequiredCa
         // App with 'appName' is not deployed yet.
         for (Map.Entry<String, AppArtifact> entry : pendingToDeployArtifacts.entrySet()) {
             AppArtifact appArtifact = entry.getValue();
-            if (appArtifact.appName.equals(appName)) {
+            if (appArtifact.getAppName().equals(appName)) {
                 pendingToDeployArtifacts.remove(entry.getKey());
-                log.info("UUF app in '" + appArtifact.artifact.getPath() + "' removed even before it deployed.");
+                log.info("UUF app in '" + appArtifact.getArtifact().getPath() + "' removed even before it deployed.");
                 return;
             }
         }
@@ -218,7 +226,7 @@ public class ArtifactAppDeployer implements Deployer, UUFAppDeployer, RequiredCa
         App createdApp;
         synchronized (lock) {
             AppArtifact appArtifact = pendingToDeployArtifacts.remove(contextPath);
-            Artifact artifact = appArtifact.artifact;
+            Artifact artifact = appArtifact.getArtifact();
             if (artifact == null) {
                 // App is deployed before acquiring the lock.
                 return deployedApps.get(contextPath);
@@ -229,10 +237,10 @@ public class ArtifactAppDeployer implements Deployer, UUFAppDeployer, RequiredCa
                 return null;
             }
             try {
-                createdApp = createApp(appArtifact.appName, contextPath, artifact);
+                createdApp = createApp(appArtifact.getAppName(), contextPath, artifact);
             } catch (Exception e) {
                 // catching any/all exception/s
-                if (UUFServer.isDevModeEnabled()) {
+                if (isDevModeEnabled()) {
                     /* If the server is in the developer mode, add the artifact back to the 'pendingToDeployArtifacts'
                     map so the developer can correct the error and attempt to re-deploy the artifact. */
                     pendingToDeployArtifacts.put(contextPath, appArtifact);
@@ -314,14 +322,9 @@ public class ArtifactAppDeployer implements Deployer, UUFAppDeployer, RequiredCa
         log.debug("ArtifactAppDeployer registered as an UUFAppDeployer.");
     }
 
-    private static class AppArtifact {
-
-        private final String appName;
-        private final Artifact artifact;
-
-        public AppArtifact(String appName, Artifact artifact) {
-            this.appName = appName;
-            this.artifact = artifact;
-        }
+    @Deprecated
+    public static boolean isDevModeEnabled() {
+        // TODO: 8/13/16 Remove this when Carbon 'Utils.isDevModeEnabled()' is available in C5.20
+        return DEV_MODE_ENABLED;
     }
 }

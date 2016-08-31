@@ -16,10 +16,66 @@
 
 package org.wso2.carbon.uuf.api;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.wso2.carbon.uuf.core.App;
+import org.wso2.carbon.uuf.core.AppArtifact;
+import org.wso2.carbon.uuf.exception.UUFException;
+import org.wso2.carbon.uuf.internal.RequestDispatcher;
 import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.carbon.uuf.spi.HttpResponse;
 
-public interface ServerConnection {
+import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_BAD_REQUEST;
+import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_INTERNAL_SERVER_ERROR;
+import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_NOT_FOUND;
 
-    HttpResponse serve(HttpRequest request, HttpResponse response);
+public class ServerConnection {
+
+    private static final Logger log = LoggerFactory.getLogger(ServerConnection.class);
+
+    private final String contextPath;
+    private AppArtifact appArtifact;
+    private final RequestDispatcher requestDispatcher;
+
+    public ServerConnection(AppArtifact appArtifact, String contextPath) {
+        this.requestDispatcher = new RequestDispatcher();
+        this.contextPath = contextPath;
+        this.appArtifact = appArtifact;
+    }
+
+    public void serve(HttpRequest request, HttpResponse response) {
+        if (!request.isValid()) {
+            requestDispatcher.serveDefaultErrorPage(STATUS_BAD_REQUEST, "Invalid URI '" + request.getUri() + "'.",
+                                                    response);
+            return;
+        }
+        if (request.isDefaultFaviconRequest()) {
+            requestDispatcher.serveDefaultFavicon(request, response);
+            return;
+        }
+
+        App app = null;
+        try {
+            app = appArtifact.getApp(request.getContextPath()).orElse(null);
+        } catch (UUFException e) {
+            String msg = "A server error occurred while serving for request '" + request + "'.";
+            log.error(msg, e);
+            requestDispatcher.serveDefaultErrorPage(STATUS_INTERNAL_SERVER_ERROR, msg, response);
+        } catch (Exception e) {
+            String msg = "An unexpected error occurred while serving for request '" + request + "'.";
+            log.error(msg, e);
+            requestDispatcher.serveDefaultErrorPage(STATUS_INTERNAL_SERVER_ERROR, msg, response);
+        }
+
+        if (app == null) {
+            requestDispatcher.serveDefaultErrorPage(STATUS_NOT_FOUND, "Cannot find an app for context path '" +
+                    request.getContextPath() + "'.", response);
+        } else {
+            requestDispatcher.serve(app, request, response);
+        }
+    }
+
+    public String getContextPath() {
+        return this.contextPath;
+    }
 }

@@ -24,7 +24,6 @@ import org.wso2.carbon.uuf.core.Component;
 import org.wso2.carbon.uuf.core.Theme;
 import org.wso2.carbon.uuf.exception.FileOperationException;
 import org.wso2.carbon.uuf.exception.ResourceNotFoundException;
-import org.wso2.carbon.uuf.internal.UUFServer;
 import org.wso2.carbon.uuf.internal.io.util.MimeMapper;
 import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.carbon.uuf.spi.HttpResponse;
@@ -77,7 +76,7 @@ public class StaticResolver {
      * The constructor of StaticResolver class
      */
     public StaticResolver() {
-        if (UUFServer.isDevModeEnabled()) {
+        if (ArtifactAppDeployer.isDevModeEnabled()) {
             /*
              * When the dev mode is enabled, we do not cache last modified dates of serving static resources. This is
              * achieved by setting a dummy map to the 'resourcesLastModifiedDates' field. Dummy map does not store any

@@ -20,7 +20,5 @@ import org.wso2.carbon.uuf.api.ServerConnection;
 
 public interface HttpConnector {
 
-    void setServerConnection(ServerConnection serverConnection);
-
-    void registerContextPath(String contextPath);
+    void registerConnection(ServerConnection serverConnection);
 }
