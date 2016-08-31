@@ -34,7 +34,7 @@ public class ServerConnection {
     private static final Logger log = LoggerFactory.getLogger(ServerConnection.class);
 
     private final String contextPath;
-    private AppArtifact appArtifact;
+    private final AppArtifact appArtifact;
     private final RequestDispatcher requestDispatcher;
 
     public ServerConnection(AppArtifact appArtifact, String contextPath) {

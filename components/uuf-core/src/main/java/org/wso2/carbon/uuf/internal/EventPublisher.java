@@ -21,7 +21,7 @@ import org.osgi.util.tracker.ServiceTracker;
 
 public class EventPublisher {
 
-    private ServiceTracker serviceTracker;
+    private final ServiceTracker serviceTracker;
 
     public EventPublisher(BundleContext bundleContext, Class listenerType) {
         this.serviceTracker = new ServiceTracker<>(bundleContext, listenerType, null);
