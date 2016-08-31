@@ -56,7 +56,7 @@ public class ServerConnection {
 
         App app = null;
         try {
-            app = appArtifact.getApp(request.getContextPath()).orElse(null);
+            app = appArtifact.getDeployedApp(request.getContextPath()).orElse(null);
         } catch (UUFException e) {
             String msg = "A server error occurred while serving for request '" + request + "'.";
             log.error(msg, e);

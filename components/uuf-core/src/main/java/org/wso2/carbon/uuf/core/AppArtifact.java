@@ -41,7 +41,7 @@ public class AppArtifact {
         return this.artifact;
     }
 
-    public Optional<App> getApp(String contextPath) {
+    public Optional<App> getDeployedApp(String contextPath) {
         return this.artifactAppDeployer.getApp(contextPath);
     }
 }
