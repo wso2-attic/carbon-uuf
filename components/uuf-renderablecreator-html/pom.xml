@@ -42,6 +42,10 @@
             <groupId>org.wso2.carbon.uuf</groupId>
             <artifactId>org.wso2.carbon.uuf.core</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.wso2.msf4j</groupId>
+            <artifactId>msf4j-core</artifactId>
+        </dependency>
         <!-- Dependencies for tests -->
         <dependency>
             <groupId>org.testng</groupId>
@@ -61,7 +65,8 @@
                             org.wso2.carbon.uuf.*;version="${carbon.uuf.version}",
                             org.osgi.service.component.annotations.*,
                             com.google.common.*;version="${guava.version.range}",
-                            org.slf4j.*;version="${slf4j.version.range}"
+                            org.slf4j.*;version="${slf4j.version.range}",
+                            org.wso2.msf4j; version="${msf4j.version}"
                         </Import-Package>
                         <Private-Package>org.wso2.carbon.uuf.renderablecreator.html.internal.*</Private-Package>
                         <Export-Package>

@@ -18,12 +18,16 @@ package org.wso2.carbon.uuf.core;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
 import org.wso2.carbon.uuf.api.auth.Session;
-import org.wso2.carbon.uuf.spi.auth.User;
 import org.wso2.carbon.uuf.exception.HttpErrorException;
 import org.wso2.carbon.uuf.exception.PageRedirectException;
 import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.internal.core.auth.SessionRegistry;
+import org.wso2.carbon.uuf.spi.auth.User;
+import org.wso2.msf4j.Microservice;
+import org.wso2.msf4j.Request;
 
 import javax.naming.Binding;
 import javax.naming.Context;
@@ -122,6 +126,8 @@ public class API {
 
     public static void callMicroService() {
         // TODO: 5/16/16 Call a Microservice through OSGi or network-call accrodingly
+//        BundleContext bundleContext = FrameworkUtil.getBundle(API.class).getBundleContext();
+//        Object x = bundleContext.getService(bundleContext.getServiceReference(Microservice.class));
         throw new UnsupportedOperationException("To be implemented");
     }
 
@@ -142,10 +148,19 @@ public class API {
         throw new PageRedirectException(redirectUrl);
     }
 
+    public String getSessionData(Request request) {
+        String cookie = request.getHeader("Cookie");
+        String first = cookie.substring(cookie.indexOf("UUFSESSIONID"));
+        String uufSessionId = first.substring(13, first.indexOf(";"));
+        Session session = this.sessionRegistry.getSession(uufSessionId).orElse(null);
+        String userName = session.getUser().getUsername();
+        return userName;
+    }
+
     /**
      * Creates a new session and returns it.
      *
-     * @param userName user name
+     * @param user User object
      * @return newly created session
      */
     public Session createSession(User user) {
