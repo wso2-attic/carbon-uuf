@@ -16,7 +16,12 @@
 
 package org.wso2.carbon.uuf.internal.core.auth;
 
+import org.osgi.framework.BundleContext;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.api.auth.Session;
 import org.wso2.carbon.uuf.exception.UUFException;
 
@@ -36,6 +41,7 @@ import java.util.Optional;
            immediate = true)
 public class SessionRegistry implements Closeable {
 
+    private static final Logger log = LoggerFactory.getLogger(SessionHandler.class);
     public static final String SESSION_COOKIE_NAME = "UUFSESSIONID";
     private static final Object LOCK = new Object();
 
@@ -112,5 +118,15 @@ public class SessionRegistry implements Closeable {
     protected void finalize() throws Throwable {
         close();
         super.finalize();
+    }
+
+    @Activate
+    protected void activate(BundleContext bundleContext) {
+        log.debug("SessionRegistry activated.");
+    }
+
+    @Deactivate
+    protected void deactivate() {
+        log.debug("SessionRegistry deactivated.");
     }
 }
