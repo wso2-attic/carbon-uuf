@@ -33,16 +33,16 @@ import org.wso2.carbon.deployment.engine.exception.CarbonDeploymentException;
 import org.wso2.carbon.kernel.startupresolver.RequiredCapabilityListener;
 import org.wso2.carbon.uuf.api.ServerConnection;
 import org.wso2.carbon.uuf.core.App;
-import org.wso2.carbon.uuf.core.AppArtifact;
 import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.internal.EventPublisher;
+import org.wso2.carbon.uuf.internal.UUFServer;
 import org.wso2.carbon.uuf.internal.core.create.AppCreator;
 import org.wso2.carbon.uuf.internal.core.create.ClassLoaderProvider;
 import org.wso2.carbon.uuf.internal.io.util.ZipArtifactHandler;
 import org.wso2.carbon.uuf.internal.util.NameUtils;
 import org.wso2.carbon.uuf.spi.HttpConnector;
 import org.wso2.carbon.uuf.spi.RenderableCreator;
-import org.wso2.carbon.uuf.spi.UUFAppDeployer;
+import org.wso2.carbon.uuf.spi.UUFAppRegistry;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -65,14 +65,9 @@ import java.util.concurrent.ConcurrentMap;
         }
 )
 @SuppressWarnings("unused")
-public class ArtifactAppDeployer implements Deployer, UUFAppDeployer, RequiredCapabilityListener {
+public class ArtifactAppDeployer implements Deployer, UUFAppRegistry, RequiredCapabilityListener {
 
     private static final Logger log = LoggerFactory.getLogger(ArtifactAppDeployer.class);
-    private static final boolean DEV_MODE_ENABLED;
-
-    static {
-        DEV_MODE_ENABLED = Boolean.parseBoolean(System.getProperties().getProperty("devmode", "false"));
-    }
 
     private final ArtifactType artifactType;
     private final URL location;
@@ -135,15 +130,14 @@ public class ArtifactAppDeployer implements Deployer, UUFAppDeployer, RequiredCa
                             "' as another app is already registered for the same context path.");
         }
 
-        AppArtifact appArtifact = new AppArtifact(appNameContextPath.getLeft(), artifact, this);
-
-        for (Object o : eventPublisher.getServiceTracker().getServices()) {
+        for (Object o : eventPublisher.getTrackerServices()) {
             HttpConnector httpConnector = (HttpConnector) o;
-            ServerConnection serverConnection = new ServerConnection(appArtifact, appNameContextPath.getRight());
+            ServerConnection serverConnection = new ServerConnection(appNameContextPath.getRight(), this);
             httpConnector.registerConnection(serverConnection);
         }
 
-        pendingToDeployArtifacts.put(appNameContextPath.getRight(), appArtifact);
+        pendingToDeployArtifacts.put(appNameContextPath.getRight(),
+                                     new AppArtifact(appNameContextPath.getLeft(), artifact));
         log.debug("UUF app '" + appNameContextPath.getLeft() + "' added to the pending deployments list.");
         return appNameContextPath.getLeft();
     }
@@ -187,11 +181,12 @@ public class ArtifactAppDeployer implements Deployer, UUFAppDeployer, RequiredCa
         // App with 'appName' is not deployed yet.
         for (Map.Entry<String, AppArtifact> entry : pendingToDeployArtifacts.entrySet()) {
             AppArtifact appArtifact = entry.getValue();
-            if (appArtifact.getAppName().equals(appName)) {
+            if (appArtifact.appName.equals(appName)) {
                 pendingToDeployArtifacts.remove(entry.getKey());
-                log.info("UUF app in '" + appArtifact.getArtifact().getPath() + "' removed even before it deployed.");
+                log.info("UUF app in '" + appArtifact.artifact.getPath() + "' removed even before it deployed.");
                 return;
             }
+
         }
     }
 
@@ -226,7 +221,7 @@ public class ArtifactAppDeployer implements Deployer, UUFAppDeployer, RequiredCa
         App createdApp;
         synchronized (lock) {
             AppArtifact appArtifact = pendingToDeployArtifacts.remove(contextPath);
-            Artifact artifact = appArtifact.getArtifact();
+            Artifact artifact = appArtifact.artifact;
             if (artifact == null) {
                 // App is deployed before acquiring the lock.
                 return deployedApps.get(contextPath);
@@ -237,10 +232,10 @@ public class ArtifactAppDeployer implements Deployer, UUFAppDeployer, RequiredCa
                 return null;
             }
             try {
-                createdApp = createApp(appArtifact.getAppName(), contextPath, artifact);
+                createdApp = createApp(appArtifact.appName, contextPath, artifact);
             } catch (Exception e) {
                 // catching any/all exception/s
-                if (isDevModeEnabled()) {
+                if (UUFServer.isDevModeEnabled()) {
                     /* If the server is in the developer mode, add the artifact back to the 'pendingToDeployArtifacts'
                     map so the developer can correct the error and attempt to re-deploy the artifact. */
                     pendingToDeployArtifacts.put(contextPath, appArtifact);
@@ -299,14 +294,14 @@ public class ArtifactAppDeployer implements Deployer, UUFAppDeployer, RequiredCa
     protected void activate(BundleContext bundleContext) {
         this.bundleContext = bundleContext;
         eventPublisher = new EventPublisher(bundleContext, HttpConnector.class);
-        eventPublisher.getServiceTracker().open();
+        eventPublisher.openTracker();
         log.debug("ArtifactAppDeployer service activated.");
     }
 
     @Deactivate
     protected void deactivate(BundleContext bundleContext) {
         this.bundleContext = null;
-        eventPublisher.getServiceTracker().close();
+        eventPublisher.closeTracker();
         log.debug("ArtifactAppDeployer service deactivated.");
     }
 
@@ -318,13 +313,18 @@ public class ArtifactAppDeployer implements Deployer, UUFAppDeployer, RequiredCa
         bundleContext.registerService(Deployer.class, this, null);
         log.info("UUF ArtifactAppDeployer registered as a Carbon artifact deployer.");
 
-        bundleContext.registerService(UUFAppDeployer.class, this, null);
-        log.debug("ArtifactAppDeployer registered as an UUFAppDeployer.");
+        bundleContext.registerService(UUFAppRegistry.class, this, null);
+        log.debug("ArtifactAppDeployer registered as an UUFAppRegistry.");
     }
 
-    @Deprecated
-    public static boolean isDevModeEnabled() {
-        // TODO: 8/13/16 Remove this when Carbon 'Utils.isDevModeEnabled()' is available in C5.20
-        return DEV_MODE_ENABLED;
+    private static class AppArtifact {
+
+        private final String appName;
+        private final Artifact artifact;
+
+        public AppArtifact(String appName, Artifact artifact) {
+            this.appName = appName;
+            this.artifact = artifact;
+        }
     }
 }

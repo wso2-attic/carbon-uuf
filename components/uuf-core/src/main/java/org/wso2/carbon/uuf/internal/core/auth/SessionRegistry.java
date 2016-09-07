@@ -16,6 +16,7 @@
 
 package org.wso2.carbon.uuf.internal.core.auth;
 
+import org.osgi.service.component.annotations.Component;
 import org.wso2.carbon.uuf.api.auth.Session;
 import org.wso2.carbon.uuf.exception.UUFException;
 
@@ -30,6 +31,9 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.util.Optional;
 
+@Component(name = "org.wso2.carbon.uuf.internal.core.auth.SessionRegistry",
+           service = {SessionRegistry.class},
+           immediate = true)
 public class SessionRegistry implements Closeable {
 
     public static final String SESSION_COOKIE_NAME = "UUFSESSIONID";

@@ -14,28 +14,14 @@
  *  limitations under the License.
  */
 
-package org.wso2.carbon.uuf.internal;
+package org.wso2.carbon.uuf.spi;
 
-import org.osgi.framework.BundleContext;
-import org.osgi.util.tracker.ServiceTracker;
+import org.wso2.carbon.uuf.core.App;
 
-public class EventPublisher {
+import java.util.Optional;
 
-    private final ServiceTracker serviceTracker;
+public interface UUFAppRegistry {
 
-    public EventPublisher(BundleContext bundleContext, Class listenerType) {
-        this.serviceTracker = new ServiceTracker<>(bundleContext, listenerType, null);
-    }
-
-    public void openTracker() {
-        this.serviceTracker.open();
-    }
-
-    public void closeTracker() {
-        this.serviceTracker.close();
-    }
-
-    public Object[] getTrackerServices() {
-        return this.serviceTracker.getServices();
-    }
+    Optional<App> getApp(String contextPath);
 }
+
