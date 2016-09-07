@@ -19,11 +19,13 @@ package org.wso2.carbon.uuf.internal;
 import org.osgi.framework.BundleContext;
 import org.osgi.util.tracker.ServiceTracker;
 
-public class EventPublisher {
+import java.util.function.Consumer;
+
+public class EventPublisher<T> {
 
     private final ServiceTracker serviceTracker;
 
-    public EventPublisher(BundleContext bundleContext, Class listenerType) {
+    public EventPublisher(BundleContext bundleContext, Class<T> listenerType) {
         this.serviceTracker = new ServiceTracker<>(bundleContext, listenerType, null);
     }
 
@@ -35,7 +37,9 @@ public class EventPublisher {
         this.serviceTracker.close();
     }
 
-    public Object[] getTrackerServices() {
-        return this.serviceTracker.getServices();
+    public void publish(Consumer<T> consumer) {
+        for (T service : (T[]) this.serviceTracker.getServices()) {
+            consumer.accept(service);
+        }
     }
 }

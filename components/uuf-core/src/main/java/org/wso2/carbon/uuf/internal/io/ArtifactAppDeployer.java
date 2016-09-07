@@ -130,11 +130,11 @@ public class ArtifactAppDeployer implements Deployer, UUFAppRegistry, RequiredCa
                             "' as another app is already registered for the same context path.");
         }
 
-        for (Object o : eventPublisher.getTrackerServices()) {
-            HttpConnector httpConnector = (HttpConnector) o;
+        eventPublisher.publish((service) -> {
+            HttpConnector httpConnector = (HttpConnector) service;
             ServerConnection serverConnection = new ServerConnection(appNameContextPath.getRight(), this);
             httpConnector.registerConnection(serverConnection);
-        }
+        });
 
         pendingToDeployArtifacts.put(appNameContextPath.getRight(),
                                      new AppArtifact(appNameContextPath.getLeft(), artifact));
@@ -293,7 +293,7 @@ public class ArtifactAppDeployer implements Deployer, UUFAppRegistry, RequiredCa
     @Activate
     protected void activate(BundleContext bundleContext) {
         this.bundleContext = bundleContext;
-        eventPublisher = new EventPublisher(bundleContext, HttpConnector.class);
+        eventPublisher = new EventPublisher<>(bundleContext, HttpConnector.class);
         eventPublisher.openTracker();
         log.debug("ArtifactAppDeployer service activated.");
     }
