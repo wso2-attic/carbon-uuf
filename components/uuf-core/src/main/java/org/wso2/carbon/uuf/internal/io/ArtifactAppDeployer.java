@@ -130,15 +130,14 @@ public class ArtifactAppDeployer implements Deployer, UUFAppRegistry, RequiredCa
                             "' as another app is already registered for the same context path.");
         }
 
-        AppArtifact appArtifact = new AppArtifact(appNameContextPath.getLeft(), artifact);
-
         for (Object o : eventPublisher.getTrackerServices()) {
             HttpConnector httpConnector = (HttpConnector) o;
             ServerConnection serverConnection = new ServerConnection(appNameContextPath.getRight(), this);
             httpConnector.registerConnection(serverConnection);
         }
 
-        pendingToDeployArtifacts.put(appNameContextPath.getRight(), appArtifact);
+        pendingToDeployArtifacts.put(appNameContextPath.getRight(),
+                                     new AppArtifact(appNameContextPath.getLeft(), artifact));
         log.debug("UUF app '" + appNameContextPath.getLeft() + "' added to the pending deployments list.");
         return appNameContextPath.getLeft();
     }
