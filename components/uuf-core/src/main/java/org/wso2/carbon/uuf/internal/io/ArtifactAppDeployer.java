@@ -183,12 +183,11 @@ public class ArtifactAppDeployer implements Deployer, UUFAppRegistry, RequiredCa
         for (Map.Entry<String, AppArtifact> entry : pendingToDeployArtifacts.entrySet()) {
             AppArtifact appArtifact = entry.getValue();
             if (appArtifact.appName.equals(appName)) {
-                if (appArtifact.appName.equals(appName)) {
-                    pendingToDeployArtifacts.remove(entry.getKey());
-                    log.info("UUF app in '" + appArtifact.artifact.getPath() + "' removed even before it deployed.");
-                    return;
-                }
+                pendingToDeployArtifacts.remove(entry.getKey());
+                log.info("UUF app in '" + appArtifact.artifact.getPath() + "' removed even before it deployed.");
+                return;
             }
+
         }
     }
 
