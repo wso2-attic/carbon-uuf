@@ -30,7 +30,7 @@ import org.wso2.msf4j.Microservice;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
-@Component(name = "MSF4JHttpConnector",
+@Component(name = "org.wso2.carbon.uuf.httpconnector.msf4j.internal.MSF4JHttpConnector",
            service = {HttpConnector.class},
            immediate = true)
 @SuppressWarnings("unused")
