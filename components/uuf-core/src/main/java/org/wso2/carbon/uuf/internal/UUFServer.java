@@ -14,14 +14,19 @@
  *  limitations under the License.
  */
 
-package org.wso2.carbon.uuf.spi;
+package org.wso2.carbon.uuf.internal;
 
-import org.wso2.carbon.uuf.core.App;
+public class UUFServer {
 
-import java.util.Optional;
+    private static final boolean DEV_MODE_ENABLED;
 
-public interface UUFAppDeployer {
+    static {
+        DEV_MODE_ENABLED = Boolean.parseBoolean(System.getProperties().getProperty("devmode", "false"));
+    }
 
-    Optional<App> getApp(String contextPath);
+    @Deprecated
+    public static boolean isDevModeEnabled() {
+        // TODO: 8/13/16 Remove this when Carbon 'Utils.isDevModeEnabled()' is available in C5.20
+        return DEV_MODE_ENABLED;
+    }
 }
-

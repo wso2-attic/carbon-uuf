@@ -19,11 +19,11 @@ package org.wso2.carbon.uuf.api;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.core.App;
-import org.wso2.carbon.uuf.core.AppArtifact;
 import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.internal.RequestDispatcher;
 import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.carbon.uuf.spi.HttpResponse;
+import org.wso2.carbon.uuf.spi.UUFAppRegistry;
 
 import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_BAD_REQUEST;
 import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_INTERNAL_SERVER_ERROR;
@@ -34,13 +34,13 @@ public class ServerConnection {
     private static final Logger log = LoggerFactory.getLogger(ServerConnection.class);
 
     private final String contextPath;
-    private final AppArtifact appArtifact;
     private final RequestDispatcher requestDispatcher;
+    private final UUFAppRegistry uufAppRegistry;
 
-    public ServerConnection(AppArtifact appArtifact, String contextPath) {
+    public ServerConnection(String contextPath, UUFAppRegistry uufAppRegistry) {
         this.requestDispatcher = new RequestDispatcher();
         this.contextPath = contextPath;
-        this.appArtifact = appArtifact;
+        this.uufAppRegistry = uufAppRegistry;
     }
 
     public void serve(HttpRequest request, HttpResponse response) {
@@ -56,7 +56,7 @@ public class ServerConnection {
 
         App app = null;
         try {
-            app = appArtifact.getDeployedApp(request.getContextPath()).orElse(null);
+            app = uufAppRegistry.getApp(request.getContextPath()).orElse(null);
         } catch (UUFException e) {
             String msg = "A server error occurred while serving for request '" + request + "'.";
             log.error(msg, e);
