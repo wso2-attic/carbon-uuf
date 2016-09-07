@@ -26,20 +26,19 @@ public class EventPublisher<T> {
     private final ServiceTracker serviceTracker;
 
     public EventPublisher(BundleContext bundleContext, Class<T> listenerType) {
-        this.serviceTracker = new ServiceTracker<>(bundleContext, listenerType, null);
-    }
-
-    public void openTracker() {
+        this.serviceTracker = new ServiceTracker<T, T>(bundleContext, listenerType, null);
         this.serviceTracker.open();
-    }
-
-    public void closeTracker() {
-        this.serviceTracker.close();
     }
 
     public void publish(Consumer<T> consumer) {
         for (T service : (T[]) this.serviceTracker.getServices()) {
             consumer.accept(service);
         }
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        this.serviceTracker.close();
+        super.finalize();
     }
 }
