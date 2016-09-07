@@ -1,0 +1,20 @@
+{{secured}}
+{{layout "org.wso2.carbon.uuf.sample.foundation.main"}}
+{{favicon "images/favicon.png" type="image/png"}}
+{{title "Hello | " @config.appName}}
+{{js "js/hello.js"}}
+{{js "js/jquery-v2.2.3/jquery.min.js"}}
+
+{{#fillZone "content"}}
+    <div class="page-header">
+        <h1>{{t "pets-store.hello.service"}}</h1>
+        <p class="lead">{{t "pets-store.hello.service.message"}}</p>
+    </div>
+    <div>
+        <p><a href="#" onClick="callHello();">Click Me</a></p>
+    </div>
+
+{{/fillZone}}
+<!--<script type="text/javascript">-->
+    <!--var userName = userName;-->
+<!--</script>-->
