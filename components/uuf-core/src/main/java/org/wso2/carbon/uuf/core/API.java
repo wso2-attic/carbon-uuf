@@ -152,15 +152,6 @@ public class API {
         throw new PageRedirectException(redirectUrl);
     }
 
-//    @Reference(name = "sessionRegistry",
-//               service = SessionRegistry.class,
-//               cardinality = ReferenceCardinality.MANDATORY,
-//               policy = ReferencePolicy.DYNAMIC,
-//               unbind = "unsetSessionRegistry")
-//    public void setSessionRegistry(SessionRegistry sessionRegistry) {
-//        this.sessionRegistry = sessionRegistry;
-//    }
-
     public String getSessionData(Request request) {
         String cookie = request.getHeader("Cookie");
         String first = cookie.substring(cookie.indexOf("UUFSESSIONID"));

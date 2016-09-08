@@ -38,7 +38,7 @@ import java.io.IOException;
 import java.util.Optional;
 
 @Component(name = "org.wso2.carbon.uuf.internal.core.auth.SessionRegistry",
-           service = {SessionRegistry.class},
+           service = {SessionHandler.class},
            immediate = true)
 public class SessionRegistry implements Closeable, SessionHandler {
 
