@@ -23,6 +23,7 @@ import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.internal.RequestDispatcher;
 import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.carbon.uuf.spi.HttpResponse;
+import org.wso2.carbon.uuf.spi.SessionHandler;
 import org.wso2.carbon.uuf.spi.UUFAppRegistry;
 
 import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_BAD_REQUEST;
@@ -36,11 +37,13 @@ public class ServerConnection {
     private final String contextPath;
     private final RequestDispatcher requestDispatcher;
     private final UUFAppRegistry uufAppRegistry;
+    private final SessionHandler sessionHandler;
 
-    public ServerConnection(String contextPath, UUFAppRegistry uufAppRegistry) {
+    public ServerConnection(String contextPath, UUFAppRegistry uufAppRegistry, SessionHandler sessionHandler) {
         this.requestDispatcher = new RequestDispatcher();
         this.contextPath = contextPath;
         this.uufAppRegistry = uufAppRegistry;
+        this.sessionHandler = sessionHandler;
     }
 
     public void serve(HttpRequest request, HttpResponse response) {

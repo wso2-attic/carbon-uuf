@@ -20,11 +20,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
 import org.wso2.carbon.uuf.api.auth.Session;
 import org.wso2.carbon.uuf.exception.HttpErrorException;
 import org.wso2.carbon.uuf.exception.PageRedirectException;
 import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.internal.core.auth.SessionRegistry;
+import org.wso2.carbon.uuf.spi.SessionHandler;
 import org.wso2.carbon.uuf.spi.auth.User;
 import org.wso2.msf4j.Microservice;
 import org.wso2.msf4j.Request;
@@ -42,11 +46,11 @@ import java.util.Optional;
 @SuppressWarnings("PackageAccessibility")
 public class API {
 
-    private final SessionRegistry sessionRegistry;
+    private SessionHandler sessionRegistry;
     private final RequestLookup requestLookup;
     private Optional<Session> currentSession;
 
-    API(SessionRegistry sessionRegistry, RequestLookup requestLookup) {
+    API(SessionHandler sessionRegistry, RequestLookup requestLookup) {
         this.sessionRegistry = sessionRegistry;
         this.requestLookup = requestLookup;
         this.currentSession = Optional.<Session>empty();
@@ -147,6 +151,15 @@ public class API {
         }
         throw new PageRedirectException(redirectUrl);
     }
+
+//    @Reference(name = "sessionRegistry",
+//               service = SessionRegistry.class,
+//               cardinality = ReferenceCardinality.MANDATORY,
+//               policy = ReferencePolicy.DYNAMIC,
+//               unbind = "unsetSessionRegistry")
+//    public void setSessionRegistry(SessionRegistry sessionRegistry) {
+//        this.sessionRegistry = sessionRegistry;
+//    }
 
     public String getSessionData(Request request) {
         String cookie = request.getHeader("Cookie");

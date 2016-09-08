@@ -45,8 +45,8 @@ public class HelloService implements Microservice {
     @Path("/say")
     public String hello(@Context Request request)  {
         System.out.println("Hello");
-        String userName = API.getSessionData(request);
+        //String userName = API.getSessionData(request);
         BundleContext bundleContext1 = this.bundleContext;
-        return "Hello " + userName;
+        return "Hello ";// + userName;
     }
 }

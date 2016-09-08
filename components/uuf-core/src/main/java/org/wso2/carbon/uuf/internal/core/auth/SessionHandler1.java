@@ -9,7 +9,7 @@ import org.wso2.msf4j.Request;
 import org.wso2.msf4j.Response;
 import org.wso2.msf4j.ServiceMethodInfo;
 
-public class SessionHandler implements Interceptor {
+public class SessionHandler1 implements Interceptor {
 
 
     private SessionRegistry sessionRegistry;
@@ -21,24 +21,28 @@ public class SessionHandler implements Interceptor {
         String uufSessionId = first.substring(13, first.indexOf(";"));
         Session session = this.sessionRegistry.getSession(uufSessionId).orElse(null);
         String userName = session.getUser().getUsername();
-        return false;
+        return true;
     }
 
     @Override
     public void postCall(Request request, int status, ServiceMethodInfo serviceMethodInfo) throws Exception {
-
+        System.out.println("** post call");
     }
 
-    @Reference(name = "sessionRegistry",
-               service = SessionRegistry.class,
-               cardinality = ReferenceCardinality.MANDATORY,
-               policy = ReferencePolicy.DYNAMIC,
-               unbind = "unsetSessionRegistry")
-    public void setSessionRegistry(SessionRegistry sessionRegistry) {
-        this.sessionRegistry = sessionRegistry;
-    }
+//    @Reference(name = "sessionRegistry",
+//               service = SessionRegistry.class,
+//               cardinality = ReferenceCardinality.MANDATORY,
+//               policy = ReferencePolicy.DYNAMIC,
+//               unbind = "unsetSessionRegistry")
+//    public void setSessionRegistry(SessionRegistry sessionRegistry) {
+//        this.sessionRegistry = sessionRegistry;
+//    }
 
     public void unsetSessionRegistry() {
         this.sessionRegistry = null;
+    }
+
+    public boolean isValid(String sessionId) {
+        return true;
     }
 }

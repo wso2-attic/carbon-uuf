@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.api.auth.Session;
 import org.wso2.carbon.uuf.exception.UUFException;
+import org.wso2.carbon.uuf.spi.SessionHandler;
 
 import javax.cache.Cache;
 import javax.cache.CacheException;
@@ -39,9 +40,9 @@ import java.util.Optional;
 @Component(name = "org.wso2.carbon.uuf.internal.core.auth.SessionRegistry",
            service = {SessionRegistry.class},
            immediate = true)
-public class SessionRegistry implements Closeable {
+public class SessionRegistry implements Closeable, SessionHandler {
 
-    private static final Logger log = LoggerFactory.getLogger(SessionHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(SessionHandler1.class);
     public static final String SESSION_COOKIE_NAME = "UUFSESSIONID";
     private static final Object LOCK = new Object();
 
@@ -74,7 +75,8 @@ public class SessionRegistry implements Closeable {
         }
     }
 
-    public SessionRegistry(String appName) {
+    public SessionRegistry() {
+        String appName = "name1";
         MutableConfiguration<String, Session> cacheConfig = new MutableConfiguration<>();
         cacheConfig.setTypes(String.class, Session.class);
         cacheConfig.setStoreByValue(false);
@@ -84,10 +86,12 @@ public class SessionRegistry implements Closeable {
         cache = getCache(cacheName, cacheConfig);
     }
 
+    @Override
     public void addSession(Session session) {
         cache.put(session.getSessionId(), session);
     }
 
+    @Override
     public Optional<Session> getSession(String sessionId) {
         if (!Session.isValidSessionId(sessionId)) {
             throw new IllegalArgumentException("Session ID '" + sessionId + "' is invalid.");
@@ -95,11 +99,17 @@ public class SessionRegistry implements Closeable {
         return Optional.ofNullable(cache.get(sessionId));
     }
 
+    @Override
     public boolean removeSession(String sessionId) {
         if (!Session.isValidSessionId(sessionId)) {
             throw new IllegalArgumentException("Session ID '" + sessionId + "' is invalid.");
         }
         return cache.remove(sessionId);
+    }
+
+    @Override
+    public boolean validateSession(String sessionId) {
+        return false;
     }
 
     public void removeAllSessions() {

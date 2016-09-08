@@ -30,6 +30,7 @@ import org.wso2.carbon.uuf.internal.util.NameUtils;
 import org.wso2.carbon.uuf.internal.util.UriUtils;
 import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.carbon.uuf.spi.HttpResponse;
+import org.wso2.carbon.uuf.spi.SessionHandler;
 import org.wso2.carbon.uuf.spi.model.Model;
 
 import java.util.HashMap;
@@ -49,9 +50,9 @@ public class App {
     private final Map<String, Theme> themes;
     private final Theme defaultTheme;
     private final Configuration configuration;
-    private final SessionRegistry sessionRegistry;
+    private final SessionHandler sessionRegistry;
 
-    public App(String name, String contextPath, Lookup lookup, Set<Theme> themes, SessionRegistry sessionRegistry) {
+    public App(String name, String contextPath, Lookup lookup, Set<Theme> themes, SessionHandler sessionRegistry) {
         this.name = name;
         this.contextPath = contextPath;
         this.lookup = lookup;
