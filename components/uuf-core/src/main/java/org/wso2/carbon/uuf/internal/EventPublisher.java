@@ -31,8 +31,11 @@ public class EventPublisher<T> {
     }
 
     public void publish(Consumer<T> consumer) {
-        for (T service : (T[]) this.serviceTracker.getServices()) {
-            consumer.accept(service);
+        T[] services = (T[]) this.serviceTracker.getServices();
+        if (services != null) {
+            for (T service : services) {
+                consumer.accept(service);
+            }
         }
     }
 
