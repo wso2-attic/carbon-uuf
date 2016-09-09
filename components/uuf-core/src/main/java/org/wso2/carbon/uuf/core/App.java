@@ -30,7 +30,6 @@ import org.wso2.carbon.uuf.internal.util.NameUtils;
 import org.wso2.carbon.uuf.internal.util.UriUtils;
 import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.carbon.uuf.spi.HttpResponse;
-import org.wso2.carbon.uuf.spi.SessionHandler;
 import org.wso2.carbon.uuf.spi.model.Model;
 
 import java.util.HashMap;
@@ -50,14 +49,14 @@ public class App {
     private final Map<String, Theme> themes;
     private final Theme defaultTheme;
     private final Configuration configuration;
-    private final SessionHandler sessionRegistry;
+   // private final SessionRegistry sessionRegistry;
 
-    public App(String name, String contextPath, Lookup lookup, Set<Theme> themes, SessionHandler sessionRegistry) {
+    public App(String name, String contextPath, Lookup lookup, Set<Theme> themes) {
         this.name = name;
         this.contextPath = contextPath;
         this.lookup = lookup;
         this.configuration = this.lookup.getConfiguration();
-        this.sessionRegistry = sessionRegistry;
+       // this.sessionRegistry = sessionRegistry;
 
         this.components = this.lookup.getAllComponents().values().stream()
                 .collect(Collectors.toMap(Component::getContextPath, cmp -> cmp));
@@ -111,7 +110,7 @@ public class App {
      */
     public String renderPage(HttpRequest request, HttpResponse response) {
         RequestLookup requestLookup = createRequestLookup(request, response);
-        API api = new API(sessionRegistry, requestLookup);
+        API api = new API(requestLookup);
         Theme theme = getRenderingTheme(api);
         try {
             return renderPageUri(request.getUriWithoutContextPath(), null, requestLookup, api, theme);
@@ -189,7 +188,7 @@ public class App {
 
         Model model = new MapModel(request.getQueryParams());
         RequestLookup requestLookup = createRequestLookup(request, response);
-        API api = new API(sessionRegistry, requestLookup);
+        API api = new API(requestLookup);
         return fragment.render(model, lookup, requestLookup, api);
     }
 

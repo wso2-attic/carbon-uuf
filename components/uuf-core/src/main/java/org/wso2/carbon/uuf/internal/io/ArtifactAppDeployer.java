@@ -36,14 +36,12 @@ import org.wso2.carbon.uuf.core.App;
 import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.internal.EventPublisher;
 import org.wso2.carbon.uuf.internal.UUFServer;
-import org.wso2.carbon.uuf.internal.core.auth.SessionRegistry;
 import org.wso2.carbon.uuf.internal.core.create.AppCreator;
 import org.wso2.carbon.uuf.internal.core.create.ClassLoaderProvider;
 import org.wso2.carbon.uuf.internal.io.util.ZipArtifactHandler;
 import org.wso2.carbon.uuf.internal.util.NameUtils;
 import org.wso2.carbon.uuf.spi.HttpConnector;
 import org.wso2.carbon.uuf.spi.RenderableCreator;
-import org.wso2.carbon.uuf.spi.SessionHandler;
 import org.wso2.carbon.uuf.spi.UUFAppRegistry;
 
 import java.net.MalformedURLException;
@@ -81,7 +79,6 @@ public class ArtifactAppDeployer implements Deployer, UUFAppRegistry, RequiredCa
     private EventPublisher<HttpConnector> eventPublisher;
     private AppCreator appCreator;
     private BundleContext bundleContext;
-    private SessionHandler sessionRegistry;
 
     public ArtifactAppDeployer() {
         this(new BundleClassLoaderProvider());
@@ -134,7 +131,7 @@ public class ArtifactAppDeployer implements Deployer, UUFAppRegistry, RequiredCa
         }
 
         eventPublisher.publish(httpConnector -> httpConnector
-                .registerConnection(new ServerConnection(appNameContextPath.getRight(), this, sessionRegistry)));
+                .registerConnection(new ServerConnection(appNameContextPath.getRight(), this)));
 
         pendingToDeployArtifacts.put(appNameContextPath.getRight(),
                                      new AppArtifact(appNameContextPath.getLeft(), artifact));
@@ -256,7 +253,7 @@ public class ArtifactAppDeployer implements Deployer, UUFAppRegistry, RequiredCa
         } else {
             appReference = new ArtifactAppReference(Paths.get(artifact.getPath()));
         }
-        return appCreator.createApp(appReference, appContextPath, sessionRegistry);
+        return appCreator.createApp(appReference, appContextPath);
     }
 
     /**
@@ -288,19 +285,6 @@ public class ArtifactAppDeployer implements Deployer, UUFAppRegistry, RequiredCa
         renderableCreators.remove(renderableCreator);
         log.info("RenderableCreator " + renderableCreator.getClass().getName() + " unregistered for " +
                          renderableCreator.getSupportedFileExtensions() + " extensions.");
-    }
-
-    @Reference(name = "sessionRegistry",
-               service = SessionHandler.class,
-               cardinality = ReferenceCardinality.MANDATORY,
-               policy = ReferencePolicy.DYNAMIC,
-               unbind = "unsetSessionRegistry")
-    public void setSessionRegistry(SessionHandler sessionRegistry) {
-        this.sessionRegistry = sessionRegistry;
-    }
-
-    public void unsetSessionRegistry(SessionHandler sessionRegistry) {
-        this.sessionRegistry = null;
     }
 
     @Activate

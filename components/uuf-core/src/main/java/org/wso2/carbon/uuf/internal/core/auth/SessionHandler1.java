@@ -19,7 +19,8 @@ public class SessionHandler1 implements Interceptor {
         String cookie = request.getHeader("Cookie");
         String first = cookie.substring(cookie.indexOf("UUFSESSIONID"));
         String uufSessionId = first.substring(13, first.indexOf(";"));
-        Session session = this.sessionRegistry.getSession(uufSessionId).orElse(null);
+        String contxtPath = "/pets-store";
+        Session session = this.sessionRegistry.getSession(uufSessionId, contxtPath).orElse(null);
         String userName = session.getUser().getUsername();
         return true;
     }

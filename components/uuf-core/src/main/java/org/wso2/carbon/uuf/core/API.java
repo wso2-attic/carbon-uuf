@@ -18,11 +18,6 @@ package org.wso2.carbon.uuf.core;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.FrameworkUtil;
-import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
-import org.osgi.service.component.annotations.ReferencePolicy;
 import org.wso2.carbon.uuf.api.auth.Session;
 import org.wso2.carbon.uuf.exception.HttpErrorException;
 import org.wso2.carbon.uuf.exception.PageRedirectException;
@@ -30,7 +25,6 @@ import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.internal.core.auth.SessionRegistry;
 import org.wso2.carbon.uuf.spi.SessionHandler;
 import org.wso2.carbon.uuf.spi.auth.User;
-import org.wso2.msf4j.Microservice;
 import org.wso2.msf4j.Request;
 
 import javax.naming.Binding;
@@ -46,12 +40,12 @@ import java.util.Optional;
 @SuppressWarnings("PackageAccessibility")
 public class API {
 
-    private SessionHandler sessionRegistry;
+   // private SessionHandler sessionRegistry;
     private final RequestLookup requestLookup;
     private Optional<Session> currentSession;
 
-    API(SessionHandler sessionRegistry, RequestLookup requestLookup) {
-        this.sessionRegistry = sessionRegistry;
+    API(RequestLookup requestLookup) {
+       // this.sessionRegistry = (SessionHandler) getSessionRegistryService("getSession");
         this.requestLookup = requestLookup;
         this.currentSession = Optional.<Session>empty();
     }
@@ -156,9 +150,14 @@ public class API {
         String cookie = request.getHeader("Cookie");
         String first = cookie.substring(cookie.indexOf("UUFSESSIONID"));
         String uufSessionId = first.substring(13, first.indexOf(";"));
-        Session session = this.sessionRegistry.getSession(uufSessionId).orElse(null);
+        Session session = (Session) getSessionRegistryService("getSession", uufSessionId);
+                //this.sessionRegistry.getSession(uufSessionId).orElse(null);
         String userName = session.getUser().getUsername();
         return userName;
+    }
+
+    public Object getSessionRegistryService(String methodName, Object... args) {
+        return  callOSGiService("org.wso2.carbon.uuf.internal.core.auth.SessionHandler", methodName, args);
     }
 
     /**
@@ -170,7 +169,8 @@ public class API {
     public Session createSession(User user) {
         destroySession();
         Session session = new Session(user);
-        sessionRegistry.addSession(session);
+        //sessionRegistry.addSession(session);
+        getSessionRegistryService("addSession", session);
         String header = SessionRegistry.SESSION_COOKIE_NAME + "=" + session.getSessionId() + "; Path=" +
                 requestLookup.getContextPath() + "; Secure; HTTPOnly";
         requestLookup.getResponse().setHeader("Set-Cookie", header);
@@ -182,7 +182,8 @@ public class API {
             // Since an API object lives in the request scope, it is safe to cache the current Session object.
             String sessionId = requestLookup.getRequest().getCookieValue(SessionRegistry.SESSION_COOKIE_NAME);
             if (!StringUtils.isEmpty(sessionId)) {
-                currentSession = sessionRegistry.getSession(sessionId);
+                currentSession = (Optional<Session>)getSessionRegistryService("getSession", sessionId);
+                //sessionRegistry.getSession(sessionId);
             }
         }
         return currentSession;
@@ -196,7 +197,8 @@ public class API {
         }
 
         // Remove session from the SessionRegistry.
-        sessionRegistry.removeSession(session.get().getSessionId());
+        getSessionRegistryService("removeSession", session.get().getSessionId());
+        //sessionRegistry.removeSession(session.get().getSessionId());
         // Clear the session cookie by setting its value to an empty string, Max-Age to zero, & Expires to a past date.
         String header = SessionRegistry.SESSION_COOKIE_NAME +
                 "=; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:01 GMT; Path=" + requestLookup.getContextPath() +

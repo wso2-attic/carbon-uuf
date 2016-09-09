@@ -6,11 +6,11 @@ import java.util.Optional;
 
 public interface SessionHandler {
 
-    void addSession(Session session);
+    void addSession(Session session, String contextPath);
 
-    Optional<Session> getSession(String sessionId);
+    Optional<Session> getSession(String sessionId, String contextPath);
 
-    boolean removeSession(String sessionId);
+    boolean removeSession(String sessionId, String contextPath);
 
-    boolean validateSession(String sessionId);
+    boolean validateSession(String sessionId, String contextPath);
 }

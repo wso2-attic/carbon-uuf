@@ -40,7 +40,6 @@ import org.wso2.carbon.uuf.reference.LayoutReference;
 import org.wso2.carbon.uuf.reference.PageReference;
 import org.wso2.carbon.uuf.reference.ThemeReference;
 import org.wso2.carbon.uuf.spi.RenderableCreator;
-import org.wso2.carbon.uuf.spi.SessionHandler;
 import org.yaml.snakeyaml.Yaml;
 
 import java.util.Collections;
@@ -75,7 +74,7 @@ public class AppCreator {
         this.classLoaderProvider = classLoaderProvider;
     }
 
-    public App createApp(AppReference appReference, String appContextPath, SessionHandler sessionHandler) {
+    public App createApp(AppReference appReference, String appContextPath) {
         DependencyTreeParser.Result result = DependencyTreeParser.parse(appReference.getDependencies());
 
         Lookup lookup = new Lookup(result.getFlattenedDependencies());
@@ -115,7 +114,7 @@ public class AppCreator {
 
         Set<Theme> themes = appReference.getThemeReferences().map(this::createTheme).collect(Collectors.toSet());
 
-        return new App(appName, appContextPath, lookup, themes, sessionHandler);
+        return new App(appName, appContextPath, lookup, themes);
     }
 
     private Component createComponent(String componentName, String componentVersion, String componentContextPath,
