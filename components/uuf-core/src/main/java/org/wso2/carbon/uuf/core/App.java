@@ -111,6 +111,7 @@ public class App {
     public String renderPage(HttpRequest request, HttpResponse response) {
         RequestLookup requestLookup = createRequestLookup(request, response);
         API api = new API(requestLookup);
+        api.getSessionRegistryService("createCacheEntry", this.name, this.contextPath);
         Theme theme = getRenderingTheme(api);
         try {
             return renderPageUri(request.getUriWithoutContextPath(), null, requestLookup, api, theme);

@@ -23,7 +23,6 @@ import org.wso2.carbon.uuf.exception.HttpErrorException;
 import org.wso2.carbon.uuf.exception.PageRedirectException;
 import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.internal.core.auth.SessionRegistry;
-import org.wso2.carbon.uuf.spi.SessionHandler;
 import org.wso2.carbon.uuf.spi.auth.User;
 import org.wso2.msf4j.Request;
 
@@ -40,12 +39,12 @@ import java.util.Optional;
 @SuppressWarnings("PackageAccessibility")
 public class API {
 
-   // private SessionHandler sessionRegistry;
+    // private SessionHandler sessionRegistry;
     private final RequestLookup requestLookup;
     private Optional<Session> currentSession;
 
     API(RequestLookup requestLookup) {
-       // this.sessionRegistry = (SessionHandler) getSessionRegistryService("getSession");
+        // this.sessionRegistry = (SessionHandler) getSessionRegistryService("getSession");
         this.requestLookup = requestLookup;
         this.currentSession = Optional.<Session>empty();
     }
@@ -150,14 +149,14 @@ public class API {
         String cookie = request.getHeader("Cookie");
         String first = cookie.substring(cookie.indexOf("UUFSESSIONID"));
         String uufSessionId = first.substring(13, first.indexOf(";"));
-        Session session = (Session) getSessionRegistryService("getSession", uufSessionId);
-                //this.sessionRegistry.getSession(uufSessionId).orElse(null);
+        Session session = (Session) getSessionRegistryService("getSession", uufSessionId, requestLookup.getContextPath());
+        //this.sessionRegistry.getSession(uufSessionId).orElse(null);
         String userName = session.getUser().getUsername();
         return userName;
     }
 
     public Object getSessionRegistryService(String methodName, Object... args) {
-        return  callOSGiService("org.wso2.carbon.uuf.internal.core.auth.SessionHandler", methodName, args);
+        return callOSGiService("org.wso2.carbon.uuf.spi.SessionHandler", methodName, args);
     }
 
     /**
@@ -170,7 +169,7 @@ public class API {
         destroySession();
         Session session = new Session(user);
         //sessionRegistry.addSession(session);
-        getSessionRegistryService("addSession", session);
+        getSessionRegistryService("addSession", session, requestLookup.getContextPath());
         String header = SessionRegistry.SESSION_COOKIE_NAME + "=" + session.getSessionId() + "; Path=" +
                 requestLookup.getContextPath() + "; Secure; HTTPOnly";
         requestLookup.getResponse().setHeader("Set-Cookie", header);
@@ -182,7 +181,7 @@ public class API {
             // Since an API object lives in the request scope, it is safe to cache the current Session object.
             String sessionId = requestLookup.getRequest().getCookieValue(SessionRegistry.SESSION_COOKIE_NAME);
             if (!StringUtils.isEmpty(sessionId)) {
-                currentSession = (Optional<Session>)getSessionRegistryService("getSession", sessionId);
+                currentSession = (Optional<Session>) getSessionRegistryService("getSession", sessionId, requestLookup.getContextPath());
                 //sessionRegistry.getSession(sessionId);
             }
         }
@@ -197,7 +196,7 @@ public class API {
         }
 
         // Remove session from the SessionRegistry.
-        getSessionRegistryService("removeSession", session.get().getSessionId());
+        getSessionRegistryService("removeSession", session.get().getSessionId(), requestLookup.getContextPath());
         //sessionRegistry.removeSession(session.get().getSessionId());
         // Clear the session cookie by setting its value to an empty string, Max-Age to zero, & Expires to a past date.
         String header = SessionRegistry.SESSION_COOKIE_NAME +

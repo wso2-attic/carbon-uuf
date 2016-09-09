@@ -89,7 +89,11 @@ public class SessionRegistry implements Closeable, SessionHandler {
 //        cache = getCache(cacheName, cacheConfig);
     }
 
-    public void createCache(String appName, String contextPath) {
+    @Override
+    public void createCacheEntry(String appName, String contextPath) {
+        if(sessionRegistry.get(contextPath) != null) {
+            return;
+        }
         Cache<String, Session> cache;
         MutableConfiguration<String, Session> cacheConfig = new MutableConfiguration<>();
         cacheConfig.setTypes(String.class, Session.class);

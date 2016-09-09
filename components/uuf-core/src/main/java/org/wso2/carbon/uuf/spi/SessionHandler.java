@@ -13,4 +13,6 @@ public interface SessionHandler {
     boolean removeSession(String sessionId, String contextPath);
 
     boolean validateSession(String sessionId, String contextPath);
+
+    void createCacheEntry(String appName, String contextPath);
 }
