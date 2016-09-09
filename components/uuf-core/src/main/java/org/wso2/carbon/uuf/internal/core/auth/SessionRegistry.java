@@ -44,11 +44,10 @@ import java.util.Optional;
            immediate = true)
 public class SessionRegistry implements Closeable, SessionHandler {
 
-    private static final Logger log = LoggerFactory.getLogger(SessionHandler1.class);
     public static final String SESSION_COOKIE_NAME = "UUFSESSIONID";
+    private static final Logger log = LoggerFactory.getLogger(SessionHandler1.class);
     private static final Object LOCK = new Object();
     private static final Map<String, Cache<String, Session>> sessionRegistry = new HashMap<>();
-    //private final Cache<String, Session> cache;
 
     private static Cache<String, Session> getCache(String cacheName,
                                                    MutableConfiguration<String, Session> cacheConfig) {
@@ -77,21 +76,9 @@ public class SessionRegistry implements Closeable, SessionHandler {
         }
     }
 
-    public SessionRegistry() {
-        System.out.println("constructor of SessionReg");
-//        String appName = "name1";
-//        MutableConfiguration<String, Session> cacheConfig = new MutableConfiguration<>();
-//        cacheConfig.setTypes(String.class, Session.class);
-//        cacheConfig.setStoreByValue(false);
-//        // TODO: read session expire time from configurations
-//        cacheConfig.setExpiryPolicyFactory(AccessedExpiryPolicy.factoryOf(Duration.TWENTY_MINUTES));
-//        String cacheName = this.getClass().getName() + "-" + appName + "-sessions_cache";
-//        cache = getCache(cacheName, cacheConfig);
-    }
-
     @Override
     public void createCacheEntry(String appName, String contextPath) {
-        if(sessionRegistry.get(contextPath) != null) {
+        if (sessionRegistry.get(contextPath) != null) {
             return;
         }
         Cache<String, Session> cache;
@@ -128,11 +115,9 @@ public class SessionRegistry implements Closeable, SessionHandler {
 
     @Override
     public boolean validateSession(String sessionId, String contextPath) {
-//        String cookie = request.getHeader("Cookie");
-//        String first = cookie.substring(cookie.indexOf("UUFSESSIONID"));
-//        String uufSessionId = first.substring(13, first.indexOf(";"));
         Session session = this.getSession(sessionId, contextPath).orElse(null);
         String userName = session.getUser().getUsername();
+        //TODO
         return true;
     }
 
