@@ -21,15 +21,32 @@ import org.osgi.util.tracker.ServiceTracker;
 
 import java.util.function.Consumer;
 
+/**
+ * This class keeps track of services which have a particular service type and which belongs to a particular osgi
+ * context, and provides a common functionality for each tracked service while publishing.
+ *
+ * @param <T> Service type to be tracked
+ */
 public class EventPublisher<T> {
 
     private final ServiceTracker serviceTracker;
 
+    /**
+     * Constructor of the EventPublisher.
+     *
+     * @param bundleContext Context of the tracking services.
+     * @param listenerType  Service type to be tracked.
+     */
     public EventPublisher(BundleContext bundleContext, Class<T> listenerType) {
         this.serviceTracker = new ServiceTracker<T, T>(bundleContext, listenerType, null);
         this.serviceTracker.open();
     }
 
+    /**
+     * Provide a common functionality for each tracked service.
+     *
+     * @param consumer Functionality to be served.
+     */
     public void publish(Consumer<T> consumer) {
         T[] services = (T[]) this.serviceTracker.getServices();
         if (services != null) {
@@ -39,6 +56,11 @@ public class EventPublisher<T> {
         }
     }
 
+    /**
+     * Stop tracking services when this object is garbage collected.
+     *
+     * @throws Throwable
+     */
     @Override
     protected void finalize() throws Throwable {
         this.serviceTracker.close();

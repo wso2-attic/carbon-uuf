@@ -29,6 +29,11 @@ import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_BAD_REQUEST;
 import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_INTERNAL_SERVER_ERROR;
 import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_NOT_FOUND;
 
+/**
+ * Each MSF4JHttpConnector has a ServerConnection, which provides a connection between the UUFMicroservice and the
+ * application's contextPath. This class will be called from the UUFMicroservice for each MicroserviceHttpRequest to
+ * serve an application.
+ */
 public class ServerConnection {
 
     private static final Logger log = LoggerFactory.getLogger(ServerConnection.class);
@@ -37,12 +42,24 @@ public class ServerConnection {
     private final RequestDispatcher requestDispatcher;
     private final UUFAppRegistry uufAppRegistry;
 
+    /**
+     * Constructor of ServerConnection.
+     *
+     * @param contextPath    Application's context path.
+     * @param uufAppRegistry Instance of UUFAppRegistry. Used to retrieve the relevant application from the registry.
+     */
     public ServerConnection(String contextPath, UUFAppRegistry uufAppRegistry) {
         this.requestDispatcher = new RequestDispatcher();
         this.contextPath = contextPath;
         this.uufAppRegistry = uufAppRegistry;
     }
 
+    /**
+     * The method that will be called from the UUFMicroservice to serve an application.
+     *
+     * @param request  Request for serving the application.
+     * @param response Response to be send.
+     */
     public void serve(HttpRequest request, HttpResponse response) {
         if (!request.isValid()) {
             requestDispatcher.serveDefaultErrorPage(STATUS_BAD_REQUEST, "Invalid URI '" + request.getUri() + "'.",
@@ -75,6 +92,11 @@ public class ServerConnection {
         }
     }
 
+    /**
+     * Return the context path of the application, which has this connection for.
+     *
+     * @return Application's context path.
+     */
     public String getContextPath() {
         return this.contextPath;
     }

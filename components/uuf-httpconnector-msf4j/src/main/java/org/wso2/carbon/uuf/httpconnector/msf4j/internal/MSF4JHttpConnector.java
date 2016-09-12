@@ -30,28 +30,45 @@ import org.wso2.msf4j.Microservice;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
+/**
+ * This class generates connections between the each application's context path and MSF4j, to facilitate communication
+ * between the browser and UUF core.
+ */
 @Component(name = "org.wso2.carbon.uuf.httpconnector.msf4j.internal.MSF4JHttpConnector",
            service = {HttpConnector.class},
            immediate = true)
 @SuppressWarnings("unused")
 public class MSF4JHttpConnector implements HttpConnector {
 
-    private static final Logger log = LoggerFactory.getLogger(UUFMicroservice.class);
+    private static final Logger log = LoggerFactory.getLogger(MSF4JHttpConnector.class);
     private ServerConnection serverConnection;
     private BundleContext bundleContext;
 
+    /**
+     * Get called when this osgi component get registered.
+     *
+     * @param bundleContext Context of the osgi component.
+     */
     @Activate
     protected void activate(BundleContext bundleContext) {
         this.bundleContext = bundleContext;
         log.debug("MSF4JHttpConnector activated.");
     }
 
+    /**
+     * Get called when this osgi component get unregistered.
+     */
     @Deactivate
     protected void deactivate() {
         this.bundleContext = null;
         log.debug("MSF4JHttpConnector deactivated.");
     }
 
+    /**
+     * Create and register a microservice for each application using application's context path.
+     *
+     * @param serverConnection Server Connection of the application.
+     */
     @Override
     public void registerConnection(ServerConnection serverConnection) {
         Dictionary<String, String> dictionary = new Hashtable<>();
