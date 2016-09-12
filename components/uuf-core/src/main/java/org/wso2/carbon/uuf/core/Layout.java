@@ -20,6 +20,9 @@ import org.wso2.carbon.uuf.internal.util.NameUtils;
 import org.wso2.carbon.uuf.internal.util.UriUtils;
 import org.wso2.carbon.uuf.spi.Renderable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Objects;
 
 public class Layout {
@@ -27,6 +30,7 @@ public class Layout {
     private final String name;
     private final String simpleName;
     private final Renderable renderer;
+    private static final Logger log = LoggerFactory.getLogger(Layout.class);
 
     /**
      * @param name     fully qualified name
@@ -47,6 +51,11 @@ public class Layout {
     }
 
     public String render(Lookup lookup, RequestLookup requestLookup, API api) {
+        Long startTime = null;
+        if(log.isDebugEnabled()){
+            startTime = System.currentTimeMillis();
+            log.debug("Rendering layout " + name);
+        }
         // Rendering flow tracking in.
         requestLookup.tracker().in(this);
         Component currentComponent = lookup.getComponent(requestLookup.tracker().getCurrentComponentName()).get();
@@ -55,6 +64,11 @@ public class Layout {
         // Rendering flow tracking out.
         requestLookup.popPublicUriStack();
         requestLookup.tracker().out(this);
+        if (log.isDebugEnabled()) {
+            Long endTime = System.currentTimeMillis();
+            Double elapsedTime = (endTime - startTime)/1000.0;
+            log.debug(name + " layout render completed in " + elapsedTime + " seconds.");
+        }
         return output;
     }
 

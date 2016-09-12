@@ -22,6 +22,9 @@ import org.wso2.carbon.uuf.internal.util.UriUtils;
 import org.wso2.carbon.uuf.spi.Renderable;
 import org.wso2.carbon.uuf.spi.model.Model;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Objects;
 
 public class Page implements Comparable<Page> {
@@ -30,6 +33,8 @@ public class Page implements Comparable<Page> {
     private final Renderable renderer;
     private final boolean isSecured;
     private final Layout layout;
+    private static final Logger log = LoggerFactory.getLogger(Page.class);
+
 
     public Page(UriPatten uriPatten, Renderable renderer, boolean isSecured) {
         this(uriPatten, renderer, isSecured, null);
@@ -47,9 +52,15 @@ public class Page implements Comparable<Page> {
     }
 
     public String render(Model model, Lookup lookup, RequestLookup requestLookup, API api) {
+        Long startTime = null;
         if (isSecured && !api.getSession().isPresent()) {
             throw new SessionNotFoundException(
                     "Page '" + this + "' is secured and required an user session to render.");
+        }
+
+        if (log.isDebugEnabled()) {
+            startTime = System.currentTimeMillis();
+            log.debug("Rendering Page " + this);
         }
 
         // Rendering flow tracking in.
@@ -64,6 +75,11 @@ public class Page implements Comparable<Page> {
         // Rendering flow tracking out.
         requestLookup.popPublicUriStack();
         requestLookup.tracker().out(this);
+        if (log.isDebugEnabled()) {
+            Long endTime = System.currentTimeMillis();
+            Double elapsedTime = (endTime - startTime)/1000.0;
+            log.debug(this + " page render completed in " + elapsedTime + " seconds.");
+        }
         return output;
     }
 

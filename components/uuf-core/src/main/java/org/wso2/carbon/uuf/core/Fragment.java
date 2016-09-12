@@ -22,6 +22,9 @@ import org.wso2.carbon.uuf.internal.util.UriUtils;
 import org.wso2.carbon.uuf.spi.Renderable;
 import org.wso2.carbon.uuf.spi.model.Model;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Objects;
 
 public class Fragment {
@@ -30,6 +33,7 @@ public class Fragment {
     private final String simpleName;
     private final Renderable renderer;
     private final boolean isSecured;
+    private static final Logger log = LoggerFactory.getLogger(Fragment.class);
 
     /**
      * @param name     fully qualified name
@@ -51,6 +55,7 @@ public class Fragment {
     }
 
     public String render(Model model, Lookup lookup, RequestLookup requestLookup, API api) {
+        Long startTime = null;
         if (isSecured && !api.getSession().isPresent()) {
             if (requestLookup.tracker().isInPage() || requestLookup.tracker().isInLayout() ||
                     requestLookup.tracker().isInFragment()) {
@@ -63,6 +68,11 @@ public class Fragment {
             }
         }
 
+        if (log.isDebugEnabled()) {
+            startTime = System.currentTimeMillis();
+            log.debug("Rendering fragment " + name);
+        }
+
         // Rendering flow tracking in.
         requestLookup.tracker().in(this);
         lookup.getComponent(requestLookup.tracker().getCurrentComponentName())
@@ -72,6 +82,11 @@ public class Fragment {
         // Rendering flow tracking out.
         requestLookup.popPublicUriStack();
         requestLookup.tracker().out(this);
+        if (log.isDebugEnabled()) {
+            Long endTime = System.currentTimeMillis();
+            Double elapsedTime = (endTime - startTime)/1000.0;
+            log.debug(name + " fragment render completed in " + elapsedTime + " seconds.");
+        }
         return output;
     }
 

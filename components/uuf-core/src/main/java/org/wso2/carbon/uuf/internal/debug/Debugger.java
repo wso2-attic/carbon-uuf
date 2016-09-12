@@ -16,22 +16,26 @@
 
 package org.wso2.carbon.uuf.internal.debug;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.core.App;
 import org.wso2.carbon.uuf.internal.core.UriPatten;
+import org.wso2.carbon.uuf.internal.io.DebugLogFileTailer;
 import org.wso2.carbon.uuf.internal.io.util.MimeMapper;
 import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.carbon.uuf.spi.HttpResponse;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.management.ManagementFactory;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import static org.wso2.carbon.uuf.spi.HttpResponse.CONTENT_TYPE_APPLICATION_JSON;
 import static org.wso2.carbon.uuf.spi.HttpResponse.CONTENT_TYPE_WILDCARD;
@@ -40,7 +44,9 @@ import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_INTERNAL_SERVER_ERROR;
 import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_NOT_FOUND;
 import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_OK;
 
-public class Debugger {
+import org.wso2.carbon.uuf.spi.DebugLogTailerListner;
+
+public class Debugger implements DebugLogTailerListner {
 
     private static final UriPatten URI_PATTEN_API_APP = new UriPatten("/debug/api/app/");
     private static final UriPatten URI_PATTEN_API_COMPONENTS = new UriPatten("/debug/api/components/");
@@ -52,20 +58,37 @@ public class Debugger {
     private static final UriPatten URI_PATTEN_PAGE_INDEX = new UriPatten("/debug/");
     private static final UriPatten URI_PATTEN_RESOURCES = new UriPatten("/debug/{+resource}");
     private final static JsonParser JSON_PARSER = new JsonParser();
-    private static final Logger log = LoggerFactory.getLogger(Debugger.class);
+    private static final org.slf4j.Logger log = LoggerFactory.getLogger(Debugger.class);
     private static final boolean IS_DEBUGGING_ENABLED;
 
     static {
         IS_DEBUGGING_ENABLED = ManagementFactory.getRuntimeMXBean().getInputArguments().contains("-Xdebug");
     }
 
-    // TODO: 12/07/2016 uncomment this once osgi issue solved for DebugAppender
-    //private final DebugAppender debugAppender;
+    private DebugLogFileTailer tailer;
+    private static final int MAX_CAPACITY = 1000;
+    private final Queue<String> messages;
 
     public Debugger() {
-        // TODO: 12/07/2016 uncomment this once osgi issue solved for DebugAppender
-        //this.debugAppender = new DebugAppender("debugger", "");
-        //this.debugAppender.attach();
+        //TODO replace System.getProperty with proper log4j snippet
+        File debugLog = new File(System.getProperty("carbon.home") + "/logs/uuf-debug.log");
+        this.messages = new ConcurrentLinkedQueue<>();
+
+        if(debugLog.exists() && !debugLog.isDirectory()){
+            tailer = new DebugLogFileTailer(debugLog, 1000, false);
+            tailer.addLogFileTailerListener(this);
+            tailer.start();
+        }
+    }
+
+    @Override
+    public void hasNewLogLine(String line) {
+        if (line.contains("org.wso2.carbon.uuf")) {
+            messages.add(line);
+            if (messages.size() > MAX_CAPACITY) {
+                messages.poll();
+            }
+        }
     }
 
     public void serve(App app, HttpRequest request, HttpResponse response) {
@@ -121,11 +144,10 @@ public class Debugger {
             return;
         }
 
-        // TODO: 12/07/2016 uncomment this once osgi issue solved for DebugAppender
-        // if (URI_PATTEN_API_LOGS.matches(uriWithoutContextPath)) {
-        //      response.setContent(STATUS_OK, debugAppender.getMessagesAsJson(), CONTENT_TYPE_APPLICATION_JSON);
-        //      return;
-        // }
+         if (URI_PATTEN_API_LOGS.matches(uriWithoutContextPath)) {
+              response.setContent(STATUS_OK, new Gson().toJson(messages), CONTENT_TYPE_APPLICATION_JSON);
+              return;
+         }
 
         if (URI_PATTEN_PAGE_INDEX.matches(uriWithoutContextPath) ||
                 URI_PATTEN_RESOURCES.matches(uriWithoutContextPath)) {
