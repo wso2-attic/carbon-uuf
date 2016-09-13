@@ -12,21 +12,21 @@ import org.wso2.msf4j.ServiceMethodInfo;
 import java.util.HashSet;
 import java.util.Set;
 
-@Component(
-        name = "org.wso2.carbon.uuf.internal.core.auth.SessionInterceptor",
-        service = {Interceptor.class, InterceptorHandler.class},
-        immediate = true
-)
+@Component(name = "org.wso2.carbon.uuf.internal.core.auth.SessionInterceptor",
+           service = {Interceptor.class, InterceptorHandler.class},
+           immediate = true)
 public class SessionInterceptor implements Interceptor, InterceptorHandler {
 
     private static final Set<String> urlsToBeSecured = new HashSet<>();
+    public static final String SECURED_APIS_URL = "/apis";
+    public static final String UNSECURED_APIS_URL = "/apis/public";
 
     @Override
     public boolean preCall(Request request, Response responder, ServiceMethodInfo serviceMethodInfo) throws Exception {
         String url = (String) request.getProperties().get("REQUEST_URL");
         if (isValidURL(url)) {
             try {
-                return API.validateSession(request, url.substring(0, url.indexOf("/api")));
+                return API.validateSession(request, url.substring(0, url.indexOf(SECURED_APIS_URL)));
             } catch (Exception e) {
                 throw new UnauthorizedException("You are not permitted to access " + url);
             }
@@ -37,11 +37,13 @@ public class SessionInterceptor implements Interceptor, InterceptorHandler {
 
     @Override
     public void postCall(Request request, int status, ServiceMethodInfo serviceMethodInfo) throws Exception {
-        System.out.println("post call");
     }
 
     private boolean isValidURL(String url) {
-        return url.contains("/api") && urlsToBeSecured.contains(url.substring(0, url.indexOf("/api") + 4));
+        //For non secured apis: <context-path>/apis/public/<api-name>
+        //For secured apis: <context-path>/apis/<api-name>
+        return !url.contains(UNSECURED_APIS_URL) && url.contains(SECURED_APIS_URL) && urlsToBeSecured.contains(
+                url.substring(0, url.indexOf(SECURED_APIS_URL) + SECURED_APIS_URL.length()));
     }
 
     @Override

@@ -186,8 +186,9 @@ public class API {
 
     public static String extractSessionId(Request request) {
         String cookie = request.getHeader("Cookie");
-        String beginningOfSessionId = cookie.substring(cookie.indexOf(SessionRegistry.SESSION_COOKIE_NAME));
-        return beginningOfSessionId.substring(13, beginningOfSessionId.indexOf(";"));
+        int startingIndexOfId = cookie.indexOf(SessionRegistry.SESSION_COOKIE_NAME) +
+                SessionRegistry.SESSION_COOKIE_NAME.concat("=").length();
+        return cookie.substring(startingIndexOfId, cookie.indexOf(";", startingIndexOfId));
     }
 
     public static Object getServiceInstance(String serviceClassName) {

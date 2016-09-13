@@ -37,6 +37,7 @@ import org.wso2.carbon.uuf.core.App;
 import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.internal.EventPublisher;
 import org.wso2.carbon.uuf.internal.UUFServer;
+import org.wso2.carbon.uuf.internal.core.auth.SessionInterceptor;
 import org.wso2.carbon.uuf.internal.core.create.AppCreator;
 import org.wso2.carbon.uuf.internal.core.create.ClassLoaderProvider;
 import org.wso2.carbon.uuf.internal.io.util.ZipArtifactHandler;
@@ -132,7 +133,7 @@ public class ArtifactAppDeployer implements Deployer, UUFAppRegistry, RequiredCa
                             "' as another app is already registered for the same context path.");
         }
 
-        getInterceptorService().addURL(appNameContextPath.getRight().concat("/api"));
+        getInterceptorService().addURL(appNameContextPath.getRight().concat(SessionInterceptor.SECURED_APIS_URL));
 
         eventPublisher.publish(httpConnector -> httpConnector
                 .registerConnection(new ServerConnection(appNameContextPath.getRight(), this)));
@@ -174,7 +175,7 @@ public class ArtifactAppDeployer implements Deployer, UUFAppRegistry, RequiredCa
             if (app.getName().equals(appName)) {
                 // App with 'appName' is deployed.
                 deployedApps.remove(app.getContextPath());
-                getInterceptorService().removeURL(app.getContextPath().concat("/api"));
+                getInterceptorService().removeURL(app.getContextPath().concat(SessionInterceptor.SECURED_APIS_URL));
                 log.info("UUF app '" + app.getName() + "' undeployed for context '" + app.getContextPath() + "'.");
                 return;
             }
@@ -185,7 +186,7 @@ public class ArtifactAppDeployer implements Deployer, UUFAppRegistry, RequiredCa
             AppArtifact appArtifact = entry.getValue();
             if (appArtifact.appName.equals(appName)) {
                 pendingToDeployArtifacts.remove(entry.getKey());
-                getInterceptorService().removeURL(entry.getKey().concat("/api"));
+                getInterceptorService().removeURL(entry.getKey().concat(SessionInterceptor.SECURED_APIS_URL));
                 log.info("UUF app in '" + appArtifact.artifact.getPath() + "' removed even before it deployed.");
                 return;
             }
