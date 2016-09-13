@@ -32,6 +32,7 @@ import org.wso2.carbon.deployment.engine.Deployer;
 import org.wso2.carbon.deployment.engine.exception.CarbonDeploymentException;
 import org.wso2.carbon.kernel.startupresolver.RequiredCapabilityListener;
 import org.wso2.carbon.uuf.api.ServerConnection;
+import org.wso2.carbon.uuf.core.API;
 import org.wso2.carbon.uuf.core.App;
 import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.internal.EventPublisher;
@@ -41,6 +42,7 @@ import org.wso2.carbon.uuf.internal.core.create.ClassLoaderProvider;
 import org.wso2.carbon.uuf.internal.io.util.ZipArtifactHandler;
 import org.wso2.carbon.uuf.internal.util.NameUtils;
 import org.wso2.carbon.uuf.spi.HttpConnector;
+import org.wso2.carbon.uuf.spi.InterceptorHandler;
 import org.wso2.carbon.uuf.spi.RenderableCreator;
 import org.wso2.carbon.uuf.spi.UUFAppRegistry;
 
@@ -130,6 +132,8 @@ public class ArtifactAppDeployer implements Deployer, UUFAppRegistry, RequiredCa
                             "' as another app is already registered for the same context path.");
         }
 
+        getInterceptorService().addURL(appNameContextPath.getRight().concat("/api"));
+
         eventPublisher.publish(httpConnector -> httpConnector
                 .registerConnection(new ServerConnection(appNameContextPath.getRight(), this)));
 
@@ -170,6 +174,7 @@ public class ArtifactAppDeployer implements Deployer, UUFAppRegistry, RequiredCa
             if (app.getName().equals(appName)) {
                 // App with 'appName' is deployed.
                 deployedApps.remove(app.getContextPath());
+                getInterceptorService().removeURL(app.getContextPath().concat("/api"));
                 log.info("UUF app '" + app.getName() + "' undeployed for context '" + app.getContextPath() + "'.");
                 return;
             }
@@ -180,6 +185,7 @@ public class ArtifactAppDeployer implements Deployer, UUFAppRegistry, RequiredCa
             AppArtifact appArtifact = entry.getValue();
             if (appArtifact.appName.equals(appName)) {
                 pendingToDeployArtifacts.remove(entry.getKey());
+                getInterceptorService().removeURL(entry.getKey().concat("/api"));
                 log.info("UUF app in '" + appArtifact.artifact.getPath() + "' removed even before it deployed.");
                 return;
             }
@@ -254,6 +260,10 @@ public class ArtifactAppDeployer implements Deployer, UUFAppRegistry, RequiredCa
             appReference = new ArtifactAppReference(Paths.get(artifact.getPath()));
         }
         return appCreator.createApp(appReference, appContextPath);
+    }
+
+    private InterceptorHandler getInterceptorService() {
+        return (InterceptorHandler) API.getServiceInstance("org.wso2.carbon.uuf.spi.InterceptorHandler");
     }
 
     /**

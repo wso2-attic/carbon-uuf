@@ -108,8 +108,6 @@ public class API {
 
     public static void callMicroService() {
         // TODO: 5/16/16 Call a Microservice through OSGi or network-call accrodingly
-//        BundleContext bundleContext = FrameworkUtil.getBundle(API.class).getBundleContext();
-//        Object x = bundleContext.getService(bundleContext.getServiceReference(Microservice.class));
         throw new UnsupportedOperationException("To be implemented");
     }
 
@@ -130,13 +128,12 @@ public class API {
         throw new PageRedirectException(redirectUrl);
     }
 
-    public String getSessionUserName(Request request) {
-        String cookie = request.getHeader("Cookie");
-        String first = cookie.substring(cookie.indexOf("UUFSESSIONID"));
-        String uufSessionId = first.substring(13, first.indexOf(";"));
-        Session session = getSessionRegistryService().getSession(uufSessionId, requestLookup.getContextPath()).orElse(
-                null);
-        return session.getUser().getUsername();
+    public static String getSessionUserName(Request request, String contextPath) {
+        return getSessionRegistryService().getUserName(extractSessionId(request), contextPath);
+    }
+
+    public static boolean validateSession(Request request, String contextPath) {
+        return getSessionRegistryService().validateSession(extractSessionId(request), contextPath);
     }
 
     static SessionHandler getSessionRegistryService() {
@@ -152,7 +149,6 @@ public class API {
     public Session createSession(User user) {
         destroySession();
         Session session = new Session(user);
-        //sessionRegistry.addSession(session);
         getSessionRegistryService().addSession(session, requestLookup.getContextPath());
         String header = SessionRegistry.SESSION_COOKIE_NAME + "=" + session.getSessionId() + "; Path=" +
                 requestLookup.getContextPath() + "; Secure; HTTPOnly";
@@ -188,7 +184,13 @@ public class API {
         return true;
     }
 
-    private static Object getServiceInstance(String serviceClassName) {
+    public static String extractSessionId(Request request) {
+        String cookie = request.getHeader("Cookie");
+        String beginningOfSessionId = cookie.substring(cookie.indexOf(SessionRegistry.SESSION_COOKIE_NAME));
+        return beginningOfSessionId.substring(13, beginningOfSessionId.indexOf(";"));
+    }
+
+    public static Object getServiceInstance(String serviceClassName) {
         InitialContext initialContext;
         Object serviceInstance;
         try {

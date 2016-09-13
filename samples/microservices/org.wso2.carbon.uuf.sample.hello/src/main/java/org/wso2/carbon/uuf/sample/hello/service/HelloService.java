@@ -7,23 +7,20 @@ import org.osgi.service.component.annotations.Deactivate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.core.API;
-import org.wso2.carbon.uuf.internal.core.auth.SessionRegistry;
+import org.wso2.carbon.uuf.httpconnector.msf4j.MicroserviceHttpRequest;
 import org.wso2.msf4j.Microservice;
 import org.wso2.msf4j.Request;
-import org.wso2.msf4j.delegates.client.MSF4JClientRequestContext;
 
-import javax.ws.rs.CookieParam;
 import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
-import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MultivaluedMap;
 
 @Component(name = "HelloService",
            service = {Microservice.class},
            immediate = true)
 @SuppressWarnings("unused")
-@Path("/pets-store/hello")
+@Path("/pets-store/api/hello")
 public class HelloService implements Microservice {
 
     private static final Logger log = LoggerFactory.getLogger(HelloService.class);
@@ -43,10 +40,10 @@ public class HelloService implements Microservice {
 
     @GET
     @Path("/say")
-    public String hello(@Context Request request)  {
-        System.out.println("Hello");
-        //String userName = API.getSessionData(request);
-        BundleContext bundleContext1 = this.bundleContext;
-        return "Hello ";// + userName;
+    public String hello(@Context Request request, @Context MultivaluedMap multivaluedMap) {
+        System.out.println("Hello Service");
+        MicroserviceHttpRequest httpRequest = new MicroserviceHttpRequest(request, multivaluedMap);
+        String userName = API.getSessionUserName(request, httpRequest.getContextPath());
+        return "Hello " + userName + "!!";
     }
 }

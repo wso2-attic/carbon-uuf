@@ -42,10 +42,11 @@ import java.util.Optional;
 @Component(name = "org.wso2.carbon.uuf.internal.core.auth.SessionHandler",
            service = {SessionHandler.class},
            immediate = true)
+@SuppressWarnings("unused")
 public class SessionRegistry implements Closeable, SessionHandler {
 
     public static final String SESSION_COOKIE_NAME = "UUFSESSIONID";
-    private static final Logger log = LoggerFactory.getLogger(SessionHandler1.class);
+    private static final Logger log = LoggerFactory.getLogger(SessionInterceptor.class);
     private static final Object LOCK = new Object();
     private static final Map<String, Cache<String, Session>> sessionRegistry = new HashMap<>();
 
@@ -116,17 +117,21 @@ public class SessionRegistry implements Closeable, SessionHandler {
     @Override
     public boolean validateSession(String sessionId, String contextPath) {
         Session session = this.getSession(sessionId, contextPath).orElse(null);
-        String userName = session.getUser().getUsername();
-        //TODO
-        return true;
+        if (sessionId.equals(session.getSessionId())) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public String getUserName(String sessionId, String contextPath) {
+        Session session = this.getSession(sessionId, contextPath).orElse(null);
+        return session.getUser().getUsername();
     }
 
     public void removeAllSessions(String contextPath) {
         sessionRegistry.get(contextPath).clear();
-    }
-
-    public SessionHandler getSessionRegistry() {
-        return this;
     }
 
     @Override
