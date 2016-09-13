@@ -1,8 +1,6 @@
 function callHello() {
-    console.log('In hello page');
-    // var userName1=userName;
     $.ajax({
-               url: 'https://localhost:9292/pets-store/api/hello/say',
+               url: 'https://localhost:9292/pets-store/apis/hello',
                type: "GET",
                async: false,
                dataType: "text"

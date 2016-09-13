@@ -20,30 +20,34 @@ import javax.ws.rs.core.MultivaluedMap;
            service = {Microservice.class},
            immediate = true)
 @SuppressWarnings("unused")
-@Path("/pets-store/api/hello")
+@Path("/pets-store/apis")
 public class HelloService implements Microservice {
 
     private static final Logger log = LoggerFactory.getLogger(HelloService.class);
-    private BundleContext bundleContext;
 
     @Activate
     protected void activate(BundleContext bundleContext) {
-        this.bundleContext = bundleContext;
-        log.debug("MicroserviceDeployer activated.");
+        log.debug("Pets-store hello service activated.");
     }
 
     @Deactivate
     protected void deactivate() {
-        this.bundleContext = null;
-        log.debug("MicroserviceDeployer deactivated.");
+        log.debug("Pets-store hello service deactivated.");
     }
 
     @GET
-    @Path("/say")
+    @Path("/hello")
     public String hello(@Context Request request, @Context MultivaluedMap multivaluedMap) {
-        System.out.println("Hello Service");
+        log.info("Accessed Secured Hello Service");
         MicroserviceHttpRequest httpRequest = new MicroserviceHttpRequest(request, multivaluedMap);
         String userName = API.getSessionUserName(request, httpRequest.getContextPath());
         return "Hello " + userName + "!!";
+    }
+
+    @GET
+    @Path("/public/hello")
+    public String unsecuredHello() {
+        log.info("Accessed Unsecured Hello Service");
+        return "Hello there !!";
     }
 }
