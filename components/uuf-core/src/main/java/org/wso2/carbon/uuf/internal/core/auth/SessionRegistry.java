@@ -39,7 +39,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-@Component(name = "org.wso2.carbon.uuf.internal.core.auth.SessionHandler",
+@Component(name = "org.wso2.carbon.uuf.internal.core.auth.SessionRegistry",
            service = {SessionHandler.class},
            immediate = true)
 @SuppressWarnings("unused")
