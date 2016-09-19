@@ -46,7 +46,7 @@ import java.util.Optional;
 public class SessionRegistry implements Closeable, SessionHandler {
 
     public static final String SESSION_COOKIE_NAME = "UUFSESSIONID";
-    private static final Logger log = LoggerFactory.getLogger(SessionInterceptor.class);
+    private static final Logger log = LoggerFactory.getLogger(SessionRegistry.class);
     private static final Object LOCK = new Object();
     private static final Map<String, Cache<String, Session>> sessionRegistry = new HashMap<>();
 
