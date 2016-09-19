@@ -115,7 +115,7 @@ public class App {
         } catch (SessionNotFoundException e) {
             String loginPageUri = configuration.getLoginPageUri().orElseThrow(() -> e);
             throw new PageRedirectException(loginPageUri, e); // Redirect to the login page.
-        } catch (PageRedirectException e) {
+        } catch (PageRedirectException | PageNotFoundException e) {
             throw e;
         } catch (HttpErrorException e) {
             return renderErrorPage(e, requestLookup, api, theme);
