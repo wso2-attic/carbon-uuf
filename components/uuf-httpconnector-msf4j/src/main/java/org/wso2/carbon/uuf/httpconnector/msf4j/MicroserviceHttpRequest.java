@@ -88,7 +88,8 @@ public class MicroserviceHttpRequest implements HttpRequest {
         }
 
         // process headers and cookies
-        this.headers = request.getHeaders();
+        this.headers = new HashMap<>();
+        request.getHeaders().getAll().forEach(header -> this.headers.put(header.getName(), header.getValue()));
         String cookieHeader = this.headers.get(HttpHeaders.COOKIE);
         this.cookies = (cookieHeader == null) ? Collections.emptyMap() :
                 ServerCookieDecoder.STRICT.decode(cookieHeader).stream().collect(Collectors.toMap(Cookie::name,
