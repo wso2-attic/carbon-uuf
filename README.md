@@ -20,7 +20,7 @@ Make sure you are running JDK8 update 40 or latest.
 2. Go to `wso2uuf-1.0.0-SNAPSHOT/bin` direcotry.
 4. Run `./carbon.sh` to start the Carbon server.
 5. Visit sample apps.
-  * Pets Store app [http://localhost:9292/pets-store/](http://localhost:9292/pets-store/)
+  * Pets Store app [https://localhost:9292/pets-store/pets](https://localhost:9292/pets-store/pets)
   * Features App [https://localhost:9292/features-app/](https://localhost:9292/features-app/)
 
 ## Contributing to Carbon Maven UUF Plugin Project
