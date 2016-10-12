@@ -18,6 +18,6 @@
 function onRequest(env) {
     var sendErrorParams = env.request.queryParams["sendError"];
     if (sendErrorParams) {
-        sendError(404, "Yep, this is a 404. Requested resource not found.");
+        sendError(418, "Yep, I'm a teapot!");
     }
 }
