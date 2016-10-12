@@ -67,6 +67,9 @@
                         <Private-Package>org.wso2.carbon.uuf.httpconnector.msf4j.internal.*</Private-Package>
                         <Import-Package>
                             org.wso2.carbon.uuf.*;version="${carbon.uuf.version}",
+                            <!--org.wso2.carbon.messaging;version="${carbon.messaging.version}",-->
+                            <!--TODO: replace below line with above commented line after carbon-messaging fix export version issue.-->
+                            org.wso2.carbon.messaging;version="1.0.5",
                             org.wso2.msf4j.*,
                             javax.ws.rs.*,
                             io.netty.handler.*,
