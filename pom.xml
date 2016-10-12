@@ -467,8 +467,8 @@
         <!-- UUF Product -->
         <carbon.datasources.version>1.0.0</carbon.datasources.version>
         <carbon.metrics.version>2.0.0</carbon.metrics.version>
-        <carbon.messaging.version>1.0.4</carbon.messaging.version>
-        <carbon.transport.http.netty.version>2.1.2</carbon.transport.http.netty.version>
+        <carbon.messaging.version>1.0.6</carbon.messaging.version>
+        <carbon.transport.http.netty.version>2.1.4</carbon.transport.http.netty.version>
 
         <!-- Handlebars -->
         <orbit.com.github.jknack.handlebars.version>4.0.3.wso2v1</orbit.com.github.jknack.handlebars.version>
@@ -477,7 +477,7 @@
         <nashorn-osgi-fragment.version>1.0.0-SNAPSHOT</nashorn-osgi-fragment.version>
 
         <!-- MSF4J -->
-        <msf4j.version>2.0.0</msf4j.version>
+        <msf4j.version>2.1.0-SNAPSHOT</msf4j.version>
 
         <!-- Authentication and Authorization -->
         <carbon.security.caas.version>1.0.0-SNAPSHOT</carbon.security.caas.version>
