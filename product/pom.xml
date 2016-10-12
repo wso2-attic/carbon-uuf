@@ -182,6 +182,12 @@
             <version>${carbon.uuf.version}</version>
             <type>zip</type>
         </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.uuf.sample</groupId>
+            <artifactId>org.wso2.carbon.uuf.hello.feature</artifactId>
+            <version>${carbon.uuf.version}</version>
+            <type>zip</type>
+        </dependency>
     </dependencies>
 
     <build>
@@ -331,6 +337,10 @@
                                     <id>org.wso2.carbon.uuf.simple-auth.feature</id>
                                     <version>${carbon.uuf.version}</version>
                                 </feature>
+                                <feature>
+                                    <id>org.wso2.carbon.uuf.hello.feature</id>
+                                    <version>${carbon.uuf.version}</version>
+                                </feature>
                             </features>
                         </configuration>
                     </execution>
@@ -458,6 +468,10 @@
                                 <feature>
                                     <id>org.wso2.carbon.security.userstore.jdbc.feature.group</id>
                                     <version>${carbon.security.userstore.jdbc.version}</version>
+                                </feature>
+                                <feature>
+                                    <id>org.wso2.carbon.uuf.hello.feature.group</id>
+                                    <version>${carbon.uuf.version}</version>
                                 </feature>
                             </features>
                         </configuration>

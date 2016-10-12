@@ -21,11 +21,13 @@ package org.wso2.carbon.uuf.core;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.wso2.carbon.uuf.api.auth.Session;
-import org.wso2.carbon.uuf.spi.auth.User;
 import org.wso2.carbon.uuf.exception.HttpErrorException;
 import org.wso2.carbon.uuf.exception.PageRedirectException;
 import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.internal.core.auth.SessionRegistry;
+import org.wso2.carbon.uuf.spi.SessionHandler;
+import org.wso2.carbon.uuf.spi.auth.User;
+import org.wso2.msf4j.Request;
 
 import javax.naming.Binding;
 import javax.naming.Context;
@@ -40,12 +42,10 @@ import java.util.Optional;
 @SuppressWarnings("PackageAccessibility")
 public class API {
 
-    private final SessionRegistry sessionRegistry;
     private final RequestLookup requestLookup;
     private Optional<Session> currentSession;
 
-    API(SessionRegistry sessionRegistry, RequestLookup requestLookup) {
-        this.sessionRegistry = sessionRegistry;
+    API(RequestLookup requestLookup) {
         this.requestLookup = requestLookup;
         this.currentSession = Optional.<Session>empty();
     }
@@ -68,21 +68,7 @@ public class API {
      * @return
      */
     public static Object callOSGiService(String serviceClassName, String serviceMethodName, Object... args) {
-        Object serviceInstance;
-        InitialContext initialContext;
-        try {
-            initialContext = new InitialContext();
-        } catch (NamingException e) {
-            throw new UUFException(
-                    "Cannot create the JNDI initial context when calling OSGi service '" + serviceClassName + "'.");
-        }
-
-        try {
-            serviceInstance = initialContext.lookup("osgi:service/" + serviceClassName);
-        } catch (NamingException e) {
-            throw new UUFException(
-                    "Cannot find any OSGi service registered with the name '" + serviceClassName + "'.");
-        }
+        Object serviceInstance = getServiceInstance(serviceClassName);
 
         try {
             return MethodUtils.invokeMethod(serviceInstance, serviceMethodName, args);
@@ -144,16 +130,28 @@ public class API {
         throw new PageRedirectException(redirectUrl);
     }
 
+    public static String getSessionUserName(Request request, String contextPath) {
+        return getSessionRegistryService().getUserName(extractSessionId(request), contextPath);
+    }
+
+    public static boolean validateSession(Request request, String contextPath) {
+        return getSessionRegistryService().validateSession(extractSessionId(request), contextPath);
+    }
+
+    static SessionHandler getSessionRegistryService() {
+        return (SessionHandler) getServiceInstance("org.wso2.carbon.uuf.spi.SessionHandler");
+    }
+
     /**
      * Creates a new session and returns it.
      *
-     * @param userName user name
+     * @param user User object
      * @return newly created session
      */
     public Session createSession(User user) {
         destroySession();
         Session session = new Session(user);
-        sessionRegistry.addSession(session);
+        getSessionRegistryService().addSession(session, requestLookup.getContextPath());
         String header = SessionRegistry.SESSION_COOKIE_NAME + "=" + session.getSessionId() + "; Path=" +
                 requestLookup.getContextPath() + "; Secure; HTTPOnly";
         requestLookup.getResponse().setHeader("Set-Cookie", header);
@@ -165,7 +163,7 @@ public class API {
             // Since an API object lives in the request scope, it is safe to cache the current Session object.
             String sessionId = requestLookup.getRequest().getCookieValue(SessionRegistry.SESSION_COOKIE_NAME);
             if (!StringUtils.isEmpty(sessionId)) {
-                currentSession = sessionRegistry.getSession(sessionId);
+                currentSession = getSessionRegistryService().getSession(sessionId, requestLookup.getContextPath());
             }
         }
         return currentSession;
@@ -179,13 +177,39 @@ public class API {
         }
 
         // Remove session from the SessionRegistry.
-        sessionRegistry.removeSession(session.get().getSessionId());
+        getSessionRegistryService().removeSession(session.get().getSessionId(), requestLookup.getContextPath());
         // Clear the session cookie by setting its value to an empty string, Max-Age to zero, & Expires to a past date.
         String header = SessionRegistry.SESSION_COOKIE_NAME +
                 "=; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:01 GMT; Path=" + requestLookup.getContextPath() +
                 "; Secure; HTTPOnly";
         requestLookup.getResponse().setHeader("Set-Cookie", header);
         return true;
+    }
+
+    public static String extractSessionId(Request request) {
+        String cookie = request.getHeader("Cookie");
+        int startingIndexOfId = cookie.indexOf(SessionRegistry.SESSION_COOKIE_NAME) +
+                SessionRegistry.SESSION_COOKIE_NAME.concat("=").length();
+        return cookie.substring(startingIndexOfId, cookie.indexOf(";", startingIndexOfId));
+    }
+
+    public static Object getServiceInstance(String serviceClassName) {
+        InitialContext initialContext;
+        Object serviceInstance;
+        try {
+            initialContext = new InitialContext();
+        } catch (NamingException e) {
+            throw new UUFException(
+                    "Cannot create the JNDI initial context when calling OSGi service '" + serviceClassName + "'.");
+        }
+
+        try {
+            serviceInstance = initialContext.lookup("osgi:service/" + serviceClassName);
+        } catch (NamingException e) {
+            throw new UUFException(
+                    "Cannot find any OSGi service registered with the name '" + serviceClassName + "'.");
+        }
+        return serviceInstance;
     }
 
     private static String joinClassNames(Object[] args) {

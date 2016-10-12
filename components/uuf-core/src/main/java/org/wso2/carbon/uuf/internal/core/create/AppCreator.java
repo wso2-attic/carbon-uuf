@@ -116,7 +116,7 @@ public class AppCreator {
 
         Set<Theme> themes = appReference.getThemeReferences().map(this::createTheme).collect(Collectors.toSet());
 
-        return new App(appName, appContextPath, lookup, themes, new SessionRegistry(appName));
+        return new App(appName, appContextPath, lookup, themes);
     }
 
     private Component createComponent(String componentName, String componentVersion, String componentContextPath,
