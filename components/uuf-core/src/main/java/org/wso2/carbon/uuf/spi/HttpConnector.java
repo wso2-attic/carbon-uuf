@@ -22,7 +22,5 @@ import org.wso2.carbon.uuf.api.ServerConnection;
 
 public interface HttpConnector {
 
-    void setServerConnection(ServerConnection serverConnection);
-
-    ServerConnection getServerConnection();
+    void registerConnection(ServerConnection serverConnection);
 }

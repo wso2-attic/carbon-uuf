@@ -522,6 +522,8 @@
         <equinox.osgi.version>3.10.2.v20150203-1939</equinox.osgi.version>
         <org.wso2.eclipse.osgi.version>3.4.0.v20140312-2051</org.wso2.eclipse.osgi.version>
         <ow2.jta.spec.version>1.0.12</ow2.jta.spec.version>
+        <osgi.service.tracker.package.import.version.range>[1.5.1, 2.0.0)
+        </osgi.service.tracker.package.import.version.range>
 
         <!-- Source and target Java version -->
         <wso2.maven.compiler.source>1.8</wso2.maven.compiler.source>

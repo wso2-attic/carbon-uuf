@@ -18,7 +18,9 @@
 function onRequest(env) {
     var session = getSession();
     if (!session) {
-        session = createSession("rasika");
+        var SimpleAuthHandler = Java.type("org.wso2.carbon.uuf.sample.simpleauth.bundle.SimpleAuthHandler");
+        var user = SimpleAuthHandler.authenticate("admin", "admin");
+        session = createSession(user);
     }
     session.setThemeName("org.wso2.carbon.uuf.sample.theme.green");
 }

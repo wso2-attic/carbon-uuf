@@ -33,13 +33,16 @@ import org.wso2.carbon.deployment.engine.ArtifactType;
 import org.wso2.carbon.deployment.engine.Deployer;
 import org.wso2.carbon.deployment.engine.exception.CarbonDeploymentException;
 import org.wso2.carbon.kernel.startupresolver.RequiredCapabilityListener;
+import org.wso2.carbon.uuf.api.ServerConnection;
 import org.wso2.carbon.uuf.core.App;
 import org.wso2.carbon.uuf.exception.UUFException;
+import org.wso2.carbon.uuf.internal.EventPublisher;
 import org.wso2.carbon.uuf.internal.UUFServer;
 import org.wso2.carbon.uuf.internal.core.create.AppCreator;
 import org.wso2.carbon.uuf.internal.core.create.ClassLoaderProvider;
 import org.wso2.carbon.uuf.internal.io.util.ZipArtifactHandler;
 import org.wso2.carbon.uuf.internal.util.NameUtils;
+import org.wso2.carbon.uuf.spi.HttpConnector;
 import org.wso2.carbon.uuf.spi.RenderableCreator;
 import org.wso2.carbon.uuf.spi.UUFAppRegistry;
 
@@ -75,6 +78,7 @@ public class ArtifactAppDeployer implements Deployer, UUFAppRegistry, RequiredCa
     private final Object lock;
     private final Set<RenderableCreator> renderableCreators;
     private final ClassLoaderProvider classLoaderProvider;
+    private EventPublisher<HttpConnector> eventPublisher;
     private AppCreator appCreator;
     private BundleContext bundleContext;
 
@@ -95,6 +99,7 @@ public class ArtifactAppDeployer implements Deployer, UUFAppRegistry, RequiredCa
         this.renderableCreators = ConcurrentHashMap.newKeySet();
         this.classLoaderProvider = classLoaderProvider;
     }
+
 
     @Override
     public void init() {
@@ -127,8 +132,11 @@ public class ArtifactAppDeployer implements Deployer, UUFAppRegistry, RequiredCa
                             "' as another app is already registered for the same context path.");
         }
 
-        pendingToDeployArtifacts.put(appNameContextPath.getRight(), new AppArtifact(appNameContextPath.getLeft(),
-                                                                                    artifact));
+        eventPublisher.publish(httpConnector -> httpConnector
+                .registerConnection(new ServerConnection(appNameContextPath.getRight(), this)));
+
+        pendingToDeployArtifacts.put(appNameContextPath.getRight(),
+                                     new AppArtifact(appNameContextPath.getLeft(), artifact));
         log.debug("UUF app '" + appNameContextPath.getLeft() + "' added to the pending deployments list.");
         return appNameContextPath.getLeft();
     }
@@ -177,6 +185,7 @@ public class ArtifactAppDeployer implements Deployer, UUFAppRegistry, RequiredCa
                 log.info("UUF app in '" + appArtifact.artifact.getPath() + "' removed even before it deployed.");
                 return;
             }
+
         }
     }
 
@@ -283,6 +292,7 @@ public class ArtifactAppDeployer implements Deployer, UUFAppRegistry, RequiredCa
     @Activate
     protected void activate(BundleContext bundleContext) {
         this.bundleContext = bundleContext;
+        eventPublisher = new EventPublisher<>(bundleContext, HttpConnector.class);
         log.debug("ArtifactAppDeployer service activated.");
     }
 

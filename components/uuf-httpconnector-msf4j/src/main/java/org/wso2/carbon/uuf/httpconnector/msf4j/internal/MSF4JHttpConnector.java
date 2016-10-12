@@ -1,0 +1,78 @@
+/*
+ *  Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+package org.wso2.carbon.uuf.httpconnector.msf4j.internal;
+
+import org.osgi.framework.BundleContext;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.wso2.carbon.uuf.api.ServerConnection;
+import org.wso2.carbon.uuf.httpconnector.msf4j.UUFMicroservice;
+import org.wso2.carbon.uuf.spi.HttpConnector;
+import org.wso2.msf4j.Microservice;
+
+import java.util.Dictionary;
+import java.util.Hashtable;
+
+/**
+ * This class generates connections between the each application's context path and MSF4j, to facilitate communication
+ * between the browser and UUF core.
+ */
+@Component(name = "org.wso2.carbon.uuf.httpconnector.msf4j.internal.MSF4JHttpConnector",
+           service = {HttpConnector.class},
+           immediate = true)
+@SuppressWarnings("unused")
+public class MSF4JHttpConnector implements HttpConnector {
+
+    private static final Logger log = LoggerFactory.getLogger(MSF4JHttpConnector.class);
+    private ServerConnection serverConnection;
+    private BundleContext bundleContext;
+
+    /**
+     * Get called when this osgi component get registered.
+     *
+     * @param bundleContext Context of the osgi component.
+     */
+    @Activate
+    protected void activate(BundleContext bundleContext) {
+        this.bundleContext = bundleContext;
+        log.debug("MSF4JHttpConnector activated.");
+    }
+
+    /**
+     * Get called when this osgi component get unregistered.
+     */
+    @Deactivate
+    protected void deactivate() {
+        this.bundleContext = null;
+        log.debug("MSF4JHttpConnector deactivated.");
+    }
+
+    /**
+     * Create and register a microservice for each application using application's context path.
+     *
+     * @param serverConnection Server Connection of the application.
+     */
+    @Override
+    public void registerConnection(ServerConnection serverConnection) {
+        Dictionary<String, String> dictionary = new Hashtable<>();
+        dictionary.put("contextPath", serverConnection.getContextPath());
+        bundleContext.registerService(Microservice.class, new UUFMicroservice(serverConnection), dictionary);
+    }
+}
