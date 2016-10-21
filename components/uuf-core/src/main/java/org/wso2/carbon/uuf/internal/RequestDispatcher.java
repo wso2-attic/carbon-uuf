@@ -22,7 +22,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.core.App;
 import org.wso2.carbon.uuf.exception.HttpErrorException;
-import org.wso2.carbon.uuf.exception.PageNotFoundException;
 import org.wso2.carbon.uuf.exception.PageRedirectException;
 import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.internal.debug.Debugger;
@@ -34,7 +33,6 @@ import static org.wso2.carbon.uuf.spi.HttpResponse.CONTENT_TYPE_TEXT_HTML;
 import static org.wso2.carbon.uuf.spi.HttpResponse.HEADER_LOCATION;
 import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_FOUND;
 import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_INTERNAL_SERVER_ERROR;
-import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_MOVED_PERMANENTLY;
 import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_OK;
 
 public class RequestDispatcher {
@@ -89,26 +87,7 @@ public class RequestDispatcher {
                 html = app.renderFragment(request, response);
             } else {
                 // Request for a page.
-                try {
-                    html = app.renderPage(request, response);
-                } catch (PageNotFoundException e) {
-                    // See https://googlewebmastercentral.blogspot.com/2010/04/to-slash-or-not-to-slash.html
-                    // If the tailing '/' is extra or a it is missing, then send 301 with corrected URL.
-                    String uriWithoutContextPath = request.getUriWithoutContextPath();
-                    String correctedUriWithoutContextPath = uriWithoutContextPath.endsWith("/") ?
-                            uriWithoutContextPath.substring(0, uriWithoutContextPath.length() - 1) :
-                            (uriWithoutContextPath + "/");
-                    if (app.hasPage(correctedUriWithoutContextPath)) {
-                        response.setStatus(STATUS_MOVED_PERMANENTLY);
-                        String correctedUri = request.getContextPath() + correctedUriWithoutContextPath;
-                        if (request.getQueryString() != null) {
-                            correctedUri = correctedUri + '?' + request.getQueryString();
-                        }
-                        response.setHeader(HEADER_LOCATION, correctedUri);
-                        return;
-                    }
-                    throw e;
-                }
+                html = app.renderPage(request, response);
             }
             response.setContent(STATUS_OK, html, CONTENT_TYPE_TEXT_HTML);
         } catch (UUFException e) {
