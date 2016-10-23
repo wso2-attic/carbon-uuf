@@ -115,12 +115,18 @@ public class DependencyTreeParser {
          *  (<group ID>:<artifact ID>:<artifact type>:<artifact version>:compile - omitted for duplicate)
          */
         String[] parts = dependencyLine.split(":");
-        if ((parts.length != 4) && (parts.length != 5)) {
-            throw new MalformedConfigurationException(
-                    "Format of the dependency line '" + dependencyLine + "' is incorrect.");
+        switch (parts.length) {
+            case 4:
+            case 5:
+                return new ComponentData(parts[1], parts[3]);
+            case 6:
+                return new ComponentData(parts[1], parts[4]);
+            default:
+                throw new MalformedConfigurationException(
+                        "Format of the dependency line '" + dependencyLine + "' is incorrect. Found " + parts.length +
+                                " instead of 4, 5 or 6");
         }
         // component name = <artifact ID> (2nd part), component version = <artifact version> (4th part)
-        return new ComponentData(parts[1], parts[3]);
     }
 
     public static class Result {
