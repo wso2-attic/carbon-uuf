@@ -21,8 +21,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.wso2.carbon.uuf.sample</groupId>
-    <artifactId>org.wso2.carbon.uuf.sample.devices-store</artifactId>
+    <artifactId>org.wso2.carbon.uuf.sample.devices-store.feature</artifactId>
     <version>1.0.0-SNAPSHOT</version>
+    <packaging>carbon-feature</packaging>
 
     <name>WSO2 UUF Sample - App - Devices Store App</name>
     <url>http://wso2.org</url>
@@ -49,12 +50,13 @@
                 <groupId>org.wso2.carbon.uuf.maven</groupId>
                 <artifactId>carbon-uuf-maven-plugin</artifactId>
                 <version>${carbon-uuf-maven-plugin.version}</version>
+                <extensions>true</extensions>
                 <executions>
                     <execution>
                         <id>create</id>
                         <phase>package</phase>
                         <goals>
-                            <goal>create-application</goal>
+                            <goal>create-app</goal>
                         </goals>
                     </execution>
                 </executions>
