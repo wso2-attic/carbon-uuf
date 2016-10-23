@@ -14,7 +14,7 @@ Then clone this repository (`git clone https://github.com/wso2/carbon-uuf.git`) 
 
 ## How to run ?
 
-Make sure you are running JDK8 update 40 or latest.
+Make sure you are running **JDK8 update 40** or latest.
 
 1. Extract `wso2uuf-1.0.0-SNAPSHOT.zip` archive.
 2. Go to `wso2uuf-1.0.0-SNAPSHOT/bin` direcotry.
