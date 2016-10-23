@@ -36,6 +36,8 @@
     </parent>
 
     <modules>
+        <module>osgi-services/org.wso2.carbon.uuf.sample.pets-store.bundle</module>
+        <module>osgi-services/org.wso2.carbon.uuf.sample.simple-auth.bundle</module>
         <module>themes/org.wso2.carbon.uuf.sample.theme.default</module>
         <module>themes/org.wso2.carbon.uuf.sample.theme.blue</module>
         <module>themes/org.wso2.carbon.uuf.sample.theme.green</module>
@@ -43,13 +45,9 @@
         <module>components/org.wso2.carbon.uuf.sample.foundation</module>
         <module>components/org.wso2.carbon.uuf.sample.store-common</module>
         <module>apps/org.wso2.carbon.uuf.sample.pets-store</module>
-        <module>apps/org.wso2.carbon.uuf.sample.devices-store</module>
         <module>apps/org.wso2.carbon.uuf.sample.features-app</module>
-        <module>osgi-services/org.wso2.carbon.uuf.sample.pets-store.bundle</module>
-        <module>osgi-services/org.wso2.carbon.uuf.sample.simple-auth.bundle</module>
-        <module>p2-features/org.wso2.carbon.uuf.sample.pets-store.feature</module>
-        <module>p2-features/org.wso2.carbon.uuf.sample.simple-auth.feature</module>
-        <module>p2-features/org.wso2.carbon.uuf.sample.Features-app.feature</module>
+        <!--UUF Maven plugin does not support uuf-app dependencies-->
+        <!--<module>apps/org.wso2.carbon.uuf.sample.devices-store</module>-->
     </modules>
 
 </project>
