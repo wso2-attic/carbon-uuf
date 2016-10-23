@@ -21,8 +21,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.wso2.carbon.uuf.sample</groupId>
-    <artifactId>org.wso2.carbon.uuf.sample.pets-store</artifactId>
+    <artifactId>org.wso2.carbon.uuf.sample.pets-store.feature</artifactId>
     <version>1.0.0-SNAPSHOT</version>
+    <packaging>carbon-feature</packaging>
 
     <name>WSO2 UUF Sample - App - Pets Store App</name>
     <url>http://wso2.org</url>
@@ -35,29 +36,41 @@
     </parent>
 
     <dependencies>
+        <!--UUF Components-->
         <dependency>
             <groupId>org.wso2.carbon.uuf.sample</groupId>
             <artifactId>org.wso2.carbon.uuf.sample.foundation</artifactId>
             <version>${carbon.uuf.version}</version>
             <type>zip</type>
+            <classifier>uuf-component</classifier>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.uuf.sample</groupId>
             <artifactId>org.wso2.carbon.uuf.sample.simple-auth</artifactId>
             <version>${carbon.uuf.version}</version>
             <type>zip</type>
+            <classifier>uuf-component</classifier>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.uuf.sample</groupId>
             <artifactId>org.wso2.carbon.uuf.sample.store-common</artifactId>
             <version>${carbon.uuf.version}</version>
             <type>zip</type>
+            <classifier>uuf-component</classifier>
         </dependency>
+        <!--UUF Themes-->
         <dependency>
             <groupId>org.wso2.carbon.uuf.sample</groupId>
             <artifactId>org.wso2.carbon.uuf.sample.theme.default</artifactId>
             <version>${carbon.uuf.version}</version>
-            <type>tar</type>
+            <type>zip</type>
+            <classifier>uuf-theme</classifier>
+        </dependency>
+        <!--Backend dependencies-->
+        <dependency>
+            <groupId>org.wso2.carbon.uuf.sample</groupId>
+            <artifactId>org.wso2.carbon.uuf.sample.pets-store.bundle</artifactId>
+            <version>${carbon.uuf.version}</version>
         </dependency>
     </dependencies>
 
@@ -67,17 +80,25 @@
                 <groupId>org.wso2.carbon.uuf.maven</groupId>
                 <artifactId>carbon-uuf-maven-plugin</artifactId>
                 <version>${carbon-uuf-maven-plugin.version}</version>
+                <extensions>true</extensions>
                 <executions>
                     <execution>
                         <id>create</id>
                         <phase>package</phase>
                         <goals>
-                            <goal>create-application</goal>
+                            <goal>create-app</goal>
                         </goals>
                         <configuration>
                             <instructions>
                                 <Import-Package>org.wso2.carbon.uuf.sample.simpleauth.bundle</Import-Package>
                             </instructions>
+                            <!--All backend dependencies should be specified here-->
+                            <bundles>
+                                <bundle>
+                                    <symbolicName>org.wso2.carbon.uuf.sample.pets-store.bundle</symbolicName>
+                                    <version>${carbon.uuf.version}</version>
+                                </bundle>
+                            </bundles>
                         </configuration>
                     </execution>
                 </executions>
