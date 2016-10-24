@@ -129,7 +129,8 @@ public class App {
                     uriWithoutContextPath.substring(0, uriWithoutContextPath.length() - 1) :
                     (uriWithoutContextPath + "/");
             if (hasPage(correctedUriWithoutContextPath)) {
-                throw new PageRedirectException(request.getContextPath() + correctedUriWithoutContextPath, e); // Redirect to the login page.
+                // Redirecting to the correct page.
+                throw new PageRedirectException(request.getContextPath() + correctedUriWithoutContextPath, e);
             } else {
                 return renderErrorPage(e, requestLookup, api, theme);
             }
