@@ -125,21 +125,15 @@ public class App {
             // See https://googlewebmastercentral.blogspot.com/2010/04/to-slash-or-not-to-slash.html
             // If the tailing '/' is extra or a it is missing, then send 301 with corrected URL.
             String uriWithoutContextPath = request.getUriWithoutContextPath();
-            String uriWithContextPath = request.getUri();
-            if (uriWithoutContextPath.endsWith("/")) {
-                uriWithoutContextPath = uriWithoutContextPath.substring(0, uriWithoutContextPath.length() - 1);
-                uriWithContextPath = uriWithContextPath.substring(0, uriWithContextPath.length() - 1);
-
-            } else {
-                uriWithoutContextPath = (uriWithoutContextPath + "/");
-                uriWithContextPath = (uriWithContextPath + "/");
-            }
-            if (hasPage(uriWithoutContextPath)) {
-                throw new PageRedirectException(uriWithContextPath, e); // Redirect to the login page.
+            String correctedUriWithoutContextPath = uriWithoutContextPath.endsWith("/") ?
+                    uriWithoutContextPath.substring(0, uriWithoutContextPath.length() - 1) :
+                    (uriWithoutContextPath + "/");
+            if (hasPage(correctedUriWithoutContextPath)) {
+                throw new PageRedirectException(request.getContextPath() + correctedUriWithoutContextPath, e); // Redirect to the login page.
             } else {
                 return renderErrorPage(e, requestLookup, api, theme);
             }
-        }catch (HttpErrorException e) {
+        } catch (HttpErrorException e) {
             return renderErrorPage(e, requestLookup, api, theme);
         } catch (UUFException e) {
             return renderErrorPage(new HttpErrorException(HttpResponse.STATUS_INTERNAL_SERVER_ERROR, e.getMessage(), e),
@@ -212,7 +206,7 @@ public class App {
         return fragment.render(model, lookup, requestLookup, api);
     }
 
-    public boolean hasPage(String uriWithoutContextPath) {
+    private boolean hasPage(String uriWithoutContextPath) {
         // First check 'root' component has the page.
         if (rootComponent.hasPage(uriWithoutContextPath)) {
             return true;
