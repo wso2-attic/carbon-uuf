@@ -42,6 +42,11 @@ public class MutableHbsPageRenderable extends HbsPageRenderable implements Mutab
     }
 
     @Override
+    public String getComponentPath() {
+        return getRelativePath();
+    }
+
+    @Override
     protected Template getTemplate() {
         return template;
     }

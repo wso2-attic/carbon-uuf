@@ -38,6 +38,11 @@ public class MutableHbsLayoutRenderable extends HbsLayoutRenderable implements M
     }
 
     @Override
+    public String getComponentPath() {
+        return getRelativePath();
+    }
+
+    @Override
     protected Template getTemplate() {
         return template;
     }

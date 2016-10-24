@@ -44,6 +44,11 @@ public class MutableHbsFragmentRenderable extends HbsFragmentRenderable implemen
     }
 
     @Override
+    public String getComponentPath() {
+        return getRelativePath();
+    }
+
+    @Override
     protected Template getTemplate() {
         return template;
     }
