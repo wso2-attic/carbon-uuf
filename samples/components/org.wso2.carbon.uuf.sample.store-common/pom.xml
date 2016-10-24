@@ -23,6 +23,7 @@
     <groupId>org.wso2.carbon.uuf.sample</groupId>
     <artifactId>org.wso2.carbon.uuf.sample.store-common</artifactId>
     <version>1.0.0-SNAPSHOT</version>
+    <packaging>uuf-component</packaging>
 
     <name>WSO2 UUF Sample - Component - Store Common Component</name>
     <url>http://wso2.org</url>
@@ -40,6 +41,7 @@
             <artifactId>org.wso2.carbon.uuf.sample.foundation</artifactId>
             <version>${carbon.uuf.version}</version>
             <type>zip</type>
+            <classifier>uuf-component</classifier>
         </dependency>
     </dependencies>
 
@@ -49,6 +51,7 @@
                 <groupId>org.wso2.carbon.uuf.maven</groupId>
                 <artifactId>carbon-uuf-maven-plugin</artifactId>
                 <version>${carbon-uuf-maven-plugin.version}</version>
+                <extensions>true</extensions>
                 <executions>
                     <execution>
                         <phase>package</phase>
