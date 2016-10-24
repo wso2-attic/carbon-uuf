@@ -130,7 +130,11 @@ public class App {
                     (uriWithoutContextPath + "/");
             if (hasPage(correctedUriWithoutContextPath)) {
                 // Redirecting to the correct page.
-                throw new PageRedirectException(request.getContextPath() + correctedUriWithoutContextPath, e);
+                String correctedUri = request.getContextPath() + correctedUriWithoutContextPath;
+                if (request.getQueryString() != null) {
+                    correctedUri = correctedUri + '?' + request.getQueryString();
+                }
+                throw new PageRedirectException(correctedUri, e);
             } else {
                 return renderErrorPage(e, requestLookup, api, theme);
             }
