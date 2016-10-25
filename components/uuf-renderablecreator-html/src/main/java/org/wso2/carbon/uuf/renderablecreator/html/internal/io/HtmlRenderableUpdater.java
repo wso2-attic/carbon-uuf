@@ -121,23 +121,21 @@ public class HtmlRenderableUpdater {
                 Path updatedFileAbsolutePath = updatedDirectory.resolve(updatedFileName);
                 try (DirectoryStream<Path> stream = Files.newDirectoryStream(updatedFileAbsolutePath.getParent())) {
                     for (Path entry : stream) {
-                        if (!Files.isDirectory(entry)) {
+                        if (Files.isDirectory(entry)) {
+                            continue;
+                        }
+
+                        MutableHtmlRenderable mutableHtmlRenderable = watchingRenderables.get(entry);
+                        if (mutableHtmlRenderable != null) {
                             try {
-                                MutableHtmlRenderable mutableHtmlRenderable = watchingRenderables.get(entry);
-                                if (mutableHtmlRenderable != null) {
-                                    String content = new String(Files.readAllBytes(entry), StandardCharsets.UTF_8);
-                                    mutableHtmlRenderable.setHtml(content);
-                                    log.info("HTML template '" + entry + "' reloaded successfully.");
-                                }
+                                String content = new String(Files.readAllBytes(entry), StandardCharsets.UTF_8);
+                                mutableHtmlRenderable.setHtml(content);
+                                log.info("HTML template '" + entry + "' reloaded successfully.");
                             } catch (IOException e) {
-                                throw new FileOperationException("Cannot read content of updated file '" + entry + "'.",
-                                                                 e);
-                            } catch (UUFException e) {
                                 log.error("An error occurred while reloading HTML template '" + entry + "'.", e);
                             }
                         }
                     }
-
                 } catch (IOException e) {
                     log.error("An error occurred while reloading HTML template '" + updatedFileAbsolutePath + "'.", e);
                 }
