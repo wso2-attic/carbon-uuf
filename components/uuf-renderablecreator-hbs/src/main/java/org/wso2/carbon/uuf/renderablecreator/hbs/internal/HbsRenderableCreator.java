@@ -40,7 +40,7 @@ import org.wso2.carbon.uuf.renderablecreator.hbs.impl.MutableHbsFragmentRenderab
 import org.wso2.carbon.uuf.renderablecreator.hbs.impl.MutableHbsLayoutRenderable;
 import org.wso2.carbon.uuf.renderablecreator.hbs.impl.MutableHbsPageRenderable;
 import org.wso2.carbon.uuf.renderablecreator.hbs.impl.MutableJsExecutable;
-import org.wso2.carbon.uuf.renderablecreator.hbs.internal.io.RenderableUpdater;
+import org.wso2.carbon.uuf.renderablecreator.hbs.internal.io.HbsRenderableUpdater;
 import org.wso2.carbon.uuf.spi.Renderable;
 import org.wso2.carbon.uuf.spi.RenderableCreator;
 
@@ -59,13 +59,13 @@ public class HbsRenderableCreator implements RenderableCreator {
     private static final Logger log = LoggerFactory.getLogger(HbsRenderableCreator.class);
 
     private final boolean isDevmodeEnabled;
-    private final RenderableUpdater updater;
+    private final HbsRenderableUpdater updater;
 
     public HbsRenderableCreator() {
         //this.isDevmodeEnabled = DebugUtil.isDevmodeEnabled();
         this.isDevmodeEnabled = Boolean.parseBoolean(System.getProperties().getProperty("devmode", "false"));
         if (this.isDevmodeEnabled) {
-            updater = new RenderableUpdater();
+            updater = new HbsRenderableUpdater();
         } else {
             updater = null;
         }

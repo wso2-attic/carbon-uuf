@@ -49,9 +49,9 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-public class RenderableUpdater {
+public class HbsRenderableUpdater {
 
-    private static final Logger log = LoggerFactory.getLogger(RenderableUpdater.class);
+    private static final Logger log = LoggerFactory.getLogger(HbsRenderableUpdater.class);
 
     private final Set<Path> watchingDirectories;
     private final ConcurrentMap<Path, MutableHbsRenderable> watchingRenderables;
@@ -60,7 +60,7 @@ public class RenderableUpdater {
     private final Thread watchService;
     private boolean isWatchServiceStopped;
 
-    public RenderableUpdater() {
+    public HbsRenderableUpdater() {
         this.watchingDirectories = new HashSet<>();
         this.watchingRenderables = new ConcurrentHashMap<>();
         this.watchingExecutables = new ConcurrentHashMap<>();
@@ -69,7 +69,7 @@ public class RenderableUpdater {
         } catch (IOException e) {
             throw new FileOperationException("Cannot create file watch service.", e);
         }
-        this.watchService = new Thread(this::run, RenderableUpdater.class.getName() + "-WatchService");
+        this.watchService = new Thread(this::run, HbsRenderableUpdater.class.getName() + "-WatchService");
         this.isWatchServiceStopped = false;
     }
 
