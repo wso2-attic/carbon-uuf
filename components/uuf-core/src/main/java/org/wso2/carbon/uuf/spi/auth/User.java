@@ -19,7 +19,9 @@
 package org.wso2.carbon.uuf.spi.auth;
 
 
-public interface User {
+import java.io.Serializable;
+
+public interface User extends Serializable {
 
     String getUsername();
 
