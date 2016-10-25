@@ -52,6 +52,7 @@ import java.util.concurrent.ConcurrentMap;
 public class RenderableUpdater {
 
     private static final Logger log = LoggerFactory.getLogger(RenderableUpdater.class);
+
     private final Set<Path> watchingDirectories;
     private final ConcurrentMap<Path, MutableHbsRenderable> watchingRenderables;
     private final ConcurrentMap<Path, MutableExecutable> watchingExecutables;
@@ -94,10 +95,10 @@ public class RenderableUpdater {
                 throw new UUFException("File watch service is closed.", e);
             } catch (NotDirectoryException e) {
                 throw new FileOperationException("Cannot register path '" + parentDirectory +
-                        "' to file watch service as it is not a directory.", e);
+                                                         "' to file watch service as it is not a directory.", e);
             } catch (IOException e) {
                 throw new FileOperationException("An IO error occurred when registering path '" + parentDirectory +
-                        "' to file watch service.'", e);
+                                                         "' to file watch service.'", e);
             }
         }
         watchingRenderables.put(renderablePath, mutableRenderable);
@@ -152,8 +153,8 @@ public class RenderableUpdater {
                                             mutableRenderable.getComponentPath(), content));
                                     log.info("Handlebars template '" + entry + "' reloaded successfully.");
                                 } catch (UUFException e) {
-                                    log.error("An error occurred while reloading Handlebars template '" + entry +
-                                            "'.", e);
+                                    log.error("An error occurred while reloading Handlebars template '" + entry + "'.",
+                                              e);
                                 }
                             } else {
                                 MutableExecutable mutableExecutable = watchingExecutables.get(entry);
@@ -163,8 +164,8 @@ public class RenderableUpdater {
                                         mutableExecutable.reload(readFileContent(entry));
                                         log.info("JavaScript file '" + entry + "' reloaded successfully.");
                                     } catch (UUFException e) {
-                                        log.error("An error occurred while reloading JavaScript file '" + entry +
-                                                "'.", e);
+                                        log.error("An error occurred while reloading JavaScript file '" + entry + "'.",
+                                                  e);
                                     }
                                 }
                             }

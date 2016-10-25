@@ -75,8 +75,9 @@ public class HtmlRenderableUpdater {
                 throw new FileOperationException("Cannot register path '" + parentDirectory +
                                                          "' to file watch service as it is not a directory.", e);
             } catch (IOException e) {
-                throw new FileOperationException("An IO error occurred when registering path '" + parentDirectory +
-                                                         "' to file watch service.'", e);
+                throw new FileOperationException(
+                        "An IO error occurred when registering path '" + parentDirectory + "' to file watch service.'",
+                        e);
             }
         }
         watchingRenderables.put(renderablePath, mutableHtmlRenderable);
@@ -116,34 +117,29 @@ public class HtmlRenderableUpdater {
                 Path updatedDirectory = (Path) watchKey.watchable();
                 @SuppressWarnings("unchecked")
                 Path updatedFileName = ((WatchEvent<Path>) watchEvent).context();
-
                 // Updating the changed html file
                 Path updatedFileAbsolutePath = updatedDirectory.resolve(updatedFileName);
                 try (DirectoryStream<Path> stream = Files.newDirectoryStream(updatedFileAbsolutePath.getParent())) {
                     for (Path entry : stream) {
                         if (!Files.isDirectory(entry)) {
                             try {
-                                MutableHtmlRenderable
-                                        mutableHtmlRenderable = watchingRenderables.get(entry);
+                                MutableHtmlRenderable mutableHtmlRenderable = watchingRenderables.get(entry);
                                 if (mutableHtmlRenderable != null) {
-                                    String content = new String(Files.readAllBytes(entry),
-                                            StandardCharsets.UTF_8);
+                                    String content = new String(Files.readAllBytes(entry), StandardCharsets.UTF_8);
                                     mutableHtmlRenderable.setHtml(content);
                                     log.info("HTML template '" + entry + "' reloaded successfully.");
                                 }
                             } catch (IOException e) {
-                                throw new FileOperationException(
-                                        "Cannot read content of updated file '" + entry + "'.", e);
+                                throw new FileOperationException("Cannot read content of updated file '" + entry + "'.",
+                                                                 e);
                             } catch (UUFException e) {
-                                log.error("An error occurred while reloading HTML template '" + entry +
-                                        "'.", e);
+                                log.error("An error occurred while reloading HTML template '" + entry + "'.", e);
                             }
                         }
                     }
 
                 } catch (IOException e) {
-                    log.error("An error occurred while reloading HTML template '" + updatedFileAbsolutePath +
-                            "'.", e);
+                    log.error("An error occurred while reloading HTML template '" + updatedFileAbsolutePath + "'.", e);
                 }
             }
 
