@@ -32,7 +32,6 @@ import org.wso2.carbon.uuf.renderablecreator.html.internal.io.HtmlRenderableUpda
 import org.wso2.carbon.uuf.spi.Renderable;
 import org.wso2.carbon.uuf.spi.RenderableCreator;
 
-import java.lang.management.ManagementFactory;
 import java.util.Set;
 
 @Component(name = "org.wso2.carbon.uuf.renderablecreator.html.internal.HtmlRenderableCreator",
@@ -44,12 +43,13 @@ public class HtmlRenderableCreator implements RenderableCreator {
     private static final Set<String> SUPPORTED_FILE_EXTENSIONS = ImmutableSet.of("html");
     private static final Logger log = LoggerFactory.getLogger(HtmlRenderableCreator.class);
 
-    private final boolean isDebuggingEnabled;
+    private final boolean isDevmodeEnabled;
     private final HtmlRenderableUpdater updater;
 
     public HtmlRenderableCreator() {
-        this.isDebuggingEnabled = ManagementFactory.getRuntimeMXBean().getInputArguments().contains("-Xdebug");
-        if (this.isDebuggingEnabled) {
+        //this.isDevmodeEnabled = ManagementFactory.getRuntimeMXBean().getInputArguments().contains("-Xdebug");
+        this.isDevmodeEnabled = Boolean.parseBoolean(System.getProperties().getProperty("devmode", "false"));
+        if (this.isDevmodeEnabled) {
             updater = new HtmlRenderableUpdater();
         } else {
             updater = null;
@@ -59,7 +59,7 @@ public class HtmlRenderableCreator implements RenderableCreator {
     @Activate
     protected void activate() {
         log.debug("HtmlRenderableCreator activated.");
-        if (isDebuggingEnabled) {
+        if (isDevmodeEnabled) {
             updater.start();
         }
     }
@@ -67,7 +67,7 @@ public class HtmlRenderableCreator implements RenderableCreator {
     @Deactivate
     protected void deactivate() {
         log.debug("HtmlRenderableCreator deactivated.");
-        if (isDebuggingEnabled) {
+        if (isDevmodeEnabled) {
             updater.finish();
         }
     }
@@ -97,7 +97,7 @@ public class HtmlRenderableCreator implements RenderableCreator {
 
     private Renderable getHtmlRenderable(FileReference fileReference) {
 
-        if (isDebuggingEnabled) {
+        if (isDevmodeEnabled) {
             MutableHtmlRenderable mutableHtmlRenderable = new MutableHtmlRenderable(fileReference.getContent(),
                                                                                     fileReference.getAbsolutePath(),
                                                                                     fileReference.getRelativePath());

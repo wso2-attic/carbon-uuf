@@ -26,6 +26,7 @@ import org.wso2.carbon.uuf.renderablecreator.html.core.MutableHtmlRenderable;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.ClosedWatchServiceException;
+import java.nio.file.DirectoryStream;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.NotDirectoryException;
@@ -74,8 +75,9 @@ public class HtmlRenderableUpdater {
                 throw new FileOperationException("Cannot register path '" + parentDirectory +
                                                          "' to file watch service as it is not a directory.", e);
             } catch (IOException e) {
-                throw new FileOperationException("An IO error occurred when registering path '" + parentDirectory +
-                                                         "' to file watch service.'", e);
+                throw new FileOperationException(
+                        "An IO error occurred when registering path '" + parentDirectory + "' to file watch service.'",
+                        e);
             }
         }
         watchingRenderables.put(renderablePath, mutableHtmlRenderable);
@@ -115,26 +117,29 @@ public class HtmlRenderableUpdater {
                 Path updatedDirectory = (Path) watchKey.watchable();
                 @SuppressWarnings("unchecked")
                 Path updatedFileName = ((WatchEvent<Path>) watchEvent).context();
-
                 // Updating the changed html file
                 Path updatedFileAbsolutePath = updatedDirectory.resolve(updatedFileName);
-                if (Files.exists(updatedFileAbsolutePath)) {
-                    try {
-                        MutableHtmlRenderable
-                                mutableHtmlRenderable = watchingRenderables.get(updatedFileAbsolutePath);
-                        if (mutableHtmlRenderable != null) {
-                            String content = new String(Files.readAllBytes(updatedFileAbsolutePath),
-                                                        StandardCharsets.UTF_8);
-                            mutableHtmlRenderable.setHtml(content);
-                            log.info("HTML template '" + updatedFileAbsolutePath + "' reloaded successfully.");
+                try (DirectoryStream<Path> stream = Files.newDirectoryStream(updatedFileAbsolutePath.getParent())) {
+                    for (Path entry : stream) {
+                        if (!Files.isDirectory(entry)) {
+                            try {
+                                MutableHtmlRenderable mutableHtmlRenderable = watchingRenderables.get(entry);
+                                if (mutableHtmlRenderable != null) {
+                                    String content = new String(Files.readAllBytes(entry), StandardCharsets.UTF_8);
+                                    mutableHtmlRenderable.setHtml(content);
+                                    log.info("HTML template '" + entry + "' reloaded successfully.");
+                                }
+                            } catch (IOException e) {
+                                throw new FileOperationException("Cannot read content of updated file '" + entry + "'.",
+                                                                 e);
+                            } catch (UUFException e) {
+                                log.error("An error occurred while reloading HTML template '" + entry + "'.", e);
+                            }
                         }
-                    } catch (IOException e) {
-                        throw new FileOperationException(
-                                "Cannot read content of updated file '" + updatedFileAbsolutePath + "'.", e);
-                    } catch (UUFException e) {
-                        log.error("An error occurred while reloading HTML template '" + updatedFileAbsolutePath +
-                                          "'.", e);
                     }
+
+                } catch (IOException e) {
+                    log.error("An error occurred while reloading HTML template '" + updatedFileAbsolutePath + "'.", e);
                 }
             }
 

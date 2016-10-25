@@ -26,6 +26,8 @@ public interface MutableHbsRenderable {
 
     String getPath();
 
+    String getComponentPath();
+
     void reload(TemplateSource templateSource);
 
     Optional<MutableExecutable> getMutableExecutable();

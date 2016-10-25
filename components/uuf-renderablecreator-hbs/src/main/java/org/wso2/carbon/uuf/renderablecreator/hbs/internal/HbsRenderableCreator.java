@@ -58,12 +58,13 @@ public class HbsRenderableCreator implements RenderableCreator {
     private static final String EXTENSION_JAVASCRIPT = ".js";
     private static final Logger log = LoggerFactory.getLogger(HbsRenderableCreator.class);
 
-    private final boolean isDebuggingEnabled;
+    private final boolean isDevmodeEnabled;
     private final RenderableUpdater updater;
 
     public HbsRenderableCreator() {
-        this.isDebuggingEnabled = DebugUtil.isDebuggingEnabled();
-        if (this.isDebuggingEnabled) {
+        //this.isDevmodeEnabled = DebugUtil.isDevmodeEnabled();
+        this.isDevmodeEnabled = Boolean.parseBoolean(System.getProperties().getProperty("devmode", "false"));
+        if (this.isDevmodeEnabled) {
             updater = new RenderableUpdater();
         } else {
             updater = null;
@@ -73,7 +74,7 @@ public class HbsRenderableCreator implements RenderableCreator {
     @Activate
     protected void activate() {
         log.debug("HbsRenderableCreator activated.");
-        if (isDebuggingEnabled) {
+        if (isDevmodeEnabled) {
             updater.start();
         }
     }
@@ -81,7 +82,7 @@ public class HbsRenderableCreator implements RenderableCreator {
     @Deactivate
     protected void deactivate() {
         log.debug("HbsRenderableCreator deactivated.");
-        if (isDebuggingEnabled) {
+        if (isDevmodeEnabled) {
             updater.finish();
         }
     }
@@ -98,7 +99,7 @@ public class HbsRenderableCreator implements RenderableCreator {
         TemplateSource templateSource = createTemplateSource(file);
         Executable executable = createExecutable(fragmentReference, classLoader);
         Renderable fragmentRenderable;
-        if (isDebuggingEnabled) {
+        if (isDevmodeEnabled) {
             MutableHbsFragmentRenderable mfr = new MutableHbsFragmentRenderable(templateSource,
                                                                                 file.getAbsolutePath(),
                                                                                 file.getRelativePath(),
@@ -119,7 +120,7 @@ public class HbsRenderableCreator implements RenderableCreator {
         TemplateSource templateSource = createTemplateSource(file);
         Executable executable = createExecutable(pageReference, classLoader);
         Renderable pageRenderable;
-        if (isDebuggingEnabled) {
+        if (isDevmodeEnabled) {
             MutableHbsPageRenderable mpr = new MutableHbsPageRenderable(templateSource, file.getAbsolutePath(),
                                                                         file.getRelativePath(),
                                                                         (MutableExecutable) executable);
@@ -139,7 +140,7 @@ public class HbsRenderableCreator implements RenderableCreator {
         FileReference file = layoutReference.getRenderingFile();
         TemplateSource templateSource = createTemplateSource(file);
         Renderable layoutRenderable;
-        if (isDebuggingEnabled) {
+        if (isDevmodeEnabled) {
             MutableHbsLayoutRenderable mlr = new MutableHbsLayoutRenderable(templateSource, file.getAbsolutePath(),
                                                                             file.getRelativePath());
             updater.add(layoutReference, mlr);
@@ -173,7 +174,7 @@ public class HbsRenderableCreator implements RenderableCreator {
 
     private Executable createExecutable(FileReference executableFileReference, ClassLoader classLoader,
                                         ComponentReference componentReference) {
-        if (isDebuggingEnabled) {
+        if (isDevmodeEnabled) {
             return new MutableJsExecutable(executableFileReference.getContent(), classLoader,
                                            executableFileReference.getAbsolutePath(),
                                            executableFileReference.getRelativePath(), componentReference.getPath());

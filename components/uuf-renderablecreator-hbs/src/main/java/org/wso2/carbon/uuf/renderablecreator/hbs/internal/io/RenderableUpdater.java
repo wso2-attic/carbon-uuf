@@ -34,6 +34,7 @@ import org.wso2.carbon.uuf.renderablecreator.hbs.core.MutableHbsRenderable;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.ClosedWatchServiceException;
+import java.nio.file.DirectoryStream;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.NotDirectoryException;
@@ -51,6 +52,7 @@ import java.util.concurrent.ConcurrentMap;
 public class RenderableUpdater {
 
     private static final Logger log = LoggerFactory.getLogger(RenderableUpdater.class);
+
     private final Set<Path> watchingDirectories;
     private final ConcurrentMap<Path, MutableHbsRenderable> watchingRenderables;
     private final ConcurrentMap<Path, MutableExecutable> watchingExecutables;
@@ -139,29 +141,38 @@ public class RenderableUpdater {
                 @SuppressWarnings("unchecked")
                 Path updatedFileName = ((WatchEvent<Path>) event).context();
                 Path updatedFileAbsolutePath = updatedDirectory.resolve(updatedFileName);
-                MutableHbsRenderable mutableRenderable = watchingRenderables.get(updatedFileAbsolutePath);
-                if (mutableRenderable != null) {
-                    // Updated file is a MutableHbsRenderable
-                    try {
-                        String content = readFileContent(updatedFileAbsolutePath);
-                        mutableRenderable.reload(new StringTemplateSource(mutableRenderable.getPath(), content));
-                        log.info("Handlebars template '" + updatedFileAbsolutePath + "' reloaded successfully.");
-                    } catch (UUFException e) {
-                        log.error("An error occurred while reloading Handlebars template '" + updatedFileAbsolutePath +
-                                          "'.", e);
-                    }
-                } else {
-                    MutableExecutable mutableExecutable = watchingExecutables.get(updatedFileAbsolutePath);
-                    if (mutableExecutable != null) {
-                        // Updated file is a MutableExecutable
-                        try {
-                            mutableExecutable.reload(readFileContent(updatedFileAbsolutePath));
-                            log.info("JavaScript file '" + updatedFileAbsolutePath + "' reloaded successfully.");
-                        } catch (UUFException e) {
-                            log.error("An error occurred while reloading JavaScript file '" + updatedFileAbsolutePath +
-                                              "'.", e);
+                try (DirectoryStream<Path> stream = Files.newDirectoryStream(updatedFileAbsolutePath.getParent())) {
+                    for (Path entry : stream) {
+                        if (!Files.isDirectory(entry)) {
+                            MutableHbsRenderable mutableRenderable = watchingRenderables.get(entry);
+                            if (mutableRenderable != null) {
+                                // Updated file is a MutableHbsRenderable
+                                try {
+                                    String content = readFileContent(entry);
+                                    mutableRenderable.reload(new StringTemplateSource(
+                                            mutableRenderable.getComponentPath(), content));
+                                    log.info("Handlebars template '" + entry + "' reloaded successfully.");
+                                } catch (UUFException e) {
+                                    log.error("An error occurred while reloading Handlebars template '" + entry + "'.",
+                                              e);
+                                }
+                            } else {
+                                MutableExecutable mutableExecutable = watchingExecutables.get(entry);
+                                if (mutableExecutable != null) {
+                                    // Updated file is a MutableExecutable
+                                    try {
+                                        mutableExecutable.reload(readFileContent(entry));
+                                        log.info("JavaScript file '" + entry + "' reloaded successfully.");
+                                    } catch (UUFException e) {
+                                        log.error("An error occurred while reloading JavaScript file '" + entry + "'.",
+                                                  e);
+                                    }
+                                }
+                            }
                         }
                     }
+                } catch (IOException e) {
+                    log.error("An error occurred while reloading modified files '" + updatedFileAbsolutePath + "'.", e);
                 }
             }
 
