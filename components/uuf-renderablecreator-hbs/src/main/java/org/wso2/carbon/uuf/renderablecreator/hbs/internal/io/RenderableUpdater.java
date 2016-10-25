@@ -143,31 +143,31 @@ public class RenderableUpdater {
                 Path updatedFileAbsolutePath = updatedDirectory.resolve(updatedFileName);
                 try (DirectoryStream<Path> stream = Files.newDirectoryStream(updatedFileAbsolutePath.getParent())) {
                     for (Path entry : stream) {
-                        if (!Files.isDirectory(entry)) {
-                            MutableHbsRenderable mutableRenderable = watchingRenderables.get(entry);
-                            if (mutableRenderable != null) {
-                                // Updated file is a MutableHbsRenderable
-                                try {
-                                    String content = readFileContent(entry);
-                                    mutableRenderable.reload(new StringTemplateSource(
-                                            mutableRenderable.getComponentPath(), content));
-                                    log.info("Handlebars template '" + entry + "' reloaded successfully.");
-                                } catch (UUFException e) {
-                                    log.error("An error occurred while reloading Handlebars template '" + entry + "'.",
-                                              e);
-                                }
-                            } else {
-                                MutableExecutable mutableExecutable = watchingExecutables.get(entry);
-                                if (mutableExecutable != null) {
-                                    // Updated file is a MutableExecutable
-                                    try {
-                                        mutableExecutable.reload(readFileContent(entry));
-                                        log.info("JavaScript file '" + entry + "' reloaded successfully.");
-                                    } catch (UUFException e) {
-                                        log.error("An error occurred while reloading JavaScript file '" + entry + "'.",
-                                                  e);
-                                    }
-                                }
+                        if (Files.isDirectory(entry)) {
+                            continue;
+                        }
+
+                        MutableHbsRenderable mutableRenderable = watchingRenderables.get(entry);
+                        if (mutableRenderable != null) {
+                            // Updated file is a MutableHbsRenderable
+                            try {
+                                mutableRenderable.reload(new StringTemplateSource(mutableRenderable.getComponentPath(),
+                                                                                  readFileContent(entry)));
+                                log.info("Handlebars template '" + entry + "' reloaded successfully.");
+                            } catch (IOException e) {
+                                log.error("An error occurred while reloading Handlebars template '" + entry + "'.", e);
+                            }
+                            continue;
+                        }
+
+                        MutableExecutable mutableExecutable = watchingExecutables.get(entry);
+                        if (mutableExecutable != null) {
+                            // Updated file is a MutableExecutable
+                            try {
+                                mutableExecutable.reload(readFileContent(entry));
+                                log.info("JavaScript file '" + entry + "' reloaded successfully.");
+                            } catch (IOException e) {
+                                log.error("An error occurred while reloading JavaScript file '" + entry + "'.", e);
                             }
                         }
                     }
@@ -184,11 +184,7 @@ public class RenderableUpdater {
         }
     }
 
-    private static String readFileContent(Path filePath) {
-        try {
-            return new String(Files.readAllBytes(filePath), StandardCharsets.UTF_8);
-        } catch (IOException e) {
-            throw new FileOperationException("Cannot read content of updated file '" + filePath + "'.", e);
-        }
+    private static String readFileContent(Path filePath) throws IOException {
+        return new String(Files.readAllBytes(filePath), StandardCharsets.UTF_8);
     }
 }
