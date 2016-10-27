@@ -16,7 +16,7 @@
 
 package org.wso2.carbon.uuf.httpconnector.msf4j;
 
-import org.wso2.carbon.uuf.api.ServerConnection;
+import org.wso2.carbon.uuf.api.Server;
 import org.wso2.msf4j.Microservice;
 import org.wso2.msf4j.Request;
 
@@ -33,10 +33,11 @@ import javax.ws.rs.core.Response;
  * UUF Connector for MSF4J.
  */
 public class UUFMicroservice implements Microservice {
-    private ServerConnection serverConnection;
 
-    public UUFMicroservice(ServerConnection serverConnection) {
-        this.serverConnection = serverConnection;
+    private Server uufServer;
+
+    public UUFMicroservice(Server uufServer) {
+        this.uufServer = uufServer;
     }
 
     @GET
@@ -50,7 +51,7 @@ public class UUFMicroservice implements Microservice {
     public Response getImpl(@Context Request request) {
         MicroserviceHttpRequest httpRequest = new MicroserviceHttpRequest(request);
         MicroserviceHttpResponse httpResponse = new MicroserviceHttpResponse();
-        serverConnection.serve(httpRequest, httpResponse);
+        uufServer.serve(httpRequest, httpResponse);
         return httpResponse.build();
     }
 
@@ -67,7 +68,7 @@ public class UUFMicroservice implements Microservice {
     public Response postImpl(@Context Request request, @Context MultivaluedMap multivaluedMap) {
         MicroserviceHttpRequest httpRequest = new MicroserviceHttpRequest(request, multivaluedMap);
         MicroserviceHttpResponse httpResponse = new MicroserviceHttpResponse();
-        serverConnection.serve(httpRequest, httpResponse);
+        uufServer.serve(httpRequest, httpResponse);
         return httpResponse.build();
     }
 }

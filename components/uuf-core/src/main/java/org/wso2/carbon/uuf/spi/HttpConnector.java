@@ -18,9 +18,7 @@
 
 package org.wso2.carbon.uuf.spi;
 
-import org.wso2.carbon.uuf.api.ServerConnection;
-
 public interface HttpConnector {
 
-    void registerConnection(ServerConnection serverConnection);
+    void registerAppContextPath(String appContextPath);
 }

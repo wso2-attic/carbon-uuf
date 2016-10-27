@@ -20,9 +20,12 @@ import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.uuf.api.ServerConnection;
+import org.wso2.carbon.uuf.api.Server;
 import org.wso2.carbon.uuf.httpconnector.msf4j.UUFMicroservice;
 import org.wso2.carbon.uuf.spi.HttpConnector;
 import org.wso2.msf4j.Microservice;
@@ -35,14 +38,28 @@ import java.util.Hashtable;
  * between the browser and UUF core.
  */
 @Component(name = "org.wso2.carbon.uuf.httpconnector.msf4j.internal.MSF4JHttpConnector",
-           service = {HttpConnector.class},
+           service = HttpConnector.class,
            immediate = true)
 @SuppressWarnings("unused")
 public class MSF4JHttpConnector implements HttpConnector {
 
     private static final Logger log = LoggerFactory.getLogger(MSF4JHttpConnector.class);
-    private ServerConnection serverConnection;
+
+    private Server uufServer;
     private BundleContext bundleContext;
+
+    @Reference(name = "uufServer",
+               service = Server.class,
+               cardinality = ReferenceCardinality.MANDATORY,
+               policy = ReferencePolicy.DYNAMIC,
+               unbind = "unsetServer")
+    public void setServer(Server uufServer) {
+        this.uufServer = uufServer;
+    }
+
+    public void unsetServer(Server uufServer) {
+        this.uufServer = null;
+    }
 
     /**
      * Get called when this osgi component get registered.
@@ -67,12 +84,12 @@ public class MSF4JHttpConnector implements HttpConnector {
     /**
      * Create and register a microservice for each application using application's context path.
      *
-     * @param serverConnection Server Connection of the application.
+     * @param appContextPath app context path
      */
     @Override
-    public void registerConnection(ServerConnection serverConnection) {
+    public void registerAppContextPath(String appContextPath) {
         Dictionary<String, String> dictionary = new Hashtable<>();
-        dictionary.put("contextPath", serverConnection.getContextPath());
-        bundleContext.registerService(Microservice.class, new UUFMicroservice(serverConnection), dictionary);
+        dictionary.put("contextPath", appContextPath);
+        bundleContext.registerService(Microservice.class, new UUFMicroservice(uufServer), dictionary);
     }
 }
