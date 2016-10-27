@@ -16,14 +16,12 @@
  *  under the License.
  */
 
-package org.wso2.carbon.uuf.spi;
+package org.wso2.carbon.uuf.api;
 
-import org.wso2.carbon.uuf.core.App;
+import org.wso2.carbon.uuf.spi.HttpRequest;
+import org.wso2.carbon.uuf.spi.HttpResponse;
 
-import java.util.Optional;
+public interface Server {
 
-public interface UUFAppRegistry {
-
-    Optional<App> getApp(String contextPath);
+    void serve(HttpRequest request, HttpResponse response);
 }
-
