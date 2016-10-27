@@ -18,12 +18,181 @@
 
 package org.wso2.carbon.uuf.internal;
 
-public class UUFServer {
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceRegistration;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.wso2.carbon.kernel.startupresolver.RequiredCapabilityListener;
+import org.wso2.carbon.uuf.api.Server;
+import org.wso2.carbon.uuf.core.App;
+import org.wso2.carbon.uuf.exception.UUFException;
+import org.wso2.carbon.uuf.internal.core.create.AppDeployer;
+import org.wso2.carbon.uuf.internal.io.ArtifactAppDeployer;
+import org.wso2.carbon.uuf.spi.HttpConnector;
+import org.wso2.carbon.uuf.spi.HttpRequest;
+import org.wso2.carbon.uuf.spi.HttpResponse;
+import org.wso2.carbon.uuf.spi.RenderableCreator;
+
+import java.util.HashSet;
+import java.util.Set;
+
+import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_BAD_REQUEST;
+import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_INTERNAL_SERVER_ERROR;
+import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_NOT_FOUND;
+
+@Component(name = "org.wso2.carbon.uuf.internal.UUFServer",
+           service = RequiredCapabilityListener.class,
+           immediate = true,
+           property = {
+                   "componentName=wso2-uuf-server"
+           }
+)
+public class UUFServer implements Server, AppDeployer, RequiredCapabilityListener {
 
     private static final boolean DEV_MODE_ENABLED;
+    private static final Logger log = LoggerFactory.getLogger(UUFServer.class);
 
     static {
         DEV_MODE_ENABLED = Boolean.parseBoolean(System.getProperties().getProperty("devmode", "false"));
+    }
+
+    private final String appRepositiryPath;
+    private final Set<RenderableCreator> renderableCreators;
+    private final RequestDispatcher requestDispatcher;
+    private ArtifactAppDeployer appDeployer;
+    private BundleContext bundleContext;
+    private EventPublisher<HttpConnector> eventPublisher;
+    private ServiceRegistration appDeployerServiceRegistration;
+    private ServiceRegistration serverServiceRegistration;
+
+    public UUFServer() {
+        this("deployment/uufapps/");
+    }
+
+    public UUFServer(String appRepositoryPath) {
+        this.appRepositiryPath = appRepositoryPath;
+        this.renderableCreators = new HashSet<>();
+        this.requestDispatcher = new RequestDispatcher();
+    }
+
+    /**
+     * This bind method is invoked by OSGi framework whenever a new RenderableCreator is registered.
+     *
+     * @param renderableCreator registered renderable creator
+     */
+    @Reference(name = "renderableCreator",
+               service = RenderableCreator.class,
+               cardinality = ReferenceCardinality.AT_LEAST_ONE,
+               policy = ReferencePolicy.DYNAMIC,
+               unbind = "unsetRenderableCreator")
+    public void setRenderableCreator(RenderableCreator renderableCreator) {
+        if (!renderableCreators.add(renderableCreator)) {
+            throw new IllegalArgumentException(
+                    "A RenderableCreator for '" + renderableCreator.getSupportedFileExtensions() +
+                            "' extensions is already registered");
+        }
+        log.info("RenderableCreator '" + renderableCreator.getClass().getName() + "' registered for " +
+                         renderableCreator.getSupportedFileExtensions() + " extensions.");
+    }
+
+    /**
+     * This bind method is invoked by OSGi framework whenever a RenderableCreator is left.
+     *
+     * @param renderableCreator unregistered renderable creator
+     */
+    public void unsetRenderableCreator(RenderableCreator renderableCreator) {
+        renderableCreators.remove(renderableCreator);
+        log.info("RenderableCreator " + renderableCreator.getClass().getName() + " unregistered for " +
+                         renderableCreator.getSupportedFileExtensions() + " extensions.");
+        if (renderableCreators.isEmpty()) {
+            throw new IllegalStateException("There should be at least one RenderableCreator.");
+        }
+        if (appDeployer != null) {
+            /* We have created the 'appDeployer' with the removed RenderableCreator. So we need to create it again
+            without the removed RenderableCreator. */
+            appDeployer = createArtifactAppDeployer();
+        }
+    }
+
+    @Activate
+    protected void activate(BundleContext bundleContext) {
+        this.bundleContext = bundleContext;
+        log.debug("UUF Server activated.");
+    }
+
+    @Deactivate
+    protected void deactivate(BundleContext bundleContext) {
+        renderableCreators.clear();
+        appDeployer = null;
+        this.bundleContext = null;
+        eventPublisher = null;
+        appDeployerServiceRegistration.unregister();
+        serverServiceRegistration.unregister();
+        log.debug("UUF Server deactivated.");
+    }
+
+    @Override
+    public void onAllRequiredCapabilitiesAvailable() {
+        eventPublisher = new EventPublisher<>(bundleContext, HttpConnector.class);
+        appDeployer = createArtifactAppDeployer();
+        log.debug("ArtifactAppDeployer is ready.");
+
+        appDeployerServiceRegistration = bundleContext.registerService(AppDeployer.class, this, null);
+        log.debug(getClass().getName() + " registered as an AppDeployer.");
+
+        serverServiceRegistration = bundleContext.registerService(Server.class, this, null);
+        log.info(getClass().getName() + " registered as a Server.");
+    }
+
+    private ArtifactAppDeployer createArtifactAppDeployer() {
+        return new ArtifactAppDeployer(appRepositiryPath, renderableCreators);
+    }
+
+    @Override
+    public void serve(HttpRequest request, HttpResponse response) {
+        if (!request.isValid()) {
+            requestDispatcher.serveDefaultErrorPage(STATUS_BAD_REQUEST, "Invalid URI '" + request.getUri() + "'.",
+                                                    response);
+            return;
+        }
+        if (request.isDefaultFaviconRequest()) {
+            requestDispatcher.serveDefaultFavicon(request, response);
+            return;
+        }
+
+        App app = null;
+        try {
+            app = appDeployer.getApp(request.getContextPath());
+        } catch (UUFException e) {
+            String msg = "A server error occurred while serving for request '" + request + "'.";
+            log.error(msg, e);
+            requestDispatcher.serveDefaultErrorPage(STATUS_INTERNAL_SERVER_ERROR, msg, response);
+        } catch (Exception e) {
+            String msg = "An unexpected error occurred while serving for request '" + request + "'.";
+            log.error(msg, e);
+            requestDispatcher.serveDefaultErrorPage(STATUS_INTERNAL_SERVER_ERROR, msg, response);
+        }
+
+        if (app == null) {
+            requestDispatcher.serveDefaultErrorPage(STATUS_NOT_FOUND, "Cannot find an app for context path '" +
+                    request.getContextPath() + "'.", response);
+        } else {
+            requestDispatcher.serve(app, request, response);
+        }
+    }
+
+    @Override
+    public void deploy() {
+        Set<String> deployedAppContexts = appDeployer.deploy();
+        for (String deployedAppContext : deployedAppContexts) {
+            eventPublisher.publish(httpConnector -> httpConnector.registerAppContextPath(deployedAppContext));
+        }
     }
 
     @Deprecated
