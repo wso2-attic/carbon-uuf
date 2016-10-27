@@ -142,10 +142,12 @@
                             org.wso2.carbon.uuf.spi.*;version="${carbon.uuf.version}",
                         </Export-Package>
                         <Carbon-Component>
-                            startup.listener;componentName="wso2-uuf-deployer";
+                            startup.listener;componentName="wso2-uuf-server";
                             requiredService="org.wso2.carbon.uuf.spi.RenderableCreator",
-                            osgi.service;objectClass="org.wso2.carbon.deployment.engine.Deployer",
-                            osgi.service;objectClass="org.wso2.carbon.uuf.spi.UUFAppRegistry"
+                            startup.listener;componentName="wso2-uuf-startup-listener";
+                            requiredService="org.wso2.carbon.uuf.spi.HttpConnector,org.wso2.carbon.uuf.internal.core.create.AppDeployer",
+                            osgi.service;objectClass="org.wso2.carbon.uuf.api.Server",
+                            osgi.service;objectClass="org.wso2.carbon.uuf.internal.core.create.AppDeployer"
                         </Carbon-Component>
                         <Include-Resource>src/main/resources</Include-Resource>
                     </instructions>
