@@ -23,7 +23,6 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.deployment.engine.Artifact;
 import org.wso2.carbon.kernel.utils.Utils;
 import org.wso2.carbon.uuf.exception.FileOperationException;
 
@@ -44,38 +43,38 @@ public class ZipArtifactHandler {
     private static final Path TEMP_DIRECTORY = Paths.get(System.getProperty("java.io.tmpdir")).resolve("uufapps");
     private static final Logger log = LoggerFactory.getLogger(ZipArtifactHandler.class);
 
-    public static boolean isZipArtifact(Artifact artifact) {
-        return ZIP_FILE_EXTENSION.equals(FilenameUtils.getExtension(artifact.getPath()));
+    public static boolean isZipArtifact(Path appPath) {
+        return ZIP_FILE_EXTENSION.equals(FilenameUtils.getExtension(appPath.getFileName().toString()));
     }
 
     /**
-     * @param zipArtifact zip app artifact
+     * @param zipFile zip app
      * @return app name
      * @throws FileOperationException I/O error
      */
-    public static String getAppName(Artifact zipArtifact) {
+    public static String getAppName(Path zipFile) {
         ZipFile zip = null;
         try {
-            zip = new ZipFile(zipArtifact.getFile());
+            zip = new ZipFile(zipFile.toFile());
             ZipEntry firstEntry = zip.stream()
                     .findFirst()
                     .orElseThrow(() -> new FileOperationException("Cannot find app directory in zip artifact '" +
-                                                                          zipArtifact.getPath() + "'."));
+                                                                          zipFile + "'."));
             if (firstEntry.isDirectory()) {
                 return Paths.get(firstEntry.getName()).getFileName().toString();
             } else {
                 throw new FileOperationException(
-                        "Cannot find an app directory inside the zip artifact '" + zipArtifact.getPath() + "'.");
+                        "Cannot find an app directory inside the zip artifact '" + zipFile + "'.");
             }
         } catch (IOException e) {
             throw new FileOperationException(
-                    "An error occurred when opening zip artifact '" + zipArtifact.getPath() + "'.", e);
+                    "An error occurred when opening zip artifact '" + zipFile + "'.", e);
         } finally {
             IOUtils.closeQuietly(zip);
         }
     }
 
-    public static Path unzip(Artifact zipArtifact, String appName) {
+    public static Path unzip(String appName, Path zipFile) {
         Path appDirectory = TEMP_DIRECTORY.resolve(appName);
         if (Files.exists(appDirectory)) {
             // A directory already exists in the tmp folder with the same app name, delete it before unzipping
@@ -92,9 +91,9 @@ public class ZipArtifactHandler {
 
         ZipFile zip;
         try {
-            zip = new ZipFile(zipArtifact.getFile(), ZipFile.OPEN_READ);
+            zip = new ZipFile(zipFile.toFile(), ZipFile.OPEN_READ);
         } catch (IOException e) {
-            throw new FileOperationException("Cannot open zip artifact '" + zipArtifact.getPath() + "' to extract.", e);
+            throw new FileOperationException("Cannot open zip artifact '" + zipFile + "' to extract.", e);
         }
         try {
             Enumeration<? extends ZipEntry> zipEntries = zip.entries();
@@ -111,7 +110,7 @@ public class ZipArtifactHandler {
                     } catch (IOException e) {
                         throw new FileOperationException(
                                 "Cannot copy content of zip entry '" + zipEntry.getName() + "' in zip artifact '" +
-                                        zipArtifact.getPath() + "' to temporary file '" + tempFilePath + "'.", e);
+                                        zipFile + "' to temporary file '" + tempFilePath + "'.", e);
                     }
                 }
             }
