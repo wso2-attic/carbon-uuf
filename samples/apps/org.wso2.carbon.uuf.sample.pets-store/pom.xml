@@ -46,14 +46,14 @@
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.uuf.sample</groupId>
-            <artifactId>org.wso2.carbon.uuf.sample.simple-auth</artifactId>
+            <artifactId>org.wso2.carbon.uuf.sample.store-common</artifactId>
             <version>${carbon.uuf.version}</version>
             <type>zip</type>
             <classifier>uuf-component</classifier>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.uuf.sample</groupId>
-            <artifactId>org.wso2.carbon.uuf.sample.store-common</artifactId>
+            <artifactId>org.wso2.carbon.uuf.sample.simple-auth</artifactId>
             <version>${carbon.uuf.version}</version>
             <type>zip</type>
             <classifier>uuf-component</classifier>
@@ -72,7 +72,13 @@
             <artifactId>org.wso2.carbon.uuf.sample.pets-store.bundle</artifactId>
             <version>${carbon.uuf.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.uuf.sample</groupId>
+            <artifactId>org.wso2.carbon.uuf.sample.simple-auth.bundle</artifactId>
+            <version>${carbon.uuf.version}</version>
+        </dependency>
     </dependencies>
+
 
     <build>
         <plugins>
@@ -96,6 +102,10 @@
                             <bundles>
                                 <bundle>
                                     <symbolicName>org.wso2.carbon.uuf.sample.pets-store.bundle</symbolicName>
+                                    <version>${carbon.uuf.version}</version>
+                                </bundle>
+                                <bundle>
+                                    <symbolicName>org.wso2.carbon.uuf.sample.simple-auth.bundle</symbolicName>
                                     <version>${carbon.uuf.version}</version>
                                 </bundle>
                             </bundles>
