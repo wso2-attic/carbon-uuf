@@ -23,7 +23,6 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.kernel.utils.Utils;
 import org.wso2.carbon.uuf.exception.FileOperationException;
 
 import java.io.IOException;
@@ -39,7 +38,6 @@ import java.util.zip.ZipFile;
 public class ZipArtifactHandler {
 
     private static final String ZIP_FILE_EXTENSION = "zip";
-    private static final Path CARBON_HOME = Utils.getCarbonHome();
     private static final Path TEMP_DIRECTORY = Paths.get(System.getProperty("java.io.tmpdir")).resolve("uufapps");
     private static final Logger log = LoggerFactory.getLogger(ZipArtifactHandler.class);
 
@@ -77,16 +75,15 @@ public class ZipArtifactHandler {
     public static Path unzip(String appName, Path zipFile) {
         Path appDirectory = TEMP_DIRECTORY.resolve(appName);
         if (Files.exists(appDirectory)) {
-            // A directory already exists in the tmp folder with the same app name, delete it before unzipping
-            // the new app.
+            /* A directory already exists in the tmp folder with the same app name, delete it before unzipping the
+            new app. */
             try {
                 FileUtils.deleteDirectory(appDirectory.toFile());
             } catch (IOException e) {
-                throw new FileOperationException("Error occurred while deleting the directory, " +
-                                                         appDirectory.relativize(CARBON_HOME) + ".");
+                throw new FileOperationException("An error occurred while deleting directory '" + appDirectory + "'.");
             }
-            log.debug("Removed the existing app directory '" + appDirectory.relativize(CARBON_HOME) +
-                              "' before extracting app '" + appName + "'.");
+            log.debug("Removed the existing app directory '" + appDirectory + "' before extracting app '" + appName +
+                              "'.");
         }
 
         ZipFile zip;
