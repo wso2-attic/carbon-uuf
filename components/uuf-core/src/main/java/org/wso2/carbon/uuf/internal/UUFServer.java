@@ -39,6 +39,7 @@ import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.carbon.uuf.spi.HttpResponse;
 import org.wso2.carbon.uuf.spi.RenderableCreator;
 
+import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -72,7 +73,7 @@ public class UUFServer implements Server, AppDeployer, RequiredCapabilityListene
     private ServiceRegistration serverServiceRegistration;
 
     public UUFServer() {
-        this("deployment/uufapps/");
+        this(Paths.get(System.getProperty("carbon.home", "."), "deployment/uufapps/").toString());
     }
 
     public UUFServer(String appRepositoryPath) {
@@ -110,9 +111,6 @@ public class UUFServer implements Server, AppDeployer, RequiredCapabilityListene
         renderableCreators.remove(renderableCreator);
         log.info("RenderableCreator " + renderableCreator.getClass().getName() + " unregistered for " +
                          renderableCreator.getSupportedFileExtensions() + " extensions.");
-        if (renderableCreators.isEmpty()) {
-            throw new IllegalStateException("There should be at least one RenderableCreator.");
-        }
         if (appDeployer != null) {
             /* We have created the 'appDeployer' with the removed RenderableCreator. So we need to create it again
             without the removed RenderableCreator. */
