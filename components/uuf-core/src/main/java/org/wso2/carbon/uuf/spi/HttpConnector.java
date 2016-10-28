@@ -18,7 +18,11 @@
 
 package org.wso2.carbon.uuf.spi;
 
+import org.wso2.carbon.uuf.api.Server;
+
 public interface HttpConnector {
+
+    void setServer(Server server);
 
     void registerAppContextPath(String appContextPath);
 }

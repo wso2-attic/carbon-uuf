@@ -53,11 +53,12 @@ public class MSF4JHttpConnector implements HttpConnector {
                cardinality = ReferenceCardinality.MANDATORY,
                policy = ReferencePolicy.DYNAMIC,
                unbind = "unsetServer")
-    public void setServer(Server uufServer) {
-        this.uufServer = uufServer;
+    @Override
+    public void setServer(Server server) {
+        this.uufServer = server;
     }
 
-    public void unsetServer(Server uufServer) {
+    public void unsetServer(Server server) {
         this.uufServer = null;
     }
 
