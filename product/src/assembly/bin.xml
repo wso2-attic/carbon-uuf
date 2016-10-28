@@ -34,6 +34,7 @@
                 <exclude>**/*.iwr</exclude>
                 <exclude>**/*.eclipse</exclude>
                 <exclude>**/netty-transports.yml</exclude>
+                <exclude>**/netty-transports.yml</exclude>
             </excludes>
         </fileSet>
 
@@ -64,6 +65,12 @@
         <fileSet>
             <directory>carbon-home/resources/</directory>
             <outputDirectory>resources/</outputDirectory>
+            <fileMode>644</fileMode>
+        </fileSet>
+
+        <fileSet>
+            <directory>carbon-home/datasources/</directory>
+            <outputDirectory>conf/datasources/</outputDirectory>
             <fileMode>644</fileMode>
         </fileSet>
 
