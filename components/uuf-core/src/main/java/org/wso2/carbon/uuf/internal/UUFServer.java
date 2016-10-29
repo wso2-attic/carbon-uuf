@@ -178,7 +178,7 @@ public class UUFServer implements Server, RequiredCapabilityListener {
         }
     }
 
-    public void deploy() {
+    public void start() {
         Set<String> deployedAppContexts = appDeployer.deploy();
         for (String deployedAppContext : deployedAppContexts) {
             eventPublisher.publish(httpConnector -> httpConnector.registerAppContextPath(deployedAppContext));

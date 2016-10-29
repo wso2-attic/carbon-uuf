@@ -92,6 +92,6 @@ public class StartupListener implements RequiredCapabilityListener {
 
     @Override
     public void onAllRequiredCapabilitiesAvailable() {
-        uufServer.deploy();
+        uufServer.start();
     }
 }
