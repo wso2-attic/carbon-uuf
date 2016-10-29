@@ -34,10 +34,10 @@ public class DummyHttpConnector implements HttpConnector {
 
     @Override
     public void setServer(Server server) {
-        log.info("Server '" + server + "' registered to '" + getClass().getName() + "'.");
+        log.info("Server '{}' registered to '{}'.", server, getClass().getName());
     }
 
     public void registerAppContextPath(String appContextPath) {
-        log.info("App context path '" + appContextPath + "' registered to '" + getClass().getName() + "'.");
+        log.info("App context path '{}' registered to '{}'.", appContextPath, getClass().getName());
     }
 }

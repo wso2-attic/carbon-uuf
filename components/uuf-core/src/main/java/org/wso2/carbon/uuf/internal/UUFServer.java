@@ -98,8 +98,8 @@ public class UUFServer implements Server, AppDeployer, RequiredCapabilityListene
                     "A RenderableCreator for '" + renderableCreator.getSupportedFileExtensions() +
                             "' extensions is already registered");
         }
-        log.info("RenderableCreator '" + renderableCreator.getClass().getName() + "' registered for " +
-                         renderableCreator.getSupportedFileExtensions() + " extensions.");
+        log.info("RenderableCreator '{}' registered for {} extensions.",
+                 renderableCreator.getClass().getName(), renderableCreator.getSupportedFileExtensions());
     }
 
     /**
@@ -109,8 +109,8 @@ public class UUFServer implements Server, AppDeployer, RequiredCapabilityListene
      */
     public void unsetRenderableCreator(RenderableCreator renderableCreator) {
         renderableCreators.remove(renderableCreator);
-        log.info("RenderableCreator " + renderableCreator.getClass().getName() + " unregistered for " +
-                         renderableCreator.getSupportedFileExtensions() + " extensions.");
+        log.info("RenderableCreator '{}' unregistered for {} extensions.",
+                 renderableCreator.getClass().getName(), renderableCreator.getSupportedFileExtensions());
         if (appDeployer != null) {
             /* We have created the 'appDeployer' with the removed RenderableCreator. So we need to create it again
             without the removed RenderableCreator. */
@@ -142,10 +142,10 @@ public class UUFServer implements Server, AppDeployer, RequiredCapabilityListene
         log.debug("ArtifactAppDeployer is ready.");
 
         appDeployerServiceRegistration = bundleContext.registerService(AppDeployer.class, this, null);
-        log.debug(getClass().getName() + " registered as an AppDeployer.");
+        log.debug("'{}' registered as an AppDeployer.", getClass().getName());
 
         serverServiceRegistration = bundleContext.registerService(Server.class, this, null);
-        log.info(getClass().getName() + " registered as a Server.");
+        log.info("'{}' registered as a Server.", getClass().getName());
     }
 
     private ArtifactAppDeployer createArtifactAppDeployer() {

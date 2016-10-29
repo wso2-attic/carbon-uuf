@@ -83,7 +83,7 @@ public class ArtifactAppDeployer {
             Pair<String, String> appNameContextPath = getAppNameContextPath(appPath);
             pendingToDeployArtifacts.put(appNameContextPath.getRight(),
                                          new AppArtifact(appNameContextPath.getLeft(), appPath));
-            log.debug("UUF app '" + appNameContextPath.getLeft() + "' added to the pending deployments list.");
+            log.debug("UUF app '{}' added to the pending deployments list.", appNameContextPath.getLeft());
         });
         return Collections.unmodifiableSet(pendingToDeployArtifacts.keySet());
     }
@@ -124,7 +124,7 @@ public class ArtifactAppDeployer {
             }
             if (!Files.exists(appArtifact.appPath)) {
                 // Somehow artifact has been removed/deleted. So we cannot create an app from it.
-                log.warn("Cannot deploy UUF app in '" + appArtifact.appPath + "' as it does not exists anymore.");
+                log.warn("Cannot deploy UUF app in '{}' as it does not exists anymore.", appArtifact.appPath);
                 return null;
             }
             try {
@@ -141,8 +141,7 @@ public class ArtifactAppDeployer {
             }
             deployedApps.put(createdApp.getContextPath(), createdApp);
         }
-        log.info("UUF app '" + createdApp.getName() + "' deployed for context path '" + createdApp.getContextPath() +
-                         "'.");
+        log.info("UUF app '{}' deployed for context path '{}'.", createdApp.getName(), createdApp.getContextPath());
         return createdApp;
     }
 

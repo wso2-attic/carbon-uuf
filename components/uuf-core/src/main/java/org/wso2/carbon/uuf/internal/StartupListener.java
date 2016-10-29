@@ -50,11 +50,11 @@ public class StartupListener implements RequiredCapabilityListener {
                policy = ReferencePolicy.DYNAMIC,
                unbind = "unsetHttpConnector")
     public void setHttpConnector(HttpConnector httpConnector) {
-        log.debug("HttpConnector '" + httpConnector.getClass().getName() + "' registered.");
+        log.debug("HttpConnector '{}' registered.", httpConnector.getClass().getName());
     }
 
     public void unsetHttpConnector(HttpConnector httpConnector) {
-        log.debug("HttpConnector '" + httpConnector.getClass().getName() + "' unregistered.");
+        log.debug("HttpConnector '{}' unregistered.", httpConnector.getClass().getName());
     }
 
     @Reference(name = "appDeployer",
