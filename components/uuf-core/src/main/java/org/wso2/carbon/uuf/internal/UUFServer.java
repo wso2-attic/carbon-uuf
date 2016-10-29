@@ -39,7 +39,6 @@ import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.carbon.uuf.spi.HttpResponse;
 import org.wso2.carbon.uuf.spi.RenderableCreator;
 
-import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -65,11 +64,10 @@ public class UUFServer implements Server, RequiredCapabilityListener {
     private AppDeployer appDeployer;
     private BundleContext bundleContext;
     private EventPublisher<HttpConnector> eventPublisher;
-    private ServiceRegistration appDeployerServiceRegistration;
     private ServiceRegistration serverServiceRegistration;
 
     public UUFServer() {
-        this(Paths.get(System.getProperty("carbon.home", "."), "deployment/uufapps/").toString());
+        this(null);
     }
 
     public UUFServer(String appRepositoryPath) {
@@ -110,7 +108,7 @@ public class UUFServer implements Server, RequiredCapabilityListener {
         if (appDeployer != null) {
             /* We have created the 'appDeployer' with the removed RenderableCreator. So we need to create it again
             without the removed RenderableCreator. */
-            appDeployer = createArtifactAppDeployer();
+            appDeployer = createAppDeployer();
         }
     }
 
@@ -126,7 +124,6 @@ public class UUFServer implements Server, RequiredCapabilityListener {
         appDeployer = null;
         this.bundleContext = null;
         eventPublisher = null;
-        appDeployerServiceRegistration.unregister();
         serverServiceRegistration.unregister();
         log.debug("UUF Server deactivated.");
     }
@@ -134,15 +131,17 @@ public class UUFServer implements Server, RequiredCapabilityListener {
     @Override
     public void onAllRequiredCapabilitiesAvailable() {
         eventPublisher = new EventPublisher<>(bundleContext, HttpConnector.class);
-        appDeployer = createArtifactAppDeployer();
+        appDeployer = createAppDeployer();
         log.debug("ArtifactAppDeployer is ready.");
 
         serverServiceRegistration = bundleContext.registerService(Server.class, this, null);
         log.info("'{}' registered as a Server.", getClass().getName());
     }
 
-    private AppDeployer createArtifactAppDeployer() {
-        return new ArtifactAppDeployer(appRepositiryPath, renderableCreators);
+    private AppDeployer createAppDeployer() {
+        return (appRepositiryPath == null) ?
+                new ArtifactAppDeployer(renderableCreators) :
+                new ArtifactAppDeployer(appRepositiryPath, renderableCreators);
     }
 
     @Override
@@ -170,11 +169,11 @@ public class UUFServer implements Server, RequiredCapabilityListener {
             requestDispatcher.serveDefaultErrorPage(STATUS_INTERNAL_SERVER_ERROR, msg, response);
         }
 
-        if (app == null) {
+        if (app != null) {
+            requestDispatcher.serve(app, request, response);
+        } else {
             requestDispatcher.serveDefaultErrorPage(STATUS_NOT_FOUND, "Cannot find an app for context path '" +
                     request.getContextPath() + "'.", response);
-        } else {
-            requestDispatcher.serve(app, request, response);
         }
     }
 

@@ -55,8 +55,12 @@ public class ArtifactAppDeployer implements AppDeployer {
     private final ConcurrentMap<String, AppArtifact> pendingToDeployArtifacts;
     private final Object lock;
 
+    public ArtifactAppDeployer(Set<RenderableCreator> renderableCreators) {
+        this(Paths.get(System.getProperty("carbon.home", "."), "deployment", "uufapps").toString(), renderableCreators);
+    }
+
     public ArtifactAppDeployer(String appsRepositoryPath, Set<RenderableCreator> renderableCreators) {
-        this(Paths.get(appsRepositoryPath), new AppCreator(renderableCreators, new BundleClassLoaderProvider()));
+        this(appsRepositoryPath, renderableCreators, new BundleClassLoaderProvider());
     }
 
     public ArtifactAppDeployer(String appsRepositoryPath, Set<RenderableCreator> renderableCreators,
