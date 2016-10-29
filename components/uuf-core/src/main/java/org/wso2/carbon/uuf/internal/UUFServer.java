@@ -32,6 +32,7 @@ import org.wso2.carbon.kernel.startupresolver.RequiredCapabilityListener;
 import org.wso2.carbon.uuf.api.Server;
 import org.wso2.carbon.uuf.core.App;
 import org.wso2.carbon.uuf.exception.UUFException;
+import org.wso2.carbon.uuf.internal.core.create.AppDeployer;
 import org.wso2.carbon.uuf.internal.io.ArtifactAppDeployer;
 import org.wso2.carbon.uuf.spi.HttpConnector;
 import org.wso2.carbon.uuf.spi.HttpRequest;
@@ -61,7 +62,7 @@ public class UUFServer implements Server, RequiredCapabilityListener {
     private final String appRepositiryPath;
     private final Set<RenderableCreator> renderableCreators;
     private final RequestDispatcher requestDispatcher;
-    private ArtifactAppDeployer appDeployer;
+    private AppDeployer appDeployer;
     private BundleContext bundleContext;
     private EventPublisher<HttpConnector> eventPublisher;
     private ServiceRegistration appDeployerServiceRegistration;
@@ -140,7 +141,7 @@ public class UUFServer implements Server, RequiredCapabilityListener {
         log.info("'{}' registered as a Server.", getClass().getName());
     }
 
-    private ArtifactAppDeployer createArtifactAppDeployer() {
+    private AppDeployer createArtifactAppDeployer() {
         return new ArtifactAppDeployer(appRepositiryPath, renderableCreators);
     }
 

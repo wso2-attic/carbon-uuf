@@ -26,6 +26,7 @@ import org.wso2.carbon.uuf.exception.FileOperationException;
 import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.internal.UUFServer;
 import org.wso2.carbon.uuf.internal.core.create.AppCreator;
+import org.wso2.carbon.uuf.internal.core.create.AppDeployer;
 import org.wso2.carbon.uuf.internal.core.create.ClassLoaderProvider;
 import org.wso2.carbon.uuf.internal.io.util.ZipArtifactHandler;
 import org.wso2.carbon.uuf.internal.util.NameUtils;
@@ -44,7 +45,7 @@ import java.util.stream.Stream;
 /**
  * UUF app deployer.
  */
-public class ArtifactAppDeployer {
+public class ArtifactAppDeployer implements AppDeployer {
 
     private static final Logger log = LoggerFactory.getLogger(ArtifactAppDeployer.class);
 
@@ -71,6 +72,7 @@ public class ArtifactAppDeployer {
         this.lock = new Object();
     }
 
+    @Override
     public Set<String> deploy() {
         Stream<Path> contents;
         try {
@@ -89,19 +91,7 @@ public class ArtifactAppDeployer {
         return Collections.unmodifiableSet(pendingToDeployArtifacts.keySet());
     }
 
-    private Pair<String, String> getAppNameContextPath(Path appPath) {
-        // Fully qualified name of the app is equals to the name of the app directory. This is guaranteed by the UUF
-        // Maven plugin.
-        String appFullyQualifiedName;
-        if (ZipArtifactHandler.isZipArtifact(appPath)) {
-            appFullyQualifiedName = ZipArtifactHandler.getAppName(appPath);
-        } else {
-            appFullyQualifiedName = appPath.getFileName().toString();
-        }
-        // TODO: 6/28/16 deployment.properties can override app's context path
-        return Pair.of(appFullyQualifiedName, ("/" + NameUtils.getSimpleName(appFullyQualifiedName)));
-    }
-
+    @Override
     public App getApp(String contextPath) {
         App app = deployedApps.get(contextPath);
         if (app != null) {
@@ -113,6 +103,19 @@ public class ArtifactAppDeployer {
                 return null;
             }
         }
+    }
+
+    private Pair<String, String> getAppNameContextPath(Path appPath) {
+        // Fully qualified name of the app is equals to the name of the app directory. This is guaranteed by the UUF
+        // Maven plugin.
+        String appFullyQualifiedName;
+        if (ZipArtifactHandler.isZipArtifact(appPath)) {
+            appFullyQualifiedName = ZipArtifactHandler.getAppName(appPath);
+        } else {
+            appFullyQualifiedName = appPath.getFileName().toString();
+        }
+        // TODO: 6/28/16 deployment.properties can override app's context path
+        return Pair.of(appFullyQualifiedName, ("/" + NameUtils.getSimpleName(appFullyQualifiedName)));
     }
 
     private App deployApp(String contextPath) {
