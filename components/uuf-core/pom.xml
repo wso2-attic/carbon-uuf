@@ -139,9 +139,8 @@
                             startup.listener;componentName="wso2-uuf-server";
                             requiredService="org.wso2.carbon.uuf.spi.RenderableCreator",
                             startup.listener;componentName="wso2-uuf-startup-listener";
-                            requiredService="org.wso2.carbon.uuf.spi.HttpConnector,org.wso2.carbon.uuf.internal.core.create.AppDeployer",
-                            osgi.service;objectClass="org.wso2.carbon.uuf.api.Server",
-                            osgi.service;objectClass="org.wso2.carbon.uuf.internal.core.create.AppDeployer"
+                            requiredService="org.wso2.carbon.uuf.spi.HttpConnector,org.wso2.carbon.uuf.api.Server",
+                            osgi.service;objectClass="org.wso2.carbon.uuf.api.Server"
                         </Carbon-Component>
                         <Include-Resource>src/main/resources</Include-Resource>
                     </instructions>

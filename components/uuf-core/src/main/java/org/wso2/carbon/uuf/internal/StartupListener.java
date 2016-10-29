@@ -28,7 +28,7 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.kernel.startupresolver.RequiredCapabilityListener;
-import org.wso2.carbon.uuf.internal.core.create.AppDeployer;
+import org.wso2.carbon.uuf.api.Server;
 import org.wso2.carbon.uuf.spi.HttpConnector;
 
 @Component(name = "org.wso2.carbon.uuf.internal.StartupListener",
@@ -42,7 +42,7 @@ public class StartupListener implements RequiredCapabilityListener {
 
     private static final Logger log = LoggerFactory.getLogger(StartupListener.class);
 
-    private AppDeployer appDeployer;
+    private UUFServer uufServer;
 
     @Reference(name = "httpConnector",
                service = HttpConnector.class,
@@ -57,17 +57,26 @@ public class StartupListener implements RequiredCapabilityListener {
         log.debug("HttpConnector '{}' unregistered.", httpConnector.getClass().getName());
     }
 
-    @Reference(name = "appDeployer",
-               service = AppDeployer.class,
+    @Reference(name = "server",
+               service = Server.class,
                cardinality = ReferenceCardinality.MANDATORY,
                policy = ReferencePolicy.DYNAMIC,
-               unbind = "unsetAppDeployer")
-    public void setAppDeployer(AppDeployer appDeployer) {
-        this.appDeployer = appDeployer;
+               unbind = "unsetServer")
+    public void setServer(Server server) {
+        if (server instanceof UUFServer) {
+            this.uufServer = (UUFServer) server;
+        } else {
+            /* Well somebody has screwed-up. There should be only one instance of 'Server' interface in the runtime
+            and it should be an 'UUFServer" instance.*/
+            throw new IllegalStateException(
+                    "Only instance of '" + Server.class.getName() +
+                            "' interface in the OSGi runtime should an instance of '" + UUFServer.class.getName() +
+                            "' class. But instead found an instance of '" + server.getClass().getName() + "' class.");
+        }
     }
 
-    public void unsetAppDeployer(AppDeployer appDeployer) {
-        this.appDeployer = null;
+    public void unsetServer(Server server) {
+        this.uufServer = null;
     }
 
     @Activate
@@ -77,12 +86,12 @@ public class StartupListener implements RequiredCapabilityListener {
 
     @Deactivate
     protected void deactivate(BundleContext bundleContext) {
-        appDeployer = null;
+        uufServer = null;
         log.debug("StartupListener deactivated.");
     }
 
     @Override
     public void onAllRequiredCapabilitiesAvailable() {
-        appDeployer.deploy();
+        uufServer.deploy();
     }
 }

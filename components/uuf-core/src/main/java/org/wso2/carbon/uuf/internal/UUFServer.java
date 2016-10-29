@@ -32,7 +32,6 @@ import org.wso2.carbon.kernel.startupresolver.RequiredCapabilityListener;
 import org.wso2.carbon.uuf.api.Server;
 import org.wso2.carbon.uuf.core.App;
 import org.wso2.carbon.uuf.exception.UUFException;
-import org.wso2.carbon.uuf.internal.core.create.AppDeployer;
 import org.wso2.carbon.uuf.internal.io.ArtifactAppDeployer;
 import org.wso2.carbon.uuf.spi.HttpConnector;
 import org.wso2.carbon.uuf.spi.HttpRequest;
@@ -54,7 +53,7 @@ import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_NOT_FOUND;
                    "componentName=wso2-uuf-server"
            }
 )
-public class UUFServer implements Server, AppDeployer, RequiredCapabilityListener {
+public class UUFServer implements Server, RequiredCapabilityListener {
 
     private static final boolean DEV_MODE_ENABLED = Boolean.getBoolean("devmode");
     private static final Logger log = LoggerFactory.getLogger(UUFServer.class);
@@ -137,9 +136,6 @@ public class UUFServer implements Server, AppDeployer, RequiredCapabilityListene
         appDeployer = createArtifactAppDeployer();
         log.debug("ArtifactAppDeployer is ready.");
 
-        appDeployerServiceRegistration = bundleContext.registerService(AppDeployer.class, this, null);
-        log.debug("'{}' registered as an AppDeployer.", getClass().getName());
-
         serverServiceRegistration = bundleContext.registerService(Server.class, this, null);
         log.info("'{}' registered as a Server.", getClass().getName());
     }
@@ -181,7 +177,6 @@ public class UUFServer implements Server, AppDeployer, RequiredCapabilityListene
         }
     }
 
-    @Override
     public void deploy() {
         Set<String> deployedAppContexts = appDeployer.deploy();
         for (String deployedAppContext : deployedAppContexts) {
