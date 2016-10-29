@@ -56,12 +56,8 @@ import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_NOT_FOUND;
 )
 public class UUFServer implements Server, AppDeployer, RequiredCapabilityListener {
 
-    private static final boolean DEV_MODE_ENABLED;
+    private static final boolean DEV_MODE_ENABLED = Boolean.getBoolean("devmode");
     private static final Logger log = LoggerFactory.getLogger(UUFServer.class);
-
-    static {
-        DEV_MODE_ENABLED = Boolean.parseBoolean(System.getProperties().getProperty("devmode", "false"));
-    }
 
     private final String appRepositiryPath;
     private final Set<RenderableCreator> renderableCreators;
