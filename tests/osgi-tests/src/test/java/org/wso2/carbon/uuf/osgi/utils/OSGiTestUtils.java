@@ -138,7 +138,8 @@ public class OSGiTestUtils {
         copy(Paths.get("src", "test", "resources", "conf", "deployment.yml"), Paths.get("conf", "deployment.yml"));
 
         //Replace the existing "README.txt file with populated "README.txt file.
-        copy(Paths.get("src", "test", "resources", "deployment", "README.txt"), Paths.get("deployment", "README.txt"));
+        copy(Paths.get("src", "test", "resources", "deployment", "uufapps", "README.txt"),
+             Paths.get("deployment", "uufapps", "README.txt"));
     }
 
     /**

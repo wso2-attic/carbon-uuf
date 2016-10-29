@@ -58,20 +58,24 @@ public class OSGiServicesTest {
     public Option[] createConfiguration() throws Exception {
         OSGiTestUtils.setEnv();
         Option[] options = CoreOptions.options(
-                getBundleOption("org.wso2.carbon.deployment.engine", "org.wso2.carbon.deployment"),
-                getBundleOption("org.wso2.carbon.deployment.notifier", "org.wso2.carbon.deployment"),
-                getBundleOption("geronimo-jms_1.1_spec", "org.apache.geronimo.specs"),
-                getBundleOption("commons-pool", "commons-pool.wso2"),
-                getBundleOption("org.wso2.carbon.uuf.sample.pets-store.bundle", "org.wso2.carbon.uuf.sample"),
-                getBundleOption("commons-io", "commons-io.wso2"),
+                // Carbon
                 getBundleOption("org.wso2.carbon.jndi", "org.wso2.carbon.jndi"),
                 getBundleOption("org.wso2.carbon.caching", "org.wso2.carbon.caching"),
+                getBundleOption("org.wso2.carbon.deployment.engine", "org.wso2.carbon.deployment"),
+                getBundleOption("org.wso2.carbon.deployment.notifier", "org.wso2.carbon.deployment"),
+                // Others
+                getBundleOption("geronimo-jms_1.1_spec", "org.apache.geronimo.specs"),
+                getBundleOption("commons-pool", "commons-pool.wso2"),
+                getBundleOption("commons-io", "commons-io.wso2"),
                 getBundleOption("gson", "com.google.code.gson"),
                 getBundleOption("guava", "com.google.guava"),
                 getBundleOption("commons-lang3", "org.apache.commons"),
                 getBundleOption("asm", "org.ow2.asm"),
+                // UUF
+                getBundleOption("org.wso2.carbon.uuf.core", "org.wso2.carbon.uuf"),
                 getBundleOption("org.wso2.carbon.uuf.renderablecreator.html", "org.wso2.carbon.uuf"),
-                getBundleOption("org.wso2.carbon.uuf.core", "org.wso2.carbon.uuf")
+                getBundleOption("org.wso2.carbon.uuf.tests.dummy-http-connector", "org.wso2.carbon.uuf.tests"),
+                getBundleOption("org.wso2.carbon.uuf.sample.pets-store.bundle", "org.wso2.carbon.uuf.sample")
         );
         return OSGiTestUtils.getDefaultPaxOptions(options);
     }

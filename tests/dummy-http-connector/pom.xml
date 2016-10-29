@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright (c) 2016, WSO2 Inc. (http://wso2.com) All Rights Reserved.
+  ~ Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -13,54 +13,48 @@
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
--->
+  -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>org.wso2.carbon.uuf.httpconnector.msf4j</artifactId>
+    <groupId>org.wso2.carbon.uuf.tests</groupId>
+    <artifactId>org.wso2.carbon.uuf.tests.dummy-http-connector</artifactId>
     <packaging>bundle</packaging>
 
-    <name>WSO2 UUF - HTTP Connector - MSF4J</name>
-    <description>HTTP Connector implementation using WSO2 MSF4j for Unified UI Framework</description>
+    <name>WSO2 UUF Tests - Dummy HTTP Connector</name>
+    <url>http://wso2.org</url>
+
+    <description>WSO2 UUF Tests - Dummy HTTP Connector</description>
 
     <parent>
-        <groupId>org.wso2.carbon.uuf</groupId>
-        <artifactId>uuf-parent</artifactId>
+        <groupId>org.wso2.carbon.uuf.tests</groupId>
+        <artifactId>tests-parent</artifactId>
         <version>1.0.0-SNAPSHOT</version>
-        <relativePath>../../pom.xml</relativePath>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <dependencies>
-        <!--Carbon-->
+        <!--UUF Core-->
         <dependency>
             <groupId>org.wso2.carbon.uuf</groupId>
             <artifactId>org.wso2.carbon.uuf.core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon.messaging</groupId>
-            <artifactId>org.wso2.carbon.messaging</artifactId>
         </dependency>
         <!--OSGi-->
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.core</artifactId>
         </dependency>
-        <!--MSF4J-->
+        <!--Logger-->
         <dependency>
-            <groupId>org.wso2.msf4j</groupId>
-            <artifactId>msf4j-core</artifactId>
-        </dependency>
-        <!--Test-->
-        <dependency>
-            <groupId>org.testng</groupId>
-            <artifactId>testng</artifactId>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
         </dependency>
     </dependencies>
 
@@ -74,19 +68,10 @@
                         <Private-Package>org.wso2.carbon.uuf.httpconnector.msf4j.internal.*</Private-Package>
                         <Import-Package>
                             org.wso2.carbon.uuf.*;version="${carbon.uuf.version}",
-                            <!--org.wso2.carbon.messaging;version="${carbon.messaging.version}",-->
-                            <!--TODO: replace below line with above commented line after carbon-messaging fix export version issue.-->
-                            org.wso2.carbon.messaging;version="1.0.5",
-                            org.wso2.msf4j.*,
-                            javax.ws.rs.*,
-                            io.netty.handler.*,
-                            org.osgi.service.component.annotations.*,
-                            org.yaml.snakeyaml,
-                            com.google.common.*;version="${guava.version.range}",
                             org.slf4j.*;version="${slf4j.version.range}"
                         </Import-Package>
                         <Export-Package>
-                            org.wso2.carbon.uuf.httpconnector.msf4j.*;version="${carbon.uuf.version}"
+                            org.wso2.carbon.uuf.test.*;version="${carbon.uuf.version}"
                         </Export-Package>
                         <Carbon-Component>
                             osgi.service;objectClass="org.wso2.carbon.uuf.spi.HttpConnector"
@@ -96,4 +81,5 @@
             </plugin>
         </plugins>
     </build>
+
 </project>

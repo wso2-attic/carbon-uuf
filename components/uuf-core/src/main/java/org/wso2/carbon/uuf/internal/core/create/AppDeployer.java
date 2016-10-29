@@ -16,13 +16,9 @@
  *  under the License.
  */
 
-package org.wso2.carbon.uuf.spi;
+package org.wso2.carbon.uuf.internal.core.create;
 
-import org.wso2.carbon.uuf.api.Server;
+public interface AppDeployer {
 
-public interface HttpConnector {
-
-    void setServer(Server server);
-
-    void registerAppContextPath(String appContextPath);
+    void deploy();
 }

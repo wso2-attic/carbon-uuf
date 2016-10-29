@@ -35,22 +35,10 @@
     </parent>
 
     <dependencies>
-        <!-- Dependencies for UUF Core-->
+        <!--Carbon-->
         <dependency>
-            <groupId>org.wso2.carbon.deployment</groupId>
-            <artifactId>org.wso2.carbon.deployment.engine</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon.deployment</groupId>
-            <artifactId>org.wso2.carbon.deployment.notifier</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.wso2.orbit.org.yaml</groupId>
-            <artifactId>snakeyaml</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>javax.cache</groupId>
-            <artifactId>cache-api</artifactId>
+            <groupId>org.wso2.carbon</groupId>
+            <artifactId>org.wso2.carbon.core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.caching</groupId>
@@ -60,10 +48,17 @@
             <groupId>org.wso2.carbon.jndi</groupId>
             <artifactId>org.wso2.carbon.jndi</artifactId>
         </dependency>
+        <!--JavaX-->
         <dependency>
-            <groupId>org.ow2.asm</groupId>
-            <artifactId>asm</artifactId>
+            <groupId>javax.cache</groupId>
+            <artifactId>cache-api</artifactId>
         </dependency>
+        <!--Orbit-->
+        <dependency>
+            <groupId>org.wso2.orbit.org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+        </dependency>
+        <!--Other-->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
@@ -89,11 +84,10 @@
             <artifactId>commons-io</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.wso2.carbon</groupId>
-            <artifactId>org.wso2.carbon.core</artifactId>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm</artifactId>
         </dependency>
-
-        <!-- Other Dependencies -->
+        <!--Test-->
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
@@ -142,10 +136,12 @@
                             org.wso2.carbon.uuf.spi.*;version="${carbon.uuf.version}",
                         </Export-Package>
                         <Carbon-Component>
-                            startup.listener;componentName="wso2-uuf-deployer";
+                            startup.listener;componentName="wso2-uuf-server";
                             requiredService="org.wso2.carbon.uuf.spi.RenderableCreator",
-                            osgi.service;objectClass="org.wso2.carbon.deployment.engine.Deployer",
-                            osgi.service;objectClass="org.wso2.carbon.uuf.spi.UUFAppRegistry"
+                            startup.listener;componentName="wso2-uuf-startup-listener";
+                            requiredService="org.wso2.carbon.uuf.spi.HttpConnector,org.wso2.carbon.uuf.internal.core.create.AppDeployer",
+                            osgi.service;objectClass="org.wso2.carbon.uuf.api.Server",
+                            osgi.service;objectClass="org.wso2.carbon.uuf.internal.core.create.AppDeployer"
                         </Carbon-Component>
                         <Include-Resource>src/main/resources</Include-Resource>
                     </instructions>
