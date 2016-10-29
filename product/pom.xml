@@ -495,7 +495,7 @@
                                 <path id="h2.classpath">
                                     <path refid="maven.compile.classpath" />
                                 </path>
-                                <echo message="########### Create HT H2 Database ##############" />
+                                <echo message="#################### Create H2 Database ####################" />
                                 <sql driver="org.h2.Driver"
                                      url="jdbc:h2:${basedir}/target/wso2carbon-kernel-${carbon.kernel.version}/database/WSO2CARBON_DB;create=true"
                                      userid="wso2carbon" password="wso2carbon" autocommit="true" onerror="continue">
@@ -505,7 +505,7 @@
                                     <fileset file="${basedir}/carbon-home/dbscripts/WSO2CARBON_DB.sql" />
                                     <fileset file="${basedir}/carbon-home/dbscripts/h2_test_data.sql" />
                                 </sql>
-                                <echo message="##################### END ############################" />
+                                <echo message="#################### END ####################" />
                             </tasks>
                         </configuration>
                     </execution>

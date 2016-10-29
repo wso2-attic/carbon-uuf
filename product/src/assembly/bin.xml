@@ -13,6 +13,7 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
+
 <assembly>
     <includeBaseDirectory>true</includeBaseDirectory>
     <baseDirectory>wso2uuf-${project.version}</baseDirectory>
@@ -33,7 +34,6 @@
                 <exclude>**/*.ipr</exclude>
                 <exclude>**/*.iwr</exclude>
                 <exclude>**/*.eclipse</exclude>
-                <exclude>**/netty-transports.yml</exclude>
                 <exclude>**/netty-transports.yml</exclude>
             </excludes>
         </fileSet>
