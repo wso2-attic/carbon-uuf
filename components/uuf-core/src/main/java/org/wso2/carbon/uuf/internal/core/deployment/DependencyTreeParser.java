@@ -16,7 +16,7 @@
  *  under the License.
  */
 
-package org.wso2.carbon.uuf.internal.core.create;
+package org.wso2.carbon.uuf.internal.core.deployment;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;

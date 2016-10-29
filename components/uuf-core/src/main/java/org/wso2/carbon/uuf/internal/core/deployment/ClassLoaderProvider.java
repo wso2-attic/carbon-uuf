@@ -16,7 +16,7 @@
  *  under the License.
  */
 
-package org.wso2.carbon.uuf.internal.core.create;
+package org.wso2.carbon.uuf.internal.core.deployment;
 
 import org.wso2.carbon.uuf.reference.ComponentReference;
 

@@ -16,7 +16,7 @@
  *  under the License.
  */
 
-package org.wso2.carbon.uuf.internal.core.create;
+package org.wso2.carbon.uuf.internal.core.deployment;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
@@ -55,7 +55,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-import static org.wso2.carbon.uuf.internal.core.create.DependencyTreeParser.ComponentData;
+import static org.wso2.carbon.uuf.internal.core.deployment.DependencyTreeParser.ComponentData;
 import static org.wso2.carbon.uuf.internal.util.NameUtils.getFullyQualifiedName;
 
 public class AppCreator {

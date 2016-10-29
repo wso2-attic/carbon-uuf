@@ -19,14 +19,14 @@ package org.wso2.carbon.uuf;
 import com.google.common.collect.SetMultimap;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import org.wso2.carbon.uuf.internal.core.create.DependencyTreeParser;
+import org.wso2.carbon.uuf.internal.core.deployment.DependencyTreeParser;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
 
-import static org.wso2.carbon.uuf.internal.core.create.DependencyTreeParser.ComponentData;
+import static org.wso2.carbon.uuf.internal.core.deployment.DependencyTreeParser.ComponentData;
 
 public class DependencyTreeParserTest {
 
