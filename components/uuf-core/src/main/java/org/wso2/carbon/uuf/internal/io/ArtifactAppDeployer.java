@@ -72,19 +72,20 @@ public class ArtifactAppDeployer {
     }
 
     public Set<String> deploy() {
-        Stream<Path> list;
+        Stream<Path> contents;
         try {
-            list = Files.list(appsRepository);
+            contents = Files.list(appsRepository);
         } catch (IOException e) {
             throw new FileOperationException("Cannot list UUF apps in '" + appsRepository + "' directory.", e);
         }
 
-        list.filter(Files::isDirectory).forEach(appPath -> {
-            Pair<String, String> appNameContextPath = getAppNameContextPath(appPath);
-            pendingToDeployArtifacts.put(appNameContextPath.getRight(),
-                                         new AppArtifact(appNameContextPath.getLeft(), appPath));
-            log.debug("UUF app '{}' added to the pending deployments list.", appNameContextPath.getLeft());
-        });
+        contents.filter(Files::isDirectory)
+                .forEach(appPath -> {
+                    Pair<String, String> appNameContextPath = getAppNameContextPath(appPath);
+                    pendingToDeployArtifacts.put(appNameContextPath.getRight(),
+                                                 new AppArtifact(appNameContextPath.getLeft(), appPath));
+                    log.debug("UUF app '{}' added to the pending deployments list.", appNameContextPath.getLeft());
+                });
         return Collections.unmodifiableSet(pendingToDeployArtifacts.keySet());
     }
 
