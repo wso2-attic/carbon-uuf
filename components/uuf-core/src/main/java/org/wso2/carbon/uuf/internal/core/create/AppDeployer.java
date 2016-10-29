@@ -18,7 +18,13 @@
 
 package org.wso2.carbon.uuf.internal.core.create;
 
+import org.wso2.carbon.uuf.core.App;
+
+import java.util.Set;
+
 public interface AppDeployer {
 
-    void deploy();
+    Set<String> deploy();
+
+    App getApp(String contextPath);
 }
