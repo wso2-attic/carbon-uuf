@@ -120,8 +120,7 @@ public class UUFServer implements Server, RequiredCapabilityListener {
 
     @Deactivate
     protected void deactivate(BundleContext bundleContext) {
-        renderableCreators.clear();
-        appDeployer = null;
+        stop();
         this.bundleContext = null;
         eventPublisher = null;
         serverServiceRegistration.unregister();
@@ -182,6 +181,11 @@ public class UUFServer implements Server, RequiredCapabilityListener {
         for (String deployedAppContext : deployedAppContexts) {
             eventPublisher.publish(httpConnector -> httpConnector.registerAppContextPath(deployedAppContext));
         }
+    }
+
+    public void stop() {
+        renderableCreators.clear();
+        appDeployer = null;
     }
 
     @Deprecated
