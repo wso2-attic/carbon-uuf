@@ -16,7 +16,7 @@
  *  under the License.
  */
 
-package org.wso2.carbon.uuf.reference;
+package org.wso2.carbon.uuf.api.reference;
 
 public interface LayoutReference {
 

@@ -50,7 +50,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static org.wso2.carbon.uuf.reference.ComponentReference.DIR_NAME_FRAGMENTS;
+import static org.wso2.carbon.uuf.api.reference.ComponentReference.DIR_NAME_FRAGMENTS;
 import static org.wso2.carbon.uuf.spi.HttpResponse.CONTENT_TYPE_IMAGE_PNG;
 import static org.wso2.carbon.uuf.spi.HttpResponse.CONTENT_TYPE_WILDCARD;
 import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_BAD_REQUEST;

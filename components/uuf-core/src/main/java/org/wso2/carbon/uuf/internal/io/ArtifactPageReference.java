@@ -19,13 +19,13 @@
 package org.wso2.carbon.uuf.internal.io;
 
 import org.apache.commons.io.FilenameUtils;
-import org.wso2.carbon.uuf.reference.ComponentReference;
-import org.wso2.carbon.uuf.reference.FileReference;
-import org.wso2.carbon.uuf.reference.PageReference;
+import org.wso2.carbon.uuf.api.reference.ComponentReference;
+import org.wso2.carbon.uuf.api.reference.FileReference;
+import org.wso2.carbon.uuf.api.reference.PageReference;
 
 import java.nio.file.Path;
 
-import static org.wso2.carbon.uuf.reference.ComponentReference.DIR_NAME_PAGES;
+import static org.wso2.carbon.uuf.api.reference.ComponentReference.DIR_NAME_PAGES;
 
 public class ArtifactPageReference implements PageReference {
 

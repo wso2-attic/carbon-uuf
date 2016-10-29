@@ -27,11 +27,11 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.wiring.BundleWiring;
+import org.wso2.carbon.uuf.api.reference.ComponentReference;
+import org.wso2.carbon.uuf.api.reference.FileReference;
 import org.wso2.carbon.uuf.exception.FileOperationException;
 import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.internal.core.deployment.ClassLoaderProvider;
-import org.wso2.carbon.uuf.reference.ComponentReference;
-import org.wso2.carbon.uuf.reference.FileReference;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

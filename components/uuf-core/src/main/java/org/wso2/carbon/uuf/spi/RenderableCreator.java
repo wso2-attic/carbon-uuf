@@ -18,9 +18,9 @@
 
 package org.wso2.carbon.uuf.spi;
 
-import org.wso2.carbon.uuf.reference.FragmentReference;
-import org.wso2.carbon.uuf.reference.LayoutReference;
-import org.wso2.carbon.uuf.reference.PageReference;
+import org.wso2.carbon.uuf.api.reference.FragmentReference;
+import org.wso2.carbon.uuf.api.reference.LayoutReference;
+import org.wso2.carbon.uuf.api.reference.PageReference;
 
 import java.util.Optional;
 import java.util.Set;

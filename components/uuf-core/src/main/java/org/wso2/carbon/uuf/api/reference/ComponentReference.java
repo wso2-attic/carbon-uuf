@@ -16,12 +16,12 @@
  *  under the License.
  */
 
-package org.wso2.carbon.uuf.reference;
+package org.wso2.carbon.uuf.api.reference;
 
-import java.util.Optional;
-import java.util.Set;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
+import java.util.Set;
 import java.util.stream.Stream;
 
 public interface ComponentReference {

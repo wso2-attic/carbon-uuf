@@ -16,25 +16,13 @@
  *  under the License.
  */
 
-package org.wso2.carbon.uuf.reference;
+package org.wso2.carbon.uuf.api.reference;
 
-import java.util.List;
-import java.util.stream.Stream;
-
-public interface AppReference {
-
-    String DIR_NAME_COMPONENTS = "components";
-    String DIR_NAME_CUSTOMIZATIONS = "customizations";
-    String DIR_NAME_THEMES = "themes";
-    String FILE_NAME_DEPENDENCY_TREE = "dependency.tree";
+public interface FragmentReference {
 
     String getName();
 
-    ComponentReference getComponentReference(String componentSimpleName);
+    FileReference getRenderingFile();
 
-    Stream<ThemeReference> getThemeReferences();
-
-    List<String> getDependencies();
-
-    String getPath();
+    ComponentReference getComponentReference();
 }

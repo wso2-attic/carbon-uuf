@@ -18,9 +18,9 @@
 
 package org.wso2.carbon.uuf.internal.io;
 
+import org.wso2.carbon.uuf.api.reference.FileReference;
+import org.wso2.carbon.uuf.api.reference.ThemeReference;
 import org.wso2.carbon.uuf.exception.UUFException;
-import org.wso2.carbon.uuf.reference.FileReference;
-import org.wso2.carbon.uuf.reference.ThemeReference;
 
 import java.nio.file.Files;
 import java.nio.file.Path;

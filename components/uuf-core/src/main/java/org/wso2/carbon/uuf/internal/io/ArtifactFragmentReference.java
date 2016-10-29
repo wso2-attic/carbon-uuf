@@ -18,10 +18,10 @@
 
 package org.wso2.carbon.uuf.internal.io;
 
+import org.wso2.carbon.uuf.api.reference.ComponentReference;
+import org.wso2.carbon.uuf.api.reference.FileReference;
+import org.wso2.carbon.uuf.api.reference.FragmentReference;
 import org.wso2.carbon.uuf.exception.UUFException;
-import org.wso2.carbon.uuf.reference.ComponentReference;
-import org.wso2.carbon.uuf.reference.FileReference;
-import org.wso2.carbon.uuf.reference.FragmentReference;
 
 import java.nio.file.Files;
 import java.nio.file.Path;

@@ -18,7 +18,7 @@
 
 package org.wso2.carbon.uuf.internal.core.deployment;
 
-import org.wso2.carbon.uuf.reference.ComponentReference;
+import org.wso2.carbon.uuf.api.reference.ComponentReference;
 
 public interface ClassLoaderProvider {
 

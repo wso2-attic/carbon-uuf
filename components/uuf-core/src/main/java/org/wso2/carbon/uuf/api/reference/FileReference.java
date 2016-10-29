@@ -16,13 +16,21 @@
  *  under the License.
  */
 
-package org.wso2.carbon.uuf.reference;
+package org.wso2.carbon.uuf.api.reference;
 
-public interface FragmentReference {
+import java.util.Optional;
+
+public interface FileReference {
 
     String getName();
 
-    FileReference getRenderingFile();
+    String getExtension();
 
-    ComponentReference getComponentReference();
+    String getContent();
+
+    String getRelativePath();
+
+    String getAbsolutePath();
+
+    Optional<FileReference> getSibling(String name);
 }

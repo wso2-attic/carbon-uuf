@@ -22,12 +22,12 @@ import com.github.jknack.handlebars.io.StringTemplateSource;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.uuf.api.reference.FileReference;
+import org.wso2.carbon.uuf.api.reference.FragmentReference;
+import org.wso2.carbon.uuf.api.reference.LayoutReference;
+import org.wso2.carbon.uuf.api.reference.PageReference;
 import org.wso2.carbon.uuf.exception.FileOperationException;
 import org.wso2.carbon.uuf.exception.UUFException;
-import org.wso2.carbon.uuf.reference.FileReference;
-import org.wso2.carbon.uuf.reference.FragmentReference;
-import org.wso2.carbon.uuf.reference.LayoutReference;
-import org.wso2.carbon.uuf.reference.PageReference;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.MutableExecutable;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.MutableHbsRenderable;
 

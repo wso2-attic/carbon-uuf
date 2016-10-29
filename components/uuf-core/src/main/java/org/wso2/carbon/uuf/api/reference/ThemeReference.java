@@ -16,13 +16,15 @@
  *  under the License.
  */
 
-package org.wso2.carbon.uuf.reference;
+package org.wso2.carbon.uuf.api.reference;
 
-public interface PageReference {
+public interface ThemeReference {
 
-    String getPathPattern();
+    String FILE_NAME_THEME = "theme.yaml";
 
-    FileReference getRenderingFile();
+    String getName();
 
-    ComponentReference getComponentReference();
+    FileReference getThemeConfig();
+
+    String getPath();
 }

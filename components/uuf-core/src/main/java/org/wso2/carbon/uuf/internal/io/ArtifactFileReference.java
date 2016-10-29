@@ -19,8 +19,8 @@
 package org.wso2.carbon.uuf.internal.io;
 
 import org.apache.commons.io.FilenameUtils;
+import org.wso2.carbon.uuf.api.reference.FileReference;
 import org.wso2.carbon.uuf.exception.FileOperationException;
-import org.wso2.carbon.uuf.reference.FileReference;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
