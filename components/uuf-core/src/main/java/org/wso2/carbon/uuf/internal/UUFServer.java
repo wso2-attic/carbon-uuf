@@ -26,6 +26,7 @@ import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
+import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.kernel.startupresolver.RequiredCapabilityListener;
@@ -33,6 +34,7 @@ import org.wso2.carbon.uuf.api.Server;
 import org.wso2.carbon.uuf.core.App;
 import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.internal.core.deployment.AppDeployer;
+import org.wso2.carbon.uuf.internal.core.deployment.DeploymentNotifier;
 import org.wso2.carbon.uuf.internal.io.ArtifactAppDeployer;
 import org.wso2.carbon.uuf.spi.HttpConnector;
 import org.wso2.carbon.uuf.spi.HttpRequest;
@@ -62,8 +64,8 @@ public class UUFServer implements Server, RequiredCapabilityListener {
     private final Set<RenderableCreator> renderableCreators;
     private final RequestDispatcher requestDispatcher;
     private AppDeployer appDeployer;
+    private DeploymentNotifier deploymentNotifier;
     private BundleContext bundleContext;
-    private EventPublisher<HttpConnector> eventPublisher;
     private ServiceRegistration serverServiceRegistration;
 
     public UUFServer() {
@@ -122,14 +124,14 @@ public class UUFServer implements Server, RequiredCapabilityListener {
     protected void deactivate(BundleContext bundleContext) {
         stop();
         this.bundleContext = null;
-        eventPublisher = null;
+        deploymentNotifier = null;
         serverServiceRegistration.unregister();
         log.debug("UUF Server deactivated.");
     }
 
     @Override
     public void onAllRequiredCapabilitiesAvailable() {
-        eventPublisher = new EventPublisher<>(bundleContext, HttpConnector.class);
+        deploymentNotifier = new WhiteboardDeploymentNotifier(bundleContext);
         appDeployer = createAppDeployer();
         log.debug("ArtifactAppDeployer is ready.");
 
@@ -177,10 +179,8 @@ public class UUFServer implements Server, RequiredCapabilityListener {
     }
 
     public void start() {
-        Set<String> deployedAppContexts = appDeployer.deploy();
-        for (String deployedAppContext : deployedAppContexts) {
-            eventPublisher.publish(httpConnector -> httpConnector.registerAppContextPath(deployedAppContext));
-        }
+        Set<String> deployedAppContextPaths = appDeployer.deploy();
+        deploymentNotifier.notify(deployedAppContextPaths);
     }
 
     public void stop() {
@@ -192,5 +192,24 @@ public class UUFServer implements Server, RequiredCapabilityListener {
     public static boolean isDevModeEnabled() {
         // TODO: 8/13/16 Remove this when Carbon 'Utils.isDevModeEnabled()' is available in C5.20
         return DEV_MODE_ENABLED;
+    }
+
+    private static class WhiteboardDeploymentNotifier extends DeploymentNotifier {
+
+        private final ServiceTracker serviceTracker;
+
+        public WhiteboardDeploymentNotifier(BundleContext bundleContext) {
+            serviceTracker = new ServiceTracker<HttpConnector, HttpConnector>(bundleContext, HttpConnector.class, null);
+            serviceTracker.open();
+        }
+
+        @Override
+        protected Set<HttpConnector> getHttpConnectors() {
+            Set<HttpConnector> rv = new HashSet<>();
+            for (Object service : serviceTracker.getServices()) {
+                rv.add((HttpConnector) service);
+            }
+            return rv;
+        }
     }
 }
