@@ -60,7 +60,7 @@ public class UUFServer implements Server, RequiredCapabilityListener {
     private static final boolean DEV_MODE_ENABLED = Boolean.getBoolean("devmode");
     private static final Logger log = LoggerFactory.getLogger(UUFServer.class);
 
-    private final String appRepositiryPath;
+    private final String appRepositoryPath;
     private final Set<RenderableCreator> renderableCreators;
     private final RequestDispatcher requestDispatcher;
     private AppDeployer appDeployer;
@@ -73,7 +73,7 @@ public class UUFServer implements Server, RequiredCapabilityListener {
     }
 
     public UUFServer(String appRepositoryPath) {
-        this.appRepositiryPath = appRepositoryPath;
+        this.appRepositoryPath = appRepositoryPath;
         this.renderableCreators = new HashSet<>();
         this.requestDispatcher = new RequestDispatcher();
     }
@@ -140,9 +140,9 @@ public class UUFServer implements Server, RequiredCapabilityListener {
     }
 
     private AppDeployer createAppDeployer() {
-        return (appRepositiryPath == null) ?
+        return (appRepositoryPath == null) ?
                 new ArtifactAppDeployer(renderableCreators) :
-                new ArtifactAppDeployer(appRepositiryPath, renderableCreators);
+                new ArtifactAppDeployer(appRepositoryPath, renderableCreators);
     }
 
     @Override
