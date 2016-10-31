@@ -145,8 +145,8 @@ public class StaticResolver {
         }
 
         if (lastModifiedDate == null) {
-            // Since we failed to read last modified date of 'resourcePath' file, we cannot set cache headers.
-            // Therefore just serve the file without any cache headers.
+            /* Since we failed to read last modified date of 'resourcePath' file, we cannot set cache headers.
+            Therefore just serve the file without any cache headers. */
             response.setStatus(STATUS_OK);
             response.setContent(resourcePath, getContentType(request, resourcePath));
             return;
@@ -204,7 +204,7 @@ public class StaticResolver {
         String relativePathString = uriWithoutContextPath.substring(fifthSlashIndex + 1,
                                                                     uriWithoutContextPath.length());
         if (DIR_NAME_COMPONENT_RESOURCES.equals(fragmentSimpleName)) {
-            // Resource is inside the 'base' directory of the 'component'
+            // Resource is inside the 'public' directory of the 'component'
             return Paths.get(component.getPath(), DIR_NAME_PUBLIC_RESOURCES, relativePathString);
         } else {
             // Resource is inside the 'public' directory of fragment 'fragmentSimpleName' of the 'component'
