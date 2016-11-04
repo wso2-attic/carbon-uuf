@@ -475,7 +475,7 @@
         <antlr-version>4.5.1-1</antlr-version>
 
         <!-- MSF4J -->
-        <msf4j.version>2.1.0-SNAPSHOT</msf4j.version>
+        <msf4j.version>2.1.0</msf4j.version>
 
         <!-- Authentication and Authorization -->
         <carbon.security.caas.version>1.0.0-m2</carbon.security.caas.version>
