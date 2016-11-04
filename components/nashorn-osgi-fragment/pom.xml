@@ -56,7 +56,7 @@
                     <instructions>
                         <Fragment-Host>system.bundle;extension:=framework</Fragment-Host>
                         <Export-Package>
-                            jdk.nashorn.api.scripting; version="${nashorn-osgi-fragment.version}"
+                            jdk.nashorn.api.scripting; version="${carbon.uuf.version}"
                         </Export-Package>
                     </instructions>
                 </configuration>
