@@ -15,6 +15,7 @@
             <th>Name</th>
             <th>Email Address</th>
             <th>Organization</th>
+            <th>&nbsp;</th>
         </tr>
         </thead>
         <tbody>
@@ -24,8 +25,23 @@
                 <td>{{name}}</td>
                 <td>{{email}}</td>
                 <td>{{organization}}</td>
+                <td><a data-toggle="modal" data-target="#modal2"><i class="fw fw-view"></i> Show Modal</a></td>
             </tr>
         {{/each}}
         </tbody>
     </table>
+{{/fillZone}}
+
+{{#fillZone "modal"}}
+    {{
+        fragment "org.wso2.carbon.uuf.sample.foundation.modal"
+        id="modal2"
+        class="additional-class"
+        modalTitle="Are you sure you want to delete ?"
+        modalBody="Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa."
+        modalFooter=""
+        primaryButton="Yes"
+        secondaryButton="Cancel"
+        dismissButton=true
+    }}
 {{/fillZone}}
