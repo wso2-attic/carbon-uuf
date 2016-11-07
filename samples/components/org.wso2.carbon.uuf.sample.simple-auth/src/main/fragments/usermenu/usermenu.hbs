@@ -1,5 +1,5 @@
-{{css "css/usermenu.css"}}
-<ul class="nav navbar-right float-remove-xs text-center-xs">
+
+<ul class="nav navbar-right">
     {{#if enableLogin}}
         <li class="login-label">
             <a href="{{@contextPath}}/simple-auth/login">
@@ -8,17 +8,16 @@
         </li>
     {{else if enableLogout}}
         <li class="visible-inline-block">
-            <a class="dropdown" data-toggle="dropdown">
-                    <span class="icon fw-stack fw-lg">
-                       <i class="fw fw-circle fw-stack-2x"></i>
-                       <i class="fw fw-user fw-stack-1x fw-inverse-black"></i>
-                    </span>
-                <span class="hidden-xs">{{username}}<span class="caret"></span></span>
+        <li class="visible-inline-block">
+            <a class="dropdown" data-toggle="dropdown" aria-expanded="false">
+                   <span class="icon fw-stack">
+                      <i class="fw fw-circle fw-stack-2x"></i>
+                      <i class="fw fw-user fw-stack-1x fw-inverse"></i>
+                   </span>
+                <span class="hidden-xs add-margin-left-1x">{{username}} <span class="caret"></span></span>
             </a>
-            <ul class="dropdown-menu dropdown-menu-right float-remove-xs position-static-xs text-center-xs remove-margin-xs slideInDown"
-                role="menu">
-                <li class="dropdown-header visible-xs">{{username}}<span class="caret"></span></li>
-                <li class="divider visible-xs"></li>
+            <ul class="dropdown-menu dropdown-menu-right slideInDown" role="menu">
+                <li><a href="{{@contextPath}}">Profile Settings</a></li>
                 <li><a href="{{@contextPath}}/simple-auth/logout">Logout</a></li>
             </ul>
         </li>
