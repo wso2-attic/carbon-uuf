@@ -43,7 +43,7 @@
         <dependency>
             <groupId>org.wso2.carbon.uuf</groupId>
             <artifactId>nashorn-osgi-fragment</artifactId>
-            <version>${nashorn-osgi-fragment.version}</version>
+            <version>${carbon.uuf.version}</version>
         </dependency>
     </dependencies>
 
@@ -86,7 +86,7 @@
                                 </bundle>
                                 <bundle>
                                     <symbolicName>nashorn-osgi-fragment</symbolicName>
-                                    <version>${nashorn-osgi-fragment.version}</version>
+                                    <version>${carbon.uuf.version}</version>
                                 </bundle>
                             </bundles>
                             <importFeatures>
