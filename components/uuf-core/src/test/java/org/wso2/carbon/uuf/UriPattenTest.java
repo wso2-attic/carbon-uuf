@@ -64,8 +64,15 @@ public class UriPattenTest {
                 {"/a/{x}/{+y}", "/a/b/c/d"},
                 {"/a/{x}/c/de{+y}", "/a/b/c/def/g/"},
                 {"/index", "/"},
-                {"/a/index", "/a"},
-                {"/a/{x}/index", "/a/b"}
+                {"/index", "/index"},
+                {"/a/index", "/a/"},
+                {"/a/index", "/a/index"},
+                {"/a{x}/index", "/ab/"},
+                {"/a{x}/index", "/ab/index"},
+                {"/a/{x}/{y}/index", "/a/b/c/"},
+                {"/a/{x}/{y}/index", "/a/b/c/index"},
+                {"/a/{x}/index", "/a/b/"},
+                {"/a/{x}/index", "/a/b/index"}
         };
     }
 
@@ -81,9 +88,9 @@ public class UriPattenTest {
                 {"/a{+x}", "/A/b"},
                 {"/a/{+x}", "/A/b"},
                 {"/a/b{+x}", "/a/Bc/d"},
-                {"/index", "/index"},
-                {"/a/index", "/a/index"},
-                {"/a/{x}/index", "/a/b/index"}
+                {"/index", "/index/"},
+                {"/a/index", "/a/index/"},
+                {"/a/{x}/index", "/a/b/index/"}
         };
     }
 
@@ -130,6 +137,16 @@ public class UriPattenTest {
         int j = bPatten.compareTo(aPatten);
         Assert.assertTrue(i < 0, a + " should be more specific than " + b);
         Assert.assertTrue(j > 0, a + " should be more specific than " + b);
+    }
+
+    @Test(dataProvider = "matchingUriPatterns")
+    public void testPatternsWithParameters(String uriPattern, String uri) {
+        Assert.assertTrue(new UriPatten(uriPattern).match(uri).isPresent());
+    }
+
+    @Test(dataProvider = "unmatchingUriPatterns")
+    public void testUnMatchingPatternsWithParameters(String uriPattern, String uri) {
+        Assert.assertFalse(new UriPatten(uriPattern).match(uri).isPresent());
     }
 
     @Test
