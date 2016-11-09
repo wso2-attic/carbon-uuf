@@ -128,13 +128,10 @@ public class UriPatten implements Comparable<UriPatten> {
         if (matcher.matches()) {
             if (!variableNames.isEmpty()) {
                 Map<String, String> result = new HashMap<>(variableNames.size());
-                for (int i = 1; i <= matcher.groupCount(); i++) {
-                    String name = variableNames.get(i - 1);
-                    String value = matcher.group(i);
+                for (int i = 0; i < variableNames.size(); i++) {
+                    String name = variableNames.get(i);
+                    String value = matcher.group(i + 1);
                     result.put(name, value);
-                    if (i == variableNames.size()) {
-                        break;
-                    }
                 }
                 return Optional.of(result);
             }

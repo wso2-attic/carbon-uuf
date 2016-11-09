@@ -16,10 +16,13 @@
 
 package org.wso2.carbon.uuf;
 
+import com.google.common.collect.ImmutableMap;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import org.wso2.carbon.uuf.internal.core.UriPatten;
+
+import java.util.Map;
 
 import static java.lang.Integer.signum;
 
@@ -110,6 +113,36 @@ public class UriPattenTest {
         };
     }
 
+    @DataProvider
+    public Object[][] uriPatternsWithSingleParams() {
+        return new Object[][]{
+                {"/{x}", "/a", "x", "a"},
+                {"/{x}", "/-._~?#[]@!$&'()+,;=", "x", "-._~?#[]@!$&'()+,;="},
+                {"/a{x}", "/ab", "x", "b"},
+                {"/{x}b", "/ab", "x", "a"},
+                {"/a/{x}", "/a/b", "x", "b"},
+                {"/a{x}/index", "/ab/", "x", "b"},
+                {"/a{x}/index", "/ab/index", "x", "b"},
+                {"/a/{x}/index", "/a/b/", "x", "b"},
+                {"/a/{x}/index", "/a/b/index", "x", "b"}
+        };
+    }
+
+    @DataProvider
+    public Object[][] uriPatternsWithMultipleParams() {
+        return new Object[][]{
+                {"/a{x}c/d{y}f", "/abc/def", ImmutableMap.of("x", "b", "y", "e")},
+                {"/{+x}", "/a", ImmutableMap.of("x", "a")},
+                {"/{+x}", "/-._~?#[]@!$&'()+,;=", ImmutableMap.of("x", "-._~?#[]@!$&'()+,;=")},
+                {"/{+x}", "/a/", ImmutableMap.of("x", "a/")},
+                {"/{+x}", "/a/b/c", ImmutableMap.of("x", "a/b/c")},
+                {"/a/{x}/{+y}", "/a/b/c/d", ImmutableMap.of("x", "b", "y", "c/d")},
+                {"/a/{x}/c/de{+y}", "/a/b/c/def/g/", ImmutableMap.of("x", "b", "y", "f/g/")},
+                {"/a/{x}/{y}/index", "/a/b/c/", ImmutableMap.of("x", "b", "y", "c")},
+                {"/a/{x}/{y}/index", "/a/b/c/index", ImmutableMap.of("x", "b", "y", "c")}
+        };
+    }
+
     @Test(dataProvider = "invalidUriPatterns")
     public void testInvalidUriPatterns(String uriPattern, String message) {
         try {
@@ -142,6 +175,17 @@ public class UriPattenTest {
     @Test(dataProvider = "matchingUriPatterns")
     public void testPatternsWithParameters(String uriPattern, String uri) {
         Assert.assertTrue(new UriPatten(uriPattern).match(uri).isPresent());
+    }
+
+    @Test(dataProvider = "uriPatternsWithSingleParams")
+    public void testPatternsWithSingleParameters(String uriPattern, String uri, String paramKey, String paramVal) {
+        Assert.assertTrue(new UriPatten(uriPattern).match(uri).get().get(paramKey).equals(paramVal));
+    }
+
+    @Test(dataProvider = "uriPatternsWithMultipleParams")
+    public void testPatternsWithMultipleParameters(String uriPattern, String uri, Map<String, String> data) {
+        data.forEach((paramKey, paramVal) ->
+                Assert.assertTrue(new UriPatten(uriPattern).match(uri).get().get(paramKey).equals(paramVal)));
     }
 
     @Test(dataProvider = "unmatchingUriPatterns")
