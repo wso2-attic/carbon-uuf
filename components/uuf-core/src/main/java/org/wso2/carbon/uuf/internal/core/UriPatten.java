@@ -21,6 +21,7 @@ package org.wso2.carbon.uuf.internal.core;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,10 +45,11 @@ public class UriPatten implements Comparable<UriPatten> {
 
     public UriPatten(String uriPattern) {
         Pair<Boolean, List<String>> analyseResult = analyse(uriPattern);
+        String indexPathRegex = null;
         // URI pattern cleanup
         if (uriPattern.endsWith("/index")) {
-            String tmp = uriPattern.substring(0, (uriPattern.length() - 6));
-            uriPattern = (tmp.isEmpty()) ? "/" : tmp;
+            uriPattern = uriPattern.substring(0, (uriPattern.length() - "index".length()));
+            indexPathRegex = "(index)?";
         }
         this.patternString = uriPattern;
         boolean hasPlusMarkedVariable = analyseResult.getLeft();
@@ -58,6 +60,10 @@ public class UriPatten implements Comparable<UriPatten> {
                 .collect(Collectors.joining(URI_VARIABLE_REGEX));
         if (uriPattern.charAt(uriPattern.length() - 1) == '}') {
             patternRegex += (hasPlusMarkedVariable) ? PLUS_MARKED_URI_VARIABLE_REGEX : URI_VARIABLE_REGEX;
+        }
+        //append the index path regex if this is uri has ended with /index
+        if (indexPathRegex != null) {
+            patternRegex = patternRegex + indexPathRegex;
         }
         pattern = Pattern.compile(patternRegex);
     }
@@ -120,15 +126,18 @@ public class UriPatten implements Comparable<UriPatten> {
     public Optional<Map<String, String>> match(String uri) {
         Matcher matcher = this.pattern.matcher(uri);
         if (matcher.matches()) {
-            Map<String, String> result = new HashMap<>(variableNames.size());
-            for (int i = 1; i <= matcher.groupCount(); i++) {
-                String name = variableNames.get(i - 1);
-                String value = matcher.group(i);
-                result.put(name, value);
+            if (!variableNames.isEmpty()) {
+                Map<String, String> result = new HashMap<>(variableNames.size());
+                for (int i = 0; i < variableNames.size(); i++) {
+                    String name = variableNames.get(i);
+                    String value = matcher.group(i + 1);
+                    result.put(name, value);
+                }
+                return Optional.of(result);
             }
-            return Optional.of(result);
+            return Optional.of(Collections.emptyMap());
         } else {
-            return Optional.<Map<String, String>>empty();
+            return Optional.empty();
         }
     }
 
