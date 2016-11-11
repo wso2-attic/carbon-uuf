@@ -17,6 +17,14 @@
 package org.wso2.carbon.uuf.renderablecreator.hbs.impl.js;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
+import jdk.nashorn.api.scripting.ScriptObjectMirror;
 import org.wso2.carbon.uuf.api.Placeholder;
 import org.wso2.carbon.uuf.core.API;
 import org.wso2.carbon.uuf.exception.FileOperationException;
@@ -35,6 +43,7 @@ import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.SendToClientFunction;
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -61,7 +70,8 @@ public class JsFunctionsImpl {
         CALL_MICRO_SERVICE_FUNCTION = API::callMicroService;
         SEND_ERROR_FUNCTION = API::sendError;
         SEND_REDIRECT_FUNCTION = API::sendRedirect;
-        GSON = new Gson();
+        GSON = new GsonBuilder().registerTypeAdapter(ScriptObjectMirror.class,
+                new ScriptObjectMirrorSerializer()).create();
     }
 
     public JsFunctionsImpl(API api) {
@@ -145,5 +155,54 @@ public class JsFunctionsImpl {
             };
         }
         return sendToClientFunction;
+    }
+
+    /**
+     * This ScriptObjectMirrorSerializer class is needed to build the {@link Gson} instance with JsonSerializer that
+     * understands complex (eg - having json arrays and maps) json structure created using ScriptObjectMirror
+     * elements. This is needed to properly serialize sub elements of ScriptObjectMirror when sendToClient function
+     * is invoked with a complex js object consisting of arrays and maps. etc.
+     */
+    private static class ScriptObjectMirrorSerializer implements JsonSerializer<ScriptObjectMirror> {
+
+        @Override
+        public JsonElement serialize(ScriptObjectMirror jsObj, Type type,
+                                     JsonSerializationContext serializationContext) {
+            return serialize(jsObj, serializationContext);
+        }
+
+        private JsonElement serialize(ScriptObjectMirror jsObj, JsonSerializationContext serializationContext) {
+            if (jsObj == null) {
+                return JsonNull.INSTANCE;
+            }
+            if (jsObj.isFunction()) {
+                throw new UUFException("Cannot send java script functions from sendToClient function call");
+            }
+            if (jsObj.isArray()) {
+                JsonArray jsonArray = new JsonArray();
+                for (Object item : jsObj.values()) {
+                    if (item instanceof ScriptObjectMirror) {
+                        jsonArray.add(serialize((ScriptObjectMirror) item, serializationContext));
+                    } else {
+                        jsonArray.add(serializationContext.serialize(item));
+                    }
+                }
+                return jsonArray;
+            }
+            if (jsObj.isEmpty()) {
+                return new JsonObject();
+            } else {
+                JsonObject jsonObject = new JsonObject();
+                for (String key : jsObj.getOwnKeys(true)) {
+                    Object member = jsObj.getMember(key);
+                    if (member instanceof ScriptObjectMirror) {
+                        jsonObject.add(key, serialize((ScriptObjectMirror) member, serializationContext));
+                    } else {
+                        jsonObject.add(key, serializationContext.serialize(member));
+                    }
+                }
+                return jsonObject;
+            }
+        }
     }
 }
