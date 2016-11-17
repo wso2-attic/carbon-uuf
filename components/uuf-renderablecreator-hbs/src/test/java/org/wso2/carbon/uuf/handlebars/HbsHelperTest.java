@@ -225,6 +225,24 @@ public class HbsHelperTest {
             Assert.assertEquals(error.line, 3, "error is in the 3rd line");
             Assert.assertEquals(error.column, 2, "error is in the 2nd column");
         }
+    }
 
+    @Test
+    public void testInlineFragmentTemplate() {
+        RequestLookup requestLookup = createRequestLookup();
+        String templateName = "someName";
+        String scriptText = "<div class=\"col-md-12\">\n" +
+                "    {{#each devices}}\n" +
+                "        <div class=\"device\">\n" +
+                "            <span>Name : {{name}}</span>\n" +
+                "            <span>Type : {{type}}</span>\n" +
+                "        </div>\n" +
+                "    {{/each}}\n" +
+                "</div>";
+        createRenderable("{{#template \"" + templateName + "\"}}\n" + scriptText + "{{/template}}").
+                render(null, createLookup(), requestLookup, createAPI());
+        String expected = "<script id=\"" + templateName + "\" type=\"text/x-handlebars-template\">\n" + scriptText +
+                "</script>";
+        Assert.assertEquals(requestLookup.getPlaceholderContent(Placeholder.js).get(), expected);
     }
 }
