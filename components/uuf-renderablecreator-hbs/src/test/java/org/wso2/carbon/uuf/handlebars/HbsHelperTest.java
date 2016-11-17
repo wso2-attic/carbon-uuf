@@ -266,11 +266,10 @@ public class HbsHelperTest {
                 "        </div>\n" +
                 "    {{/each}}\n" +
                 "</div>";
-        Fragment fragment = new Fragment(fragmentName, createRenderable(fragmentContent), false);
         Page page = new Page(new UriPatten("/contextPath"), createRenderable(pageContent), false);
         Component component = new Component(componentName, null, null, ImmutableSortedSet.of(page), null);
         Lookup lookup = new Lookup(ImmutableSetMultimap.of());
-        lookup.add(fragment);
+        lookup.add(new Fragment(fragmentName, createRenderable(fragmentContent), false));
         lookup.add(component);
         RequestLookup requestLookup = createRequestLookup();
         component.renderPage("/contextPath", null, lookup, requestLookup, createAPI());
