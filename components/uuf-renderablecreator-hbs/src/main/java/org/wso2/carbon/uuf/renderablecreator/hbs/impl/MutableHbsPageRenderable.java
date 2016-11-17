@@ -47,7 +47,7 @@ public class MutableHbsPageRenderable extends HbsPageRenderable implements Mutab
     }
 
     @Override
-    protected Template getTemplate() {
+    public Template getTemplate() {
         return template;
     }
 

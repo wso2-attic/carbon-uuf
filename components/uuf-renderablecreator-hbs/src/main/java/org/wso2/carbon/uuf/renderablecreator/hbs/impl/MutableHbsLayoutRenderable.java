@@ -43,7 +43,7 @@ public class MutableHbsLayoutRenderable extends HbsLayoutRenderable implements M
     }
 
     @Override
-    protected Template getTemplate() {
+    public Template getTemplate() {
         return template;
     }
 

@@ -49,7 +49,7 @@ public class MutableHbsFragmentRenderable extends HbsFragmentRenderable implemen
     }
 
     @Override
-    protected Template getTemplate() {
+    public Template getTemplate() {
         return template;
     }
 
