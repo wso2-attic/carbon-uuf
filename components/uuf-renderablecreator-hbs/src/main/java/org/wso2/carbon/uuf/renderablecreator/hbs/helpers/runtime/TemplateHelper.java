@@ -28,7 +28,6 @@ import org.wso2.carbon.uuf.renderablecreator.hbs.core.HbsRenderable;
 import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.FillPlaceholderHelper;
 
 import java.io.IOException;
-import java.util.Optional;
 
 /**
  * Helper class to embed handlebars fragment template inside a <script> HTML tag and send it to client side.
