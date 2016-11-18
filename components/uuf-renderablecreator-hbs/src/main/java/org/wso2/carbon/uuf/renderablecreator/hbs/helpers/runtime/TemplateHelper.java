@@ -15,6 +15,7 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
+
 package org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime;
 
 import com.github.jknack.handlebars.Options;
@@ -47,18 +48,18 @@ public class TemplateHelper extends FillPlaceholderHelper<String> {
         String scriptText;
         if (TagType.VAR.equals(options.tagType)) { // fragment template name is provided
             if (options.params.length < 1) {
-                throw new UUFException("Fragment name is not given in the template");
+                throw new UUFException("Fragment name is not given in the template helper.");
             }
             String fragmentName = options.param(0).toString();
             Lookup lookup = options.data(HbsRenderable.DATA_KEY_LOOKUP);
             RequestLookup requestLookup = options.data(HbsRenderable.DATA_KEY_REQUEST_LOOKUP);
             String componentName = requestLookup.tracker().getCurrentComponentName();
             Fragment fragment = lookup.getFragmentIn(componentName, fragmentName)
-                    .orElseThrow(() -> new UUFException("Cannot find the fragment with the given name '" +
-                            fragmentName + "' from the component '" + componentName + "'"));
+                    .orElseThrow(() -> new UUFException("Fragment '" + fragmentName + "' does not exist in " +
+                            "component '" + componentName + "' or its dependencies."));
             if (!(fragment.getRenderable() instanceof HbsRenderable)) {
-                throw new UUFException("Renderable for the fragment " + fragmentName + " is not an instance of " +
-                        "HbsRenderable");
+                throw new UUFException("The template of the fragment '" + fragmentName + "' is not a handlebars " +
+                        "template.");
             }
             scriptText = "\n" + ((HbsRenderable) fragment.getRenderable()).getTemplate().text() + "\n";
         } else { // fragment is defined inline
