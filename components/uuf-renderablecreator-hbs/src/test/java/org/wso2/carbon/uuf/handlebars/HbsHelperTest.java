@@ -19,13 +19,19 @@ package org.wso2.carbon.uuf.handlebars;
 import com.github.jknack.handlebars.HandlebarsError;
 import com.github.jknack.handlebars.HandlebarsException;
 import com.github.jknack.handlebars.io.StringTemplateSource;
+import com.google.common.collect.ImmutableSetMultimap;
+import com.google.common.collect.ImmutableSortedSet;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.wso2.carbon.uuf.api.Configuration;
 import org.wso2.carbon.uuf.api.Placeholder;
 import org.wso2.carbon.uuf.core.API;
+import org.wso2.carbon.uuf.core.Component;
+import org.wso2.carbon.uuf.core.Fragment;
 import org.wso2.carbon.uuf.core.Lookup;
+import org.wso2.carbon.uuf.core.Page;
 import org.wso2.carbon.uuf.core.RequestLookup;
+import org.wso2.carbon.uuf.internal.core.UriPatten;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.HbsRenderable;
 import org.wso2.carbon.uuf.renderablecreator.hbs.impl.HbsPageRenderable;
 import org.wso2.carbon.uuf.spi.HttpRequest;
@@ -225,6 +231,50 @@ public class HbsHelperTest {
             Assert.assertEquals(error.line, 3, "error is in the 3rd line");
             Assert.assertEquals(error.column, 2, "error is in the 2nd column");
         }
+    }
 
+    @Test
+    public void testInlineFragmentTemplate() {
+        RequestLookup requestLookup = createRequestLookup();
+        String templateName = "testTemplateName";
+        String scriptText = "<div class=\"col-md-12\">\n" +
+                "    {{#each devices}}\n" +
+                "        <div class=\"device\">\n" +
+                "            <span>Name : {{name}}</span>\n" +
+                "            <span>Type : {{type}}</span>\n" +
+                "        </div>\n" +
+                "    {{/each}}\n" +
+                "</div>";
+        createRenderable("{{#template \"" + templateName + "\"}}\n" + scriptText + "{{/template}}").
+                render(null, createLookup(), requestLookup, createAPI());
+        String expected = "<script id=\"" + templateName + "\" type=\"text/x-handlebars-template\">\n" + scriptText +
+                "</script>";
+        Assert.assertEquals(requestLookup.getPlaceholderContent(Placeholder.js).get(), expected);
+    }
+
+    @Test
+    public void testReferencedFragmentTemplate() {
+        String templateName = "testTemplateName";
+        String componentName = "test.componentName";
+        String fragmentName = componentName + ".fragmentName";
+        String pageContent = "{{template \"" + templateName + "\" \"" + fragmentName + "\"}}";
+        String fragmentContent = "<div class=\"col-md-12\">\n" +
+                "    {{#each devices}}\n" +
+                "        <div class=\"device\">\n" +
+                "            <span>Name : {{name}}</span>\n" +
+                "            <span>Type : {{type}}</span>\n" +
+                "        </div>\n" +
+                "    {{/each}}\n" +
+                "</div>";
+        Page page = new Page(new UriPatten("/contextPath"), createRenderable(pageContent), false);
+        Component component = new Component(componentName, null, null, ImmutableSortedSet.of(page), null);
+        Lookup lookup = new Lookup(ImmutableSetMultimap.of());
+        lookup.add(new Fragment(fragmentName, createRenderable(fragmentContent), false));
+        lookup.add(component);
+        RequestLookup requestLookup = createRequestLookup();
+        component.renderPage("/contextPath", null, lookup, requestLookup, createAPI());
+        String expected = "<script id=\"" + templateName + "\" type=\"text/x-handlebars-template\">\n" +
+                fragmentContent + "\n</script>";
+        Assert.assertEquals(requestLookup.getPlaceholderContent(Placeholder.js).get(), expected);
     }
 }

@@ -52,6 +52,10 @@ public class Fragment {
         return simpleName;
     }
 
+    public Renderable getRenderable() {
+        return renderer;
+    }
+
     public String render(Model model, Lookup lookup, RequestLookup requestLookup, API api) {
         if (isSecured && !api.getSession().isPresent()) {
             if (requestLookup.tracker().isInPage() || requestLookup.tracker().isInLayout() ||
