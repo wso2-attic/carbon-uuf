@@ -61,7 +61,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.URI;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -81,7 +80,7 @@ public class HbsHelperRegistry implements HelperRegistry {
     /**
      * The helper registry.
      */
-    private final Map<String, Helper<?>> helpers = new HashMap<String, Helper<?>>();
+    private final Map<String, Helper<?>> helpers = new HashMap<>();
 
     /**
      * Decorators.
@@ -199,7 +198,6 @@ public class HbsHelperRegistry implements HelperRegistry {
      */
     private void registerDynamicHelper(final Object source, final Class<?> clazz) {
         if (clazz != Object.class) {
-            Set<String> overloaded = new HashSet<String>();
             // Keep backing up the inheritance hierarchy.
             Method[] methods = clazz.getDeclaredMethods();
             for (Method method : methods) {
