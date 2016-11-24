@@ -112,9 +112,17 @@ public class HbsHelperRegistry implements HelperRegistry {
         throw new UnsupportedOperationException();
     }
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
     public HelperRegistry registerHelpers(final Class<?> helperSource) {
-        throw new UnsupportedOperationException();
+        if (!Enum.class.isAssignableFrom(helperSource)) {
+            throw new UnsupportedOperationException();
+        }
+        Enum[] helpers = ((Class<Enum>) helperSource).getEnumConstants();
+        for (Enum helper : helpers) {
+            registerHelper(helper.name(), (Helper) helper);
+        }
+        return this;
     }
 
     @Override
@@ -166,9 +174,7 @@ public class HbsHelperRegistry implements HelperRegistry {
         registry.registerHelper(PrecompileHelper.NAME, PrecompileHelper.INSTANCE);
         registry.registerHelper(LookupHelper.NAME, LookupHelper.INSTANCE);
         registry.registerHelper(LogHelper.NAME, LogHelper.INSTANCE);
-        for (StringHelpers helper : StringHelpers.values()) {
-            registry.registerHelper(helper.name(), helper);
-        }
+        registry.registerHelpers(StringHelpers.class);
         //UUF related helpers
         registry.registerHelper(FragmentHelper.HELPER_NAME, new FragmentHelper());
         registry.registerHelper(SecuredHelper.HELPER_NAME, new SecuredHelper());
