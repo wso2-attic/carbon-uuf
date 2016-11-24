@@ -228,6 +228,8 @@ public class HbsHelperRegistry implements HelperRegistry {
         registry.registerHelper(PrecompileHelper.NAME, PrecompileHelper.INSTANCE);
         registry.registerHelper(LookupHelper.NAME, LookupHelper.INSTANCE);
         registry.registerHelper(LogHelper.NAME, LogHelper.INSTANCE);
+        registry.registerHelpers(StringHelpers.class);
+        //UUF related helpers
         registry.registerHelper(FragmentHelper.HELPER_NAME, new FragmentHelper());
         registry.registerHelper(SecuredHelper.HELPER_NAME, new SecuredHelper());
         registry.registerHelper(PublicHelper.HELPER_NAME, new PublicHelper());
@@ -243,7 +245,6 @@ public class HbsHelperRegistry implements HelperRegistry {
         registry.registerHelper(JsHelper.HELPER_NAME, new JsHelper());
         registry.registerHelper(I18nHelper.HELPER_NAME, new I18nHelper());
         registry.registerHelper(TemplateHelper.HELPER_NAME, new TemplateHelper());
-        registry.registerHelpers(StringHelpers.class);
         registry.registerHelperMissing(new MissingHelper());
         // decorator
         registry.registerDecorator("inline", InlineDecorator.INSTANCE);
