@@ -28,13 +28,10 @@ import com.github.jknack.handlebars.helper.IfHelper;
 import com.github.jknack.handlebars.helper.InlineDecorator;
 import com.github.jknack.handlebars.helper.LogHelper;
 import com.github.jknack.handlebars.helper.LookupHelper;
-import com.github.jknack.handlebars.helper.MethodHelper;
 import com.github.jknack.handlebars.helper.PrecompileHelper;
 import com.github.jknack.handlebars.helper.StringHelpers;
 import com.github.jknack.handlebars.helper.UnlessHelper;
 import com.github.jknack.handlebars.helper.WithHelper;
-import com.github.jknack.handlebars.internal.Files;
-import com.github.jknack.handlebars.js.HandlebarsJs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.CssHelper;
@@ -57,8 +54,6 @@ import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.TitleHelper;
 import java.io.File;
 import java.io.InputStream;
 import java.io.Reader;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
@@ -66,16 +61,14 @@ import java.util.Set;
 
 /**
  * Default implementation of {@link HelperRegistry} used in UUF.
- * Reusing the same code from {@link com.github.jknack.handlebars.helper.DefaultHelperRegistry} and additionally
+ * Reusing the some code from {@link com.github.jknack.handlebars.helper.DefaultHelperRegistry} and additionally
  * including helpers written for UUF.
  *
  * @since 1.0.0
  */
 public class HbsHelperRegistry implements HelperRegistry {
-    /**
-     * The logging system.
-     */
-    private final Logger logger = LoggerFactory.getLogger(HelperRegistry.class);
+
+    private final Logger logger = LoggerFactory.getLogger(HbsHelperRegistry.class);
 
     /**
      * The helper registry.
@@ -88,12 +81,9 @@ public class HbsHelperRegistry implements HelperRegistry {
     private final Map<String, Decorator> decorators = new HashMap<>();
 
     /**
-     * A Handlebars.js implementation.
+     * Default constructor that registers all the default hbs helpers and additionally registers UUF related helpers
      */
-    private HandlebarsJs handlebarsJs = HandlebarsJs.create(this);
-
-    {
-        // make sure default helpers are registered
+    public HbsHelperRegistry() {
         registerDefaultHelpers(this);
     }
 
@@ -117,70 +107,42 @@ public class HbsHelperRegistry implements HelperRegistry {
         return registerHelper(Handlebars.HELPER_MISSING, helper);
     }
 
-    @SuppressWarnings("rawtypes")
     @Override
     public HelperRegistry registerHelpers(final Object helperSource) {
-        try {
-            if (helperSource instanceof File) {
-                // adjust to File version
-                return registerHelpers((File) helperSource);
-            } else if (helperSource instanceof URI) {
-                // adjust to URI version
-                return registerHelpers((URI) helperSource);
-            } else if (helperSource instanceof Class) {
-                // adjust to Class version
-                return registerHelpers((Class) helperSource);
-            }
-        } catch (RuntimeException ex) {
-            throw ex;
-        } catch (Exception ex) {
-            throw new IllegalArgumentException("Can't register helpers", ex);
-        }
-        registerDynamicHelper(helperSource, helperSource.getClass());
-        return this;
+        throw new UnsupportedOperationException();
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
     public HelperRegistry registerHelpers(final Class<?> helperSource) {
-        if (Enum.class.isAssignableFrom(helperSource)) {
-            Enum[] helpers = ((Class<Enum>) helperSource).getEnumConstants();
-            for (Enum helper : helpers) {
-                registerHelper(helper.name(), (Helper) helper);
-            }
-        } else {
-            registerDynamicHelper(null, helperSource);
-        }
-        return this;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public HelperRegistry registerHelpers(final URI location) throws Exception {
-        return registerHelpers(location.getPath(), Files.read(location.toString()));
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public HelperRegistry registerHelpers(final File input) throws Exception {
-        return registerHelpers(input.getAbsolutePath(), Files.read(input));
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public HelperRegistry registerHelpers(final String filename, final Reader source)
             throws Exception {
-        return registerHelpers(filename, Files.read(source));
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public HelperRegistry registerHelpers(final String filename, final InputStream source)
             throws Exception {
-        return registerHelpers(filename, Files.read(source));
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public HelperRegistry registerHelpers(final String filename, final String source)
             throws Exception {
-        handlebarsJs.registerHelpers(filename, source);
-        return this;
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -188,30 +150,6 @@ public class HbsHelperRegistry implements HelperRegistry {
         return this.helpers.entrySet();
     }
 
-    /**
-     * <p>
-     * Register all the helper methods for the given helper source.
-     * </p>
-     *
-     * @param source The helper source.
-     * @param clazz  The helper source class.
-     */
-    private void registerDynamicHelper(final Object source, final Class<?> clazz) {
-        if (clazz != Object.class) {
-            // Keep backing up the inheritance hierarchy.
-            Method[] methods = clazz.getDeclaredMethods();
-            for (Method method : methods) {
-                boolean isPublic = Modifier.isPublic(method.getModifiers());
-                String helperName = method.getName();
-                if (isPublic && CharSequence.class.isAssignableFrom(method.getReturnType())) {
-                    boolean isStatic = Modifier.isStatic(method.getModifiers());
-                    if (source != null || isStatic) {
-                        registerHelper(helperName, new MethodHelper(method, source));
-                    }
-                }
-            }
-        }
-    }
 
     /**
      * Register built-in and default helpers. We are not registering some of the unwanted helpers (partial, embedded,
@@ -219,7 +157,7 @@ public class HbsHelperRegistry implements HelperRegistry {
      *
      * @param registry The handlebars instance.
      */
-    private static void registerDefaultHelpers(final HelperRegistry registry) {
+    private void registerDefaultHelpers(final HelperRegistry registry) {
         registry.registerHelper(WithHelper.NAME, WithHelper.INSTANCE);
         registry.registerHelper(IfHelper.NAME, IfHelper.INSTANCE);
         registry.registerHelper(UnlessHelper.NAME, UnlessHelper.INSTANCE);
@@ -228,7 +166,9 @@ public class HbsHelperRegistry implements HelperRegistry {
         registry.registerHelper(PrecompileHelper.NAME, PrecompileHelper.INSTANCE);
         registry.registerHelper(LookupHelper.NAME, LookupHelper.INSTANCE);
         registry.registerHelper(LogHelper.NAME, LogHelper.INSTANCE);
-        registry.registerHelpers(StringHelpers.class);
+        for (StringHelpers helper : StringHelpers.values()) {
+            registry.registerHelper(helper.name(), helper);
+        }
         //UUF related helpers
         registry.registerHelper(FragmentHelper.HELPER_NAME, new FragmentHelper());
         registry.registerHelper(SecuredHelper.HELPER_NAME, new SecuredHelper());
@@ -261,18 +201,6 @@ public class HbsHelperRegistry implements HelperRegistry {
         if (old != null) {
             logger.warn("Decorator '{}' has been replaced by '{}'", name, decorator);
         }
-        return this;
-    }
-
-    /**
-     * Set the handlebars Js. This operation will override previously registered
-     * handlebars Js.
-     *
-     * @param handlebarsJs The handlebars Js. Required.
-     * @return This DefaultHelperRegistry object.
-     */
-    public HbsHelperRegistry with(final HandlebarsJs handlebarsJs) {
-        this.handlebarsJs = handlebarsJs;
         return this;
     }
 }
