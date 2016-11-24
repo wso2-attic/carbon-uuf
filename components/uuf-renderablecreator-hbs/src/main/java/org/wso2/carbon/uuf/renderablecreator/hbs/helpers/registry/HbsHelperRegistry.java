@@ -28,7 +28,6 @@ import com.github.jknack.handlebars.helper.IfHelper;
 import com.github.jknack.handlebars.helper.InlineDecorator;
 import com.github.jknack.handlebars.helper.LogHelper;
 import com.github.jknack.handlebars.helper.LookupHelper;
-import com.github.jknack.handlebars.helper.PrecompileHelper;
 import com.github.jknack.handlebars.helper.StringHelpers;
 import com.github.jknack.handlebars.helper.UnlessHelper;
 import com.github.jknack.handlebars.helper.WithHelper;
@@ -87,12 +86,18 @@ public class HbsHelperRegistry implements HelperRegistry {
         registerDefaultHelpers(this);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @SuppressWarnings("unchecked")
     @Override
     public <C> Helper<C> helper(final String name) {
         return (Helper<C>) helpers.get(name);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public <H> HelperRegistry registerHelper(final String name, final Helper<H> helper) {
         Helper<?> oldHelper = helpers.put(name, helper);
@@ -102,16 +107,27 @@ public class HbsHelperRegistry implements HelperRegistry {
         return this;
     }
 
+    /**
+     * This method is not supported and not used within UUF.
+     */
     @Override
     public <H> HelperRegistry registerHelperMissing(final Helper<H> helper) {
         return registerHelper(Handlebars.HELPER_MISSING, helper);
     }
 
+    /**
+     * This method is not supported and not used within UUF.
+     */
     @Override
     public HelperRegistry registerHelpers(final Object helperSource) {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * This will register only the class source of enum with {@link Helper} implementation.
+     */
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
     public HelperRegistry registerHelpers(final Class<?> helperSource) {
@@ -125,34 +141,52 @@ public class HbsHelperRegistry implements HelperRegistry {
         return this;
     }
 
+    /**
+     * This method is not supported and not used within UUF.
+     */
     @Override
     public HelperRegistry registerHelpers(final URI location) throws Exception {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * This method is not supported and not used within UUF.
+     */
     @Override
     public HelperRegistry registerHelpers(final File input) throws Exception {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * This method is not supported and not used within UUF.
+     */
     @Override
     public HelperRegistry registerHelpers(final String filename, final Reader source)
             throws Exception {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * This method is not supported and not used within UUF.
+     */
     @Override
     public HelperRegistry registerHelpers(final String filename, final InputStream source)
             throws Exception {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * This method is not supported and not used within UUF.
+     */
     @Override
     public HelperRegistry registerHelpers(final String filename, final String source)
             throws Exception {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Set<Map.Entry<String, Helper<?>>> helpers() {
         return this.helpers.entrySet();
@@ -171,7 +205,6 @@ public class HbsHelperRegistry implements HelperRegistry {
         registry.registerHelper(UnlessHelper.NAME, UnlessHelper.INSTANCE);
         registry.registerHelper(EachHelper.NAME, EachHelper.INSTANCE);
         registry.registerHelper(BlockHelper.NAME, BlockHelper.INSTANCE);
-        registry.registerHelper(PrecompileHelper.NAME, PrecompileHelper.INSTANCE);
         registry.registerHelper(LookupHelper.NAME, LookupHelper.INSTANCE);
         registry.registerHelper(LogHelper.NAME, LogHelper.INSTANCE);
         registry.registerHelpers(StringHelpers.class);
@@ -196,11 +229,17 @@ public class HbsHelperRegistry implements HelperRegistry {
         registry.registerDecorator("inline", InlineDecorator.INSTANCE);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Decorator decorator(final String name) {
         return decorators.get(name);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public HelperRegistry registerDecorator(final String name, final Decorator decorator) {
         Decorator old = decorators.put(name, decorator);
