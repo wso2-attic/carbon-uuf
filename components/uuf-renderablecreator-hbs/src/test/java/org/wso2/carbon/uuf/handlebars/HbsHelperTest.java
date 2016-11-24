@@ -31,7 +31,7 @@ import org.wso2.carbon.uuf.core.Fragment;
 import org.wso2.carbon.uuf.core.Lookup;
 import org.wso2.carbon.uuf.core.Page;
 import org.wso2.carbon.uuf.core.RequestLookup;
-import org.wso2.carbon.uuf.internal.core.UriPatten;
+import org.wso2.carbon.uuf.core.UriPatten;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.HbsRenderable;
 import org.wso2.carbon.uuf.renderablecreator.hbs.impl.HbsPageRenderable;
 import org.wso2.carbon.uuf.spi.HttpRequest;

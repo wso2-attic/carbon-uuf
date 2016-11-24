@@ -26,7 +26,7 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.core.App;
-import org.wso2.carbon.uuf.internal.core.UriPatten;
+import org.wso2.carbon.uuf.core.UriPatten;
 import org.wso2.carbon.uuf.internal.io.util.MimeMapper;
 import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.carbon.uuf.spi.HttpResponse;

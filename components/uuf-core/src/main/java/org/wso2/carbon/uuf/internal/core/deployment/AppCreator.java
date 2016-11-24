@@ -38,7 +38,7 @@ import org.wso2.carbon.uuf.core.Theme;
 import org.wso2.carbon.uuf.exception.InvalidTypeException;
 import org.wso2.carbon.uuf.exception.MalformedConfigurationException;
 import org.wso2.carbon.uuf.exception.UUFException;
-import org.wso2.carbon.uuf.internal.core.UriPatten;
+import org.wso2.carbon.uuf.core.UriPatten;
 import org.wso2.carbon.uuf.internal.core.auth.SessionRegistry;
 import org.wso2.carbon.uuf.internal.util.NameUtils;
 import org.wso2.carbon.uuf.spi.RenderableCreator;

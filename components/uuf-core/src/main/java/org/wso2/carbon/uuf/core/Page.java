@@ -19,7 +19,6 @@
 package org.wso2.carbon.uuf.core;
 
 import org.wso2.carbon.uuf.exception.SessionNotFoundException;
-import org.wso2.carbon.uuf.internal.core.UriPatten;
 import org.wso2.carbon.uuf.internal.util.UriUtils;
 import org.wso2.carbon.uuf.spi.Renderable;
 import org.wso2.carbon.uuf.spi.model.Model;
