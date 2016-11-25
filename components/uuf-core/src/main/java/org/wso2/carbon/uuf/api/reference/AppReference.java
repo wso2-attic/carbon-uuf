@@ -26,7 +26,8 @@ public interface AppReference {
     String DIR_NAME_COMPONENTS = "components";
     String DIR_NAME_CUSTOMIZATIONS = "customizations";
     String DIR_NAME_THEMES = "themes";
-    String FILE_NAME_DEPENDENCY_TREE = "dependency.tree";
+    String FILE_NAME_DEPENDENCY_TREE = "dependency-tree.yaml";
+    String FILE_NAME_CONFIGURATIONS = "config.yaml";
 
     String getName();
 
@@ -34,7 +35,12 @@ public interface AppReference {
 
     Stream<ThemeReference> getThemeReferences();
 
+    @Deprecated
     List<String> getDependencies();
+
+    FileReference getDependencyTree();
+
+    FileReference getConfiguration();
 
     String getPath();
 }

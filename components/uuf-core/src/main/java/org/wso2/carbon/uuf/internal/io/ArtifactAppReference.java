@@ -20,6 +20,7 @@ package org.wso2.carbon.uuf.internal.io;
 
 import org.wso2.carbon.uuf.api.reference.AppReference;
 import org.wso2.carbon.uuf.api.reference.ComponentReference;
+import org.wso2.carbon.uuf.api.reference.FileReference;
 import org.wso2.carbon.uuf.api.reference.ThemeReference;
 import org.wso2.carbon.uuf.exception.FileOperationException;
 
@@ -80,6 +81,16 @@ public class ArtifactAppReference implements AppReference {
             throw new FileOperationException(
                     "An error occurred while reading dependencies from file '" + dependencyTreeFile + "'.", e);
         }
+    }
+
+    @Override
+    public FileReference getConfiguration() {
+        return new ArtifactFileReference(componentsDirectory.resolve(FILE_NAME_CONFIGURATIONS), this);
+    }
+
+    @Override
+    public FileReference getDependencyTree() {
+        return new ArtifactFileReference(componentsDirectory.resolve(FILE_NAME_DEPENDENCY_TREE), this);
     }
 
     @Override
