@@ -23,6 +23,7 @@ import org.wso2.carbon.uuf.renderablecreator.hbs.core.HbsRenderable;
 import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.FillPlaceholderHelper;
 
 import java.io.IOException;
+import java.util.HashSet;
 
 public class CssHelper extends FillPlaceholderHelper<String> {
 
@@ -33,6 +34,7 @@ public class CssHelper extends FillPlaceholderHelper<String> {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public CharSequence apply(String relativePath, Options options) throws IOException {
         if (relativePath == null) {
             throw new IllegalArgumentException("Relative path of a CSS file cannot be null.");
@@ -48,8 +50,14 @@ public class CssHelper extends FillPlaceholderHelper<String> {
             buffer.append(param);
         }
         buffer.append("\" rel=\"stylesheet\" type=\"text/css\" />\n");
+        String content = buffer.toString();
 
-        addToPlaceholder(buffer.toString(), options);
+        if (isPlacedholderResolved(content, options)) {
+            return "";
+        }
+
+        addToPlaceholder(content, options);
+        ((HashSet<String>) options.data(RESOLVED_PLACEHOLDERS)).add(content);
         return "";
     }
 }
