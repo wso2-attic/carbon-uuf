@@ -140,6 +140,17 @@ public class HbsHelperTest {
     }
 
     @Test
+    public void testCssWithDuplicatePlaceholders() {
+        RequestLookup requestLookup = createRequestLookup();
+        when(requestLookup.getPublicUri()).thenReturn("/myapp/public/component/base");
+        createRenderable("{{css \"css/my-styles.css\"}} {{css \"css/my-styles.css\"}}")
+                .render(null, createLookup(), requestLookup, createAPI());
+        String expected = "<link href=\"/myapp/public/component/base/css/my-styles.css\" rel=\"stylesheet\" " +
+                "type=\"text/css\" />\n";
+        Assert.assertEquals(requestLookup.getPlaceholderContent(Placeholder.css).get(), expected);
+    }
+
+    @Test
     public void testHeadJs() {
         RequestLookup requestLookup = createRequestLookup();
         when(requestLookup.getPublicUri()).thenReturn("/myapp/public/component/base");
@@ -162,6 +173,18 @@ public class HbsHelperTest {
         Assert.assertEquals(requestLookup.getPlaceholderContent(Placeholder.headJs).get(),
                             "<script src=\"/myapp/public/component/base/js/my-script.js\" type=\"text/javascript\">" +
                                     "</script>\n");
+    }
+
+    @Test
+    public void testHeadJsWithDuplicatePlaceholders() {
+        RequestLookup requestLookup = createRequestLookup();
+        when(requestLookup.getPublicUri()).thenReturn("/myapp/public/component/base");
+        createRenderable("{{headJs \"js/my-script.js\"}} {{headJs \"js/my-script.js\"}}")
+                .render(null, createLookup(), requestLookup, createAPI());
+
+        String expected = "<script src=\"/myapp/public/component/base/js/my-script.js\" type=\"text/javascript\">" +
+                "</script>\n";
+        Assert.assertEquals(requestLookup.getPlaceholderContent(Placeholder.headJs).get(), expected);
     }
 
     @Test
