@@ -23,22 +23,7 @@ import org.wso2.carbon.uuf.core.API;
 import org.wso2.carbon.uuf.core.Lookup;
 import org.wso2.carbon.uuf.core.RequestLookup;
 import org.wso2.carbon.uuf.exception.UUFException;
-import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.CssHelper;
-import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.DefinePlaceholderHelper;
-import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.DefineZoneHelper;
-import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.FaviconHelper;
-import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.FillZoneHelper;
-import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.FragmentHelper;
-import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.HeadJsHelper;
-import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.HeadOtherHelper;
-import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.I18nHelper;
-import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.JsHelper;
-import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.MenuHelper;
-import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.MissingHelper;
-import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.PublicHelper;
-import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.SecuredHelper;
-import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.TemplateHelper;
-import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.TitleHelper;
+import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.registry.HbsHelperRegistry;
 import org.wso2.carbon.uuf.spi.Renderable;
 import org.wso2.carbon.uuf.spi.model.Model;
 
@@ -53,26 +38,7 @@ public abstract class HbsRenderable implements Renderable {
     public static final String DATA_KEY_REQUEST_LOOKUP = HbsRenderable.class.getName() + "#request-lookup";
     public static final String DATA_KEY_API = HbsRenderable.class.getName() + "#api";
     public static final String DATA_KEY_CURRENT_WRITER = HbsRenderable.class.getName() + "#writer";
-    private static final Handlebars HANDLEBARS = new Handlebars();
-
-    static {
-        HANDLEBARS.registerHelper(FragmentHelper.HELPER_NAME, new FragmentHelper());
-        HANDLEBARS.registerHelper(SecuredHelper.HELPER_NAME, new SecuredHelper());
-        HANDLEBARS.registerHelper(PublicHelper.HELPER_NAME, new PublicHelper());
-        HANDLEBARS.registerHelper(MenuHelper.HELPER_NAME, new MenuHelper());
-        HANDLEBARS.registerHelper(DefineZoneHelper.HELPER_NAME, new DefineZoneHelper());
-        HANDLEBARS.registerHelper(FillZoneHelper.HELPER_NAME, new FillZoneHelper());
-        HANDLEBARS.registerHelper(DefinePlaceholderHelper.HELPER_NAME, new DefinePlaceholderHelper());
-        HANDLEBARS.registerHelper(FaviconHelper.HELPER_NAME, new FaviconHelper());
-        HANDLEBARS.registerHelper(TitleHelper.HELPER_NAME, new TitleHelper());
-        HANDLEBARS.registerHelper(CssHelper.HELPER_NAME, new CssHelper());
-        HANDLEBARS.registerHelper(HeadJsHelper.HELPER_NAME, new HeadJsHelper());
-        HANDLEBARS.registerHelper(HeadOtherHelper.HELPER_NAME, new HeadOtherHelper());
-        HANDLEBARS.registerHelper(JsHelper.HELPER_NAME, new JsHelper());
-        HANDLEBARS.registerHelper(I18nHelper.HELPER_NAME, new I18nHelper());
-        HANDLEBARS.registerHelper(TemplateHelper.HELPER_NAME, new TemplateHelper());
-        HANDLEBARS.registerHelperMissing(new MissingHelper());
-    }
+    private static final Handlebars HANDLEBARS = new Handlebars().with(new HbsHelperRegistry());
 
     private final Template template;
     private final String absolutePath;
