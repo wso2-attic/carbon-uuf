@@ -17,6 +17,7 @@
 package org.wso2.carbon.uuf.renderablecreator.hbs.core;
 
 import com.github.jknack.handlebars.Handlebars;
+import com.github.jknack.handlebars.HandlebarsException;
 import com.github.jknack.handlebars.Template;
 import com.github.jknack.handlebars.io.TemplateSource;
 import org.wso2.carbon.uuf.core.API;
@@ -76,6 +77,8 @@ public abstract class HbsRenderable implements Renderable {
         try {
             return HANDLEBARS.compile(templateSource);
         } catch (IOException e) {
+            throw new UUFException("Cannot load Handlebars template '" + templateSource.filename() + "'.", e);
+        } catch (HandlebarsException e) {
             throw new UUFException("Cannot compile Handlebars template '" + templateSource.filename() + "'.", e);
         }
     }
