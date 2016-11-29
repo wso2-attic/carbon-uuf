@@ -159,7 +159,7 @@ public class HbsRenderableUpdater {
                             } catch (UUFException e) {
                                 log.error("An error occurred while compiling Handlebars template '" + entry + "'.", e);
                             } catch (Exception e) {
-                                log.error("An unexpected error occurred while loading Handlebars template '" + entry +
+                                log.error("An unexpected error occurred while reloading Handlebars template '" + entry +
                                         "'.", e);
                             }
                             continue;
