@@ -18,6 +18,8 @@
 
 package org.wso2.carbon.uuf.internal.core.deployment;
 
+import org.wso2.carbon.uuf.api.reference.FileReference;
+import org.wso2.carbon.uuf.exception.MalformedConfigurationException;
 import org.yaml.snakeyaml.Yaml;
 
 import java.util.Collections;
@@ -31,8 +33,13 @@ public class DependencyTreeParser {
 
     private final Yaml yaml = new Yaml();
 
-    public DependencyTreeParser.DependencyNode parse(String dependencyTree) {
-        return yaml.loadAs(dependencyTree, DependencyTreeParser.DependencyNode.class);
+    public DependencyTreeParser.DependencyNode parse(FileReference dependencyTreeFile) {
+        try {
+            return yaml.loadAs(dependencyTreeFile.getContent(), DependencyTreeParser.DependencyNode.class);
+        } catch (Exception e) {
+            throw new MalformedConfigurationException(
+                    "Cannot parse dependency tree file '" + dependencyTreeFile.getAbsolutePath() + "'.", e);
+        }
     }
 
     public static class DependencyNode {
@@ -68,7 +75,7 @@ public class DependencyTreeParser {
         }
 
         public void setContextPath(String contextPath) {
-            this.contextPath = contextPath;
+            this.contextPath = contextPath.startsWith("/") ? contextPath : "/" + contextPath;
         }
 
         public List<DependencyNode> getDependencies() {
