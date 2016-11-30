@@ -22,104 +22,16 @@ import org.wso2.carbon.uuf.api.reference.FileReference;
 import org.wso2.carbon.uuf.exception.MalformedConfigurationException;
 import org.yaml.snakeyaml.Yaml;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.function.Consumer;
-
 public class DependencyTreeParser {
 
     private final Yaml yaml = new Yaml();
 
-    public DependencyTreeParser.DependencyNode parse(FileReference dependencyTreeFile) {
+    public DependencyNode parse(FileReference dependencyTreeFile) {
         try {
-            return yaml.loadAs(dependencyTreeFile.getContent(), DependencyTreeParser.DependencyNode.class);
+            return yaml.loadAs(dependencyTreeFile.getContent(), DependencyNode.class);
         } catch (Exception e) {
             throw new MalformedConfigurationException(
                     "Cannot parse dependency tree file '" + dependencyTreeFile.getAbsolutePath() + "'.", e);
-        }
-    }
-
-    public static class DependencyNode {
-
-        private String artifactId;
-        private String version;
-        private String contextPath;
-        private List<DependencyNode> dependencies;
-        private Set<String> allDependencies;
-
-        public DependencyNode() {
-            this.dependencies = Collections.emptyList();
-        }
-
-        public String getArtifactId() {
-            return artifactId;
-        }
-
-        public void setArtifactId(String artifactId) {
-            this.artifactId = artifactId;
-        }
-
-        public String getVersion() {
-            return version;
-        }
-
-        public void setVersion(String version) {
-            this.version = version;
-        }
-
-        public String getContextPath() {
-            return contextPath;
-        }
-
-        public void setContextPath(String contextPath) {
-            this.contextPath = contextPath.startsWith("/") ? contextPath : "/" + contextPath;
-        }
-
-        public List<DependencyNode> getDependencies() {
-            return dependencies;
-        }
-
-        public void setDependencies(List<DependencyNode> dependencies) {
-            if (dependencies == null) {
-                this.dependencies = Collections.emptyList();
-                this.allDependencies = Collections.emptySet();
-            } else {
-                this.dependencies = dependencies;
-                Set<String> allDependencies = new HashSet<>();
-                dependencies.forEach(dependencyNode -> {
-                    allDependencies.add(dependencyNode.artifactId);
-                    allDependencies.addAll(dependencyNode.allDependencies);
-                });
-                this.allDependencies = allDependencies;
-            }
-        }
-
-        public Set<String> getAllDependencies() {
-            return allDependencies;
-        }
-
-        public void traverse(Consumer<DependencyNode> nodeConsumer) {
-            dependencies.forEach(dependencyNode -> dependencyNode.traverse(nodeConsumer));
-            nodeConsumer.accept(this);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(artifactId, version, contextPath);
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if ((obj != null) && (obj instanceof DependencyNode)) {
-                DependencyNode other = (DependencyNode) obj;
-                return Objects.equals(this.artifactId, other.artifactId) &&
-                        Objects.equals(this.version, other.version) &&
-                        Objects.equals(this.contextPath, other.contextPath);
-            }
-            return false;
         }
     }
 }
