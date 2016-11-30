@@ -24,10 +24,10 @@ import org.wso2.carbon.uuf.renderablecreator.hbs.core.HbsRenderable;
 
 import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 public abstract class FillPlaceholderHelper<T> implements Helper<T> {
 
-    protected static final String RESOLVED_PLACEHOLDERS = "resolvedPlaceholders";
     private final Placeholder placeholder;
 
     protected FillPlaceholderHelper(Placeholder placeholder) {
@@ -48,19 +48,19 @@ public abstract class FillPlaceholderHelper<T> implements Helper<T> {
         return requestLookup.getPlaceholderContent(placeholder);
     }
 
-    /**
-     * Create a {@link HashSet} with the name {@code RESOLVED_PLACEHOLDERS} in handlebars options data if it's not
-     * there. Check whether the given content is already resolved.
-     *
-     * @param options handlebars options to get {@code RESOLVED_PLACEHOLDERS}
-     * @param content content to check for
-     * @return <tt>true</tt> if the placeholder is already resolved, <tt>false</tt> otherwise
-     */
-    protected boolean isPlacedholderResolved(String content, Options options) {
-        if (options.data(RESOLVED_PLACEHOLDERS) == null) {
-            options.data(RESOLVED_PLACEHOLDERS, new HashSet<String>());
+    protected String getResourceIdentifier(RequestLookup requestLookup, String relativePath) {
+        RequestLookup.RenderingFlowTracker tracker = requestLookup.tracker();
+        // unique resource identifier is calculated as fragment/component name:relativePath
+        String resourceIdentifier = tracker.isInFragment() ? tracker.getCurrentFragment().get().getName()
+                : tracker.getCurrentComponentName();
+        return resourceIdentifier + relativePath;
+    }
+
+    protected boolean isResourceAlreadyResolved(String resourceIdentifier, Options handlebarsOptions) {
+        if (handlebarsOptions.data(HbsRenderable.DATA_KEY_RESOLVED_RESOURCES) == null) {
+            handlebarsOptions.data(HbsRenderable.DATA_KEY_RESOLVED_RESOURCES, new HashSet<>());
             return false;
         }
-        return ((HashSet) options.data(RESOLVED_PLACEHOLDERS)).contains(content);
+        return ((Set) handlebarsOptions.data(HbsRenderable.DATA_KEY_RESOLVED_RESOURCES)).contains(resourceIdentifier);
     }
 }

@@ -23,7 +23,7 @@ import org.wso2.carbon.uuf.renderablecreator.hbs.core.HbsRenderable;
 import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.FillPlaceholderHelper;
 
 import java.io.IOException;
-import java.util.HashSet;
+import java.util.Set;
 
 public class CssHelper extends FillPlaceholderHelper<String> {
 
@@ -41,23 +41,25 @@ public class CssHelper extends FillPlaceholderHelper<String> {
 
         }
 
-        RequestLookup requestLookup = options.data(HbsRenderable.DATA_KEY_REQUEST_LOOKUP);
-        StringBuilder buffer = new StringBuilder("<link href=\"")
-                .append(requestLookup.getPublicUri())
-                .append('/')
-                .append(relativePath);
+        StringBuilder completeRelativePath = new StringBuilder(relativePath);
         for (Object param : options.params) {
-            buffer.append(param);
+            completeRelativePath.append(param);
         }
-        buffer.append("\" rel=\"stylesheet\" type=\"text/css\" />\n");
-        String content = buffer.toString();
 
-        if (isPlacedholderResolved(content, options)) {
+        RequestLookup requestLookup = options.data(HbsRenderable.DATA_KEY_REQUEST_LOOKUP);
+
+        String resourceIdentifier = getResourceIdentifier(requestLookup, completeRelativePath.toString());
+        if (isResourceAlreadyResolved(resourceIdentifier, options)) {
             return "";
         }
 
-        addToPlaceholder(content, options);
-        ((HashSet<String>) options.data(RESOLVED_PLACEHOLDERS)).add(content);
+        StringBuilder buffer = new StringBuilder("<link href=\"")
+                .append(requestLookup.getPublicUri())
+                .append('/')
+                .append(completeRelativePath);
+        buffer.append("\" rel=\"stylesheet\" type=\"text/css\" />\n");
+        addToPlaceholder(buffer.toString(), options);
+        ((Set) options.data(HbsRenderable.DATA_KEY_RESOLVED_RESOURCES)).add(resourceIdentifier);
         return "";
     }
 }

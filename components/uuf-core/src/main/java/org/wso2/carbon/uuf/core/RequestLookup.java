@@ -175,15 +175,15 @@ public class RequestLookup {
             return componentNamesStack.peekLast();
         }
 
-        Optional<Page> getCurrentPage() {
+        public Optional<Page> getCurrentPage() {
             return Optional.ofNullable(pageStack.peekLast());
         }
 
-        Optional<Fragment> getCurrentFragment() {
+        public Optional<Fragment> getCurrentFragment() {
             return Optional.ofNullable(fragmentStack.peekLast());
         }
 
-        Optional<Layout> getCurrentLayout() {
+        public Optional<Layout> getCurrentLayout() {
             return Optional.ofNullable(layoutStack.peekLast());
         }
 
