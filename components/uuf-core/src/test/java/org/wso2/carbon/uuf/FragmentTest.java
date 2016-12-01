@@ -34,7 +34,7 @@ public class FragmentTest {
         final String content = "Hello world from a fragment!";
         Renderable renderable = (model, componentLookup, requestLookup, api) -> content;
         Component component = new Component("test.component-name", null, null, Collections.emptySortedSet(), null);
-        Lookup lookup = new Lookup(ImmutableSetMultimap.of());
+        Lookup lookup = new Lookup(ImmutableSetMultimap.of(), null);
         lookup.add(component);
         RequestLookup requestLookup = new RequestLookup("/context-path", null, null);
         Fragment fragment = new Fragment("test.component-name.fragmentName", renderable, false);

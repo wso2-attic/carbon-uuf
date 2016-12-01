@@ -52,7 +52,7 @@ public class HbsHelperTest {
 
     private static Lookup createLookup() {
         Lookup lookup = mock(Lookup.class);
-        when(lookup.getConfiguration()).thenReturn(new Configuration());
+        when(lookup.getConfiguration()).thenReturn(new Configuration(Collections.emptyMap()));
         return lookup;
     }
 
@@ -268,7 +268,7 @@ public class HbsHelperTest {
                 "</div>";
         Page page = new Page(new UriPatten("/contextPath"), createRenderable(pageContent), false);
         Component component = new Component(componentName, null, null, ImmutableSortedSet.of(page), null);
-        Lookup lookup = new Lookup(ImmutableSetMultimap.of());
+        Lookup lookup = new Lookup(ImmutableSetMultimap.of(), new Configuration(Collections.emptyMap()));
         lookup.add(new Fragment(fragmentName, createRenderable(fragmentContent), false));
         lookup.add(component);
         RequestLookup requestLookup = createRequestLookup();
