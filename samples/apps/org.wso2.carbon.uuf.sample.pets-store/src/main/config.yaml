@@ -11,5 +11,5 @@ menu :
 errorPages:
   "404": /foundation/error/404
   default: /foundation/error/default
-loginPageUri: "simple-auth/login"
+loginPageUri: "/simple-auth/login"
 loginRedirectUri: "/pets"
