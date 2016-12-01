@@ -49,10 +49,11 @@ public class ArtifactAppReference implements AppReference {
     }
 
     @Override
-    public ComponentReference getComponentReference(String componentSimpleName) {
-        Path componentDirectory = customizationsDirectory.resolve(componentSimpleName);
+    public ComponentReference getComponentReference(String componentContext) {
+        String componentDirName = componentContext.startsWith("/") ? componentContext.substring(1) : componentContext;
+        Path componentDirectory = customizationsDirectory.resolve(componentDirName);
         if (!Files.exists(componentDirectory)) {
-            componentDirectory = componentsDirectory.resolve(componentSimpleName);
+            componentDirectory = componentsDirectory.resolve(componentDirName);
         }
         return new ArtifactComponentReference(componentDirectory, this);
     }

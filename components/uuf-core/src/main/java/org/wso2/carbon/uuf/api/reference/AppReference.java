@@ -31,7 +31,7 @@ public interface AppReference {
 
     String getName();
 
-    ComponentReference getComponentReference(String componentSimpleName);
+    ComponentReference getComponentReference(String componentContext);
 
     Stream<ThemeReference> getThemeReferences();
 
