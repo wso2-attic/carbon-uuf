@@ -21,7 +21,7 @@ package org.wso2.carbon.uuf.core;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.SetMultimap;
-import org.wso2.carbon.uuf.api.Configuration;
+import org.wso2.carbon.uuf.api.config.Configuration;
 import org.wso2.carbon.uuf.internal.core.deployment.parser.ComponentManifest;
 import org.wso2.carbon.uuf.internal.util.NameUtils;
 
