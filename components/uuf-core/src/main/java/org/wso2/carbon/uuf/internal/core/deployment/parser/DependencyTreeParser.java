@@ -18,6 +18,7 @@
 
 package org.wso2.carbon.uuf.internal.core.deployment.parser;
 
+import org.wso2.carbon.uuf.api.config.DependencyNode;
 import org.wso2.carbon.uuf.api.reference.FileReference;
 import org.wso2.carbon.uuf.exception.MalformedConfigurationException;
 import org.yaml.snakeyaml.Yaml;
