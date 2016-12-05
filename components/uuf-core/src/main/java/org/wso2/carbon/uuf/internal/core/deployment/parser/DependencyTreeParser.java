@@ -35,7 +35,7 @@ public class DependencyTreeParser {
      *
      * @param dependencyTreeFile reference to the dependency tree YAML file
      * @return root node of the dependecy tree
-     * @throws MalformedConfigurationException if cannot parse specified dependency tree file
+     * @exception MalformedConfigurationException if cannot parse specified dependency tree file
      */
     public static DependencyNode parse(FileReference dependencyTreeFile) {
         try {

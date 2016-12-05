@@ -35,7 +35,7 @@ public class ComponentManifestParser {
      *
      * @param componentManifestFile path to component manifest YAML file
      * @return component manifest
-     * @throws MalformedConfigurationException if cannot parse the specified component manifest file
+     * @exception MalformedConfigurationException if cannot parse the specified component manifest file
      */
     public static ComponentManifest parse(FileReference componentManifestFile) {
         try {
