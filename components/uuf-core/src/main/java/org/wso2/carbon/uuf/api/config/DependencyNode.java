@@ -26,7 +26,9 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 /**
- * Created by sajith on 11/30/16.
+ * A bean class that represents a node in the dependency tree.
+ *
+ * @since 1.0.0
  */
 public class DependencyNode {
 
@@ -36,38 +38,82 @@ public class DependencyNode {
     private List<DependencyNode> dependencies;
     private Set<String> allDependencies;
 
+    /**
+     * Creates a new dependency node.
+     */
     public DependencyNode() {
         this.dependencies = Collections.emptyList();
     }
 
+    /**
+     * Returns the artifact ID of the UUF Component which is reflected by this node.
+     *
+     * @return artifact ID of the UUF Component
+     */
     public String getArtifactId() {
         return artifactId;
     }
 
+    /**
+     * Sets the artifact ID of the UUF Component reflected by this node.
+     *
+     * @param artifactId artifact ID to be set
+     */
     public void setArtifactId(String artifactId) {
         this.artifactId = artifactId;
     }
 
+    /**
+     * Returns the version of the UUF Component which is reflected by this node.
+     *
+     * @return version of the UUF Component
+     */
     public String getVersion() {
         return version;
     }
 
+    /**
+     * Sets the version of the UUF Component reflected by this node.
+     *
+     * @param version version to be set
+     */
     public void setVersion(String version) {
         this.version = version;
     }
 
+    /**
+     * Returns the context path of the UUF Component which is reflected by this node.
+     *
+     * @return context path of the UUF Component
+     */
     public String getContextPath() {
         return contextPath;
     }
 
+    /**
+     * Sets the context path of the UUF Component reflected by this node. If the setting context path doesn't start with
+     * a '/', then it will be prepended.
+     *
+     * @param contextPath context path to be set
+     */
     public void setContextPath(String contextPath) {
         this.contextPath = contextPath.startsWith("/") ? contextPath : "/" + contextPath;
     }
 
+    /**
+     * Returns the dependencies of the UUF Component which is reflected by this node.
+     *
+     * @return dependencies of the UUF Component
+     */
     public List<DependencyNode> getDependencies() {
         return dependencies;
     }
 
+    /**
+     * Sets the dependencies list of the UUF Component reflected by this node.
+     *
+     * @param dependencies dependencies list to be set
+     */
     public void setDependencies(List<DependencyNode> dependencies) {
         if (dependencies == null) {
             this.dependencies = Collections.emptyList();
@@ -83,20 +129,36 @@ public class DependencyNode {
         }
     }
 
+    /**
+     * Returns all the dependencies (including transitive ones) of the UUF Component which is reflected by this node.
+     *
+     * @return dependencies of the UUF Component including transitive
+     */
     public Set<String> getAllDependencies() {
         return allDependencies;
     }
 
+    /**
+     * Traverse this node and its dependencies in depth-first manner.
+     *
+     * @param nodeConsumer consumer that consumes each node
+     */
     public void traverse(Consumer<DependencyNode> nodeConsumer) {
         dependencies.forEach(dependencyNode -> dependencyNode.traverse(nodeConsumer));
         nodeConsumer.accept(this);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int hashCode() {
         return Objects.hash(artifactId, version, contextPath);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean equals(Object obj) {
         if ((obj != null) && (obj instanceof DependencyNode)) {

@@ -26,15 +26,37 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Represents a Configuration of a particular UUF App.
+ * Represents the Configuration of a particular UUF App.
+ *
+ * @since 1.0.0
  */
 public class Configuration {
 
-    private static final String KEY_CONTEXT_PATH = "contextPath";
-    private static final String KEY_THEME = "theme";
-    private static final String KEY_LOGIN_PAGE_URI = "loginPageUri";
-    private static final String KEY_MENU = "menu";
-    private static final String KEY_ERROR_PAGES = "errorPages";
+    /**
+     * Configuration key to configure context path.
+     * @see #getContextPath()
+     */
+    public static final String KEY_CONTEXT_PATH = "contextPath";
+    /**
+     * Configuration key to configure theme name.
+     * @see #getThemeName()
+     */
+    public static final String KEY_THEME = "theme";
+    /**
+     * Configuration key to configure URI of the login page.
+     * @see #getLoginPageUri()
+     */
+    public static final String KEY_LOGIN_PAGE_URI = "loginPageUri";
+    /**
+     * Configuration key to configure menus.
+     * @see #getMenus()
+     */
+    public static final String KEY_MENU = "menu";
+    /**
+     * Configuration key to configure URIs of the error pages.
+     * @see #getErrorPageUris()
+     */
+    public static final String KEY_ERROR_PAGES = "errorPages";
 
     private final Map<String, Object> map;
     private final Map<String, Object> unmodifiableMap;
@@ -46,6 +68,12 @@ public class Configuration {
     private Map<Integer, String> cachedErrorPageUris = new ConcurrentHashMap<>();
     private String cachedDefaultErrorPageUri;
 
+    /**
+     * Creates a new {@link Configuration} instance wrapping the specified map.
+     *
+     * @param rawMap configuration map
+     * @exception InvalidTypeException if the keys of the {@code rawMap} are not {@link String}s.
+     */
     @SuppressWarnings("unchecked")
     public Configuration(Map<?, ?> rawMap) {
         // Validation
@@ -59,6 +87,15 @@ public class Configuration {
         this.unmodifiableMap = Collections.unmodifiableMap(map);
     }
 
+    /**
+     * Returns the configured context path in this configuration. Context path should be configured with key {@link
+     * #KEY_CONTEXT_PATH}.
+     *
+     * @return configured context path, or {@link Optional#empty()} if there is no value under key {@code
+     * KEY_CONTEXT_PATH}
+     * @exception InvalidTypeException     if configured value is not a {@link String}
+     * @exception IllegalArgumentException if configured string is empty or does not start with a '/'
+     */
     public Optional<String> getContextPath() {
         if (cachedContextPath != null) {
             return Optional.of(cachedContextPath); // Return cached value.
@@ -83,6 +120,14 @@ public class Configuration {
         return Optional.of(contextPath);
     }
 
+    /**
+     * Returns the configured theme name in this configuration. Theme name should be configured with key {@link
+     * #KEY_THEME}.
+     *
+     * @return configured theme name, or {@link Optional#empty()} if there is no value under key {@code KEY_THEME}
+     * @exception InvalidTypeException     if configured value is not a {@link String}
+     * @exception IllegalArgumentException if configured string is empty
+     */
     public Optional<String> getThemeName() {
         if (cachedThemeName != null) {
             return Optional.of(cachedThemeName); // Return cached value.
@@ -105,6 +150,15 @@ public class Configuration {
         return Optional.of(themeName);
     }
 
+    /**
+     * Returns the configured URI of the login page in this configuration. Login page URI should be configured with key
+     * {@link #KEY_LOGIN_PAGE_URI}.
+     *
+     * @return configured login page URi, or {@link Optional#empty()} if there is no value under key {@code
+     * KEY_LOGIN_PAGE_URI}
+     * @exception InvalidTypeException     if configured value is not a {@link String}
+     * @exception IllegalArgumentException if configured string is empty or does not start with a '/'
+     */
     public Optional<String> getLoginPageUri() {
         if (cachedLoginPageUri != null) {
             return Optional.of(cachedLoginPageUri); // Return cached value.
@@ -132,6 +186,12 @@ public class Configuration {
         return Optional.of(loginPageUri);
     }
 
+    /**
+     * Returns the configured menus in this configuration. Menus should be configured under the key {@link #KEY_MENU}.
+     *
+     * @return map of configured menus
+     * @exception InvalidTypeException if configured value is not a {@code Map<String, Map<String, Map>}
+     */
     @SuppressWarnings("unchecked")
     public Map<String, Map> getMenus() {
         Object menusMapObj = map.get(KEY_MENU);
@@ -161,11 +221,13 @@ public class Configuration {
     }
 
     /**
-     * Returns the list of menu-items of the menu identified by the given {@code name}. If there is no menu associated
-     * with the given name, then an {@code null} is returned.
+     * Returns the configured menu for the specified name.
      *
-     * @param name name of the menu
-     * @return menu-items
+     * @param name menu name
+     * @return configured error page URI or {@link Optional#empty()} if there is no value configured for the specified
+     * HTTP code
+     * @exception InvalidTypeException if configured menu with the specified name is not a {@code Map<String, Map>}
+     * @see #getMenus()
      */
     @SuppressWarnings("unchecked")
     public Map<String, Map> getMenu(String name) {
@@ -195,6 +257,14 @@ public class Configuration {
         return menu;
     }
 
+    /**
+     * Returns the configured URIs of error pages in this configuration. Error page URIs should be configured under the
+     * key {@link #KEY_ERROR_PAGES}.
+     *
+     * @return map of configured error page URIs, where keys are the HTTP status code (or string "default") and values
+     * are page URIs
+     * @exception InvalidTypeException if configured value is not a {@code Map<String, String>}
+     */
     @SuppressWarnings("unchecked")
     public Map<String, String> getErrorPageUris() {
         Object errorPagesObj = map.get(KEY_ERROR_PAGES);
@@ -223,6 +293,16 @@ public class Configuration {
         return (Map<String, String>) errorPagesMap;
     }
 
+    /**
+     * Returns the configured error page URI for the specified HTTP status code.
+     *
+     * @param httpStatusCode HTTP status code
+     * @return configured error page URI or {@link Optional#empty()} if there is no value configured for the specified
+     * HTTP code
+     * @exception IllegalArgumentException if configured error page URI is empty or does not start with a '/'
+     * @see #getErrorPageUris()
+     * @see #getDefaultErrorPageUri()
+     */
     public Optional<String> getErrorPageUri(int httpStatusCode) {
         String cachedErrorPageUri = cachedErrorPageUris.get(httpStatusCode);
         if (cachedErrorPageUri != null) {
@@ -244,6 +324,15 @@ public class Configuration {
         return Optional.of(errorPageUri);
     }
 
+    /**
+     * Returns the configured default error page URI.
+     *
+     * @return configured default error page URI or {@link Optional#empty()} if there is no value configured under key
+     * "{@code default}"
+     * @exception IllegalArgumentException if configured error page URI is empty or does not start with a '/'
+     * @see #getErrorPageUris()
+     * @see #getErrorPageUri(int)
+     */
     public Optional<String> getDefaultErrorPageUri() {
         if (cachedDefaultErrorPageUri != null) {
             return Optional.of(cachedDefaultErrorPageUri); // Return cached value.
@@ -271,6 +360,9 @@ public class Configuration {
         return unmodifiableMap;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return map.toString();

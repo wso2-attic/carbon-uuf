@@ -168,8 +168,8 @@ public class ComponentManifest {
          * Sets the mode of this binding.
          *
          * @param mode mode to be set
-         * @throws IllegalArgumentException if the {@code mode} is not {@link #MODE_PREPEND} or {@link #MODE_APPEND} or
-         *                                  {@link #MODE_OVERWRITE}
+         * @exception IllegalArgumentException if the {@code mode} is not {@link #MODE_PREPEND} or {@link #MODE_APPEND}
+         *                                     or {@link #MODE_OVERWRITE}
          * @see #MODE_PREPEND
          * @see #MODE_APPEND
          * @see #MODE_OVERWRITE
