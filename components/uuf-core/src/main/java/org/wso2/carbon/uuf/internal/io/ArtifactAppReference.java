@@ -27,7 +27,6 @@ import org.wso2.carbon.uuf.exception.FileOperationException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 import java.util.stream.Stream;
 
 public class ArtifactAppReference implements AppReference {
@@ -70,17 +69,6 @@ public class ArtifactAppReference implements AppReference {
                     .map(path -> new ArtifactThemeReference(path, this));
         } catch (IOException e) {
             throw new FileOperationException("An error occurred while listing themes in '" + themesDirectory + "'.", e);
-        }
-    }
-
-    @Override
-    public List<String> getDependencies() {
-        Path dependencyTreeFile = componentsDirectory.resolve(FILE_NAME_DEPENDENCY_TREE);
-        try {
-            return Files.readAllLines(dependencyTreeFile);
-        } catch (IOException e) {
-            throw new FileOperationException(
-                    "An error occurred while reading dependencies from file '" + dependencyTreeFile + "'.", e);
         }
     }
 

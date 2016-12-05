@@ -18,7 +18,6 @@
 
 package org.wso2.carbon.uuf.api.reference;
 
-import java.util.List;
 import java.util.stream.Stream;
 
 public interface AppReference {
@@ -34,9 +33,6 @@ public interface AppReference {
     ComponentReference getComponentReference(String componentContext);
 
     Stream<ThemeReference> getThemeReferences();
-
-    @Deprecated
-    List<String> getDependencies();
 
     FileReference getDependencyTree();
 
