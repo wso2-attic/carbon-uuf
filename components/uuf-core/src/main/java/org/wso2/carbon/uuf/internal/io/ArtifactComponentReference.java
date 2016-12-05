@@ -101,16 +101,6 @@ public class ArtifactComponentReference implements ComponentReference {
     }
 
     @Override
-    public Optional<FileReference> getBindingsConfig() {
-        Path bindingsConfiguration = componentDirectory.resolve(FILE_NAME_BINDINGS);
-        if (Files.exists(bindingsConfiguration)) {
-            return Optional.of(new ArtifactFileReference(bindingsConfiguration, appReference));
-        } else {
-            return Optional.empty();
-        }
-    }
-
-    @Override
     public Optional<FileReference> getManifest() {
         Path manifest = componentDirectory.resolve(FILE_NAME_MANIFEST);
         if (Files.exists(manifest)) {

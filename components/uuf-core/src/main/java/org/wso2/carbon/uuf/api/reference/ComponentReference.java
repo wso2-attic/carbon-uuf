@@ -31,7 +31,6 @@ public interface ComponentReference {
     String DIR_NAME_FRAGMENTS = "fragments";
     String DIR_NAME_LANGUAGE = "lang";
     String FILE_NAME_MANIFEST = "component.yaml";
-    String FILE_NAME_BINDINGS = "bindings.yaml";
     String FILE_NAME_CONFIGURATIONS = "config.yaml";
     String FILE_NAME_OSGI_IMPORTS = "osgi-imports";
 
@@ -40,9 +39,6 @@ public interface ComponentReference {
     Stream<LayoutReference> getLayouts(Set<String> supportedExtensions);
 
     Stream<FragmentReference> getFragments(Set<String> supportedExtensions);
-
-    @Deprecated
-    Optional<FileReference> getBindingsConfig();
 
     Optional<FileReference> getManifest();
 
