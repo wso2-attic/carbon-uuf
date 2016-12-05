@@ -31,8 +31,6 @@ import java.util.Map;
  */
 public class ConfigurationParser {
 
-    private final Yaml yaml = new Yaml();
-
     /**
      * Parses the specified config YAML file.
      *
@@ -40,9 +38,9 @@ public class ConfigurationParser {
      * @return configuration found in the file or {@code null} if specified config file does not exists
      * @throws MalformedConfigurationException
      */
-    public Map parse(FileReference configFile) {
+    public static Map parse(FileReference configFile) {
         try {
-            return yaml.loadAs(configFile.getContent(), Map.class);
+            return new Yaml().loadAs(configFile.getContent(), Map.class);
         } catch (Exception e) {
             throw new MalformedConfigurationException(
                     "Cannot parse configuration file '" + configFile.getAbsolutePath() + "'.", e);

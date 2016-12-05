@@ -87,7 +87,7 @@ public class AppCreator {
         // Parse dependency tree.
         DependencyNode rootNode = new DependencyTreeParser().parse(appReference.getDependencyTree());
         // Parse configurations.
-        Map<?, ?> rawConfiguration = new ConfigurationParser().parse(appReference.getConfiguration());
+        Map<?, ?> rawConfiguration = ConfigurationParser.parse(appReference.getConfiguration());
         // Create Lookup.
         final Lookup lookup = new Lookup(getFlattenedDependencies(rootNode), new Configuration(rawConfiguration));
 
