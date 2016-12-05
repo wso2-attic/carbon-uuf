@@ -35,10 +35,10 @@ public class ConfigurationParser {
      * Parses the specified config YAML file.
      *
      * @param configFile reference to the config YAML file
-     * @return configuration found in the file or {@code null} if specified config file does not exists
-     * @throws MalformedConfigurationException
+     * @return configuration as a {@link Map}
+     * @exception MalformedConfigurationException if cannot parse the specified configuration file
      */
-    public static Map parse(FileReference configFile) {
+    public static Map<?, ?> parse(FileReference configFile) {
         try {
             return new Yaml().loadAs(configFile.getContent(), Map.class);
         } catch (Exception e) {
