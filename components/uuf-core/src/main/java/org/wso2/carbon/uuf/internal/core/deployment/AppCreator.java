@@ -144,7 +144,7 @@ public class AppCreator {
                 .forEach(lookup::add);
 
         componentReference.getManifest().ifPresent(componentManifestFile -> {
-            ComponentManifest componentManifest = new ComponentManifestParser().parse(componentManifestFile);
+            ComponentManifest componentManifest = ComponentManifestParser.parse(componentManifestFile);
             addBindings(componentManifest.getBindings(), lookup, componentName);
             // TODO: Register APIs
         });

@@ -30,23 +30,19 @@ import org.yaml.snakeyaml.Yaml;
  */
 public class ComponentManifestParser {
 
-    private final Yaml yaml = new Yaml();
-
     /**
      * Parses the specified component manifest YAML file.
      *
      * @param componentManifestFile path to component manifest YAML file
-     * @return component manifest in the file or {@code null} if specified component manifest file does not exists
-     * @throws MalformedConfigurationException if cannot read or parse the content of the specified component manifest
-     *                                         file
+     * @return component manifest
+     * @throws MalformedConfigurationException if cannot parse the specified component manifest file
      */
-    public ComponentManifest parse(FileReference componentManifestFile) {
+    public static ComponentManifest parse(FileReference componentManifestFile) {
         try {
-            return yaml.loadAs(componentManifestFile.getContent(), ComponentManifest.class);
+            return new Yaml().loadAs(componentManifestFile.getContent(), ComponentManifest.class);
         } catch (Exception e) {
             throw new MalformedConfigurationException(
-                    "Cannot parse component manifest file '" + componentManifestFile.getAbsolutePath() + "'.",
-                    e);
+                    "Cannot parse component manifest file '" + componentManifestFile.getAbsolutePath() + "'.", e);
         }
     }
 }
