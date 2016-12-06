@@ -102,9 +102,9 @@ public class ArtifactComponentReference implements ComponentReference {
 
     @Override
     public Optional<FileReference> getManifest() {
-        Path manifest = componentDirectory.resolve(FILE_NAME_MANIFEST);
-        if (Files.exists(manifest)) {
-            return Optional.of(new ArtifactFileReference(manifest, appReference));
+        Path componentManifest = componentDirectory.resolve(FILE_NAME_MANIFEST);
+        if (Files.exists(componentManifest)) {
+            return Optional.of(new ArtifactFileReference(componentManifest, appReference));
         } else {
             return Optional.empty();
         }
