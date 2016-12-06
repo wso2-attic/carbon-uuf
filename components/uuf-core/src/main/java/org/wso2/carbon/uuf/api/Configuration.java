@@ -119,7 +119,7 @@ public class Configuration {
         if (loginPageUri.isEmpty()) {
             throw new IllegalArgumentException("Value of 'loginPageUri' in the app configuration cannot be empty.");
         }
-        if (loginPageUri.charAt(0) == '/') {
+        if (loginPageUri.charAt(0) != '/') {
             throw new IllegalArgumentException(
                     "Value of 'loginPageUri' in the app configuration must start with a '/'. Instead found '" +
                             loginPageUri.charAt(0) + "' at the beginning.");
