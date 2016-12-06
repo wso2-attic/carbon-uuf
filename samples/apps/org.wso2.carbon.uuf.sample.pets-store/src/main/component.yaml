@@ -6,20 +6,20 @@ apis: []
 
 # Binding fragments into zones.
 # Modes:
-#   PREPEND - pushes the specified fragments into the beginning of the existing pushed content of the zone
-#   APPEND - pushes the specified fragments into the end of the existing pushed content of the zone
-#   OVERWRITE - remove/ignore the existing pushed content of the zone and replace with specified fragments
+#   prepend - pushes the specified fragments into the beginning of the existing pushed content of the zone
+#   append - pushes the specified fragments into the end of the existing pushed content of the zone
+#   overwrite - remove/ignore the existing pushed content of the zone and replace with specified fragments
 # Please note that the configured order of the fragments in here, will be honored when filling the zone
 bindings:
     - zoneName: "org.wso2.carbon.uuf.sample.foundation.footer"
-      mode: "APPEND"
+      mode: "append"
       fragments:
         - "org.wso2.carbon.uuf.sample.foundation.footer"
     - zoneName: "org.wso2.carbon.uuf.sample.foundation.menubar"
-      mode: "APPEND"
+      mode: "append"
       fragments:
         - "org.wso2.carbon.uuf.sample.foundation.secured-menubar"
     - zoneName: "org.wso2.carbon.uuf.sample.foundation.usermenu"
-      mode: "APPEND"
+      mode: "append"
       fragments:
         - "org.wso2.carbon.uuf.sample.simple-auth.usermenu"

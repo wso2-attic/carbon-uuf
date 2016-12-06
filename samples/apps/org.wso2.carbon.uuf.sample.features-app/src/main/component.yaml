@@ -1,9 +1,9 @@
 bindings:
     - zoneName: "org.wso2.carbon.uuf.sample.foundation.footer"
-      mode: "APPEND"
+      mode: "append"
       fragments:
         - "org.wso2.carbon.uuf.sample.foundation.footer"
     - zoneName: "org.wso2.carbon.uuf.sample.foundation.menubar"
-      mode: "APPEND"
+      mode: "append"
       fragments:
         - "org.wso2.carbon.uuf.sample.foundation.menubar"

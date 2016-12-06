@@ -123,15 +123,15 @@ public class ComponentManifest {
         /**
          * Binding combine mode prepend.
          */
-        public static final String MODE_PREPEND = "PREPEND";
+        public static final String MODE_PREPEND = "prepend";
         /**
          * Binging combine mode append.
          */
-        public static final String MODE_APPEND = "APPEND";
+        public static final String MODE_APPEND = "append";
         /**
          * Binding combine mode overwrite.
          */
-        public static final String MODE_OVERWRITE = "OVERWRITE";
+        public static final String MODE_OVERWRITE = "overwrite";
 
         private String zoneName;
         private String mode;
@@ -175,10 +175,9 @@ public class ComponentManifest {
          * @see #MODE_OVERWRITE
          */
         public void setMode(String mode) {
-            String capitalizedMode = mode.toUpperCase();
-            if (MODE_PREPEND.equals(capitalizedMode) || MODE_APPEND.equals(capitalizedMode) ||
-                    MODE_OVERWRITE.equals(capitalizedMode)) {
-                this.mode = capitalizedMode;
+            if (MODE_PREPEND.equals(mode) || MODE_APPEND.equals(mode) ||
+                    MODE_OVERWRITE.equals(mode)) {
+                this.mode = mode;
             } else {
                 throw new IllegalArgumentException(
                         "Binding mode should be either '" + MODE_PREPEND + "', '" + MODE_APPEND + "' or '" +
