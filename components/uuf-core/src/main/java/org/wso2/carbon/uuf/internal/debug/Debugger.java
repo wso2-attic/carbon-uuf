@@ -53,8 +53,9 @@ public class Debugger {
     private static final UriPatten URI_PATTEN_API_LOGS = new UriPatten("/debug/api/logs/");
     private static final UriPatten URI_PATTEN_PAGE_INDEX = new UriPatten("/debug/");
     private static final UriPatten URI_PATTEN_RESOURCES = new UriPatten("/debug/{+resource}");
+
     private final static JsonParser JSON_PARSER = new JsonParser();
-    private static final Logger log = LoggerFactory.getLogger(Debugger.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Debugger.class);
     private static final boolean IS_DEBUGGING_ENABLED;
 
     static {
@@ -136,7 +137,7 @@ public class Debugger {
             String resourcePath = "/apps" + uriWithoutContextPath;
             InputStream resourceAsStream = this.getClass().getResourceAsStream(resourcePath);
             if (resourceAsStream == null) {
-                log.error("Cannot find resource '" + resourcePath + "' in classpath.");
+                LOGGER.error("Cannot find resource '{}' in classpath.", resourcePath);
                 response.setStatus(STATUS_NOT_FOUND);
                 return;
             }
@@ -146,7 +147,7 @@ public class Debugger {
                 response.setContent(STATUS_OK, debugContent,
                                     MimeMapper.getMimeType(extensionFromUri).orElse(CONTENT_TYPE_WILDCARD));
             } catch (IOException e) {
-                log.error("Cannot read string from input stream of '" + resourcePath + "' in classpath", e);
+                LOGGER.error("Cannot read string from input stream of '{}' in classpath", resourcePath, e);
                 response.setStatus(STATUS_INTERNAL_SERVER_ERROR);
             }
             return;
