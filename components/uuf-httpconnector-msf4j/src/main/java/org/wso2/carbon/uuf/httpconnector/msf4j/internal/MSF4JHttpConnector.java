@@ -70,7 +70,7 @@ public class MSF4JHttpConnector implements HttpConnector {
     @Activate
     protected void activate(BundleContext bundleContext) {
         this.bundleContext = bundleContext;
-        LOGGER.debug("{} activated.", MSF4JHttpConnector.class.getName());
+        LOGGER.debug("{} activated.", getClass().getName());
     }
 
     /**
@@ -79,7 +79,7 @@ public class MSF4JHttpConnector implements HttpConnector {
     @Deactivate
     protected void deactivate() {
         this.bundleContext = null;
-        LOGGER.debug("{} deactivated.", MSF4JHttpConnector.class.getName());
+        LOGGER.debug("{} deactivated.", getClass().getName());
     }
 
     /**

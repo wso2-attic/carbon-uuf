@@ -58,7 +58,7 @@ public class HtmlRenderableCreator implements RenderableCreator {
 
     @Activate
     protected void activate() {
-        LOGGER.debug("{} activated.", HtmlRenderableCreator.class.getName());
+        LOGGER.debug("{} activated.", getClass().getName());
         if (isDevmodeEnabled) {
             updater.start();
         }
@@ -66,7 +66,7 @@ public class HtmlRenderableCreator implements RenderableCreator {
 
     @Deactivate
     protected void deactivate() {
-        LOGGER.debug("{} deactivated.", HtmlRenderableCreator.class.getName());
+        LOGGER.debug("{} deactivated.", getClass().getName());
         if (isDevmodeEnabled) {
             updater.finish();
         }

@@ -73,7 +73,7 @@ public class HbsRenderableCreator implements RenderableCreator {
 
     @Activate
     protected void activate() {
-        LOGGER.debug("{} activated.", HbsRenderableCreator.class.getName());
+        LOGGER.debug("{} activated.", getClass().getName());
         if (isDevmodeEnabled) {
             updater.start();
         }
@@ -81,7 +81,7 @@ public class HbsRenderableCreator implements RenderableCreator {
 
     @Deactivate
     protected void deactivate() {
-        LOGGER.debug("{} deactivated.", HbsRenderableCreator.class.getName());
+        LOGGER.debug("{} deactivated.", getClass().getName());
         if (isDevmodeEnabled) {
             updater.finish();
         }
