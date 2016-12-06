@@ -18,7 +18,6 @@
 
 package org.wso2.carbon.uuf.api.reference;
 
-import java.util.List;
 import java.util.stream.Stream;
 
 public interface AppReference {
@@ -26,15 +25,18 @@ public interface AppReference {
     String DIR_NAME_COMPONENTS = "components";
     String DIR_NAME_CUSTOMIZATIONS = "customizations";
     String DIR_NAME_THEMES = "themes";
-    String FILE_NAME_DEPENDENCY_TREE = "dependency.tree";
+    String FILE_NAME_DEPENDENCY_TREE = "dependency-tree.yaml";
+    String FILE_NAME_CONFIGURATIONS = "config.yaml";
 
     String getName();
 
-    ComponentReference getComponentReference(String componentSimpleName);
+    ComponentReference getComponentReference(String componentContext);
 
     Stream<ThemeReference> getThemeReferences();
 
-    List<String> getDependencies();
+    FileReference getDependencyTree();
+
+    FileReference getConfiguration();
 
     String getPath();
 }

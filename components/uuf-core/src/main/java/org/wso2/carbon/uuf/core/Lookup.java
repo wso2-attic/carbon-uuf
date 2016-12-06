@@ -18,15 +18,17 @@
 
 package org.wso2.carbon.uuf.core;
 
-import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
 import com.google.common.collect.SetMultimap;
-import org.wso2.carbon.uuf.api.Configuration;
+import org.wso2.carbon.uuf.api.config.ComponentManifest;
+import org.wso2.carbon.uuf.api.config.Configuration;
 import org.wso2.carbon.uuf.internal.util.NameUtils;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.Properties;
 
 public class Lookup {
@@ -43,7 +45,7 @@ public class Lookup {
     /**
      * All bindings of this lookup. key = fully qualified name of the zone, value = pushed fragments set
      */
-    private final SetMultimap<String, Fragment> bindings;
+    private final ListMultimap<String, Fragment> bindings;
     /**
      * All layouts of this lookup. key = fully qualified name, value = layout
      */
@@ -51,13 +53,13 @@ public class Lookup {
     private final Configuration configuration;
     private final Map<String, Properties> i18nResources;
 
-    public Lookup(SetMultimap<String, String> flattenedDependencies) {
+    public Lookup(SetMultimap<String, String> flattenedDependencies, Configuration configuration) {
         this.flattenedDependencies = flattenedDependencies;
+        this.configuration = configuration;
         this.components = new HashMap<>();
         this.layouts = new HashMap<>();
         this.fragments = new HashMap<>();
-        this.bindings = HashMultimap.create();
-        this.configuration = new Configuration();
+        this.bindings = ArrayListMultimap.create();
         this.i18nResources = new HashMap<>();
     }
 
@@ -69,7 +71,7 @@ public class Lookup {
         fragments.put(fragment.getName(), fragment);
     }
 
-    public void add(Map<String, Properties> i18nConfiguration){
+    public void add(Map<String, Properties> i18nConfiguration) {
         for (Map.Entry<String, Properties> entry : i18nConfiguration.entrySet()) {
             Properties tmpProps = entry.getValue();
             Properties i18nProps = i18nResources.get(entry.getKey());
@@ -83,8 +85,18 @@ public class Lookup {
         }
     }
 
-    public void addBinding(String zoneName, Fragment fragment) {
-        bindings.put(zoneName, fragment);
+    public void addBinding(String zoneName, List<Fragment> fragments, String mode) {
+        // TODO: 12/1/16 we should move handling  bindings in to a separate class
+        switch (mode) {
+            case ComponentManifest.Binding.MODE_PREPEND:
+                bindings.get(zoneName).addAll(0, fragments);
+                break;
+            case ComponentManifest.Binding.MODE_APPEND:
+                bindings.putAll(zoneName, fragments);
+                break;
+            case ComponentManifest.Binding.MODE_OVERWRITE:
+                bindings.replaceValues(zoneName, fragments);
+        }
     }
 
     public void add(Layout layout) {
@@ -123,7 +135,7 @@ public class Lookup {
         return fragments;
     }
 
-    public Set<Fragment> getBindings(String componentName, String zoneName) {
+    public List<Fragment> getBindings(String componentName, String zoneName) {
         return bindings.get(NameUtils.getFullyQualifiedName(componentName, zoneName));
     }
 

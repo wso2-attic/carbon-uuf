@@ -101,10 +101,10 @@ public class ArtifactComponentReference implements ComponentReference {
     }
 
     @Override
-    public Optional<FileReference> getBindingsConfig() {
-        Path bindingsConfiguration = componentDirectory.resolve(FILE_NAME_BINDINGS);
-        if (Files.exists(bindingsConfiguration)) {
-            return Optional.of(new ArtifactFileReference(bindingsConfiguration, appReference));
+    public Optional<FileReference> getManifest() {
+        Path componentManifest = componentDirectory.resolve(FILE_NAME_MANIFEST);
+        if (Files.exists(componentManifest)) {
+            return Optional.of(new ArtifactFileReference(componentManifest, appReference));
         } else {
             return Optional.empty();
         }
@@ -122,9 +122,9 @@ public class ArtifactComponentReference implements ComponentReference {
 
     @Override
     public Optional<FileReference> getOsgiImportsConfig() {
-        Path binding = componentDirectory.resolve(FILE_NAME_OSGI_IMPORTS);
-        if (Files.exists(binding)) {
-            return Optional.of(new ArtifactFileReference(binding, appReference));
+        Path osgiImports = componentDirectory.resolve(FILE_NAME_OSGI_IMPORTS);
+        if (Files.exists(osgiImports)) {
+            return Optional.of(new ArtifactFileReference(osgiImports, appReference));
         } else {
             return Optional.empty();
         }

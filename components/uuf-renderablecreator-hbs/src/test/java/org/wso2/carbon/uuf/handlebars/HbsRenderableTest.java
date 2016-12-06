@@ -18,11 +18,11 @@ package org.wso2.carbon.uuf.handlebars;
 
 import com.github.jknack.handlebars.Context;
 import com.github.jknack.handlebars.io.StringTemplateSource;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import org.wso2.carbon.uuf.api.Configuration;
+import org.wso2.carbon.uuf.api.config.Configuration;
 import org.wso2.carbon.uuf.api.model.MapModel;
 import org.wso2.carbon.uuf.core.API;
 import org.wso2.carbon.uuf.core.Fragment;
@@ -70,7 +70,7 @@ public class HbsRenderableTest {
 
     private static Lookup createLookup() {
         Lookup lookup = mock(Lookup.class);
-        when(lookup.getConfiguration()).thenReturn(new Configuration());
+        when(lookup.getConfiguration()).thenReturn(new Configuration(Collections.emptyMap()));
         return lookup;
     }
 
@@ -163,7 +163,7 @@ public class HbsRenderableTest {
         Lookup lookup = createLookup();
         Fragment pushedFragment = mock(Fragment.class);
         when(pushedFragment.render(any(), any(), any(), any())).thenReturn("fragment content");
-        when(lookup.getBindings(any(), eq("test-zone"))).thenReturn(ImmutableSet.of(pushedFragment));
+        when(lookup.getBindings(any(), eq("test-zone"))).thenReturn(ImmutableList.of(pushedFragment));
 
         String output = pageRenderable.render(createModel(), lookup, createRequestLookup(), createAPI());
         Assert.assertEquals(output, "X fragment content Y");
@@ -173,7 +173,7 @@ public class HbsRenderableTest {
     public void testZone() {
         HbsPageRenderable pageRenderable = createPageRenderable("X {{defineZone \"test-zone\"}} Y");
         Lookup lookup = createLookup();
-        when(lookup.getBindings(anyString(), anyString())).thenReturn(Collections.emptySet());
+        when(lookup.getBindings(anyString(), anyString())).thenReturn(Collections.emptyList());
         RequestLookup requestLookup = createRequestLookup();
         when(requestLookup.getZoneContent("test-zone")).thenReturn(Optional.of("zone content"));
 

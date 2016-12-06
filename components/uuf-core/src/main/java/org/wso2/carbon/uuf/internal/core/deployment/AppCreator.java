@@ -19,8 +19,13 @@
 package org.wso2.carbon.uuf.internal.core.deployment;
 
 import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ListMultimap;
+import com.google.common.collect.SetMultimap;
 import org.wso2.carbon.uuf.api.Placeholder;
+import org.wso2.carbon.uuf.api.config.ComponentManifest;
+import org.wso2.carbon.uuf.api.config.Configuration;
+import org.wso2.carbon.uuf.api.config.DependencyNode;
 import org.wso2.carbon.uuf.api.reference.AppReference;
 import org.wso2.carbon.uuf.api.reference.ComponentReference;
 import org.wso2.carbon.uuf.api.reference.FileReference;
@@ -35,16 +40,19 @@ import org.wso2.carbon.uuf.core.Layout;
 import org.wso2.carbon.uuf.core.Lookup;
 import org.wso2.carbon.uuf.core.Page;
 import org.wso2.carbon.uuf.core.Theme;
+import org.wso2.carbon.uuf.core.UriPatten;
 import org.wso2.carbon.uuf.exception.InvalidTypeException;
 import org.wso2.carbon.uuf.exception.MalformedConfigurationException;
 import org.wso2.carbon.uuf.exception.UUFException;
-import org.wso2.carbon.uuf.internal.core.UriPatten;
 import org.wso2.carbon.uuf.internal.core.auth.SessionRegistry;
+import org.wso2.carbon.uuf.internal.core.deployment.parser.ComponentManifestParser;
+import org.wso2.carbon.uuf.internal.core.deployment.parser.ConfigurationParser;
+import org.wso2.carbon.uuf.internal.core.deployment.parser.DependencyTreeParser;
 import org.wso2.carbon.uuf.internal.util.NameUtils;
 import org.wso2.carbon.uuf.spi.RenderableCreator;
 import org.yaml.snakeyaml.Yaml;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -55,7 +63,6 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-import static org.wso2.carbon.uuf.internal.core.deployment.DependencyTreeParser.ComponentData;
 import static org.wso2.carbon.uuf.internal.util.NameUtils.getFullyQualifiedName;
 
 public class AppCreator {
@@ -76,47 +83,49 @@ public class AppCreator {
         this.classLoaderProvider = classLoaderProvider;
     }
 
-    public App createApp(AppReference appReference, String appContextPath) {
-        DependencyTreeParser.Result result = DependencyTreeParser.parse(appReference.getDependencies());
+    public App createApp(AppReference appReference, String contextPath) {
+        // Parse dependency tree.
+        DependencyNode rootNode = DependencyTreeParser.parse(appReference.getDependencyTree());
+        // Parse configurations.
+        Map<?, ?> rawConfiguration = ConfigurationParser.parse(appReference.getConfiguration());
+        // Create Lookup.
+        final Lookup lookup = new Lookup(getFlattenedDependencies(rootNode), new Configuration(rawConfiguration));
 
-        Lookup lookup = new Lookup(result.getFlattenedDependencies());
-        List<Set<ComponentData>> leveledDependencies = result.getLeveledDependencies();
-        Map<String, Component> createdComponents = new HashMap<>();
-        String appName = null;
-
-        for (int i = (leveledDependencies.size() - 1); i >= 0; i--) {
-            Set<ComponentData> dependencies = leveledDependencies.get(i); // dependencies at level i
-            for (ComponentData componentData : dependencies) {
-                String componentName = componentData.getName();
-                if (createdComponents.containsKey(componentName)) {
-                    continue; // Component 'componentName' is already created.
-                }
-
-                String componentVersion = componentData.getVersion();
-                String componentSimpleName, componentContextPath;
-                if (i == 0) {
-                    // This happens only once, because when (i == 0) then (dependencies.size() == 1).
-                    appName = componentName; // Name of the root component is the fully qualified app name.
-                    componentSimpleName = Component.ROOT_COMPONENT_NAME;
-                    componentContextPath = Component.ROOT_COMPONENT_CONTEXT_PATH;
-                } else {
-                    componentSimpleName = NameUtils.getSimpleName(componentName);
-                    componentContextPath = "/" + componentSimpleName;
-                }
-
-                ComponentReference componentReference = appReference.getComponentReference(componentSimpleName);
-                ClassLoader classLoader = classLoaderProvider.getClassLoader(componentName, componentVersion,
-                                                                             componentReference);
-                Component component = createComponent(componentName, componentVersion, componentContextPath,
-                                                      componentReference, classLoader, lookup);
-                lookup.add(component);
-                createdComponents.put(componentName, component);
+        // Created Components.
+        final Map<String, Component> createdComponents = new HashMap<>();
+        rootNode.traverse(dependencyNode -> {
+            if (createdComponents.containsKey(dependencyNode.getArtifactId())) {
+                return; // Component for this dependency node is already created.
             }
-        }
 
+            String componentName = dependencyNode.getArtifactId();
+            String componentVersion = dependencyNode.getVersion();
+            String componentContextPath = (dependencyNode == rootNode) ? Component.ROOT_COMPONENT_CONTEXT_PATH :
+                    dependencyNode.getContextPath();
+            ComponentReference componentReference = appReference.getComponentReference(componentContextPath);
+            ClassLoader classLoader = classLoaderProvider.getClassLoader(componentName, componentVersion,
+                                                                         componentReference);
+            Component component = createComponent(componentName, componentVersion, componentContextPath,
+                                                  componentReference, classLoader, lookup);
+            lookup.add(component);
+            createdComponents.put(componentName, component);
+        });
+        // Create Themes.
         Set<Theme> themes = appReference.getThemeReferences().map(this::createTheme).collect(Collectors.toSet());
-
+        // Create App.
+        String appName = rootNode.getArtifactId();
+        String appContextPath = (contextPath == null) ? rootNode.getContextPath() : contextPath;
         return new App(appName, appContextPath, lookup, themes, new SessionRegistry(appName));
+    }
+
+    private SetMultimap<String, String> getFlattenedDependencies(DependencyNode rootNode) {
+        final SetMultimap<String, String> flattenedDependencies = HashMultimap.create();
+        rootNode.traverse(dependencyNode -> {
+            if (!flattenedDependencies.containsKey(dependencyNode.getArtifactId())) {
+                flattenedDependencies.putAll(dependencyNode.getArtifactId(), dependencyNode.getAllDependencies());
+            }
+        });
+        return flattenedDependencies;
     }
 
     private Component createComponent(String componentName, String componentVersion, String componentContextPath,
@@ -129,32 +138,11 @@ public class AppCreator {
                 .map((fragmentReference) -> createFragment(fragmentReference, componentName, classLoader))
                 .forEach(lookup::add);
 
-        Yaml yaml = new Yaml();
-        try {
-            Map<?, ?> bindingsConfig = componentReference
-                    .getBindingsConfig()
-                    .map(fileReference -> yaml.loadAs(fileReference.getContent(), Map.class))
-                    .orElse(Collections.emptyMap());
-            addBindings(bindingsConfig, lookup, componentName);
-        } catch (Exception e) {
-            // Yaml.loadAs() throws an Exception
-            throw new MalformedConfigurationException(
-                    "Bindings configuration '" + componentReference.getBindingsConfig().get().getRelativePath() +
-                            "' is malformed.", e);
-        }
-
-        try {
-            Map<?, ?> rawConfigurations = componentReference
-                    .getConfiguration()
-                    .map(fileReference -> yaml.loadAs(fileReference.getContent(), Map.class))
-                    .orElse(new HashMap<>(0));
-            lookup.getConfiguration().merge(rawConfigurations);
-        } catch (Exception e) {
-            // Yaml.loadAs() throws an Exception
-            throw new MalformedConfigurationException(
-                    "Configuration '" + componentReference.getConfiguration().get().getRelativePath() +
-                            "' is malformed.", e);
-        }
+        componentReference.getManifest().ifPresent(componentManifestFile -> {
+            ComponentManifest componentManifest = ComponentManifestParser.parse(componentManifestFile);
+            addBindings(componentManifest.getBindings(), lookup, componentName);
+            // TODO: Register APIs
+        });
 
         if (!componentReference.getI18nFiles().isEmpty()) {
             lookup.add(componentReference.getI18nFiles());
@@ -183,55 +171,24 @@ public class AppCreator {
         return new Fragment(fragmentName, frd.getRenderable(), frd.isSecured());
     }
 
-    private void addBindings(Map<?, ?> bindingsConfig, Lookup lookup, String componentName) {
-        if (bindingsConfig.isEmpty()) {
+    private void addBindings(List<ComponentManifest.Binding> bindings, Lookup lookup, String componentName) {
+        if ((bindings == null) || bindings.isEmpty()) {
             return;
         }
 
-        for (Map.Entry<?, ?> entry : bindingsConfig.entrySet()) {
-            if (!(entry.getKey() instanceof String)) {
-                throw new InvalidTypeException(
-                        "A key (zone name) in the bindings configuration must be a string. Instead found '" +
-                                entry.getKey().getClass() + "'.");
-            }
-            String zoneName = (String) entry.getKey();
-            if (NameUtils.isSimpleName(zoneName)) {
-                zoneName = NameUtils.getFullyQualifiedName(componentName, zoneName);
-            }
-
-            if (entry.getValue() instanceof String) {
-                String fragmentName = (String) entry.getValue();
+        for (ComponentManifest.Binding binding : bindings) {
+            String zoneName = NameUtils.getFullyQualifiedName(componentName, binding.getZoneName());
+            List<Fragment> fragments = new ArrayList<>();
+            for (String fragmentName : binding.getFragments()) {
                 Optional<Fragment> fragment = lookup.getFragmentIn(componentName, fragmentName);
                 if (fragment.isPresent()) {
-                    lookup.addBinding(zoneName, fragment.get());
+                    fragments.add(fragment.get());
                 } else {
-                    throw new IllegalArgumentException(
-                            "Fragment '" + fragmentName + "' does not exists in component '" + componentName +
-                                    "' or its dependencies.");
+                    throw new IllegalArgumentException("Fragment '" + fragmentName + "' does not exists in component '"
+                                                               + componentName + "' or its dependencies.");
                 }
-            } else if (entry.getValue() instanceof List) {
-                List fragmentsNames = (List) entry.getValue();
-                for (Object fragmentNameObj : fragmentsNames) {
-                    if (!(fragmentNameObj instanceof String)) {
-                        throw new InvalidTypeException(
-                                "An array of values (fragment names) in the bindings configuration must be a string " +
-                                        "array. Instead found '" + fragmentNameObj.getClass() + "'.");
-                    }
-                    String fragmentName = (String) fragmentNameObj;
-                    Optional<Fragment> fragment = lookup.getFragmentIn(componentName, fragmentName);
-                    if (fragment.isPresent()) {
-                        lookup.addBinding(zoneName, fragment.get());
-                    } else {
-                        throw new IllegalArgumentException(
-                                "Fragment '" + fragmentName + "' does not exists in component '" + componentName +
-                                        "' or its dependencies.");
-                    }
-                }
-            } else {
-                throw new InvalidTypeException("A value (fragment name/s) in the bindings configuration must be " +
-                                                       "either a string or a string array. Instead found '" +
-                                                       entry.getValue().getClass() + "'");
             }
+            lookup.addBinding(zoneName, fragments, binding.getMode());
         }
     }
 

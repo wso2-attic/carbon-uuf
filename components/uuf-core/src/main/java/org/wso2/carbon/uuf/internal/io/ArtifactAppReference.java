@@ -20,13 +20,13 @@ package org.wso2.carbon.uuf.internal.io;
 
 import org.wso2.carbon.uuf.api.reference.AppReference;
 import org.wso2.carbon.uuf.api.reference.ComponentReference;
+import org.wso2.carbon.uuf.api.reference.FileReference;
 import org.wso2.carbon.uuf.api.reference.ThemeReference;
 import org.wso2.carbon.uuf.exception.FileOperationException;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 import java.util.stream.Stream;
 
 public class ArtifactAppReference implements AppReference {
@@ -48,10 +48,11 @@ public class ArtifactAppReference implements AppReference {
     }
 
     @Override
-    public ComponentReference getComponentReference(String componentSimpleName) {
-        Path componentDirectory = customizationsDirectory.resolve(componentSimpleName);
+    public ComponentReference getComponentReference(String componentContext) {
+        String componentDirName = componentContext.startsWith("/") ? componentContext.substring(1) : componentContext;
+        Path componentDirectory = customizationsDirectory.resolve(componentDirName);
         if (!Files.exists(componentDirectory)) {
-            componentDirectory = componentsDirectory.resolve(componentSimpleName);
+            componentDirectory = componentsDirectory.resolve(componentDirName);
         }
         return new ArtifactComponentReference(componentDirectory, this);
     }
@@ -72,14 +73,13 @@ public class ArtifactAppReference implements AppReference {
     }
 
     @Override
-    public List<String> getDependencies() {
-        Path dependencyTreeFile = componentsDirectory.resolve(FILE_NAME_DEPENDENCY_TREE);
-        try {
-            return Files.readAllLines(dependencyTreeFile);
-        } catch (IOException e) {
-            throw new FileOperationException(
-                    "An error occurred while reading dependencies from file '" + dependencyTreeFile + "'.", e);
-        }
+    public FileReference getConfiguration() {
+        return new ArtifactFileReference(componentsDirectory.resolve(FILE_NAME_CONFIGURATIONS), this);
+    }
+
+    @Override
+    public FileReference getDependencyTree() {
+        return new ArtifactFileReference(componentsDirectory.resolve(FILE_NAME_DEPENDENCY_TREE), this);
     }
 
     @Override

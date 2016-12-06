@@ -23,15 +23,15 @@ import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.ImmutableSortedSet;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import org.wso2.carbon.uuf.api.Configuration;
 import org.wso2.carbon.uuf.api.Placeholder;
+import org.wso2.carbon.uuf.api.config.Configuration;
 import org.wso2.carbon.uuf.core.API;
 import org.wso2.carbon.uuf.core.Component;
 import org.wso2.carbon.uuf.core.Fragment;
 import org.wso2.carbon.uuf.core.Lookup;
 import org.wso2.carbon.uuf.core.Page;
 import org.wso2.carbon.uuf.core.RequestLookup;
-import org.wso2.carbon.uuf.internal.core.UriPatten;
+import org.wso2.carbon.uuf.core.UriPatten;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.HbsRenderable;
 import org.wso2.carbon.uuf.renderablecreator.hbs.impl.HbsPageRenderable;
 import org.wso2.carbon.uuf.spi.HttpRequest;
@@ -52,7 +52,7 @@ public class HbsHelperTest {
 
     private static Lookup createLookup() {
         Lookup lookup = mock(Lookup.class);
-        when(lookup.getConfiguration()).thenReturn(new Configuration());
+        when(lookup.getConfiguration()).thenReturn(new Configuration(Collections.emptyMap()));
         return lookup;
     }
 
@@ -268,7 +268,7 @@ public class HbsHelperTest {
                 "</div>";
         Page page = new Page(new UriPatten("/contextPath"), createRenderable(pageContent), false);
         Component component = new Component(componentName, null, null, ImmutableSortedSet.of(page), null);
-        Lookup lookup = new Lookup(ImmutableSetMultimap.of());
+        Lookup lookup = new Lookup(ImmutableSetMultimap.of(), new Configuration(Collections.emptyMap()));
         lookup.add(new Fragment(fragmentName, createRenderable(fragmentContent), false));
         lookup.add(component);
         RequestLookup requestLookup = createRequestLookup();

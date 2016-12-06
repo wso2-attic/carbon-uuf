@@ -18,7 +18,7 @@
 
 package org.wso2.carbon.uuf.internal.debug;
 
-import org.wso2.carbon.uuf.api.Configuration;
+import org.wso2.carbon.uuf.api.config.Configuration;
 import org.wso2.carbon.uuf.core.App;
 import org.wso2.carbon.uuf.core.Component;
 import org.wso2.carbon.uuf.core.Fragment;

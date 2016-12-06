@@ -27,7 +27,7 @@ import org.wso2.carbon.uuf.renderablecreator.hbs.core.HbsRenderable;
 import org.wso2.carbon.uuf.renderablecreator.hbs.model.ContextModel;
 
 import java.io.IOException;
-import java.util.Set;
+import java.util.List;
 
 public class DefineZoneHelper implements Helper<String> {
 
@@ -43,7 +43,7 @@ public class DefineZoneHelper implements Helper<String> {
         RequestLookup requestLookup = options.data(HbsRenderable.DATA_KEY_REQUEST_LOOKUP);
         StringBuilder buffer = new StringBuilder();
 
-        Set<Fragment> bindings = lookup.getBindings(requestLookup.tracker().getCurrentComponentName(), zoneName);
+        List<Fragment> bindings = lookup.getBindings(requestLookup.tracker().getCurrentComponentName(), zoneName);
         if (!bindings.isEmpty()) {
             API api = options.data(HbsRenderable.DATA_KEY_API);
             for (Fragment fragment : bindings) {

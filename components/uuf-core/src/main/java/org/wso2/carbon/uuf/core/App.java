@@ -18,8 +18,8 @@
 
 package org.wso2.carbon.uuf.core;
 
-import org.wso2.carbon.uuf.api.Configuration;
 import org.wso2.carbon.uuf.api.auth.Session;
+import org.wso2.carbon.uuf.api.config.Configuration;
 import org.wso2.carbon.uuf.api.model.MapModel;
 import org.wso2.carbon.uuf.exception.FragmentNotFoundException;
 import org.wso2.carbon.uuf.exception.HttpErrorException;

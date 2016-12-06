@@ -482,7 +482,7 @@
         <carbon.security.userstore.jdbc.version>1.0.0-m2</carbon.security.userstore.jdbc.version>
 
         <!-- Maven Plugins -->
-        <carbon-uuf-maven-plugin.version>1.0.0-m6</carbon-uuf-maven-plugin.version>
+        <carbon-uuf-maven-plugin.version>1.0.0-m8</carbon-uuf-maven-plugin.version>
         <carbon.feature.plugin.version>2.0.1</carbon.feature.plugin.version>
         <maven.bundle.plugin.version>2.5.0</maven.bundle.plugin.version>
 
