@@ -35,15 +35,8 @@ public class DependencyNode {
     private String artifactId;
     private String version;
     private String contextPath;
-    private List<DependencyNode> dependencies;
-    private Set<String> allDependencies;
-
-    /**
-     * Creates a new dependency node.
-     */
-    public DependencyNode() {
-        this.dependencies = Collections.emptyList();
-    }
+    private List<DependencyNode> dependencies = Collections.emptyList();
+    private Set<String> allDependencies = Collections.emptySet();
 
     /**
      * Returns the artifact ID of the UUF Component which is reflected by this node.
@@ -116,17 +109,16 @@ public class DependencyNode {
      */
     public void setDependencies(List<DependencyNode> dependencies) {
         if (dependencies == null) {
-            this.dependencies = Collections.emptyList();
-            this.allDependencies = Collections.emptySet();
-        } else {
-            this.dependencies = dependencies;
-            Set<String> allDependencies = new HashSet<>();
-            dependencies.forEach(dependencyNode -> {
-                allDependencies.add(dependencyNode.artifactId);
-                allDependencies.addAll(dependencyNode.allDependencies);
-            });
-            this.allDependencies = allDependencies;
+            return;
         }
+
+        this.dependencies = dependencies;
+        Set<String> allDependencies = new HashSet<>();
+        dependencies.forEach(dependencyNode -> {
+            allDependencies.add(dependencyNode.artifactId);
+            allDependencies.addAll(dependencyNode.allDependencies);
+        });
+        this.allDependencies = allDependencies;
     }
 
     /**
