@@ -100,13 +100,8 @@ public class AppCreator {
 
             String componentName = dependencyNode.getArtifactId();
             String componentVersion = dependencyNode.getVersion();
-            String componentContextPath;
-            if (dependencyNode == rootNode) {
-                // This is the root component.
-                componentContextPath = Component.ROOT_COMPONENT_CONTEXT_PATH;
-            } else {
-                componentContextPath = dependencyNode.getContextPath();
-            }
+            String componentContextPath = (dependencyNode == rootNode) ? Component.ROOT_COMPONENT_CONTEXT_PATH :
+                    dependencyNode.getContextPath();
             ComponentReference componentReference = appReference.getComponentReference(componentContextPath);
             ClassLoader classLoader = classLoaderProvider.getClassLoader(componentName, componentVersion,
                                                                          componentReference);
