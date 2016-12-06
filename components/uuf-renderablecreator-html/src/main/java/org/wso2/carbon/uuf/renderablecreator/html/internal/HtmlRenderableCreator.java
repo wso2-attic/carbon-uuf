@@ -41,7 +41,7 @@ import java.util.Set;
 public class HtmlRenderableCreator implements RenderableCreator {
 
     private static final Set<String> SUPPORTED_FILE_EXTENSIONS = ImmutableSet.of("html");
-    private static final Logger log = LoggerFactory.getLogger(HtmlRenderableCreator.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(HtmlRenderableCreator.class);
 
     private final boolean isDevmodeEnabled;
     private final HtmlRenderableUpdater updater;
@@ -58,7 +58,7 @@ public class HtmlRenderableCreator implements RenderableCreator {
 
     @Activate
     protected void activate() {
-        log.debug("HtmlRenderableCreator activated.");
+        LOGGER.debug("{} activated.", HtmlRenderableCreator.class.getName());
         if (isDevmodeEnabled) {
             updater.start();
         }
@@ -66,7 +66,7 @@ public class HtmlRenderableCreator implements RenderableCreator {
 
     @Deactivate
     protected void deactivate() {
-        log.debug("HtmlRenderableCreator deactivated.");
+        LOGGER.debug("{} deactivated.", HtmlRenderableCreator.class.getName());
         if (isDevmodeEnabled) {
             updater.finish();
         }
