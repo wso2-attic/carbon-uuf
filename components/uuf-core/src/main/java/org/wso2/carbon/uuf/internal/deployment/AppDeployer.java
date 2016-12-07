@@ -22,9 +22,25 @@ import org.wso2.carbon.uuf.core.App;
 
 import java.util.Set;
 
+/**
+ * A deployer for UUF apps.
+ *
+ * @since 1.0.0
+ */
 public interface AppDeployer {
 
+    /**
+     * Deploys all the available apps.
+     *
+     * @return context paths of the deployed apps.
+     */
     Set<String> deploy();
 
+    /**
+     * Returns the deployed app corresponds for the specified context path.
+     *
+     * @param contextPath context path of the app
+     * @return deployed app or {@code null} is there is no app associated with the specified context path
+     */
     App getApp(String contextPath);
 }
