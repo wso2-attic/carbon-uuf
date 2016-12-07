@@ -20,6 +20,11 @@ package org.wso2.carbon.uuf.internal.deployment;
 
 import org.wso2.carbon.uuf.api.reference.ComponentReference;
 
+/**
+ * A provider that gives the class loader for a given component.
+ *
+ * @since 1.0.0
+ */
 public interface ClassLoaderProvider {
 
     /**
