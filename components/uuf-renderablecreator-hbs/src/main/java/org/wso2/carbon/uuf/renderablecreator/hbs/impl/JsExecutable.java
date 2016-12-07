@@ -34,12 +34,12 @@ import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.SendToClientFunction;
 import org.wso2.carbon.uuf.renderablecreator.hbs.impl.js.JsFunctionsImpl;
 import org.wso2.carbon.uuf.renderablecreator.hbs.impl.js.LoggerObject;
 
+import java.util.Map;
+import java.util.Objects;
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 import javax.script.SimpleBindings;
-import java.util.Map;
-import java.util.Objects;
 
 // TODO remove this SuppressWarnings
 @SuppressWarnings("PackageAccessibility")
@@ -131,6 +131,7 @@ public class JsExecutable implements Executable {
 
     public static class UUFBindings extends SimpleBindings {
 
+        // TODO: 12/6/16 Check whether we can change this to a 'private static' variable
         private final ThreadLocal<JsFunctionsImpl> threadLocalFunctionProvider;
         private boolean isLocked;
 
