@@ -17,6 +17,7 @@
 package org.wso2.carbon.uuf.renderablecreator.hbs.core;
 
 import com.github.jknack.handlebars.Handlebars;
+import com.github.jknack.handlebars.HandlebarsException;
 import com.github.jknack.handlebars.Template;
 import com.github.jknack.handlebars.io.TemplateSource;
 import org.wso2.carbon.uuf.core.API;
@@ -38,6 +39,7 @@ public abstract class HbsRenderable implements Renderable {
     public static final String DATA_KEY_REQUEST_LOOKUP = HbsRenderable.class.getName() + "#request-lookup";
     public static final String DATA_KEY_API = HbsRenderable.class.getName() + "#api";
     public static final String DATA_KEY_CURRENT_WRITER = HbsRenderable.class.getName() + "#writer";
+    public static final String DATA_KEY_RESOLVED_RESOURCES = HbsRenderable.class.getName() + "#resolved-resources";
     private static final Handlebars HANDLEBARS = new Handlebars().with(new HbsHelperRegistry());
 
     private final Template template;
@@ -76,6 +78,8 @@ public abstract class HbsRenderable implements Renderable {
         try {
             return HANDLEBARS.compile(templateSource);
         } catch (IOException e) {
+            throw new UUFException("Cannot load Handlebars template '" + templateSource.filename() + "'.", e);
+        } catch (HandlebarsException e) {
             throw new UUFException("Cannot compile Handlebars template '" + templateSource.filename() + "'.", e);
         }
     }

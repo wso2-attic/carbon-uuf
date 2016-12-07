@@ -156,6 +156,11 @@ public class HbsRenderableUpdater {
                                 log.info("Handlebars template '" + entry + "' reloaded successfully.");
                             } catch (IOException e) {
                                 log.error("An error occurred while reloading Handlebars template '" + entry + "'.", e);
+                            } catch (UUFException e) {
+                                log.error("An error occurred while compiling Handlebars template '" + entry + "'.", e);
+                            } catch (Exception e) {
+                                log.error("An unexpected error occurred while reloading Handlebars template '" + entry +
+                                        "'.", e);
                             }
                             continue;
                         }
@@ -168,6 +173,11 @@ public class HbsRenderableUpdater {
                                 log.info("JavaScript file '" + entry + "' reloaded successfully.");
                             } catch (IOException e) {
                                 log.error("An error occurred while reloading JavaScript file '" + entry + "'.", e);
+                            } catch (UUFException e) {
+                                log.error("An error occurred while compiling JavaScript file '" + entry + "'.", e);
+                            } catch (Exception e) {
+                                log.error("An unexpected error occurred while reloading JavaScript file '" + entry +
+                                        "'.", e);
                             }
                         }
                     }

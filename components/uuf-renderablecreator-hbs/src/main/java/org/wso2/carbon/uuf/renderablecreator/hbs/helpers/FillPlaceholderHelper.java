@@ -22,7 +22,9 @@ import org.wso2.carbon.uuf.api.Placeholder;
 import org.wso2.carbon.uuf.core.RequestLookup;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.HbsRenderable;
 
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 public abstract class FillPlaceholderHelper<T> implements Helper<T> {
 
@@ -44,5 +46,21 @@ public abstract class FillPlaceholderHelper<T> implements Helper<T> {
     protected Optional<String> getPlaceholderValue(Options handlebarsOptions) {
         RequestLookup requestLookup = handlebarsOptions.data(HbsRenderable.DATA_KEY_REQUEST_LOOKUP);
         return requestLookup.getPlaceholderContent(placeholder);
+    }
+
+    protected String getResourceIdentifier(RequestLookup requestLookup, String relativePath) {
+        RequestLookup.RenderingFlowTracker tracker = requestLookup.tracker();
+        // unique resource identifier is calculated as fragment/component name:relativePath
+        String resourceIdentifier = tracker.isInFragment() ? tracker.getCurrentFragment().get().getName()
+                : tracker.getCurrentComponentName();
+        return resourceIdentifier + relativePath;
+    }
+
+    protected boolean isResourceAlreadyResolved(String resourceIdentifier, Options handlebarsOptions) {
+        if (handlebarsOptions.data(HbsRenderable.DATA_KEY_RESOLVED_RESOURCES) == null) {
+            handlebarsOptions.data(HbsRenderable.DATA_KEY_RESOLVED_RESOURCES, new HashSet<>());
+            return false;
+        }
+        return ((Set) handlebarsOptions.data(HbsRenderable.DATA_KEY_RESOLVED_RESOURCES)).contains(resourceIdentifier);
     }
 }

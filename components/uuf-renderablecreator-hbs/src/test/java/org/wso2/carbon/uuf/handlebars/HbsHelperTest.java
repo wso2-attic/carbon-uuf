@@ -33,12 +33,15 @@ import org.wso2.carbon.uuf.core.Page;
 import org.wso2.carbon.uuf.core.RequestLookup;
 import org.wso2.carbon.uuf.core.UriPatten;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.HbsRenderable;
+import org.wso2.carbon.uuf.renderablecreator.hbs.impl.HbsFragmentRenderable;
 import org.wso2.carbon.uuf.renderablecreator.hbs.impl.HbsPageRenderable;
 import org.wso2.carbon.uuf.spi.HttpRequest;
+import org.wso2.carbon.uuf.spi.model.Model;
 
 import java.util.Collections;
 import java.util.Optional;
 
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -66,6 +69,17 @@ public class HbsHelperTest {
         API api = mock(API.class);
         when(api.getSession()).thenReturn(Optional.empty());
         return api;
+    }
+
+    private static RequestLookup.RenderingFlowTracker createRenderingFlowTracker(boolean isInFragment) {
+        RequestLookup.RenderingFlowTracker tracker = mock(RequestLookup.RenderingFlowTracker.class);
+        if (isInFragment) {
+            when(tracker.isInFragment()).thenReturn(true);
+        } else {
+            when(tracker.isInPage()).thenReturn(true);
+            when(tracker.isInLayout()).thenReturn(true);
+        }
+        return tracker;
     }
 
     @Test
@@ -118,7 +132,11 @@ public class HbsHelperTest {
     public void testCss() {
         RequestLookup requestLookup = createRequestLookup();
         when(requestLookup.getPublicUri()).thenReturn("/myapp/public/component/base");
-        createRenderable("{{css \"css/my-styles.css\"}}").render(null, createLookup(), requestLookup, createAPI());
+        RequestLookup.RenderingFlowTracker tracker = createRenderingFlowTracker(false);
+        when(tracker.getCurrentComponentName()).thenReturn("test.component");
+        when(requestLookup.tracker()).thenReturn(tracker);
+        createRenderable("{{css \"css/my-styles.css\"}}{{css \"css/my-styles.css\"}}")
+                .render(null, createLookup(), requestLookup, createAPI());
         String expected = "<link href=\"/myapp/public/component/base/css/my-styles.css\" rel=\"stylesheet\" " +
                 "type=\"text/css\" />\n";
 
@@ -132,8 +150,11 @@ public class HbsHelperTest {
     public void testCssWithMultipleParameters() {
         RequestLookup requestLookup = createRequestLookup();
         when(requestLookup.getPublicUri()).thenReturn("/myapp/public/component/base");
-        createRenderable("{{css \"css/\" \"my-styles\" \".css\"}}").render(null, createLookup(), requestLookup,
-                                                                           createAPI());
+        RequestLookup.RenderingFlowTracker tracker = createRenderingFlowTracker(false);
+        when(tracker.getCurrentComponentName()).thenReturn("test.component");
+        when(requestLookup.tracker()).thenReturn(tracker);
+        createRenderable("{{css \"css/\" \"my-styles\" \".css\"}}{{css \"css/\" \"my-styles\" \".css\"}}")
+                .render(null, createLookup(), requestLookup, createAPI());
         Assert.assertEquals(requestLookup.getPlaceholderContent(Placeholder.css).get(),
                             "<link href=\"/myapp/public/component/base/css/my-styles.css\" rel=\"stylesheet\" " +
                                     "type=\"text/css\" />\n");
@@ -143,7 +164,11 @@ public class HbsHelperTest {
     public void testHeadJs() {
         RequestLookup requestLookup = createRequestLookup();
         when(requestLookup.getPublicUri()).thenReturn("/myapp/public/component/base");
-        createRenderable("{{headJs \"js/my-script.js\"}}").render(null, createLookup(), requestLookup, createAPI());
+        RequestLookup.RenderingFlowTracker tracker = createRenderingFlowTracker(false);
+        when(tracker.getCurrentComponentName()).thenReturn("test.component");
+        when(requestLookup.tracker()).thenReturn(tracker);
+        createRenderable("{{headJs \"js/my-script.js\"}}{{headJs \"js/my-script.js\"}}")
+                .render(null, createLookup(), requestLookup, createAPI());
         String expected = "<script src=\"/myapp/public/component/base/js/my-script.js\" type=\"text/javascript\">" +
                 "</script>\n";
 
@@ -157,8 +182,11 @@ public class HbsHelperTest {
     public void testHeadJsWithMultipleParameters() {
         RequestLookup requestLookup = createRequestLookup();
         when(requestLookup.getPublicUri()).thenReturn("/myapp/public/component/base");
-        createRenderable("{{headJs \"js/\" \"my-script\" \".js\"}}").render(null, createLookup(), requestLookup,
-                                                                            createAPI());
+        RequestLookup.RenderingFlowTracker tracker = createRenderingFlowTracker(false);
+        when(tracker.getCurrentComponentName()).thenReturn("test.component");
+        when(requestLookup.tracker()).thenReturn(tracker);
+        createRenderable("{{headJs \"js/\" \"my-script\" \".js\"}}{{headJs \"js/\" \"my-script\" \".js\"}}")
+                .render(null, createLookup(), requestLookup, createAPI());
         Assert.assertEquals(requestLookup.getPlaceholderContent(Placeholder.headJs).get(),
                             "<script src=\"/myapp/public/component/base/js/my-script.js\" type=\"text/javascript\">" +
                                     "</script>\n");
@@ -168,7 +196,11 @@ public class HbsHelperTest {
     public void testJs() {
         RequestLookup requestLookup = createRequestLookup();
         when(requestLookup.getPublicUri()).thenReturn("/myapp/public/component/base");
-        createRenderable("{{js \"js/bottom-script.js\"}}").render(null, createLookup(), requestLookup, createAPI());
+        RequestLookup.RenderingFlowTracker tracker = createRenderingFlowTracker(false);
+        when(tracker.getCurrentComponentName()).thenReturn("test.component");
+        when(requestLookup.tracker()).thenReturn(tracker);
+        createRenderable("{{js \"js/bottom-script.js\"}}{{js \"js/bottom-script.js\"}}")
+                .render(null, createLookup(), requestLookup, createAPI());
         String expected = "<script src=\"/myapp/public/component/base/js/bottom-script.js\" type=\"text/javascript\">" +
                 "</script>\n";
 
@@ -276,5 +308,30 @@ public class HbsHelperTest {
         String expected = "<script id=\"" + templateName + "\" type=\"text/x-handlebars-template\">\n" +
                 fragmentContent + "\n</script>";
         Assert.assertEquals(requestLookup.getPlaceholderContent(Placeholder.js).get(), expected);
+    }
+
+    @Test
+    public void testDuplicatedResources() {
+        RequestLookup requestLookup = createRequestLookup();
+        when(requestLookup.getPublicUri()).thenReturn("/myapp/public/component/base");
+        HbsRenderable fragmentRenderable = new HbsFragmentRenderable(
+                new StringTemplateSource("", "{{css \"css/my-styles.css\"}}{{headJs \"js/my-script.js\"}}"));
+        Lookup lookup = createLookup();
+        Fragment fragment = new Fragment("test.fragment", fragmentRenderable, false) {
+            @Override
+            public String render(Model model, Lookup lookup, RequestLookup requestLookup, API api) {
+                return fragmentRenderable.render(model, lookup, requestLookup, api);
+            }
+        };
+        when(lookup.getFragmentIn(any(), any())).thenReturn(Optional.of(fragment));
+        HbsRenderable pageRenderable = createRenderable("{{placeholder \"css\"}}{{placeholder \"headJs\"}}" +
+                "{{fragment \"test.fragment\"}}{{fragment \"test.fragment\"}}");
+        RequestLookup.RenderingFlowTracker tracker = createRenderingFlowTracker(true);
+        when(requestLookup.tracker()).thenReturn(tracker);
+        when(tracker.getCurrentFragment()).thenReturn(Optional.of(fragment));
+        String expected = "<link href=\"/myapp/public/component/base/css/my-styles.css\" rel=\"stylesheet\" " +
+                "type=\"text/css\" />\n<script src=\"/myapp/public/component/base/js/my-script.js\" " +
+                "type=\"text/javascript\"></script>\n";
+        Assert.assertEquals(pageRenderable.render(null, lookup, requestLookup, createAPI()), expected);
     }
 }
