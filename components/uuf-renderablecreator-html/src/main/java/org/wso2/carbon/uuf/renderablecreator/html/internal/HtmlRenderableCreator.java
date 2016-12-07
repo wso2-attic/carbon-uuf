@@ -47,7 +47,6 @@ public class HtmlRenderableCreator implements RenderableCreator {
     private final HtmlRenderableUpdater updater;
 
     public HtmlRenderableCreator() {
-        //this.isDevmodeEnabled = ManagementFactory.getRuntimeMXBean().getInputArguments().contains("-Xdebug");
         this.isDevmodeEnabled = Boolean.parseBoolean(System.getProperties().getProperty("devmode", "false"));
         if (this.isDevmodeEnabled) {
             updater = new HtmlRenderableUpdater();

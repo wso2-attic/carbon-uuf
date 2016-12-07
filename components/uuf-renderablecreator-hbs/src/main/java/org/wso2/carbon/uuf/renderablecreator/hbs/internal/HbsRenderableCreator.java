@@ -62,7 +62,6 @@ public class HbsRenderableCreator implements RenderableCreator {
     private final HbsRenderableUpdater updater;
 
     public HbsRenderableCreator() {
-        //this.isDevmodeEnabled = DebugUtil.isDevmodeEnabled();
         this.isDevmodeEnabled = Boolean.parseBoolean(System.getProperties().getProperty("devmode", "false"));
         if (this.isDevmodeEnabled) {
             updater = new HbsRenderableUpdater();
