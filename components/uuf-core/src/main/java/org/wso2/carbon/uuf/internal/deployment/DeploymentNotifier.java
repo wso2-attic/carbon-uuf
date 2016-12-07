@@ -22,10 +22,26 @@ import org.wso2.carbon.uuf.spi.HttpConnector;
 
 import java.util.Set;
 
+/**
+ * A notifier that notify app deployment event to others.
+ *
+ * @since 1.0.0
+ */
 public abstract class DeploymentNotifier {
 
+    /**
+     * Returns the HTTP connectors that need to notified.
+     *
+     * @return HTTP connectors
+     */
     protected abstract Set<HttpConnector> getHttpConnectors();
 
+    /**
+     * Notifies all the HTTP connectors that the specified context paths are available now.
+     *
+     * @param deployedAppContextPaths context path of apps
+     * @see #getHttpConnectors()
+     */
     public void notify(Set<String> deployedAppContextPaths) {
         for (HttpConnector httpConnector : getHttpConnectors()) {
             for (String deployedAppContextPath : deployedAppContextPaths) {
