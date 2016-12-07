@@ -30,11 +30,15 @@ public class Activator implements BundleActivator {
     @Override
     public void start(BundleContext bundleContext) throws Exception {
         bundleContext.registerService(PetsStoreService.class.getName(), new PetsManagerImpl(), null);
-        LOGGER.debug("Pet-Store BE Bundle started.");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Pet-Store BE Bundle started.");
+        }
     }
 
     @Override
     public void stop(BundleContext bundleContext) throws Exception {
-        LOGGER.debug("Pet-Store BE Bundle stopped.");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Pet-Store BE Bundle stopped.");
+        }
     }
 }
