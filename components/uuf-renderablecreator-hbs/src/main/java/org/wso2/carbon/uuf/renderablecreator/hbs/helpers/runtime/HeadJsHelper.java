@@ -23,6 +23,8 @@ import org.wso2.carbon.uuf.renderablecreator.hbs.core.HbsRenderable;
 import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.FillPlaceholderHelper;
 
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 public class HeadJsHelper extends FillPlaceholderHelper<String> {
 
@@ -43,14 +45,22 @@ public class HeadJsHelper extends FillPlaceholderHelper<String> {
 
         }
 
+        StringBuilder completeRelativePath = new StringBuilder(relativePath);
+        for (Object param : options.params) {
+            completeRelativePath.append(param);
+        }
+
         RequestLookup requestLookup = options.data(HbsRenderable.DATA_KEY_REQUEST_LOOKUP);
+
+        String resourceIdentifier = getResourceIdentifier(requestLookup, completeRelativePath.toString());
+        if (isResourceAlreadyResolved(resourceIdentifier, options)) {
+            return "";
+        }
+
         StringBuilder buffer = new StringBuilder("<script src=\"")
                 .append(requestLookup.getPublicUri())
                 .append('/')
-                .append(relativePath);
-        for (Object param : options.params) {
-            buffer.append(param);
-        }
+                .append(completeRelativePath);
         buffer.append("\"");
         // See http://www.w3schools.com/tags/att_script_async.asp
         Object async = options.hash.get("async");
@@ -63,8 +73,8 @@ public class HeadJsHelper extends FillPlaceholderHelper<String> {
             buffer.append(" defer");
         }
         buffer.append(" type=\"text/javascript\"></script>\n");
-
         addToPlaceholder(buffer.toString(), options);
+        ((Set) options.data(HbsRenderable.DATA_KEY_RESOLVED_RESOURCES)).add(resourceIdentifier);
         return "";
     }
 }

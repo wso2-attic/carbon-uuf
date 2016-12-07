@@ -39,6 +39,7 @@ public abstract class HbsRenderable implements Renderable {
     public static final String DATA_KEY_REQUEST_LOOKUP = HbsRenderable.class.getName() + "#request-lookup";
     public static final String DATA_KEY_API = HbsRenderable.class.getName() + "#api";
     public static final String DATA_KEY_CURRENT_WRITER = HbsRenderable.class.getName() + "#writer";
+    public static final String DATA_KEY_RESOLVED_RESOURCES = HbsRenderable.class.getName() + "#resolved-resources";
     private static final Handlebars HANDLEBARS = new Handlebars().with(new HbsHelperRegistry());
 
     private final Template template;
