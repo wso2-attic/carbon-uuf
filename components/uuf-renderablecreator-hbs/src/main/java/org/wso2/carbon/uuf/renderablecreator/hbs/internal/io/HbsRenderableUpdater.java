@@ -51,7 +51,7 @@ import java.util.concurrent.ConcurrentMap;
 
 public class HbsRenderableUpdater {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(HbsRenderableUpdater.class);
+    private static final Logger log = LoggerFactory.getLogger(HbsRenderableUpdater.class);
 
     private final Set<Path> watchingDirectories;
     private final ConcurrentMap<Path, MutableHbsRenderable> watchingRenderables;
@@ -125,10 +125,10 @@ public class HbsRenderableUpdater {
             try {
                 watchKey = watcher.take();
             } catch (ClosedWatchServiceException e) {
-                LOGGER.debug("File watch service is closed.");
+                log.debug("File watch service is closed.");
                 return;
             } catch (InterruptedException e) {
-                LOGGER.debug("File watch service interrupted.");
+                log.debug("File watch service interrupted.");
                 return;
             }
 
@@ -153,9 +153,9 @@ public class HbsRenderableUpdater {
                             try {
                                 mutableRenderable.reload(new StringTemplateSource(mutableRenderable.getComponentPath(),
                                                                                   readFileContent(entry)));
-                                LOGGER.info("Handlebars template '{}' reloaded successfully.", entry);
+                                log.info("Handlebars template '" + entry + "' reloaded successfully.");
                             } catch (IOException e) {
-                                LOGGER.error("An error occurred while reloading Handlebars template '{}'.", entry, e);
+                                log.error("An error occurred while reloading Handlebars template '" + entry + "'.", e);
                             }
                             continue;
                         }
@@ -165,14 +165,14 @@ public class HbsRenderableUpdater {
                             // Updated file is a MutableExecutable
                             try {
                                 mutableExecutable.reload(readFileContent(entry));
-                                LOGGER.info("JavaScript file '{}' reloaded successfully.", entry);
+                                log.info("JavaScript file '" + entry + "' reloaded successfully.");
                             } catch (IOException e) {
-                                LOGGER.error("An error occurred while reloading JavaScript file '{}'.", entry, e);
+                                log.error("An error occurred while reloading JavaScript file '" + entry + "'.", e);
                             }
                         }
                     }
                 } catch (IOException e) {
-                    LOGGER.error("An error occurred while reloading modified files '{}'.", updatedFileAbsolutePath, e);
+                    log.error("An error occurred while reloading modified files '" + updatedFileAbsolutePath + "'.", e);
                 }
             }
 
