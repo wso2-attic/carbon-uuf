@@ -43,7 +43,7 @@ import java.util.Hashtable;
 @SuppressWarnings("unused")
 public class MSF4JHttpConnector implements HttpConnector {
 
-    private static final Logger log = LoggerFactory.getLogger(MSF4JHttpConnector.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MSF4JHttpConnector.class);
 
     private Server uufServer;
     private BundleContext bundleContext;
@@ -70,7 +70,7 @@ public class MSF4JHttpConnector implements HttpConnector {
     @Activate
     protected void activate(BundleContext bundleContext) {
         this.bundleContext = bundleContext;
-        log.debug("MSF4JHttpConnector activated.");
+        LOGGER.debug("{} activated.", getClass().getName());
     }
 
     /**
@@ -79,7 +79,7 @@ public class MSF4JHttpConnector implements HttpConnector {
     @Deactivate
     protected void deactivate() {
         this.bundleContext = null;
-        log.debug("MSF4JHttpConnector deactivated.");
+        LOGGER.debug("{} deactivated.", getClass().getName());
     }
 
     /**

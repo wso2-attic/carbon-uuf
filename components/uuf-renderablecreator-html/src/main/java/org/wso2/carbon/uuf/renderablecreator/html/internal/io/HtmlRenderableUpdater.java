@@ -43,7 +43,7 @@ import java.util.concurrent.ConcurrentMap;
 
 public class HtmlRenderableUpdater {
 
-    private static final Logger log = LoggerFactory.getLogger(HtmlRenderableUpdater.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(HtmlRenderableUpdater.class);
 
     private final Set<Path> watchingDirectories;
     private final ConcurrentMap<Path, MutableHtmlRenderable> watchingRenderables;
@@ -102,10 +102,10 @@ public class HtmlRenderableUpdater {
             try {
                 watchKey = watchService.take();
             } catch (ClosedWatchServiceException e) {
-                log.debug("File watch service is closed.");
+                LOGGER.debug("File watch service is closed.");
                 return;
             } catch (InterruptedException e) {
-                log.debug("File watch service interrupted.");
+                LOGGER.debug("File watch service interrupted.");
                 return;
             }
 
@@ -130,14 +130,14 @@ public class HtmlRenderableUpdater {
                             try {
                                 String content = new String(Files.readAllBytes(entry), StandardCharsets.UTF_8);
                                 mutableHtmlRenderable.setHtml(content);
-                                log.info("HTML template '" + entry + "' reloaded successfully.");
+                                LOGGER.info("HTML template '{}' reloaded successfully.", entry);
                             } catch (IOException e) {
-                                log.error("An error occurred while reloading HTML template '" + entry + "'.", e);
+                                LOGGER.error("An error occurred while reloading HTML template '{}'.", entry, e);
                             }
                         }
                     }
                 } catch (IOException e) {
-                    log.error("An error occurred while reloading HTML template '" + updatedFileAbsolutePath + "'.", e);
+                    LOGGER.error("An error occurred while reloading HTML template '{}'.", updatedFileAbsolutePath, e);
                 }
             }
 

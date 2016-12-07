@@ -33,8 +33,8 @@ import org.wso2.carbon.kernel.startupresolver.RequiredCapabilityListener;
 import org.wso2.carbon.uuf.api.Server;
 import org.wso2.carbon.uuf.core.App;
 import org.wso2.carbon.uuf.exception.UUFException;
-import org.wso2.carbon.uuf.internal.core.deployment.AppDeployer;
-import org.wso2.carbon.uuf.internal.core.deployment.DeploymentNotifier;
+import org.wso2.carbon.uuf.internal.deployment.AppDeployer;
+import org.wso2.carbon.uuf.internal.deployment.DeploymentNotifier;
 import org.wso2.carbon.uuf.internal.io.ArtifactAppDeployer;
 import org.wso2.carbon.uuf.spi.HttpConnector;
 import org.wso2.carbon.uuf.spi.HttpRequest;
@@ -58,7 +58,7 @@ import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_NOT_FOUND;
 public class UUFServer implements Server, RequiredCapabilityListener {
 
     private static final boolean DEV_MODE_ENABLED = Boolean.getBoolean("devmode");
-    private static final Logger log = LoggerFactory.getLogger(UUFServer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(UUFServer.class);
 
     private final String appRepositoryPath;
     private final Set<RenderableCreator> renderableCreators;
@@ -94,8 +94,8 @@ public class UUFServer implements Server, RequiredCapabilityListener {
                     "A RenderableCreator for '" + renderableCreator.getSupportedFileExtensions() +
                             "' extensions is already registered");
         }
-        log.info("RenderableCreator '{}' registered for {} extensions.",
-                 renderableCreator.getClass().getName(), renderableCreator.getSupportedFileExtensions());
+        LOGGER.info("RenderableCreator '{}' registered for {} extensions.",
+                    renderableCreator.getClass().getName(), renderableCreator.getSupportedFileExtensions());
     }
 
     /**
@@ -105,8 +105,8 @@ public class UUFServer implements Server, RequiredCapabilityListener {
      */
     public void unsetRenderableCreator(RenderableCreator renderableCreator) {
         renderableCreators.remove(renderableCreator);
-        log.info("RenderableCreator '{}' unregistered for {} extensions.",
-                 renderableCreator.getClass().getName(), renderableCreator.getSupportedFileExtensions());
+        LOGGER.info("RenderableCreator '{}' unregistered for {} extensions.",
+                    renderableCreator.getClass().getName(), renderableCreator.getSupportedFileExtensions());
         if (appDeployer != null) {
             /* We have created the 'appDeployer' with the removed RenderableCreator. So we need to create it again
             without the removed RenderableCreator. */
@@ -117,7 +117,7 @@ public class UUFServer implements Server, RequiredCapabilityListener {
     @Activate
     protected void activate(BundleContext bundleContext) {
         this.bundleContext = bundleContext;
-        log.debug("UUF Server activated.");
+        LOGGER.debug("UUF Server activated.");
     }
 
     @Deactivate
@@ -126,17 +126,17 @@ public class UUFServer implements Server, RequiredCapabilityListener {
         this.bundleContext = null;
         deploymentNotifier = null;
         serverServiceRegistration.unregister();
-        log.debug("UUF Server deactivated.");
+        LOGGER.debug("UUF Server deactivated.");
     }
 
     @Override
     public void onAllRequiredCapabilitiesAvailable() {
         deploymentNotifier = new WhiteboardDeploymentNotifier(bundleContext);
         appDeployer = createAppDeployer();
-        log.debug("ArtifactAppDeployer is ready.");
+        LOGGER.debug("ArtifactAppDeployer is ready.");
 
         serverServiceRegistration = bundleContext.registerService(Server.class, this, null);
-        log.info("'{}' registered as a Server.", getClass().getName());
+        LOGGER.info("'{}' registered as a Server.", getClass().getName());
     }
 
     private AppDeployer createAppDeployer() {
@@ -162,11 +162,11 @@ public class UUFServer implements Server, RequiredCapabilityListener {
             app = appDeployer.getApp(request.getContextPath());
         } catch (UUFException e) {
             String msg = "A server error occurred while serving for request '" + request + "'.";
-            log.error(msg, e);
+            LOGGER.error(msg, e);
             requestDispatcher.serveDefaultErrorPage(STATUS_INTERNAL_SERVER_ERROR, msg, response);
         } catch (Exception e) {
             String msg = "An unexpected error occurred while serving for request '" + request + "'.";
-            log.error(msg, e);
+            LOGGER.error(msg, e);
             requestDispatcher.serveDefaultErrorPage(STATUS_INTERNAL_SERVER_ERROR, msg, response);
         }
 

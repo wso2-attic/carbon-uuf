@@ -30,14 +30,14 @@ import org.wso2.carbon.uuf.spi.HttpConnector;
 @SuppressWarnings("unused")
 public class DummyHttpConnector implements HttpConnector {
 
-    private static final Logger log = LoggerFactory.getLogger(DummyHttpConnector.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DummyHttpConnector.class);
 
     @Override
     public void setServer(Server server) {
-        log.info("Server '{}' registered to '{}'.", server, getClass().getName());
+        LOGGER.info("Server '{}' registered to '{}'.", server, getClass().getName());
     }
 
     public void registerAppContextPath(String appContextPath) {
-        log.info("App context path '{}' registered to '{}'.", appContextPath, getClass().getName());
+        LOGGER.info("App context path '{}' registered to '{}'.", appContextPath, getClass().getName());
     }
 }

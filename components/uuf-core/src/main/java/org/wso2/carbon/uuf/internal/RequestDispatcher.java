@@ -37,7 +37,7 @@ import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_OK;
 
 public class RequestDispatcher {
 
-    private static final Logger log = LoggerFactory.getLogger(RequestDispatcher.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RequestDispatcher.class);
 
     private final StaticResolver staticResolver;
     private final Debugger debugger;
@@ -52,9 +52,6 @@ public class RequestDispatcher {
     }
 
     public void serve(App app, HttpRequest request, HttpResponse response) {
-        if (log.isDebugEnabled() && !request.isDebugRequest()) {
-            log.debug("HTTP request received " + request);
-        }
 
         try {
             if (request.isStaticResourceRequest()) {
@@ -71,11 +68,11 @@ public class RequestDispatcher {
             serveDefaultErrorPage(e.getHttpStatusCode(), e.getMessage(), response);
         } catch (UUFException e) {
             String msg = "A server error occurred while serving for request '" + request + "'.";
-            log.error(msg, e);
+            LOGGER.error(msg, e);
             serveDefaultErrorPage(STATUS_INTERNAL_SERVER_ERROR, msg, response);
         } catch (Exception e) {
             String msg = "An unexpected error occurred while serving for request '" + request + "'.";
-            log.error(msg, e);
+            LOGGER.error(msg, e);
             serveDefaultErrorPage(STATUS_INTERNAL_SERVER_ERROR, msg, response);
         }
     }

@@ -31,9 +31,9 @@ import java.util.concurrent.ThreadLocalRandom;
  * Provides a way to identify a user across more than one page request or visit to a Web site and to store information
  * about that user.
  * <p>
- * The {@link org.wso2.carbon.uuf.internal.core.auth.SessionRegistry SessionRegistry} uses this class to create a
- * session between an HTTP client and an HTTP server. The session persists for a specified time period, across more than
- * one connection or page request from the user.
+ * The {@link org.wso2.carbon.uuf.internal.auth.SessionRegistry SessionRegistry} uses this class to create a session
+ * between an HTTP client and an HTTP server. The session persists for a specified time period, across more than one
+ * connection or page request from the user.
  */
 public class Session implements Serializable {
 

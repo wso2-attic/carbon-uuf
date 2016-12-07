@@ -25,20 +25,20 @@ import org.wso2.carbon.uuf.sample.petsstore.bundle.service.PetsStoreService;
 
 public class Activator implements BundleActivator {
 
-    private static final Logger log = LoggerFactory.getLogger(Activator.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Activator.class);
 
     @Override
     public void start(BundleContext bundleContext) throws Exception {
         bundleContext.registerService(PetsStoreService.class.getName(), new PetsManagerImpl(), null);
-        if (log.isDebugEnabled()) {
-            log.debug("Pet-Store BE Bundle Started.");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Pet-Store BE Bundle started.");
         }
     }
 
     @Override
     public void stop(BundleContext bundleContext) throws Exception {
-        if (log.isDebugEnabled()) {
-            log.debug("Pet-Store BE Bundle Stopped.");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Pet-Store BE Bundle stopped.");
         }
     }
 }

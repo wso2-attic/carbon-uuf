@@ -39,7 +39,7 @@ public class ZipArtifactHandler {
 
     private static final String ZIP_FILE_EXTENSION = "zip";
     private static final Path TEMP_DIRECTORY = Paths.get(System.getProperty("java.io.tmpdir")).resolve("uufapps");
-    private static final Logger log = LoggerFactory.getLogger(ZipArtifactHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ZipArtifactHandler.class);
 
     public static boolean isZipArtifact(Path appPath) {
         return ZIP_FILE_EXTENSION.equals(FilenameUtils.getExtension(appPath.getFileName().toString()));
@@ -48,7 +48,7 @@ public class ZipArtifactHandler {
     /**
      * @param zipFile zip app
      * @return app name
-     * @throws FileOperationException I/O error
+     * @exception FileOperationException I/O error
      */
     public static String getAppName(Path zipFile) {
         ZipFile zip = null;
@@ -80,10 +80,10 @@ public class ZipArtifactHandler {
             try {
                 FileUtils.deleteDirectory(appDirectory.toFile());
             } catch (IOException e) {
-                throw new FileOperationException("An error occurred while deleting directory '" + appDirectory + "'.");
+                throw new FileOperationException("An error occurred while deleting directory '" + appDirectory + "'.",
+                                                 e);
             }
-            log.debug("Removed the existing app directory '" + appDirectory + "' before extracting app '" + appName +
-                              "'.");
+            LOGGER.debug("Removed the existing app directory '{}' before extracting app '{}'.", appDirectory, appName);
         }
 
         ZipFile zip;

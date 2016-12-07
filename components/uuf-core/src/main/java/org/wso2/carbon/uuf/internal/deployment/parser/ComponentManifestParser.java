@@ -16,7 +16,7 @@
  * under the License.
  */
 
-package org.wso2.carbon.uuf.internal.core.deployment.parser;
+package org.wso2.carbon.uuf.internal.deployment.parser;
 
 import org.wso2.carbon.uuf.api.config.ComponentManifest;
 import org.wso2.carbon.uuf.api.reference.FileReference;

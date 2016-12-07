@@ -40,7 +40,7 @@ import org.wso2.carbon.uuf.spi.HttpConnector;
 )
 public class StartupListener implements RequiredCapabilityListener {
 
-    private static final Logger log = LoggerFactory.getLogger(StartupListener.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(StartupListener.class);
 
     private UUFServer uufServer;
 
@@ -50,11 +50,11 @@ public class StartupListener implements RequiredCapabilityListener {
                policy = ReferencePolicy.DYNAMIC,
                unbind = "unsetHttpConnector")
     public void setHttpConnector(HttpConnector httpConnector) {
-        log.debug("HttpConnector '{}' registered.", httpConnector.getClass().getName());
+        LOGGER.debug("HttpConnector '{}' registered.", httpConnector.getClass().getName());
     }
 
     public void unsetHttpConnector(HttpConnector httpConnector) {
-        log.debug("HttpConnector '{}' unregistered.", httpConnector.getClass().getName());
+        LOGGER.debug("HttpConnector '{}' unregistered.", httpConnector.getClass().getName());
     }
 
     @Reference(name = "server",
@@ -81,13 +81,13 @@ public class StartupListener implements RequiredCapabilityListener {
 
     @Activate
     protected void activate(BundleContext bundleContext) {
-        log.debug("StartupListener activated.");
+        LOGGER.debug("StartupListener activated.");
     }
 
     @Deactivate
     protected void deactivate(BundleContext bundleContext) {
         uufServer = null;
-        log.debug("StartupListener deactivated.");
+        LOGGER.debug("StartupListener deactivated.");
     }
 
     @Override

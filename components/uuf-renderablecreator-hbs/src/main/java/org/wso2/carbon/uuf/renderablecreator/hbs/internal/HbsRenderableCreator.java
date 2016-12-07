@@ -56,13 +56,12 @@ public class HbsRenderableCreator implements RenderableCreator {
 
     private static final Set<String> SUPPORTED_FILE_EXTENSIONS = ImmutableSet.of("hbs");
     private static final String EXTENSION_JAVASCRIPT = ".js";
-    private static final Logger log = LoggerFactory.getLogger(HbsRenderableCreator.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(HbsRenderableCreator.class);
 
     private final boolean isDevmodeEnabled;
     private final HbsRenderableUpdater updater;
 
     public HbsRenderableCreator() {
-        //this.isDevmodeEnabled = DebugUtil.isDevmodeEnabled();
         this.isDevmodeEnabled = Boolean.parseBoolean(System.getProperties().getProperty("devmode", "false"));
         if (this.isDevmodeEnabled) {
             updater = new HbsRenderableUpdater();
@@ -73,7 +72,7 @@ public class HbsRenderableCreator implements RenderableCreator {
 
     @Activate
     protected void activate() {
-        log.debug("HbsRenderableCreator activated.");
+        LOGGER.debug("{} activated.", getClass().getName());
         if (isDevmodeEnabled) {
             updater.start();
         }
@@ -81,7 +80,7 @@ public class HbsRenderableCreator implements RenderableCreator {
 
     @Deactivate
     protected void deactivate() {
-        log.debug("HbsRenderableCreator deactivated.");
+        LOGGER.debug("{} deactivated.", getClass().getName());
         if (isDevmodeEnabled) {
             updater.finish();
         }

@@ -34,7 +34,7 @@ public class LoggerObject {
     public static final String NAME = "Log";
     private static final Gson GSON;
 
-    private final org.slf4j.Logger log;
+    private final org.slf4j.Logger logger;
 
     static {
         GsonBuilder gsonBuilder = new GsonBuilder();
@@ -43,7 +43,7 @@ public class LoggerObject {
     }
 
     LoggerObject(String name) {
-        this.log = org.slf4j.LoggerFactory.getLogger(name);
+        this.logger = org.slf4j.LoggerFactory.getLogger(name);
     }
 
     private String getLogMessage(Object obj) {
@@ -55,23 +55,23 @@ public class LoggerObject {
     }
 
     public void info(Object obj) {
-        log.info(getLogMessage(obj));
+        logger.info(getLogMessage(obj));
     }
 
     public void debug(Object obj) {
-        log.debug(getLogMessage(obj));
+        logger.debug(getLogMessage(obj));
     }
 
     public void trace(Object obj) {
-        log.trace(getLogMessage(obj));
+        logger.trace(getLogMessage(obj));
     }
 
     public void warn(Object obj) {
-        log.warn(getLogMessage(obj));
+        logger.warn(getLogMessage(obj));
     }
 
     public void error(Object obj) {
-        log.error(getLogMessage(obj));
+        logger.error(getLogMessage(obj));
     }
 
     private static class ScriptObjectMirrorSerializer implements JsonSerializer<ScriptObjectMirror> {

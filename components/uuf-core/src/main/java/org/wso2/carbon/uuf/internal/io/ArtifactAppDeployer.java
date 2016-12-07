@@ -25,9 +25,9 @@ import org.wso2.carbon.uuf.core.App;
 import org.wso2.carbon.uuf.exception.FileOperationException;
 import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.internal.UUFServer;
-import org.wso2.carbon.uuf.internal.core.deployment.AppCreator;
-import org.wso2.carbon.uuf.internal.core.deployment.AppDeployer;
-import org.wso2.carbon.uuf.internal.core.deployment.ClassLoaderProvider;
+import org.wso2.carbon.uuf.internal.deployment.AppCreator;
+import org.wso2.carbon.uuf.internal.deployment.AppDeployer;
+import org.wso2.carbon.uuf.internal.deployment.ClassLoaderProvider;
 import org.wso2.carbon.uuf.internal.io.util.ZipArtifactHandler;
 import org.wso2.carbon.uuf.internal.util.NameUtils;
 import org.wso2.carbon.uuf.spi.RenderableCreator;
@@ -47,7 +47,7 @@ import java.util.stream.Stream;
  */
 public class ArtifactAppDeployer implements AppDeployer {
 
-    private static final Logger log = LoggerFactory.getLogger(ArtifactAppDeployer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ArtifactAppDeployer.class);
 
     private final Path appsRepository;
     private final AppCreator appCreator;
@@ -90,7 +90,7 @@ public class ArtifactAppDeployer implements AppDeployer {
                     Pair<String, String> appNameContextPath = getAppNameContextPath(appPath);
                     pendingToDeployArtifacts.put(appNameContextPath.getRight(),
                                                  new AppArtifact(appNameContextPath.getLeft(), appPath));
-                    log.debug("UUF app '{}' added to the pending deployments list.", appNameContextPath.getLeft());
+                    LOGGER.debug("UUF app '{}' added to the pending deployments list.", appNameContextPath.getLeft());
                 });
         return Collections.unmodifiableSet(pendingToDeployArtifacts.keySet());
     }
@@ -132,7 +132,7 @@ public class ArtifactAppDeployer implements AppDeployer {
             }
             if (!Files.exists(appArtifact.appPath)) {
                 // Somehow artifact has been removed/deleted. So we cannot create an app from it.
-                log.warn("Cannot deploy UUF app in '{}' as it does not exists anymore.", appArtifact.appPath);
+                LOGGER.warn("Cannot deploy UUF app in '{}' as it does not exists anymore.", appArtifact.appPath);
                 return null;
             }
             try {
@@ -149,7 +149,7 @@ public class ArtifactAppDeployer implements AppDeployer {
             }
             deployedApps.put(createdApp.getContextPath(), createdApp);
         }
-        log.info("UUF app '{}' deployed for context path '{}'.", createdApp.getName(), createdApp.getContextPath());
+        LOGGER.info("UUF app '{}' deployed for context path '{}'.", createdApp.getName(), createdApp.getContextPath());
         return createdApp;
     }
 

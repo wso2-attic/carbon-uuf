@@ -32,7 +32,7 @@ public class Component {
 
     public static final String ROOT_COMPONENT_NAME = "root";
     public static final String ROOT_COMPONENT_CONTEXT_PATH = "/root";
-    private static final Logger log = LoggerFactory.getLogger(Component.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Component.class);
 
     private final String name;
     private final String version;
@@ -79,9 +79,7 @@ public class Component {
             return Optional.<String>empty();
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug("Component '" + name + "' is serving Page '" + servingPage + "' for URI '" + pageUri + "'.");
-        }
+        LOGGER.debug("Component '{}' is serving Page '{}' for URI '{}'.", name, servingPage, pageUri);
 
         // Rendering flow tracking start.
         requestLookup.tracker().start(this);

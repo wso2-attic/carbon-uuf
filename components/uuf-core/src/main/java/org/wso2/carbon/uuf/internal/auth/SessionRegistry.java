@@ -16,11 +16,14 @@
  *  under the License.
  */
 
-package org.wso2.carbon.uuf.internal.core.auth;
+package org.wso2.carbon.uuf.internal.auth;
 
 import org.wso2.carbon.uuf.api.auth.Session;
 import org.wso2.carbon.uuf.exception.UUFException;
 
+import java.io.Closeable;
+import java.io.IOException;
+import java.util.Optional;
 import javax.cache.Cache;
 import javax.cache.CacheException;
 import javax.cache.CacheManager;
@@ -28,9 +31,6 @@ import javax.cache.Caching;
 import javax.cache.configuration.MutableConfiguration;
 import javax.cache.expiry.AccessedExpiryPolicy;
 import javax.cache.expiry.Duration;
-import java.io.Closeable;
-import java.io.IOException;
-import java.util.Optional;
 
 public class SessionRegistry implements Closeable {
 
