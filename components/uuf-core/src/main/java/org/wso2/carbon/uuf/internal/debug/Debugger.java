@@ -27,13 +27,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.core.App;
 import org.wso2.carbon.uuf.core.UriPatten;
+import org.wso2.carbon.uuf.internal.UUFServer;
 import org.wso2.carbon.uuf.internal.io.util.MimeMapper;
 import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.carbon.uuf.spi.HttpResponse;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.management.ManagementFactory;
 
 import static org.wso2.carbon.uuf.spi.HttpResponse.CONTENT_TYPE_APPLICATION_JSON;
 import static org.wso2.carbon.uuf.spi.HttpResponse.CONTENT_TYPE_WILDCARD;
@@ -56,11 +56,7 @@ public class Debugger {
 
     private final static JsonParser JSON_PARSER = new JsonParser();
     private static final Logger LOGGER = LoggerFactory.getLogger(Debugger.class);
-    private static final boolean IS_DEBUGGING_ENABLED;
-
-    static {
-        IS_DEBUGGING_ENABLED = ManagementFactory.getRuntimeMXBean().getInputArguments().contains("-Xdebug");
-    }
+    private static final boolean IS_DEBUGGING_ENABLED = UUFServer.isDevModeEnabled();
 
     // TODO: 12/07/2016 uncomment this once osgi issue solved for DebugAppender
     //private final DebugAppender debugAppender;
