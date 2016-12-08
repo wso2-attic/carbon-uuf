@@ -188,9 +188,7 @@ public class UUFServer implements Server, RequiredCapabilityListener {
         appDeployer = null;
     }
 
-    @Deprecated
     public static boolean isDevModeEnabled() {
-        // TODO: 8/13/16 Remove this when Carbon 'Utils.isDevModeEnabled()' is available in C5.20
         return DEV_MODE_ENABLED;
     }
 
