@@ -95,6 +95,8 @@ public class LogEvent {
 
     /**
      * Represent different type of events.
+     *
+     * @since 1.0.0
      */
     public enum EventType {
         /**
