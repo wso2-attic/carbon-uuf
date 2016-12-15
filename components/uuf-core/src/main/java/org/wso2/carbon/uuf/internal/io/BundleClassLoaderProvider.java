@@ -39,6 +39,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Dictionary;
 import java.util.List;
 import java.util.Optional;
 import java.util.jar.Attributes;
@@ -65,6 +66,12 @@ public class BundleClassLoaderProvider implements ClassLoaderProvider {
         Bundle bundle = getBundle(componentName, componentVersion, componentReference);
         BundleWiring bundleWiring = bundle.adapt(BundleWiring.class);
         return bundleWiring.getClassLoader();
+    }
+
+    @Override
+    public <T> void deployAPI(Class<T> tClass, T object, Dictionary<String, ?> properties) {
+        BundleContext bundleContext = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
+        bundleContext.registerService(tClass, object, properties);
     }
 
     /**

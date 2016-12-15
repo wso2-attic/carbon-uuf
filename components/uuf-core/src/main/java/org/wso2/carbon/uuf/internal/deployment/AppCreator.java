@@ -22,6 +22,8 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.SetMultimap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.api.Placeholder;
 import org.wso2.carbon.uuf.api.config.ComponentManifest;
 import org.wso2.carbon.uuf.api.config.Configuration;
@@ -50,11 +52,14 @@ import org.wso2.carbon.uuf.internal.deployment.parser.ConfigurationParser;
 import org.wso2.carbon.uuf.internal.deployment.parser.DependencyTreeParser;
 import org.wso2.carbon.uuf.internal.util.NameUtils;
 import org.wso2.carbon.uuf.spi.RenderableCreator;
+import org.wso2.msf4j.Microservice;
 import org.yaml.snakeyaml.Yaml;
 
 import java.util.ArrayList;
+import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -67,6 +72,7 @@ import static org.wso2.carbon.uuf.internal.util.NameUtils.getFullyQualifiedName;
 
 public class AppCreator {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(AppCreator.class);
     private final Map<String, RenderableCreator> renderableCreators;
     private final Set<String> supportedExtensions;
     private final ClassLoaderProvider classLoaderProvider;
@@ -105,8 +111,8 @@ public class AppCreator {
             ComponentReference componentReference = appReference.getComponentReference(componentContextPath);
             ClassLoader classLoader = classLoaderProvider.getClassLoader(componentName, componentVersion,
                                                                          componentReference);
-            Component component = createComponent(componentName, componentVersion, componentContextPath,
-                                                  componentReference, classLoader, lookup);
+            Component component = createComponent(contextPath, componentName, componentVersion, componentContextPath,
+                    componentReference, classLoader, lookup);
             lookup.add(component);
             createdComponents.put(componentName, component);
         });
@@ -128,9 +134,9 @@ public class AppCreator {
         return flattenedDependencies;
     }
 
-    private Component createComponent(String componentName, String componentVersion, String componentContextPath,
-                                      ComponentReference componentReference, ClassLoader classLoader,
-                                      Lookup lookup) {
+    private Component createComponent(String appContextPath, String componentName, String componentVersion,
+                                      String componentContextPath, ComponentReference componentReference,
+                                      ClassLoader classLoader, Lookup lookup) {
         componentReference.getLayouts(supportedExtensions)
                 .map(layoutReference -> createLayout(layoutReference, componentName))
                 .forEach(lookup::add);
@@ -141,7 +147,7 @@ public class AppCreator {
         componentReference.getManifest().ifPresent(componentManifestFile -> {
             ComponentManifest componentManifest = ComponentManifestParser.parse(componentManifestFile);
             addBindings(componentManifest.getBindings(), lookup, componentName);
-            // TODO: Register APIs
+            addAPIs(componentManifest.getApis(), appContextPath, componentContextPath, componentName, classLoader);
         });
 
         if (!componentReference.getI18nFiles().isEmpty()) {
@@ -189,6 +195,31 @@ public class AppCreator {
                 }
             }
             lookup.addBinding(zoneName, fragments, binding.getMode());
+        }
+    }
+
+    private void addAPIs(List<ComponentManifest.API> apis, String appContextPath, String componentContextPath,
+                         String componentName, ClassLoader classLoader) {
+        if ((apis == null) || apis.isEmpty()) {
+            return;
+        }
+
+        for (ComponentManifest.API api : apis) {
+            String className = api.getClassName();
+            String uri = appContextPath + componentContextPath + "/apis" + api.getUri();
+            Object apiImplementation;
+            try {
+                apiImplementation = classLoader.loadClass(className).newInstance();
+            } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+                throw new UUFException("Error in deploying API " + className, e);
+            }
+            if (!(apiImplementation instanceof Microservice)) {
+                throw new UUFException("API class " + apiImplementation + " doesn't implement Microservice interface");
+            }
+            Dictionary<String, String> serviceProperties = new Hashtable<>();
+            serviceProperties.put("contextPath", uri);
+            classLoaderProvider.deployAPI(Microservice.class, (Microservice) apiImplementation, serviceProperties);
+            LOGGER.info("Deployed API " + className + " with the context " + uri + " in component " + componentName);
         }
     }
 
