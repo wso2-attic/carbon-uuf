@@ -2,8 +2,9 @@
 # example entry:
 #    - className: "org.wso2.carbon.uuf.sample.pets-store.PetsStoreMicroservice"
 #      uri: "/pets/"
-apis: []
-
+apis:
+    - className: "org.wso2.carbon.uuf.sample.api.HelloService"
+      uri: "/hello-service/"
 # Binding fragments into zones.
 # Modes:
 #   prepend - pushes the specified fragments into the beginning of the existing pushed content of the zone
