@@ -30,7 +30,12 @@ import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.carbon.uuf.spi.HttpResponse;
 
 import static org.wso2.carbon.uuf.spi.HttpResponse.CONTENT_TYPE_TEXT_HTML;
+import static org.wso2.carbon.uuf.spi.HttpResponse.HEADER_CACHE_CONTROL;
+import static org.wso2.carbon.uuf.spi.HttpResponse.HEADER_EXPIRES;
 import static org.wso2.carbon.uuf.spi.HttpResponse.HEADER_LOCATION;
+import static org.wso2.carbon.uuf.spi.HttpResponse.HEADER_PRAGMA;
+import static org.wso2.carbon.uuf.spi.HttpResponse.HEADER_X_CONTENT_TYPE_OPTIONS;
+import static org.wso2.carbon.uuf.spi.HttpResponse.HEADER_X_XSS_PROTECTION;
 import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_FOUND;
 import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_INTERNAL_SERVER_ERROR;
 import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_OK;
@@ -84,6 +89,7 @@ public class RequestDispatcher {
                 html = app.renderFragment(request, response);
             } else {
                 // Request for a page.
+                setDefaultSecurityHeaders(response);
                 html = app.renderPage(request, response);
             }
             response.setContent(STATUS_OK, html, CONTENT_TYPE_TEXT_HTML);
@@ -109,5 +115,13 @@ public class RequestDispatcher {
 
     public void serveDefaultFavicon(HttpRequest request, HttpResponse response) {
         staticResolver.serveDefaultFavicon(request, response);
+    }
+
+    private void setDefaultSecurityHeaders(HttpResponse httpResponse) {
+        httpResponse.setHeader(HEADER_X_CONTENT_TYPE_OPTIONS, "nosniff");
+        httpResponse.setHeader(HEADER_X_XSS_PROTECTION, "1; mode=block");
+        httpResponse.setHeader(HEADER_CACHE_CONTROL, "no-store, no-cache, must-revalidate, private");
+        httpResponse.setHeader(HEADER_EXPIRES, "0");
+        httpResponse.setHeader(HEADER_PRAGMA, "no-cache");
     }
 }
