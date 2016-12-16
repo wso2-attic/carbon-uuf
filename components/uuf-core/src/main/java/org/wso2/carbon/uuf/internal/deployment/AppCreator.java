@@ -219,7 +219,8 @@ public class AppCreator {
             Dictionary<String, String> serviceProperties = new Hashtable<>();
             serviceProperties.put("contextPath", uri);
             classLoaderProvider.deployAPI(Microservice.class, (Microservice) apiImplementation, serviceProperties);
-            LOGGER.info("Deployed API " + className + " with the context " + uri + " in component " + componentName);
+            LOGGER.info("Deployed API '{}' in component '{}' with the context path '{}'.",
+                    className, componentName, uri);
         }
     }
 
