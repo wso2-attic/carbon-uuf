@@ -84,10 +84,10 @@ public class APITest {
         // This single element array is used to store the api context path
         final String[] apiContextPath = new String[1];
         doAnswer(invocation -> {
-            Dictionary<String, String> serviceProperties = (Dictionary<String, String>) invocation.getArguments()[2];
+            Dictionary<String, String> serviceProperties = (Dictionary<String, String>) invocation.getArguments()[1];
             apiContextPath[0] = serviceProperties.get("contextPath");
             return null;
-        }).when(classLoaderProvider).deployAPI(any(), any(), any());
+        }).when(classLoaderProvider).deployAPI(any(), any());
 
         AppCreator appCreator = new AppCreator(renderableCreators, classLoaderProvider);
         appCreator.createApp(appReference, appContextpath);

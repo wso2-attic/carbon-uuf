@@ -32,6 +32,7 @@ import org.wso2.carbon.uuf.api.reference.FileReference;
 import org.wso2.carbon.uuf.exception.FileOperationException;
 import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.internal.deployment.ClassLoaderProvider;
+import org.wso2.msf4j.Microservice;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -69,9 +70,13 @@ public class BundleClassLoaderProvider implements ClassLoaderProvider {
     }
 
     @Override
-    public <T> void deployAPI(Class<T> tClass, T object, Dictionary<String, ?> properties) {
+    public void deployAPI(Object serviceImplementation, Dictionary<String, ?> properties) {
+        if (!(serviceImplementation instanceof Microservice)) {
+            throw new UUFException("API class " + serviceImplementation.getClass().getName() +
+                    " doesn't implement Microservice interface");
+        }
         BundleContext bundleContext = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
-        bundleContext.registerService(tClass, object, properties);
+        bundleContext.registerService(Microservice.class, (Microservice) serviceImplementation, properties);
     }
 
     /**

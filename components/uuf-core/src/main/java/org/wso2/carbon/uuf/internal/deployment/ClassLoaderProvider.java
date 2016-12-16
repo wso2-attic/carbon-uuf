@@ -40,12 +40,10 @@ public interface ClassLoaderProvider {
     ClassLoader getClassLoader(String componentName, String componentVersion, ComponentReference componentReference);
 
     /**
-     * Deploys an API service.
+     * Deploys an API as a MSF4J service.
      *
-     * @param tClass     interface name
-     * @param object     service object which implements the interface
-     * @param properties service specific properties
-     * @param <T>        service type
+     * @param serviceImplementation service object which implements the interface
+     * @param properties            service specific properties
      */
-    <T> void deployAPI(Class<T> tClass, T object, Dictionary<String, ?> properties);
+    void deployAPI(Object serviceImplementation, Dictionary<String, ?> properties);
 }

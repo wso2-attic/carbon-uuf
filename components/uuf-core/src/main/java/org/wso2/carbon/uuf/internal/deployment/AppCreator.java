@@ -52,7 +52,6 @@ import org.wso2.carbon.uuf.internal.deployment.parser.ConfigurationParser;
 import org.wso2.carbon.uuf.internal.deployment.parser.DependencyTreeParser;
 import org.wso2.carbon.uuf.internal.util.NameUtils;
 import org.wso2.carbon.uuf.spi.RenderableCreator;
-import org.wso2.msf4j.Microservice;
 import org.yaml.snakeyaml.Yaml;
 
 import java.util.ArrayList;
@@ -213,12 +212,9 @@ public class AppCreator {
             } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
                 throw new UUFException("Error in deploying API " + className, e);
             }
-            if (!(apiImplementation instanceof Microservice)) {
-                throw new UUFException("API class " + apiImplementation + " doesn't implement Microservice interface");
-            }
             Dictionary<String, String> serviceProperties = new Hashtable<>();
             serviceProperties.put("contextPath", uri);
-            classLoaderProvider.deployAPI(Microservice.class, (Microservice) apiImplementation, serviceProperties);
+            classLoaderProvider.deployAPI(apiImplementation, serviceProperties);
             LOGGER.info("Deployed API '{}' in component '{}' with the context path '{}'.",
                     className, componentName, uri);
         }
