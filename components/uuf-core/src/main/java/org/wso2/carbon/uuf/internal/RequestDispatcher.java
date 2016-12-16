@@ -85,11 +85,11 @@ public class RequestDispatcher {
     private void servePageOrFragment(App app, HttpRequest request, HttpResponse response) {
         try {
             String html;
+            // set default mandatory http headers for security purpose
+            setDefaultSecurityHeaders(response);
             if (request.isFragmentRequest()) {
                 html = app.renderFragment(request, response);
             } else {
-                // Set default mandatory http headers for security purpose
-                setDefaultSecurityHeaders(response);
                 // Request for a page.
                 html = app.renderPage(request, response);
             }

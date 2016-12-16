@@ -54,6 +54,7 @@ import static org.wso2.carbon.uuf.api.reference.ComponentReference.DIR_NAME_FRAG
 import static org.wso2.carbon.uuf.spi.HttpResponse.CONTENT_TYPE_IMAGE_PNG;
 import static org.wso2.carbon.uuf.spi.HttpResponse.CONTENT_TYPE_WILDCARD;
 import static org.wso2.carbon.uuf.spi.HttpResponse.HEADER_CACHE_CONTROL;
+import static org.wso2.carbon.uuf.spi.HttpResponse.HEADER_LAST_MODIFIED;
 import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_BAD_REQUEST;
 import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_INTERNAL_SERVER_ERROR;
 import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_NOT_FOUND;
@@ -296,7 +297,7 @@ public class StaticResolver {
     }
 
     private void setCacheHeaders(ZonedDateTime lastModifiedDate, HttpResponse response) {
-        response.setHeader("Last-Modified", HTTP_DATE_FORMATTER.format(lastModifiedDate));
+        response.setHeader(HEADER_LAST_MODIFIED, HTTP_DATE_FORMATTER.format(lastModifiedDate));
         response.setHeader(HEADER_CACHE_CONTROL, "public,max-age=2592000");
     }
 

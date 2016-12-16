@@ -45,6 +45,7 @@ public interface HttpResponse {
     String HEADER_X_CONTENT_TYPE_OPTIONS = "X-Content-Type-Options";
     String HEADER_X_XSS_PROTECTION = "X-XSS-Protection";
     String HEADER_CACHE_CONTROL = "Cache-Control";
+    String HEADER_LAST_MODIFIED = "Last-Modified";
     String HEADER_EXPIRES = "Expires";
     String HEADER_PRAGMA = "Pragma";
 
