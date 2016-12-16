@@ -88,8 +88,9 @@ public class RequestDispatcher {
             if (request.isFragmentRequest()) {
                 html = app.renderFragment(request, response);
             } else {
-                // Request for a page.
+                // Set default mandatory http headers for security purpose
                 setDefaultSecurityHeaders(response);
+                // Request for a page.
                 html = app.renderPage(request, response);
             }
             response.setContent(STATUS_OK, html, CONTENT_TYPE_TEXT_HTML);
@@ -117,6 +118,11 @@ public class RequestDispatcher {
         staticResolver.serveDefaultFavicon(request, response);
     }
 
+    /**
+     * Sets some default and mandatory security related headers to the response path.
+     *
+     * @param httpResponse the http response instance used with setting the headers.
+     */
     private void setDefaultSecurityHeaders(HttpResponse httpResponse) {
         httpResponse.setHeader(HEADER_X_CONTENT_TYPE_OPTIONS, "nosniff");
         httpResponse.setHeader(HEADER_X_XSS_PROTECTION, "1; mode=block");
