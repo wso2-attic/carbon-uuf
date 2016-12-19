@@ -72,8 +72,8 @@ public class BundleClassLoaderProvider implements ClassLoaderProvider {
     @Override
     public void deployAPI(Object serviceImplementation, Dictionary<String, ?> properties) {
         if (!(serviceImplementation instanceof Microservice)) {
-            throw new UUFException("API class " + serviceImplementation.getClass().getName() +
-                    " doesn't implement Microservice interface");
+            throw new UUFException("Cannot deploy REST API '" + serviceImplementation.getClass().getName() +
+                    "' as a micro-service because it does not implement '" + Microservice.class.getName() + "'");
         }
         BundleContext bundleContext = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
         bundleContext.registerService(Microservice.class, (Microservice) serviceImplementation, properties);

@@ -210,12 +210,13 @@ public class AppCreator {
             try {
                 apiImplementation = classLoader.loadClass(className).newInstance();
             } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
-                throw new UUFException("Error in deploying API " + className, e);
+                throw new UUFException("Cannot deploy REST API '" + className + "' for component '" +
+                        componentName + "'", e);
             }
             Dictionary<String, String> serviceProperties = new Hashtable<>();
             serviceProperties.put("contextPath", uri);
             classLoaderProvider.deployAPI(apiImplementation, serviceProperties);
-            LOGGER.info("Deployed API '{}' in component '{}' with the context path '{}'.",
+            LOGGER.info("Deployed REST API '{}' for component '{}' with context path '{}'.",
                     className, componentName, uri);
         }
     }
