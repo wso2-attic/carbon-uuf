@@ -378,6 +378,54 @@
                 <version>${equinox.osgi.version}</version>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>org.apache.servicemix.bundles</groupId>
+                <artifactId>org.apache.servicemix.bundles.commons-beanutils</artifactId>
+                <version>${beanutils.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-buffer</artifactId>
+                <version>${netty.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-common</artifactId>
+                <version>${netty.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-handler</artifactId>
+                <version>${netty.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-transport</artifactId>
+                <version>${netty.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-codec</artifactId>
+                <version>${netty.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-codec-http</artifactId>
+                <version>${netty.version}</version>
+                <!--<scope>test</scope>-->
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.lmax</groupId>
+                <artifactId>disruptor</artifactId>
+                <version>${disruptor.orbit.version}</version>
+                <scope>test</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -522,6 +570,9 @@
         <ow2.jta.spec.version>1.0.12</ow2.jta.spec.version>
         <osgi.service.tracker.package.import.version.range>[1.5.1, 2.0.0)
         </osgi.service.tracker.package.import.version.range>
+        <beanutils.version>1.8.3_2</beanutils.version>
+        <netty.version>4.0.30.Final</netty.version>
+        <disruptor.orbit.version>3.3.2.wso2v1</disruptor.orbit.version>
 
         <!-- Source and target Java version -->
         <wso2.maven.compiler.source>1.8</wso2.maven.compiler.source>

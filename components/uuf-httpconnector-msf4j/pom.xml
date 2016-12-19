@@ -78,6 +78,7 @@
                             <!--TODO: replace below line with above commented line after carbon-messaging fix export version issue.-->
                             org.wso2.carbon.messaging;version="1.0.5",
                             org.wso2.msf4j.*,
+                            org.osgi.framework;version="${osgi.framework.import.version.range}",
                             javax.ws.rs.*,
                             io.netty.handler.*,
                             org.osgi.service.component.annotations.*,

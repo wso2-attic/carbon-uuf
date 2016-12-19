@@ -75,7 +75,20 @@ public class OSGiServicesTest {
                 getBundleOption("org.wso2.carbon.uuf.core", "org.wso2.carbon.uuf"),
                 getBundleOption("org.wso2.carbon.uuf.renderablecreator.html", "org.wso2.carbon.uuf"),
                 getBundleOption("org.wso2.carbon.uuf.tests.dummy-http-connector", "org.wso2.carbon.uuf.tests"),
-                getBundleOption("org.wso2.carbon.uuf.sample.pets-store.bundle", "org.wso2.carbon.uuf.sample")
+                getBundleOption("org.wso2.carbon.uuf.sample.pets-store.bundle", "org.wso2.carbon.uuf.sample"),
+                // MSF4J
+                getBundleOption("msf4j-core", "org.wso2.msf4j"),
+                getBundleOption("org.apache.servicemix.bundles.commons-beanutils", "org.apache.servicemix.bundles"),
+                getBundleOption("javax.ws.rs-api", "javax.ws.rs"),
+                getBundleOption("netty-buffer", "io.netty"),
+                getBundleOption("netty-common", "io.netty"),
+                getBundleOption("netty-handler", "io.netty"),
+                getBundleOption("netty-transport", "io.netty"),
+                getBundleOption("netty-codec", "io.netty"),
+                getBundleOption("netty-codec-http", "io.netty"),
+                getBundleOption("disruptor", "org.wso2.lmax"),
+                getBundleOption("org.wso2.carbon.transport.http.netty", "org.wso2.carbon.transport"),
+                getBundleOption("org.wso2.carbon.messaging", "org.wso2.carbon.messaging")
         );
         return OSGiTestUtils.getDefaultPaxOptions(options);
     }

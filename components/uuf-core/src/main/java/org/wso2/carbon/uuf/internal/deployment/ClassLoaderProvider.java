@@ -20,6 +20,8 @@ package org.wso2.carbon.uuf.internal.deployment;
 
 import org.wso2.carbon.uuf.api.reference.ComponentReference;
 
+import java.util.Dictionary;
+
 /**
  * A provider that gives the class loader for a given component.
  *
@@ -36,4 +38,12 @@ public interface ClassLoaderProvider {
      * @return class loader for specified component
      */
     ClassLoader getClassLoader(String componentName, String componentVersion, ComponentReference componentReference);
+
+    /**
+     * Deploys an API as a MSF4J service.
+     *
+     * @param serviceImplementation service object which implements the interface
+     * @param properties            service specific properties
+     */
+    void deployAPI(Object serviceImplementation, Dictionary<String, ?> properties);
 }
