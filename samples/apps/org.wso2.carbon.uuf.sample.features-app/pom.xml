@@ -43,37 +43,34 @@
         <dependency>
             <groupId>org.wso2.carbon.uuf.sample</groupId>
             <artifactId>org.wso2.carbon.uuf.sample.foundation</artifactId>
-            <version>${carbon.uuf.version}</version>
             <type>zip</type>
             <classifier>uuf-component</classifier>
         </dependency>
+
         <!--UUF Themes-->
         <dependency>
             <groupId>org.wso2.carbon.uuf.sample</groupId>
             <artifactId>org.wso2.carbon.uuf.sample.theme.default</artifactId>
-            <version>${carbon.uuf.version}</version>
             <type>zip</type>
             <classifier>uuf-theme</classifier>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.uuf.sample</groupId>
             <artifactId>org.wso2.carbon.uuf.sample.theme.blue</artifactId>
-            <version>${carbon.uuf.version}</version>
             <type>zip</type>
             <classifier>uuf-theme</classifier>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.uuf.sample</groupId>
             <artifactId>org.wso2.carbon.uuf.sample.theme.green</artifactId>
-            <version>${carbon.uuf.version}</version>
             <type>zip</type>
             <classifier>uuf-theme</classifier>
         </dependency>
+
         <!--Backend dependencies-->
         <dependency>
             <groupId>org.wso2.carbon.uuf.sample</groupId>
             <artifactId>org.wso2.carbon.uuf.sample.pets-store.bundle</artifactId>
-            <version>${carbon.uuf.version}</version>
         </dependency>
     </dependencies>
 
