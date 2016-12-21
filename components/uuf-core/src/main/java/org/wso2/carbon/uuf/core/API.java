@@ -147,7 +147,7 @@ public class API {
     /**
      * Creates a new session and returns it.
      *
-     * @param user user
+     * @param user user to create the session
      * @return newly created session
      */
     public Session createSession(User user) {
