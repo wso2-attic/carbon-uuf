@@ -43,7 +43,7 @@
         <dependency>
             <groupId>org.wso2.carbon.uuf.sample</groupId>
             <artifactId>org.wso2.carbon.uuf.sample.foundation</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>${carbon.uuf.version}</version>
             <type>zip</type>
             <classifier>uuf-component</classifier>
         </dependency>
@@ -51,21 +51,21 @@
         <dependency>
             <groupId>org.wso2.carbon.uuf.sample</groupId>
             <artifactId>org.wso2.carbon.uuf.sample.theme.default</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>${carbon.uuf.version}</version>
             <type>zip</type>
             <classifier>uuf-theme</classifier>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.uuf.sample</groupId>
             <artifactId>org.wso2.carbon.uuf.sample.theme.blue</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>${carbon.uuf.version}</version>
             <type>zip</type>
             <classifier>uuf-theme</classifier>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.uuf.sample</groupId>
             <artifactId>org.wso2.carbon.uuf.sample.theme.green</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>${carbon.uuf.version}</version>
             <type>zip</type>
             <classifier>uuf-theme</classifier>
         </dependency>
