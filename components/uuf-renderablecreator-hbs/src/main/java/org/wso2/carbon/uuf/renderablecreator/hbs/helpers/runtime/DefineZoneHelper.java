@@ -42,6 +42,7 @@ public class DefineZoneHelper implements Helper<String> {
         Lookup lookup = options.data(HbsRenderable.DATA_KEY_LOOKUP);
         RequestLookup requestLookup = options.data(HbsRenderable.DATA_KEY_REQUEST_LOOKUP);
         StringBuilder buffer = new StringBuilder();
+        buffer.append("<!--[UUF-ZONE]{\"name\": \"").append(zoneName).append("\",\"position\": \"start\"}-->\n");
 
         List<Fragment> bindings = lookup.getBindings(requestLookup.tracker().getCurrentComponentName(), zoneName);
         if (!bindings.isEmpty()) {
@@ -52,6 +53,7 @@ public class DefineZoneHelper implements Helper<String> {
         }
 
         requestLookup.getZoneContent(zoneName).ifPresent(buffer::append);
+        buffer.append("<!--[UUF-ZONE]{\"name\": \"").append(zoneName).append("\",\"position\": \"end\"}-->\n");
         return new Handlebars.SafeString(buffer.toString());
     }
 }

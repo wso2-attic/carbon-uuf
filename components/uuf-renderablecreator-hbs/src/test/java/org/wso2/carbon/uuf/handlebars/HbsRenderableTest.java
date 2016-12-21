@@ -166,7 +166,9 @@ public class HbsRenderableTest {
         when(lookup.getBindings(any(), eq("test-zone"))).thenReturn(ImmutableList.of(pushedFragment));
 
         String output = pageRenderable.render(createModel(), lookup, createRequestLookup(), createAPI());
-        Assert.assertEquals(output, "X fragment content Y");
+        Assert.assertEquals(output, "X <!--[UUF-ZONE]{\"name\": \"test-zone\",\"position\": \"start\"}-->\n" +
+                "fragment content<!--[UUF-ZONE]{\"name\": \"test-zone\",\"position\": \"end\"}-->\n" +
+                " Y");
     }
 
     @Test
@@ -178,6 +180,8 @@ public class HbsRenderableTest {
         when(requestLookup.getZoneContent("test-zone")).thenReturn(Optional.of("zone content"));
 
         String output = pageRenderable.render(createModel(), lookup, requestLookup, createAPI());
-        Assert.assertEquals(output, "X zone content Y");
+        Assert.assertEquals(output, "X <!--[UUF-ZONE]{\"name\": \"test-zone\",\"position\": \"start\"}-->\n" +
+                "zone content<!--[UUF-ZONE]{\"name\": \"test-zone\",\"position\": \"end\"}-->\n" +
+                " Y");
     }
 }
