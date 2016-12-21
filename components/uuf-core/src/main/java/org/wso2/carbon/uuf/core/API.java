@@ -65,7 +65,7 @@ public class API {
      * @param serviceClassName  service class name
      * @param serviceMethodName method name
      * @param args              method arguments
-     * @return result of the method invocation of the best matched OSGi service
+     * @return invoked OSGi service instance
      */
     public static Object callOSGiService(String serviceClassName, String serviceMethodName, Object... args) {
         Object serviceInstance;
