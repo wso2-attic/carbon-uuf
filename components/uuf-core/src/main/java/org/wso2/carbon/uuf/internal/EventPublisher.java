@@ -59,7 +59,7 @@ public class EventPublisher<T> {
     /**
      * Stop tracking services when this object is garbage collected.
      *
-     * @throws Throwable
+     * @throws Throwable the {@code Exception} raised by this method
      */
     @Override
     protected void finalize() throws Throwable {
