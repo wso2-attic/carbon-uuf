@@ -1,35 +1,36 @@
 {{layout "org.wso2.carbon.uuf.sample.foundation.main"}}
-{{title "if Block Helper Sample | " @config.appName}}
+{{title "if | Block Helper Sample | " @config.appName}}
 {{#fillZone "content"}}
-    <h3>The if Block Helper.</h3>
+    <h3>The 'if' Block Helper.</h3>
     <hr />
-    <p>You can use the if helper to conditionally render a block.</p>
+    <p>You can use the 'if' helper to conditionally render a block.</p>
     <p>If its argument returns false, undefined, null, "", 0, or [], Handlebars will not render the block.</p>
     <pre>
         &lt;div class="entry"&gt;
             \{{#if author}}
-                &lt;h1&gt;\{{firstName}} \{{lastName}}&lt;/h1&gt;
+                &lt;h3&gt;\{{firstName}} \{{lastName}}&lt;/h3&gt;
             \{{/if}}
         &lt;/div&gt;
     </pre>
-    <p>Lets see an example with the above template: </p>
+    <p>Example: </p>
     <pre>
-        var data = {
-            "author" = true;
-            "firstName" = "John";
-            "lastName" = "Samuel";
+        {
+            author: {
+                        firstName: "John",
+                        lastName: "Samuel"
+                    }
         }
     </pre>
     <p>will result in:</p>
     <pre>
         &lt;div class="entry"&gt;
-            &lt;h1&gt;John Samuel&lt;/h1&gt;
+            &lt;h3&gt;John Samuel&lt;/h3&gt;
         &lt;/div&gt;
     </pre>
     <p>output:</p>
-    <pre>
-        John Samuel
-    </pre>
+
+        <h3>John Samuel</h3>
+
     <p>When used with an empty ({}) context, author will be undefined, resulting in:</p>
     <pre>
         &lt;div class="entry"&gt;
@@ -41,7 +42,7 @@
     <pre>
         &lt;div class="entry"&gt;
           \{{#if author}}
-            &lt;h1&gt;\{{firstName}} \{{lastName}}&lt;/h1&gt;
+            &lt;h3&gt;\{{firstName}} \{{lastName}}&lt;/h3&gt;
           \{{else}}
             &lt;h1&gt;Unknown Author&lt;/h1&gt;
           \{{/if}}
@@ -51,20 +52,16 @@
         Lets see an example which render the else section:
     </p>
     <pre>
-        var data = {
-            "author" = false;
-            "firstName" = "John";
-            "lastName" = "Samuel";
+        {
+            author: false
         }
     </pre>
     <p>will result in:</p>
     <pre>
         &lt;div class="entry"&gt;
-            &lt;h1&gt;Unknown Author&lt;/h1&gt;
+            &lt;h3&gt;Unknown Author&lt;/h3&gt;
         &lt;/div&gt;
     </pre>
     <p>output: </p>
-    <pre>
-       Unknown Author
-    </pre>
+    <h3>Unknown Author</h3>
 {{/fillZone}}

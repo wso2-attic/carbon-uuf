@@ -1,9 +1,9 @@
 {{layout "org.wso2.carbon.uuf.sample.foundation.main"}}
-{{title "unless Block Helper Sample | " @config.appName}}
+{{title "unless | Block Helper Sample | " @config.appName}}
 {{#fillZone "content"}}
-    <h3>The unless Block Helper.</h3>
+    <h3>The 'unless' Block Helper.</h3>
     <hr />
-    <p>You can use the unless helper as the inverse of the if helper.</p>
+    <p>You can use the 'unless' helper as the inverse of the 'if' helper.</p>
     <p>Its block will be rendered if the expression returns a falsy value.</p>
     <pre>
         &lt;div class="entry"&gt;
@@ -12,14 +12,14 @@
           \{{/unless}}
         &lt;/div&gt;
     </pre>
-    <p>When used with the above template: </p>
+    <p>Example: </p>
     <pre>
-        var data = {
-                    "license" = false;
-                }
+        {
+            "license" = false;
+        }
     </pre>
     <p>output:</p>
-    <pre>WARNING: This entry does not have a license!</pre>
+    <h3>WARNING: This entry does not have a license!</h3>
     <p>
         If looking up license under the current context returns a falsy value, Handlebars will render the warning.
         Otherwise, it will render nothing.
