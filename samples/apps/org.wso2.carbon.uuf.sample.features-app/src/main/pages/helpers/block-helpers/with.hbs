@@ -1,0 +1,71 @@
+{{layout "org.wso2.carbon.uuf.sample.foundation.main"}}
+{{title "with | Block Helper Sample | " @config.appName}}
+{{#fillZone "content"}}
+    <h3>The 'with' Block Helper.</h3>
+    <hr />
+    <p>Normally, Handlebars templates are evaluated against the context passed into the compiled method.</p>
+    <pre>
+        var source   = "&lt;p&gt;\{{lastName}}, \{{firstName}}&lt;/p&gt;";
+        var template = Handlebars.compile(source);
+        template({firstName: "Alan", lastName: "Johnson"});
+    </pre>
+    <p>will result in:</p>
+    <pre>
+        &lt;p&gt;Johnson, Alan&lt;/p&gt;
+    </pre>
+    <p>You can shift the context for a section of a template by using the 'with' helper.</p>
+    <pre>
+        &lt;div class="entry"&gt;
+          &lt;h1&gt;\{{title}}&lt;/h1&gt;
+
+          \{{#with author}}
+          &lt;h2&gt;By \{{firstName}} \{{lastName}}&lt;/h2&gt;
+          \{{/with}}
+        &lt;/div&gt;
+    </pre>
+    <p>For example:</p>
+    <pre>
+        {
+          title: "My first post!",
+          author: {
+            firstName: "Charles",
+            lastName: "Jolley"
+          }
+        }
+    </pre>
+    <p>will result in:</p>
+    <pre>
+        &lt;div class="entry"&gt;
+          &lt;h1&gt;My first post!&lt;/h1&gt;
+
+          &lt;h2&gt;By Charles Jolley&lt;/h2&gt;
+        &lt;/div&gt;
+    </pre>
+    <h3>output:</h3>
+    <h1>My first post!</h1>
+
+    <h2>By Charles Jolley</h2>
+    <p>
+        'with' can also be used with block parameters to define known references in the current block.
+        The example above can be converted to,
+    </p>
+    <pre>
+        &lt;div class="entry"&gt;
+          &lt;h1&gt;\{{title}}&lt;/h1&gt;
+
+          \{{#with author as |myAuthor|}}
+          &lt;h2&gt;By \{{myAuthor.firstName}} \{{myAuthor.lastName}}&lt;/h2&gt;
+          \{{/with}}
+        &lt;/div&gt;
+    </pre>
+    <p>which allows for complex templates to potentially provide clearer code than ../ depth references allow for.</p>
+    <p>You can optionally provide an \{{else}} section which will display only when the passed value is empty.</p>
+    <pre>
+        \{{#with author}}
+          &lt;p&gt;\{{name}}&lt;/p&gt;
+        \{{else}}
+          &lt;p class="empty"&gt;No content&lt;/p&gt;
+        \{{/with}}
+    </pre>
+    <p></p>
+{{/fillZone}}

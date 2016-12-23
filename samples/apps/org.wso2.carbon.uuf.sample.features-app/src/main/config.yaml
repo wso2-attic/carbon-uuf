@@ -16,6 +16,9 @@ menu :
         Session Scope : {link: "theme/session-scope"}
       Menu : {link: "menu", icon: "fw fw-list"}
       File Upload: {link: "file-upload", icon: "fw fw-upload"}
+      Helpers :
+        this : {link: "helpers"}
+        Block Helpers : {link: "helpers/block-helpers"}
 errorPages:
   "404": /foundation/error/404
   default: /foundation/error/default

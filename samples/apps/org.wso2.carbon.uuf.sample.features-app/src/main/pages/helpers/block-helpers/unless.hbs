@@ -1,0 +1,28 @@
+{{layout "org.wso2.carbon.uuf.sample.foundation.main"}}
+{{title "unless | Block Helper Sample | " @config.appName}}
+{{#fillZone "content"}}
+    <h3>The 'unless' Block Helper.</h3>
+    <hr />
+    <p>You can use the 'unless' helper as the inverse of the 'if' helper.</p>
+    <p>Its block will be rendered if the expression returns a falsy value.</p>
+    <pre>
+        &lt;div class="entry"&gt;
+          \{{#unless license}}
+            &lt;h3&gt;WARNING: This entry does not have a license!&lt;/h3&gt;
+          \{{/unless}}
+        &lt;/div&gt;
+    </pre>
+    <p>Example: </p>
+    <pre>
+        {
+            "license" = false;
+        }
+    </pre>
+    <h3>output:</h3>
+    <h3>WARNING: This entry does not have a license!</h3>
+    <p>
+        If looking up license under the current context returns a falsy value, Handlebars will render the warning.
+        Otherwise, it will render nothing.
+    </p>
+    <p></p>
+{{/fillZone}}
