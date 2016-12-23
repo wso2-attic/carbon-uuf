@@ -1,0 +1,16 @@
+{{layout "org.wso2.carbon.uuf.sample.foundation.main"}}
+{{title "Now | String Helper Sample | " @config.appName}}
+{{#fillZone "content"}}
+    <h3>Now String Helper.</h3>
+    <hr />
+    <pre>
+        \{{now ["format"] [tz=timeZone|timeZoneId]}}
+    </pre>
+    <p>Format parameters is one of:</p>
+    <li>"full": full date format. For example: Tuesday, June 19, 2012</li>
+    <li>"long": long date format. For example: June 19, 2012</li>
+    <li>"medium": medium date format. For example: Jun 19, 2012</li>
+    <li>"short": short date format. For example: 6/19/12</li>
+    <li>"pattern": a date pattern.</li>
+    <p>Otherwise, the default formatter will be used.</p>
+{{/fillZone}}

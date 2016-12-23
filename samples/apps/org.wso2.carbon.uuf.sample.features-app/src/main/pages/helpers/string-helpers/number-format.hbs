@@ -1,0 +1,23 @@
+{{layout "org.wso2.carbon.uuf.sample.foundation.main"}}
+{{title "Number format | String Helper Sample | " @config.appName}}
+{{#fillZone "content"}}
+    <h3>number format String Helper.</h3>
+    <hr />
+    <p> You can format number using one of the following format parameters: </p>
+    <li>"integer": the integer number format</li>
+    <li>"percent": the percent number format</li>
+    <li>"currency": the decimal number format</li>
+    <li>"pattern": a decimal pattern.</li>
+    <p>Otherwise, the default formatter will be used.</p>
+    <pre>
+        \{{dateFormat date ["format"] [format="format"][tz=timeZone|timeZoneId]}}
+    </pre>
+    <p>More options:</p>
+    <li>groupingUsed: Set whether or not grouping will be used in this format.</li>
+    <li>maximumFractionDigits: Sets the maximum number of digits allowed in the fraction portion of a number.</li>
+    <li>maximumIntegerDigits: Sets the maximum number of digits allowed in the integer portion of a number</li>
+    <li>minimumFractionDigits: Sets the minimum number of digits allowed in the fraction portion of a number</li>
+    <li>minimumIntegerDigits: Sets the minimum number of digits allowed in the integer portion of a number.</li>
+    <li>parseIntegerOnly: Sets whether or not numbers should be parsed as integers only.</li>
+    <li>roundingMode: Sets the {@link java.math.RoundingMode} used in this NumberFormat.</li>
+{{/fillZone}}

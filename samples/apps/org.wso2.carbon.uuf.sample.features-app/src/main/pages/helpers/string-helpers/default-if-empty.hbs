@@ -1,0 +1,19 @@
+{{layout "org.wso2.carbon.uuf.sample.foundation.main"}}
+{{title "Cut | String Helper Sample | " @config.appName}}
+{{#fillZone "content"}}
+    <h3>Cut String Helper.</h3>
+    <hr />
+    <p>If value evaluates to False, uses the given default. Otherwise, uses the value.</p>
+    <pre>
+        \{{defaultIfEmpty value ["nothing"] }}
+    </pre>
+    <p>when you use the template: </p>
+    <pre>
+        value = ""; (the empty string)
+    </pre>
+    <p>will result in:</p>
+    <pre>
+        "nothing"
+    </pre>
+    <p></p>
+{{/fillZone}}
