@@ -34,10 +34,10 @@ public class AppConfig {
     private String contextPath;
     private String theme;
     private String loginPageUri;
-    private Map<String, String> errorPages;
-    private Map<String, List<MenuItem>> menus;
-    private SecurityConfig security;
-    private Map<String, Object> otherConfigurations;
+    private Map<String, String> errorPages = Collections.emptyMap();
+    private Map<String, List<MenuItem>> menus = Collections.emptyMap();
+    private SecurityConfig security = new SecurityConfig();
+    private Map<String, Object> otherConfigurations = Collections.emptyMap();
 
     /**
      * Returns the client-side context path in this app's config.
@@ -108,7 +108,7 @@ public class AppConfig {
      * @param errorPages URIs of error pages to be set
      */
     public void setErrorPages(Map<String, String> errorPages) {
-        this.errorPages = errorPages;
+        this.errorPages = (errorPages == null) ? Collections.emptyMap() : errorPages;
     }
 
     /**
@@ -126,7 +126,7 @@ public class AppConfig {
      * @param menus menus to be set
      */
     public void setMenus(Map<String, List<MenuItem>> menus) {
-        this.menus = menus;
+        this.menus = (menus == null) ? Collections.emptyMap() : menus;
     }
 
     /**
@@ -144,7 +144,7 @@ public class AppConfig {
      * @param security security configs to be set
      */
     public void setSecurity(SecurityConfig security) {
-        this.security = security;
+        this.security = (security == null) ? new SecurityConfig() : security;
     }
 
     /**
@@ -162,7 +162,7 @@ public class AppConfig {
      * @param otherConfigurations business-logic related configurations to be set
      */
     public void setOther(Map<String, Object> otherConfigurations) {
-        this.otherConfigurations = otherConfigurations;
+        this.otherConfigurations = (otherConfigurations == null) ? Collections.emptyMap() : otherConfigurations;
     }
 
     /**
@@ -247,15 +247,15 @@ public class AppConfig {
     }
 
     /**
-     * Bean class that represents security related configurations in the app's config file of an UUF Component.
+     * Bean class that represents security related configurations in the app's config file of an UUF App.
      *
      * @since 1.0.0
      */
     public static class SecurityConfig {
 
-        private PatternsConfig csrfPatterns;
-        private PatternsConfig xssPatterns;
-        private Map<String, String> responseHeaders;
+        private PatternsConfig csrfPatterns = new PatternsConfig();
+        private PatternsConfig xssPatterns = new PatternsConfig();
+        private Map<String, String> responseHeaders = Collections.emptyMap();
 
         /**
          * Returns CSRF URI patterns of this security configuration.
@@ -272,7 +272,7 @@ public class AppConfig {
          * @param csrfPatterns CSRF URI patterns to be set
          */
         public void setCsrfPatterns(PatternsConfig csrfPatterns) {
-            this.csrfPatterns = csrfPatterns;
+            this.csrfPatterns = (csrfPatterns == null) ? new PatternsConfig() : csrfPatterns;
         }
 
         /**
@@ -290,7 +290,7 @@ public class AppConfig {
          * @param xssPatterns XSS URI patterns to be set
          */
         public void setXssPatterns(PatternsConfig xssPatterns) {
-            this.xssPatterns = xssPatterns;
+            this.xssPatterns = (xssPatterns == null) ? new PatternsConfig() : xssPatterns;
         }
 
         /**
@@ -308,20 +308,19 @@ public class AppConfig {
          * @param responseHeaders HTTP response headers to be set
          */
         public void setResponseHeaders(Map<String, String> responseHeaders) {
-            this.responseHeaders = responseHeaders;
+            this.responseHeaders = (responseHeaders == null) ? Collections.emptyMap() : responseHeaders;
         }
     }
 
     /**
-     * Bean class that represents security related URI patterns configurations in the app's config file of an UUF
-     * Component.
+     * Bean class that represents security related URI patterns configurations in the app's config file of an UUF App.
      *
      * @since 1.0.0
      */
     public static class PatternsConfig {
 
-        private List<String> accept;
-        private List<String> reject;
+        private List<String> accept = Collections.emptyList();
+        private List<String> reject = Collections.emptyList();
 
         /**
          * Returns allowing URI patterns of this URI pattern configuration.
@@ -338,7 +337,17 @@ public class AppConfig {
          * @param accept allowing URI patterns to be set
          */
         public void setAccept(List<String> accept) {
-            this.accept = accept;
+            if (accept == null) {
+                this.accept = Collections.emptyList();
+            } else {
+                for (String uriPattern : accept) {
+                    if (uriPattern.isEmpty()) {
+                        throw new IllegalArgumentException("Accepting URI pattern cannot be empty.");
+                    }
+                    // TODO: 12/29/16 Check whether uriPattern is a valid pattern.
+                }
+                this.accept = accept;
+            }
         }
 
         /**
@@ -356,7 +365,17 @@ public class AppConfig {
          * @param reject denying URI patterns to be set
          */
         public void setReject(List<String> reject) {
-            this.reject = reject;
+            if (reject == null) {
+                this.reject = Collections.emptyList();
+            } else {
+                for (String uriPattern : reject) {
+                    if (uriPattern.isEmpty()) {
+                        throw new IllegalArgumentException("Rejecting URI pattern cannot be empty.");
+                    }
+                    // TODO: 12/29/16 Check whether uriPattern is a valid pattern.
+                }
+                this.reject = reject;
+            }
         }
     }
 }
