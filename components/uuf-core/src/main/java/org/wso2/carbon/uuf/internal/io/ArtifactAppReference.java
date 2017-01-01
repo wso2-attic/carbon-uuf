@@ -83,11 +83,11 @@ public class ArtifactAppReference implements AppReference {
 
     @Override
     public FileReference getConfiguration() {
-        Path configuration = componentsDirectory.resolve(FILE_NAME_CONFIGURATIONS);
+        Path configuration = componentsDirectory.resolve(FILE_NAME_CONFIGURATION);
         if (Files.exists(configuration)) {
             return new ArtifactFileReference(configuration, this);
         } else {
-            throw new FileOperationException("Cannot find app's configuration file '" + FILE_NAME_CONFIGURATIONS +
+            throw new FileOperationException("Cannot find app's configuration file '" + FILE_NAME_CONFIGURATION +
                                                      "' in app '" + appDirectory + "'.");
         }
     }

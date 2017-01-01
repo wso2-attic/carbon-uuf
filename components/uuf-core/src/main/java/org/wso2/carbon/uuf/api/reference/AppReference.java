@@ -26,7 +26,7 @@ public interface AppReference {
     String DIR_NAME_CUSTOMIZATIONS = "customizations";
     String DIR_NAME_THEMES = "themes";
     String FILE_NAME_DEPENDENCY_TREE = "dependency-tree.yaml";
-    String FILE_NAME_CONFIGURATIONS = "config.yaml";
+    String FILE_NAME_CONFIGURATION = "configuration.yaml";
 
     String getName();
 
