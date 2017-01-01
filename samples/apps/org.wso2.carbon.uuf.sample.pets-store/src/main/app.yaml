@@ -12,14 +12,14 @@ menus :
     - text: "Pets"
       submenus:
         - text: "See all our amazing pets"
-          link: "pets"
+          link: "/pets"
         - text: "Add a new pets"
-          link: "pets/new"
+          link: "/pets/new"
           icon: "fw fw-add"
         - text: "Pet of the month"
-          link: "pets/snowball"
+          link: "/pets/snowball"
         - text: "Order new pets"
-          link: "pets/order"
+          link: "/pets/order"
 
 # Error pages for this app.
 errorPages:
@@ -32,10 +32,10 @@ loginPageUri: "/simple-auth/login"
 # Security related configurations for this app.
 security:
   csrfPatterns:
-    acept: []
+    accept: []
     reject: []
   xssPatterns:
-    acept: []
+    accept: []
     reject: []
   responseHeaders:
     "Some Header": "some Value"
