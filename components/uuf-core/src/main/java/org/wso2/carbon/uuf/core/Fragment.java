@@ -34,8 +34,9 @@ public class Fragment {
     private final boolean isSecured;
 
     /**
-     * @param name     fully qualified name
-     * @param renderer renderer
+     * @param name      fully qualified name
+     * @param renderer  renderer
+     * @param isSecured secured fragment or not
      */
     public Fragment(String name, Renderable renderer, boolean isSecured) {
         this.name = name;

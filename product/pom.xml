@@ -15,9 +15,7 @@
   ~ limitations under the License.
 -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>wso2uuf</artifactId>
@@ -474,8 +472,7 @@
                         <phase>package</phase>
                         <configuration>
                             <tasks>
-                                <replace dir="target/wso2carbon-kernel-${carbon.kernel.version}/osgi" token="false"
-                                         value="true">
+                                <replace dir="target/wso2carbon-kernel-${carbon.kernel.version}/osgi" token="false" value="true">
                                     <include name="**/bundles.info" />
                                 </replace>
                             </tasks>
@@ -496,9 +493,7 @@
                                     <path refid="maven.compile.classpath" />
                                 </path>
                                 <echo message="#################### Create H2 Database ####################" />
-                                <sql driver="org.h2.Driver"
-                                     url="jdbc:h2:${basedir}/target/wso2carbon-kernel-${carbon.kernel.version}/database/WSO2CARBON_DB;create=true"
-                                     userid="wso2carbon" password="wso2carbon" autocommit="true" onerror="continue">
+                                <sql driver="org.h2.Driver" url="jdbc:h2:${basedir}/target/wso2carbon-kernel-${carbon.kernel.version}/database/WSO2CARBON_DB;create=true" userid="wso2carbon" password="wso2carbon" autocommit="true" onerror="continue">
                                     <classpath>
                                         <path refid="h2.classpath" />
                                     </classpath>

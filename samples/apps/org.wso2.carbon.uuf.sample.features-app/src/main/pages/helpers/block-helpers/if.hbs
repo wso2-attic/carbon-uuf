@@ -1,0 +1,65 @@
+{{layout "org.wso2.carbon.uuf.sample.foundation.main"}}
+{{title "if | Block Helper Sample | " @config.appName}}
+{{#fillZone "content"}}
+    <h3>The 'if' Block Helper.</h3>
+    <hr />
+    <p>You can use the 'if' helper to conditionally render a block.</p>
+    <p>If its argument returns false, undefined, null, "", 0, or [], Handlebars will not render the block.</p>
+    <pre>
+        &lt;div class="entry"&gt;
+            \{{#if author}}
+                &lt;h3&gt;\{{firstName}} \{{lastName}}&lt;/h3&gt;
+            \{{/if}}
+        &lt;/div&gt;
+    </pre>
+    <p>Example: </p>
+    <pre>
+        {
+            author: {
+                        firstName: "John",
+                        lastName: "Samuel"
+                    }
+        }
+    </pre>
+    <p>will result in:</p>
+    <pre>
+        &lt;div class="entry"&gt;
+            &lt;h3&gt;John Samuel&lt;/h3&gt;
+        &lt;/div&gt;
+    </pre>
+    <h3>output:</h3>
+    <h3>John Samuel</h3>
+    <p>When used with an empty ({}) context, author will be undefined, resulting in:</p>
+    <pre>
+        &lt;div class="entry"&gt;
+        &lt;/div&gt;
+    </pre>
+    <p>When using a block expression, you can specify a template section to run if the expression returns a falsy value.
+    The section, marked by \{{else}} is called an "else section".
+    </p>
+    <pre>
+        &lt;div class="entry"&gt;
+          \{{#if author}}
+            &lt;h3&gt;\{{firstName}} \{{lastName}}&lt;/h3&gt;
+          \{{else}}
+            &lt;h1&gt;Unknown Author&lt;/h1&gt;
+          \{{/if}}
+        &lt;/div&gt;
+    </pre>
+    <p>
+        Lets see an example which render the else section:
+    </p>
+    <pre>
+        {
+            author: false
+        }
+    </pre>
+    <p>will result in:</p>
+    <pre>
+        &lt;div class="entry"&gt;
+            &lt;h3&gt;Unknown Author&lt;/h3&gt;
+        &lt;/div&gt;
+    </pre>
+    <h3>output: </h3>
+    <h3>Unknown Author</h3>
+{{/fillZone}}

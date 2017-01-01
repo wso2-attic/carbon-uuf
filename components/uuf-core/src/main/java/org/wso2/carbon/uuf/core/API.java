@@ -65,7 +65,7 @@ public class API {
      * @param serviceClassName  service class name
      * @param serviceMethodName method name
      * @param args              method arguments
-     * @return
+     * @return invoked OSGi service instance
      */
     public static Object callOSGiService(String serviceClassName, String serviceMethodName, Object... args) {
         Object serviceInstance;
@@ -147,7 +147,7 @@ public class API {
     /**
      * Creates a new session and returns it.
      *
-     * @param userName user name
+     * @param user user to create the session
      * @return newly created session
      */
     public Session createSession(User user) {

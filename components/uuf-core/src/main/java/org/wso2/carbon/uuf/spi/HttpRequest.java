@@ -71,12 +71,12 @@ public interface HttpRequest {
     /**
      * Returns the part of this request's URL from the protocol name up to the query string in the first line of the
      * HTTP request. For example:
-     * <p>
+     * <br><br>
      * <table summary="Examples of Returned Values"> <tr align=left> <th>First line of HTTP request</th> <th>Returned
      * Value</th> </tr> <tr> <td>GET http://foo.bar/a/b.html HTTP/1.0</td> <td>/a/b.html</td> </tr> <tr> <td>GET
      * https://192.168.1.1:9292/foo/bar?x=y HTTP/1.1</td> <td>/foo/bar</td> </tr> <tr> <td>POST /some/path.html
      * HTTP/1.1</td> <td>/some/path.html</td> </tr> </table>
-     * <p>
+     * <br>
      * Returned URI string is decoded.
      *
      * @return a decoded {@code String} containing the part of the URL from the protocol name up to the query string
@@ -86,7 +86,7 @@ public interface HttpRequest {
     /**
      * Returns the part of this request's URI from the first forward slash up to the second forward slash but not
      * including. For example.
-     * <p>
+     * <br><br>
      * <table summary="Examples of Returned Values"> <tr align=left> <th>URI</th> <th>Returned Value</th> </tr> <tr>
      * <td>/a/b.html</td> <td>/a</td> </tr> <tr> <td>/foo/bar?x=y</td> <td>/foo</td> </tr> <tr> <td>/some/path.html</td>
      * <td>/some</td> </tr> </table>
@@ -99,7 +99,7 @@ public interface HttpRequest {
 
     /**
      * Returns the part of this request's URI from the second forward slash to the end. For example:
-     * <p>
+     * <br><br>
      * <table summary="Examples of Returned Values"> <tr align=left> <th>URI</th> <th>Returned Value</th> </tr> <tr>
      * <td>/a/b.html</td> <td>/b.html</td> </tr> <tr> <td>/foo/bar?x=y</td> <td>/bar</td> </tr> <tr>
      * <td>/some/path.html</td> <td>/path.html</td> </tr> </table>
