@@ -18,10 +18,9 @@
 
 package org.wso2.carbon.uuf.internal.deployment.parser;
 
-import org.wso2.carbon.uuf.api.config.DependencyNode;
 import org.wso2.carbon.uuf.api.reference.FileReference;
 import org.wso2.carbon.uuf.exception.MalformedConfigurationException;
-import org.yaml.snakeyaml.Yaml;
+import org.wso2.carbon.uuf.internal.deployment.parser.bean.DependencyNode;
 
 /**
  * Parser for dependency tree file in an UUF App.
@@ -34,12 +33,12 @@ public class DependencyTreeParser {
      * Parses the specified dependency tree YAML file.
      *
      * @param dependencyTreeFile reference to the dependency tree YAML file
-     * @return root node of the dependecy tree
-     * @exception MalformedConfigurationException if cannot parse specified dependency tree file
+     * @return root node of the dependency tree
+     * @throws MalformedConfigurationException if cannot parse specified dependency tree file
      */
     public static DependencyNode parse(FileReference dependencyTreeFile) {
         try {
-            return new Yaml().loadAs(dependencyTreeFile.getContent(), DependencyNode.class);
+            return AppConfigParser.getYamlParser().loadAs(dependencyTreeFile.getContent(), DependencyNode.class);
         } catch (Exception e) {
             throw new MalformedConfigurationException(
                     "Cannot parse dependency tree file '" + dependencyTreeFile.getAbsolutePath() + "'.", e);

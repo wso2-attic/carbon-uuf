@@ -16,7 +16,7 @@
  * under the License.
  */
 
-package org.wso2.carbon.uuf.api.config;
+package org.wso2.carbon.uuf.internal.deployment.parser.bean;
 
 import java.util.Collections;
 import java.util.HashSet;
