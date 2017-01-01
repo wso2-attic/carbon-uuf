@@ -1,0 +1,41 @@
+# Configurations of Pets Store app.
+
+# Default theme for this app.
+theme : "org.wso2.carbon.uuf.sample.theme.default"
+
+# Menus in this app.
+menus :
+  main:
+    - text: "Home"
+      link: "#"
+      icon: "fw-home"
+    - text: "Pets"
+      submenus:
+        - text: "See all our amazing pets"
+          link: "pets"
+        - text: "Add a new pets"
+          link: "pets/new"
+          icon: "fw fw-add"
+        - text: "Pet of the month"
+          link: "pets/snowball"
+        - text: "Order new pets"
+          link: "pets/order"
+
+# Error pages for this app.
+errorPages:
+  404: "/foundation/error/404"
+  default: "/foundation/error/default"
+
+# URI of the login page in this app.
+loginPageUri: "/simple-auth/login"
+
+# Security related configurations for this app.
+security:
+  csrfPatterns:
+    acept: []
+    reject: []
+  xssPatterns:
+    acept: []
+    reject: []
+  responseHeaders:
+    "Some Header": "some Value"
