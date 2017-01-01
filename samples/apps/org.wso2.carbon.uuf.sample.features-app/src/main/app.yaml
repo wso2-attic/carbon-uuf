@@ -1,6 +1,6 @@
 theme: "org.wso2.carbon.uuf.sample.theme.default"
 
-menu:
+menus:
   main:
     - text: "Home"
       link: ""
