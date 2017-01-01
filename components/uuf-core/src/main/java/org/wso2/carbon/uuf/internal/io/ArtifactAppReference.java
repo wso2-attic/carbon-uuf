@@ -50,11 +50,20 @@ public class ArtifactAppReference implements AppReference {
     @Override
     public ComponentReference getComponentReference(String componentContext) {
         String componentDirName = componentContext.startsWith("/") ? componentContext.substring(1) : componentContext;
-        Path componentDirectory = customizationsDirectory.resolve(componentDirName);
-        if (!Files.exists(componentDirectory)) {
-            componentDirectory = componentsDirectory.resolve(componentDirName);
+
+        // check the customizations directory first to load the customized version of the component.
+        Path customizedComponentDirectory = customizationsDirectory.resolve(componentDirName);
+        if (Files.exists(customizedComponentDirectory)) {
+            return new ArtifactComponentReference(customizedComponentDirectory, this);
         }
-        return new ArtifactComponentReference(componentDirectory, this);
+        // Didn't found the customized version, so try to find it in the components directory.
+        Path componentDirectory = componentsDirectory.resolve(componentDirName);
+        if (Files.exists(componentDirectory)) {
+            return new ArtifactComponentReference(componentDirectory, this);
+        } else {
+            throw new FileOperationException("Cannot find the component for '" + componentContext +
+                                                     "' context path in app '" + appDirectory + "'.");
+        }
     }
 
     @Override
@@ -74,12 +83,24 @@ public class ArtifactAppReference implements AppReference {
 
     @Override
     public FileReference getConfiguration() {
-        return new ArtifactFileReference(componentsDirectory.resolve(FILE_NAME_CONFIGURATIONS), this);
+        Path configuration = componentsDirectory.resolve(FILE_NAME_CONFIGURATIONS);
+        if (Files.exists(configuration)) {
+            return new ArtifactFileReference(configuration, this);
+        } else {
+            throw new FileOperationException("Cannot find app's configuration file '" + FILE_NAME_CONFIGURATIONS +
+                                                     "' in app '" + appDirectory + "'.");
+        }
     }
 
     @Override
     public FileReference getDependencyTree() {
-        return new ArtifactFileReference(componentsDirectory.resolve(FILE_NAME_DEPENDENCY_TREE), this);
+        Path dependencyTree = componentsDirectory.resolve(FILE_NAME_DEPENDENCY_TREE);
+        if (Files.exists(dependencyTree)) {
+            return new ArtifactFileReference(dependencyTree, this);
+        } else {
+            throw new FileOperationException("Cannot find dependency tree file '" + FILE_NAME_DEPENDENCY_TREE +
+                                                     "' in app '" + appDirectory + "'.");
+        }
     }
 
     @Override
