@@ -43,7 +43,7 @@ public class AppConfigParser {
             return getYamlParser().loadAs(configFile.getContent(), AppConfig.class);
         } catch (Exception e) {
             throw new MalformedConfigurationException(
-                    "Cannot app's configuration file '" + configFile.getAbsolutePath() + "'.", e);
+                    "Cannot parse app's configuration file '" + configFile.getAbsolutePath() + "'.", e);
         }
     }
 

@@ -41,7 +41,7 @@ public class ComponentConfigParser {
             return AppConfigParser.getYamlParser().loadAs(configFile.getContent(), ComponentConfig.class);
         } catch (Exception e) {
             throw new MalformedConfigurationException(
-                    "Cannot component's configuration file '" + configFile.getAbsolutePath() + "'.", e);
+                    "Cannot parse component's configuration file '" + configFile.getAbsolutePath() + "'.", e);
         }
     }
 }

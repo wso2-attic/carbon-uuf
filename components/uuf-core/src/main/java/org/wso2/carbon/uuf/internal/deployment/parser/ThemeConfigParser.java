@@ -41,7 +41,7 @@ public class ThemeConfigParser {
             return AppConfigParser.getYamlParser().loadAs(configFile.getContent(), ThemeConfig.class);
         } catch (Exception e) {
             throw new MalformedConfigurationException(
-                    "Cannot theme's configuration file '" + configFile.getAbsolutePath() + "'.", e);
+                    "Cannot parse theme's configuration file '" + configFile.getAbsolutePath() + "'.", e);
         }
     }
 }
