@@ -20,7 +20,7 @@ package org.wso2.carbon.uuf.internal.io;
 
 import org.wso2.carbon.uuf.api.reference.FileReference;
 import org.wso2.carbon.uuf.api.reference.ThemeReference;
-import org.wso2.carbon.uuf.exception.UUFException;
+import org.wso2.carbon.uuf.exception.FileOperationException;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -42,12 +42,14 @@ public class ArtifactThemeReference implements ThemeReference {
     }
 
     @Override
-    public FileReference getThemeConfig() {
-        Path themeConfig = themeDirectory.resolve(FILE_NAME_THEME);
+    public FileReference getConfiguration() {
+        Path themeConfig = themeDirectory.resolve(FILE_NAME_CONFIGURATION);
         if (Files.exists(themeConfig)) {
             return new ArtifactFileReference(themeConfig, appReference);
         } else {
-            throw new UUFException("Theme '" + getName() + "' of app '" + appReference.getPath() + "' is empty.");
+            throw new FileOperationException(
+                    "Cannot find theme's configuration file '" + FILE_NAME_CONFIGURATION + "' of theme '" + getName() +
+                            "' in app '" + appReference.getPath() + "'.");
         }
     }
 
