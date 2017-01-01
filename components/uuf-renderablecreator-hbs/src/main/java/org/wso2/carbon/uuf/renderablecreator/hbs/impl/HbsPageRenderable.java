@@ -112,7 +112,7 @@ public class HbsPageRenderable extends HbsRenderable {
     protected static Map<String, Object> getExecutableContext(Model model, Lookup lookup, RequestLookup requestLookup) {
         Map<String, Object> context = new HashMap<>();
         context.put("contextPath", requestLookup.getContextPath());
-        context.put("config", lookup.getConfiguration().asMap());
+        context.put("config", lookup.getConfiguration().other());
         context.put("request", requestLookup.getRequest());
         context.put("response", requestLookup.getResponse());
         context.put("pathParams", requestLookup.getPathParams());
