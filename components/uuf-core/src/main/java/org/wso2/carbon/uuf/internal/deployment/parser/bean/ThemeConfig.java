@@ -18,11 +18,14 @@
 
 package org.wso2.carbon.uuf.internal.deployment.parser.bean;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
  * Bean class that represents the theme's config file of an UUF Theme.
  *
+ * @apiNote Getters and setters of this class should match with getters and setters in
+ * org.wso2.carbon.uuf.maven.bean.ThemeConfig class.
  * @since 1.0.0
  */
 public class ThemeConfig {
@@ -46,7 +49,7 @@ public class ThemeConfig {
      * @param css CSS relative paths to be set
      */
     public void setCss(List<String> css) {
-        this.css = css;
+        this.css = (css == null) ? Collections.emptyList() : css;
     }
 
     /**
@@ -64,7 +67,7 @@ public class ThemeConfig {
      * @param headJs head JS relative paths to be set
      */
     public void setHeadJs(List<String> headJs) {
-        this.headJs = headJs;
+        this.headJs = (headJs == null) ? Collections.emptyList() : headJs;
     }
 
     /**
@@ -82,6 +85,6 @@ public class ThemeConfig {
      * @param js footer JS relative paths to be set
      */
     public void setJs(List<String> js) {
-        this.js = js;
+        this.js = (js == null) ? Collections.emptyList() : js;
     }
 }

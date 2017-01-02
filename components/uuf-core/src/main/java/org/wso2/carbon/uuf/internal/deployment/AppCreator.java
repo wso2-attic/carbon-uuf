@@ -54,6 +54,7 @@ import org.wso2.carbon.uuf.internal.util.NameUtils;
 import org.wso2.carbon.uuf.spi.RenderableCreator;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -255,8 +256,11 @@ public class AppCreator {
 
     private Theme createTheme(ThemeReference themeReference) {
         ThemeConfig themeConfig = ThemeConfigParser.parse(themeReference.getConfiguration());
-        return new Theme(themeReference.getName(), themeConfig.getCss(), themeConfig.getHeadJs(), themeConfig.getJs(),
-                         themeReference.getPath());
+        List<String> css = (themeConfig.getCss() == null) ? Collections.emptyList() : themeConfig.getCss();
+        List<String> headJs = (themeConfig.getHeadJs() == null) ? Collections.emptyList() : themeConfig.getHeadJs();
+        List<String> js = (themeConfig.getJs() == null) ? Collections.emptyList() : themeConfig.getJs();
+
+        return new Theme(themeReference.getName(), css, headJs, js, themeReference.getPath());
     }
 
     private static class AppConfiguration extends Configuration {
