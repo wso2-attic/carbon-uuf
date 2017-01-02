@@ -13,7 +13,7 @@
                     <span class="caret"></span>
                 </a>
                 <ul class="dropdown-menu">
-                    {{~#menu submenus}}
+                    {{~#menu subMenus}}
                         {{~#if @leaf}}
                             <li>
                                 <a href="{{@contextPath}}{{link}}">
@@ -23,7 +23,7 @@
                             <li class="dropdown-submenu">
                                 <a href="{{#if link}}{{@contextPath}}{{link}}{{else}}#{{/if}}">{{text}}</a>
                                 <ul class="dropdown-menu">
-                                    {{#menu submenus}}
+                                    {{#menu subMenus}}
                                         <li>
                                             <a href="{{@contextPath}}{{link}}">
                                                 {{#if icon}}<i class="{{icon}}"></i>{{/if}}{{text}}
