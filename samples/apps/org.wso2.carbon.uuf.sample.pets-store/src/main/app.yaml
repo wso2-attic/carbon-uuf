@@ -11,6 +11,7 @@ menus :
         link: "#"
         icon: "fw-home"
       - text: "Pets"
+        link: ""
         submenus:
           - text: "See all our amazing pets"
             link: "/pets"
