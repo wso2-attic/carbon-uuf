@@ -270,7 +270,9 @@ public class AppCreator {
                     .collect(Collectors.toMap(entry -> Integer.valueOf(entry.getKey()), Map.Entry::getValue));
             setErrorPageUris(errorPageUris);
             setDefaultErrorPageUri(appConfig.getErrorPages().get("default"));
-            setMenus(appConfig.getMenus());
+            setMenus(appConfig.getMenus().stream()
+                             .map(AppConfig.Menu::toConfigurationMenu)
+                             .collect(Collectors.toList()));
             setAcceptingCsrfPatterns(Sets.newHashSet(appConfig.getSecurity().getCsrfPatterns().getAccept()));
             setRejectingCsrfPatterns(Sets.newHashSet(appConfig.getSecurity().getCsrfPatterns().getReject()));
             setAcceptingXssPatterns(Sets.newHashSet(appConfig.getSecurity().getXssPatterns().getAccept()));
