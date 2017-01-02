@@ -21,6 +21,7 @@ package org.wso2.carbon.uuf.api.config;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ListMultimap;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -224,14 +225,14 @@ public class Configuration {
     }
 
     /**
-     * Sets menu items for the app.
+     * Sets menus for the app.
      *
-     * @param menus menu items to be set
+     * @param menus menus to be set
      * @see #getMenu(String)
      */
-    protected void setMenus(Map<String, ? extends List<? extends MenuItem>> menus) {
+    protected void setMenus(List<? extends Menu> menus) {
         ImmutableListMultimap.Builder<String, MenuItem> builder = new ImmutableListMultimap.Builder<>();
-        menus.forEach(builder::putAll);
+        menus.forEach(menu -> builder.putAll(menu.getName(), menu.getItems()));
         this.menus = builder.build();
     }
 
@@ -390,38 +391,137 @@ public class Configuration {
     }
 
     /**
+     * Represents a configured menu for an UUF App.
+     *
+     * @since 1.0.0
+     */
+    public static class Menu {
+
+        private final String name;
+        private final List<MenuItem> items;
+
+        /**
+         * Creates a new menu.
+         *
+         * @param name  name of the menu
+         * @param items menu items for the creating menu
+         * @throws IllegalArgumentException if name is null or empty
+         * @throws IllegalArgumentException if menu items is null or empty
+         */
+        public Menu(String name, List<MenuItem> items) {
+            // Validate name.
+            if (name == null) {
+                throw new IllegalArgumentException("Name of a menu cannot be null.");
+            } else if (name.isEmpty()) {
+                throw new IllegalArgumentException("Name of a menu cannot be empty.");
+            } else {
+                this.name = name;
+            }
+            // Validate menu items.
+            if (items == null) {
+                throw new IllegalArgumentException(
+                        "Items of a menu cannot be null. Cannot find menu items for menu '" + name + "'.");
+            } else if (items.isEmpty()) {
+                throw new IllegalArgumentException(
+                        "Items of a menu cannot be empty list. Cannot find menu items for menu '" + name + "'.");
+            } else {
+                this.items = Collections.unmodifiableList(items);
+            }
+        }
+
+        /**
+         * Returns the name of this menu.
+         *
+         * @return text of this menu
+         */
+        public String getName() {
+            return name;
+        }
+
+        /**
+         * Returns the menu items of this menu.
+         *
+         * @return menu items of this menu
+         */
+        public List<MenuItem> getItems() {
+            return items;
+        }
+    }
+
+    /**
      * Represents a configured menu item for an UUF App.
      *
      * @since 1.0.0
      */
-    public static abstract class MenuItem {
+    public static class MenuItem {
+
+        private final String text;
+        private final String link;
+        private final String icon;
+        private final List<MenuItem> subMenus;
 
         /**
-         * Return the text of this menu item.
+         * Creates a new menu item.
+         *
+         * @param text     text of the menu item
+         * @param link     link of the menu item
+         * @param icon     icon of the menu item
+         * @param subMenus sub menus of the creating menu item
+         * @throws IllegalArgumentException if text is null
+         * @throws IllegalArgumentException if link is null
+         */
+        public MenuItem(String text, String link, String icon, List<MenuItem> subMenus) {
+            // Validate text.
+            if (text == null) {
+                throw new IllegalArgumentException("Text of a menu item cannot be null.");
+            } else {
+                this.text = text;
+            }
+            // Validate link.
+            if (link == null) {
+                throw new IllegalArgumentException(
+                        "Link of a menu item cannot be null. Cannot find link for menu item '" + text + "'.");
+            } else {
+                this.link = link;
+            }
+            this.icon = icon;
+            this.subMenus = (subMenus == null) ? Collections.emptyList() : Collections.unmodifiableList(subMenus);
+        }
+
+        /**
+         * Returns the text of this menu item.
          *
          * @return text of this menu item
          */
-        public abstract String getText();
+        public String getText() {
+            return text;
+        }
 
         /**
-         * Return the link of this menu item.
+         * Returns the link of this menu item.
          *
-         * @return link of this menu item
+         * @return link of this menu item.
          */
-        public abstract String getLink();
+        public String getLink() {
+            return link;
+        }
 
         /**
-         * Return the icon of this menu item.
+         * Returns the icon CSS class of this menu item.
          *
-         * @return icon of this menu item
+         * @return icon CSS class of this menu item
          */
-        public abstract String getIcon();
+        public String getIcon() {
+            return icon;
+        }
 
         /**
-         * Return the sub-menus of this menu item.
+         * Returns the sub-menus of this menu item.
          *
          * @return sub-menus of this menu item
          */
-        public abstract List<? extends MenuItem> getSubmenus();
+        public List<MenuItem> getSubMenus() {
+            return subMenus;
+        }
     }
 }
