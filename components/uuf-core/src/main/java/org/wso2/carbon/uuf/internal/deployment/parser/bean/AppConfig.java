@@ -28,6 +28,8 @@ import java.util.stream.Collectors;
 /**
  * Bean class that represents the app's config file of an UUF App.
  *
+ * @apiNote Getters and setters of this class should match with getters and setters in
+ * org.wso2.carbon.uuf.maven.bean.AppConfig class.
  * @since 1.0.0
  */
 public class AppConfig {
