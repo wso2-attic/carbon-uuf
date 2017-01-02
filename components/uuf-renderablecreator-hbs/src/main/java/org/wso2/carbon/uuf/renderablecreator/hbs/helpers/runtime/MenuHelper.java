@@ -68,7 +68,7 @@ public class MenuHelper implements Helper<Object> {
         boolean isFirstIteration = true;
         while (iterator.hasNext()) {
             Configuration.MenuItem menuItem = iterator.next();
-            boolean isLeaf = menuItem.getSubmenus().isEmpty();
+            boolean isLeaf = menuItem.getSubMenus().isEmpty();
             Context iterationContext = Context.newContext(parentContext, menuItem)
                     .combine("@first", isFirstIteration)
                     .combine("@last", !iterator.hasNext())
