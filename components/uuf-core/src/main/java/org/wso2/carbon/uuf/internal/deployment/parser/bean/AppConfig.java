@@ -23,6 +23,7 @@ import org.wso2.carbon.uuf.api.config.Configuration;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Bean class that represents the app's config file of an UUF App.
@@ -35,7 +36,7 @@ public class AppConfig {
     private String theme;
     private String loginPageUri;
     private Map<String, String> errorPages = Collections.emptyMap();
-    private Map<String, List<MenuItem>> menus = Collections.emptyMap();
+    private List<Menu> menus = Collections.emptyList();
     private SecurityConfig security = new SecurityConfig();
     private Map<String, Object> otherConfigurations = Collections.emptyMap();
 
@@ -116,7 +117,7 @@ public class AppConfig {
      *
      * @return menus in this app's config
      */
-    public Map<String, List<MenuItem>> getMenus() {
+    public List<Menu> getMenus() {
         return menus;
     }
 
@@ -125,8 +126,8 @@ public class AppConfig {
      *
      * @param menus menus to be set
      */
-    public void setMenus(Map<String, List<MenuItem>> menus) {
-        this.menus = (menus == null) ? Collections.emptyMap() : menus;
+    public void setMenus(List<Menu> menus) {
+        this.menus = (menus == null) ? Collections.emptyList() : menus;
     }
 
     /**
@@ -166,21 +167,77 @@ public class AppConfig {
     }
 
     /**
+     * Bean class that represents a menu in the app's config file of an UUF App.
+     *
+     * @since 1.0.0
+     */
+    public static class Menu {
+
+        private String name;
+        private List<MenuItem> items;
+
+        /**
+         * Returns the name of this menu.
+         *
+         * @return text of this menu
+         */
+        public String getName() {
+            return name;
+        }
+
+        /**
+         * Sets the name of this menu.
+         *
+         * @param name name to be set
+         */
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        /**
+         * Returns the menu items of this menu.
+         *
+         * @return menu items of this menu
+         */
+        public List<MenuItem> getItems() {
+            return items;
+        }
+
+        /**
+         * Sets the menu items of this menu.
+         *
+         * @param items menu items to be set
+         */
+        public void setItems(List<MenuItem> items) {
+            this.items = items;
+        }
+
+        public Configuration.Menu toConfigurationMenu() {
+            List<Configuration.MenuItem> menuItems = null;
+            if (this.items != null) {
+                menuItems = this.items.stream().map(MenuItem::toConfigurationMenuItem).collect(Collectors.toList());
+            }
+            return new Configuration.Menu(this.name, menuItems);
+        }
+    }
+
+    /**
      * Bean class that represents a menu item in the app's config file of an UUF Component.
      *
      * @since 1.0.0
      */
-    public static class MenuItem extends Configuration.MenuItem {
+    public static class MenuItem {
 
         private String text;
         private String link;
         private String icon;
-        private List<MenuItem> submenus;
+        private List<MenuItem> submenus = Collections.emptyList();
 
         /**
-         * {@inheritDoc}
+         * Returns the text of this menu item.
+         *
+         * @return text of this menu item
          */
-        @Override
         public String getText() {
             return text;
         }
@@ -195,9 +252,10 @@ public class AppConfig {
         }
 
         /**
-         * {@inheritDoc}
+         * Returns the link of this menu item.
+         *
+         * @return link of this menu item.
          */
-        @Override
         public String getLink() {
             return link;
         }
@@ -212,9 +270,10 @@ public class AppConfig {
         }
 
         /**
-         * {@inheritDoc}
+         * Returns the icon CSS class of this menu item.
+         *
+         * @return icon CSS class of this menu item
          */
-        @Override
         public String getIcon() {
             return icon;
         }
@@ -229,9 +288,10 @@ public class AppConfig {
         }
 
         /**
-         * {@inheritDoc}
+         * Returns the sub-menus of this menu item.
+         *
+         * @return sub-menus of this menu item
          */
-        @Override
         public List<MenuItem> getSubmenus() {
             return submenus;
         }
@@ -242,7 +302,15 @@ public class AppConfig {
          * @param submenus sub-menus to be set
          */
         public void setSubmenus(List<MenuItem> submenus) {
-            this.submenus = (submenus == null) ? Collections.emptyList() : submenus;
+            this.submenus = submenus;
+        }
+
+        public Configuration.MenuItem toConfigurationMenuItem() {
+            List<Configuration.MenuItem> subMenus = null;
+            if (this.submenus != null) {
+                subMenus = this.submenus.stream().map(MenuItem::toConfigurationMenuItem).collect(Collectors.toList());
+            }
+            return new Configuration.MenuItem(this.text, this.link, this.icon, subMenus);
         }
     }
 
@@ -337,17 +405,7 @@ public class AppConfig {
          * @param accept allowing URI patterns to be set
          */
         public void setAccept(List<String> accept) {
-            if (accept == null) {
-                this.accept = Collections.emptyList();
-            } else {
-                for (String uriPattern : accept) {
-                    if (uriPattern.isEmpty()) {
-                        throw new IllegalArgumentException("Accepting URI pattern cannot be empty.");
-                    }
-                    // TODO: 12/29/16 Check whether uriPattern is a valid pattern.
-                }
-                this.accept = accept;
-            }
+            this.accept = (accept == null) ? Collections.emptyList() : accept;
         }
 
         /**
@@ -365,17 +423,7 @@ public class AppConfig {
          * @param reject denying URI patterns to be set
          */
         public void setReject(List<String> reject) {
-            if (reject == null) {
-                this.reject = Collections.emptyList();
-            } else {
-                for (String uriPattern : reject) {
-                    if (uriPattern.isEmpty()) {
-                        throw new IllegalArgumentException("Rejecting URI pattern cannot be empty.");
-                    }
-                    // TODO: 12/29/16 Check whether uriPattern is a valid pattern.
-                }
-                this.reject = reject;
-            }
+            this.reject = (reject == null) ? Collections.emptyList() : reject;
         }
     }
 }
