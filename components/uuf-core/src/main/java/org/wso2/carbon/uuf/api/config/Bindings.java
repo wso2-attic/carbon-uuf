@@ -39,7 +39,7 @@ public class Bindings {
             throw new IllegalArgumentException("Zone name of a binding cannot be null.");
         } else if (zoneName.isEmpty()) {
             throw new IllegalArgumentException("Zone name of a binding cannot be empty.");
-        } else if (NameUtils.isFullyQualifiedName(zoneName)) {
+        } else if (!NameUtils.isFullyQualifiedName(zoneName)) {
             throw new IllegalArgumentException(
                     "Zone name of a binding should be a fully qualified name. Instead found '" + zoneName + "'.");
         }
