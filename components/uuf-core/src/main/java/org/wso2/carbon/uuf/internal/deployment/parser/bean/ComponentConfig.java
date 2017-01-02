@@ -26,7 +26,8 @@ import java.util.Map;
 
 /**
  * Bean class that represents configurations of an UUF Component.
- *
+ * @apiNote Getters and setters of this class should match with getters and setters in
+ * org.wso2.carbon.uuf.maven.bean.ComponentConfig class.
  * @since 1.0.0
  */
 public class ComponentConfig {
@@ -112,8 +113,16 @@ public class ComponentConfig {
          * Sets the name of the class of this API.
          *
          * @param className name of the class to be set
+         * @throws IllegalArgumentException if class name is null or empty
          */
         public void setClassName(String className) {
+            if (className == null) {
+                throw new IllegalArgumentException(
+                        "Class name of an API entry in the component's config cannot be null.");
+            } else if (className.isEmpty()) {
+                throw new IllegalArgumentException(
+                        "Class name of an API entry in the component's config cannot be a empty.");
+            }
             this.className = className;
         }
 
@@ -130,8 +139,18 @@ public class ComponentConfig {
          * Sets the URI of this API.
          *
          * @param uri URI to be set
+         * @throws IllegalArgumentException if URI is null or empty or doesn't start with a '/'
          */
         public void setUri(String uri) {
+            if (uri == null) {
+                throw new IllegalArgumentException("URI of an API entry in the component's config cannot be null.");
+            } else if (uri.isEmpty()) {
+                throw new IllegalArgumentException("URI of an API entry in the component's config cannot be a empty.");
+            } else if (uri.charAt(0) != '/') {
+                throw new IllegalArgumentException(
+                        "URI of an API entry in the component's config must start with a '/'. Instead found '" +
+                                uri.charAt(0) + "' at the beginning.");
+            }
             this.uri = uri;
         }
     }
@@ -160,8 +179,16 @@ public class ComponentConfig {
          * Sets the zone name of this binding.
          *
          * @param zoneName zone name to be set
+         * @throws IllegalArgumentException if zone name is null or empty
          */
         public void setZoneName(String zoneName) {
+            if (zoneName == null) {
+                throw new IllegalArgumentException(
+                        "Zone name of a binding entry in the component's config cannot be null.");
+            } else if (zoneName.isEmpty()) {
+                throw new IllegalArgumentException(
+                        "Zone name of a binding entry in the component's config cannot be a empty.");
+            }
             this.zoneName = zoneName;
         }
 
@@ -180,7 +207,7 @@ public class ComponentConfig {
          * @param mode mode to be set
          */
         public void setMode(Bindings.Mode mode) {
-            this.mode = mode;
+            this.mode = (mode == null) ? Bindings.Mode.prepend : mode;
         }
 
         /**
@@ -196,8 +223,13 @@ public class ComponentConfig {
          * Sets the names of the fragments of this binding.
          *
          * @param fragments names of the Fragments to be set
+         * @throws IllegalArgumentException if fragments list is null
          */
         public void setFragments(List<String> fragments) {
+            if (fragments == null) {
+                throw new IllegalArgumentException(
+                        "Fragments of a bindings entry in the component's config cannot be null.");
+            }
             this.fragments = fragments;
         }
     }
