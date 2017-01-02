@@ -37,11 +37,15 @@ public class ComponentConfigParser {
      * @throws MalformedConfigurationException if cannot parse the specified configuration file
      */
     public static ComponentConfig parse(FileReference configFile) {
+        ComponentConfig componentConfig;
         try {
-            return AppConfigParser.getYamlParser().loadAs(configFile.getContent(), ComponentConfig.class);
+            componentConfig = AppConfigParser.getYamlParser().loadAs(configFile.getContent(), ComponentConfig.class);
         } catch (Exception e) {
             throw new MalformedConfigurationException(
                     "Cannot parse component's configuration file '" + configFile.getAbsolutePath() + "'.", e);
         }
+
+        // Parsed component config can be null if the configuration file is empty or has comments only.
+        return (componentConfig == null) ? new ComponentConfig() : componentConfig;
     }
 }
