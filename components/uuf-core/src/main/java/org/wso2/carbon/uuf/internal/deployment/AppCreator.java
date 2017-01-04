@@ -131,7 +131,26 @@ public class AppCreator {
     }
 
     private Configuration createConfiguration(AppReference appReference) {
-        return new AppConfiguration(YamlFileParser.parse(appReference.getConfiguration(), AppConfig.class));
+        AppConfig appConfig = YamlFileParser.parse(appReference.getConfiguration(), AppConfig.class);
+        Configuration configuration = new Configuration();
+        configuration.setContextPath(appConfig.getContextPath());
+        configuration.setThemeName(appConfig.getTheme());
+        configuration.setLoginPageUri(appConfig.getLoginPageUri());
+        Map<Integer, String> errorPageUris = appConfig.getErrorPages().entrySet().stream()
+                .filter(entry -> NumberUtils.isNumber(entry.getKey()))
+                .collect(Collectors.toMap(entry -> Integer.valueOf(entry.getKey()), Map.Entry::getValue));
+        configuration.setErrorPageUris(errorPageUris);
+        configuration.setDefaultErrorPageUri(appConfig.getErrorPages().get("default"));
+        configuration.setMenus(appConfig.getMenus().stream()
+                                       .map(AppConfig.Menu::toConfigurationMenu)
+                                       .collect(Collectors.toList()));
+        configuration.setAcceptingCsrfPatterns(Sets.newHashSet(appConfig.getSecurity().getCsrfPatterns().getAccept()));
+        configuration.setRejectingCsrfPatterns(Sets.newHashSet(appConfig.getSecurity().getCsrfPatterns().getReject()));
+        configuration.setAcceptingXssPatterns(Sets.newHashSet(appConfig.getSecurity().getXssPatterns().getAccept()));
+        configuration.setRejectingXssPatterns(Sets.newHashSet(appConfig.getSecurity().getXssPatterns().getReject()));
+        configuration.setResponseHeaders(appConfig.getSecurity().getResponseHeaders());
+        configuration.setOther(appConfig.getOther());
+        return configuration;
     }
 
     private Component createComponent(String appContextPath, String componentName, String componentVersion,
@@ -259,28 +278,5 @@ public class AppCreator {
         List<String> js = (themeConfig.getJs() == null) ? Collections.emptyList() : themeConfig.getJs();
 
         return new Theme(themeReference.getName(), css, headJs, js, themeReference.getPath());
-    }
-
-    private static class AppConfiguration extends Configuration {
-
-        public AppConfiguration(AppConfig appConfig) {
-            setContextPath(appConfig.getContextPath());
-            setThemeName(appConfig.getTheme());
-            setLoginPageUri(appConfig.getLoginPageUri());
-            Map<Integer, String> errorPageUris = appConfig.getErrorPages().entrySet().stream()
-                    .filter(entry -> NumberUtils.isNumber(entry.getKey()))
-                    .collect(Collectors.toMap(entry -> Integer.valueOf(entry.getKey()), Map.Entry::getValue));
-            setErrorPageUris(errorPageUris);
-            setDefaultErrorPageUri(appConfig.getErrorPages().get("default"));
-            setMenus(appConfig.getMenus().stream()
-                             .map(AppConfig.Menu::toConfigurationMenu)
-                             .collect(Collectors.toList()));
-            setAcceptingCsrfPatterns(Sets.newHashSet(appConfig.getSecurity().getCsrfPatterns().getAccept()));
-            setRejectingCsrfPatterns(Sets.newHashSet(appConfig.getSecurity().getCsrfPatterns().getReject()));
-            setAcceptingXssPatterns(Sets.newHashSet(appConfig.getSecurity().getXssPatterns().getAccept()));
-            setRejectingXssPatterns(Sets.newHashSet(appConfig.getSecurity().getXssPatterns().getReject()));
-            setResponseHeaders(appConfig.getSecurity().getResponseHeaders());
-            setOther(appConfig.getOther());
-        }
     }
 }

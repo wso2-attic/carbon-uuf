@@ -52,7 +52,7 @@ public class Configuration {
     private Map<String, String> responseHeaders;
     private Map<String, Object> otherConfigurations;
 
-    protected Configuration() {
+    public Configuration() {
     }
 
     /**
@@ -71,7 +71,7 @@ public class Configuration {
      * @throws IllegalArgumentException if the context path is empty or doesn't start with a '/'
      * @see #getContextPath()
      */
-    protected void setContextPath(String contextPath) {
+    public void setContextPath(String contextPath) {
         if (contextPath != null) {
             if (contextPath.isEmpty()) {
                 throw new IllegalArgumentException("Context path cannot be empty.");
@@ -99,7 +99,7 @@ public class Configuration {
      * @throws IllegalArgumentException if the theme name is empty
      * @see #getThemeName()
      */
-    protected void setThemeName(String themeName) {
+    public void setThemeName(String themeName) {
         if ((themeName != null) && themeName.isEmpty()) {
             throw new IllegalArgumentException("Theme name cannot be empty.");
         }
@@ -122,7 +122,7 @@ public class Configuration {
      * @throws IllegalArgumentException if login page URI is empty of doesn't start with a '/'
      * @see #getLoginPageUri()
      */
-    protected void setLoginPageUri(String loginPageUri) {
+    public void setLoginPageUri(String loginPageUri) {
         if (loginPageUri != null) {
             if (loginPageUri.isEmpty()) {
                 throw new IllegalArgumentException("Login page URI cannot be empty.");
@@ -154,7 +154,7 @@ public class Configuration {
      * @see #getErrorPageUri(int)
      * @see #setDefaultErrorPageUri(String)
      */
-    protected void setErrorPageUris(Map<Integer, String> errorPageUris) {
+    public void setErrorPageUris(Map<Integer, String> errorPageUris) {
         if (errorPageUris == null) {
             this.errorPageUris = emptyMap();
         } else {
@@ -201,7 +201,7 @@ public class Configuration {
      * @see #getDefaultErrorPageUri()
      * @see #setErrorPageUris(Map)
      */
-    protected void setDefaultErrorPageUri(String defaultErrorPageUri) {
+    public void setDefaultErrorPageUri(String defaultErrorPageUri) {
         if (defaultErrorPageUri != null) {
             if (defaultErrorPageUri.isEmpty()) {
                 throw new IllegalArgumentException("URI of the default error page cannot be empty.");
@@ -230,7 +230,7 @@ public class Configuration {
      * @param menus menus to be set
      * @see #getMenu(String)
      */
-    protected void setMenus(List<? extends Menu> menus) {
+    public void setMenus(List<? extends Menu> menus) {
         ImmutableListMultimap.Builder<String, MenuItem> builder = new ImmutableListMultimap.Builder<>();
         menus.forEach(menu -> builder.putAll(menu.getName(), menu.getItems()));
         this.menus = builder.build();
@@ -252,7 +252,7 @@ public class Configuration {
      * @param acceptingCsrfPatterns accepting CSRF patterns to be set
      * @throws IllegalArgumentException if a pattern is null or empty
      */
-    protected void setAcceptingCsrfPatterns(Set<String> acceptingCsrfPatterns) {
+    public void setAcceptingCsrfPatterns(Set<String> acceptingCsrfPatterns) {
         if (acceptingCsrfPatterns == null) {
             this.acceptingCsrfPatterns = emptySet();
         } else {
@@ -284,7 +284,7 @@ public class Configuration {
      * @param rejectingCsrfPatterns rejecting CSRF patterns to be set
      * @throws IllegalArgumentException if a pattern is null or empty
      */
-    protected void setRejectingCsrfPatterns(Set<String> rejectingCsrfPatterns) {
+    public void setRejectingCsrfPatterns(Set<String> rejectingCsrfPatterns) {
         if (rejectingCsrfPatterns == null) {
             this.rejectingCsrfPatterns = emptySet();
         } else {
@@ -316,7 +316,7 @@ public class Configuration {
      * @param acceptingXssPatterns accepting XSS patterns to be set
      * @throws IllegalArgumentException if a pattern is null or empty
      */
-    protected void setAcceptingXssPatterns(Set<String> acceptingXssPatterns) {
+    public void setAcceptingXssPatterns(Set<String> acceptingXssPatterns) {
         if (acceptingXssPatterns == null) {
             this.acceptingXssPatterns = emptySet();
         } else {
@@ -348,7 +348,7 @@ public class Configuration {
      * @param rejectingXssPatterns rejecting XSS patterns to be set
      * @throws IllegalArgumentException if a pattern is null or empty
      */
-    protected void setRejectingXssPatterns(Set<String> rejectingXssPatterns) {
+    public void setRejectingXssPatterns(Set<String> rejectingXssPatterns) {
         if (rejectingXssPatterns == null) {
             this.rejectingXssPatterns = emptySet();
         } else {
@@ -373,7 +373,7 @@ public class Configuration {
         return responseHeaders;
     }
 
-    protected void setResponseHeaders(Map<String, String> responseHeaders) {
+    public void setResponseHeaders(Map<String, String> responseHeaders) {
         this.responseHeaders = (responseHeaders == null) ? emptyMap() : unmodifiableMap(responseHeaders);
     }
 
@@ -386,7 +386,7 @@ public class Configuration {
         return otherConfigurations;
     }
 
-    protected void setOther(Map<String, Object> other) {
+    public void setOther(Map<String, Object> other) {
         this.otherConfigurations = (other == null) ? emptyMap() : unmodifiableMap(other);
     }
 
