@@ -15,7 +15,8 @@
   ~ limitations under the License.
 -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>org.wso2.carbon.uuf.renderablecreator.hbs</artifactId>
@@ -52,10 +53,10 @@
             <groupId>org.antlr</groupId>
             <artifactId>antlr4-runtime</artifactId>
         </dependency>
-<!--         <dependency>
-            <groupId>org.wso2.msf4j</groupId>
-            <artifactId>msf4j-core</artifactId>
-        </dependency> -->
+        <!--         <dependency>
+                    <groupId>org.wso2.msf4j</groupId>
+                    <artifactId>msf4j-core</artifactId>
+                </dependency> -->
         <!-- Other Dependencies -->
         <dependency>
             <groupId>org.testng</groupId>
@@ -79,16 +80,19 @@
                 <configuration>
                     <instructions>
                         <Import-Package>
-                            org.wso2.carbon.uuf.*;version="${carbon.uuf.version}",
-                            javax.script,
-                            jdk.nashorn.api.scripting,
-                            org.osgi.service.component.annotations.*,
-                            com.github.jknack.handlebars.*,
-                            com.google.common.*;version="${guava.version.range}",
-                            com.google.gson.*;version="${gson.version}",
-                            org.slf4j.*;version="${slf4j.version.range}",
-                            org.apache.commons.io,
-                            org.yaml.snakeyaml,
+                            org.wso2.carbon.uuf.*; version="${carbon.uuf.version}",
+                            javax.script; version="${javax.script.version.range}",
+                            jdk.nashorn.api.scripting; version="${carbon.uuf.version}",
+                            org.osgi.service.component.annotations.*;
+                            version="${org.osgi.service.component.annotations.version.range}",
+                            com.github.jknack.handlebars.*;
+                            version="${orbit.com.github.jknack.handlebars.version.range}",
+                            com.google.common.*; version="${guava.version.range}",
+                            com.google.gson.*; version="${gson.version.range}",
+                            org.slf4j.*; version="${slf4j.version.range}",
+                            org.apache.commons.io; version="${commons-io.wso2.version.range}",
+                            org.yaml.snakeyaml; version="${orbit.org.yaml.version.range}",
+                            <!--todo 2017/01/04 Add version range for CAAS once the version 1.0.0 releases-->
                             org.wso2.carbon.security.caas.*,
                             org.wso2.carbon.kernel.context; version="${carbon.kernel.version.range}"
                         </Import-Package>

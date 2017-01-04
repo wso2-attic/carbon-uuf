@@ -113,35 +113,35 @@
                             org.wso2.carbon.deployment.engine.*; version="${carbon.kernel.version.range}",
                             org.wso2.carbon.deployment.notifier.*; version="${carbon.kernel.version.range}",
                             org.wso2.carbon.kernel.startupresolver.*; version="${carbon.kernel.version.range}",
-                            org.wso2.carbon.kernel.transports.*;version="${carbon.kernel.version.range}",
-                            org.wso2.msf4j;version="${msf4j.version}",
-                            javax.naming,
-                            javax.cache.*,
-                            org.osgi.framework;version="${osgi.framework.import.version.range}",
-                            org.osgi.framework.wiring,
-                            org.objectweb.asm,
-                            com.google.common.*;version="${guava.version.range}",
-                            com.google.gson.*;version="${gson.version}",
-                            org.apache.commons.lang3.*,
-                            org.apache.commons.io,
-                            org.apache.log4j.*,
-                            org.slf4j.*;version="${slf4j.version.range}",
-                            org.yaml.snakeyaml,
-                            org.osgi.util.tracker; version="${osgi.service.tracker.package.import.version.range}"
+                            org.wso2.carbon.kernel.transports.*; version="${carbon.kernel.version.range}",
+                            org.wso2.msf4j; version="${msf4j.version.range}",
+                            javax.naming; version="${javax.naming.version.range}",
+                            javax.cache.*; version="${javax.cache-api.version.range}",
+                            org.osgi.framework; version="${org.osgi.framework.version.range}",
+                            org.osgi.framework.wiring; version="${org.osgi.framework.wiring.version.range}",
+                            org.objectweb.asm; version="${org.objectweb.asm.version.range}",
+                            com.google.common.*; version="${guava.version.range}",
+                            com.google.gson.*; version="${gson.version.range}",
+                            org.apache.commons.lang3.*; version="${org.apache.commons.commons-lang3.version.range}",
+                            org.apache.commons.io; version="${commons-io.wso2.version.range}",
+                            org.apache.log4j.*; version="${org.apache.log4j.version.range}",
+                            org.slf4j.*; version="${slf4j.version.range}",
+                            org.yaml.snakeyaml; version="${orbit.org.yaml.version.range}",
+                            org.osgi.util.tracker; version="${osgi.service.tracker.version.range}"
                         </Import-Package>
                         <Private-Package>org.wso2.carbon.uuf.internal.*</Private-Package>
                         <Export-Package>
-                            org.wso2.carbon.uuf.api.*;version="${carbon.uuf.version}",
-                            org.wso2.carbon.uuf.core.*;version="${carbon.uuf.version}",
-                            org.wso2.carbon.uuf.exception.*;version="${carbon.uuf.version}",
-                            org.wso2.carbon.uuf.spi.*;version="${carbon.uuf.version}"
+                            org.wso2.carbon.uuf.api.*; version="${carbon.uuf.version}",
+                            org.wso2.carbon.uuf.core.*; version="${carbon.uuf.version}",
+                            org.wso2.carbon.uuf.exception.*; version="${carbon.uuf.version}",
+                            org.wso2.carbon.uuf.spi.*; version="${carbon.uuf.version}"
                         </Export-Package>
                         <Carbon-Component>
-                            startup.listener;componentName="wso2-uuf-server";
+                            startup.listener; componentName="wso2-uuf-server";
                             requiredService="org.wso2.carbon.uuf.spi.RenderableCreator",
-                            startup.listener;componentName="wso2-uuf-startup-listener";
+                            startup.listener; componentName="wso2-uuf-startup-listener";
                             requiredService="org.wso2.carbon.uuf.spi.HttpConnector,org.wso2.carbon.uuf.api.Server",
-                            osgi.service;objectClass="org.wso2.carbon.uuf.api.Server"
+                            osgi.service; objectClass="org.wso2.carbon.uuf.api.Server"
                         </Carbon-Component>
                         <Include-Resource>src/main/resources</Include-Resource>
                     </instructions>
