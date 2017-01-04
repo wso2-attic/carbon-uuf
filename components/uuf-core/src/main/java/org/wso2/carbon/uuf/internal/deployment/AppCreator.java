@@ -42,10 +42,7 @@ import org.wso2.carbon.uuf.core.Theme;
 import org.wso2.carbon.uuf.core.UriPatten;
 import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.internal.auth.SessionRegistry;
-import org.wso2.carbon.uuf.internal.deployment.parser.AppConfigParser;
-import org.wso2.carbon.uuf.internal.deployment.parser.ComponentConfigParser;
-import org.wso2.carbon.uuf.internal.deployment.parser.DependencyTreeParser;
-import org.wso2.carbon.uuf.internal.deployment.parser.ThemeConfigParser;
+import org.wso2.carbon.uuf.internal.deployment.parser.YamlFileParser;
 import org.wso2.carbon.uuf.internal.deployment.parser.bean.AppConfig;
 import org.wso2.carbon.uuf.internal.deployment.parser.bean.ComponentConfig;
 import org.wso2.carbon.uuf.internal.deployment.parser.bean.DependencyNode;
@@ -90,7 +87,7 @@ public class AppCreator {
 
     public App createApp(AppReference appReference, String contextPath) {
         // Parse dependency tree.
-        DependencyNode rootNode = DependencyTreeParser.parse(appReference.getDependencyTree());
+        DependencyNode rootNode = YamlFileParser.parse(appReference.getDependencyTree(), DependencyNode.class);
         // Parse configurations.
         Configuration configuration = createConfiguration(appReference);
         // Create Lookup.
@@ -134,7 +131,7 @@ public class AppCreator {
     }
 
     private Configuration createConfiguration(AppReference appReference) {
-        return new AppConfiguration(AppConfigParser.parse(appReference.getConfiguration()));
+        return new AppConfiguration(YamlFileParser.parse(appReference.getConfiguration(), AppConfig.class));
     }
 
     private Component createComponent(String appContextPath, String componentName, String componentVersion,
@@ -147,7 +144,8 @@ public class AppCreator {
                 .map((fragmentReference) -> createFragment(fragmentReference, componentName, classLoader))
                 .forEach(lookup::add);
 
-        ComponentConfig componentConfig = ComponentConfigParser.parse(componentReference.getConfiguration());
+        ComponentConfig componentConfig = YamlFileParser.parse(componentReference.getConfiguration(),
+                                                               ComponentConfig.class);
         addBindings(componentConfig.getBindings(), lookup, componentName);
         addAPIs(componentConfig.getApis(), appContextPath, componentContextPath, componentName, classLoader);
 
@@ -255,7 +253,7 @@ public class AppCreator {
     }
 
     private Theme createTheme(ThemeReference themeReference) {
-        ThemeConfig themeConfig = ThemeConfigParser.parse(themeReference.getConfiguration());
+        ThemeConfig themeConfig = YamlFileParser.parse(themeReference.getConfiguration(), ThemeConfig.class);
         List<String> css = (themeConfig.getCss() == null) ? Collections.emptyList() : themeConfig.getCss();
         List<String> headJs = (themeConfig.getHeadJs() == null) ? Collections.emptyList() : themeConfig.getHeadJs();
         List<String> js = (themeConfig.getJs() == null) ? Collections.emptyList() : themeConfig.getJs();
