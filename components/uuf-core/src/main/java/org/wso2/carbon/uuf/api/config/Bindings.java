@@ -25,14 +25,32 @@ import org.wso2.carbon.uuf.internal.util.NameUtils;
 
 import java.util.List;
 
+/**
+ * Represents the final bindings of an UUF app.
+ *
+ * @since 1.0.0
+ */
 public class Bindings {
 
     private final ListMultimap<String, Fragment> bindings;
 
+    /**
+     * Creates a new instance.
+     */
     public Bindings() {
         this.bindings = ArrayListMultimap.create();
     }
 
+    /**
+     * Adds a new binding entry.
+     *
+     * @param zoneName  zone name that the specified fragments will be bound
+     * @param fragments fragments that will be bound
+     * @param mode      binding mode
+     * @throws IllegalArgumentException if zone name is either null, empty or not a fully qualified name
+     * @throws IllegalArgumentException if specified fragment/s is/are null
+     * @throws IllegalArgumentException if mode is null
+     */
     public void addBinding(String zoneName, List<Fragment> fragments, Mode mode) {
         // Validating zone name.
         if (zoneName == null) {
@@ -73,11 +91,31 @@ public class Bindings {
         }
     }
 
-    public List<Fragment> getBinding(String zoneName) {
+    /**
+     * Returns the bound fragments of the specified zone.
+     *
+     * @param zoneName fully qualified name of the zone
+     * @return bound fragments to the specified zone
+     */
+    public List<Fragment> getBindings(String zoneName) {
         return bindings.get(zoneName);
     }
 
+    /**
+     * Represents different pushing modes for a binding entry.
+     */
     public enum Mode {
-        prepend, append, overwrite
+        /**
+         * Pushes the specified fragments into the beginning of the existing pushed fragments of the zone.
+         */
+        prepend,
+        /**
+         * Pushes the specified fragments into the end of the existing pushed fragments of the zone.
+         */
+        append,
+        /**
+         * Removes the existing pushed fragments of the zone and replace with specified fragments.
+         */
+        overwrite
     }
 }

@@ -125,7 +125,7 @@ public class Lookup {
     }
 
     public List<Fragment> getBindings(String componentName, String zoneName) {
-        return bindings.getBinding(NameUtils.getFullyQualifiedName(componentName, zoneName));
+        return bindings.getBindings(NameUtils.getFullyQualifiedName(componentName, zoneName));
     }
 
     public Optional<Layout> getLayoutIn(String componentName, String layoutName) {
