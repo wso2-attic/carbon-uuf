@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2017, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  * WSO2 Inc. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
@@ -16,7 +16,7 @@
  * under the License.
  */
 
-package org.wso2.carbon.uuf.internal.deployment.parser.bean;
+package org.wso2.carbon.uuf.internal.deployment.parser;
 
 
 import org.wso2.carbon.uuf.api.config.Bindings;
@@ -26,6 +26,7 @@ import java.util.Map;
 
 /**
  * Bean class that represents configurations of an UUF Component.
+ *
  * @apiNote Getters and setters of this class should match with getters and setters in
  * org.wso2.carbon.uuf.maven.bean.ComponentConfig class.
  * @since 1.0.0

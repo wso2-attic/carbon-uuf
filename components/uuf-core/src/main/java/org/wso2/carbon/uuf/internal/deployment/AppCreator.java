@@ -42,11 +42,11 @@ import org.wso2.carbon.uuf.core.Theme;
 import org.wso2.carbon.uuf.core.UriPatten;
 import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.internal.auth.SessionRegistry;
+import org.wso2.carbon.uuf.internal.deployment.parser.AppConfig;
+import org.wso2.carbon.uuf.internal.deployment.parser.ComponentConfig;
+import org.wso2.carbon.uuf.internal.deployment.parser.DependencyNode;
+import org.wso2.carbon.uuf.internal.deployment.parser.ThemeConfig;
 import org.wso2.carbon.uuf.internal.deployment.parser.YamlFileParser;
-import org.wso2.carbon.uuf.internal.deployment.parser.bean.AppConfig;
-import org.wso2.carbon.uuf.internal.deployment.parser.bean.ComponentConfig;
-import org.wso2.carbon.uuf.internal.deployment.parser.bean.DependencyNode;
-import org.wso2.carbon.uuf.internal.deployment.parser.bean.ThemeConfig;
 import org.wso2.carbon.uuf.internal.util.NameUtils;
 import org.wso2.carbon.uuf.spi.RenderableCreator;
 
