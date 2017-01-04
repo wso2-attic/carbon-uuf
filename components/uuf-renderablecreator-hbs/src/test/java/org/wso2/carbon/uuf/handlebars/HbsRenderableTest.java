@@ -186,7 +186,7 @@ public class HbsRenderableTest {
     }
 
     @Test
-    public void testZoneWithInlineContent() {
+    public void testZoneWithDefaultContent() {
         HbsPageRenderable pageRenderable = createPageRenderable("X {{#defineZone \"test-zone\"}}" +
                 "<label>default content</label>{{/defineZone}} Y");
         Lookup lookup = createLookup();
