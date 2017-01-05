@@ -1,0 +1,34 @@
+{{layout "org.wso2.carbon.uuf.sample.foundation.main"}}
+{{title "Substring | String Helper Sample | " @config.appName}}
+{{#fillZone "content"}}
+    <h3>Substring String Helper.</h3>
+    <hr />
+    <p>You can return a new character sequence that is sub sequence of the given sequence.</p>
+    <p>
+        The sub sequence starts with the character value at the specified index and ends with the character value at
+        the index end-1.
+    </p>
+    <p>
+        Arguments:   start offset
+                    end offset
+    </p>
+    <pre>
+        \{{substring value 11 }}
+    </pre>
+    <p>when you use the template: </p>
+    <pre>
+        value = "Handlebars.java";
+    </pre>
+    <p>will result in:</p>
+    <pre>
+        "java"
+    </pre>
+    <pre>
+        \{{substring value 0 10 }}
+    </pre>
+    <p>will result in:</p>
+    <pre>
+        "Handlebars"
+    </pre>
+    <p></p>
+{{/fillZone}}

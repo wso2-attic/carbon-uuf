@@ -1,0 +1,20 @@
+{{layout "org.wso2.carbon.uuf.sample.foundation.main"}}
+{{title "Slugify | String Helper Sample | " @config.appName}}
+{{#fillZone "content"}}
+    <h3>Slugify String Helper.</h3>
+    <hr />
+    <p> You can convert a value to lowercase, remove non-word characters (alphanumerics and underscores) and convert
+    spaces to hyphens. Also strip leading and trailing whitespace.</p>
+    <pre>
+        \{{slugify value}}
+    </pre>
+    <p>when you use the template: </p>
+    <pre>
+        value = "Joel is a slug";
+    </pre>
+    <p>will result in:</p>
+    <pre>
+        "joel-is-a-slug"
+    </pre>
+    <p></p>
+{{/fillZone}}

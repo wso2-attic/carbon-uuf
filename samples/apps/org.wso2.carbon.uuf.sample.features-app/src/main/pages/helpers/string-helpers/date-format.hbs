@@ -1,0 +1,18 @@
+{{layout "org.wso2.carbon.uuf.sample.foundation.main"}}
+{{title "Date format | String Helper Sample | " @config.appName}}
+{{#fillZone "content"}}
+    <h3>Date format String Helper.</h3>
+    <hr />
+    <p> You can format date using one of the following format parameters: </p>
+    <li>"full": full date format. For example: Tuesday, June 19, 2012</li>
+    <li>"long": long date format. For example: June 19, 2012</li>
+    <li>"medium": medium date format. For example: Jun 19, 2012</li>
+    <li>"short": short date format. For example: 6/19/12</li>
+    <li>"pattern": a date pattern.</p>
+    <li>Otherwise, the default formatter will be used.
+     The format option can be specified as a parameter or hash (a.k.a named parameter).</p>
+    <pre>
+        \{{dateFormat date ["format"] [format="format"][tz=timeZone|timeZoneId]}}
+    </pre>
+    <p></p>
+{{/fillZone}}
