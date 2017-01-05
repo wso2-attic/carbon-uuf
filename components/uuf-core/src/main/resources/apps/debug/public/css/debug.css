@@ -7822,3 +7822,122 @@ ul.sidebar-messages > li {
     background:#e2e2e2;
     color:#666;
 }
+
+
+
+/* ========================================================================
+ * profiler styles
+ * ======================================================================== */
+
+
+.vis-inner{
+    width:100%;
+}
+.vis-item .vis-item-content{
+    padding:0px;
+}
+.vis-item .custom-vis-item-content{
+    padding:6px;
+}
+.vis-item.vis-range .custom-vis-item-content{
+    text-shadow: 0px 0px 2px rgba(0, 0, 0, 1);
+}
+.vis-item .vis-item-overflow {
+  overflow: visible;
+}
+.vis-item.vis-range {
+    font-size:0px;
+    border-width:0px;
+    background: #333;
+    color:#fff;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
+   -o-transition:background .5s ease-in;
+    -ms-transition:background .5s ease-in;
+    -moz-transition:background .5s ease-in;
+    -webkit-transition:background .5s ease-in;
+    transition:background .5s ease-in;
+}
+.vis-item.vis-range:hover {
+    background: #666!important;
+    cursor:pointer;
+}
+.vis-item.vis-background{
+    font-size:11px;
+    background:#EEEEEE;
+    color:#333;
+    height:100%!important;
+}
+.vis-custom-time{
+    background-color:#F62459;
+    width:1px;
+}
+.vis-timeline{
+    //border:none;
+}
+.vis-foreground .vis-group{
+    border:none;
+}
+.lvl-1 .vis-item.vis-range{
+    background-color: #3498db;
+}
+.lvl-1.vis-label{
+
+}
+.lvl-2 .vis-item.vis-range{
+  background-color: #63B0E3;
+}
+.lvl-2.vis-label{
+
+}
+.lvl-3 .vis-item.vis-range{
+  background-color: #97CAED;
+}
+.lvl-3.vis-label{
+
+}
+.vis-labelset .vis-label .vis-inner{
+    padding-right:20px;
+}
+.popover{
+    font-size: 11px;
+}
+.popover .popover-title{
+    font-size: 11px;
+}
+.popover .popover-content ul{
+    margin:0;
+    padding:0;
+    list-style:none;
+}
+.popover .popover-content ul li span{
+    margin-right:20px;
+}
+.popover .popover-content .table{
+    margin:0;
+}
+
+.popover .popover-content .table>tbody>tr>td,.popover .popover-content .table>tbody>tr>th,
+.popover .popover-content .table>tfoot>tr>td,.popover .popover-content .table>tfoot>tr>th,
+.popover .popover-content .table>thead>tr>td, .table>thead>tr>th{
+    border:none;
+    padding:4px;
+}
+.left-label{
+    float:left;
+}
+.right-label{
+    font-size:11px;
+    line-height:20px;
+    padding-left:50px;
+    float:right;
+}
+.vis-labelset .vis-label:first-child .left-label,
+.vis-labelset .vis-label:first-child .right-label{
+    font-weight:bold;
+}
+.time-lbl{
+    position: absolute;
+    color:#ccc;
+}
