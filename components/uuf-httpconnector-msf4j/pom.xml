@@ -77,7 +77,7 @@
                             org.wso2.msf4j; version="${msf4j.version.range}",
                             org.osgi.framework; version="${org.osgi.framework.version.range}",
                             javax.ws.rs.*; version="${javax.ws.rs.version.range}",
-                            io.netty.handler.*; version="${netty.version}",
+                            io.netty.handler.*; version="${netty.version.range}",
                             org.osgi.service.component.annotations.*;
                             version="${org.osgi.service.component.annotations.version.range}",
                             org.yaml.snakeyaml; version="${orbit.org.yaml.version.range}",

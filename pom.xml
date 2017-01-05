@@ -650,6 +650,7 @@
         <osgi.service.tracker.version.range>[1.5.1, 2.0.0)</osgi.service.tracker.version.range>
         <beanutils.version>1.8.3_2</beanutils.version>
         <netty.version>4.0.30.Final</netty.version>
+        <netty.version.range>[4.0.30, 5.0.0)</netty.version.range>
         <disruptor.orbit.version>3.3.2.wso2v1</disruptor.orbit.version>
 
         <!-- Source and target Java version -->
