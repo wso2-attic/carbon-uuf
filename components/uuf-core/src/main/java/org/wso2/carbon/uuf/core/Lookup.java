@@ -18,10 +18,8 @@
 
 package org.wso2.carbon.uuf.core;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.ListMultimap;
 import com.google.common.collect.SetMultimap;
-import org.wso2.carbon.uuf.api.config.ComponentManifest;
+import org.wso2.carbon.uuf.api.config.Bindings;
 import org.wso2.carbon.uuf.api.config.Configuration;
 import org.wso2.carbon.uuf.internal.util.NameUtils;
 
@@ -43,23 +41,24 @@ public class Lookup {
      */
     private final Map<String, Fragment> fragments;
     /**
-     * All bindings of this lookup. key = fully qualified name of the zone, value = pushed fragments set
-     */
-    private final ListMultimap<String, Fragment> bindings;
-    /**
      * All layouts of this lookup. key = fully qualified name, value = layout
      */
     private final Map<String, Layout> layouts;
-    private final Configuration configuration;
     private final Map<String, Properties> i18nResources;
+    private final Configuration configuration;
+    private final Bindings bindings;
 
     public Lookup(SetMultimap<String, String> flattenedDependencies, Configuration configuration) {
+        this(flattenedDependencies, configuration, new Bindings());
+    }
+
+    Lookup(SetMultimap<String, String> flattenedDependencies, Configuration configuration, Bindings bindings) {
         this.flattenedDependencies = flattenedDependencies;
         this.configuration = configuration;
+        this.bindings = bindings;
         this.components = new HashMap<>();
         this.layouts = new HashMap<>();
         this.fragments = new HashMap<>();
-        this.bindings = ArrayListMultimap.create();
         this.i18nResources = new HashMap<>();
     }
 
@@ -85,18 +84,8 @@ public class Lookup {
         }
     }
 
-    public void addBinding(String zoneName, List<Fragment> fragments, String mode) {
-        // TODO: 12/1/16 we should move handling  bindings in to a separate class
-        switch (mode) {
-            case ComponentManifest.Binding.MODE_PREPEND:
-                bindings.get(zoneName).addAll(0, fragments);
-                break;
-            case ComponentManifest.Binding.MODE_APPEND:
-                bindings.putAll(zoneName, fragments);
-                break;
-            case ComponentManifest.Binding.MODE_OVERWRITE:
-                bindings.replaceValues(zoneName, fragments);
-        }
+    public void addBinding(String zoneName, List<Fragment> fragments, Bindings.Mode mode) {
+        bindings.addBinding(zoneName, fragments, mode);
     }
 
     public void add(Layout layout) {
@@ -136,7 +125,7 @@ public class Lookup {
     }
 
     public List<Fragment> getBindings(String componentName, String zoneName) {
-        return bindings.get(NameUtils.getFullyQualifiedName(componentName, zoneName));
+        return bindings.getBindings(NameUtils.getFullyQualifiedName(componentName, zoneName));
     }
 
     public Optional<Layout> getLayoutIn(String componentName, String layoutName) {

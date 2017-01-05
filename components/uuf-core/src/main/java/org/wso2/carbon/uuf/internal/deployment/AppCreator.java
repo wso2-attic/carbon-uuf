@@ -18,16 +18,13 @@
 
 package org.wso2.carbon.uuf.internal.deployment;
 
-import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.ListMultimap;
 import com.google.common.collect.SetMultimap;
+import com.google.common.collect.Sets;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.uuf.api.Placeholder;
-import org.wso2.carbon.uuf.api.config.ComponentManifest;
 import org.wso2.carbon.uuf.api.config.Configuration;
-import org.wso2.carbon.uuf.api.config.DependencyNode;
 import org.wso2.carbon.uuf.api.reference.AppReference;
 import org.wso2.carbon.uuf.api.reference.ComponentReference;
 import org.wso2.carbon.uuf.api.reference.FileReference;
@@ -43,18 +40,18 @@ import org.wso2.carbon.uuf.core.Lookup;
 import org.wso2.carbon.uuf.core.Page;
 import org.wso2.carbon.uuf.core.Theme;
 import org.wso2.carbon.uuf.core.UriPatten;
-import org.wso2.carbon.uuf.exception.InvalidTypeException;
-import org.wso2.carbon.uuf.exception.MalformedConfigurationException;
 import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.internal.auth.SessionRegistry;
-import org.wso2.carbon.uuf.internal.deployment.parser.ComponentManifestParser;
-import org.wso2.carbon.uuf.internal.deployment.parser.ConfigurationParser;
-import org.wso2.carbon.uuf.internal.deployment.parser.DependencyTreeParser;
+import org.wso2.carbon.uuf.internal.deployment.parser.AppConfig;
+import org.wso2.carbon.uuf.internal.deployment.parser.ComponentConfig;
+import org.wso2.carbon.uuf.internal.deployment.parser.DependencyNode;
+import org.wso2.carbon.uuf.internal.deployment.parser.ThemeConfig;
+import org.wso2.carbon.uuf.internal.deployment.parser.YamlFileParser;
 import org.wso2.carbon.uuf.internal.util.NameUtils;
 import org.wso2.carbon.uuf.spi.RenderableCreator;
-import org.yaml.snakeyaml.Yaml;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -90,11 +87,11 @@ public class AppCreator {
 
     public App createApp(AppReference appReference, String contextPath) {
         // Parse dependency tree.
-        DependencyNode rootNode = DependencyTreeParser.parse(appReference.getDependencyTree());
+        DependencyNode rootNode = YamlFileParser.parse(appReference.getDependencyTree(), DependencyNode.class);
         // Parse configurations.
-        Map<?, ?> rawConfiguration = ConfigurationParser.parse(appReference.getConfiguration());
+        Configuration configuration = createConfiguration(appReference);
         // Create Lookup.
-        final Lookup lookup = new Lookup(getFlattenedDependencies(rootNode), new Configuration(rawConfiguration));
+        final Lookup lookup = new Lookup(getFlattenedDependencies(rootNode), configuration);
 
         // Created Components.
         final Map<String, Component> createdComponents = new HashMap<>();
@@ -111,7 +108,7 @@ public class AppCreator {
             ClassLoader classLoader = classLoaderProvider.getClassLoader(componentName, componentVersion,
                                                                          componentReference);
             Component component = createComponent(contextPath, componentName, componentVersion, componentContextPath,
-                    componentReference, classLoader, lookup);
+                                                  componentReference, classLoader, lookup);
             lookup.add(component);
             createdComponents.put(componentName, component);
         });
@@ -133,6 +130,29 @@ public class AppCreator {
         return flattenedDependencies;
     }
 
+    private Configuration createConfiguration(AppReference appReference) {
+        AppConfig appConfig = YamlFileParser.parse(appReference.getConfiguration(), AppConfig.class);
+        Configuration configuration = new Configuration();
+        configuration.setContextPath(appConfig.getContextPath());
+        configuration.setThemeName(appConfig.getTheme());
+        configuration.setLoginPageUri(appConfig.getLoginPageUri());
+        Map<Integer, String> errorPageUris = appConfig.getErrorPages().entrySet().stream()
+                .filter(entry -> NumberUtils.isNumber(entry.getKey()))
+                .collect(Collectors.toMap(entry -> Integer.valueOf(entry.getKey()), Map.Entry::getValue));
+        configuration.setErrorPageUris(errorPageUris);
+        configuration.setDefaultErrorPageUri(appConfig.getErrorPages().get("default"));
+        configuration.setMenus(appConfig.getMenus().stream()
+                                       .map(AppConfig.Menu::toConfigurationMenu)
+                                       .collect(Collectors.toList()));
+        configuration.setAcceptingCsrfPatterns(Sets.newHashSet(appConfig.getSecurity().getCsrfPatterns().getAccept()));
+        configuration.setRejectingCsrfPatterns(Sets.newHashSet(appConfig.getSecurity().getCsrfPatterns().getReject()));
+        configuration.setAcceptingXssPatterns(Sets.newHashSet(appConfig.getSecurity().getXssPatterns().getAccept()));
+        configuration.setRejectingXssPatterns(Sets.newHashSet(appConfig.getSecurity().getXssPatterns().getReject()));
+        configuration.setResponseHeaders(appConfig.getSecurity().getResponseHeaders());
+        configuration.setOther(appConfig.getOther());
+        return configuration;
+    }
+
     private Component createComponent(String appContextPath, String componentName, String componentVersion,
                                       String componentContextPath, ComponentReference componentReference,
                                       ClassLoader classLoader, Lookup lookup) {
@@ -143,11 +163,10 @@ public class AppCreator {
                 .map((fragmentReference) -> createFragment(fragmentReference, componentName, classLoader))
                 .forEach(lookup::add);
 
-        componentReference.getManifest().ifPresent(componentManifestFile -> {
-            ComponentManifest componentManifest = ComponentManifestParser.parse(componentManifestFile);
-            addBindings(componentManifest.getBindings(), lookup, componentName);
-            addAPIs(componentManifest.getApis(), appContextPath, componentContextPath, componentName, classLoader);
-        });
+        ComponentConfig componentConfig = YamlFileParser.parse(componentReference.getConfiguration(),
+                                                               ComponentConfig.class);
+        addBindings(componentConfig.getBindings(), lookup, componentName);
+        addAPIs(componentConfig.getApis(), appContextPath, componentContextPath, componentName, classLoader);
 
         if (!componentReference.getI18nFiles().isEmpty()) {
             lookup.add(componentReference.getI18nFiles());
@@ -176,12 +195,12 @@ public class AppCreator {
         return new Fragment(fragmentName, frd.getRenderable(), frd.isSecured());
     }
 
-    private void addBindings(List<ComponentManifest.Binding> bindings, Lookup lookup, String componentName) {
+    private void addBindings(List<ComponentConfig.Binding> bindings, Lookup lookup, String componentName) {
         if ((bindings == null) || bindings.isEmpty()) {
             return;
         }
 
-        for (ComponentManifest.Binding binding : bindings) {
+        for (ComponentConfig.Binding binding : bindings) {
             String zoneName = NameUtils.getFullyQualifiedName(componentName, binding.getZoneName());
             List<Fragment> fragments = new ArrayList<>();
             for (String fragmentName : binding.getFragments()) {
@@ -197,27 +216,27 @@ public class AppCreator {
         }
     }
 
-    private void addAPIs(List<ComponentManifest.API> apis, String appContextPath, String componentContextPath,
+    private void addAPIs(List<ComponentConfig.API> apis, String appContextPath, String componentContextPath,
                          String componentName, ClassLoader classLoader) {
         if ((apis == null) || apis.isEmpty()) {
             return;
         }
 
-        for (ComponentManifest.API api : apis) {
+        for (ComponentConfig.API api : apis) {
             String className = api.getClassName();
             String uri = appContextPath + componentContextPath + "/apis" + api.getUri();
             Object apiImplementation;
             try {
                 apiImplementation = classLoader.loadClass(className).newInstance();
             } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
-                throw new UUFException("Cannot deploy REST API '" + className + "' for component '" +
-                        componentName + "'", e);
+                throw new UUFException(
+                        "Cannot deploy REST API '" + className + "' for component '" + componentName + "'.", e);
             }
             Dictionary<String, String> serviceProperties = new Hashtable<>();
             serviceProperties.put("contextPath", uri);
             classLoaderProvider.deployAPI(apiImplementation, serviceProperties);
-            LOGGER.info("Deployed REST API '{}' for component '{}' with context path '{}'.",
-                    className, componentName, uri);
+            LOGGER.info("Deployed REST API '{}' for component '{}' with context path '{}'.", className, componentName,
+                        uri);
         }
     }
 
@@ -253,52 +272,11 @@ public class AppCreator {
     }
 
     private Theme createTheme(ThemeReference themeReference) {
-        Map<?, ?> rawConfig;
-        try {
-            rawConfig = new Yaml().loadAs(themeReference.getThemeConfig().getContent(), Map.class);
-        } catch (Exception e) {
-            // Yaml.loadAs() throws an Exception
-            throw new MalformedConfigurationException(
-                    "Theme configuration '" + themeReference.getThemeConfig().getRelativePath() + "' is malformed.", e);
-        }
+        ThemeConfig themeConfig = YamlFileParser.parse(themeReference.getConfiguration(), ThemeConfig.class);
+        List<String> css = (themeConfig.getCss() == null) ? Collections.emptyList() : themeConfig.getCss();
+        List<String> headJs = (themeConfig.getHeadJs() == null) ? Collections.emptyList() : themeConfig.getHeadJs();
+        List<String> js = (themeConfig.getJs() == null) ? Collections.emptyList() : themeConfig.getJs();
 
-        ListMultimap<String, String> config = ArrayListMultimap.create();
-        for (Map.Entry<?, ?> entry : rawConfig.entrySet()) {
-            if (!(entry.getKey() instanceof String)) {
-                throw new InvalidTypeException(
-                        "Theme configuration must be a Map<String, String[]>. Instead found a '" +
-                                entry.getKey().getClass().getName() + "' key.");
-            }
-            String key = (String) entry.getKey();
-            if (!(key.equals(Placeholder.css.name()) || key.equals(Placeholder.headJs.name()) ||
-                    key.equals(Placeholder.js.name()))) {
-                throw new IllegalArgumentException(
-                        "Theme configuration must be a Map<String, String[]> where key has to be either '" +
-                                Placeholder.css + "', '" + Placeholder.headJs + "', and '" + Placeholder.js +
-                                "'. Instead found '" + key + "' key.");
-            }
-
-            if (!(entry.getValue() instanceof List)) {
-                throw new InvalidTypeException(
-                        "Theme configuration must be a Map<String, List<String>>. Instead found a '" +
-                                entry.getKey().getClass().getName() + "' value.");
-            } else {
-                List<?> rawList = (List) entry.getValue();
-                for (Object listValue : rawList) {
-                    if ((listValue instanceof String)) {
-                        config.put(key, (String) listValue);
-                    } else {
-                        throw new InvalidTypeException(
-                                "Theme configuration must be a Map<String, List<String>>. Instead found a '" +
-                                        entry.getKey().getClass().getName() + "' value.");
-                    }
-                }
-            }
-
-        }
-
-        return new Theme(themeReference.getName(), config.get(Placeholder.css.name()),
-                         config.get(Placeholder.headJs.name()), config.get(Placeholder.js.name()),
-                         themeReference.getPath());
+        return new Theme(themeReference.getName(), css, headJs, js, themeReference.getPath());
     }
 }
