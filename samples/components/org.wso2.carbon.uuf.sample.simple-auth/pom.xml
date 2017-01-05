@@ -15,7 +15,8 @@
   ~ limitations under the License.
 -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.wso2.carbon.uuf.sample</groupId>
@@ -34,11 +35,17 @@
     </parent>
 
     <dependencies>
+        <!--UUF Components-->
         <dependency>
             <groupId>org.wso2.carbon.uuf.sample</groupId>
             <artifactId>org.wso2.carbon.uuf.sample.foundation</artifactId>
             <type>zip</type>
             <classifier>uuf-component</classifier>
+        </dependency>
+        <!--Backend dependencies-->
+        <dependency>
+            <groupId>org.wso2.carbon.uuf.sample</groupId>
+            <artifactId>org.wso2.carbon.uuf.sample.simple-auth.bundle</artifactId>
         </dependency>
     </dependencies>
 
@@ -56,9 +63,17 @@
                             <goal>create-component</goal>
                         </goals>
                         <configuration>
+                            <!--OSGi imports-->
                             <instructions>
                                 <Import-Package>org.wso2.carbon.uuf.sample.simpleauth.bundle</Import-Package>
                             </instructions>
+                            <!-- All backend dependencies should be specified here -->
+                            <bundles>
+                                <bundle>
+                                    <symbolicName>org.wso2.carbon.uuf.sample.simple-auth.bundle</symbolicName>
+                                    <version>${carbon.uuf.version}</version>
+                                </bundle>
+                            </bundles>
                         </configuration>
                     </execution>
                 </executions>

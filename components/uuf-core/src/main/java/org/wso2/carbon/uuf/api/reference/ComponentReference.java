@@ -30,8 +30,7 @@ public interface ComponentReference {
     String DIR_NAME_LAYOUTS = "layouts";
     String DIR_NAME_FRAGMENTS = "fragments";
     String DIR_NAME_LANGUAGE = "lang";
-    String FILE_NAME_MANIFEST = "component.yaml";
-    String FILE_NAME_CONFIGURATIONS = "config.yaml";
+    String FILE_NAME_CONFIGURATION = "component.yaml";
     String FILE_NAME_OSGI_IMPORTS = "osgi-imports";
 
     Stream<PageReference> getPages(Set<String> supportedExtensions);
@@ -40,9 +39,7 @@ public interface ComponentReference {
 
     Stream<FragmentReference> getFragments(Set<String> supportedExtensions);
 
-    Optional<FileReference> getManifest();
-
-    Optional<FileReference> getConfiguration();
+    FileReference getConfiguration();
 
     Optional<FileReference> getOsgiImportsConfig();
 

@@ -126,22 +126,22 @@
                             org.apache.commons.io; version="${commons-io.wso2.version.range}",
                             org.apache.log4j.*; version="${org.apache.log4j.version.range}",
                             org.slf4j.*; version="${slf4j.version.range}",
-                            org.yaml.snakeyaml; version="${orbit.org.yaml.version.range}",
+                            org.yaml.snakeyaml.*; version="${orbit.org.yaml.version.range}",
                             org.osgi.util.tracker; version="${osgi.service.tracker.version.range}"
                         </Import-Package>
                         <Private-Package>org.wso2.carbon.uuf.internal.*</Private-Package>
                         <Export-Package>
-                            org.wso2.carbon.uuf.api.*; version="${carbon.uuf.version}",
-                            org.wso2.carbon.uuf.core.*; version="${carbon.uuf.version}",
-                            org.wso2.carbon.uuf.exception.*; version="${carbon.uuf.version}",
-                            org.wso2.carbon.uuf.spi.*; version="${carbon.uuf.version}"
+                            org.wso2.carbon.uuf.api.*;version="${carbon.uuf.version}",
+                            org.wso2.carbon.uuf.core.*;version="${carbon.uuf.version}",
+                            org.wso2.carbon.uuf.exception.*;version="${carbon.uuf.version}",
+                            org.wso2.carbon.uuf.spi.*;version="${carbon.uuf.version}"
                         </Export-Package>
                         <Carbon-Component>
-                            startup.listener; componentName="wso2-uuf-server";
+                            startup.listener;componentName="wso2-uuf-server";
                             requiredService="org.wso2.carbon.uuf.spi.RenderableCreator",
-                            startup.listener; componentName="wso2-uuf-startup-listener";
+                            startup.listener;componentName="wso2-uuf-startup-listener";
                             requiredService="org.wso2.carbon.uuf.spi.HttpConnector,org.wso2.carbon.uuf.api.Server",
-                            osgi.service; objectClass="org.wso2.carbon.uuf.api.Server"
+                            osgi.service;objectClass="org.wso2.carbon.uuf.api.Server"
                         </Carbon-Component>
                         <Include-Resource>src/main/resources</Include-Resource>
                     </instructions>

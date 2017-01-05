@@ -69,8 +69,10 @@ public class HbsRenderableTest {
     }
 
     private static Lookup createLookup() {
+        Configuration configuration = mock(Configuration.class);
+        when(configuration.other()).thenReturn(Collections.emptyMap());
         Lookup lookup = mock(Lookup.class);
-        when(lookup.getConfiguration()).thenReturn(new Configuration(Collections.emptyMap()));
+        when(lookup.getConfiguration()).thenReturn(configuration);
         return lookup;
     }
 
