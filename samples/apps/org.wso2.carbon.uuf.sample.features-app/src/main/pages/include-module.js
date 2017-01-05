@@ -16,5 +16,5 @@
 module("device");
 
 function onRequest(env) {
-    devicesManager.getAllDevices("admin");    
+    return {"devices": devicesManager.getAllDevices("admin")};
 }
