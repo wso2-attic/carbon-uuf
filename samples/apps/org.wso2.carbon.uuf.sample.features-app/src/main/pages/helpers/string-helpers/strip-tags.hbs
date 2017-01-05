@@ -1,10 +1,13 @@
 {{layout "org.wso2.carbon.uuf.sample.foundation.main"}}
-{{title "Strip-Tags | String Helper Sample | " @config.appName}}
+{{title "Strip Tags | String Helper Sample | " @config.appName}}
+
 {{#fillZone "content"}}
-    <h3>Strip-Tags String Helper.</h3>
+    <h3><b>stripTags</b> Helper</h3>
     <hr />
-    <p> You can strip all [X]HTML tags.</p>
-    <pre>
-        \{{stripTags value}}
-    </pre>
+    <p>Strips HTML tags.</p>
+
+    <div>
+        <pre>\{{stripTags &lt;value&gt;}}</pre>
+        <p><b>value</b> - string to be processed</p>
+    </div>
 {{/fillZone}}

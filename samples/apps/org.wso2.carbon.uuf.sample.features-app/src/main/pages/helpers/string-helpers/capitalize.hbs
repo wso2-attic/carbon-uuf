@@ -1,19 +1,32 @@
 {{layout "org.wso2.carbon.uuf.sample.foundation.main"}}
 {{title "Capitalize | String Helper Sample | " @config.appName}}
+
 {{#fillZone "content"}}
-    <h3>Capitalize String Helper.</h3>
+    <h3><b>capitalize</b> Helper</h3>
     <hr />
-    <p> You can capitalize all the whitespace separated words in a String.</p>
-    <pre>
-        \{{capitalize value [fully=false]}}
-    </pre>
-    <p>when you use the template: </p>
-    <pre>
-        value = "my first post";
-    </pre>
-    <p>will result in:</p>
-    <pre>
-        "My First Post"
-    </pre>
-    <p></p>
+    <p>Capitalizes all the whitespace separated words in a String.</p>
+
+    <div>
+        <pre>\{{capitalize &lt;value&gt; [fully=false]}}</pre>
+        <p><b>value</b> - string to capitalize</p>
+        <p><b>fully</b> - optional boolean to identify whether to fully capitalize the string or not</p>
+    </div>
+
+    <div style="margin-top: 40px">
+        <h4><b>Example</b></h4>
+        <pre>
+            &lt;div&gt;
+                \{{capitalize value}}
+            &lt;/div&gt;</pre>
+        <p>when used with this context:</p>
+        <pre>
+            {
+                value: "my first post"
+            }</pre>
+        <p>will result in:</p>
+        <pre>
+            &lt;div&gt;
+                {{capitalize value}}
+            &lt;/div&gt;</pre>
+    </div>
 {{/fillZone}}

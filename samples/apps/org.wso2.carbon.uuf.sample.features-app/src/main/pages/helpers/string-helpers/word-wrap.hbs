@@ -1,22 +1,33 @@
 {{layout "org.wso2.carbon.uuf.sample.foundation.main"}}
-{{title "Word-wrap | String Helper Sample | " @config.appName}}
+{{title "Word Wrap | String Helper Sample | " @config.appName}}
+
 {{#fillZone "content"}}
-    <h3>Word-wrap String Helper.</h3>
+    <h3><b>wordWrap</b> Helper</h3>
     <hr />
-    <p> You can wrap words at specified line length.</p>
-    <p>Argument: number of characters at which to wrap the text</p>
-    <pre>
-        \{{ wordWrap value 5 }}
-    </pre>
-    <p>when you use the template: </p>
-    <pre>
-        value = "Joel is a slug";
-    </pre>
-    <p>will result in:</p>
-    <pre>
-        Joel
-        is a
-        slug
-    </pre>
-    <p></p>
+    <p>Wraps words at specified line length.</p>
+
+    <div>
+        <pre> \{{wordWrap &lt;value&gt; &lt;size&gt;}}</pre>
+        <p><b>value</b> - string to be wrapped</p>
+        <p><b>size</b> - number of characters at which to wrap the text</p>
+    </div>
+
+    <div style="margin-top: 40px">
+        <h4><b>Example</b></h4>
+        <pre>
+            &lt;div&gt;
+                \{{wordWrap value size}}
+            &lt;/div&gt;</pre>
+        <p>when used with this context:</p>
+        <pre>
+            {
+                value: "Joel is a slug",
+                size: 5
+            }</pre>
+        <p>will result in:</p>
+        <pre>
+            &lt;div&gt;
+                {{wordWrap value size}}
+            &lt;/div&gt;</pre>
+    </div>
 {{/fillZone}}

@@ -1,19 +1,33 @@
 {{layout "org.wso2.carbon.uuf.sample.foundation.main"}}
 {{title "Center | String Helper Sample | " @config.appName}}
+
 {{#fillZone "content"}}
-    <h3>Center String Helper.</h3>
+    <h3><b>center</b> Helper</h3>
     <hr />
-    <p>You can center the value in a field of a given width.</p>
-    <pre>
-        \{{center value size=19 [pad="char"] }}
-    </pre>
-    <p>when you use the template: </p>
-    <pre>
-        value = "handlebars.java";
-    </pre>
-    <p>will result in:</p>
-    <pre>
-        "  Handlebars.java  "
-    </pre>
-    <p></p>
+    <p>Center the value in a field of a given width.</p>
+
+    <div>
+        <pre>\{{center &lt;value&gt; &lt;size&gt; [pad=" "]}}</pre>
+        <p><b>value</b> - string to center</p>
+        <p><b>size</b> - size of the final string</p>
+        <p><b>pad</b> - string to be used as padding</p>
+    </div>
+
+    <div style="margin-top: 40px">
+        <h4><b>Example</b></h4>
+        <pre>
+            &lt;div&gt;
+                "\{{center value size=19}}"
+            &lt;/div&gt;</pre>
+        <p>when used with this context:</p>
+        <pre>
+            {
+                value: "handlebars.java"
+            }</pre>
+        <p>will result in:</p>
+        <pre>
+            &lt;div&gt;
+                "{{center value size=size}}"
+            &lt;/div&gt;</pre>
+    </div>
 {{/fillZone}}

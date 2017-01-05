@@ -1,19 +1,33 @@
 {{layout "org.wso2.carbon.uuf.sample.foundation.main"}}
 {{title "Cut | String Helper Sample | " @config.appName}}
+
 {{#fillZone "content"}}
-    <h3>Cut String Helper.</h3>
+    <h3><b>cut</b> Helper</h3>
     <hr />
-    <p>You can remove all values of arg from the given string.</p>
-    <pre>
-        \{{cut value [" "]}}
-    </pre>
-    <p>when you use the template: </p>
-    <pre>
-        value = "String with spaces";
-    </pre>
-    <p>will result in:</p>
-    <pre>
-        "Stringwithspaces"
-    </pre>
-    <p></p>
+    <p>Remove all values of arg from the given string.</p>
+
+    <div>
+        <pre>\{{cut value [" "]}}</pre>
+        <p><b>value</b> - string to be processed</p>
+        <p><b>arg</b> - string which should be removed from the value string</p>
+    </div>
+
+    <div style="margin-top: 40px">
+        <h4><b>Example</b></h4>
+        <pre>
+            &lt;div&gt;
+                \{{cut value}}
+            &lt;/div&gt;</pre>
+        <p>when used with this context:</p>
+        <pre>
+            {
+                value: "String with spaces"
+            }</pre>
+        <p>will result in:</p>
+        <pre>
+            &lt;div&gt;
+                {{cut value}}
+            &lt;/div&gt;</pre>
+    </div>
 {{/fillZone}}
+

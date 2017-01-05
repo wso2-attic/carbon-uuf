@@ -1,20 +1,36 @@
 {{layout "org.wso2.carbon.uuf.sample.foundation.main"}}
 {{title "Replace | String Helper Sample | " @config.appName}}
+
 {{#fillZone "content"}}
-    <h3>Replace String Helper.</h3>
+    <h3><b>replace</b> Helper</h3>
     <hr />
-    <p> You can replace each substring of this string that matches the literal target sequence with the specified literal
-    replacement sequence.</p>
-    <pre>
-        \{{ replace value "..." "rocks" }}
-    </pre>
-    <p>when you use the template: </p>
-    <pre>
-        value = "Handlebars ...";
-    </pre>
-    <p>will result in:</p>
-    <pre>
-        "Handlebars rocks"
-    </pre>
-    <p></p>
+    <p>Replaces each substring of this string that matches the literal target sequence with the specified literal
+       replacement sequence.</p>
+
+    <div>
+        <pre>\{{replace &lt;value&gt; &lt;target&gt; &lt;replacement&gt;}}</pre>
+        <p><b>value</b> - string to be processed</p>
+        <p><b>target</b> - target string to be removed</p>
+        <p><b>replacement</b> - replacement string for the target string</p>
+    </div>
+
+    <div style="margin-top: 40px">
+        <h4><b>Example</b></h4>
+        <pre>
+            &lt;div&gt;
+                \{{replace value target replacement}}
+            &lt;/div&gt;</pre>
+        <p>when used with this context:</p>
+        <pre>
+            {
+                value: "Handlebars ...",
+                target: "...",
+                replacement: "rocks"
+            }</pre>
+        <p>will result in:</p>
+        <pre>
+            &lt;div&gt;
+                {{replace value target replacement}}
+            &lt;/div&gt;</pre>
+    </div>
 {{/fillZone}}

@@ -1,19 +1,35 @@
 {{layout "org.wso2.carbon.uuf.sample.foundation.main"}}
 {{title "Join | String Helper Sample | " @config.appName}}
+
 {{#fillZone "content"}}
-    <h3>Join String Helper.</h3>
+    <h3><b>join</b> Helper</h3>
     <hr />
-    <p>You can join an array, iterator or an iterable with a string.</p>
-    <pre>
-        \{{join value " // " [prefix=""] [suffix=""]}}
-    </pre>
-    <p>when you use the template: </p>
-    <pre>
-        value = ['a', 'b', 'c'];
-    </pre>
-    <p>will result in:</p>
-    <pre>
-        "a // b // c"
-    </pre>
-    <p></p>
+    <p>Joins an array, iterator or an iterable with a string.</p>
+
+    <div>
+        <pre>\{{join &lt;value&gt; &lt;separator&gt; [prefix=""] [suffix=""]}}</pre>
+        <p><b>value</b> - items to be concatenated (space separated values)</p>
+        <p><b>separator</b> - item separator string</p>
+    </div>
+
+    <div style="margin-top: 40px">
+        <h4><b>Example</b></h4>
+        <pre>
+            &lt;div&gt;
+                \{{join value separator}}
+            &lt;/div&gt;</pre>
+        <p>when used with this context:</p>
+        <pre>
+            {
+                a: "a",
+                b: "b",
+                c: "c",
+                separator: " // "
+            }</pre>
+        <p>will result in:</p>
+        <pre>
+            &lt;div&gt;
+                {{join a b c separator}}
+            &lt;/div&gt;</pre>
+    </div>
 {{/fillZone}}

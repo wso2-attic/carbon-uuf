@@ -1,19 +1,31 @@
 {{layout "org.wso2.carbon.uuf.sample.foundation.main"}}
 {{title "Upper | String Helper Sample | " @config.appName}}
+
 {{#fillZone "content"}}
-    <h3>Upper String Helper.</h3>
+    <h3><b>lower</b> Helper</h3>
     <hr />
-    <p> You can convert a string into all uppercase.</p>
-    <pre>
-        \{{upper value}}
-    </pre>
-    <p>when you use the template: </p>
-    <pre>
-        value = "Hello";
-    </pre>
-    <p>will result in:</p>
-    <pre>
-        "HELLO"
-    </pre>
-    <p></p>
+    <p>Convert a string to uppercase.</p>
+
+    <div>
+        <pre>\{{upper &lt;value&gt;}}</pre>
+        <p><b>value</b> - string to be converted</p>
+    </div>
+
+    <div style="margin-top: 40px">
+        <h4><b>Example</b></h4>
+        <pre>
+            &lt;div&gt;
+                \{{upper value}}
+            &lt;/div&gt;</pre>
+        <p>when used with this context:</p>
+        <pre>
+            {
+                value: "Hello"
+            }</pre>
+        <p>will result in:</p>
+        <pre>
+            &lt;div&gt;
+                {{upper value}}
+            &lt;/div&gt;</pre>
+    </div>
 {{/fillZone}}

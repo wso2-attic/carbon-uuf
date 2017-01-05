@@ -1,19 +1,31 @@
 {{layout "org.wso2.carbon.uuf.sample.foundation.main"}}
 {{title "Lower | String Helper Sample | " @config.appName}}
+
 {{#fillZone "content"}}
-    <h3>Lower String Helper.</h3>
+    <h3><b>lower</b> Helper</h3>
     <hr />
-    <p> You can convert a string into all lowercase.</p>
-    <pre>
-        \{{lower value}}
-    </pre>
-    <p>when you use the template: </p>
-    <pre>
-        value = "HELLO";
-    </pre>
-    <p>will result in:</p>
-    <pre>
-        "hello"
-    </pre>
-    <p></p>
+    <p>Convert a string to lowercase.</p>
+
+    <div>
+        <pre>\{{lower &lt;value&gt;}}</pre>
+        <p><b>value</b> - string to be converted</p>
+    </div>
+
+    <div style="margin-top: 40px">
+        <h4><b>Example</b></h4>
+        <pre>
+            &lt;div&gt;
+                \{{lower value}}
+            &lt;/div&gt;</pre>
+        <p>when used with this context:</p>
+        <pre>
+            {
+                value: "HELLO"
+            }</pre>
+        <p>will result in:</p>
+        <pre>
+            &lt;div&gt;
+                {{lower value}}
+            &lt;/div&gt;</pre>
+    </div>
 {{/fillZone}}

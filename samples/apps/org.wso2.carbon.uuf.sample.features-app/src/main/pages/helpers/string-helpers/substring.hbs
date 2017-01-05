@@ -1,34 +1,55 @@
 {{layout "org.wso2.carbon.uuf.sample.foundation.main"}}
 {{title "Substring | String Helper Sample | " @config.appName}}
+
 {{#fillZone "content"}}
-    <h3>Substring String Helper.</h3>
+    <h3><b>substring</b> Helper</h3>
     <hr />
-    <p>You can return a new character sequence that is sub sequence of the given sequence.</p>
-    <p>
-        The sub sequence starts with the character value at the specified index and ends with the character value at
-        the index end-1.
-    </p>
-    <p>
-        Arguments:   start offset
-                    end offset
-    </p>
-    <pre>
-        \{{substring value 11 }}
-    </pre>
-    <p>when you use the template: </p>
-    <pre>
-        value = "Handlebars.java";
-    </pre>
-    <p>will result in:</p>
-    <pre>
-        "java"
-    </pre>
-    <pre>
-        \{{substring value 0 10 }}
-    </pre>
-    <p>will result in:</p>
-    <pre>
-        "Handlebars"
-    </pre>
-    <p></p>
+    <p>Get a character sequence that is sub sequence of the given sequence. The sub sequence starts with the character
+       value at the specified index and ends with the character value at the index <b>end-1</b>.</p>
+
+    <div>
+        <pre>\{{substring &lt;value&gt; &lt;start&gt; [end=STRING_LENGTH]}}</pre>
+        <p><b>value</b> - string to be processed</p>
+        <p><b>start</b> - start offset</p>
+        <p><b>end</b> - end offset</p>
+    </div>
+
+    <div style="margin-top: 40px">
+        <h4><b>Example 1</b></h4>
+        <pre>
+            &lt;div&gt;
+                \{{substring value start1}}
+            &lt;/div&gt;</pre>
+        <p>when used with this context:</p>
+        <pre>
+            {
+                value: "Handlebars.java",
+                start1: 11
+            }</pre>
+        <p>will result in:</p>
+        <pre>
+            &lt;div&gt;
+                {{substring value start1}}
+            &lt;/div&gt;</pre>
+    </div>
+
+    <div style="margin-top: 40px">
+        <h4><b>Example 2</b></h4>
+        <pre>
+            &lt;div&gt;
+                \{{substring value start2 end2}}
+            &lt;/div&gt;</pre>
+        <p>when used with this context:</p>
+        <pre>
+            {
+                value: "Handlebars.java",
+                start2: 0,
+                end2: 10
+            }</pre>
+        <p>will result in:</p>
+        <pre>
+            &lt;div&gt;
+                {{substring value start2 end2}}
+            &lt;/div&gt;</pre>
+    </div>
 {{/fillZone}}

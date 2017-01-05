@@ -1,19 +1,31 @@
 {{layout "org.wso2.carbon.uuf.sample.foundation.main"}}
 {{title "Capitalize-First | String Helper Sample | " @config.appName}}
+
 {{#fillZone "content"}}
-    <h3>Capitalize-First String Helper.</h3>
+    <h3><b>capitalizeFirst</b> Helper</h3>
     <hr />
-    <p>You can capitalize the first character of a sentence.</p>
-    <pre>
-        \{{capFirst value}}
-    </pre>
-    <p>when you use the template: </p>
-    <pre>
-        value = "handlebars.java";
-    </pre>
-    <p>will result in:</p>
-    <pre>
-        "Handlebars.java"
-    </pre>
-    <p></p>
+    <p>Capitalizes the first character of a sentence.</p>
+
+    <div>
+        <pre>\{{capitalizeFirst value}}</pre>
+        <p><b>value</b> - string to capitalize</p>
+    </div>
+
+    <div style="margin-top: 40px">
+        <h4><b>Example</b></h4>
+        <pre>
+            &lt;div&gt;
+                \{{capitalizeFirst value}}
+            &lt;/div&gt;</pre>
+        <p>when used with this context:</p>
+        <pre>
+            {
+                value: "handlebars.java"
+            }</pre>
+        <p>will result in:</p>
+        <pre>
+            &lt;div&gt;
+                {{capitalizeFirst value}}
+            &lt;/div&gt;</pre>
+    </div>
 {{/fillZone}}

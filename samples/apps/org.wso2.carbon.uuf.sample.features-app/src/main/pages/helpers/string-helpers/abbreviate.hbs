@@ -1,21 +1,33 @@
 {{layout "org.wso2.carbon.uuf.sample.foundation.main"}}
 {{title "Abbreviate | String Helper Sample | " @config.appName}}
+
 {{#fillZone "content"}}
-    <h3>Abbreviate String Helper.</h3>
+    <h3><b>abbreviate</b> Helper</h3>
     <hr />
-    <p> You can truncate a string if it is longer than the specified number of characters.
-     Truncated strings will end with a translatable ellipsis sequence ("...").</p>
-    <p>Argument: Number of characters to truncate to</p>
-    <pre>
-        \{{abbreviate value 13 }}
-    </pre>
-    <p>when you use the template: </p>
-    <pre>
-        value = "Handlebars rocks";
-    </pre>
-    <p>will result in:</p>
-    <pre>
-        "Handlebars..."
-    </pre>
-    <p></p>
+    <p>Truncates a string if it is longer than the specified number of characters. Truncated strings will end with a
+       translatable ellipsis sequence ("...").</p>
+
+    <div>
+        <pre>\{{abbreviate &lt;value&gt; &lt;size&gt;]}}</pre>
+        <p><b>value</b> - string to truncate</p>
+        <p><b>size</b> - number of characters to show</p>
+    </div>
+
+    <div style="margin-top: 40px">
+        <h4><b>Example</b></h4>
+        <pre>
+            &lt;div&gt;
+                \{{abbreviate value size}}
+            &lt;/div&gt;</pre>
+        <p>when used with this context:</p>
+        <pre>
+            {
+                value: "Handlebars rocks"
+            }</pre>
+        <p>will result in:</p>
+        <pre>
+            &lt;div&gt;
+                 {{abbreviate value size}}
+            &lt;/div&gt;</pre>
+    </div>
 {{/fillZone}}

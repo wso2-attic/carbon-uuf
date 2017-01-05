@@ -1,19 +1,33 @@
 {{layout "org.wso2.carbon.uuf.sample.foundation.main"}}
-{{title "Cut | String Helper Sample | " @config.appName}}
+{{title "Default If Empty | String Helper Sample | " @config.appName}}
+
 {{#fillZone "content"}}
-    <h3>Cut String Helper.</h3>
+    <h3><b>defaultIfEmpty</b> Helper</h3>
     <hr />
-    <p>If value evaluates to False, uses the given default. Otherwise, uses the value.</p>
-    <pre>
-        \{{defaultIfEmpty value ["nothing"] }}
-    </pre>
-    <p>when you use the template: </p>
-    <pre>
-        value = ""; (the empty string)
-    </pre>
-    <p>will result in:</p>
-    <pre>
-        "nothing"
-    </pre>
-    <p></p>
+    <p>Assign a default value to a string if the string is evaluated as false.</p>
+
+    <div>
+        <pre>\{{defaultIfEmpty &lt;value&gt; [default=""]}}</pre>
+        <p><b>value</b> - string to be evaluated</p>
+        <p><b>arg</b> - default value</p>
+    </div>
+
+    <div style="margin-top: 40px">
+        <h4><b>Example</b></h4>
+        <pre>
+            &lt;div&gt;
+                \{{defaultIfEmpty value default}}
+            &lt;/div&gt;</pre>
+        <p>when used with this context:</p>
+        <pre>
+            {
+                value: "",
+                default: "nothing"
+            }</pre>
+        <p>will result in:</p>
+        <pre>
+            &lt;div&gt;
+                {{defaultIfEmpty value default}}
+            &lt;/div&gt;</pre>
+    </div>
 {{/fillZone}}
