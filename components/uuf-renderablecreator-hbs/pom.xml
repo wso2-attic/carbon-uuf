@@ -53,6 +53,7 @@
             <groupId>org.antlr</groupId>
             <artifactId>antlr4-runtime</artifactId>
         </dependency>
+        <!-- Other Dependencies -->
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
@@ -87,7 +88,7 @@
                             org.slf4j.*; version="${slf4j.version.range}",
                             org.apache.commons.io; version="${commons-io.wso2.version.range}",
                             org.yaml.snakeyaml; version="${orbit.org.yaml.version.range}",
-                            <!--todo 2017/01/04 Add version range for CAAS once the version 1.0.0 releases-->
+                            <!-- todo 2017/01/04 Add version range for CAAS once the version 1.0.0 releases -->
                             org.wso2.carbon.security.caas.*,
                             org.wso2.carbon.kernel.context; version="${carbon.kernel.version.range}"
                         </Import-Package>

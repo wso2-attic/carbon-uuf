@@ -60,7 +60,7 @@
                 <configuration>
                     <instructions>
                         <Import-Package>
-                            <!--todo 2017/01/04 Add version range for CAAS once the version 1.0.0 releases-->
+                            <!-- todo 2017/01/04 Add version range for CAAS once the version 1.0.0 releases -->
                             org.wso2.carbon.security.caas.api.*,
                             org.wso2.carbon.security.caas.user.core.*,
                             org.wso2.carbon.kernel.utils; version="${carbon.kernel.version.range}",
