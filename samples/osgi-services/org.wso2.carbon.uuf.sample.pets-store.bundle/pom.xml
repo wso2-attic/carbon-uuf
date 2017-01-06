@@ -56,8 +56,8 @@
                 <configuration>
                     <instructions>
                         <Import-Package>
-                            org.osgi.framework,
-                            org.slf4j.*;version="${slf4j.version.range}",
+                            org.osgi.framework; version="${org.osgi.framework.version.range}",
+                            org.slf4j.*; version="${slf4j.version.range}",
                         </Import-Package>
                         <Private-Package>org.wso2.carbon.uuf.sample.petsstore.bundle.internal.*</Private-Package>
                         <Export-Package>

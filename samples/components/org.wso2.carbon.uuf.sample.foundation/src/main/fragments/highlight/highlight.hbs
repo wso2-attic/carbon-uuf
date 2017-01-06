@@ -1,0 +1,8 @@
+{{#if @params.theme~}}
+    {{css "highlight.js_9.9.0/styles/" @params.theme ".css"~}}
+{{else}}
+    {{~css "highlight.js_9.9.0/styles/default.css"~}}
+{{/if~}}
+{{js "highlight.js_9.9.0/highlight.pack.js"~}}
+{{css "css/highlightjs-styles.css"~}}
+{{js "js/highlightjs-init.js"~}}

@@ -1,0 +1,49 @@
+theme: "org.wso2.carbon.uuf.sample.theme.default"
+
+menus:
+  - name: "main"
+    items:
+      - text: "Home"
+        link: ""
+        icon: "fw-home"
+      - text: "Features"
+        link: ""
+        submenus:
+          - text: "Call a Java class"
+            link: "/osgi/call-class"
+          - text: "Call an OSGi Service"
+            link: "/osgi/call-service"
+            icon: "fw fw-service"
+          - text: "Include a Module"
+            link: "/include-module"
+            icon: "fw fw-use"
+          - text: "Http Form POST"
+            link: "/http-form"
+          - text: "Send HTTP Error"
+            link: "/send-error"
+            icon: "fw fw-bug"
+          - text: "Send HTTP Redirect"
+            link: "/send-redirect"
+          - text: "Session"
+            link: "/session"
+            icon: "fw fw-user"
+          - text: "Theme"
+            link: "/theme"
+            submenus:
+              - text: "Session Scope"
+                link: "/theme/session-scope"
+          - text: "Menu"
+            link: "/menu"
+            icon: "fw fw-list"
+          - text: "File Upload"
+            link: "/file-upload"
+            icon: "fw fw-upload"
+          - text: "Helpers"
+            link: "/helpers"
+            submenus:
+              - text: "Block Helpers"
+                link: "/helpers/block-helpers"
+
+errorPages:
+  404: /foundation/error/404
+  default: /foundation/error/default

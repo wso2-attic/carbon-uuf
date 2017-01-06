@@ -67,10 +67,6 @@
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.uuf.sample</groupId>
-            <artifactId>org.wso2.carbon.uuf.sample.simple-auth.bundle</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon.uuf.sample</groupId>
             <artifactId>org.wso2.carbon.uuf.sample.api</artifactId>
         </dependency>
     </dependencies>
@@ -101,10 +97,6 @@
                             <bundles>
                                 <bundle>
                                     <symbolicName>org.wso2.carbon.uuf.sample.pets-store.bundle</symbolicName>
-                                    <version>${carbon.uuf.version}</version>
-                                </bundle>
-                                <bundle>
-                                    <symbolicName>org.wso2.carbon.uuf.sample.simple-auth.bundle</symbolicName>
                                     <version>${carbon.uuf.version}</version>
                                 </bundle>
                                 <bundle>

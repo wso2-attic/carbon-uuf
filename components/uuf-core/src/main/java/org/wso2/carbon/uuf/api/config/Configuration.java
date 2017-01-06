@@ -18,353 +18,510 @@
 
 package org.wso2.carbon.uuf.api.config;
 
-import org.wso2.carbon.uuf.exception.InvalidTypeException;
+import com.google.common.collect.ImmutableListMultimap;
+import com.google.common.collect.ListMultimap;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Set;
+
+import static java.util.Collections.emptyMap;
+import static java.util.Collections.emptySet;
+import static java.util.Collections.unmodifiableMap;
+import static java.util.Collections.unmodifiableSet;
 
 /**
- * Represents the Configuration of a particular UUF App.
+ * Represents the final configuration of an UUF App.
  *
  * @since 1.0.0
  */
 public class Configuration {
 
-    /**
-     * Configuration key to configure context path.
-     * @see #getContextPath()
-     */
-    public static final String KEY_CONTEXT_PATH = "contextPath";
-    /**
-     * Configuration key to configure theme name.
-     * @see #getThemeName()
-     */
-    public static final String KEY_THEME = "theme";
-    /**
-     * Configuration key to configure URI of the login page.
-     * @see #getLoginPageUri()
-     */
-    public static final String KEY_LOGIN_PAGE_URI = "loginPageUri";
-    /**
-     * Configuration key to configure menus.
-     * @see #getMenus()
-     */
-    public static final String KEY_MENU = "menu";
-    /**
-     * Configuration key to configure URIs of the error pages.
-     * @see #getErrorPageUris()
-     */
-    public static final String KEY_ERROR_PAGES = "errorPages";
+    private String contextPath;
+    private String themeName;
+    private String loginPageUri;
+    private Map<Integer, String> errorPageUris;
+    private String defaultErrorPageUri;
+    private ListMultimap<String, MenuItem> menus;
+    private Set<String> acceptingCsrfPatterns;
+    private Set<String> rejectingCsrfPatterns;
+    private Set<String> acceptingXssPatterns;
+    private Set<String> rejectingXssPatterns;
+    private Map<String, String> responseHeaders;
+    private Map<String, Object> otherConfigurations;
 
-    private final Map<String, Object> map;
-    private final Map<String, Object> unmodifiableMap;
-    // We cache following values to avoid extracting them from 'map' and validating them over and over again.
-    private String cachedContextPath;
-    private String cachedThemeName;
-    private String cachedLoginPageUri;
-    private Map<String, Map<String, Map>> cachedMenus = new ConcurrentHashMap<>();
-    private Map<Integer, String> cachedErrorPageUris = new ConcurrentHashMap<>();
-    private String cachedDefaultErrorPageUri;
-
-    /**
-     * Creates a new {@link Configuration} instance wrapping the specified map.
-     *
-     * @param rawMap configuration map
-     * @exception InvalidTypeException if the keys of the {@code rawMap} are not {@link String}s.
-     */
-    @SuppressWarnings("unchecked")
-    public Configuration(Map<?, ?> rawMap) {
-        // Validation
-        rawMap.keySet().forEach(key -> {
-            if (!(key instanceof String)) {
-                throw new InvalidTypeException("Configurations must be a Map<String, Object>. Instead found a '" +
-                                                       key.getClass().getName() + "' key.");
-            }
-        });
-        this.map = (Map<String, Object>) rawMap;
-        this.unmodifiableMap = Collections.unmodifiableMap(map);
+    public Configuration() {
     }
 
     /**
-     * Returns the configured context path in this configuration. Context path should be configured with key {@link
-     * #KEY_CONTEXT_PATH}.
+     * Returns the configured client-side context path for the app.
      *
-     * @return configured context path, or {@link Optional#empty()} if there is no value under key {@code
-     * KEY_CONTEXT_PATH}
-     * @exception InvalidTypeException     if configured value is not a {@link String}
-     * @exception IllegalArgumentException if configured string is empty or does not start with a '/'
+     * @return client-side context path
      */
     public Optional<String> getContextPath() {
-        if (cachedContextPath != null) {
-            return Optional.of(cachedContextPath); // Return cached value.
-        }
-
-        Object contextPathObj = map.get(KEY_CONTEXT_PATH);
-        if (contextPathObj == null) {
-            return Optional.<String>empty();
-        } else if (!(contextPathObj instanceof String)) {
-            throw new InvalidTypeException(
-                    "Value of 'contextPath' in the app configuration must be a string. Instead found '" +
-                            contextPathObj.getClass().getName() + "'.");
-        }
-        String contextPath = (String) contextPathObj;
-        // Validate 'contextPath'
-        if (contextPath.isEmpty()) {
-            throw new IllegalArgumentException("Value of 'contextPath' in the app configuration cannot be empty.");
-        } else if (contextPath.charAt(0) != '/') {
-            throw new IllegalArgumentException("Value of 'contextPath' in the app configuration must start with '/'.");
-        }
-        cachedContextPath = contextPath; // Cache computed value.
-        return Optional.of(contextPath);
+        return Optional.ofNullable(contextPath);
     }
 
     /**
-     * Returns the configured theme name in this configuration. Theme name should be configured with key {@link
-     * #KEY_THEME}.
+     * Sets the client-side context path for the app.
      *
-     * @return configured theme name, or {@link Optional#empty()} if there is no value under key {@code KEY_THEME}
-     * @exception InvalidTypeException     if configured value is not a {@link String}
-     * @exception IllegalArgumentException if configured string is empty
+     * @param contextPath client-side context path to be set
+     * @throws IllegalArgumentException if the context path is empty or doesn't start with a '/'
+     * @see #getContextPath()
+     */
+    public void setContextPath(String contextPath) {
+        if (contextPath != null) {
+            if (contextPath.isEmpty()) {
+                throw new IllegalArgumentException("Context path cannot be empty.");
+            } else if (contextPath.charAt(0) != '/') {
+                throw new IllegalArgumentException("Context path must start with a '/'. Instead found '" +
+                                                           contextPath.charAt(0) + "' at the beginning.");
+            }
+        }
+        this.contextPath = contextPath;
+    }
+
+    /**
+     * Returns the configured default theme name for the app.
+     *
+     * @return default theme name
      */
     public Optional<String> getThemeName() {
-        if (cachedThemeName != null) {
-            return Optional.of(cachedThemeName); // Return cached value.
-        }
-
-        Object themeNameObj = map.get(KEY_THEME);
-        if (themeNameObj == null) {
-            return Optional.<String>empty();
-        } else if (!(themeNameObj instanceof String)) {
-            throw new InvalidTypeException(
-                    "Value of 'theme' in the app configuration must be a string. Instead found '" +
-                            themeNameObj.getClass().getName() + "'.");
-        }
-        String themeName = (String) themeNameObj;
-        // Validate 'themeName'
-        if (themeName.isEmpty()) {
-            throw new IllegalArgumentException("Value of 'theme' in the app configuration cannot be empty.");
-        }
-        cachedThemeName = themeName; // Cache computed value.
-        return Optional.of(themeName);
+        return Optional.ofNullable(themeName);
     }
 
     /**
-     * Returns the configured URI of the login page in this configuration. Login page URI should be configured with key
-     * {@link #KEY_LOGIN_PAGE_URI}.
+     * Sets the theme name for the app.
      *
-     * @return configured login page URi, or {@link Optional#empty()} if there is no value under key {@code
-     * KEY_LOGIN_PAGE_URI}
-     * @exception InvalidTypeException     if configured value is not a {@link String}
-     * @exception IllegalArgumentException if configured string is empty or does not start with a '/'
+     * @param themeName theme name to be set
+     * @throws IllegalArgumentException if the theme name is empty
+     * @see #getThemeName()
+     */
+    public void setThemeName(String themeName) {
+        if ((themeName != null) && themeName.isEmpty()) {
+            throw new IllegalArgumentException("Theme name cannot be empty.");
+        }
+        this.themeName = themeName;
+    }
+
+    /**
+     * Returns the configured login page URI (without the app context path) for the app.
+     *
+     * @return login page's URI
      */
     public Optional<String> getLoginPageUri() {
-        if (cachedLoginPageUri != null) {
-            return Optional.of(cachedLoginPageUri); // Return cached value.
-        }
-
-        Object loginPageUriObj = map.get(KEY_LOGIN_PAGE_URI);
-        if (loginPageUriObj == null) {
-            return Optional.<String>empty();
-        } else if (!(loginPageUriObj instanceof String)) {
-            throw new InvalidTypeException(
-                    "Value of 'loginPageUri' in the app configuration must be a string. Instead found '" +
-                            loginPageUriObj.getClass().getName() + "'.");
-        }
-        String loginPageUri = (String) loginPageUriObj;
-        // Validate 'loginPageUri'
-        if (loginPageUri.isEmpty()) {
-            throw new IllegalArgumentException("Value of 'loginPageUri' in the app configuration cannot be empty.");
-        }
-        if (loginPageUri.charAt(0) != '/') {
-            throw new IllegalArgumentException(
-                    "Value of 'loginPageUri' in the app configuration must start with a '/'. Instead found '" +
-                            loginPageUri.charAt(0) + "' at the beginning.");
-        }
-        cachedLoginPageUri = loginPageUri; // Cache computed value.
-        return Optional.of(loginPageUri);
+        return Optional.ofNullable(loginPageUri);
     }
 
     /**
-     * Returns the configured menus in this configuration. Menus should be configured under the key {@link #KEY_MENU}.
+     * Sets the URI of the login page for the app.
      *
-     * @return map of configured menus
-     * @exception InvalidTypeException if configured value is not a {@code Map<String, Map<String, Map>}
+     * @param loginPageUri URI of the login page to be set
+     * @throws IllegalArgumentException if login page URI is empty of doesn't start with a '/'
+     * @see #getLoginPageUri()
      */
-    @SuppressWarnings("unchecked")
-    public Map<String, Map> getMenus() {
-        Object menusMapObj = map.get(KEY_MENU);
-        if (menusMapObj == null) {
-            return Collections.<String, Map>emptyMap();
-        } else if (!(menusMapObj instanceof Map)) {
-            throw new InvalidTypeException(
-                    "Value of 'menu' in the configurations must be a Map<String, Map<String, Map>. Instead found " +
-                            menusMapObj.getClass().getName() + ".");
-        }
-        Map<?, ?> menusMap = (Map) menusMapObj;
-        // Validate 'menusMap'
-        for (Map.Entry<?, ?> entry : menusMap.entrySet()) {
-            if (!(entry.getKey() instanceof String)) {
-                throw new InvalidTypeException(
-                        "Value of 'menu' in the app configuration must be a Map<String, Map<String, Map>." +
-                                "Instead found a '" + entry.getKey().getClass().getName() + "' key.");
-            }
-            if (!(entry.getValue() instanceof Map)) {
-                throw new InvalidTypeException(
-                        "Value of 'menu' in the app configuration must be a Map<String, Map<String, Map>. " +
-                                "Instead found a '" + entry.getValue().getClass().getName() + "' value at key '" +
-                                entry.getKey() + "'.");
+    public void setLoginPageUri(String loginPageUri) {
+        if (loginPageUri != null) {
+            if (loginPageUri.isEmpty()) {
+                throw new IllegalArgumentException("Login page URI cannot be empty.");
+            } else if (loginPageUri.charAt(0) != '/') {
+                throw new IllegalArgumentException("Login page URI must start with a '/'. Instead found '" +
+                                                           loginPageUri.charAt(0) + "' at the beginning.");
             }
         }
-        return (Map<String, Map>) menusMap;
+        this.loginPageUri = loginPageUri;
     }
 
     /**
-     * Returns the configured menu for the specified name.
-     *
-     * @param name menu name
-     * @return configured error page URI or {@link Optional#empty()} if there is no value configured for the specified
-     * HTTP code
-     * @exception InvalidTypeException if configured menu with the specified name is not a {@code Map<String, Map>}
-     * @see #getMenus()
-     */
-    @SuppressWarnings("unchecked")
-    public Map<String, Map> getMenu(String name) {
-        Map<String, Map> cachedMenu = cachedMenus.get(name);
-        if (cachedMenu != null) {
-            return cachedMenu; // Return cached value.
-        }
-
-        Map<?, ?> menuMap = getMenus().get(name);
-        if (menuMap == null) {
-            return Collections.<String, Map>emptyMap(); // Menu 'name' does not exits.
-        }
-        // Validate menu items in 'menuMap'
-        for (Map.Entry entry : menuMap.entrySet()) {
-            if (!(entry.getKey() instanceof String)) {
-                throw new InvalidTypeException("Menu '" + name + "' must be a Map<String, Map>. Instead found a '" +
-                                                       entry.getKey().getClass().getName() + "' key.");
-            }
-            if (!(entry.getValue() instanceof Map)) {
-                throw new InvalidTypeException("Menu '" + name + "' must be a Map<String, Map>. Instead found a '" +
-                                                       entry.getValue().getClass().getName() + "' value at key '" +
-                                                       entry.getKey() + "'.");
-            }
-        }
-        Map<String, Map> menu = (Map<String, Map>) menuMap;
-        cachedMenus.put(name, menu); // Cache computed value.
-        return menu;
-    }
-
-    /**
-     * Returns the configured URIs of error pages in this configuration. Error page URIs should be configured under the
-     * key {@link #KEY_ERROR_PAGES}.
-     *
-     * @return map of configured error page URIs, where keys are the HTTP status code (or string "default") and values
-     * are page URIs
-     * @exception InvalidTypeException if configured value is not a {@code Map<String, String>}
-     */
-    @SuppressWarnings("unchecked")
-    public Map<String, String> getErrorPageUris() {
-        Object errorPagesObj = map.get(KEY_ERROR_PAGES);
-        if (errorPagesObj == null) {
-            return Collections.<String, String>emptyMap();
-        } else if (!(errorPagesObj instanceof Map)) {
-            throw new InvalidTypeException(
-                    "Value of 'errorPages' in the app configuration must be a Map<String, String>. " +
-                            "Instead found '" + errorPagesObj.getClass().getName() + "'.");
-        }
-        Map<?, ?> errorPagesMap = (Map) errorPagesObj;
-        // Validate 'errorPagesMap'
-        for (Map.Entry<?, ?> entry : errorPagesMap.entrySet()) {
-            if (!(entry.getKey() instanceof String)) {
-                throw new InvalidTypeException(
-                        "Value of 'errorPages' in the app configuration must be a Map<String, String>." +
-                                " Instead found a '" + entry.getKey().getClass().getName() + "' key.");
-            }
-            if (!(entry.getValue() instanceof String)) {
-                throw new InvalidTypeException(
-                        "Value of 'errorPages' in the app configuration must be a Map<String, String>. " +
-                                "Instead found a '" + entry.getValue().getClass().getName() + "' value at key '" +
-                                entry.getKey() + "'.");
-            }
-        }
-        return (Map<String, String>) errorPagesMap;
-    }
-
-    /**
-     * Returns the configured error page URI for the specified HTTP status code.
+     * Returns the configured error page URI (without the app context path) for the specified HTTP status code.
      *
      * @param httpStatusCode HTTP status code
-     * @return configured error page URI or {@link Optional#empty()} if there is no value configured for the specified
-     * HTTP code
-     * @exception IllegalArgumentException if configured error page URI is empty or does not start with a '/'
-     * @see #getErrorPageUris()
+     * @return corresponding error page's URI
      * @see #getDefaultErrorPageUri()
      */
     public Optional<String> getErrorPageUri(int httpStatusCode) {
-        String cachedErrorPageUri = cachedErrorPageUris.get(httpStatusCode);
-        if (cachedErrorPageUri != null) {
-            return Optional.of(cachedErrorPageUri); // Return cached value.
-        }
-        String errorPageUri = getErrorPageUris().get(Integer.toString(httpStatusCode));
-        if (errorPageUri == null) {
-            return Optional.<String>empty();
-        }
-        // Validate 'errorPageUri'
-        if (errorPageUri.isEmpty()) {
-            throw new IllegalArgumentException("Error page URI for HTTP status code '" + httpStatusCode +
-                                                       "' in the app configuration cannot be empty.");
-        } else if (errorPageUri.charAt(0) != '/') {
-            throw new IllegalArgumentException("Error page URI for HTTP status code '" + httpStatusCode +
-                                                       "' in the app configuration must start with '/'.");
-        }
-        cachedErrorPageUris.put(httpStatusCode, errorPageUri); // Cache computed value.
-        return Optional.of(errorPageUri);
+        return Optional.ofNullable(errorPageUris.get(httpStatusCode));
     }
 
     /**
-     * Returns the configured default error page URI.
+     * Sets the URIs of the error pages for the app.
      *
-     * @return configured default error page URI or {@link Optional#empty()} if there is no value configured under key
-     * "{@code default}"
-     * @exception IllegalArgumentException if configured error page URI is empty or does not start with a '/'
-     * @see #getErrorPageUris()
+     * @param errorPageUris URIs of the error pages to be set
+     * @throws IllegalArgumentException if HTTP status code is less than 100 or greater than 999
+     * @throws IllegalArgumentException if an error page URI is empty or doesn't start with a '/'
+     * @see #getErrorPageUri(int)
+     * @see #setDefaultErrorPageUri(String)
+     */
+    public void setErrorPageUris(Map<Integer, String> errorPageUris) {
+        if (errorPageUris == null) {
+            this.errorPageUris = emptyMap();
+        } else {
+            for (Map.Entry<Integer, String> entry : errorPageUris.entrySet()) {
+                int httpStatusCode = entry.getKey();
+                String errorPageUri = entry.getValue();
+
+                if ((httpStatusCode < 100) || (httpStatusCode > 999)) {
+                    throw new IllegalArgumentException(
+                            "HTTP status code of an error page entry must be between 100 and 999. Instead found '" +
+                                    httpStatusCode + "' for URI '" + errorPageUri + "'.");
+                }
+
+                if (errorPageUri.isEmpty()) {
+                    throw new IllegalArgumentException(
+                            "URI of an error page entry cannot be empty. Found an empty URI for HTTP status code '" +
+                                    httpStatusCode + "'.");
+                } else if (errorPageUri.charAt(0) != '/') {
+                    throw new IllegalArgumentException(
+                            "URI of an error page entry must start with a '/'. Instead found '" +
+                                    errorPageUri.charAt(0) + "' at the beginning of the URI for HTTP status code '" +
+                                    httpStatusCode + "'.");
+                }
+            }
+            this.errorPageUris = errorPageUris;
+        }
+    }
+
+    /**
+     * Return the configured default error page URI (without the app context path) for the app.
+     *
+     * @return default error page's URI
      * @see #getErrorPageUri(int)
      */
     public Optional<String> getDefaultErrorPageUri() {
-        if (cachedDefaultErrorPageUri != null) {
-            return Optional.of(cachedDefaultErrorPageUri); // Return cached value.
-        }
-        String defaultErrorPageUri = getErrorPageUris().get("default");
-        if (defaultErrorPageUri == null) {
-            return Optional.<String>empty();
-        }
-        // Validate 'defaultErrorPageUri'
-        if (defaultErrorPageUri.isEmpty()) {
-            throw new IllegalArgumentException("Default error page URI in the app configuration cannot be empty.");
-        } else if (defaultErrorPageUri.charAt(0) != '/') {
-            throw new IllegalArgumentException("Default error page URI in the app configuration must start with '/'.");
-        }
-        cachedDefaultErrorPageUri = defaultErrorPageUri; // Cache computed value.
-        return Optional.of(defaultErrorPageUri);
+        return Optional.ofNullable(defaultErrorPageUri);
     }
 
     /**
-     * Returns this Configuration object as a Map.
+     * Sets the URI of the default error page for the app.
      *
-     * @return unmodifiable map
+     * @param defaultErrorPageUri URI of the default error page to be set
+     * @throws IllegalArgumentException if default error page URI is empty for doesn't start with a '/'
+     * @see #getDefaultErrorPageUri()
+     * @see #setErrorPageUris(Map)
      */
-    public Map<String, Object> asMap() {
-        return unmodifiableMap;
+    public void setDefaultErrorPageUri(String defaultErrorPageUri) {
+        if (defaultErrorPageUri != null) {
+            if (defaultErrorPageUri.isEmpty()) {
+                throw new IllegalArgumentException("URI of the default error page cannot be empty.");
+            } else if (defaultErrorPageUri.charAt(0) != '/') {
+                throw new IllegalArgumentException(
+                        "URI of the default error page must start with a '/'. Instead found '" +
+                                defaultErrorPageUri.charAt(0) + "' at the beginning.");
+            }
+        }
+        this.defaultErrorPageUri = defaultErrorPageUri;
     }
 
     /**
-     * {@inheritDoc}
+     * Returns the configured menu items for the given name.
+     *
+     * @param name name of the menu
+     * @return menu items for the specified name
      */
-    @Override
-    public String toString() {
-        return map.toString();
+    public List<MenuItem> getMenu(String name) {
+        return menus.get(name);
+    }
+
+    /**
+     * Sets menus for the app.
+     *
+     * @param menus menus to be set
+     * @see #getMenu(String)
+     */
+    public void setMenus(List<? extends Menu> menus) {
+        ImmutableListMultimap.Builder<String, MenuItem> builder = new ImmutableListMultimap.Builder<>();
+        menus.forEach(menu -> builder.putAll(menu.getName(), menu.getItems()));
+        this.menus = builder.build();
+    }
+
+    /**
+     * Returns the configured accepting CSRF URI patterns in the security configuration.
+     *
+     * @return accepting CSRF URI patterns
+     * @see #getRejectingCsrfPatterns()
+     */
+    public Set<String> getAcceptingCsrfPatterns() {
+        return acceptingCsrfPatterns;
+    }
+
+    /**
+     * Sets the accepting CSRF patterns for the app.
+     *
+     * @param acceptingCsrfPatterns accepting CSRF patterns to be set
+     * @throws IllegalArgumentException if a pattern is null or empty
+     */
+    public void setAcceptingCsrfPatterns(Set<String> acceptingCsrfPatterns) {
+        if (acceptingCsrfPatterns == null) {
+            this.acceptingCsrfPatterns = emptySet();
+        } else {
+            for (String acceptingCsrfPattern : acceptingCsrfPatterns) {
+                if (acceptingCsrfPattern == null) {
+                    throw new IllegalArgumentException("An accepting CSRF pattern cannot be null.");
+                } else if (acceptingCsrfPattern.isEmpty()) {
+                    throw new IllegalArgumentException("An accepting CSRF pattern cannot be empty.");
+                }
+                // TODO: 12/31/16 check whether the 'acceptingCsrfPattern' is a valid URI pattern
+            }
+            this.acceptingCsrfPatterns = unmodifiableSet(acceptingCsrfPatterns);
+        }
+    }
+
+    /**
+     * Returns the configured rejecting CSRF URI patterns in the security configuration.
+     *
+     * @return rejecting CSRF URI patterns
+     * @see #getAcceptingCsrfPatterns()
+     */
+    public Set<String> getRejectingCsrfPatterns() {
+        return rejectingCsrfPatterns;
+    }
+
+    /**
+     * Sets the rejecting CSRF patterns for the app.
+     *
+     * @param rejectingCsrfPatterns rejecting CSRF patterns to be set
+     * @throws IllegalArgumentException if a pattern is null or empty
+     */
+    public void setRejectingCsrfPatterns(Set<String> rejectingCsrfPatterns) {
+        if (rejectingCsrfPatterns == null) {
+            this.rejectingCsrfPatterns = emptySet();
+        } else {
+            for (String rejectingCsrfPattern : rejectingCsrfPatterns) {
+                if (rejectingCsrfPattern == null) {
+                    throw new IllegalArgumentException("A rejecting CSRF pattern cannot be null.");
+                } else if (rejectingCsrfPattern.isEmpty()) {
+                    throw new IllegalArgumentException("A rejecting CSRF pattern cannot be empty.");
+                }
+                // TODO: 12/31/16 check whether the 'rejectingCsrfPattern' is a valid URI pattern
+            }
+            this.rejectingCsrfPatterns = unmodifiableSet(rejectingCsrfPatterns);
+        }
+    }
+
+    /**
+     * Returns the configured accepting XSS URI patterns in the security configuration.
+     *
+     * @return accepting XSS URI patterns
+     * @see #getRejectingXssPatterns()
+     */
+    public Set<String> getAcceptingXssPatterns() {
+        return acceptingXssPatterns;
+    }
+
+    /**
+     * Sets the accepting XSS patterns for the app.
+     *
+     * @param acceptingXssPatterns accepting XSS patterns to be set
+     * @throws IllegalArgumentException if a pattern is null or empty
+     */
+    public void setAcceptingXssPatterns(Set<String> acceptingXssPatterns) {
+        if (acceptingXssPatterns == null) {
+            this.acceptingXssPatterns = emptySet();
+        } else {
+            for (String acceptingXssPattern : acceptingXssPatterns) {
+                if (acceptingXssPattern == null) {
+                    throw new IllegalArgumentException("An accepting XSS pattern cannot be null.");
+                } else if (acceptingXssPattern.isEmpty()) {
+                    throw new IllegalArgumentException("An accepting XSS pattern cannot be empty.");
+                }
+                // TODO: 12/31/16 check whether the 'acceptingXssPattern' is a valid URI pattern
+            }
+            this.acceptingXssPatterns = unmodifiableSet(acceptingXssPatterns);
+        }
+    }
+
+    /**
+     * Returns the configured rejecting XSS URI patterns in the security configuration.
+     *
+     * @return rejecting XSS URI patterns
+     * @see #getAcceptingXssPatterns()
+     */
+    public Set<String> getRejectingXssPatterns() {
+        return rejectingXssPatterns;
+    }
+
+    /**
+     * Sets the rejecting XSS patterns for the app.
+     *
+     * @param rejectingXssPatterns rejecting XSS patterns to be set
+     * @throws IllegalArgumentException if a pattern is null or empty
+     */
+    public void setRejectingXssPatterns(Set<String> rejectingXssPatterns) {
+        if (rejectingXssPatterns == null) {
+            this.rejectingXssPatterns = emptySet();
+        } else {
+            for (String rejectingXssPattern : rejectingXssPatterns) {
+                if (rejectingXssPattern == null) {
+                    throw new IllegalArgumentException("An rejecting XSS pattern cannot be null.");
+                } else if (rejectingXssPattern.isEmpty()) {
+                    throw new IllegalArgumentException("An rejecting XSS pattern cannot be empty.");
+                }
+                // TODO: 12/31/16 check whether the 'rejectingXssPattern' is a valid URI pattern
+            }
+            this.rejectingXssPatterns = unmodifiableSet(rejectingXssPatterns);
+        }
+    }
+
+    /**
+     * Returns the configured HTTP headers for the response in the security configuration.
+     *
+     * @return HTTP headers for the response
+     */
+    public Map<String, String> getResponseHeaders() {
+        return responseHeaders;
+    }
+
+    public void setResponseHeaders(Map<String, String> responseHeaders) {
+        this.responseHeaders = (responseHeaders == null) ? emptyMap() : unmodifiableMap(responseHeaders);
+    }
+
+    /**
+     * Return the business-logic related configurations that are configured for the app.
+     *
+     * @return business-logic related configurations
+     */
+    public Map<String, Object> other() {
+        return otherConfigurations;
+    }
+
+    public void setOther(Map<String, Object> other) {
+        this.otherConfigurations = (other == null) ? emptyMap() : unmodifiableMap(other);
+    }
+
+    /**
+     * Represents a configured menu for an UUF App.
+     *
+     * @since 1.0.0
+     */
+    public static class Menu {
+
+        private final String name;
+        private final List<MenuItem> items;
+
+        /**
+         * Creates a new menu.
+         *
+         * @param name  name of the menu
+         * @param items menu items for the creating menu
+         * @throws IllegalArgumentException if name is null or empty
+         * @throws IllegalArgumentException if menu items is null or empty
+         */
+        public Menu(String name, List<MenuItem> items) {
+            // Validate name.
+            if (name == null) {
+                throw new IllegalArgumentException("Name of a menu cannot be null.");
+            } else if (name.isEmpty()) {
+                throw new IllegalArgumentException("Name of a menu cannot be empty.");
+            } else {
+                this.name = name;
+            }
+            // Validate menu items.
+            if (items == null) {
+                throw new IllegalArgumentException(
+                        "Items of a menu cannot be null. Cannot find menu items for menu '" + name + "'.");
+            } else if (items.isEmpty()) {
+                throw new IllegalArgumentException(
+                        "Items of a menu cannot be empty list. Cannot find menu items for menu '" + name + "'.");
+            } else {
+                this.items = Collections.unmodifiableList(items);
+            }
+        }
+
+        /**
+         * Returns the name of this menu.
+         *
+         * @return text of this menu
+         */
+        public String getName() {
+            return name;
+        }
+
+        /**
+         * Returns the menu items of this menu.
+         *
+         * @return menu items of this menu
+         */
+        public List<MenuItem> getItems() {
+            return items;
+        }
+    }
+
+    /**
+     * Represents a configured menu item for an UUF App.
+     *
+     * @since 1.0.0
+     */
+    public static class MenuItem {
+
+        private final String text;
+        private final String link;
+        private final String icon;
+        private final List<MenuItem> subMenus;
+
+        /**
+         * Creates a new menu item.
+         *
+         * @param text     text of the menu item
+         * @param link     link of the menu item
+         * @param icon     icon of the menu item
+         * @param subMenus sub menus of the creating menu item
+         * @throws IllegalArgumentException if text is null
+         * @throws IllegalArgumentException if link is null
+         */
+        public MenuItem(String text, String link, String icon, List<MenuItem> subMenus) {
+            // Validate text.
+            if (text == null) {
+                throw new IllegalArgumentException("Text of a menu item cannot be null.");
+            } else {
+                this.text = text;
+            }
+            // Validate link.
+            if (link == null) {
+                throw new IllegalArgumentException(
+                        "Link of a menu item cannot be null. Cannot find link for menu item '" + text + "'.");
+            } else {
+                this.link = link;
+            }
+            this.icon = icon;
+            this.subMenus = (subMenus == null) ? Collections.emptyList() : Collections.unmodifiableList(subMenus);
+        }
+
+        /**
+         * Returns the text of this menu item.
+         *
+         * @return text of this menu item
+         */
+        public String getText() {
+            return text;
+        }
+
+        /**
+         * Returns the link of this menu item.
+         *
+         * @return link of this menu item.
+         */
+        public String getLink() {
+            return link;
+        }
+
+        /**
+         * Returns the icon CSS class of this menu item.
+         *
+         * @return icon CSS class of this menu item
+         */
+        public String getIcon() {
+            return icon;
+        }
+
+        /**
+         * Returns the sub-menus of this menu item.
+         *
+         * @return sub-menus of this menu item
+         */
+        public List<MenuItem> getSubMenus() {
+            return subMenus;
+        }
     }
 }

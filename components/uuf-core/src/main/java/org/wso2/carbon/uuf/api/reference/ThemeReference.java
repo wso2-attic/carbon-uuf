@@ -20,11 +20,11 @@ package org.wso2.carbon.uuf.api.reference;
 
 public interface ThemeReference {
 
-    String FILE_NAME_THEME = "theme.yaml";
+    String FILE_NAME_CONFIGURATION = "theme.yaml";
 
     String getName();
 
-    FileReference getThemeConfig();
+    FileReference getConfiguration();
 
     String getPath();
 }

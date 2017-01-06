@@ -15,7 +15,8 @@
   ~ limitations under the License.
 -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.wso2.carbon.uuf</groupId>
@@ -98,7 +99,7 @@
             <dependency>
                 <groupId>org.osgi</groupId>
                 <artifactId>org.osgi.core</artifactId>
-                <version>${osgi.api.version}</version>
+                <version>${org.osgi.api.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
@@ -558,44 +559,62 @@
         <carbon.jndi.version>1.0.0</carbon.jndi.version>
         <carbon.cache.version>1.0.0</carbon.cache.version>
         <javax.cache-api.version>1.0.0</javax.cache-api.version>
-        <osgi.framework.import.version.range>[1.8.0, 2.0.0)</osgi.framework.import.version.range>
-        <osgi.api.version>6.0.0</osgi.api.version>
+        <javax.cache-api.version.range>[1.0.0, 2.0.0)</javax.cache-api.version.range>
+        <javax.naming.version.range>[0.0.0, 1.0.0)</javax.naming.version.range>
+        <javax.script.version.range>[0.0.0, 1.0.0)</javax.script.version.range>
+        <org.osgi.framework.version.range>[1.8.0, 2.0.0)</org.osgi.framework.version.range>
+        <org.osgi.api.version>6.0.0</org.osgi.api.version>
+        <org.osgi.framework.wiring.version.range>[1.2.0, 2.0.0)</org.osgi.framework.wiring.version.range>
+        <org.osgi.service.component.annotations.version.range>[1.2.0, 2.0.0)
+        </org.osgi.service.component.annotations.version.range>
         <slf4j.version>1.7.5</slf4j.version>
         <slf4j.version.range>[1.7,2)</slf4j.version.range>
         <slf4j.log4j.version>1.6.0</slf4j.log4j.version>
+        <slf4j.log4j.version.range>[1.6.0, 2.0.0)</slf4j.log4j.version.range>
+        <org.apache.log4j.version.range>[1.2.15, 2.0.0)</org.apache.log4j.version.range>
         <commons-io.wso2.version>2.4.0.wso2v1</commons-io.wso2.version>
+        <commons-io.wso2.version.range>[2.4.0, 3.0.0)</commons-io.wso2.version.range>
         <org.apache.commons.commons-lang3.version>3.1</org.apache.commons.commons-lang3.version>
+        <org.apache.commons.commons-lang3.version.range>[3.1, 4.0)</org.apache.commons.commons-lang3.version.range>
         <guava.version>18.0</guava.version>
         <guava.version.range>[18.0,19.0)</guava.version.range>
         <gson.version>2.6.2</gson.version>
         <gson.version.range>[2.6.2,3)</gson.version.range>
         <orbit.org.yaml.version>1.16.0.wso2v1</orbit.org.yaml.version>
+        <orbit.org.yaml.version.range>[1.16.0, 1.17.0)</orbit.org.yaml.version.range>
         <org.objectweb.asm.version>5.1</org.objectweb.asm.version>
+        <org.objectweb.asm.version.range>[5.1, 6.0)</org.objectweb.asm.version.range>
+        <javax.ws.rs.version.range>[2.0.0, 3.0.0)</javax.ws.rs.version.range>
 
         <!-- UUF Product -->
         <carbon.datasources.version>1.0.0</carbon.datasources.version>
         <carbon.metrics.version>2.0.0</carbon.metrics.version>
-        <carbon.messaging.version>1.0.6</carbon.messaging.version>
+        <carbon.messaging.version>1.0.11</carbon.messaging.version>
+        <carbon.messaging.version.range>[1.0.11, 2.0.0)</carbon.messaging.version.range>
         <carbon.transport.http.netty.version>2.1.4</carbon.transport.http.netty.version>
 
         <!-- Handlebars -->
         <orbit.com.github.jknack.handlebars.version>4.0.3.wso2v1</orbit.com.github.jknack.handlebars.version>
+        <orbit.com.github.jknack.handlebars.version.range>[4.0.3, 5.0.0)</orbit.com.github.jknack.handlebars.version.range>
         <antlr-version>4.5.1-1</antlr-version>
 
         <!-- MSF4J -->
         <msf4j.version>2.1.0</msf4j.version>
+        <msf4j.version.range>[2.1.0, 3.0.0)</msf4j.version.range>
 
         <!-- Authentication and Authorization -->
         <carbon.security.caas.version>1.0.0-m2</carbon.security.caas.version>
         <carbon.security.userstore.jdbc.version>1.0.0-m2</carbon.security.userstore.jdbc.version>
 
         <!-- Maven Plugins -->
-        <carbon-uuf-maven-plugin.version>1.0.0-m8</carbon-uuf-maven-plugin.version>
+        <carbon-uuf-maven-plugin.version>1.0.0-m9</carbon-uuf-maven-plugin.version>
         <carbon.feature.plugin.version>2.0.1</carbon.feature.plugin.version>
         <maven.bundle.plugin.version>2.5.0</maven.bundle.plugin.version>
 
         <!-- Test -->
+        <!-- todo 2017/01/04 Upgrade TestNG version to 6.9.5 -->
         <testng.version>6.9.4</testng.version>
+        <!-- todo 2017/01/04 Upgrade Mockito version to 2.4.2 -->
         <mockito-core.version>2.0.44-beta</mockito-core.version>
 
         <!-- OSGi Tests -->
@@ -628,10 +647,10 @@
         <equinox.osgi.version>3.10.2.v20150203-1939</equinox.osgi.version>
         <org.wso2.eclipse.osgi.version>3.4.0.v20140312-2051</org.wso2.eclipse.osgi.version>
         <ow2.jta.spec.version>1.0.12</ow2.jta.spec.version>
-        <osgi.service.tracker.package.import.version.range>[1.5.1, 2.0.0)
-        </osgi.service.tracker.package.import.version.range>
+        <osgi.service.tracker.version.range>[1.5.1, 2.0.0)</osgi.service.tracker.version.range>
         <beanutils.version>1.8.3_2</beanutils.version>
         <netty.version>4.0.30.Final</netty.version>
+        <netty.version.range>[4.0.30, 5.0.0)</netty.version.range>
         <disruptor.orbit.version>3.3.2.wso2v1</disruptor.orbit.version>
 
         <!-- Source and target Java version -->

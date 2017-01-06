@@ -55,8 +55,15 @@ public class HbsHelperTest {
 
     private static Lookup createLookup() {
         Lookup lookup = mock(Lookup.class);
-        when(lookup.getConfiguration()).thenReturn(new Configuration(Collections.emptyMap()));
+        Configuration configuration = createConfiguration();
+        when(lookup.getConfiguration()).thenReturn(configuration);
         return lookup;
+    }
+
+    private static Configuration createConfiguration() {
+        Configuration configuration = mock(Configuration.class);
+        when(configuration.other()).thenReturn(Collections.emptyMap());
+        return configuration;
     }
 
     private static RequestLookup createRequestLookup() {
@@ -300,7 +307,7 @@ public class HbsHelperTest {
                 "</div>";
         Page page = new Page(new UriPatten("/contextPath"), createRenderable(pageContent), false);
         Component component = new Component(componentName, null, null, ImmutableSortedSet.of(page), null);
-        Lookup lookup = new Lookup(ImmutableSetMultimap.of(), new Configuration(Collections.emptyMap()));
+        Lookup lookup = new Lookup(ImmutableSetMultimap.of(), createConfiguration());
         lookup.add(new Fragment(fragmentName, createRenderable(fragmentContent), false));
         lookup.add(component);
         RequestLookup requestLookup = createRequestLookup();
@@ -325,7 +332,8 @@ public class HbsHelperTest {
         };
         when(lookup.getFragmentIn(any(), any())).thenReturn(Optional.of(fragment));
         HbsRenderable pageRenderable = createRenderable("{{placeholder \"css\"}}{{placeholder \"headJs\"}}" +
-                "{{fragment \"test.fragment\"}}{{fragment \"test.fragment\"}}");
+                                                                "{{fragment \"test.fragment\"}}{{fragment \"test" +
+                                                                ".fragment\"}}");
         RequestLookup.RenderingFlowTracker tracker = createRenderingFlowTracker(true);
         when(requestLookup.tracker()).thenReturn(tracker);
         when(tracker.getCurrentFragment()).thenReturn(Optional.of(fragment));

@@ -143,7 +143,7 @@
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.core</artifactId>
-            <version>${osgi.api.version}</version>
+            <version>${org.osgi.api.version}</version>
         </dependency>
 
         <!-- MSF4J -->

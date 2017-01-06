@@ -101,22 +101,13 @@ public class ArtifactComponentReference implements ComponentReference {
     }
 
     @Override
-    public Optional<FileReference> getManifest() {
-        Path componentManifest = componentDirectory.resolve(FILE_NAME_MANIFEST);
-        if (Files.exists(componentManifest)) {
-            return Optional.of(new ArtifactFileReference(componentManifest, appReference));
-        } else {
-            return Optional.empty();
-        }
-    }
-
-    @Override
-    public Optional<FileReference> getConfiguration() {
-        Path configuration = componentDirectory.resolve(FILE_NAME_CONFIGURATIONS);
+    public FileReference getConfiguration() {
+        Path configuration = componentDirectory.resolve(FILE_NAME_CONFIGURATION);
         if (Files.exists(configuration)) {
-            return Optional.of(new ArtifactFileReference(configuration, appReference));
+            return new ArtifactFileReference(configuration, appReference);
         } else {
-            return Optional.empty();
+            throw new FileOperationException("Cannot find component's configuration '" + FILE_NAME_CONFIGURATION +
+                                                     "' file in component '" + componentDirectory + "'.");
         }
     }
 

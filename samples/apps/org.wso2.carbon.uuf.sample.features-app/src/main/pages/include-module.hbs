@@ -1,35 +1,43 @@
 {{layout "org.wso2.carbon.uuf.sample.foundation.main"}}
 {{title "Include a Module | " @config.appName}}
+{{fragment "org.wso2.carbon.uuf.sample.foundation.highlight" theme="tomorrow"}}
+
 {{#fillZone "content"}}
     <h3>Include a Module.</h3>
     <hr />
     <p>You can include a module in your executable.</p>
-    <p>Syntax : <code>module(moduleName);</code></p>
+    <p>Syntax : <code class="code inline lang-javascript">module(moduleName);</code></p>
     <p>In your module;</p>
-    <pre>
-        var deviceManager = {};
-        (function (deviceManager) {
+    <figure class="highlight">
+        <pre class="code lang-javascript">
+            var deviceManager = {};
+            (function (deviceManager) {
                 deviceManager.getDevices = function (username) {
-                return [{name: "device1"}, {name: "device2"}, {name: "device3"}];
-            };
-        })(deviceManager);
-    </pre>
+                    return [{name: "device1"}, {name: "device2"}, {name: "device3"}];
+                };
+            })(deviceManager);</pre>
+    </figure>
     <p>In your JS file;</p>
-    <pre>
-        module("deviceManager");
-        function onRequest(env) {
-            return {"devices": deviceManager.getDevices("admin")};
-        }
-    </pre>
+    <figure class="highlight">
+        <pre class="code lang-javascript">
+            module("deviceManager");
+            function onRequest(env) {
+                return {"devices": deviceManager.getDevices("admin")};
+            }</pre>
+    </figure>
     <p>Then, you can use this variable in your handlebars;</p>
-    <pre>
-        \{{#each devices}}
-            name: \{{name}},&nbsp;
-        \{{/each}}
-    </pre>
+    <figure class="highlight">
+        <pre class="code lang-handlebars">
+            \{{#each devices}}
+                name: \{{name}}&lt;br/&gt;
+            \{{/each}}</pre>
+    </figure>
+
     <h3>Notes:</h3>
     The above code will print;<br />
-    {{#each devices}}
-        <b>name</b>: {{name}},&nbsp;
-    {{/each}}
+    <div class="output">
+        {{#each devices}}
+            <b>name</b>: {{name}}<br />
+        {{/each}}
+    </div>
 {{/fillZone}}

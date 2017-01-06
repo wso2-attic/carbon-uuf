@@ -15,7 +15,8 @@
   ~ limitations under the License.
 -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>org.wso2.carbon.uuf.core</artifactId>
@@ -112,22 +113,21 @@
                             org.wso2.carbon.deployment.engine.*; version="${carbon.kernel.version.range}",
                             org.wso2.carbon.deployment.notifier.*; version="${carbon.kernel.version.range}",
                             org.wso2.carbon.kernel.startupresolver.*; version="${carbon.kernel.version.range}",
-                            org.wso2.carbon.kernel.transports.*;version="${carbon.kernel.version.range}",
-                            org.wso2.carbon.kernel.utils,
-                            org.wso2.msf4j;version="${msf4j.version}",
-                            javax.naming,
-                            javax.cache.*,
-                            org.osgi.framework;version="${osgi.framework.import.version.range}",
-                            org.osgi.framework.wiring,
-                            org.objectweb.asm,
-                            com.google.common.*;version="${guava.version.range}",
-                            com.google.gson.*;version="${gson.version}",
-                            org.apache.commons.lang3.*,
-                            org.apache.commons.io,
-                            org.apache.log4j.*,
-                            org.slf4j.*;version="${slf4j.version.range}",
-                            org.yaml.snakeyaml,
-                            org.osgi.util.tracker; version="${osgi.service.tracker.package.import.version.range}"
+                            org.wso2.carbon.kernel.transports.*; version="${carbon.kernel.version.range}",
+                            org.wso2.msf4j; version="${msf4j.version.range}",
+                            javax.naming; version="${javax.naming.version.range}",
+                            javax.cache.*; version="${javax.cache-api.version.range}",
+                            org.osgi.framework; version="${org.osgi.framework.version.range}",
+                            org.osgi.framework.wiring; version="${org.osgi.framework.wiring.version.range}",
+                            org.objectweb.asm; version="${org.objectweb.asm.version.range}",
+                            com.google.common.*; version="${guava.version.range}",
+                            com.google.gson.*; version="${gson.version.range}",
+                            org.apache.commons.lang3.*; version="${org.apache.commons.commons-lang3.version.range}",
+                            org.apache.commons.io; version="${commons-io.wso2.version.range}",
+                            org.apache.log4j.*; version="${org.apache.log4j.version.range}",
+                            org.slf4j.*; version="${slf4j.version.range}",
+                            org.yaml.snakeyaml.*; version="${orbit.org.yaml.version.range}",
+                            org.osgi.util.tracker; version="${osgi.service.tracker.version.range}"
                         </Import-Package>
                         <Private-Package>org.wso2.carbon.uuf.internal.*</Private-Package>
                         <Export-Package>
