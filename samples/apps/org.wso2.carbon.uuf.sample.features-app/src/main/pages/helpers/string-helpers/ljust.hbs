@@ -1,0 +1,42 @@
+{{layout "org.wso2.carbon.uuf.sample.foundation.main"}}
+{{title "LJust | String Helper Sample | " @config.appName}}
+{{fragment "org.wso2.carbon.uuf.sample.foundation.highlight" theme=@config.highlightjsTheme}}
+
+{{#fillZone "content"}}
+    <h3><b>ljust</b> Helper</h3>
+    <hr />
+    <p>Left align the value in a field of a given width.</p>
+
+    <div>
+        <figure class="highlight">
+            <pre class="code lang-handlebars">\{{ljust &lt;value&gt; &lt;size=size&gt; [pad=" "]}}</pre>
+        </figure>
+        <p><b>value</b> - string to be aligned</p>
+        <p><b>size</b> - size of the final string</p>
+    </div>
+
+    <div style="margin-top: 40px">
+        <h4><b>Example</b></h4>
+        <figure class="highlight">
+            <pre class="code lang-handlebars">
+            &lt;div&gt;
+                "\{{ljust value size=size}}"
+            &lt;/div&gt;</pre>
+        </figure>
+        <p>when used with this context:</p>
+        <figure class="highlight">
+            <pre class="code lang-json">
+                {
+                    value: "Handlebars.java",
+                    size: 20
+                }</pre>
+        </figure>
+        <p>will result in:</p>
+        <figure class="highlight">
+            <pre class="code lang-handlebars">
+            &lt;div&gt;
+                "{{ljust value size=size}}"
+            &lt;/div&gt;</pre>
+        </figure>
+    </div>
+{{/fillZone}}

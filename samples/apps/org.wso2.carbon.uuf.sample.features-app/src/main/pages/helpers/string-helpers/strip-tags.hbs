@@ -1,0 +1,16 @@
+{{layout "org.wso2.carbon.uuf.sample.foundation.main"}}
+{{title "Strip Tags | String Helper Sample | " @config.appName}}
+{{fragment "org.wso2.carbon.uuf.sample.foundation.highlight" theme=@config.highlightjsTheme}}
+
+{{#fillZone "content"}}
+    <h3><b>stripTags</b> Helper</h3>
+    <hr />
+    <p>Strips HTML tags.</p>
+
+    <div>
+        <figure class="highlight">
+            <pre class="code lang-handlebars">\{{stripTags &lt;value&gt;}}</pre>
+        </figure>
+        <p><b>value</b> - string to be processed</p>
+    </div>
+{{/fillZone}}

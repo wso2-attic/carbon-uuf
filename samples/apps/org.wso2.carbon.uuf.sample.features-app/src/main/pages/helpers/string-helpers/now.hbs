@@ -1,0 +1,25 @@
+{{layout "org.wso2.carbon.uuf.sample.foundation.main"}}
+{{title "Now | String Helper Sample | " @config.appName}}
+{{fragment "org.wso2.carbon.uuf.sample.foundation.highlight" theme=@config.highlightjsTheme}}
+
+{{#fillZone "content"}}
+    <h3><b>now</b> Helper</h3>
+    <hr />
+    <p>Add the current date.</p>
+
+    <div>
+        <figure class="highlight">
+            <pre class="code lang-handlebars">\{{now ["format"] [tz=timeZone|timeZoneId]}}</pre>
+        </figure>
+
+        <p>Format parameters is one of:</p>
+        <ul>
+            <li><b>full</b> - full date format. For example: Tuesday, June 19, 2012</li>
+            <li><b>long</b> - long date format. For example: June 19, 2012</li>
+            <li><b>medium</b> - medium date format. For example: Jun 19, 2012</li>
+            <li><b>short</b> - short date format. For example: 6/19/12</li>
+            <li><b>pattern</b> - a date pattern.
+        </ul>
+        <p>Otherwise, the default formatter will be used.</p>
+    </div>
+{{/fillZone}}
