@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * Bean class that represents the theme's config file of an UUF Theme.
  *
- * @apiNote Getters and setters of this class should match with getters and setters in
+ * Getters and setters of this class should match with getters and setters in
  * org.wso2.carbon.uuf.maven.bean.ThemeConfig class.
  * @since 1.0.0
  */
