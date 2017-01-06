@@ -27,7 +27,7 @@ import java.util.Map;
 /**
  * Bean class that represents configurations of an UUF Component.
  *
- * @apiNote Getters and setters of this class should match with getters and setters in
+ * Getters and setters of this class should match with getters and setters in
  * org.wso2.carbon.uuf.maven.bean.ComponentConfig class.
  * @since 1.0.0
  */
