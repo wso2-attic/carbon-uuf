@@ -1,5 +1,6 @@
 {{layout "org.wso2.carbon.uuf.sample.foundation.main"}}
 {{title "Center | String Helper Sample | " @config.appName}}
+{{fragment "org.wso2.carbon.uuf.sample.foundation.highlight" theme=@config.highlightjsTheme}}
 
 {{#fillZone "content"}}
     <h3><b>center</b> Helper</h3>
@@ -7,7 +8,9 @@
     <p>Center the value in a field of a given width.</p>
 
     <div>
-        <pre>\{{center &lt;value&gt; &lt;size&gt; [pad=" "]}}</pre>
+        <figure class="highlight">
+            <pre class="code lang-handlebars">\{{center &lt;value&gt; &lt;size=size&gt; [pad=" "]}}</pre>
+        </figure>
         <p><b>value</b> - string to center</p>
         <p><b>size</b> - size of the final string</p>
         <p><b>pad</b> - string to be used as padding</p>
@@ -15,19 +18,25 @@
 
     <div style="margin-top: 40px">
         <h4><b>Example</b></h4>
-        <pre>
+        <figure class="highlight">
+            <pre class="code lang-handlebars">
             &lt;div&gt;
-                "\{{center value size=19}}"
+                "\{{center value size=size}}"
             &lt;/div&gt;</pre>
+        </figure>
         <p>when used with this context:</p>
-        <pre>
-            {
-                value: "handlebars.java"
-            }</pre>
+        <figure class="highlight">
+            <pre class="code lang-json">
+                {
+                    value: "handlebars.java"
+                }</pre>
+        </figure>
         <p>will result in:</p>
-        <pre>
+        <figure class="highlight">
+            <pre class="code lang-handlebars">
             &lt;div&gt;
                 "{{center value size=size}}"
             &lt;/div&gt;</pre>
+        </figure>
     </div>
 {{/fillZone}}

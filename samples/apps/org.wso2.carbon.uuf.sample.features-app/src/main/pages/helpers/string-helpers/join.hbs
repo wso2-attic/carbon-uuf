@@ -1,5 +1,6 @@
 {{layout "org.wso2.carbon.uuf.sample.foundation.main"}}
 {{title "Join | String Helper Sample | " @config.appName}}
+{{fragment "org.wso2.carbon.uuf.sample.foundation.highlight" theme=@config.highlightjsTheme}}
 
 {{#fillZone "content"}}
     <h3><b>join</b> Helper</h3>
@@ -7,29 +8,37 @@
     <p>Joins an array, iterator or an iterable with a string.</p>
 
     <div>
-        <pre>\{{join &lt;value&gt; &lt;separator&gt; [prefix=""] [suffix=""]}}</pre>
+        <figure class="highlight">
+            <pre class="code lang-handlebars">\{{join &lt;value&gt; &lt;separator&gt; [prefix=""] [suffix=""]}}</pre>
+        </figure>
         <p><b>value</b> - items to be concatenated (space separated values)</p>
         <p><b>separator</b> - item separator string</p>
     </div>
 
     <div style="margin-top: 40px">
         <h4><b>Example</b></h4>
-        <pre>
+        <figure class="highlight">
+            <pre class="code lang-handlebars">
             &lt;div&gt;
-                \{{join value separator}}
+                \{{join a b c separator}}
             &lt;/div&gt;</pre>
+        </figure>
         <p>when used with this context:</p>
-        <pre>
-            {
-                a: "a",
-                b: "b",
-                c: "c",
-                separator: " // "
-            }</pre>
+        <figure class="highlight">
+            <pre class="code lang-json">
+                {
+                    a: "a",
+                    b: "b",
+                    c: "c",
+                    separator: " // "
+                }</pre>
+        </figure>
         <p>will result in:</p>
-        <pre>
+        <figure class="highlight">
+            <pre class="code lang-handlebars">
             &lt;div&gt;
                 {{join a b c separator}}
             &lt;/div&gt;</pre>
+        </figure>
     </div>
 {{/fillZone}}

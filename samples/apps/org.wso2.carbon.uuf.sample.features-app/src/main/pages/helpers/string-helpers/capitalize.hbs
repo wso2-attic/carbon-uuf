@@ -1,5 +1,6 @@
 {{layout "org.wso2.carbon.uuf.sample.foundation.main"}}
 {{title "Capitalize | String Helper Sample | " @config.appName}}
+{{fragment "org.wso2.carbon.uuf.sample.foundation.highlight" theme=@config.highlightjsTheme}}
 
 {{#fillZone "content"}}
     <h3><b>capitalize</b> Helper</h3>
@@ -7,26 +8,34 @@
     <p>Capitalizes all the whitespace separated words in a String.</p>
 
     <div>
-        <pre>\{{capitalize &lt;value&gt; [fully=false]}}</pre>
+        <figure class="highlight">
+            <pre class="code lang-handlebars">\{{capitalize &lt;value&gt; [fully=false]}}</pre>
+        </figure>
         <p><b>value</b> - string to capitalize</p>
         <p><b>fully</b> - optional boolean to identify whether to fully capitalize the string or not</p>
     </div>
 
     <div style="margin-top: 40px">
         <h4><b>Example</b></h4>
-        <pre>
+        <figure class="highlight">
+            <pre class="code lang-handlebars">
             &lt;div&gt;
                 \{{capitalize value}}
             &lt;/div&gt;</pre>
+        </figure>
         <p>when used with this context:</p>
-        <pre>
-            {
-                value: "my first post"
-            }</pre>
+        <figure class="highlight">
+            <pre class="code lang-json">
+                {
+                    value: "my first post"
+                }</pre>
+        </figure>
         <p>will result in:</p>
-        <pre>
+        <figure class="highlight">
+            <pre class="code lang-handlebars">
             &lt;div&gt;
                 {{capitalize value}}
             &lt;/div&gt;</pre>
+        </figure>
     </div>
 {{/fillZone}}

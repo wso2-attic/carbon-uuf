@@ -1,5 +1,6 @@
 {{layout "org.wso2.carbon.uuf.sample.foundation.main"}}
 {{title "String Format | String Helper Sample | " @config.appName}}
+{{fragment "org.wso2.carbon.uuf.sample.foundation.highlight" theme=@config.highlightjsTheme}}
 
 {{#fillZone "content"}}
     <h3><b>stringFormat</b> Helper</h3>
@@ -7,27 +8,35 @@
     <p>Formats the variable according to a string formatting specifier.</p>
 
     <div>
-        <pre>\{{stringFormat value &lt;params&gt;...}}</pre>
+        <figure class="highlight">
+            <pre class="code lang-handlebars">\{{stringFormat value &lt;params&gt;...}}</pre>
+        </figure>
         <p><b>value</b> - formatting specifier</p>
         <p><b>params</b> - list of parameters</p>
     </div>
 
     <div style="margin-top: 40px">
         <h4><b>Example</b></h4>
-        <pre>
+        <figure class="highlight">
+            <pre class="code lang-handlebars">
             &lt;div&gt;
                 \{{stringFormat value param}}
             &lt;/div&gt;</pre>
+        </figure>
         <p>when used with this context:</p>
-        <pre>
-            {
-                value: "Hello %s",
-                param: "handlebars.java"
-            }</pre>
+        <figure class="highlight">
+            <pre class="code lang-json">
+                {
+                    value: "Hello %s",
+                    param: "handlebars.java"
+                }</pre>
+        </figure>
         <p>will result in:</p>
-        <pre>
+        <figure class="highlight">
+            <pre class="code lang-handlebars">
             &lt;div&gt;
                 {{stringFormat value param}}
             &lt;/div&gt;</pre>
+        </figure>
     </div>
 {{/fillZone}}

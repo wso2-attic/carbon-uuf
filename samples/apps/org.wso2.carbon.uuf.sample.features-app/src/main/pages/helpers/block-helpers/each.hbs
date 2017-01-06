@@ -1,35 +1,40 @@
 {{layout "org.wso2.carbon.uuf.sample.foundation.main"}}
 {{title "each | Block Helper Sample | " @config.appName}}
+{{fragment "org.wso2.carbon.uuf.sample.foundation.highlight" theme=@config.highlightjsTheme}}
+
 {{#fillZone "content"}}
-    <h3>The 'each' Block Helper.</h3>
+    <h3><b>each</b> Helper</h3>
     <hr />
     <p>You can iterate over a list using the 'each' helper. </p>
     <p>Inside the block, you can use this to reference the element being iterated over.</p>
-    <pre>
+    <figure class="highlight">
+        <pre class="code lang-handlebars">
         &lt;ul class="people_list"&gt;
-          \{{#each people}}
+            \{{#each people}}
                 &lt;li&gt;\{{this}}&lt;/li&gt;
-          \{{/each}}
-        &lt/ul&lt
-    </pre>
+            \{{/each}}
+        &lt;/ul&gt;</pre>
+    </figure>
     <p>For example: </p>
-    <pre>
+    <figure class="highlight">
+        <pre class="code lang-json">
         {
           people: [
             "Yehuda Katz",
             "Alan Johnson",
             "Charles Jolley"
           ]
-        }
-    </pre>
+        }</pre>
+    </figure>
     <p>will result in:</p>
-    <pre>
+    <figure class="highlight">
+        <pre class="code lang-handlebars">
         &lt;ul class="people_list"&gt;
-          &lt;li&gt;Yehuda Katz&lt;/li&gt;
-          &lt;li&gt;Alan Johnson&lt;/li&gt;
-          &lt;li&gt;Charles Jolley&lt;/li&gt;
-        &lt;/ul&gt;
-    </pre>
+            &lt;li&gt;Yehuda Katz&lt;/li&gt;
+            &lt;li&gt;Alan Johnson&lt;/li&gt;
+            &lt;li&gt;Charles Jolley&lt;/li&gt;
+        &lt;/ul&gt;</pre>
+    </figure>
     <h3>output:</h3>
     <ul>
         <li>Yehuda Katz</li>
@@ -37,58 +42,66 @@
         <li>Charles Jolley</li>
     </ul>
     <p>You can use this expression in any context to reference the current context.</p>
-    <p>You can optionally provide an \{{else}} section which will display only when the list is empty.<p>
-    <pre>
-        \{{#each paragraphs}}
-          &lt;p&gt;\{{this}}&lt;/p&gt;
-        \{{else}}
-          &lt;p class="empty"&gt;No content&lt;/p&gt;
-        \{{/each}}
-    </pre>
+    <p>You can optionally provide an \{{else}} section which will display only when the list is empty.
+    <p>
+        <figure class="highlight">
+            <pre class="code lang-handlebars">
+            \{{#each paragraphs}}
+                &lt;p&gt;\{{this}}&lt;/p&gt;
+                \{{else}}
+                &lt;p class="empty"&gt;No content&lt;/p&gt;
+            \{{/each}}</pre>
+        </figure>
     <p>When looping through items in each, you can optionally reference the current loop index via \{{@index}}</p>
-    <pre>
+    <figure class="highlight">
+        <pre class="code lang-handlebars">
         \{{#each people}}
-          \{{@index}}: \{{this}}
-        \{{/each}}
-    </pre>
+            \{{@index}}: \{{this}}
+        \{{/each}}</pre>
+    </figure>
     <p>Example:</p>
-    <pre>
+    <figure class="highlight">
+        <pre class="code lang-json">
         {
             people: [
                 "Yehuda Katz",
                 "Alan Johnson",
                 "Charles Jolley"
                 ]
-        }
-    </pre>
+        }</pre>
+    </figure>
     <h3>output:</h3>
-    <pre>
+    <figure class="highlight">
+        <pre class="code lang-handlebars">
         0: Yehuda Katz
         1: Alan Johnson
-        2: Charles Jolley
-    </pre>
+        2: Charles Jolley</pre>
+    </figure>
     <p>Additionally for object iteration, \{{@key}} references the current key name:</p>
-    <pre>
+    <figure class="highlight">
+        <pre class="code lang-handlebars">
         \{{#each people}}
-          \{{@key}}: \{{this}}
-        \{{/each}}
-    </pre>
+            \{{@key}}: \{{this}}
+        \{{/each}}</pre>
+    </figure>
     <p>Example: </p>
-    <pre>
+    <figure class="highlight">
+       <pre class="code lang-json">
         {
             people: [
                 "first" => "Yehuda Katz",
                 "second" => "Alan Johnson",
                 "third" => "Charles Jolley"
                 ]
-        }
-    </pre>
+        }</pre>
+    </figure>
     <h3>output:</h3>
-    <pre>
+    <figure class="highlight">
+        <pre class="code lang-handlebars">
         first: Yehuda Katz
         second: Alan Johnson
-        third: Charles Jolley
-    </pre>
+        third: Charles Jolley</pre>
+    </figure>
     <p>
         The first and last steps of iteration are noted via the @first and @last variables when iterating over an array.
         When iterating over an object only the @first is available.
@@ -96,13 +109,14 @@
         To access the parent index, for example, \{{@../index}} can be used.
     </p>
     <p>The each helper also supports block parameters, allowing for named references anywhere in the block.</p>
-    <pre>
+    <figure class="highlight">
+        <pre class="code lang-handlebars">
         \{{#each array as |value key|}}
-          \{{#each child as |childValue childKey|}}
-            \{{key}} - \{{childKey}}. \{{childValue}}
-          \{{/each}}
-        \{{/each}}
-    </pre>
+            \{{#each child as |childValue childKey|}}
+                \{{key}} - \{{childKey}}. \{{childValue}}
+            \{{/each}}
+        \{{/each}}</pre>
+    </figure>
     <p>Will create a key and value variable that children may access without the need for depth variable references.</p>
     <p>In the example above, \{{key}} is identical to \{{@../key}} but in many cases is more readable.</p>
     <p></p>

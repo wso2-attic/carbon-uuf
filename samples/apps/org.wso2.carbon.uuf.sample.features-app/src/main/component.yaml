@@ -10,3 +10,4 @@ bindings:
 
 config:
   appName: "Features App"
+  highlightjsTheme: "tomorrow"

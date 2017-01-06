@@ -1,5 +1,6 @@
 {{layout "org.wso2.carbon.uuf.sample.foundation.main"}}
 {{title "Rjust | String Helper Sample | " @config.appName}}
+{{fragment "org.wso2.carbon.uuf.sample.foundation.highlight" theme=@config.highlightjsTheme}}
 
 {{#fillZone "content"}}
     <h3><b>rjust</b> Helper</h3>
@@ -7,27 +8,35 @@
     <p>Right align the value in a field of a given width.</p>
 
     <div>
-        <pre>\{{rjust &lt;value&gt; &lt;size=size&gt; [pad=" "]}}</pre>
+        <figure class="highlight">
+            <pre class="code lang-handlebars">\{{rjust &lt;value&gt; &lt;size=size&gt; [pad=" "]}}</pre>
+        </figure>
         <p><b>value</b> - string to be aligned</p>
         <p><b>size</b> - size of the final string</p>
     </div>
 
     <div style="margin-top: 40px">
         <h4><b>Example</b></h4>
-        <pre>
+        <figure class="highlight">
+            <pre class="code lang-handlebars">
             &lt;div&gt;
-                "\{{rjust value size}}"
+                "\{{rjust value size=size}}"
             &lt;/div&gt;</pre>
+        </figure>
         <p>when used with this context:</p>
-        <pre>
-            {
-                value: "Handlebars.java",
-                size: 20
-            }</pre>
+        <figure class="highlight">
+            <pre class="code lang-json">
+                {
+                    value: "Handlebars.java",
+                    size: 20
+                }</pre>
+        </figure>
         <p>will result in:</p>
-        <pre>
+        <figure class="highlight">
+            <pre class="code lang-handlebars">
             &lt;div&gt;
                 "{{rjust value size=size}}"
             &lt;/div&gt;</pre>
+        </figure>
     </div>
 {{/fillZone}}

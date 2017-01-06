@@ -1,5 +1,6 @@
 {{layout "org.wso2.carbon.uuf.sample.foundation.main"}}
 {{title "Upper | String Helper Sample | " @config.appName}}
+{{fragment "org.wso2.carbon.uuf.sample.foundation.highlight" theme=@config.highlightjsTheme}}
 
 {{#fillZone "content"}}
     <h3><b>lower</b> Helper</h3>
@@ -7,25 +8,33 @@
     <p>Convert a string to uppercase.</p>
 
     <div>
-        <pre>\{{upper &lt;value&gt;}}</pre>
+        <figure class="highlight">
+            <pre class="code lang-handlebars">\{{upper &lt;value&gt;}}</pre>
+        </figure>
         <p><b>value</b> - string to be converted</p>
     </div>
 
     <div style="margin-top: 40px">
         <h4><b>Example</b></h4>
-        <pre>
+        <figure class="highlight">
+            <pre class="code lang-handlebars">
             &lt;div&gt;
                 \{{upper value}}
             &lt;/div&gt;</pre>
+        </figure>
         <p>when used with this context:</p>
-        <pre>
-            {
-                value: "Hello"
-            }</pre>
+        <figure class="highlight">
+            <pre class="code lang-json">
+                {
+                    value: "Hello"
+                }</pre>
+        </figure>
         <p>will result in:</p>
-        <pre>
+        <figure class="highlight">
+            <pre class="code lang-handlebars">
             &lt;div&gt;
                 {{upper value}}
             &lt;/div&gt;</pre>
+        </figure>
     </div>
 {{/fillZone}}

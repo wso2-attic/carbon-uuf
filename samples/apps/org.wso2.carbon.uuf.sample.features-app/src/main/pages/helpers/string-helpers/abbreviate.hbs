@@ -1,5 +1,6 @@
 {{layout "org.wso2.carbon.uuf.sample.foundation.main"}}
 {{title "Abbreviate | String Helper Sample | " @config.appName}}
+{{fragment "org.wso2.carbon.uuf.sample.foundation.highlight" theme=@config.highlightjsTheme}}
 
 {{#fillZone "content"}}
     <h3><b>abbreviate</b> Helper</h3>
@@ -8,26 +9,34 @@
        translatable ellipsis sequence ("...").</p>
 
     <div>
-        <pre>\{{abbreviate &lt;value&gt; &lt;size&gt;]}}</pre>
+        <figure class="highlight">
+            <pre class="code lang-handlebars">\{{abbreviate &lt;value&gt; &lt;size&gt;]}}</pre>
+        </figure>
         <p><b>value</b> - string to truncate</p>
         <p><b>size</b> - number of characters to show</p>
     </div>
 
     <div style="margin-top: 40px">
         <h4><b>Example</b></h4>
-        <pre>
+        <figure class="highlight">
+            <pre class="code lang-handlebars">
             &lt;div&gt;
                 \{{abbreviate value size}}
             &lt;/div&gt;</pre>
+        </figure>
         <p>when used with this context:</p>
-        <pre>
-            {
-                value: "Handlebars rocks"
-            }</pre>
+        <figure class="highlight">
+            <pre class="code lang-json">
+                {
+                    value: "Handlebars rocks"
+                }</pre>
+        </figure>
         <p>will result in:</p>
-        <pre>
+        <figure class="highlight">
+            <pre class="code lang-handlebars">
             &lt;div&gt;
-                 {{abbreviate value size}}
+                {{abbreviate value size}}
             &lt;/div&gt;</pre>
+        </figure>
     </div>
 {{/fillZone}}

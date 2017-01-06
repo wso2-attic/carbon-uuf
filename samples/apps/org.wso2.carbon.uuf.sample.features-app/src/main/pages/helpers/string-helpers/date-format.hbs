@@ -1,5 +1,6 @@
 {{layout "org.wso2.carbon.uuf.sample.foundation.main"}}
 {{title "Date Format | String Helper Sample | " @config.appName}}
+{{fragment "org.wso2.carbon.uuf.sample.foundation.highlight" theme=@config.highlightjsTheme}}
 
 {{#fillZone "content"}}
     <h3><b>dateFormat</b> Helper</h3>
@@ -7,7 +8,9 @@
     <p>Formats the given date.</p>
 
     <div>
-        <pre>\{{dateFormat &lt;date&gt; ["format"] [format="format"][tz=timeZone|timeZoneId]}}</pre>
+        <figure class="highlight">
+            <pre class="code lang-handlebars">\{{dateFormat &lt;date&gt; ["format"] [format="format"][tz=timeZone|timeZoneId]}}</pre>
+        </figure>
         <p><b>date</b> - date to be formatted</p>
 
         <p> You can format date using one of the following format parameters: </p>
