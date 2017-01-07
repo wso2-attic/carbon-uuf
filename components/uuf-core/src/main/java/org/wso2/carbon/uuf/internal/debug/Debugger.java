@@ -34,6 +34,7 @@ import org.wso2.carbon.uuf.spi.HttpResponse;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 import static org.wso2.carbon.uuf.spi.HttpResponse.CONTENT_TYPE_APPLICATION_JSON;
 import static org.wso2.carbon.uuf.spi.HttpResponse.CONTENT_TYPE_WILDCARD;
@@ -57,9 +58,6 @@ public class Debugger {
     private final static JsonParser JSON_PARSER = new JsonParser();
     private static final Logger LOGGER = LoggerFactory.getLogger(Debugger.class);
     private static final boolean IS_DEBUGGING_ENABLED = UUFServer.isDevModeEnabled();
-
-    // TODO: 12/07/2016 uncomment this once osgi issue solved for DebugAppender
-    //private final DebugAppender debugAppender;
 
     public Debugger() {
         // TODO: 12/07/2016 uncomment this once osgi issue solved for DebugAppender
@@ -120,11 +118,13 @@ public class Debugger {
             return;
         }
 
-        // TODO: 12/07/2016 uncomment this once osgi issue solved for DebugAppender
-        // if (URI_PATTEN_API_LOGS.matches(uriWithoutContextPath)) {
-        //      response.setContent(STATUS_OK, debugAppender.getMessagesAsJson(), CONTENT_TYPE_APPLICATION_JSON);
-        //      return;
-        // }
+        if (URI_PATTEN_API_LOGS.matches(uriWithoutContextPath)) {
+            List<LogEvent> logEvents = DebugLogger.getLastRequestLogEvents();
+            // TODO: 1/7/17 process above debug logs and create a JSON
+            JsonObject content = new JsonObject();
+            response.setContent(STATUS_OK, content.toString(), CONTENT_TYPE_APPLICATION_JSON);
+            return;
+        }
 
         if (URI_PATTEN_PAGE_INDEX.matches(uriWithoutContextPath) ||
                 URI_PATTEN_RESOURCES.matches(uriWithoutContextPath)) {
