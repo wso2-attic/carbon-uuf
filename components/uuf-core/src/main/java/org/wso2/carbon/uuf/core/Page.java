@@ -19,6 +19,7 @@
 package org.wso2.carbon.uuf.core;
 
 import org.wso2.carbon.uuf.exception.SessionNotFoundException;
+import org.wso2.carbon.uuf.internal.debug.DebugLogger;
 import org.wso2.carbon.uuf.internal.util.UriUtils;
 import org.wso2.carbon.uuf.spi.Renderable;
 import org.wso2.carbon.uuf.spi.model.Model;
@@ -53,6 +54,8 @@ public class Page implements Comparable<Page> {
                     "Page '" + this + "' is secured and required an user session to render.");
         }
 
+        // Debug logs for page rendering start.
+        DebugLogger.startPage(this);
         // Rendering flow tracking in.
         requestLookup.tracker().in(this);
         lookup.getComponent(requestLookup.tracker().getCurrentComponentName())
@@ -65,6 +68,8 @@ public class Page implements Comparable<Page> {
         // Rendering flow tracking out.
         requestLookup.popPublicUriStack();
         requestLookup.tracker().out(this);
+        // Debug logs for page rendering end.
+        DebugLogger.endPage(this);
         return output;
     }
 
