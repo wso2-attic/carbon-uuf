@@ -24,6 +24,7 @@ import org.wso2.carbon.uuf.core.App;
 import org.wso2.carbon.uuf.exception.HttpErrorException;
 import org.wso2.carbon.uuf.exception.PageRedirectException;
 import org.wso2.carbon.uuf.exception.UUFException;
+import org.wso2.carbon.uuf.internal.debug.DebugLogger;
 import org.wso2.carbon.uuf.internal.debug.Debugger;
 import org.wso2.carbon.uuf.internal.io.StaticResolver;
 import org.wso2.carbon.uuf.spi.HttpRequest;
@@ -57,7 +58,6 @@ public class RequestDispatcher {
     }
 
     public void serve(App app, HttpRequest request, HttpResponse response) {
-
         try {
             if (request.isStaticResourceRequest()) {
                 staticResolver.serve(app, request, response);
@@ -83,9 +83,10 @@ public class RequestDispatcher {
     }
 
     private void servePageOrFragment(App app, HttpRequest request, HttpResponse response) {
+        DebugLogger.startRequest(request);
         try {
             String html;
-            // set default mandatory http headers for security purpose
+            // Set default mandatory http headers for security purposes.
             setDefaultSecurityHeaders(response);
             if (request.isFragmentRequest()) {
                 html = app.renderFragment(request, response);
@@ -107,6 +108,8 @@ public class RequestDispatcher {
             }
             // Cause of 'e' is not an UUFException.
             throw e;
+        } finally {
+            DebugLogger.endRequest(request);
         }
     }
 
