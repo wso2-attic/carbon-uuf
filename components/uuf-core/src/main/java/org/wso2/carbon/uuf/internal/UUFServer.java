@@ -157,17 +157,19 @@ public class UUFServer implements Server, RequiredCapabilityListener {
             return;
         }
 
-        App app = null;
+        App app;
         try {
             app = appDeployer.getApp(request.getContextPath());
         } catch (UUFException e) {
             String msg = "A server error occurred while serving for request '" + request + "'.";
             LOGGER.error(msg, e);
             requestDispatcher.serveDefaultErrorPage(STATUS_INTERNAL_SERVER_ERROR, msg, response);
+            return;
         } catch (Exception e) {
             String msg = "An unexpected error occurred while serving for request '" + request + "'.";
             LOGGER.error(msg, e);
             requestDispatcher.serveDefaultErrorPage(STATUS_INTERNAL_SERVER_ERROR, msg, response);
+            return;
         }
 
         if (app != null) {
