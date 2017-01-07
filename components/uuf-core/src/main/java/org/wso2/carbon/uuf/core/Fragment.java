@@ -19,6 +19,7 @@
 package org.wso2.carbon.uuf.core;
 
 import org.wso2.carbon.uuf.exception.SessionNotFoundException;
+import org.wso2.carbon.uuf.internal.debug.DebugLogger;
 import org.wso2.carbon.uuf.internal.util.NameUtils;
 import org.wso2.carbon.uuf.internal.util.UriUtils;
 import org.wso2.carbon.uuf.spi.Renderable;
@@ -70,6 +71,8 @@ public class Fragment {
             }
         }
 
+        // Debug logs for fragment rendering start.
+        DebugLogger.startFragment(this);
         // Rendering flow tracking in.
         requestLookup.tracker().in(this);
         lookup.getComponent(requestLookup.tracker().getCurrentComponentName())
@@ -79,6 +82,8 @@ public class Fragment {
         // Rendering flow tracking out.
         requestLookup.popPublicUriStack();
         requestLookup.tracker().out(this);
+        // Debug logs for fragment rendering end.
+        DebugLogger.endFragment(this);
         return output;
     }
 
