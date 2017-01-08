@@ -2,6 +2,29 @@
 {{layout "org.wso2.carbon.uuf.sample.foundation.main"}}
 {{favicon "images/favicon.png" type="image/png"}}
 {{title "Home | " @config.appName}}
+{{#fillZone "alert"}}
+    {{
+        fragment "org.wso2.carbon.uuf.sample.foundation.alert"
+        id="alert2"
+        class="additional-class"
+        icon="fw fw-error"
+        alertClass="danger"
+        alertTitle="Error...!"
+        alertBody="Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa."
+        dismissable=true
+    }}
+{{/fillZone}}
+{{#fillZone "message"}}
+    {{
+        fragment "org.wso2.carbon.uuf.sample.foundation.message"
+        id="message2"
+        class="additional-class"
+        icon="fw fw-success"
+        msgTitle="Welcome to Petstore..."
+        msgClass="success"
+        msgBody="Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa."
+    }}
+{{/fillZone}}
 {{#fillZone "content"}}
     <div class="page-header">
         <h1>{{t "pets-store.welcome"}}</h1>

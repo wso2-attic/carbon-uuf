@@ -1,0 +1,33 @@
+<div id="{{#if @params.id}}{{@params.id}}{{else}}modal1{{/if}}" class="modal fade {{@params.class}}" tabindex="-1" role="dialog" aria-labelledby="modalDemo">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content clearfix">
+            <div class="modal-header">
+                {{#if @params.dismissButton}}
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><i class="fw fw-cancel"></i></button>
+                {{/if}}
+                <h3 class="modal-title" id="deleteModalLabel">
+                    {{@params.modalTitle}}
+                </h3>
+            </div>
+            {{#if @params.modalBody}}
+                <div class="modal-body add-margin-top-2x add-margin-bottom-2x">
+                    {{@params.modalBody}}
+                </div>
+            {{/if}}
+            {{#if @params.modalFooter}}
+                <div class="modal-footer">
+                    {{@params.modalFooter}}
+                </div>
+            {{else}}
+                <div class="modal-footer">
+                    {{#if @params.primaryButton}}
+                        <button type='button' class='btn btn-primary'>{{@params.primaryButton}}</button>
+                    {{/if}}
+                    {{#if @params.secondaryButton}}
+                        <button type='button' class='btn btn-default' data-dismiss='modal'>{{@params.secondaryButton}}</button>
+                    {{/if}}
+                </div>
+            {{/if}}
+        </div>
+    </div>
+</div>

@@ -1,0 +1,16 @@
+<div id="{{#if @params.id}}{{@params.id}}{{else}}alert1{{/if}}" class="alert alert-{{@params.alertClass}} {{@params.class}}" role="alert">
+    {{#if @params.icon}}<i class="icon {{@params.icon}}"></i>{{/if}}
+    {{#if @params.alertTitle}}
+        <strong>{{@params.alertTitle}}</strong>
+    {{/if}}
+    {{#if @params.alertBody}}
+        {{@params.alertBody}}
+    {{/if}}
+    {{#if @params.dismissable}}
+    <button type="button" class="close" aria-label="close" data-dismiss="alert">
+        <span aria-hidden="true">
+            <i class="fw fw-cancel"></i>
+        </span>
+    </button>
+    {{/if}}
+</div>

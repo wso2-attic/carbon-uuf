@@ -1,0 +1,13 @@
+<div id="{{#if @params.id}}{{@params.id}}{{else}}message1{{/if}}" class="message message-{{@params.msgClass}} {{@params.class}}">
+    <h4>
+        {{#if @params.icon}}<i class="icon {{@params.icon}}"></i>{{/if}}
+        {{#if @params.msgTitle}}
+            {{@params.msgTitle}}
+        {{else}}
+            {{t "pets-store.message.title.default"}}
+        {{/if}}
+    </h4>
+    {{#if @params.msgBody}}
+        <p>{{@params.msgBody}}</p>
+    {{/if}}
+</div>
