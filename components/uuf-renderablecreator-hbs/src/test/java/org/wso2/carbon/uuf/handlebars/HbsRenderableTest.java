@@ -186,4 +186,18 @@ public class HbsRenderableTest {
                 "zone content<!--[UUF-ZONE]{\"name\": \"test-zone\",\"position\": \"end\"}-->\n" +
                 " Y");
     }
+
+    @Test
+    public void testZoneWithDefaultContent() {
+        HbsPageRenderable pageRenderable = createPageRenderable("X {{#defineZone \"test-zone\"}}" +
+                "<label>default content</label>{{/defineZone}} Y");
+        Lookup lookup = createLookup();
+        when(lookup.getBindings(anyString(), anyString())).thenReturn(Collections.emptyList());
+        RequestLookup requestLookup = createRequestLookup();
+
+        String output = pageRenderable.render(createModel(), lookup, requestLookup, createAPI());
+        Assert.assertEquals(output, "X <!--[UUF-ZONE]{\"name\": \"test-zone\",\"position\": \"start\"}-->\n" +
+                "<label>default content</label><!--[UUF-ZONE]{\"name\": \"test-zone\",\"position\": \"end\"}-->\n" +
+                " Y");
+    }
 }
