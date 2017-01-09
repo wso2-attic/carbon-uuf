@@ -16,7 +16,7 @@ Make sure you are running **JDK8 update 40** or latest.
 2. Go to `wso2uuf-1.0.0-SNAPSHOT/bin` direcotry.
 3. Run `./carbon.sh` to start the Carbon server.
 4. Visit sample apps as below. They demonstrate the 
-  * Features App [https://localhost:9292/Features-app/](https://localhost:9292/Features-app/)
+  * Features App [https://localhost:9292/features-app/](https://localhost:9292/features-app/)
     - This app showcases all the functionalities supported by UUF, including the all the in-built handlebars helpers.
   * Pets Store app [https://localhost:9292/pets-store/pets](https://localhost:9292/pets-store/pets)
     - This app demonstrates a simple pet store scenario.
