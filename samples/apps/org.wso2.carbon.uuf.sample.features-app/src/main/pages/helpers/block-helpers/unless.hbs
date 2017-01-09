@@ -15,18 +15,34 @@
             \{{/unless}}
         &lt;/div&gt;</pre>
     </figure>
-    <p>Example: </p>
+
+    <p>when used with this context:</p>
     <figure class="highlight">
-        <pre class="code lang-json">
-        {
-            license: false
+        <pre class="code lang-javascript">
+        function onRequest(env) {
+            return {
+                license: false
+            };
         }</pre>
     </figure>
-    <h3>output:</h3>
-    <h3>WARNING: This entry does not have a license!</h3>
+
+    <p>will result in:</p>
+    <figure class="highlight">
+        <pre class="code lang-html">
+        &lt;div class="entry"&gt;
+            WARNING: This entry does not have a license!
+        &lt;/div&gt;</pre>
+    </figure>
+
+    output:
+    <div class="output">
+        <div class="entry">
+            WARNING: This entry does not have a license!
+        </div>
+    </div>
+
     <p>
         If looking up license under the current context returns a falsy value, Handlebars will render the warning.
         Otherwise, it will render nothing.
     </p>
-    <p></p>
 {{/fillZone}}

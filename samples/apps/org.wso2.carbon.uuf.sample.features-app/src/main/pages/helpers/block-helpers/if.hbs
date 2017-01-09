@@ -7,42 +7,60 @@
     <hr />
     <p>You can use the 'if' helper to conditionally render a block.</p>
     <p>If its argument returns false, undefined, null, "", 0, or [], Handlebars will not render the block.</p>
+
+    <h4><b>Example</b></h4>
     <figure class="highlight">
         <pre class="code lang-handlebars">
         &lt;div class="entry"&gt;
             \{{#if author}}
-                &lt;h3&gt;\{{firstName}} \{{lastName}}&lt;/h3&gt;
+                \{{firstName}} \{{lastName}}
             \{{/if}}
         &lt;/div&gt;</pre>
     </figure>
-    <p>Example: </p>
+    <p>when used with this context:</p>
     <figure class="highlight">
-        <pre class="code lang-json">
-        {
-            author: {
-                firstName: "John",
-                lastName: "Samuel"
-            }
+        <pre class="code lang-javascript">
+        function onRequest(env) {
+            return {
+                "author": {
+                    "firstName": "John",
+                    "lastName": "Samuel"
+                }
+            };
         }</pre>
     </figure>
     <p>will result in:</p>
     <figure class="highlight">
-        <pre class="code lang-handlebars">
+        <pre class="code lang-html">
         &lt;div class="entry"&gt;
-            &lt;h3&gt;John Samuel&lt;/h3&gt;
+            John Samuel
         &lt;/div&gt;</pre>
     </figure>
-    <h3>output:</h3>
-    <h3>John Samuel</h3>
+
+    output:
+    <div class="output">
+        <div class="entry">
+            {{#if author}}
+                {{author.firstName}} {{author.lastName}}
+            {{/if}}
+        </div>
+    </div>
+
     <p>When used with an empty ({}) context, author will be undefined, resulting in:</p>
     <figure class="highlight">
         <pre class="code lang-handlebars">
         &lt;div class="entry"&gt;
+            {{#if someAuthor}}
+                {{someAuthor.firstName}} {{someAuthor.lastName}}
+            {{/if}}
         &lt;/div&gt;</pre>
     </figure>
+
     <p>When using a block expression, you can specify a template section to run if the expression returns a falsy value.
        The section, marked by \{{else}} is called an "else section".
     </p>
+
+    <h4><b>Example</b></h4>
     <figure class="highlight">
         <pre class="code lang-handlebars">
         &lt;div class="entry"&gt;
@@ -53,22 +71,33 @@
             \{{/if}}
         &lt;/div&gt;</pre>
     </figure>
-    <p>
-        Lets see an example which render the else section:
-    </p>
+
+    <p>when used with this context:</p>
     <figure class="highlight">
-        <pre class="code lang-json">
-        {
-            author: false
+        <pre class="code lang-javascript">
+        function onRequest(env) {
+            return {
+                "bookAuthor": false
+            };
         }</pre>
     </figure>
+
     <p>will result in:</p>
     <figure class="highlight">
-        <pre class="code lang-handlebars">
+        <pre class="code lang-html">
         &lt;div class="entry"&gt;
-            &lt;h3&gt;Unknown Author&lt;/h3&gt;
+            Unknown Author
         &lt;/div&gt;</pre>
     </figure>
-    <h3>output: </h3>
-    <h3>Unknown Author</h3>
+
+    output:
+    <div class="output">
+        <div class="entry">
+            {{#if bookAuthor}}
+                {{bookAuthor.firstName}} {{bookAuthor.lastName}}
+            {{else}}
+                Unknown Author
+            {{/if}}
+        </div>
+    </div>
 {{/fillZone}}
