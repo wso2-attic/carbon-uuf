@@ -27,12 +27,14 @@
         </figure>
         <p>when used with this context:</p>
         <figure class="highlight">
-            <pre class="code lang-json">
-                {
+            <pre class="code lang-javascript">
+            function onRequest(env) {
+                return {
                     value: "Handlebars ...",
                     target: "...",
                     replacement: "rocks"
-                }</pre>
+                };
+            }</pre>
         </figure>
         <p>will result in:</p>
         <figure class="highlight">
