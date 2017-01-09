@@ -22,7 +22,7 @@
      after fixing the JIRA: https://wso2.org/jira/browse/CMVNPLG-13
     -->
     <groupId>org.wso2.carbon.uuf.sample</groupId>
-    <artifactId>org.wso2.carbon.uuf.sample.Features-app.feature</artifactId>
+    <artifactId>org.wso2.carbon.uuf.sample.features-app.feature</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>carbon-feature</packaging>
 
