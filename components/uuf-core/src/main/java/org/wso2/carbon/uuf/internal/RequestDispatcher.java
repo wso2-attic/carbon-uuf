@@ -121,6 +121,7 @@ public class RequestDispatcher {
     /**
      * Sets some default mandatory and user configured security related headers to the response path.
      *
+     * @param app the application used with getting the security related configuration
      * @param httpResponse the http response instance used with setting the headers.
      */
     private void setResponseSecurityHeaders(App app, HttpResponse httpResponse) {
