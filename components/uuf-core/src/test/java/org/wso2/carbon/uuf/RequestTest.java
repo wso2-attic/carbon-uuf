@@ -46,7 +46,7 @@ public class RequestTest {
     }
 
     @Test(dataProvider = "uris")
-    public void testIsValid(String uri, boolean expectedResult) throws Exception {
+    public void testIsValid(String uri, boolean expectedResult) {
         HttpRequest request = new HttpRequest() {
             @Override
             public String getMethod() {
