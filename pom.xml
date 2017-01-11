@@ -227,7 +227,7 @@
             </dependency>
             <dependency>
                 <groupId>org.wso2.carbon.uuf.sample</groupId>
-                <artifactId>org.wso2.carbon.uuf.sample.theme.blue</artifactId>
+                <artifactId>org.wso2.carbon.uuf.sample.blue.theme</artifactId>
                 <version>${carbon.uuf.version}</version>
                 <type>zip</type>
                 <classifier>uuf-theme</classifier>
