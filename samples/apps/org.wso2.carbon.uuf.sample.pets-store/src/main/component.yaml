@@ -26,7 +26,7 @@ bindings:
   - zoneName: "org.wso2.carbon.uuf.sample.foundation.ui.usermenu"
     mode: "append"
     fragments:
-      - "org.wso2.carbon.uuf.sample.simple-auth.usermenu"
+      - "org.wso2.carbon.uuf.sample.simple-auth.ui.usermenu"
 
 # Business logic related configurations.
 # In Handlebars templates, these configurations can be access using {{@config}} variable.
