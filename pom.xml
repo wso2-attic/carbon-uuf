@@ -220,7 +220,7 @@
             <!--UUF Sample Themes-->
             <dependency>
                 <groupId>org.wso2.carbon.uuf.sample</groupId>
-                <artifactId>org.wso2.carbon.uuf.sample.theme.default</artifactId>
+                <artifactId>org.wso2.carbon.uuf.sample.default.theme</artifactId>
                 <version>${carbon.uuf.version}</version>
                 <type>zip</type>
                 <classifier>uuf-theme</classifier>
