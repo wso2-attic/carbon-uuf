@@ -194,10 +194,10 @@
                 <version>${carbon.security.userstore.jdbc.version}</version>
             </dependency>
 
-            <!--UUF Components-->
+            <!--UUF Sample Components-->
             <dependency>
                 <groupId>org.wso2.carbon.uuf.sample</groupId>
-                <artifactId>org.wso2.carbon.uuf.sample.foundation</artifactId>
+                <artifactId>org.wso2.carbon.uuf.sample.foundation.ui</artifactId>
                 <version>${carbon.uuf.version}</version>
                 <type>zip</type>
                 <classifier>uuf-component</classifier>
@@ -217,7 +217,7 @@
                 <classifier>uuf-component</classifier>
             </dependency>
 
-            <!--UUF Themes-->
+            <!--UUF Sample Themes-->
             <dependency>
                 <groupId>org.wso2.carbon.uuf.sample</groupId>
                 <artifactId>org.wso2.carbon.uuf.sample.theme.default</artifactId>
