@@ -206,7 +206,7 @@ public class App {
             throw new FragmentNotFoundException("Requested fragment '" + fragmentName + "' does not exists.");
         }
 
-        Model model = new MapModel(request.getQueryParams());
+        Model model = new MapModel(request.getFormParams());
         RequestLookup requestLookup = createRequestLookup(request, response);
         API api = new API(sessionRegistry, requestLookup);
         return fragment.render(model, lookup, requestLookup, api);

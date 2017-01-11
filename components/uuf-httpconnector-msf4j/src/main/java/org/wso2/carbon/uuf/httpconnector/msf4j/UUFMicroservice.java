@@ -35,19 +35,21 @@ import javax.ws.rs.core.Response;
 public class UUFMicroservice implements Microservice {
 
     private Server uufServer;
+    private static final String PATH_ROOT = "";
+    private static final String PATH_ALL = ".*";
 
     public UUFMicroservice(Server uufServer) {
         this.uufServer = uufServer;
     }
 
     @GET
-    @Path(".*")
+    @Path(PATH_ALL)
     public Response get(@Context Request request) {
         return getImpl(request);
     }
 
     @GET
-    @Path("")
+    @Path(PATH_ROOT)
     public Response getImpl(@Context Request request) {
         MicroserviceHttpRequest httpRequest = new MicroserviceHttpRequest(request);
         MicroserviceHttpResponse httpResponse = new MicroserviceHttpResponse();
@@ -56,17 +58,35 @@ public class UUFMicroservice implements Microservice {
     }
 
     @POST
-    @Path(".*")
-    @Consumes({MediaType.APPLICATION_FORM_URLENCODED, MediaType.MULTIPART_FORM_DATA})
-    public Response post(@Context Request request, @Context MultivaluedMap multivaluedMap) {
-        return postImpl(request, multivaluedMap);
+    @Path(PATH_ALL)
+    @Consumes({MediaType.APPLICATION_JSON})
+    public Response postJsonAll(@Context Request request, Object params) {
+        return postJsonRoot(request, params);
     }
 
     @POST
-    @Path("")
+    @Path(PATH_ROOT)
+    @Consumes({MediaType.APPLICATION_JSON})
+    public Response postJsonRoot(@Context Request request, Object params) {
+        return postImpl(request, null, params);
+    }
+
+    @POST
+    @Path(PATH_ALL)
     @Consumes({MediaType.APPLICATION_FORM_URLENCODED, MediaType.MULTIPART_FORM_DATA})
-    public Response postImpl(@Context Request request, @Context MultivaluedMap multivaluedMap) {
-        MicroserviceHttpRequest httpRequest = new MicroserviceHttpRequest(request, multivaluedMap);
+    public Response postFormAll(@Context Request request, @Context MultivaluedMap<String, ?> multivaluedMap) {
+        return postFormRoot(request, multivaluedMap);
+    }
+
+    @POST
+    @Path(PATH_ROOT)
+    @Consumes({MediaType.APPLICATION_FORM_URLENCODED, MediaType.MULTIPART_FORM_DATA})
+    public Response postFormRoot(@Context Request request, @Context MultivaluedMap<String, ?> multivaluedMap) {
+        return postImpl(request, multivaluedMap, null);
+    }
+
+    private Response postImpl(Request request, MultivaluedMap<String, ?> multivaluedMap, Object params) {
+        MicroserviceHttpRequest httpRequest = new MicroserviceHttpRequest(request, multivaluedMap, params);
         MicroserviceHttpResponse httpResponse = new MicroserviceHttpResponse();
         uufServer.serve(httpRequest, httpResponse);
         return httpResponse.build();
