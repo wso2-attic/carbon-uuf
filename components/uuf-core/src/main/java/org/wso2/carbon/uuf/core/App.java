@@ -18,8 +18,11 @@
 
 package org.wso2.carbon.uuf.core;
 
+import com.google.common.collect.ImmutableSetMultimap;
 import org.wso2.carbon.uuf.api.auth.Session;
+import org.wso2.carbon.uuf.api.config.Bindings;
 import org.wso2.carbon.uuf.api.config.Configuration;
+import org.wso2.carbon.uuf.api.config.I18nResources;
 import org.wso2.carbon.uuf.api.model.MapModel;
 import org.wso2.carbon.uuf.exception.FragmentNotFoundException;
 import org.wso2.carbon.uuf.exception.HttpErrorException;
@@ -53,19 +56,22 @@ public class App {
     private final Configuration configuration;
     private final SessionRegistry sessionRegistry;
 
-    public App(String name, String contextPath, Lookup lookup, Set<Theme> themes, SessionRegistry sessionRegistry) {
+    public App(String name, String contextPath, Set<Component> components, Set<Theme> themes,
+               Configuration configuration, Bindings bindings, I18nResources i18nResources){
+        this(name, contextPath, components, themes, configuration, bindings, i18nResources, new SessionRegistry(name));
+    }
+
+    App(String name, String contextPath, Set<Component> components, Set<Theme> themes,
+               Configuration configuration, Bindings bindings, I18nResources i18nResources,
+               SessionRegistry sessionRegistry) {
         this.name = name;
         this.contextPath = contextPath;
-        this.lookup = lookup;
-        this.configuration = this.lookup.getConfiguration();
-        this.sessionRegistry = sessionRegistry;
 
-        this.components = this.lookup.getAllComponents().values().stream()
-                .collect(Collectors.toMap(Component::getContextPath, cmp -> cmp));
+        this.components = components.stream().collect(Collectors.toMap(Component::getContextPath, cmp -> cmp));
         this.rootComponent = this.components.get(Component.ROOT_COMPONENT_CONTEXT_PATH);
 
         this.themes = themes.stream().collect(Collectors.toMap(Theme::getName, theme -> theme));
-        this.defaultTheme = this.configuration.getThemeName()
+        this.defaultTheme = configuration.getThemeName()
                 .map(configuredThemeName -> {
                     Theme configuredTheme = App.this.themes.get(configuredThemeName);
                     if (configuredTheme == null) {
@@ -75,6 +81,15 @@ public class App {
                     }
                     return configuredTheme;
                 }).orElse(null);
+
+        ImmutableSetMultimap.Builder<String, String> builder = new ImmutableSetMultimap.Builder<>();
+        for (Component component : components) {
+            component.getDependencies().forEach(dependency -> builder.put(component.getName(), dependency.getName()));
+        }
+        this.lookup = new Lookup(components, builder.build(), configuration, bindings, i18nResources);
+
+        this.configuration = configuration;
+        this.sessionRegistry = sessionRegistry;
     }
 
     public String getName() {
