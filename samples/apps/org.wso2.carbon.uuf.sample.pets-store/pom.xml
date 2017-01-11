@@ -49,7 +49,7 @@
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.uuf.sample</groupId>
-            <artifactId>org.wso2.carbon.uuf.sample.simple-auth</artifactId>
+            <artifactId>org.wso2.carbon.uuf.sample.simple-auth.ui</artifactId>
             <type>zip</type>
             <classifier>uuf-component</classifier>
         </dependency>
