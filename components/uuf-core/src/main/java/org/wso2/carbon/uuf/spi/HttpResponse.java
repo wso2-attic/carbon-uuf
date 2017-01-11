@@ -18,6 +18,7 @@
 
 package org.wso2.carbon.uuf.spi;
 
+import javax.ws.rs.core.MultivaluedMap;
 import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Path;
@@ -94,5 +95,7 @@ public interface HttpResponse {
 
     void setHeader(String name, String value);
 
-    Map<String, String> getHeaders();
+    MultivaluedMap<String, String> getHeaders();
+
+    void setCookie(String name, String value);
 }

@@ -19,6 +19,9 @@ package org.wso2.carbon.uuf.httpconnector.msf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.wso2.carbon.uuf.spi.HttpResponse;
 
+import javax.ws.rs.core.MultivaluedHashMap;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 import java.io.File;
 import java.io.InputStream;
@@ -33,11 +36,13 @@ public class MicroserviceHttpResponse implements HttpResponse {
     private int status;
     private Object content;
     private String contentType;
-    private Map<String, String> headers;
+    private MultivaluedMap<String, String> headers;
+    private Map<String, String> cookies;
 
     public MicroserviceHttpResponse() {
         this.status = 200;
-        this.headers = new HashMap<>();
+        this.headers = new MultivaluedHashMap<>();
+        this.cookies = new HashMap<>();
     }
 
     @Override
@@ -97,12 +102,16 @@ public class MicroserviceHttpResponse implements HttpResponse {
 
     @Override
     public void setHeader(String name, String value) {
-        headers.put(name, value);
+        headers.add(name, value);
     }
 
     @Override
-    public Map<String, String> getHeaders() {
+    public MultivaluedMap<String, String> getHeaders() {
         return headers;
+    }
+
+    public void setCookie(String name, String value) {
+        cookies.put(name, value);
     }
 
     public Response build() {
@@ -111,6 +120,7 @@ public class MicroserviceHttpResponse implements HttpResponse {
             responseBuilder.entity(content).type(contentType);
         }
         headers.entrySet().forEach(entry -> responseBuilder.header(entry.getKey(), entry.getValue()));
+        cookies.entrySet().forEach(entry -> responseBuilder.cookie(new NewCookie(entry.getKey(), entry.getValue())));
         return responseBuilder.build();
     }
 }

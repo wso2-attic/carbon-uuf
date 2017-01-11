@@ -36,6 +36,7 @@ import javax.cache.expiry.Duration;
 public class SessionRegistry implements Closeable {
 
     public static final String SESSION_COOKIE_NAME = "UUFSESSIONID";
+    public static final String CSRF_TOKEN = "CSRFTOKEN";
     private static final Object LOCK = new Object();
 
     private final Cache<String, Session> cache;

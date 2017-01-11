@@ -25,6 +25,7 @@ import org.wso2.carbon.uuf.exception.HttpErrorException;
 import org.wso2.carbon.uuf.exception.PageRedirectException;
 import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.internal.auth.SessionRegistry;
+import org.wso2.carbon.uuf.spi.HttpResponse;
 import org.wso2.carbon.uuf.spi.auth.User;
 
 import java.util.HashMap;
@@ -159,9 +160,10 @@ public class API {
         destroySession();
         Session session = new Session(user);
         sessionRegistry.addSession(session);
-        String header = SessionRegistry.SESSION_COOKIE_NAME + "=" + session.getSessionId() + "; Path=" +
-                requestLookup.getContextPath() + "; Secure; HTTPOnly";
-        requestLookup.getResponse().setHeader("Set-Cookie", header);
+        requestLookup.getResponse().setCookie(SessionRegistry.SESSION_COOKIE_NAME, session.getSessionId() + "; Path=" +
+                requestLookup.getContextPath() + "; Secure; HTTPOnly");
+        requestLookup.getResponse().setCookie(SessionRegistry.CSRF_TOKEN, session.getCsrfToken() + "; Path=" +
+                requestLookup.getContextPath() + "; Secure");
         return session;
     }
 
@@ -188,10 +190,10 @@ public class API {
         // Remove session from the SessionRegistry.
         sessionRegistry.removeSession(session.get().getSessionId());
         // Clear the session cookie by setting its value to an empty string, Max-Age to zero, & Expires to a past date.
-        String header = SessionRegistry.SESSION_COOKIE_NAME +
-                "=; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:01 GMT; Path=" + requestLookup.getContextPath() +
-                "; Secure; HTTPOnly";
-        requestLookup.getResponse().setHeader("Set-Cookie", header);
+        String expiredCookie = "Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:01 GMT; Path=" +
+                requestLookup.getContextPath() + "; Secure; HTTPOnly";
+        requestLookup.getResponse().setCookie(SessionRegistry.SESSION_COOKIE_NAME, expiredCookie);
+        requestLookup.getResponse().setCookie(SessionRegistry.CSRF_TOKEN, expiredCookie);
         return true;
     }
 
