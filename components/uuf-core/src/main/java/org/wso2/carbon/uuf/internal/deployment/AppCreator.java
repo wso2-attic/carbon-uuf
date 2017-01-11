@@ -18,13 +18,13 @@
 
 package org.wso2.carbon.uuf.internal.deployment;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Sets;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.uuf.api.config.Bindings;
 import org.wso2.carbon.uuf.api.config.Configuration;
+import org.wso2.carbon.uuf.api.config.I18nResources;
 import org.wso2.carbon.uuf.api.reference.AppReference;
 import org.wso2.carbon.uuf.api.reference.ComponentReference;
 import org.wso2.carbon.uuf.api.reference.FileReference;
@@ -36,12 +36,11 @@ import org.wso2.carbon.uuf.core.App;
 import org.wso2.carbon.uuf.core.Component;
 import org.wso2.carbon.uuf.core.Fragment;
 import org.wso2.carbon.uuf.core.Layout;
-import org.wso2.carbon.uuf.core.Lookup;
 import org.wso2.carbon.uuf.core.Page;
 import org.wso2.carbon.uuf.core.Theme;
 import org.wso2.carbon.uuf.core.UriPatten;
+import org.wso2.carbon.uuf.exception.MalformedConfigurationException;
 import org.wso2.carbon.uuf.exception.UUFException;
-import org.wso2.carbon.uuf.internal.auth.SessionRegistry;
 import org.wso2.carbon.uuf.internal.deployment.parser.AppConfig;
 import org.wso2.carbon.uuf.internal.deployment.parser.ComponentConfig;
 import org.wso2.carbon.uuf.internal.deployment.parser.DependencyNode;
@@ -58,12 +57,16 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+import java.util.Properties;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toCollection;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Collectors.toSet;
 import static org.wso2.carbon.uuf.internal.util.NameUtils.getFullyQualifiedName;
 
 public class AppCreator {
@@ -88,46 +91,31 @@ public class AppCreator {
     public App createApp(AppReference appReference, String contextPath) {
         // Parse dependency tree.
         DependencyNode rootNode = YamlFileParser.parse(appReference.getDependencyTree(), DependencyNode.class);
-        // Parse configurations.
-        Configuration configuration = createConfiguration(appReference);
-        // Create Lookup.
-        final Lookup lookup = new Lookup(getFlattenedDependencies(rootNode), configuration);
 
-        // Created Components.
+        final String appName = rootNode.getArtifactId();
+        final String appContextPath = (contextPath == null) ? rootNode.getContextPath() : contextPath;
+        final Configuration configuration = createConfiguration(appReference);
+        final Bindings bindings = new Bindings();
+        final I18nResources i18nResources = new I18nResources();
+
+        // Create components.
         final Map<String, Component> createdComponents = new HashMap<>();
         rootNode.traverse(dependencyNode -> {
             if (createdComponents.containsKey(dependencyNode.getArtifactId())) {
                 return; // Component for this dependency node is already created.
             }
 
-            String componentName = dependencyNode.getArtifactId();
-            String componentVersion = dependencyNode.getVersion();
-            String componentContextPath = (dependencyNode == rootNode) ? Component.ROOT_COMPONENT_CONTEXT_PATH :
-                    dependencyNode.getContextPath();
-            ComponentReference componentReference = appReference.getComponentReference(componentContextPath);
-            ClassLoader classLoader = classLoaderProvider.getClassLoader(componentName, componentVersion,
-                                                                         componentReference);
-            Component component = createComponent(contextPath, componentName, componentVersion, componentContextPath,
-                                                  componentReference, classLoader, lookup);
-            lookup.add(component);
-            createdComponents.put(componentName, component);
+            Component component = createComponent(dependencyNode, appReference, rootNode, appContextPath,
+                                                  createdComponents, bindings, i18nResources);
+            createdComponents.put(component.getName(), component);
         });
-        // Create Themes.
-        Set<Theme> themes = appReference.getThemeReferences().map(this::createTheme).collect(Collectors.toSet());
-        // Create App.
-        String appName = rootNode.getArtifactId();
-        String appContextPath = (contextPath == null) ? rootNode.getContextPath() : contextPath;
-        return new App(appName, appContextPath, lookup, themes, new SessionRegistry(appName));
-    }
 
-    private SetMultimap<String, String> getFlattenedDependencies(DependencyNode rootNode) {
-        final SetMultimap<String, String> flattenedDependencies = HashMultimap.create();
-        rootNode.traverse(dependencyNode -> {
-            if (!flattenedDependencies.containsKey(dependencyNode.getArtifactId())) {
-                flattenedDependencies.putAll(dependencyNode.getArtifactId(), dependencyNode.getAllDependencies());
-            }
-        });
-        return flattenedDependencies;
+        // Create Themes.
+        final Set<Theme> themes = appReference.getThemeReferences().map(this::createTheme).collect(toSet());
+
+        // Create App.
+        return new App(appName, appContextPath, new HashSet<>(createdComponents.values()), themes, configuration,
+                       bindings, i18nResources);
     }
 
     private Configuration createConfiguration(AppReference appReference) {
@@ -138,12 +126,12 @@ public class AppCreator {
         configuration.setLoginPageUri(appConfig.getLoginPageUri());
         Map<Integer, String> errorPageUris = appConfig.getErrorPages().entrySet().stream()
                 .filter(entry -> NumberUtils.isNumber(entry.getKey()))
-                .collect(Collectors.toMap(entry -> Integer.valueOf(entry.getKey()), Map.Entry::getValue));
+                .collect(toMap(entry -> Integer.valueOf(entry.getKey()), Map.Entry::getValue));
         configuration.setErrorPageUris(errorPageUris);
         configuration.setDefaultErrorPageUri(appConfig.getErrorPages().get("default"));
         configuration.setMenus(appConfig.getMenus().stream()
                                        .map(AppConfig.Menu::toConfigurationMenu)
-                                       .collect(Collectors.toList()));
+                                       .collect(toList()));
         configuration.setAcceptingCsrfPatterns(Sets.newHashSet(appConfig.getSecurity().getCsrfPatterns().getAccept()));
         configuration.setRejectingCsrfPatterns(Sets.newHashSet(appConfig.getSecurity().getCsrfPatterns().getReject()));
         configuration.setAcceptingXssPatterns(Sets.newHashSet(appConfig.getSecurity().getXssPatterns().getAccept()));
@@ -153,31 +141,47 @@ public class AppCreator {
         return configuration;
     }
 
-    private Component createComponent(String appContextPath, String componentName, String componentVersion,
-                                      String componentContextPath, ComponentReference componentReference,
-                                      ClassLoader classLoader, Lookup lookup) {
-        componentReference.getLayouts(supportedExtensions)
-                .map(layoutReference -> createLayout(layoutReference, componentName))
-                .forEach(lookup::add);
-        componentReference.getFragments(supportedExtensions)
-                .map((fragmentReference) -> createFragment(fragmentReference, componentName, classLoader))
-                .forEach(lookup::add);
+    private Component createComponent(DependencyNode componentNode, AppReference appReference,
+                                      DependencyNode rootNode, String appContextPath,
+                                      Map<String, Component> createdComponents, Bindings bindings,
+                                      I18nResources i18nResources) {
+        final String componentName = componentNode.getArtifactId();
+        final String componentVersion = componentNode.getVersion();
+        final String componentContextPath =
+                (componentNode == rootNode) ? Component.ROOT_COMPONENT_CONTEXT_PATH : componentNode.getContextPath();
+        ComponentReference componentReference = appReference.getComponentReference(componentContextPath);
+        ClassLoader classLoader = classLoaderProvider.getClassLoader(componentName, componentVersion,
+                                                                     componentReference);
 
+        // Dependency components.
+        final Set<Component> dependencies = componentNode.getDependencies().stream()
+                .map(dependencyNode -> createdComponents.get(dependencyNode.getArtifactId()))
+                .collect(toSet());
+        // Create layouts in the component.
+        final Set<Layout> layouts = componentReference.getLayouts(supportedExtensions)
+                .map(layoutReference -> createLayout(layoutReference, componentName))
+                .collect(toSet());
+        // Create pages in the component.
+        final Set<Fragment> fragments = componentReference.getFragments(supportedExtensions)
+                .map(fragmentReference -> createFragment(fragmentReference, componentName, classLoader))
+                .collect(toSet());
+        // Create pages in the component.
+        Map<String, Layout> availableLayouts = new HashMap<>();
+        layouts.forEach(layout -> availableLayouts.put(layout.getName(), layout));
+        dependencies.forEach(cmp -> cmp.getLayouts().forEach(l -> availableLayouts.put(l.getName(), l)));
+        final SortedSet<Page> pages = componentReference.getPages(supportedExtensions)
+                .map(pageReference -> createPage(pageReference, classLoader, availableLayouts, componentName))
+                .collect(toCollection(TreeSet::new));
+
+        // Handle component's configurations.
         ComponentConfig componentConfig = YamlFileParser.parse(componentReference.getConfiguration(),
                                                                ComponentConfig.class);
-        addBindings(componentConfig.getBindings(), lookup, componentName);
+        addBindings(componentConfig.getBindings(), bindings, componentName, fragments, dependencies);
         addAPIs(componentConfig.getApis(), appContextPath, componentContextPath, componentName, classLoader);
+        addI18nResources(componentReference.getI18nFiles(), i18nResources);
 
-        if (!componentReference.getI18nFiles().isEmpty()) {
-            lookup.add(componentReference.getI18nFiles());
-        }
-
-        SortedSet<Page> pages = componentReference.getPages(supportedExtensions)
-                .map(pageReference -> createPage(pageReference, componentName, lookup, classLoader))
-                .collect(Collectors.toCollection(TreeSet::new));
-
-        return new Component(componentName, componentVersion, componentContextPath, pages,
-                             componentReference.getPath());
+        return new Component(componentName, componentVersion, componentContextPath, pages, fragments, layouts,
+                             dependencies, componentReference.getPath());
     }
 
     private Layout createLayout(LayoutReference layoutReference, String componentName) {
@@ -195,24 +199,45 @@ public class AppCreator {
         return new Fragment(fragmentName, frd.getRenderable(), frd.isSecured());
     }
 
-    private void addBindings(List<ComponentConfig.Binding> bindings, Lookup lookup, String componentName) {
-        if ((bindings == null) || bindings.isEmpty()) {
+    private void addBindings(List<ComponentConfig.Binding> bindingEntries, Bindings bindings, String componentName,
+                             Set<Fragment> componentFragments, Set<Component> componentDependencies) {
+        if (bindingEntries == null || bindingEntries.isEmpty()) {
             return;
         }
 
-        for (ComponentConfig.Binding binding : bindings) {
-            String zoneName = NameUtils.getFullyQualifiedName(componentName, binding.getZoneName());
-            List<Fragment> fragments = new ArrayList<>();
-            for (String fragmentName : binding.getFragments()) {
-                Optional<Fragment> fragment = lookup.getFragmentIn(componentName, fragmentName);
-                if (fragment.isPresent()) {
-                    fragments.add(fragment.get());
-                } else {
-                    throw new IllegalArgumentException("Fragment '" + fragmentName + "' does not exists in component '"
-                                                               + componentName + "' or its dependencies.");
-                }
+        Map<String, Fragment> availableFragments = new HashMap<>();
+        componentFragments.forEach(fragment -> availableFragments.put(fragment.getName(), fragment));
+        componentDependencies.forEach(cmp -> cmp.getFragments().forEach(f -> availableFragments.put(f.getName(), f)));
+
+        for (ComponentConfig.Binding entry : bindingEntries) {
+            if (entry.getZoneName() == null) {
+                throw new MalformedConfigurationException(
+                        "Zone name of a binding entry cannot be null. Found such binding entry in component '" +
+                                componentName + "'.");
+            } else if (entry.getZoneName().isEmpty()) {
+                throw new MalformedConfigurationException(
+                        "Zone name of a binding entry cannot be empty. Found such binding entry in component '" +
+                                componentName + "'.");
             }
-            lookup.addBinding(zoneName, fragments, binding.getMode());
+            String zoneName = NameUtils.getFullyQualifiedName(componentName, entry.getZoneName());
+
+            if (entry.getFragments() == null) {
+                throw new MalformedConfigurationException(
+                        "Fragments in a binding entry cannot be null. Found such binding entry in component '" +
+                                componentName + "'.");
+            }
+            List<Fragment> fragments = new ArrayList<>(entry.getFragments().size());
+            for (String fragmentName : entry.getFragments()) {
+                Fragment fragment = availableFragments.get(fragmentName);
+                if (fragment == null) {
+                    throw new IllegalArgumentException(
+                            "Fragment '" + fragmentName + "' given in the binding entry '" + entry +
+                                    "' does not exists in component '" + componentName + "' or its dependencies " +
+                                    componentDependencies.stream().map(Component::getName).collect(joining(",")) + ".");
+                }
+                fragments.add(fragment);
+            }
+            bindings.addBinding(zoneName, fragments, entry.getMode());
         }
     }
 
@@ -240,21 +265,29 @@ public class AppCreator {
         }
     }
 
-    private Page createPage(PageReference pageReference, String componentName, Lookup lookup, ClassLoader classLoader) {
-        RenderableCreator renderableCreator = getRenderableCreator(pageReference.getRenderingFile());
+    private void addI18nResources(Map<String, Properties> componentI18nResources, I18nResources i18nResources) {
+        if ((componentI18nResources == null) || componentI18nResources.isEmpty()) {
+            return;
+        }
+        componentI18nResources.forEach(i18nResources::addI18nResource);
+    }
+
+    private Page createPage(PageReference pageReference, ClassLoader classLoader, Map<String, Layout> availableLayouts,
+                            String componentName) {
+        FileReference pageRenderingFile = pageReference.getRenderingFile();
+        RenderableCreator renderableCreator = getRenderableCreator(pageRenderingFile);
         RenderableCreator.PageRenderableData prd = renderableCreator.createPageRenderable(pageReference, classLoader);
         UriPatten uriPatten = new UriPatten(pageReference.getPathPattern());
         if (prd.getLayoutName().isPresent()) {
             // This page has a layout.
             String layoutName = prd.getLayoutName().get();
-            Optional<Layout> layout = lookup.getLayoutIn(componentName, layoutName);
-            if (layout.isPresent()) {
-                return new Page(uriPatten, prd.getRenderable(), prd.isSecured(), layout.get());
+            Layout layout = availableLayouts.get(layoutName);
+            if (layout != null) {
+                return new Page(uriPatten, prd.getRenderable(), prd.isSecured(), layout);
             } else {
-                throw new IllegalArgumentException("Layout '" + layoutName + "' mentioned in page '" +
-                                                           pageReference.getRenderingFile().getRelativePath() +
-                                                           "' does not exists in component '" + componentName +
-                                                           "' or its dependencies.");
+                throw new IllegalArgumentException(
+                        "Layout '" + layoutName + "' used in page '" + pageRenderingFile.getRelativePath() +
+                                "' does not exists in component '" + componentName + "' or its dependencies.");
             }
         } else {
             // This page does not have a layout.
