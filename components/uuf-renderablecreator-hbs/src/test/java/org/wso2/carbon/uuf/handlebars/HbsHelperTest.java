@@ -19,7 +19,6 @@ package org.wso2.carbon.uuf.handlebars;
 import com.github.jknack.handlebars.HandlebarsError;
 import com.github.jknack.handlebars.HandlebarsException;
 import com.github.jknack.handlebars.io.StringTemplateSource;
-import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.ImmutableSortedSet;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -42,6 +41,7 @@ import java.util.Collections;
 import java.util.Optional;
 
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -306,11 +306,15 @@ public class HbsHelperTest {
                 "    {{/each}}\n" +
                 "</div>";
         Page page = new Page(new UriPatten("/contextPath"), createRenderable(pageContent), false);
-        Component component = new Component(componentName, null, null, ImmutableSortedSet.of(page), null);
-        Lookup lookup = new Lookup(ImmutableSetMultimap.of(), createConfiguration());
-        lookup.add(new Fragment(fragmentName, createRenderable(fragmentContent), false));
-        lookup.add(component);
+        Fragment fragment = new Fragment(fragmentName, createRenderable(fragmentContent), false);
+        Component component = new Component(componentName, null, null, ImmutableSortedSet.of(page),
+                                            Collections.emptySet(), Collections.emptySet(), Collections.emptySet(),
+                                            null);
+        Lookup lookup = createLookup();
+        when(lookup.getFragmentIn(anyString(), anyString())).thenReturn(Optional.of(fragment));
+        when(lookup.getComponent(anyString())).thenReturn(Optional.of(component));
         RequestLookup requestLookup = createRequestLookup();
+
         component.renderPage("/contextPath", null, lookup, requestLookup, createAPI());
         String expected = "<script id=\"" + templateName + "\" type=\"text/x-handlebars-template\">\n" +
                 fragmentContent + "\n</script>";
