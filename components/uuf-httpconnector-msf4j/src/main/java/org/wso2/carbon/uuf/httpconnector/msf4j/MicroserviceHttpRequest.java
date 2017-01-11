@@ -22,9 +22,12 @@ import io.netty.handler.codec.http.cookie.ServerCookieDecoder;
 import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.msf4j.Request;
 
+import javax.activation.UnsupportedDataTypeException;
+import javax.ws.rs.NotSupportedException;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MultivaluedMap;
 import java.io.File;
+import java.io.UnsupportedEncodingException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -56,10 +59,10 @@ public class MicroserviceHttpRequest implements HttpRequest {
     private final Map<String, Object> files;
 
     public MicroserviceHttpRequest(Request request) {
-        this(request, null);
+        this(request, null, null);
     }
 
-    public MicroserviceHttpRequest(Request request, MultivaluedMap<String, ?> postParams) {
+    public MicroserviceHttpRequest(Request request, MultivaluedMap<String, ?> formParams, Object postParams) {
         this.msf4jRequest = request;
         this.method = request.getHttpMethod();
 
@@ -95,14 +98,31 @@ public class MicroserviceHttpRequest implements HttpRequest {
                 ServerCookieDecoder.STRICT.decode(cookieHeader).stream().collect(Collectors.toMap(Cookie::name,
                                                                                                   c -> c));
 
-        // process form POST form data
-        if (postParams == null) {
-            this.formParams = Collections.emptyMap();
+        // process POST data
+        if (formParams == null) {
+            // This request is not a form POST submission.
             this.files = Collections.emptyMap();
+            if (postParams == null) {
+                this.formParams = Collections.emptyMap();
+            } else {
+                if (postParams instanceof List) {
+                    List<?> postParamsList = (List<?>) postParams;
+                    this.formParams = new HashMap<>(postParamsList.size());
+                    for (int i = 0; i < postParamsList.size(); i++) {
+                        this.formParams.put(Integer.toString(i), postParamsList.get(i));
+                    }
+                } else if (postParams instanceof Map) {
+                    this.formParams = (Map<String, Object>) postParams;
+                } else {
+                    throw new NotSupportedException(
+                            "Unsupported JSON data type. Expected Map or List. Instead found '" +
+                                    postParams.getClass().getName() + "'.");
+                }
+            }
         } else {
             this.formParams = new HashMap<>();
             this.files = new HashMap<>();
-            for (Map.Entry<String, ? extends List<?>> entry : postParams.entrySet()) {
+            for (Map.Entry<String, ? extends List<?>> entry : formParams.entrySet()) {
                 List<?> values = entry.getValue();
                 if (values.isEmpty()) {
                     continue;
