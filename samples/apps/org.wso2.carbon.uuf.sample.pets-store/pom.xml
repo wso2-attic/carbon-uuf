@@ -43,7 +43,7 @@
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.uuf.sample</groupId>
-            <artifactId>org.wso2.carbon.uuf.sample.store-common</artifactId>
+            <artifactId>org.wso2.carbon.uuf.sample.store-common.ui</artifactId>
             <type>zip</type>
             <classifier>uuf-component</classifier>
         </dependency>

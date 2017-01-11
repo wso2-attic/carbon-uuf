@@ -204,7 +204,7 @@
             </dependency>
             <dependency>
                 <groupId>org.wso2.carbon.uuf.sample</groupId>
-                <artifactId>org.wso2.carbon.uuf.sample.store-common</artifactId>
+                <artifactId>org.wso2.carbon.uuf.sample.store-common.ui</artifactId>
                 <version>${carbon.uuf.version}</version>
                 <type>zip</type>
                 <classifier>uuf-component</classifier>
