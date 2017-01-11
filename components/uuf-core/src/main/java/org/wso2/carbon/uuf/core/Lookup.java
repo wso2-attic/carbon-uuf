@@ -21,21 +21,25 @@ package org.wso2.carbon.uuf.core;
 import com.google.common.collect.SetMultimap;
 import org.wso2.carbon.uuf.api.config.Bindings;
 import org.wso2.carbon.uuf.api.config.Configuration;
+import org.wso2.carbon.uuf.api.config.I18nResources;
 import org.wso2.carbon.uuf.internal.util.NameUtils;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Properties;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class Lookup {
 
-    private final SetMultimap<String, String> flattenedDependencies;
     /**
      * All components in this lookup. key = fully qualified name (except for root component), value = component
      */
     private final Map<String, Component> components;
+    /**
+     * Flattened component dependencies. key = component fully qualified name, value = dependencies of the key
+     */
+    private final SetMultimap<String, String> flattenedDependencies;
     /**
      * All fragments in this lookup. key = fully qualified name , value = fragment
      */
@@ -44,52 +48,23 @@ public class Lookup {
      * All layouts of this lookup. key = fully qualified name, value = layout
      */
     private final Map<String, Layout> layouts;
-    private final Map<String, Properties> i18nResources;
     private final Configuration configuration;
     private final Bindings bindings;
+    private final I18nResources i18nResources;
 
-    public Lookup(SetMultimap<String, String> flattenedDependencies, Configuration configuration) {
-        this(flattenedDependencies, configuration, new Bindings());
-    }
-
-    Lookup(SetMultimap<String, String> flattenedDependencies, Configuration configuration, Bindings bindings) {
+    public Lookup(Set<Component> components, SetMultimap<String, String> flattenedDependencies,
+                  Configuration configuration, Bindings bindings, I18nResources i18nResources) {
+        this.components = components.stream().collect(Collectors.toMap(Component::getName, component -> component));
         this.flattenedDependencies = flattenedDependencies;
+        this.fragments = components.stream()
+                .flatMap(component -> component.getFragments().stream())
+                .collect(Collectors.toMap(Fragment::getName, fragment -> fragment));
+        this.layouts = components.stream()
+                .flatMap(component -> component.getLayouts().stream())
+                .collect(Collectors.toMap(Layout::getName, layout -> layout));
         this.configuration = configuration;
         this.bindings = bindings;
-        this.components = new HashMap<>();
-        this.layouts = new HashMap<>();
-        this.fragments = new HashMap<>();
-        this.i18nResources = new HashMap<>();
-    }
-
-    public void add(Component component) {
-        components.put(component.getName(), component);
-    }
-
-    public void add(Fragment fragment) {
-        fragments.put(fragment.getName(), fragment);
-    }
-
-    public void add(Map<String, Properties> i18nConfiguration) {
-        for (Map.Entry<String, Properties> entry : i18nConfiguration.entrySet()) {
-            Properties tmpProps = entry.getValue();
-            Properties i18nProps = i18nResources.get(entry.getKey());
-            if (!tmpProps.isEmpty()) {
-                if (i18nProps == null) {
-                    i18nResources.put(entry.getKey(), tmpProps);
-                } else {
-                    i18nProps.putAll(tmpProps);
-                }
-            }
-        }
-    }
-
-    public void addBinding(String zoneName, List<Fragment> fragments, Bindings.Mode mode) {
-        bindings.addBinding(zoneName, fragments, mode);
-    }
-
-    public void add(Layout layout) {
-        layouts.put(layout.getName(), layout);
+        this.i18nResources = i18nResources;
     }
 
     public Optional<Component> getComponent(String componentName) {
@@ -155,7 +130,7 @@ public class Lookup {
         return configuration;
     }
 
-    public Map<String, Properties> getAllI18nResources() {
+    public I18nResources getI18nResources() {
         return i18nResources;
     }
 }
