@@ -18,7 +18,8 @@
 
 package org.wso2.carbon.uuf.core;
 
-import com.google.common.collect.ImmutableSetMultimap;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.SetMultimap;
 import org.wso2.carbon.uuf.api.auth.Session;
 import org.wso2.carbon.uuf.api.config.Bindings;
 import org.wso2.carbon.uuf.api.config.Configuration;
@@ -57,13 +58,12 @@ public class App {
     private final SessionRegistry sessionRegistry;
 
     public App(String name, String contextPath, Set<Component> components, Set<Theme> themes,
-               Configuration configuration, Bindings bindings, I18nResources i18nResources){
+               Configuration configuration, Bindings bindings, I18nResources i18nResources) {
         this(name, contextPath, components, themes, configuration, bindings, i18nResources, new SessionRegistry(name));
     }
 
-    App(String name, String contextPath, Set<Component> components, Set<Theme> themes,
-               Configuration configuration, Bindings bindings, I18nResources i18nResources,
-               SessionRegistry sessionRegistry) {
+    App(String name, String contextPath, Set<Component> components, Set<Theme> themes, Configuration configuration,
+        Bindings bindings, I18nResources i18nResources, SessionRegistry sessionRegistry) {
         this.name = name;
         this.contextPath = contextPath;
 
@@ -82,11 +82,13 @@ public class App {
                     return configuredTheme;
                 }).orElse(null);
 
-        ImmutableSetMultimap.Builder<String, String> builder = new ImmutableSetMultimap.Builder<>();
+        SetMultimap<String, String> flattenedDependencies = HashMultimap.create();
         for (Component component : components) {
-            component.getDependencies().forEach(dependency -> builder.put(component.getName(), dependency.getName()));
+            for (Component dependency : component.getDependencies()) {
+                flattenedDependencies.put(component.getName(), dependency.getName());
+            }
         }
-        this.lookup = new Lookup(components, builder.build(), configuration, bindings, i18nResources);
+        this.lookup = new Lookup(components, flattenedDependencies, configuration, bindings, i18nResources);
 
         this.configuration = configuration;
         this.sessionRegistry = sessionRegistry;
