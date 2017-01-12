@@ -255,7 +255,7 @@ public class App {
     }
 
     private RequestLookup createRequestLookup(HttpRequest request, HttpResponse response) {
-        return new RequestLookup((configuration.getContextPath().orElse(contextPath)), request, response);
+        return new RequestLookup((configuration.getContextPath().orElse(null)), request, response);
     }
 
     @Override
