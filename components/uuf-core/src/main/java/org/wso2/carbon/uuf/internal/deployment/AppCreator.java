@@ -280,7 +280,7 @@ public class AppCreator {
         UriPatten uriPatten = new UriPatten(pageReference.getPathPattern());
         if (prd.getLayoutName().isPresent()) {
             // This page has a layout.
-            String layoutName = prd.getLayoutName().get();
+            String layoutName = NameUtils.getFullyQualifiedName(componentName, prd.getLayoutName().get());
             Layout layout = availableLayouts.get(layoutName);
             if (layout != null) {
                 return new Page(uriPatten, prd.getRenderable(), prd.isSecured(), layout);
