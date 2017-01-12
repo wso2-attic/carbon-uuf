@@ -74,14 +74,14 @@ public class UUFMicroservice implements Microservice {
     @POST
     @Path(PATH_ALL)
     @Consumes({MediaType.APPLICATION_FORM_URLENCODED, MediaType.MULTIPART_FORM_DATA})
-    public Response postFormAll(@Context Request request, @Context MultivaluedMap<String, ?> multivaluedMap) {
+    public Response postFormAll(@Context Request request, @Context MultivaluedMap multivaluedMap) {
         return postFormRoot(request, multivaluedMap);
     }
 
     @POST
     @Path(PATH_ROOT)
     @Consumes({MediaType.APPLICATION_FORM_URLENCODED, MediaType.MULTIPART_FORM_DATA})
-    public Response postFormRoot(@Context Request request, @Context MultivaluedMap<String, ?> multivaluedMap) {
+    public Response postFormRoot(@Context Request request, @Context MultivaluedMap multivaluedMap) {
         return postImpl(request, multivaluedMap, null);
     }
 
