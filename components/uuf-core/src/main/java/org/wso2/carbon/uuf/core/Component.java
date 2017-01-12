@@ -25,6 +25,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.stream.Collectors;
 
 public class Component {
 
@@ -78,6 +79,12 @@ public class Component {
 
     public Set<Component> getDependencies() {
         return dependencies;
+    }
+
+    Set<Component> getAllDependencies() {
+        return dependencies.stream()
+                .flatMap(dependency -> dependency.getAllDependencies().stream())
+                .collect(Collectors.toSet());
     }
 
     public String getPath() {
