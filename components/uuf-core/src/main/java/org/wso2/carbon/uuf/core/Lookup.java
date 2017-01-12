@@ -18,6 +18,7 @@
 
 package org.wso2.carbon.uuf.core;
 
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
 import org.wso2.carbon.uuf.api.config.Bindings;
 import org.wso2.carbon.uuf.api.config.Configuration;
@@ -52,9 +53,15 @@ public class Lookup {
     private final Bindings bindings;
     private final I18nResources i18nResources;
 
-    public Lookup(Set<Component> components, SetMultimap<String, String> flattenedDependencies,
-                  Configuration configuration, Bindings bindings, I18nResources i18nResources) {
+    public Lookup(Set<Component> components, Configuration configuration, Bindings bindings,
+                  I18nResources i18nResources) {
         this.components = components.stream().collect(Collectors.toMap(Component::getName, component -> component));
+        SetMultimap<String, String> flattenedDependencies = HashMultimap.create();
+        for (Component component : components) {
+            for (Component dependency : component.getAllDependencies()) {
+                flattenedDependencies.put(component.getName(), dependency.getName());
+            }
+        }
         this.flattenedDependencies = flattenedDependencies;
         this.fragments = components.stream()
                 .flatMap(component -> component.getFragments().stream())
@@ -133,4 +140,5 @@ public class Lookup {
     public I18nResources getI18nResources() {
         return i18nResources;
     }
+
 }
