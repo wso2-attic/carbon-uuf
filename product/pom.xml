@@ -163,7 +163,7 @@
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.uuf.sample</groupId>
-            <artifactId>org.wso2.carbon.uuf.sample.Features-app.feature</artifactId>
+            <artifactId>org.wso2.carbon.uuf.sample.features-app.feature</artifactId>
             <version>${carbon.uuf.version}</version>
             <type>zip</type>
         </dependency>
@@ -326,7 +326,7 @@
                                     <version>${carbon.uuf.version}</version>
                                 </feature>
                                 <feature>
-                                    <id>org.wso2.carbon.uuf.sample.Features-app.feature</id>
+                                    <id>org.wso2.carbon.uuf.sample.features-app.feature</id>
                                     <version>${carbon.uuf.version}</version>
                                 </feature>
                                 <!--Sample bundles-->
@@ -448,7 +448,7 @@
                                     <version>${carbon.uuf.version}</version>
                                 </feature>
                                 <feature>
-                                    <id>org.wso2.carbon.uuf.sample.Features-app.feature.group</id>
+                                    <id>org.wso2.carbon.uuf.sample.features-app.feature.group</id>
                                     <version>${carbon.uuf.version}</version>
                                 </feature>
                                 <feature>

@@ -1,7 +1,7 @@
 # Configurations of Pets Store app.
 
 # Default theme for this app.
-theme : "org.wso2.carbon.uuf.sample.theme.default"
+theme : "org.wso2.carbon.uuf.sample.default.theme"
 
 # Menus in this app.
 menus :

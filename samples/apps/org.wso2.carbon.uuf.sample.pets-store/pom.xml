@@ -37,26 +37,26 @@
         <!--UUF Components-->
         <dependency>
             <groupId>org.wso2.carbon.uuf.sample</groupId>
-            <artifactId>org.wso2.carbon.uuf.sample.foundation</artifactId>
+            <artifactId>org.wso2.carbon.uuf.sample.foundation.ui</artifactId>
             <type>zip</type>
             <classifier>uuf-component</classifier>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.uuf.sample</groupId>
-            <artifactId>org.wso2.carbon.uuf.sample.store-common</artifactId>
+            <artifactId>org.wso2.carbon.uuf.sample.store-common.ui</artifactId>
             <type>zip</type>
             <classifier>uuf-component</classifier>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.uuf.sample</groupId>
-            <artifactId>org.wso2.carbon.uuf.sample.simple-auth</artifactId>
+            <artifactId>org.wso2.carbon.uuf.sample.simple-auth.ui</artifactId>
             <type>zip</type>
             <classifier>uuf-component</classifier>
         </dependency>
         <!--UUF Themes-->
         <dependency>
             <groupId>org.wso2.carbon.uuf.sample</groupId>
-            <artifactId>org.wso2.carbon.uuf.sample.theme.default</artifactId>
+            <artifactId>org.wso2.carbon.uuf.sample.default.theme</artifactId>
             <type>zip</type>
             <classifier>uuf-theme</classifier>
         </dependency>
