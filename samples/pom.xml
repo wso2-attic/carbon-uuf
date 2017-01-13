@@ -43,7 +43,7 @@
         <module>themes/org.wso2.carbon.uuf.sample.theme.green</module>
         <module>components/org.wso2.carbon.uuf.sample.simple-auth.ui</module>
         <module>components/org.wso2.carbon.uuf.sample.foundation.ui</module>
-        <module>components/org.wso2.carbon.uuf.sample.store-common</module>
+        <module>components/org.wso2.carbon.uuf.sample.store-common.ui</module>
         <module>apps/org.wso2.carbon.uuf.sample.pets-store</module>
         <module>apps/org.wso2.carbon.uuf.sample.features-app</module>
         <!--UUF Maven plugin does not support uuf-app dependencies-->
