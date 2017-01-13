@@ -41,7 +41,7 @@
         <module>themes/org.wso2.carbon.uuf.sample.theme.default</module>
         <module>themes/org.wso2.carbon.uuf.sample.theme.blue</module>
         <module>themes/org.wso2.carbon.uuf.sample.theme.green</module>
-        <module>components/org.wso2.carbon.uuf.sample.simple-auth</module>
+        <module>components/org.wso2.carbon.uuf.sample.simple-auth.ui</module>
         <module>components/org.wso2.carbon.uuf.sample.foundation.ui</module>
         <module>components/org.wso2.carbon.uuf.sample.store-common</module>
         <module>apps/org.wso2.carbon.uuf.sample.pets-store</module>
