@@ -26,9 +26,11 @@ import java.util.Map;
 
 /**
  * Bean class that represents configurations of an UUF Component.
+ * <p>
+ * Getters and setters of this class should match with getters and setters in org.wso2.carbon.uuf.maven.bean
+ * .ComponentConfig
+ * class.
  *
- * Getters and setters of this class should match with getters and setters in
- * org.wso2.carbon.uuf.maven.bean.ComponentConfig class.
  * @since 1.0.0
  */
 public class ComponentConfig {
@@ -232,6 +234,11 @@ public class ComponentConfig {
                         "Fragments of a bindings entry in the component's config cannot be null.");
             }
             this.fragments = fragments;
+        }
+
+        @Override
+        public String toString() {
+            return "{zoneName:" + zoneName + ",mode:" + mode.name() + ",fragments:[" + fragments + "]}";
         }
     }
 }

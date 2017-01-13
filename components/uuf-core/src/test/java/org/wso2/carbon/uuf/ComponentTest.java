@@ -29,6 +29,8 @@ import org.wso2.carbon.uuf.spi.model.Model;
 
 import java.util.Optional;
 
+import static java.util.Collections.emptySet;
+
 public class ComponentTest {
 
     private static Page createPage(String uriPattern, String content) {
@@ -48,7 +50,8 @@ public class ComponentTest {
     public void testRenderExistingPage() {
         Page p1 = createPage("/test/page/one", "Hello world from test page one!");
         Page p2 = createPage("/test/page/two", "Hello world from test page two!");
-        Component component = new Component("test.component-name", null, null, ImmutableSortedSet.of(p1, p2), null);
+        Component component = new Component("test.component-name", null, null, ImmutableSortedSet.of(p1, p2),
+                                            emptySet(), emptySet(), emptySet(), null);
 
         Optional<String> output = component.renderPage("/test/page/one", null, null, createRequestLookup(), null);
         Assert.assertEquals(output.get(), "Hello world from test page one!");
@@ -58,7 +61,8 @@ public class ComponentTest {
     public void testRenderExistingPageWithWildcard() {
         Page p1 = createPage("/test/page/{wildcard}/one", "Hello world from test page one!");
         Page p2 = createPage("/test/page/no-wildcard/two", "Hello world from test page two!");
-        Component component = new Component("test.component-name", null, null, ImmutableSortedSet.of(p1, p2), null);
+        Component component = new Component("test.component-name", null, null, ImmutableSortedSet.of(p1, p2),
+                                            emptySet(), emptySet(), emptySet(), null);
 
         Optional<String> output = component.renderPage("/test/page/wildcard-value/one", null, null,
                                                        createRequestLookup(), null);
@@ -69,7 +73,8 @@ public class ComponentTest {
     public void testRenderNonExistingPage() {
         Page p1 = createPage("/test/page/one", null);
         Page p2 = createPage("/test/page/two", null);
-        Component component = new Component("test.component-name", null, null, ImmutableSortedSet.of(p1, p2), null);
+        Component component = new Component("test.component-name", null, null, ImmutableSortedSet.of(p1, p2),
+                                            emptySet(), emptySet(), emptySet(), null);
 
         Optional<String> output = component.renderPage("/test/page/three", null, null, createRequestLookup(), null);
         Assert.assertFalse(output.isPresent());
