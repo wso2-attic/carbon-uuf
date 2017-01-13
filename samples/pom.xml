@@ -40,7 +40,7 @@
         <module>osgi-services/org.wso2.carbon.uuf.sample.api</module>
         <module>themes/org.wso2.carbon.uuf.sample.default.theme</module>
         <module>themes/org.wso2.carbon.uuf.sample.blue.theme</module>
-        <module>themes/org.wso2.carbon.uuf.sample.theme.green</module>
+        <module>themes/org.wso2.carbon.uuf.sample.green.theme</module>
         <module>components/org.wso2.carbon.uuf.sample.simple-auth.ui</module>
         <module>components/org.wso2.carbon.uuf.sample.foundation.ui</module>
         <module>components/org.wso2.carbon.uuf.sample.store-common.ui</module>
