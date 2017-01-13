@@ -20,12 +20,12 @@ package org.wso2.carbon.uuf.core;
 
 import org.wso2.carbon.uuf.spi.model.Model;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.SortedSet;
-import java.util.stream.Collectors;
 
 public class Component {
 
@@ -82,9 +82,9 @@ public class Component {
     }
 
     Set<Component> getAllDependencies() {
-        return dependencies.stream()
-                .flatMap(dependency -> dependency.getAllDependencies().stream())
-                .collect(Collectors.toSet());
+        Set<Component> allDependencies = new HashSet<>(dependencies);
+        dependencies.forEach(dependency -> allDependencies.addAll(dependency.getAllDependencies()));
+        return allDependencies;
     }
 
     public String getPath() {
