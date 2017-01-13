@@ -40,4 +40,4 @@ security:
     accept: []
     reject: []
   responseHeaders:
-    "TestHeaderName" : "TestHeaderValue"
+    "X-Frame-Options": "DENY"
