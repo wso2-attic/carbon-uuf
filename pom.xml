@@ -611,8 +611,7 @@
         <maven.bundle.plugin.version>2.5.0</maven.bundle.plugin.version>
 
         <!-- Test -->
-        <!-- todo 2017/01/04 Upgrade TestNG version to 6.9.5 -->
-        <testng.version>6.9.4</testng.version>
+        <testng.version>6.9.10</testng.version>
         <!-- todo 2017/01/04 Upgrade Mockito version to 2.4.2 -->
         <mockito-core.version>2.0.44-beta</mockito-core.version>
 
