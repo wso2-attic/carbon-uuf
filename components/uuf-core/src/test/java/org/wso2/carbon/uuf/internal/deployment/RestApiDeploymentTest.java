@@ -23,6 +23,7 @@ import org.testng.annotations.Test;
 import org.wso2.carbon.uuf.api.reference.AppReference;
 import org.wso2.carbon.uuf.api.reference.ComponentReference;
 import org.wso2.carbon.uuf.api.reference.FileReference;
+import org.wso2.msf4j.Microservice;
 
 import java.util.Collections;
 import java.util.Dictionary;
@@ -42,7 +43,7 @@ public class RestApiDeploymentTest {
     @Test
     public void testAPIContextPath() throws ClassNotFoundException {
         String appContextPath = "/sample-app";
-        String apiClassName = "org.wso2.carbon.uuf.SampleAPI";
+        String apiClassName = SampleMicroservice.class.getName();
         String apiUri = "/sample-api";
 
         // Create root component reference.
@@ -101,4 +102,9 @@ public class RestApiDeploymentTest {
         Assert.assertEquals(apiContextPath[0], expectedApiContextPath, "Calculated API context path is wrong.");
     }
 
+    /**
+     * This is a sample implementation of an MSF4J API that is used in APITest.
+     */
+    public static class SampleMicroservice implements Microservice {
+    }
 }
