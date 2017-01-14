@@ -23,8 +23,6 @@ import org.testng.annotations.Test;
 import org.wso2.carbon.uuf.api.reference.AppReference;
 import org.wso2.carbon.uuf.api.reference.ComponentReference;
 import org.wso2.carbon.uuf.api.reference.FileReference;
-import org.wso2.carbon.uuf.internal.deployment.AppCreator;
-import org.wso2.carbon.uuf.internal.deployment.ClassLoaderProvider;
 
 import java.util.Collections;
 import java.util.Dictionary;
@@ -39,7 +37,7 @@ import static org.mockito.Mockito.when;
 /**
  * This test class contains test method(s) to test the API deployment capability feature of UUF.
  */
-public class APITest {
+public class RestApiDeploymentTest {
 
     @Test
     public void testAPIContextPath() throws ClassNotFoundException {
