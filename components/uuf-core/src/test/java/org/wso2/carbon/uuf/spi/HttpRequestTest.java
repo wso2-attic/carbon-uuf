@@ -22,8 +22,15 @@ import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import java.util.Map;
+import static org.mockito.Mockito.CALLS_REAL_METHODS;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
+/**
+ * Test cases for HTTP request.
+ *
+ * @since 1.0.0
+ */
 public class HttpRequestTest {
 
     @DataProvider(name = "uris")
@@ -48,102 +55,8 @@ public class HttpRequestTest {
 
     @Test(dataProvider = "uris")
     public void testIsValid(String uri, boolean expectedResult) {
-        HttpRequest request = new HttpRequest() {
-            @Override
-            public String getMethod() {
-                return null;
-            }
-
-            @Override
-            public String getProtocol() {
-                return null;
-            }
-
-            @Override
-            public boolean isSecure() {
-                return false;
-            }
-
-            @Override
-            public String getUrl() {
-                return null;
-            }
-
-            @Override
-            public String getUri() {
-                return uri;
-            }
-
-            @Override
-            public String getContextPath() {
-                return null;
-            }
-
-            @Override
-            public String getUriWithoutContextPath() {
-                return null;
-            }
-
-            @Override
-            public String getQueryString() {
-                return null;
-            }
-
-            @Override
-            public Map<String, Object> getQueryParams() {
-                return null;
-            }
-
-            @Override
-            public Map<String, String> getHeaders() {
-                return null;
-            }
-
-            @Override
-            public String getCookieValue(String cookieName) {
-                return null;
-            }
-
-            @Override
-            public String getContentType() {
-                return null;
-            }
-
-            @Override
-            public long getContentLength() {
-                return 0;
-            }
-
-            @Override
-            public Map<String, Object> getFormParams() {
-                return null;
-            }
-
-            @Override
-            public Map<String, Object> getFiles() {
-                return null;
-            }
-
-            @Override
-            public String getLocalAddress() {
-                return null;
-            }
-
-            @Override
-            public int getLocalPort() {
-                return 0;
-            }
-
-            @Override
-            public String getRemoteAddress() {
-                return null;
-            }
-
-            @Override
-            public int getRemotePort() {
-                return 0;
-            }
-        };
+        HttpRequest request = mock(HttpRequest.class, CALLS_REAL_METHODS);
+        when(request.getUri()).thenReturn(uri);
         Assert.assertEquals(request.isValid(), expectedResult);
     }
 }
