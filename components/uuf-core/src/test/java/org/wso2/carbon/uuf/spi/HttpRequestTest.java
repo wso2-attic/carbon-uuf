@@ -24,7 +24,7 @@ import org.testng.annotations.Test;
 
 import java.util.Map;
 
-public class RequestTest {
+public class HttpRequestTest {
 
     @DataProvider(name = "uris")
     public static Object[][] getUris() {
