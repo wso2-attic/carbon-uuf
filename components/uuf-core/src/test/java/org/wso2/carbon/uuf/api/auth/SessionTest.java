@@ -22,7 +22,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
- * Test cases for API.
+ * Test cases for session.
  *
  * @since 1.0.0
  */
