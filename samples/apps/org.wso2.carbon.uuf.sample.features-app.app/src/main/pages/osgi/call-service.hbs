@@ -1,0 +1,21 @@
+{{layout "org.wso2.carbon.uuf.sample.foundation.ui.main"}}
+{{title "Call OSGi Service Sample | " @config.appName}}
+{{#fillZone "content"}}
+    <h3>Call OSGi Service.</h3>
+    <hr />
+    <p>You can call your back-end OSGi services.</p>
+    <p>Syntax : <code>callOSGiService(serviceClassName, serviceMethodName, methodParameters[]);</code></p>
+    <p>In your JS file;</p>
+    <pre>
+        function onRequest(env) {
+            var result = callOSGiService("org.wso2.carbon.uuf.sample.pets_store.service.PetsStoreService", "getHelloMessage", ["John"]);
+            return {"helloWorldText": result};
+        }
+    </pre>
+    <p>Then, you can use this variable in your handlebars;</p>
+    <pre>
+        \{{helloWorldText}}
+    </pre>
+    <h3>Output:</h3>
+    "{{helloWorldText}}".
+{{/fillZone}}

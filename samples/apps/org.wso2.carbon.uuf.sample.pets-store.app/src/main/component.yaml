@@ -1,0 +1,41 @@
+# Configurations of this component.
+
+# Classes of Microservices that implements UI specific REST APIs.
+# example entry:
+#   - className: "org.wso2.carbon.uuf.sample.pets-store.PetsStoreMicroservice"
+#     uri: "/pets/"
+apis:
+  - className: "org.wso2.carbon.uuf.sample.api.HelloService"
+    uri: "/hello-service/"
+
+# Binding fragments into zones.
+# Modes:
+#   prepend - pushes the specified fragments into the beginning of the existing pushed fragments of the zone
+#   append - pushes the specified fragments into the end of the existing pushed fragments of the zone
+#   overwrite - removes the existing pushed fragments of the zone and replace with specified fragments
+# Please note that the configured order of the fragments in here, will be honored when filling the zone
+bindings:
+  - zoneName: "org.wso2.carbon.uuf.sample.foundation.ui.footer"
+    mode: "append"
+    fragments:
+      - "org.wso2.carbon.uuf.sample.foundation.ui.footer"
+  - zoneName: "org.wso2.carbon.uuf.sample.foundation.ui.menubar"
+    mode: "append"
+    fragments:
+      - "org.wso2.carbon.uuf.sample.foundation.ui.secured-menubar"
+  - zoneName: "org.wso2.carbon.uuf.sample.foundation.ui.usermenu"
+    mode: "append"
+    fragments:
+      - "org.wso2.carbon.uuf.sample.simple-auth.ui.usermenu"
+
+# Business logic related configurations.
+# In Handlebars templates, these configurations can be access using {{@config}} variable.
+# e.g.  {{@config.appName}} will output "Pets Store"
+# In server-side JS 'onRequest(env)' function, these configurations cab access via 'env.config' variable.
+# e.g.  env.config['appName'] will give "Pets Store" value
+config:
+  # Overrrding 'appName' configuration from 'foundation' and 'simple-auth' components.
+  appName: "Pet Store"
+  pageSize: 10
+  # Overriding 'loginRedirectUri' configuration from 'simple-auth' component.
+  loginRedirectUri: "/pets"

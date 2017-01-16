@@ -1,0 +1,42 @@
+{{layout "org.wso2.carbon.uuf.sample.foundation.ui.main"}}
+{{title "Lower | String Helper Sample | " @config.appName}}
+{{fragment "org.wso2.carbon.uuf.sample.foundation.ui.highlight" theme=@config.highlightjsTheme}}
+
+{{#fillZone "content"}}
+    <h3><b>lower</b> Helper</h3>
+    <hr />
+    <p>Convert a string to lowercase.</p>
+
+    <div>
+        <figure class="highlight">
+            <pre class="code lang-handlebars">\{{lower &lt;value&gt;}}</pre>
+        </figure>
+        <p><b>value</b> - string to be converted</p>
+    </div>
+
+    <div style="margin-top: 40px">
+        <h4><b>Example</b></h4>
+        <figure class="highlight">
+            <pre class="code lang-handlebars">
+            &lt;div&gt;
+                \{{lower value}}
+            &lt;/div&gt;</pre>
+        </figure>
+        <p>when used with this context:</p>
+        <figure class="highlight">
+            <pre class="code lang-javascript">
+            function onRequest(env) {
+                return {
+                    value: "HELLO"
+                };
+            }</pre>
+        </figure>
+        <p>will result in:</p>
+        <figure class="highlight">
+            <pre class="code lang-handlebars">
+            &lt;div&gt;
+                {{lower value}}
+            &lt;/div&gt;</pre>
+        </figure>
+    </div>
+{{/fillZone}}

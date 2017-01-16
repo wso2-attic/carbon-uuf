@@ -18,8 +18,6 @@
 
 package org.wso2.carbon.uuf.core;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.spi.model.Model;
 
 import java.util.Map;
@@ -27,24 +25,32 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Component {
 
-    public static final String ROOT_COMPONENT_NAME = "root";
     public static final String ROOT_COMPONENT_CONTEXT_PATH = "/root";
-    private static final Logger LOGGER = LoggerFactory.getLogger(Component.class);
 
     private final String name;
     private final String version;
     private final String contextPath;
     private final SortedSet<Page> pages;
+    private final Set<Fragment> fragments;
+    private final Set<Layout> layouts;
+    private final Set<Component> dependencies;
     private final String path;
 
-    public Component(String name, String version, String contextPath, SortedSet<Page> pages, String path) {
+    public Component(String name, String version, String contextPath,
+                     SortedSet<Page> pages, Set<Fragment> fragments, Set<Layout> layouts,
+                     Set<Component> dependencies, String path) {
         this.name = name;
         this.version = version;
         this.contextPath = contextPath;
         this.pages = pages;
+        this.fragments = fragments;
+        this.layouts = layouts;
+        this.dependencies = dependencies;
         this.path = path;
     }
 
@@ -52,12 +58,39 @@ public class Component {
         return name;
     }
 
+    public String getVersion() {
+        return version;
+    }
+
     public String getContextPath() {
         return contextPath;
     }
 
-    public Set<Page> getPages() {
+    public SortedSet<Page> getPages() {
         return pages;
+    }
+
+    public Set<Fragment> getFragments() {
+        return fragments;
+    }
+
+    public Set<Layout> getLayouts() {
+        return layouts;
+    }
+
+    public Set<Component> getDependencies() {
+        return dependencies;
+    }
+
+    /**
+     * Returns all dependencies (including transitive ones) of this component.
+     *
+     * @return all dependencies of this component
+     */
+    Set<Component> getAllDependencies() {
+        return Stream.concat(dependencies.stream(), // immediate dependencies
+                             dependencies.stream().flatMap(dependency -> dependency.getAllDependencies().stream()))
+                .collect(Collectors.toSet());
     }
 
     public String getPath() {
@@ -78,8 +111,6 @@ public class Component {
         if (servingPage == null) {
             return Optional.<String>empty();
         }
-
-        LOGGER.debug("Component '{}' is serving Page '{}' for URI '{}'.", name, servingPage, pageUri);
 
         // Rendering flow tracking start.
         requestLookup.tracker().start(this);

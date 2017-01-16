@@ -161,4 +161,12 @@ public class DependencyNode {
         }
         return false;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return artifactId + ":" + version;
+    }
 }

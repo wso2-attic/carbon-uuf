@@ -194,47 +194,47 @@
                 <version>${carbon.security.userstore.jdbc.version}</version>
             </dependency>
 
-            <!--UUF Components-->
+            <!--UUF Sample Components-->
             <dependency>
                 <groupId>org.wso2.carbon.uuf.sample</groupId>
-                <artifactId>org.wso2.carbon.uuf.sample.foundation</artifactId>
+                <artifactId>org.wso2.carbon.uuf.sample.foundation.ui</artifactId>
                 <version>${carbon.uuf.version}</version>
                 <type>zip</type>
                 <classifier>uuf-component</classifier>
             </dependency>
             <dependency>
                 <groupId>org.wso2.carbon.uuf.sample</groupId>
-                <artifactId>org.wso2.carbon.uuf.sample.store-common</artifactId>
+                <artifactId>org.wso2.carbon.uuf.sample.store-common.ui</artifactId>
                 <version>${carbon.uuf.version}</version>
                 <type>zip</type>
                 <classifier>uuf-component</classifier>
             </dependency>
             <dependency>
                 <groupId>org.wso2.carbon.uuf.sample</groupId>
-                <artifactId>org.wso2.carbon.uuf.sample.simple-auth</artifactId>
+                <artifactId>org.wso2.carbon.uuf.sample.simple-auth.ui</artifactId>
                 <version>${carbon.uuf.version}</version>
                 <type>zip</type>
                 <classifier>uuf-component</classifier>
             </dependency>
 
-            <!--UUF Themes-->
+            <!--UUF Sample Themes-->
             <dependency>
                 <groupId>org.wso2.carbon.uuf.sample</groupId>
-                <artifactId>org.wso2.carbon.uuf.sample.theme.default</artifactId>
+                <artifactId>org.wso2.carbon.uuf.sample.default.theme</artifactId>
                 <version>${carbon.uuf.version}</version>
                 <type>zip</type>
                 <classifier>uuf-theme</classifier>
             </dependency>
             <dependency>
                 <groupId>org.wso2.carbon.uuf.sample</groupId>
-                <artifactId>org.wso2.carbon.uuf.sample.theme.blue</artifactId>
+                <artifactId>org.wso2.carbon.uuf.sample.blue.theme</artifactId>
                 <version>${carbon.uuf.version}</version>
                 <type>zip</type>
                 <classifier>uuf-theme</classifier>
             </dependency>
             <dependency>
                 <groupId>org.wso2.carbon.uuf.sample</groupId>
-                <artifactId>org.wso2.carbon.uuf.sample.theme.green</artifactId>
+                <artifactId>org.wso2.carbon.uuf.sample.green.theme</artifactId>
                 <version>${carbon.uuf.version}</version>
                 <type>zip</type>
                 <classifier>uuf-theme</classifier>
@@ -606,7 +606,7 @@
         <carbon.security.userstore.jdbc.version>1.0.0-m2</carbon.security.userstore.jdbc.version>
 
         <!-- Maven Plugins -->
-        <carbon-uuf-maven-plugin.version>1.0.0-m9</carbon-uuf-maven-plugin.version>
+        <carbon-uuf-maven-plugin.version>1.0.0-m10</carbon-uuf-maven-plugin.version>
         <carbon.feature.plugin.version>2.0.1</carbon.feature.plugin.version>
         <maven.bundle.plugin.version>2.5.0</maven.bundle.plugin.version>
 

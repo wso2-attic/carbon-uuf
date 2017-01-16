@@ -23,7 +23,6 @@ import org.wso2.carbon.uuf.core.RequestLookup;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.HbsRenderable;
 
 import java.io.IOException;
-import java.util.Map;
 import java.util.Properties;
 
 public class I18nHelper implements Helper<String> {
@@ -54,9 +53,8 @@ public class I18nHelper implements Helper<String> {
             if (locale.contains("_")) {
                 currentLocale = locale;
             } else {
-                currentLocale = lookup.getAllI18nResources().entrySet().stream()
-                        .filter(e -> e.getKey().startsWith(locale))
-                        .map(Map.Entry::getKey)
+                currentLocale = lookup.getI18nResources().getAvailableLanguages().stream()
+                        .filter(language -> language.startsWith(locale))
                         .findFirst()
                         .orElse(DEFAULT_LOCALE);
             }
@@ -64,8 +62,7 @@ public class I18nHelper implements Helper<String> {
             currentLocale = DEFAULT_LOCALE;
         }
 
-        Properties props = lookup.getAllI18nResources().get(currentLocale);
+        Properties props = lookup.getI18nResources().getI18nResource(currentLocale);
         return props != null ? props.getProperty(key, key) : key;
     }
-
 }
