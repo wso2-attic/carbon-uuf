@@ -72,7 +72,7 @@ public class DebugLogger {
      */
     public static void endRequest(HttpRequest request) {
         if (IS_DEBUGGING_ENABLED) {
-            logEvent(EventType.END_PAGE, request);
+            logEvent(EventType.END_REQUEST, request);
             lastRequestLogEvents = LOG_EVENTS.get();
             // Cleanup thread local variables.
             REQUEST_ID.remove();
