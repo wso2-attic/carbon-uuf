@@ -71,20 +71,23 @@ public class Fragment {
             }
         }
 
-        // Debug logs for fragment rendering start.
-        DebugLogger.startFragment(this);
-        // Rendering flow tracking in.
-        requestLookup.tracker().in(this);
-        lookup.getComponent(requestLookup.tracker().getCurrentComponentName())
-                .map(component -> UriUtils.getPublicUri(component, this)) // Compute public URI for this fragment.
-                .ifPresent(requestLookup::pushToPublicUriStack); // Push it to the public URi stack.
-        String output = renderer.render(model, lookup, requestLookup, api);
-        // Rendering flow tracking out.
-        requestLookup.popPublicUriStack();
-        requestLookup.tracker().out(this);
-        // Debug logs for fragment rendering end.
-        DebugLogger.endFragment(this);
-        return output;
+        try {
+            // Debug logs for fragment rendering start.
+            DebugLogger.startFragment(this);
+            // Rendering flow tracking in.
+            requestLookup.tracker().in(this);
+            lookup.getComponent(requestLookup.tracker().getCurrentComponentName())
+                    .map(component -> UriUtils.getPublicUri(component, this)) // Compute public URI for this fragment.
+                    .ifPresent(requestLookup::pushToPublicUriStack); // Push it to the public URi stack.
+
+            return renderer.render(model, lookup, requestLookup, api);
+        } finally {
+            // Rendering flow tracking out.
+            requestLookup.popPublicUriStack();
+            requestLookup.tracker().out(this);
+            // Debug logs for fragment rendering end.
+            DebugLogger.endFragment(this);
+        }
     }
 
     @Override

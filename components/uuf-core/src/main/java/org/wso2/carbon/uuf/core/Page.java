@@ -54,23 +54,27 @@ public class Page implements Comparable<Page> {
                     "Page '" + this + "' is secured and required an user session to render.");
         }
 
-        // Debug logs for page rendering start.
-        DebugLogger.startPage(this);
-        // Rendering flow tracking in.
-        requestLookup.tracker().in(this);
-        lookup.getComponent(requestLookup.tracker().getCurrentComponentName())
-                .map(component -> UriUtils.getPublicUri(component, this)) // Compute public URI for this page.
-                .ifPresent(requestLookup::pushToPublicUriStack); // Push it to the public URi stack.
-        String output = renderer.render(model, lookup, requestLookup, api);
-        if (layout != null) {
-            output = layout.render(lookup, requestLookup, api);
+        try {
+            // Debug logs for page rendering start.
+            DebugLogger.startPage(this);
+            // Rendering flow tracking in.
+            requestLookup.tracker().in(this);
+            lookup.getComponent(requestLookup.tracker().getCurrentComponentName())
+                    .map(component -> UriUtils.getPublicUri(component, this)) // Compute public URI for this page.
+                    .ifPresent(requestLookup::pushToPublicUriStack); // Push it to the public URi stack.
+
+            String output = renderer.render(model, lookup, requestLookup, api);
+            if (layout != null) {
+                output = layout.render(lookup, requestLookup, api);
+            }
+            return output;
+        } finally {
+            // Rendering flow tracking out.
+            requestLookup.popPublicUriStack();
+            requestLookup.tracker().out(this);
+            // Debug logs for page rendering end.
+            DebugLogger.endPage(this);
         }
-        // Rendering flow tracking out.
-        requestLookup.popPublicUriStack();
-        requestLookup.tracker().out(this);
-        // Debug logs for page rendering end.
-        DebugLogger.endPage(this);
-        return output;
     }
 
     @Override
