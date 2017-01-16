@@ -27,6 +27,7 @@ import java.util.Map;
 import static java.lang.Integer.signum;
 
 public class UriPattenTest {
+
     @DataProvider
     public Object[][] invalidUriPatterns() {
         return new Object[][]{
@@ -163,7 +164,7 @@ public class UriPattenTest {
     }
 
     @Test(dataProvider = "orderedUriPatterns")
-    public void testOrdering(String a, String b) throws Exception {
+    public void testOrdering(String a, String b) {
         UriPatten aPatten = new UriPatten(a);
         UriPatten bPatten = new UriPatten(b);
         int i = aPatten.compareTo(bPatten);
@@ -185,7 +186,8 @@ public class UriPattenTest {
     @Test(dataProvider = "uriPatternsWithMultipleParams")
     public void testPatternsWithMultipleParameters(String uriPattern, String uri, Map<String, String> data) {
         data.forEach((paramKey, paramVal) ->
-                Assert.assertTrue(new UriPatten(uriPattern).match(uri).get().get(paramKey).equals(paramVal)));
+                             Assert.assertTrue(new UriPatten(uriPattern).match(uri).get().get(paramKey)
+                                                       .equals(paramVal)));
     }
 
     @Test(dataProvider = "unmatchingUriPatterns")
@@ -194,7 +196,7 @@ public class UriPattenTest {
     }
 
     @Test
-    public void testInvariants() throws Exception {
+    public void testInvariants() {
         UriPatten[] pattens = new UriPatten[]{
                 new UriPatten("/"),
                 new UriPatten("/a"),
@@ -207,7 +209,7 @@ public class UriPattenTest {
                 new UriPatten("/ab/{b}"),
                 new UriPatten("/{a}/b"),
         };
-        //following invariants are specified in java.lang.Comparable
+        // following invariants are specified in java.lang.Comparable
         for (int x = 0; x < pattens.length; x++) {
             for (int y = x + 1; y < pattens.length; y++) {
                 int xy = pattens[x].compareTo(pattens[y]);

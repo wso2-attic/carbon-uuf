@@ -1,0 +1,74 @@
+{{layout "org.wso2.carbon.uuf.sample.foundation.ui.main"}}
+{{title "Substring | String Helper Sample | " @config.appName}}
+{{fragment "org.wso2.carbon.uuf.sample.foundation.ui.highlight" theme=@config.highlightjsTheme}}
+
+{{#fillZone "content"}}
+    <h3><b>substring</b> Helper</h3>
+    <hr />
+    <p>Get a character sequence that is sub sequence of the given sequence. The sub sequence starts with the character
+       value at the specified index and ends with the character value at the index <b>end-1</b>.</p>
+
+    <div>
+        <figure class="highlight">
+            <pre class="code lang-handlebars">\{{substring &lt;value&gt; &lt;start&gt; [end=STRING_LENGTH]}}</pre>
+        </figure>
+        <p><b>value</b> - string to be processed</p>
+        <p><b>start</b> - start offset</p>
+        <p><b>end</b> - end offset</p>
+    </div>
+
+    <div style="margin-top: 40px">
+        <h4><b>Example 1</b></h4>
+        <figure class="highlight">
+            <pre class="code lang-handlebars">
+            &lt;div&gt;
+                \{{substring value start1}}
+            &lt;/div&gt;</pre>
+        </figure>
+        <p>when used with this context:</p>
+        <figure class="highlight">
+            <pre class="code lang-javascript">
+            function onRequest(env) {
+                return {
+                    value: "Handlebars.java",
+                    start1: 11,
+                };
+            }</pre>
+        </figure>
+        <p>will result in:</p>
+        <figure class="highlight">
+            <pre class="code lang-handlebars">
+            &lt;div&gt;
+                {{substring value start1}}
+            &lt;/div&gt;</pre>
+        </figure>
+    </div>
+
+    <div style="margin-top: 40px">
+        <h4><b>Example 2</b></h4>
+        <figure class="highlight">
+            <pre class="code lang-handlebars">
+            &lt;div&gt;
+                \{{substring value start2 end2}}
+            &lt;/div&gt;</pre>
+        </figure>
+        <p>when used with this context:</p>
+        <figure class="highlight">
+            <pre class="code lang-javascript">
+            function onRequest(env) {
+                return {
+                    value: "Handlebars.java",
+                    start2: 0,
+                    end2: 10
+                };
+            }</pre>
+        </figure>
+        <p>will result in:</p>
+        <figure class="highlight">
+            <pre class="code lang-handlebars">
+            &lt;div&gt;
+                {{substring value start2 end2}}
+            &lt;/div&gt;</pre>
+        </figure>
+    </div>
+{{/fillZone}}

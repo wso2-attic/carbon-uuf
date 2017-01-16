@@ -19,6 +19,7 @@ package org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime;
 import com.github.jknack.handlebars.Handlebars;
 import com.github.jknack.handlebars.Helper;
 import com.github.jknack.handlebars.Options;
+import com.github.jknack.handlebars.TagType;
 import org.wso2.carbon.uuf.core.API;
 import org.wso2.carbon.uuf.core.Fragment;
 import org.wso2.carbon.uuf.core.Lookup;
@@ -28,6 +29,7 @@ import org.wso2.carbon.uuf.renderablecreator.hbs.model.ContextModel;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 public class DefineZoneHelper implements Helper<String> {
 
@@ -45,14 +47,20 @@ public class DefineZoneHelper implements Helper<String> {
         buffer.append("<!--[UUF-ZONE]{\"name\": \"").append(zoneName).append("\",\"position\": \"start\"}-->\n");
 
         List<Fragment> bindings = lookup.getBindings(requestLookup.tracker().getCurrentComponentName(), zoneName);
-        if (!bindings.isEmpty()) {
-            API api = options.data(HbsRenderable.DATA_KEY_API);
-            for (Fragment fragment : bindings) {
-                buffer.append(fragment.render(new ContextModel(options.context), lookup, requestLookup, api));
+        Optional<String> zoneContent = requestLookup.getZoneContent(zoneName);
+        if (bindings.isEmpty() && !zoneContent.isPresent() && options.tagType == TagType.SECTION) {
+            // {{#defineZone "zone-name"}}default content{{/defineZone}}
+            buffer.append(options.fn().toString());
+        } else {
+            if (!bindings.isEmpty()) {
+                API api = options.data(HbsRenderable.DATA_KEY_API);
+                for (Fragment fragment : bindings) {
+                    buffer.append(fragment.render(new ContextModel(options.context), lookup, requestLookup, api));
+                }
             }
+            zoneContent.ifPresent(buffer::append);
         }
 
-        requestLookup.getZoneContent(zoneName).ifPresent(buffer::append);
         buffer.append("<!--[UUF-ZONE]{\"name\": \"").append(zoneName).append("\",\"position\": \"end\"}-->\n");
         return new Handlebars.SafeString(buffer.toString());
     }

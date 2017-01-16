@@ -1,0 +1,16 @@
+{{layout "org.wso2.carbon.uuf.sample.foundation.ui.main"}}
+{{title "Yes No | String Helper Sample | " @config.appName}}
+{{fragment "org.wso2.carbon.uuf.sample.foundation.ui.highlight" theme=@config.highlightjsTheme}}
+
+{{#fillZone "content"}}
+    <h3><b>yesno</b> Helper</h3>
+    <hr />
+    <p>Map values for true, false and (optionally) null, to the strings "yes", "no", "maybe".</p>
+
+    <div>
+        <figure class="highlight">
+            <pre class="code lang-handlebars">\{{yesno &lt;value&gt; [yes="yes"] [no="no"] maybe=["maybe"]}}</pre>
+        </figure>
+        <p><b>value</b> - string to be mapped</p>
+    </div>
+{{/fillZone}}

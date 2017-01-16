@@ -1,0 +1,65 @@
+{{secured}}
+{{layout "org.wso2.carbon.uuf.sample.foundation.ui.main"}}
+{{favicon "images/favicon.png" type="image/png"}}
+{{title "Order Pet | " @config.appName}}
+
+{{#fillZone "content"}}
+    <div class="page-header">
+        <h1>Make an order for your pet</h1>
+    </div>
+    {{#if madeOrder}}
+        <div class="alert alert-success" role="alert">
+            <i class="icon fw fw-success"></i><strong>Success!</strong>
+            You have successfully made an order for your pet, {{petCategory}}. We'll send further details
+            to {{userEmail}}.
+            <button type="button" class="close" aria-label="close" data-dismiss="alert">
+                <span aria-hidden="true">
+                    <i class="fw fw-cancel"></i>
+                </span>
+            </button>
+        </div>
+    {{/if}}
+    <form class="form-horizontal" method="post">
+        <div class="form-group">
+            <div class="col-sm-12">
+                <label class="control-label">Pet's category</label>
+                <select class="form-control" name="pet-category">
+                    <option>puppy</option>
+                    <option>kitten</option>
+                    <option>bunny</option>
+                    <option>squirrel</option>
+                    <option>parrot</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-12">
+                <label class="control-label">Age</label>
+                <select class="form-control" name="pet-category">
+                    <option>upto 1 month</option>
+                    <option>upto 3 months</option>
+                    <option>upto 6 months</option>
+                    <option>upto 1 year</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-12">
+                <label for="input-name" class="control-label">Credit card number<span class="">*</span></label>
+                <input type="text" class="form-control" name="credit-card"
+                       placeholder="Type your credit card number here" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-12">
+                <label for="input-name" class="control-label">Email<span class="">*</span></label>
+                <input type="email" class="form-control" name="user-email" placeholder="email@example.com" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-12">
+                <button type="submit" class="btn btn-default btn-primary">Order</button>
+            </div>
+        </div>
+    </form>
+{{/fillZone}}

@@ -19,7 +19,9 @@
 package org.wso2.carbon.uuf.core;
 
 import org.wso2.carbon.uuf.api.auth.Session;
+import org.wso2.carbon.uuf.api.config.Bindings;
 import org.wso2.carbon.uuf.api.config.Configuration;
+import org.wso2.carbon.uuf.api.config.I18nResources;
 import org.wso2.carbon.uuf.api.model.MapModel;
 import org.wso2.carbon.uuf.exception.FragmentNotFoundException;
 import org.wso2.carbon.uuf.exception.HttpErrorException;
@@ -53,19 +55,21 @@ public class App {
     private final Configuration configuration;
     private final SessionRegistry sessionRegistry;
 
-    public App(String name, String contextPath, Lookup lookup, Set<Theme> themes, SessionRegistry sessionRegistry) {
+    public App(String name, String contextPath, Set<Component> components, Set<Theme> themes,
+               Configuration configuration, Bindings bindings, I18nResources i18nResources) {
+        this(name, contextPath, components, themes, configuration, bindings, i18nResources, new SessionRegistry(name));
+    }
+
+    App(String name, String contextPath, Set<Component> components, Set<Theme> themes, Configuration configuration,
+        Bindings bindings, I18nResources i18nResources, SessionRegistry sessionRegistry) {
         this.name = name;
         this.contextPath = contextPath;
-        this.lookup = lookup;
-        this.configuration = this.lookup.getConfiguration();
-        this.sessionRegistry = sessionRegistry;
 
-        this.components = this.lookup.getAllComponents().values().stream()
-                .collect(Collectors.toMap(Component::getContextPath, cmp -> cmp));
+        this.components = components.stream().collect(Collectors.toMap(Component::getContextPath, cmp -> cmp));
         this.rootComponent = this.components.get(Component.ROOT_COMPONENT_CONTEXT_PATH);
 
         this.themes = themes.stream().collect(Collectors.toMap(Theme::getName, theme -> theme));
-        this.defaultTheme = this.configuration.getThemeName()
+        this.defaultTheme = configuration.getThemeName()
                 .map(configuredThemeName -> {
                     Theme configuredTheme = App.this.themes.get(configuredThemeName);
                     if (configuredTheme == null) {
@@ -75,6 +79,10 @@ public class App {
                     }
                     return configuredTheme;
                 }).orElse(null);
+
+        this.lookup = new Lookup(components, configuration, bindings, i18nResources);
+        this.configuration = configuration;
+        this.sessionRegistry = sessionRegistry;
     }
 
     public String getName() {
@@ -206,7 +214,7 @@ public class App {
             throw new FragmentNotFoundException("Requested fragment '" + fragmentName + "' does not exists.");
         }
 
-        Model model = new MapModel(request.getQueryParams());
+        Model model = new MapModel(request.getFormParams());
         RequestLookup requestLookup = createRequestLookup(request, response);
         API api = new API(sessionRegistry, requestLookup);
         return fragment.render(model, lookup, requestLookup, api);
@@ -243,11 +251,11 @@ public class App {
                 .map(themes::get)
                 .orElseThrow(() -> new IllegalArgumentException(
                         "Theme '" + sessionThemeName.get() + "' which is set as for the current session of app '" +
-                                name + "' does not exists."));
+                                name + "' does not exists. Available themes are " + themes.keySet() + "."));
     }
 
     private RequestLookup createRequestLookup(HttpRequest request, HttpResponse response) {
-        return new RequestLookup((configuration.getContextPath().orElse(contextPath)), request, response);
+        return new RequestLookup((configuration.getContextPath().orElse(null)), request, response);
     }
 
     @Override

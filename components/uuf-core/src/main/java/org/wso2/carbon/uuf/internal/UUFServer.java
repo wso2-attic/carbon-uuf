@@ -42,6 +42,7 @@ import org.wso2.carbon.uuf.spi.HttpResponse;
 import org.wso2.carbon.uuf.spi.RenderableCreator;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_BAD_REQUEST;
@@ -181,8 +182,8 @@ public class UUFServer implements Server, RequiredCapabilityListener {
     }
 
     public void start() {
-        Set<String> deployedAppContextPaths = appDeployer.deploy();
-        deploymentNotifier.notify(deployedAppContextPaths);
+        Map<String, String> deployedApps = appDeployer.deploy();
+        deploymentNotifier.notify(deployedApps);
     }
 
     public void stop() {

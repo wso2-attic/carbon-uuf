@@ -36,7 +36,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -77,7 +78,7 @@ public class ArtifactAppDeployer implements AppDeployer {
     }
 
     @Override
-    public Set<String> deploy() {
+    public Map<String, String> deploy() {
         Stream<Path> contents;
         try {
             contents = Files.list(appsRepository);
@@ -85,14 +86,17 @@ public class ArtifactAppDeployer implements AppDeployer {
             throw new FileOperationException("Cannot list UUF apps in '" + appsRepository + "' directory.", e);
         }
 
+        final Map<String, String> deployedApps = new HashMap<>();
         contents.filter(Files::isDirectory)
                 .forEach(appPath -> {
                     Pair<String, String> appNameContextPath = getAppNameContextPath(appPath);
                     pendingToDeployArtifacts.put(appNameContextPath.getRight(),
                                                  new AppArtifact(appNameContextPath.getLeft(), appPath));
+                    deployedApps.put(appNameContextPath.getLeft(), appNameContextPath.getRight());
                     LOGGER.debug("UUF app '{}' added to the pending deployments list.", appNameContextPath.getLeft());
                 });
-        return Collections.unmodifiableSet(pendingToDeployArtifacts.keySet());
+
+        return deployedApps;
     }
 
     @Override
@@ -149,7 +153,7 @@ public class ArtifactAppDeployer implements AppDeployer {
             }
             deployedApps.put(createdApp.getContextPath(), createdApp);
         }
-        LOGGER.info("UUF app '{}' deployed for context path '{}'.", createdApp.getName(), createdApp.getContextPath());
+        LOGGER.debug("UUF app '{}' deployed for context path '{}'.", createdApp.getName(), createdApp.getContextPath());
         return createdApp;
     }
 

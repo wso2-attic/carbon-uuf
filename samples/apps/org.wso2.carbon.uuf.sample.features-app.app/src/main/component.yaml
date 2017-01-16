@@ -1,0 +1,13 @@
+bindings:
+  - zoneName: "org.wso2.carbon.uuf.sample.foundation.ui.footer"
+    mode: "append"
+    fragments:
+      - "org.wso2.carbon.uuf.sample.foundation.ui.footer"
+  - zoneName: "org.wso2.carbon.uuf.sample.foundation.ui.menubar"
+    mode: "append"
+    fragments:
+      - "org.wso2.carbon.uuf.sample.foundation.ui.menubar"
+
+config:
+  appName: "Features App"
+  highlightjsTheme: "tomorrow"

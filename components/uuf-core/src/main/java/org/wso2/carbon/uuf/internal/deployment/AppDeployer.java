@@ -20,7 +20,7 @@ package org.wso2.carbon.uuf.internal.deployment;
 
 import org.wso2.carbon.uuf.core.App;
 
-import java.util.Set;
+import java.util.Map;
 
 /**
  * A deployer for UUF apps.
@@ -32,9 +32,9 @@ public interface AppDeployer {
     /**
      * Deploys all the available apps.
      *
-     * @return context paths of the deployed apps.
+     * @return context paths of deployed apps, key = app name & value = context path
      */
-    Set<String> deploy();
+    Map<String, String> deploy();
 
     /**
      * Returns the deployed app corresponds for the specified context path.

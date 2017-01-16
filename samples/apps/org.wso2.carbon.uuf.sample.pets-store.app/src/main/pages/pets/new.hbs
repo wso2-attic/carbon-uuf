@@ -1,0 +1,65 @@
+{{secured}}
+{{layout "org.wso2.carbon.uuf.sample.foundation.ui.main"}}
+{{favicon "images/favicon.png" type="image/png"}}
+{{title "Add Pet | " @config.appName}}
+
+{{#fillZone "content"}}
+    <div class="page-header">
+        <h1>{{t "pets-store.add.pet.details"}}</h1>
+    </div>
+    {{#if petName}}
+        <div class="alert alert-success" role="alert">
+            <i class="icon fw fw-success"></i><strong>{{t "pets-store.add.pet.success"}}</strong>
+            {{t "pets-store.add.pet.success.detail"}} {{petCategory}}, {{petName}}.
+            <button type="button" class="close" aria-label="close" data-dismiss="alert">
+                <span aria-hidden="true">
+                    <i class="fw fw-cancel"></i>
+                </span>
+            </button>
+        </div>
+    {{/if}}
+    <form class="form-horizontal" method="post">
+        <div class="form-group">
+            <div class="col-sm-12">
+                <label for="input-name" class="control-label">{{t "pets-store.add.pet.name"}} <span class="">*</span></label>
+                <input type="text" class="form-control" name="pet-name" placeholder="Type your pet's name here"
+                       required>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-12">
+                <label class="control-label">{{t "pets-store.add.pet.category"}}</label>
+                <select class="form-control" name="pet-category">
+                    <option>puppy</option>
+                    <option>kitten</option>
+                    <option>bunny</option>
+                    <option>squirrel</option>
+                    <option>parrot</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-12">
+                <label class="control-label">{{t "pets-store.add.pet.color"}}</label>
+                <select class="form-control">
+                    <option>White</option>
+                    <option>Black</option>
+                    <option>Brown</option>
+                    <option>Green</option>
+                    <option>Grey</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-12">
+                <label class="control-label">{{t "pets-store.add.pet.about"}}</label>
+                <textarea class="form-control" rows="3"></textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-12">
+                <button type="submit" class="btn btn-default btn-primary">{{t "pets-store.add.pet.submit"}}</button>
+            </div>
+        </div>
+    </form>
+{{/fillZone}}
