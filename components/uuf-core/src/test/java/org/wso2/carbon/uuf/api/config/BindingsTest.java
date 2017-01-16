@@ -68,34 +68,34 @@ public class BindingsTest {
         Bindings bindings = createBindings();
         String zoneName = "org.wso2.foo.z1";
 
-        List<Fragment> fragments1 = ImmutableList.of(createFragment("org..wso2.foo.f1"),
-                                                     createFragment("org..wso2.foo.f2"));
+        List<Fragment> fragments1 = ImmutableList.of(createFragment("org.wso2.foo.f1"),
+                                                     createFragment("org.wso2.foo.f2"));
         bindings.addBinding(zoneName, fragments1, Bindings.Mode.prepend);
         Assert.assertEquals(bindings.getBindings(zoneName), fragments1);
         // prepend mode
-        List<Fragment> fragments2 = ImmutableList.of(createFragment("org..wso2.foo.f3"),
-                                                     createFragment("org..wso2.foo.f4"));
+        List<Fragment> fragments2 = ImmutableList.of(createFragment("org.wso2.foo.f3"),
+                                                     createFragment("org.wso2.foo.f4"));
         bindings.addBinding(zoneName, fragments2, Bindings.Mode.prepend);
-        Assert.assertEquals(bindings.getBindings(zoneName), ImmutableList.of(createFragment("org..wso2.foo.f3"),
-                                                                             createFragment("org..wso2.foo.f4"),
-                                                                             createFragment("org..wso2.foo.f1"),
-                                                                             createFragment("org..wso2.foo.f2")));
+        Assert.assertEquals(bindings.getBindings(zoneName), ImmutableList.of(createFragment("org.wso2.foo.f3"),
+                                                                             createFragment("org.wso2.foo.f4"),
+                                                                             createFragment("org.wso2.foo.f1"),
+                                                                             createFragment("org.wso2.foo.f2")));
         // append mode
-        List<Fragment> fragments3 = ImmutableList.of(createFragment("org..wso2.foo.f5"),
-                                                     createFragment("org..wso2.foo.f6"));
+        List<Fragment> fragments3 = ImmutableList.of(createFragment("org.wso2.foo.f5"),
+                                                     createFragment("org.wso2.foo.f6"));
         bindings.addBinding(zoneName, fragments3, Bindings.Mode.append);
-        Assert.assertEquals(bindings.getBindings(zoneName), ImmutableList.of(createFragment("org..wso2.foo.f3"),
-                                                                             createFragment("org..wso2.foo.f4"),
-                                                                             createFragment("org..wso2.foo.f1"),
-                                                                             createFragment("org..wso2.foo.f2"),
-                                                                             createFragment("org..wso2.foo.f5"),
-                                                                             createFragment("org..wso2.foo.f6")));
+        Assert.assertEquals(bindings.getBindings(zoneName), ImmutableList.of(createFragment("org.wso2.foo.f3"),
+                                                                             createFragment("org.wso2.foo.f4"),
+                                                                             createFragment("org.wso2.foo.f1"),
+                                                                             createFragment("org.wso2.foo.f2"),
+                                                                             createFragment("org.wso2.foo.f5"),
+                                                                             createFragment("org.wso2.foo.f6")));
         // overwrite mode
-        List<Fragment> fragments4 = ImmutableList.of(createFragment("org..wso2.foo.f7"),
-                                                     createFragment("org..wso2.foo.f8"));
+        List<Fragment> fragments4 = ImmutableList.of(createFragment("org.wso2.foo.f7"),
+                                                     createFragment("org.wso2.foo.f8"));
         bindings.addBinding(zoneName, fragments4, Bindings.Mode.overwrite);
-        Assert.assertEquals(bindings.getBindings(zoneName), ImmutableList.of(createFragment("org..wso2.foo.f7"),
-                                                                             createFragment("org..wso2.foo.f8")));
+        Assert.assertEquals(bindings.getBindings(zoneName), ImmutableList.of(createFragment("org.wso2.foo.f7"),
+                                                                             createFragment("org.wso2.foo.f8")));
         // another zone's bindings
         Assert.assertEquals(bindings.getBindings("org.wso2.foo.z2").size(), 0);
     }
