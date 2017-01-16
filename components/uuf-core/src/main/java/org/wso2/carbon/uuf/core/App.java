@@ -251,7 +251,7 @@ public class App {
                 .map(themes::get)
                 .orElseThrow(() -> new IllegalArgumentException(
                         "Theme '" + sessionThemeName.get() + "' which is set as for the current session of app '" +
-                                name + "' does not exists."));
+                                name + "' does not exists. Available themes are " + themes.keySet() + "."));
     }
 
     private RequestLookup createRequestLookup(HttpRequest request, HttpResponse response) {
