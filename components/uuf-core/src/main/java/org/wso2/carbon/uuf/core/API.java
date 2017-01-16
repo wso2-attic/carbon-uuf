@@ -128,8 +128,8 @@ public class API {
     }
 
     public static void sendError(int status, String message) {
-        if ((status < 100) || (status > 999)) {
-            throw new IllegalArgumentException("HTTP status code must be between 100 and 999.");
+        if ((status < 100) || (status > 599)) {
+            throw new IllegalArgumentException("HTTP status code must be between 100 and 599.");
         }
         if ((message == null) || message.isEmpty()) {
             throw new IllegalArgumentException("Error message cannot be null or empty.");

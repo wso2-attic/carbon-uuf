@@ -47,7 +47,7 @@ public class APITest {
     @Test
     public void testSendError() {
         Assert.assertThrows(IllegalArgumentException.class, () -> API.sendError(99, "Some error!"));
-        Assert.assertThrows(IllegalArgumentException.class, () -> API.sendError(1000, "Some error!"));
+        Assert.assertThrows(IllegalArgumentException.class, () -> API.sendError(600, "Some error!"));
         Assert.assertThrows(IllegalArgumentException.class, () -> API.sendError(500, null));
         Assert.assertThrows(IllegalArgumentException.class, () -> API.sendError(500, ""));
 
