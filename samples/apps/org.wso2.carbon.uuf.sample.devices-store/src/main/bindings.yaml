@@ -1,4 +1,0 @@
-# zone name : fragment name
-org.wso2.carbon.uuf.sample.foundation.footer: org.wso2.carbon.uuf.sample.foundation.footer
-org.wso2.carbon.uuf.sample.foundation.menubar: org.wso2.carbon.uuf.sample.foundation.secured-menubar
-org.wso2.carbon.uuf.sample.foundation.usermenu: org.wso2.carbon.uuf.sample.simple-auth.usermenu

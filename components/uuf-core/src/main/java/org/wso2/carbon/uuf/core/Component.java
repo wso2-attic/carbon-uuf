@@ -20,12 +20,13 @@ package org.wso2.carbon.uuf.core;
 
 import org.wso2.carbon.uuf.spi.model.Model;
 
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Component {
 
@@ -81,10 +82,15 @@ public class Component {
         return dependencies;
     }
 
+    /**
+     * Returns all dependencies (including transitive ones) of this component.
+     *
+     * @return all dependencies of this component
+     */
     Set<Component> getAllDependencies() {
-        Set<Component> allDependencies = new HashSet<>(dependencies);
-        dependencies.forEach(dependency -> allDependencies.addAll(dependency.getAllDependencies()));
-        return allDependencies;
+        return Stream.concat(dependencies.stream(), // immediate dependencies
+                             dependencies.stream().flatMap(dependency -> dependency.getAllDependencies().stream()))
+                .collect(Collectors.toSet());
     }
 
     public String getPath() {
