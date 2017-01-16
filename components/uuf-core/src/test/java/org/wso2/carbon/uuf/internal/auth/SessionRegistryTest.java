@@ -55,7 +55,7 @@ public class SessionRegistryTest {
 
         sessionRegistry.addSession(session);
         Assert.assertEquals(sessionRegistry.getSession(session.getSessionId()).get(), session);
-        Thread.sleep(3 * 1000); // wait 3 seconds.
+        Thread.sleep(4 * 1000); // wait 4 seconds.
         Assert.assertEquals(sessionRegistry.getSession(session.getSessionId()).isPresent(), false);
     }
 }
