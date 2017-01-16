@@ -39,6 +39,7 @@ import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.DefineZoneHelpe
 import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.FaviconHelper;
 import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.FillZoneHelper;
 import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.FragmentHelper;
+import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.FromHelper;
 import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.HeadJsHelper;
 import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.HeadOtherHelper;
 import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.I18nHelper;
@@ -224,6 +225,7 @@ public class RuntimeHelperRegistry implements HelperRegistry {
         registry.registerHelper(JsHelper.HELPER_NAME, new JsHelper());
         registry.registerHelper(I18nHelper.HELPER_NAME, new I18nHelper());
         registry.registerHelper(TemplateHelper.HELPER_NAME, new TemplateHelper());
+        registry.registerHelper(FromHelper.HELPER_NAME, new FromHelper());
         registry.registerHelperMissing(new MissingHelper());
     }
 
