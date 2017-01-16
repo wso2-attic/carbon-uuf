@@ -88,9 +88,8 @@ public class Component {
      * @return all dependencies of this component
      */
     Set<Component> getAllDependencies() {
-        Stream<Component> dependencies = this.dependencies.stream();
-        return Stream.concat(dependencies, // immediate dependencies
-                             dependencies.flatMap(dependency -> dependency.getAllDependencies().stream())) // transitive
+        return Stream.concat(dependencies.stream(), // immediate dependencies
+                             dependencies.stream().flatMap(dependency -> dependency.getAllDependencies().stream()))
                 .collect(Collectors.toSet());
     }
 
