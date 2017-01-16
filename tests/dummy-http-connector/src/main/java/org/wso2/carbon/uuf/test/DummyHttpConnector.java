@@ -37,7 +37,7 @@ public class DummyHttpConnector implements HttpConnector {
         LOGGER.info("Server '{}' registered to '{}'.", server, getClass().getName());
     }
 
-    public void registerAppContextPath(String appContextPath) {
-        LOGGER.info("App context path '{}' registered to '{}'.", appContextPath, getClass().getName());
+    public void registerApp(String appName, String appContextPath) {
+        LOGGER.info("App '{}' registered for context path '{}'.", appName, appContextPath);
     }
 }

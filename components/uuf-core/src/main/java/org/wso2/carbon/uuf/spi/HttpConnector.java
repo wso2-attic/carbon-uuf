@@ -24,5 +24,5 @@ public interface HttpConnector {
 
     void setServer(Server server);
 
-    void registerAppContextPath(String appContextPath);
+    void registerApp(String appName, String appContextPath);
 }

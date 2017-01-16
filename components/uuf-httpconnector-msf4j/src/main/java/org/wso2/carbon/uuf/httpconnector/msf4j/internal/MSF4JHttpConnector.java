@@ -88,9 +88,10 @@ public class MSF4JHttpConnector implements HttpConnector {
      * @param appContextPath app context path
      */
     @Override
-    public void registerAppContextPath(String appContextPath) {
+    public void registerApp(String appName, String appContextPath) {
         Dictionary<String, String> dictionary = new Hashtable<>();
         dictionary.put("contextPath", appContextPath);
         bundleContext.registerService(Microservice.class, new UUFMicroservice(uufServer), dictionary);
+        LOGGER.info("UUF app '{}' is available at '{}'.", appName, appContextPath);
     }
 }

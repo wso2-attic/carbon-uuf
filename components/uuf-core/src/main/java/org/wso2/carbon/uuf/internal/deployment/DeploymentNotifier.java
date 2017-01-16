@@ -20,6 +20,7 @@ package org.wso2.carbon.uuf.internal.deployment;
 
 import org.wso2.carbon.uuf.spi.HttpConnector;
 
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -37,15 +38,15 @@ public abstract class DeploymentNotifier {
     protected abstract Set<HttpConnector> getHttpConnectors();
 
     /**
-     * Notifies all the HTTP connectors that the specified context paths are available now.
+     * Notifies all the HTTP connectors that the specified apps are available now.
      *
-     * @param deployedAppContextPaths context path of apps
+     * @param deployedApps context paths of deployed apps, key = app name & value = context path
      * @see #getHttpConnectors()
      */
-    public void notify(Set<String> deployedAppContextPaths) {
+    public void notify(Map<String, String> deployedApps) {
         for (HttpConnector httpConnector : getHttpConnectors()) {
-            for (String deployedAppContextPath : deployedAppContextPaths) {
-                httpConnector.registerAppContextPath(deployedAppContextPath);
+            for (Map.Entry<String, String> appNameContextPath : deployedApps.entrySet()) {
+                httpConnector.registerApp(appNameContextPath.getKey(), appNameContextPath.getValue());
             }
         }
     }
