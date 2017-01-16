@@ -85,8 +85,8 @@ public class RequestDispatcher {
     private void servePageOrFragment(App app, HttpRequest request, HttpResponse response) {
         try {
             String html;
-            // set default mandatory http headers for security purpose
-            setDefaultSecurityHeaders(response);
+            // set default and configured http response headers for security purpose
+            setResponseSecurityHeaders(app, response);
             if (request.isFragmentRequest()) {
                 html = app.renderFragment(request, response);
             } else {
@@ -119,15 +119,19 @@ public class RequestDispatcher {
     }
 
     /**
-     * Sets some default and mandatory security related headers to the response path.
+     * Sets some default mandatory and user configured security related headers to the response path.
      *
+     * @param app the application used with getting the security related configuration.
      * @param httpResponse the http response instance used with setting the headers.
      */
-    private void setDefaultSecurityHeaders(HttpResponse httpResponse) {
+    private void setResponseSecurityHeaders(App app, HttpResponse httpResponse) {
         httpResponse.setHeader(HEADER_X_CONTENT_TYPE_OPTIONS, "nosniff");
         httpResponse.setHeader(HEADER_X_XSS_PROTECTION, "1; mode=block");
         httpResponse.setHeader(HEADER_CACHE_CONTROL, "no-store, no-cache, must-revalidate, private");
         httpResponse.setHeader(HEADER_EXPIRES, "0");
         httpResponse.setHeader(HEADER_PRAGMA, "no-cache");
+
+        // if there are any headers configured by the user for this app, then add them also to the response
+        app.getConfiguration().getResponseHeaders().forEach(httpResponse::setHeader);
     }
 }

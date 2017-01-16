@@ -39,4 +39,5 @@ security:
   xssPatterns:
     accept: []
     reject: []
-  responseHeaders: null
+  responseHeaders:
+    "X-Frame-Options": "DENY"
