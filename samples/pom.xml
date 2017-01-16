@@ -38,14 +38,14 @@
         <module>osgi-services/org.wso2.carbon.uuf.sample.pets-store.bundle</module>
         <module>osgi-services/org.wso2.carbon.uuf.sample.simple-auth.bundle</module>
         <module>osgi-services/org.wso2.carbon.uuf.sample.api</module>
-        <module>themes/org.wso2.carbon.uuf.sample.theme.default</module>
-        <module>themes/org.wso2.carbon.uuf.sample.theme.blue</module>
-        <module>themes/org.wso2.carbon.uuf.sample.theme.green</module>
-        <module>components/org.wso2.carbon.uuf.sample.simple-auth</module>
-        <module>components/org.wso2.carbon.uuf.sample.foundation</module>
-        <module>components/org.wso2.carbon.uuf.sample.store-common</module>
-        <module>apps/org.wso2.carbon.uuf.sample.pets-store</module>
-        <module>apps/org.wso2.carbon.uuf.sample.features-app</module>
+        <module>themes/org.wso2.carbon.uuf.sample.default.theme</module>
+        <module>themes/org.wso2.carbon.uuf.sample.blue.theme</module>
+        <module>themes/org.wso2.carbon.uuf.sample.green.theme</module>
+        <module>components/org.wso2.carbon.uuf.sample.simple-auth.ui</module>
+        <module>components/org.wso2.carbon.uuf.sample.foundation.ui</module>
+        <module>components/org.wso2.carbon.uuf.sample.store-common.ui</module>
+        <module>apps/org.wso2.carbon.uuf.sample.pets-store.app</module>
+        <module>apps/org.wso2.carbon.uuf.sample.features-app.app</module>
         <!--UUF Maven plugin does not support uuf-app dependencies-->
         <!--<module>apps/org.wso2.carbon.uuf.sample.devices-store</module>-->
     </modules>
