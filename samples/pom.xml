@@ -46,8 +46,6 @@
         <module>components/org.wso2.carbon.uuf.sample.store-common.ui</module>
         <module>apps/org.wso2.carbon.uuf.sample.pets-store.app</module>
         <module>apps/org.wso2.carbon.uuf.sample.features-app.app</module>
-        <!--UUF Maven plugin does not support uuf-app dependencies-->
-        <!--<module>apps/org.wso2.carbon.uuf.sample.devices-store</module>-->
     </modules>
 
 </project>
