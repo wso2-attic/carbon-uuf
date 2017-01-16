@@ -22,5 +22,5 @@ function onRequest(env) {
         var user = SimpleAuthHandler.authenticate("admin", "admin");
         session = createSession(user);
     }
-    session.setThemeName("org.wso2.carbon.uuf.sample.theme.green");
+    session.setThemeName("org.wso2.carbon.uuf.sample.green.theme");
 }
