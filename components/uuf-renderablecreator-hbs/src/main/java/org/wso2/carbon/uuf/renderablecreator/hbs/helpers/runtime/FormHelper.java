@@ -20,12 +20,13 @@ import com.github.jknack.handlebars.Handlebars;
 import com.github.jknack.handlebars.Helper;
 import com.github.jknack.handlebars.Options;
 import org.wso2.carbon.uuf.core.RequestLookup;
-import org.wso2.carbon.uuf.internal.auth.SessionRegistry;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.HbsRenderable;
 
 import java.io.IOException;
 
-public class FromHelper implements Helper<String> {
+import static org.wso2.carbon.uuf.spi.HttpRequest.COOKIE_UUFSESSIONID;
+
+public class FormHelper implements Helper<String> {
 
     public static final String HELPER_NAME = "form";
 
@@ -34,7 +35,7 @@ public class FromHelper implements Helper<String> {
         StringBuilder buffer = new StringBuilder();
 
         RequestLookup requestLookup = options.data(HbsRenderable.DATA_KEY_REQUEST_LOOKUP);
-        String cookieValue = requestLookup.getRequest().getCookieValue(SessionRegistry.CSRF_TOKEN);
+        String cookieValue = requestLookup.getRequest().getCookieValue(COOKIE_UUFSESSIONID);
 
         buffer.append("<form name=\"" + name + "\"");
         // set all the form attributes, such as "action", "method" etc
