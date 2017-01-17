@@ -47,15 +47,4 @@ public class SessionRegistryTest {
         sessionRegistry.removeSession(session.getSessionId());
         Assert.assertEquals(sessionRegistry.getSession(session.getSessionId()).isPresent(), false);
     }
-
-    @Test
-    public void testSessionTimeout() throws InterruptedException {
-        SessionRegistry sessionRegistry = createSessionRegistry(); // session timeout is 2 seconds
-        Session session = createSession();
-
-        sessionRegistry.addSession(session);
-        Assert.assertEquals(sessionRegistry.getSession(session.getSessionId()).get(), session);
-        Thread.sleep(4 * 1000); // wait 4 seconds.
-        Assert.assertEquals(sessionRegistry.getSession(session.getSessionId()).isPresent(), false);
-    }
 }
