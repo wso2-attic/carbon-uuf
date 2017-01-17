@@ -168,7 +168,11 @@ public class Configuration {
                                     httpStatusCode + "' for URI '" + errorPageUri + "'.");
                 }
 
-                if (errorPageUri.isEmpty()) {
+                if (errorPageUri == null) {
+                    throw new IllegalArgumentException(
+                            "URI of an error page entry cannot be null. Found a null URI for HTTP status code '" +
+                                    httpStatusCode + "'.");
+                } else if (errorPageUri.isEmpty()) {
                     throw new IllegalArgumentException(
                             "URI of an error page entry cannot be empty. Found an empty URI for HTTP status code '" +
                                     httpStatusCode + "'.");

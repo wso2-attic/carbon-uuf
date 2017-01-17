@@ -24,6 +24,7 @@ import org.wso2.carbon.uuf.exception.UUFException;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import javax.cache.Cache;
 import javax.cache.CacheException;
 import javax.cache.CacheManager;
@@ -66,12 +67,17 @@ public class SessionRegistry implements Closeable {
         }
     }
 
-    public SessionRegistry(String appName) {
+    public SessionRegistry(String name) {
+        // TODO: 1/15/17  read session expire time from configuration
+        this(name, (20 * 60)); // default session timeout is 20 minutes.
+    }
+
+    SessionRegistry(String appName, int sessionTimeoutDuration) {
         MutableConfiguration<String, Session> cacheConfig = new MutableConfiguration<>();
         cacheConfig.setTypes(String.class, Session.class);
         cacheConfig.setStoreByValue(false);
-        // TODO: read session expire time from configurations
-        cacheConfig.setExpiryPolicyFactory(AccessedExpiryPolicy.factoryOf(Duration.TWENTY_MINUTES));
+        Duration sessionTimeout = new Duration(TimeUnit.SECONDS, sessionTimeoutDuration);
+        cacheConfig.setExpiryPolicyFactory(AccessedExpiryPolicy.factoryOf(sessionTimeout));
         String cacheName = this.getClass().getName() + "-" + appName + "-sessions_cache";
         cache = getCache(cacheName, cacheConfig);
     }

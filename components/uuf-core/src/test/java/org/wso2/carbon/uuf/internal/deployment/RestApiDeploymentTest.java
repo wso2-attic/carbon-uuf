@@ -1,28 +1,29 @@
-package org.wso2.carbon.uuf;
-
 /*
- *  Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * WSO2 Inc. licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
+
+package org.wso2.carbon.uuf.internal.deployment;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.wso2.carbon.uuf.api.reference.AppReference;
 import org.wso2.carbon.uuf.api.reference.ComponentReference;
 import org.wso2.carbon.uuf.api.reference.FileReference;
-import org.wso2.carbon.uuf.internal.deployment.AppCreator;
-import org.wso2.carbon.uuf.internal.deployment.ClassLoaderProvider;
+import org.wso2.msf4j.Microservice;
 
 import java.util.Collections;
 import java.util.Dictionary;
@@ -37,12 +38,12 @@ import static org.mockito.Mockito.when;
 /**
  * This test class contains test method(s) to test the API deployment capability feature of UUF.
  */
-public class APITest {
+public class RestApiDeploymentTest {
 
     @Test
     public void testAPIContextPath() throws ClassNotFoundException {
         String appContextPath = "/sample-app";
-        String apiClassName = "org.wso2.carbon.uuf.SampleAPI";
+        String apiClassName = SampleMicroservice.class.getName();
         String apiUri = "/sample-api";
 
         // Create root component reference.
@@ -101,4 +102,9 @@ public class APITest {
         Assert.assertEquals(apiContextPath[0], expectedApiContextPath, "Calculated API context path is wrong.");
     }
 
+    /**
+     * This is a sample implementation of an MSF4J API that is used in APITest.
+     */
+    public static class SampleMicroservice implements Microservice {
+    }
 }

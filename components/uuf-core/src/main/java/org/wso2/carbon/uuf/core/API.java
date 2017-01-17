@@ -129,7 +129,7 @@ public class API {
 
     public static void sendError(int status, String message) {
         if ((status < 100) || (status > 599)) {
-            throw new IllegalArgumentException("HTTP status code must be between 100 (inclusive) and 600 (exclusive).");
+            throw new IllegalArgumentException("HTTP status code must be between 100 and 599.");
         }
         if ((message == null) || message.isEmpty()) {
             throw new IllegalArgumentException("Error message cannot be null or empty.");
@@ -139,7 +139,7 @@ public class API {
 
     public static void sendRedirect(String redirectUrl) {
         if ((redirectUrl == null) || redirectUrl.isEmpty()) {
-            throw new IllegalArgumentException("Redirect URL cannot be null or empty");
+            throw new IllegalArgumentException("Redirect URL cannot be null or empty.");
         }
         throw new PageRedirectException(redirectUrl);
     }
@@ -149,8 +149,13 @@ public class API {
      *
      * @param user user to create the session
      * @return newly created session
+     * @throws IllegalArgumentException if given user is null
      */
     public Session createSession(User user) {
+        if (user == null) {
+            throw new IllegalArgumentException("User of a session cannot be null.");
+        }
+
         destroySession();
         Session session = new Session(user);
         sessionRegistry.addSession(session);
@@ -178,6 +183,8 @@ public class API {
             return false;
         }
 
+        // Remove cached session.
+        currentSession = Optional.empty();
         // Remove session from the SessionRegistry.
         sessionRegistry.removeSession(session.get().getSessionId());
         // Clear the session cookie by setting its value to an empty string, Max-Age to zero, & Expires to a past date.
