@@ -15,7 +15,7 @@
  */
 
 //noinspection JSUnusedGlobalSymbols
-function onRequest(env) {
+function onGet(env) {
     var sendErrorParams = env.request.queryParams["sendError"];
     if (sendErrorParams) {
         sendError(418, "Yep, I'm a teapot!");

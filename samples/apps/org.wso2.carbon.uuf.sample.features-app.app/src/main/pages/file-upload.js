@@ -14,25 +14,27 @@
  *  limitations under the License.
  */
 
-function onRequest(env) {
-    if (env.request.method == "POST") {
-        var Paths = Java.type('java.nio.file.Paths');
-        var System = Java.type('java.lang.System');
-        var Files = Java.type('java.nio.file.Files');
-        var StandardCopyOption = Java.type('java.nio.file.StandardCopyOption');
+function onGet(env) {
 
-        var uploadedFile = env.request.files["file-content"];
-        var tempDirPath = System.getProperty('java.io.tmpdir');
-        var destination = Paths.get(tempDirPath).resolve(uploadedFile.name);
-        var sourcePath = Paths.get(uploadedFile.path);
-        var destinationPath = Paths.get(destination);
+}
 
-        //copy the selected file to UUF_HOME/tmp directory overriding any existing content with the same name
-        Files.copy(sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING);
+function onPost(env) {
+    var Paths = Java.type('java.nio.file.Paths');
+    var System = Java.type('java.lang.System');
+    var Files = Java.type('java.nio.file.Files');
+    var StandardCopyOption = Java.type('java.nio.file.StandardCopyOption');
 
-        return {
-            message: 'You have successfully uploaded the file, ' + uploadedFile.name + ' and copied it to '
-                     + tempDirPath + ' directory.'
-        };
-    }
+    var uploadedFile = env.request.files["file-content"];
+    var tempDirPath = System.getProperty('java.io.tmpdir');
+    var destination = Paths.get(tempDirPath).resolve(uploadedFile.name);
+    var sourcePath = Paths.get(uploadedFile.path);
+    var destinationPath = Paths.get(destination);
+
+    //copy the selected file to UUF_HOME/tmp directory overriding any existing content with the same name
+    Files.copy(sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING);
+
+    return {
+        message: 'You have successfully uploaded the file, ' + uploadedFile.name + ' and copied it to '
+                 + tempDirPath + ' directory.'
+    };
 }

@@ -1,22 +1,30 @@
 {{layout "org.wso2.carbon.uuf.sample.foundation.ui.main"}}
 {{title "Menu Sample | " @config.appName}}
+
 {{#fillZone "content"}}
     <h3>Menu.</h3>
     <hr />
-    <p>You can add a menu to your Application with following changes to the <code>config.yaml</code>.</p>
-    <p>In your <code>config.yaml</code> file:</p>
+    <p>You can add a menu to your Application with following changes to the <code>app.yaml</code>.</p>
+    <p>In your <code>app.yaml</code> file:</p>
     <pre>
-        menu :
-          main :
-            Home : {link: "#", icon: "fw-home"}
-            Pets :
-              See all our amazing pets : {link: "pets"}
-              Add a new pets : {link: "pets/new", icon: "fw fw-add"}
-              Pet of the month : {link: "pets/snowball" }
-    </pre>
+        menus:
+          - name: "main"
+            items:
+              - text: "Home"
+                link: "#"
+                icon: "fw-home"
+                submenus:
+                  - text: "See all our amazing pets"
+                    link: "pets"
+                  - text: "Add a new pets"
+                    link: "pets/new"
+                    icon: "fw fw-add"
+                  - text: "Pet of the month"
+                    link: "pets/snowball"</pre>
     <p>
-        Adding this will automatically picked up by <code>org.wso2.carbon.uuf.sample.foundation.ui.main</code> layout. However, if you are using
-       your own layout,you can use "menu" helper.
+        Adding this will automatically picked up by <code>org.wso2.carbon.uuf.sample.foundation.ui.main</code> layout.
+        However, if you are using
+        your own layout,you can use "menu" helper.
     </p>
     <h3>Notes:</h3>
     <p>The default menu implementation will be supported only up to three levels.</p>

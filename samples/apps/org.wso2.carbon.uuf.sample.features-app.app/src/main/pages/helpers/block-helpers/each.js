@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-function onRequest(env) {
+function onGet(env) {
     //Need to create an iterable list
     var ArrayList = Java.type("java.util.ArrayList");
     var people = new ArrayList();

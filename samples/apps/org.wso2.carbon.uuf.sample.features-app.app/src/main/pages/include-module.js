@@ -15,6 +15,6 @@
  */
 module("device");
 
-function onRequest(env) {
+function onGet(env) {
     return {"devices": devicesManager.getAllDevices("admin")};
 }
