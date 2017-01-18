@@ -58,8 +58,8 @@ public class JsExecutable implements Executable {
     private final String absolutePath;
     private final String relativePath;
     private final String componentPath;
-    private boolean isOnGetFound;
-    private boolean isOnPostFound;
+    private boolean hasOnGetFunction;
+    private boolean hasOnPostFunction;
 
     public JsExecutable(String scriptSource, ClassLoader componentClassLoader) {
         this(scriptSource, componentClassLoader, null, null, null);
@@ -91,15 +91,17 @@ public class JsExecutable implements Executable {
             throw new UUFException("An error occurred while evaluating the JavaScript file '" + absolutePath + "'.", e);
         }
 
-        Set<String> keySet = ((ScriptObjectMirror) engineBindings.get("nashorn.global")).keySet();
-        if (keySet.contains(FUNCTION_ON_GET)) {
-            isOnGetFound = true;
+        Set<String> availableFunctions = ((ScriptObjectMirror) engineBindings.get("nashorn.global")).keySet();
+        if (availableFunctions.contains(FUNCTION_ON_GET)) {
+            hasOnGetFunction = true;
         }
-        if (keySet.contains(FUNCTION_ON_POST)) {
-            isOnPostFound = true;
+        if (availableFunctions.contains(FUNCTION_ON_POST)) {
+            hasOnPostFunction = true;
         }
-        if (!isOnGetFound && !isOnPostFound) {
-            throw new UUFException("'onGet' and 'onPost' functions not found. Please implement at least on of them.");
+        if (!hasOnGetFunction && !hasOnPostFunction) {
+            throw new UUFException(
+                    "Either '" + FUNCTION_ON_GET + "' or '" + FUNCTION_ON_POST + "' cannot be found in " +
+                            "JavaScript file '" + absolutePath + "'. Please implement at least one of them.");
         }
 
         engineBindings.remove(ModuleFunction.NAME); // removing 'module' function
@@ -126,13 +128,12 @@ public class JsExecutable implements Executable {
         String functionName = null;
         try {
             engineBindings.setJSFunctionProvider(new JsFunctionsImpl(api));
-            functionName = api.getRequestLookup().getRequest().isGet() ? FUNCTION_ON_GET : FUNCTION_ON_POST;
-            if (functionName.equals(FUNCTION_ON_GET) && isOnGetFound) {
-                return engine.invokeFunction(functionName, context);
-            } else if (functionName.equals(FUNCTION_ON_POST) && isOnPostFound) {
-                return engine.invokeFunction(functionName, context);
+            if (api.getRequestLookup().getRequest().isGet()) {
+                functionName = FUNCTION_ON_GET;
+                return hasOnGetFunction ? engine.invokeFunction(FUNCTION_ON_GET, context) : null;
             } else {
-                return null;
+                functionName = FUNCTION_ON_POST;
+                return hasOnPostFunction ? engine.invokeFunction(FUNCTION_ON_POST, context) : null;
             }
         } catch (ScriptException e) {
             throw new UUFException(
