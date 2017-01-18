@@ -191,6 +191,12 @@ public interface HttpRequest {
      */
     int getRemotePort();
 
+    /**
+     * Return whether this request is a GET request or not.
+     * @return {@code true} if this is a GET request and {@code false} if this is a POST request
+     */
+    boolean isGet();
+
     String toString();
 
     default boolean isValid() {

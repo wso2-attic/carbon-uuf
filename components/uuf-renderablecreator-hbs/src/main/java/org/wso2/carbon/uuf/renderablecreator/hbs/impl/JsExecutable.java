@@ -104,16 +104,18 @@ public class JsExecutable implements Executable {
 
     @Override
     public Object execute(Object context, API api) {
+        String function = null;
         try {
             engineBindings.setJSFunctionProvider(new JsFunctionsImpl(api));
-            return engine.invokeFunction("onRequest", context);
+            function = api.getRequestLookup().getRequest().isGet() ? "onGet" : "onPost";
+            return engine.invokeFunction(function, context);
         } catch (ScriptException e) {
-            throw new UUFException("An error occurred when executing the 'onRequest' function in JavaScript file '" +
-                                           absolutePath + "' with context '" + context + "'.", e);
+            throw new UUFException(
+                    "An error occurred when executing the '" + function + "' function in JavaScript file '" +
+                            absolutePath + "' with context '" + context + "'.", e);
         } catch (NoSuchMethodException e) {
             throw new UUFException(
-                    "Cannot find the 'onRequest' function in the JavaScript file '" + absolutePath + "'.",
-                    e);
+                    "Cannot find the '" + function + "' function in the JavaScript file '" + absolutePath + "'.", e);
         } finally {
             engineBindings.removeJSFunctionProvider();
         }

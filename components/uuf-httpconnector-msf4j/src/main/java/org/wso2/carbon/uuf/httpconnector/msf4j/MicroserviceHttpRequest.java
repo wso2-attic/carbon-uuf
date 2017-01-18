@@ -45,6 +45,7 @@ public class MicroserviceHttpRequest implements HttpRequest {
     private static final String PROPERTY_LISTENER_PORT = "LISTENER_PORT";
     private static final String PROPERTY_REMOTE_HOST = "REMOTE_HOST";
     private static final String PROPERTY_REMOTE_PORT = "REMOTE_PORT";
+    private static final String REQUEST_GET = "GET";
 
     private final Request msf4jRequest;
     private final String method;
@@ -57,14 +58,17 @@ public class MicroserviceHttpRequest implements HttpRequest {
     private final Map<String, Object> queryParams;
     private final Map<String, Object> formParams;
     private final Map<String, Object> files;
+    private final boolean isGet;
 
     public MicroserviceHttpRequest(Request request) {
         this(request, null, null);
     }
 
     public MicroserviceHttpRequest(Request request, MultivaluedMap<String, ?> formParams, Object postParams) {
+
         this.msf4jRequest = request;
         this.method = request.getHttpMethod();
+        isGet = REQUEST_GET.equals(method);
 
         // process URI
         String rawUri = request.getUri();
@@ -231,6 +235,11 @@ public class MicroserviceHttpRequest implements HttpRequest {
     @Override
     public int getRemotePort() {
         return (Integer) msf4jRequest.getProperty(PROPERTY_REMOTE_PORT);
+    }
+
+    @Override
+    public boolean isGet() {
+        return isGet;
     }
 
     @Override
