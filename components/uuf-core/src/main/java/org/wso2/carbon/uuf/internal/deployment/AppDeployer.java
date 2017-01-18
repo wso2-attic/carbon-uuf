@@ -32,7 +32,7 @@ public interface AppDeployer {
     /**
      * Deploys all the available apps.
      *
-     * @return context paths of deployed apps, key = app name & value = context path
+     * @return context paths of deployed apps, key = app name and value = context path
      */
     Map<String, String> deploy();
 
