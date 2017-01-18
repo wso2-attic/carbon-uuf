@@ -40,7 +40,7 @@ public abstract class DeploymentNotifier {
     /**
      * Notifies all the HTTP connectors that the specified apps are available now.
      *
-     * @param deployedApps context paths of deployed apps, key = app name & value = context path
+     * @param deployedApps context paths of deployed apps, key = app name and value = context path
      * @see #getHttpConnectors()
      */
     public void notify(Map<String, String> deployedApps) {
