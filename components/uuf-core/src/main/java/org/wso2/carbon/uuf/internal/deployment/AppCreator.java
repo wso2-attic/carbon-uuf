@@ -228,7 +228,8 @@ public class AppCreator {
             }
             List<Fragment> fragments = new ArrayList<>(entry.getFragments().size());
             for (String fragmentName : entry.getFragments()) {
-                Fragment fragment = availableFragments.get(fragmentName);
+                Fragment fragment = availableFragments.get(NameUtils.getFullyQualifiedName(componentName,
+                                                                                           fragmentName));
                 if (fragment == null) {
                     throw new IllegalArgumentException(
                             "Fragment '" + fragmentName + "' given in the binding entry '" + entry +
