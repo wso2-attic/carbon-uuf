@@ -14,23 +14,21 @@
  *  limitations under the License.
  */
 
-function onRequest(env) {
+function onPost(env) {
     var session = getSession();
     if (session) {
         sendRedirect(env.contextPath + env.config['loginRedirectUri']);
     }
 
-    if (env.request.method == "POST") {
-        var username = env.request.formParams['username'];
-        var password = env.request.formParams['password'];
-        // calling dummy authentication service
-        var result = authenticate(username, password);
-        if (result.success) {
-            //configure login redirect uri
-            sendRedirect(env.contextPath + env.config['loginRedirectUri']);
-        } else {
-            return {errorMessage: result.message};
-        }
+    var username = env.request.formParams['username'];
+    var password = env.request.formParams['password'];
+    // calling dummy authentication service
+    var result = authenticate(username, password);
+    if (result.success) {
+        //configure login redirect uri
+        sendRedirect(env.contextPath + env.config['loginRedirectUri']);
+    } else {
+        return {errorMessage: result.message};
     }
 }
 

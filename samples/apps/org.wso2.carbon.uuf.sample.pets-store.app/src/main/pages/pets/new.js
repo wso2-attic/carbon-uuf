@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-function onRequest(env) {
+function onPost(env) {
     var name = env.request.formParams['pet-name'];
     var category = env.request.formParams['pet-category'];
     return {

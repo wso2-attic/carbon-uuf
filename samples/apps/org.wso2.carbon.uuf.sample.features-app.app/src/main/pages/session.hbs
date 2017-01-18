@@ -10,7 +10,7 @@
     <p>Syntax : <code>destroySession();</code></p>
     <p>In your JS file;</p>
     <pre>
-        function onRequest(context) {
+        function onGet(context) {
             var session = getSession();
             if (!session) {
                 session = createSession("admin");

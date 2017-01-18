@@ -8,7 +8,7 @@
     <p>Syntax : <code>callOSGiService(serviceClassName, serviceMethodName, methodParameters[]);</code></p>
     <p>In your JS file;</p>
     <pre>
-        function onRequest(env) {
+        function onGet(env) {
             var result = callOSGiService("org.wso2.carbon.uuf.sample.pets_store.service.PetsStoreService", "getHelloMessage", ["John"]);
             return {"helloWorldText": result};
         }

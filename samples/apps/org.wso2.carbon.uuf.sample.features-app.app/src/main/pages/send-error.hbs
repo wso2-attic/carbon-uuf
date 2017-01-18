@@ -8,13 +8,13 @@
     <p>Syntax : <code>sendError(status, message);</code></p>
     <p>In your JS file;</p>
     <pre>
-        function onRequest(env) {
+        function onGet(env) {
             sendError(409, "The request could not be processed because of conflict in the request.");
         };
     </pre>
     <h3>Demo:</h3>
     <pre>
-        function onRequest(env) {
+        function onGet(env) {
             var sendErrorParams = env.request.queryParams["sendError"];
             if (sendErrorParams) {
                 sendError(418, "Yep, I'm a teapot!");

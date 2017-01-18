@@ -15,7 +15,7 @@
  */
 
 //noinspection JSUnusedGlobalSymbols
-function onRequest(env) {
+function onGet(env) {
     var devices;
     if ((env.params.offset && env.params.limit)) {
         devices = getDevices(env.params.offset, env.params.limit);

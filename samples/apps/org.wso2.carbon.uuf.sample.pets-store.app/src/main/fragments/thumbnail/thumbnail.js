@@ -15,6 +15,6 @@
  */
 
 //noinspection JSUnusedGlobalSymbols
-function onRequest(env) {
+function onGet(env) {
     return {petData: {name: null, image: null}};
 }

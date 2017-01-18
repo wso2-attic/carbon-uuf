@@ -8,13 +8,13 @@
     <p>Syntax : <code>sendRedirect(url);</code></p>
     <p>In your JS file;</p>
     <pre>
-        var onRequest = function (context) {
+        var onGet = function (context) {
             sendRedirect("http://www.google.lk");
         };
     </pre>
     <h3>Demo:</h3>
     <pre>
-        function onRequest(context) {
+        function onGet(context) {
             var demoSendRedirect = context.request.queryParams["sendRedirect"];
             if (demoSendRedirect) {
                 sendRedirect("http://www.google.lk");
