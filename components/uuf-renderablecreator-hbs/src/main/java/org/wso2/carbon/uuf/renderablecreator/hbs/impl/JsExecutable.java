@@ -18,6 +18,7 @@ package org.wso2.carbon.uuf.renderablecreator.hbs.impl;
 
 import jdk.nashorn.api.scripting.NashornScriptEngine;
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
+import jdk.nashorn.api.scripting.ScriptObjectMirror;
 import org.wso2.carbon.uuf.core.API;
 import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.Executable;
@@ -36,6 +37,7 @@ import org.wso2.carbon.uuf.renderablecreator.hbs.impl.js.LoggerObject;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
@@ -48,11 +50,16 @@ public class JsExecutable implements Executable {
     private static final NashornScriptEngineFactory SCRIPT_ENGINE_FACTORY = new NashornScriptEngineFactory();
     private static final String[] SCRIPT_ENGINE_ARGS = new String[]{"-strict", "--optimistic-types"};
 
+    private static final String FUNCTION_ON_GET = "onGet";
+    private static final String FUNCTION_ON_POST = "onPost";
+
     private final NashornScriptEngine engine;
     private final UUFBindings engineBindings;
     private final String absolutePath;
     private final String relativePath;
     private final String componentPath;
+    private boolean isOnGetFound;
+    private boolean isOnPostFound;
 
     public JsExecutable(String scriptSource, ClassLoader componentClassLoader) {
         this(scriptSource, componentClassLoader, null, null, null);
@@ -83,6 +90,18 @@ public class JsExecutable implements Executable {
         } catch (ScriptException e) {
             throw new UUFException("An error occurred while evaluating the JavaScript file '" + absolutePath + "'.", e);
         }
+
+        Set<String> keySet = ((ScriptObjectMirror) engineBindings.get("nashorn.global")).keySet();
+        if (keySet.contains(FUNCTION_ON_GET)) {
+            isOnGetFound = true;
+        }
+        if (keySet.contains(FUNCTION_ON_POST)) {
+            isOnPostFound = true;
+        }
+        if (!isOnGetFound && !isOnPostFound) {
+            throw new UUFException("'onGet' and 'onPost' functions not found. Please implement at least on of them.");
+        }
+
         engineBindings.remove(ModuleFunction.NAME); // removing 'module' function
         engineBindings.put(CallOSGiServiceFunction.NAME, JsFunctionsImpl.getCallOsgiServiceFunction());
         engineBindings.put(GetOSGiServicesFunction.NAME, JsFunctionsImpl.getGetOsgiServicesFunction());
@@ -107,15 +126,22 @@ public class JsExecutable implements Executable {
         String functionName = null;
         try {
             engineBindings.setJSFunctionProvider(new JsFunctionsImpl(api));
-            functionName = api.getRequestLookup().getRequest().isGet() ? "onGet" : "onPost";
-            return engine.invokeFunction(functionName, context);
+            functionName = api.getRequestLookup().getRequest().isGet() ? FUNCTION_ON_GET : FUNCTION_ON_POST;
+            if (functionName.equals(FUNCTION_ON_GET) && isOnGetFound) {
+                return engine.invokeFunction(functionName, context);
+            } else if (functionName.equals(FUNCTION_ON_POST) && isOnPostFound) {
+                return engine.invokeFunction(functionName, context);
+            } else {
+                return null;
+            }
         } catch (ScriptException e) {
             throw new UUFException(
                     "An error occurred when executing the '" + functionName + "' function in JavaScript file '" +
                             absolutePath + "' with context '" + context + "'.", e);
         } catch (NoSuchMethodException e) {
             throw new UUFException(
-                    "Cannot find the '" + functionName + "' function in the JavaScript file '" + absolutePath + "'.", e);
+                    "Cannot find the '" + functionName + "' function in the JavaScript file '" + absolutePath + "'.",
+                    e);
         } finally {
             engineBindings.removeJSFunctionProvider();
         }
