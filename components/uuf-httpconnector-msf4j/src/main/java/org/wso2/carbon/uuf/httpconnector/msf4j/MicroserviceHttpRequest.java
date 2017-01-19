@@ -146,6 +146,11 @@ public class MicroserviceHttpRequest implements HttpRequest {
     }
 
     @Override
+    public boolean isGet() {
+        return isGet;
+    }
+
+    @Override
     public String getProtocol() {
         return (String) msf4jRequest.getProperty(PROPERTY_HTTP_VERSION);
     }
@@ -235,11 +240,6 @@ public class MicroserviceHttpRequest implements HttpRequest {
     @Override
     public int getRemotePort() {
         return (Integer) msf4jRequest.getProperty(PROPERTY_REMOTE_PORT);
-    }
-
-    @Override
-    public boolean isGet() {
-        return isGet;
     }
 
     @Override
