@@ -16,23 +16,21 @@
 
 function onRequest(env) {
     if (env.request.method == "POST") {
-        var Paths = Java.type('java.nio.file.Paths');
-        var System = Java.type('java.lang.System');
-        var Files = Java.type('java.nio.file.Files');
-        var StandardCopyOption = Java.type('java.nio.file.StandardCopyOption');
 
         var uploadedFile = env.request.files["file-content"];
-        var tempDirPath = System.getProperty('java.io.tmpdir');
-        var destination = Paths.get(tempDirPath).resolve(uploadedFile.name);
-        var sourcePath = Paths.get(uploadedFile.path);
-        var destinationPath = Paths.get(destination);
+        var FileUtils = Java.type("org.wso2.carbon.uuf.sample.featuresapp.bundle.FileUtils");
 
-        //copy the selected file to UUF_HOME/tmp directory overriding any existing content with the same name
-        Files.copy(sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING);
-
-        return {
-            message: 'You have successfully uploaded the file, ' + uploadedFile.name + ' and copied it to '
-                     + tempDirPath + ' directory.'
-        };
+        try {
+            var tempDirPath = FileUtils.copy(uploadedFile.path, uploadedFile.name);
+            return {
+                message: 'You have successfully uploaded the file, ' + uploadedFile.name + ' and copied it to '
+                         + tempDirPath + ' directory.'
+            };
+        } catch (e) {
+            Log.error("Error occurred while copying the file.", e);
+            return {
+                error: "Error occurred while uploading the file."
+            };
+        }
     }
 }

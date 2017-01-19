@@ -36,6 +36,7 @@
 
     <modules>
         <module>osgi-bundles/org.wso2.carbon.uuf.sample.pets-store.bundle</module>
+        <module>osgi-bundles/org.wso2.carbon.uuf.sample.features-app.bundle</module>
         <module>osgi-bundles/org.wso2.carbon.uuf.sample.simple-auth.bundle</module>
         <module>osgi-bundles/org.wso2.carbon.uuf.sample.api</module>
         <module>themes/org.wso2.carbon.uuf.sample.default.theme</module>
