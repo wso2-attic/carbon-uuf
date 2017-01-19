@@ -176,10 +176,5 @@ public class LoggerObject {
             this.setStackTrace(modifiedStackTrace);
             this.printStackTrace(printWriter);
         }
-
-        @Override
-        public String toString() {
-            return "";
-        }
     }
 }
