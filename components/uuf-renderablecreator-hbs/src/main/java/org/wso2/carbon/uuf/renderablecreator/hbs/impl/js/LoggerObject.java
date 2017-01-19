@@ -27,6 +27,8 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.reflect.Type;
 
 public class LoggerObject {
@@ -72,6 +74,19 @@ public class LoggerObject {
 
     public void error(Object obj) {
         logger.error(getLogMessage(obj));
+    }
+
+    public void error(String message, Object obj) {
+        if (obj instanceof Throwable) {
+            logger.error(message, (Throwable) obj);
+        } else {
+            StringWriter stringWriter = new StringWriter();
+            PrintWriter printWriter = new PrintWriter(stringWriter);
+            EmptyException exception = new EmptyException();
+            // Ignore the 0th element and print the stack trace from the 1st index
+            exception.printStackTrace(printWriter, 1);
+            logger.error(message + " " + getLogMessage(obj) + stringWriter.toString());
+        }
     }
 
     private static class ScriptObjectMirrorSerializer implements JsonSerializer<ScriptObjectMirror> {
@@ -150,5 +165,21 @@ public class LoggerObject {
     public String toString() {
         return "{info: function(obj), debug: function(obj), trace: function(obj), warn: function(obj), error: " +
                 "function(obj)}";
+    }
+
+    private static class EmptyException extends Exception {
+
+        void printStackTrace(PrintWriter printWriter, int startIndex) {
+            StackTraceElement[] stackTrace = getStackTrace();
+            StackTraceElement[] modifiedStackTrace = new StackTraceElement[stackTrace.length - 1];
+            System.arraycopy(stackTrace, startIndex, modifiedStackTrace, 0, stackTrace.length - 1);
+            this.setStackTrace(modifiedStackTrace);
+            this.printStackTrace(printWriter);
+        }
+
+        @Override
+        public String toString() {
+            return "";
+        }
     }
 }
