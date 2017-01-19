@@ -22,12 +22,10 @@ import io.netty.handler.codec.http.cookie.ServerCookieDecoder;
 import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.msf4j.Request;
 
-import javax.activation.UnsupportedDataTypeException;
 import javax.ws.rs.NotSupportedException;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MultivaluedMap;
 import java.io.File;
-import java.io.UnsupportedEncodingException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -58,7 +56,7 @@ public class MicroserviceHttpRequest implements HttpRequest {
     private final Map<String, Object> queryParams;
     private final Map<String, Object> formParams;
     private final Map<String, Object> files;
-    private final boolean isGet;
+    private final boolean isGetRequest;
 
     public MicroserviceHttpRequest(Request request) {
         this(request, null, null);
@@ -68,7 +66,7 @@ public class MicroserviceHttpRequest implements HttpRequest {
 
         this.msf4jRequest = request;
         this.method = request.getHttpMethod();
-        isGet = REQUEST_GET.equals(method);
+        this.isGetRequest = REQUEST_GET.equals(method);
 
         // process URI
         String rawUri = request.getUri();
@@ -146,8 +144,8 @@ public class MicroserviceHttpRequest implements HttpRequest {
     }
 
     @Override
-    public boolean isGet() {
-        return isGet;
+    public boolean isGetRequest() {
+        return isGetRequest;
     }
 
     @Override

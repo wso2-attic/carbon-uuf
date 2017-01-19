@@ -128,7 +128,7 @@ public class JsExecutable implements Executable {
         String functionName = null;
         try {
             engineBindings.setJSFunctionProvider(new JsFunctionsImpl(api));
-            if (api.getRequestLookup().getRequest().isGet()) {
+            if (api.getRequestLookup().getRequest().isGetRequest()) {
                 functionName = FUNCTION_ON_GET;
                 return hasOnGetFunction ? engine.invokeFunction(FUNCTION_ON_GET, context) : null;
             } else {

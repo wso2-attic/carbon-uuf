@@ -41,7 +41,7 @@ public interface HttpRequest {
      * Return whether this request is a GET request or not.
      * @return {@code true} if this is a GET request and {@code false} if this is a POST request
      */
-    boolean isGet();
+    boolean isGetRequest();
 
     /**
      * Returns the name and version of the protocol the request uses in the form <i>protocol/majorVersion
