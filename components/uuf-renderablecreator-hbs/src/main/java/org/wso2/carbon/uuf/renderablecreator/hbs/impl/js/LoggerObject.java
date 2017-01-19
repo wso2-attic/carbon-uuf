@@ -85,7 +85,7 @@ public class LoggerObject {
             stringWriter.write(getLogMessage(obj));
 
             PrintWriter printWriter = new PrintWriter(stringWriter);
-            EmptyException exception = new EmptyException();
+            CustomException exception = new CustomException();
             // Ignore the 0th element and print the stack trace from the 1st index to the printWriter.
             exception.printStackTrace(printWriter, 1);
             logger.error(stringWriter.toString());
@@ -173,7 +173,7 @@ public class LoggerObject {
     /**
      * Uses to get the modified stack trace.
      */
-    private static class EmptyException extends Exception {
+    private static class CustomException extends Exception {
 
         void printStackTrace(PrintWriter printWriter, int startIndex) {
             StackTraceElement[] stackTrace = getStackTrace();
