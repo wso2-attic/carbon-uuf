@@ -15,6 +15,6 @@
  */
 
 //noinspection JSUnusedGlobalSymbols
-function onRequest(env) {
+function onGet(env) {
     return {"name": env.pathParams['name']};
 }

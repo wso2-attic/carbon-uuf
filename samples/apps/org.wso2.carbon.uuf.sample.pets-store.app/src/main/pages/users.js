@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-function onRequest() {
+function onGet(env) {
     var UserManager = Java.type("org.wso2.carbon.uuf.sample.simpleauth.bundle.UserManager");
     var userManager = new UserManager();
     return {users: userManager.getAllUsers()};

@@ -14,16 +14,14 @@
  *  limitations under the License.
  */
 
-function onRequest(env) {
-    if (env.request.method == "POST") {
-        var password = env.request.formParams['input-password'];
-        var confirmPassword = env.request.formParams['input-confirm-password'];
-        var result = validateData(password, confirmPassword);
-        if (result.success) {
-            sendRedirect(env.contextPath + env.config['registerRedirectUri']);
-        } else {
-            return {errorMessage: result.message};
-        }
+function onPost(env) {
+    var password = env.request.formParams['input-password'];
+    var confirmPassword = env.request.formParams['input-confirm-password'];
+    var result = validateData(password, confirmPassword);
+    if (result.success) {
+        sendRedirect(env.contextPath + env.config['registerRedirectUri']);
+    } else {
+        return {errorMessage: result.message};
     }
 }
 

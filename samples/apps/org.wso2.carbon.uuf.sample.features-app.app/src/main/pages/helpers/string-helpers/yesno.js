@@ -14,8 +14,8 @@
  *  limitations under the License.
  */
 
-function onRequest(env) {
+function onGet(env) {
     return {
-        value: "yes"
+        value: true
     };
 }

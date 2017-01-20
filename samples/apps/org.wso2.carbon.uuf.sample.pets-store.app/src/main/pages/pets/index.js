@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-function onRequest() {
+function onGet(env) {
     var listOfPets = [{id: "1", name: "Snowy", category: "Puppy", color: "White"},
         {id: "2", name: "Kitty", category: "Kitten", color: "Brown"},
         {id: "3", name: "Blacky", category: "Bunny", color: "Black"},

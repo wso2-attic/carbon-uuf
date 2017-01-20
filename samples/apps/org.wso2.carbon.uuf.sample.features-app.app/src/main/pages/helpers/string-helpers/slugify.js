@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-function onRequest(env) {
+function onGet(env) {
     return {
         value: "Joel is a slug"
     };

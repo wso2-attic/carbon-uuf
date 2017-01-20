@@ -15,7 +15,11 @@
  */
 
 //noinspection JSUnusedGlobalSymbols
-function onRequest(env) {
+function onGet(env) {
+
+}
+
+function onPost(env) {
     var name = env.request.formParams['name'];
     return {"prevName": name};
 }

@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-function onRequest(env) {
+function onGet(env) {
     var session = getSession();
     if (!session) {
         return {enableLogin: true, enableLogout: false};

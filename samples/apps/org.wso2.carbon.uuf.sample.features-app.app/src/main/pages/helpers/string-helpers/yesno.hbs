@@ -13,4 +13,27 @@
         </figure>
         <p><b>value</b> - string to be mapped</p>
     </div>
+
+    <div style="margin-top: 40px">
+        <h4><b>Example</b></h4>
+        <figure class="highlight">
+            <pre class="code lang-handlebars">
+            \{{yesno value}}</pre>
+        </figure>
+        <p>when used with this context:</p>
+        <figure class="highlight">
+            <pre class="code lang-javascript">
+            function onGet(env) {
+                return {
+                    value: true
+                };
+            }</pre>
+        </figure>
+        <p>will result in:</p>
+        <figure class="highlight">
+            <pre class="code lang-handlebars">
+            {{yesno value}}</pre>
+        </figure>
+    </div>
+
 {{/fillZone}}

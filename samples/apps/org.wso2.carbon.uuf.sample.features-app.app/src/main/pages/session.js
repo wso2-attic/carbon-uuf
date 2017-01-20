@@ -15,7 +15,7 @@
  */
 
 //noinspection JSUnusedGlobalSymbols
-function onRequest(env) {
+function onGet(env) {
     var session = getSession();
     if (!session) {
        var SimpleAuthHandler = Java.type("org.wso2.carbon.uuf.sample.simpleauth.bundle.SimpleAuthHandler");
