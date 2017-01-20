@@ -168,7 +168,7 @@ public class LoggerObject {
     @Override
     public String toString() {
         return "{info: function(obj), debug: function(obj), trace: function(obj), warn: function(obj), error: " +
-                "function(obj)}";
+                "function(obj), error: function(message, obj)}";
     }
 
     /**
