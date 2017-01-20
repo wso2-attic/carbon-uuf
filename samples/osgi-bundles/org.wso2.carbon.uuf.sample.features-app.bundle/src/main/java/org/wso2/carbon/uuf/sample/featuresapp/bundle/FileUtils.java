@@ -24,6 +24,8 @@ import java.nio.file.StandardCopyOption;
 
 /**
  * Uses file related operations.
+ *
+ * @since 1.0.0
  */
 public class FileUtils {
 
