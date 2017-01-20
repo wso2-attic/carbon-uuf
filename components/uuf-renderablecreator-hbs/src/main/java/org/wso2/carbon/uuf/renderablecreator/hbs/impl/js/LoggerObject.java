@@ -171,10 +171,18 @@ public class LoggerObject {
     }
 
     /**
-     * Uses to get the modified stack trace.
+     * Uses to get a modified stack trace.
+     *
+     * @since 1.0.0
      */
     private static class CustomException extends Exception {
 
+        /**
+         * Properly formats and prints the stack trace to the given {@link PrintWriter} starting from the  given index.
+         *
+         * @param printWriter which uses to write the stack trace
+         * @param startIndex  start index of the stack trace to be printed
+         */
         void printStackTrace(PrintWriter printWriter, int startIndex) {
             StackTraceElement[] stackTrace = getStackTrace();
             StackTraceElement[] modifiedStackTrace = new StackTraceElement[stackTrace.length - 1];
