@@ -81,7 +81,8 @@ public class LoggerObject {
             logger.error(message, (Throwable) obj);
         } else {
             StringWriter stringWriter = new StringWriter();
-            stringWriter.write(message + " ");
+            stringWriter.write(message);
+            stringWriter.write(" ");
             stringWriter.write(getLogMessage(obj));
 
             PrintWriter printWriter = new PrintWriter(stringWriter);
