@@ -25,9 +25,10 @@ function onPost(env) {
                      + tempDirPath + ' directory.'
         };
     } catch (e) {
-        Log.error("Error occurred while copying the file.", e);
+        var message = "Error occurred while saving the file.";
+        Log.error(message, e);
         return {
-            error: "Error occurred while uploading the file."
+            error: message
         };
     }
 }
