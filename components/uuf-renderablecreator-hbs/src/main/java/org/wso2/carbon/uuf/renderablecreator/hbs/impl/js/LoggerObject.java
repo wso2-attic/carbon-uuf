@@ -86,9 +86,9 @@ public class LoggerObject {
             stringWriter.write(getLogMessage(obj));
 
             PrintWriter printWriter = new PrintWriter(stringWriter);
-            StackTracePrinter exception = new StackTracePrinter();
+            StackTracePrinter stackTracePrinter = new StackTracePrinter();
             // Ignore the 0th element and print the stack trace from the 1st index to the printWriter.
-            exception.printStackTrace(printWriter, 1);
+            stackTracePrinter.printStackTrace(printWriter, 1);
             logger.error(stringWriter.toString());
         }
     }
