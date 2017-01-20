@@ -18,10 +18,10 @@
 
 package org.wso2.carbon.uuf.api.config;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 /**
  * Holds the i18n language resources of an UUF App.
@@ -30,7 +30,7 @@ import java.util.Set;
  */
 public class I18nResources {
 
-    private final Map<String, Properties> i18nResources = new HashMap<>();
+    private final SortedMap<String, Properties> i18nResources = new TreeMap<>();
 
     /**
      * Adds the given language.
