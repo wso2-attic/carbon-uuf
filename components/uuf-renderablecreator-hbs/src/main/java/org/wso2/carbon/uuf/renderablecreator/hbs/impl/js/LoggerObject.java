@@ -27,6 +27,8 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.reflect.Type;
 
 public class LoggerObject {
@@ -72,6 +74,23 @@ public class LoggerObject {
 
     public void error(Object obj) {
         logger.error(getLogMessage(obj));
+    }
+
+    public void error(String message, Object obj) {
+        if (obj instanceof Throwable) {
+            logger.error(message, (Throwable) obj);
+        } else {
+            StringWriter stringWriter = new StringWriter();
+            stringWriter.write(message);
+            stringWriter.write(" ");
+            stringWriter.write(getLogMessage(obj));
+
+            PrintWriter printWriter = new PrintWriter(stringWriter);
+            StackTracePrinter stackTracePrinter = new StackTracePrinter();
+            // Ignore the 0th element and print the stack trace from the 1st index to the printWriter.
+            stackTracePrinter.printStackTrace(printWriter, 1);
+            logger.error(stringWriter.toString());
+        }
     }
 
     private static class ScriptObjectMirrorSerializer implements JsonSerializer<ScriptObjectMirror> {
@@ -149,6 +168,28 @@ public class LoggerObject {
     @Override
     public String toString() {
         return "{info: function(obj), debug: function(obj), trace: function(obj), warn: function(obj), error: " +
-                "function(obj)}";
+                "function(obj), error: function(message, obj)}";
+    }
+
+    /**
+     * Uses to get a modified stack trace.
+     *
+     * @since 1.0.0
+     */
+    private static class StackTracePrinter extends Exception {
+
+        /**
+         * Properly formats and prints the stack trace to the given {@link PrintWriter} starting from the  given index.
+         *
+         * @param printWriter which uses to write the stack trace
+         * @param startIndex  start index of the stack trace to be printed
+         */
+        void printStackTrace(PrintWriter printWriter, int startIndex) {
+            StackTraceElement[] stackTrace = getStackTrace();
+            StackTraceElement[] modifiedStackTrace = new StackTraceElement[stackTrace.length - 1];
+            System.arraycopy(stackTrace, startIndex, modifiedStackTrace, 0, stackTrace.length - 1);
+            this.setStackTrace(modifiedStackTrace);
+            this.printStackTrace(printWriter);
+        }
     }
 }
