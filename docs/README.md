@@ -1,19 +1,21 @@
 # Basics
 
-A UUF app is a collection of UUF components.
+## UUF Apps
+
+A UUF app is a collection of UUF components to provide its functionality. Additionaly it could use Themes to control its look and feel.
 
 ## UUF Components
 
-Could handle a specific functionality entirely. Every aspect of the functionality such as,
+A UUF component handles a specific functionality entirely. Every aspect of the functionality such as,
 
-* Rendering UI
+* Rendering the UI
 * Business logic
 * Calling OSGi services
-* Data access ?
+* Data access
 
 could be handled in a component.
 
-For example a component handling Authentication of users could take care of rendering the login UI, and using services from a WSO2 Identity Server instace authenticating users and managing sessions. A UUF app can depend on such a component to add the functionality of user authentication to itself with the help of a few configurations.
+For example a component handling authentication of users could take care of rendering the login UI, talking to an authentication service and managing sessions. A UUF app can depend on such a component to add the functionality of user authentication to itself with the help of a few configurations.
 
 A UUF component Consists of,
 
@@ -23,35 +25,21 @@ A UUF component Consists of,
 
 ### Pages
 
-* Handles a specific requested url.
-* Renders HTML using [handlebars]().
-* Possibly accompanies a js file that handles the business logic regarding the request.
-* Accompaniying js file could define the global context for the handlerbars in a page
-* Uses fragments and Layouts.
+A Page Handles a specific requested url. It renders html possibly using a template and relevent data. Fragments and Layouts are used by pages in this process.
 
 ### Fragments
 
-* Parts of pages.
-* Renders HTML using [handlebars]().
-* Could contain client side js.
-* Could be shared between pages and could occur in many places of a page.
+A Fragment represent a specific part of a Page. A Fragment renders html just like a page does.
+
+Fragments are used by pages, to avoid duplication when rendering many similar data. (Eg: A list of people)
+Multiple pages that render similar data could share Fragments.
 
 ### Layouts
 
-* Provides a frame for a page to render itself.
-* Uses *Zones* to define empty spaces that are filled in by pages.
-* Could be shared between pages
+A Layout provides a *frame* for a Page to render itself in.
 
-## UUF Apps
+Uses UUF constructs named *Zones* to define empty spaces that are filled in by pages. Multiple pages could share Layouts.
 
-Consists of,
+## Themes
 
-* A theme
-* UUF components
-
-An app can define components of its own or use external components.
-
-### Themes
-
-A theme controls the overall look and feel of an UUF app.
-Contains resources that are used in the client side like css, js and fonts.
+A Theme controls the overall look and feel of an UUF app. It contains resources that are used in the client side like style sheets, client side scripts and fonts.
