@@ -28,7 +28,7 @@ import java.util.Properties;
 public class I18nHelper implements Helper<String> {
 
     public static final String HELPER_NAME = "i18n";
-    private static final String DEFAULT_LOCALE = "en_US";
+    private static final String DEFAULT_LOCALE = "en-us";
     private static final String LOCALE_HEADER = "Accept-Language";
     private static final String LOCALE = "locale";
 
