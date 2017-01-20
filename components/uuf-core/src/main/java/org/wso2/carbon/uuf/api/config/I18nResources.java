@@ -39,6 +39,9 @@ public class I18nResources {
      * @param i18n     properties
      */
     public void addI18nResource(String language, Properties i18n) {
+        // Convert the language key to lower case before adding to the map. This is done because various browsers
+        // send the locale in different formats.
+        language = language.toLowerCase();
         Properties i18nResource = this.i18nResources.get(language);
         if (i18nResource == null) {
             this.i18nResources.put(language, i18n);
