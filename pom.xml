@@ -256,6 +256,11 @@
                 <artifactId>org.wso2.carbon.uuf.sample.api</artifactId>
                 <version>${carbon.uuf.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.uuf.sample</groupId>
+                <artifactId>org.wso2.carbon.uuf.sample.features-app.bundle</artifactId>
+                <version>${carbon.uuf.version}</version>
+            </dependency>
 
             <!-- Test -->
             <dependency>

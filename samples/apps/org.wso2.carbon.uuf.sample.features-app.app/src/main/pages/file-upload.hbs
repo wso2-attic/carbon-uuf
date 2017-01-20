@@ -16,6 +16,17 @@
             </button>
         </div>
     {{/if}}
+    {{#if error}}
+        <div class="alert alert-danger" role="alert">
+            <i class="icon fw fw-danger"></i><strong>Failed!</strong>
+            {{error}}
+            <button type="button" class="close" aria-label="close" data-dismiss="alert">
+                <span aria-hidden="true">
+                    <i class="fw fw-cancel"></i>
+                </span>
+            </button>
+        </div>
+    {{/if}}
     <form class="form-horizontal" method="post" enctype="multipart/form-data">
         <label class="control-label">Select your file here.</label>
         <input type="file" name="file-content" />
