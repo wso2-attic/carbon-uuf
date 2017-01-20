@@ -13,6 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+
 package org.wso2.carbon.uuf.sample.featuresapp.bundle;
 
 import java.io.IOException;
@@ -21,6 +22,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
+/**
+ * Uses file related operations.
+ */
 public class FileUtils {
 
     /**

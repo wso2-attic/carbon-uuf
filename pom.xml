@@ -599,8 +599,7 @@
 
         <!-- Handlebars -->
         <orbit.com.github.jknack.handlebars.version>4.0.3.wso2v1</orbit.com.github.jknack.handlebars.version>
-        <orbit.com.github.jknack.handlebars.version.range>[4.0.3, 5.0.0)
-        </orbit.com.github.jknack.handlebars.version.range>
+        <orbit.com.github.jknack.handlebars.version.range>[4.0.3, 5.0.0)</orbit.com.github.jknack.handlebars.version.range>
         <antlr-version>4.5.1-1</antlr-version>
 
         <!-- MSF4J -->
