@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-function onRequest(env) {
+function onGet(env) {
     var result = callOSGiService("org.wso2.carbon.uuf.sample.petsstore.bundle.service.PetsStoreService",
                                  "getHelloMessage", ["John"]);
     return {"helloWorldText": result};

@@ -14,8 +14,7 @@
  *  limitations under the License.
  */
 
-function onRequest(env) {
-    if (env.request.method == "POST") {
+function onPost(env) {
         var email = env.request.formParams['user-email'];
         var category = env.request.formParams['pet-category'];
         return {
@@ -23,5 +22,4 @@ function onRequest(env) {
             "userEmail": email,
             "petCategory": category
         };
-    }
 }

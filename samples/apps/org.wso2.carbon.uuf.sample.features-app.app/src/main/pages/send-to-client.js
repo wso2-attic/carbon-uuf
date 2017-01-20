@@ -15,6 +15,10 @@
  */
 
 //noinspection JSUnusedGlobalSymbols
-function onRequest(env) {
-    sendToClient("request", env.request); 
+function onGet(env) {
+
+}
+
+function onPost(env) {
+    sendToClient("request", env.request);
 }

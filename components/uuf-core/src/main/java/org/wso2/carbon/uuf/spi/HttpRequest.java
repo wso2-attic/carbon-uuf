@@ -38,6 +38,12 @@ public interface HttpRequest {
     String getMethod();
 
     /**
+     * Return whether this request is a GET request or not.
+     * @return {@code true} if this is a GET request and {@code false} if this is a POST request
+     */
+    boolean isGetRequest();
+
+    /**
      * Returns the name and version of the protocol the request uses in the form <i>protocol/majorVersion
      * .minorVersion</i>, for example, HTTP/1.1.
      *

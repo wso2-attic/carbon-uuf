@@ -1,5 +1,6 @@
 {{layout "org.wso2.carbon.uuf.sample.foundation.ui.main"}}
 {{title "Call OSGi Service Sample | " @config.appName}}
+
 {{#fillZone "content"}}
     <h3>Call OSGi Service.</h3>
     <hr />
@@ -7,7 +8,7 @@
     <p>Syntax : <code>callOSGiService(serviceClassName, serviceMethodName, methodParameters[]);</code></p>
     <p>In your JS file;</p>
     <pre>
-        function onRequest(env) {
+        function onGet(env) {
             var result = callOSGiService("org.wso2.carbon.uuf.sample.pets_store.service.PetsStoreService", "getHelloMessage", ["John"]);
             return {"helloWorldText": result};
         }

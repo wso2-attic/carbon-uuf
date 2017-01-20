@@ -14,23 +14,20 @@
  *  limitations under the License.
  */
 
-function onRequest(env) {
-    if (env.request.method == "POST") {
+function onPost(env) {
+    var uploadedFile = env.request.files["file-content"];
+    var FileUtils = Java.type("org.wso2.carbon.uuf.sample.featuresapp.bundle.FileUtils");
 
-        var uploadedFile = env.request.files["file-content"];
-        var FileUtils = Java.type("org.wso2.carbon.uuf.sample.featuresapp.bundle.FileUtils");
-
-        try {
-            var tempDirPath = FileUtils.copy(uploadedFile.path, uploadedFile.name);
-            return {
-                message: 'You have successfully uploaded the file, ' + uploadedFile.name + ' and copied it to '
-                         + tempDirPath + ' directory.'
-            };
-        } catch (e) {
-            Log.error("Error occurred while copying the file.", e);
-            return {
-                error: "Error occurred while uploading the file."
-            };
-        }
+    try {
+        var tempDirPath = FileUtils.copy(uploadedFile.path, uploadedFile.name);
+        return {
+            message: 'You have successfully uploaded the file, ' + uploadedFile.name + ' and copied it to '
+                     + tempDirPath + ' directory.'
+        };
+    } catch (e) {
+        Log.error("Error occurred while copying the file.", e);
+        return {
+            error: "Error occurred while uploading the file."
+        };
     }
 }

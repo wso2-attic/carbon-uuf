@@ -31,7 +31,7 @@ bindings:
 # Business logic related configurations.
 # In Handlebars templates, these configurations can be access using {{@config}} variable.
 # e.g.  {{@config.appName}} will output "Pets Store"
-# In server-side JS 'onRequest(env)' function, these configurations cab access via 'env.config' variable.
+# In server-side JS 'onGet(env)', 'onPost(env)' functions, these configurations cab access via 'env.config' variable.
 # e.g.  env.config['appName'] will give "Pets Store" value
 config:
   # Overrrding 'appName' configuration from 'foundation' and 'simple-auth' components.

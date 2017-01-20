@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-function onRequest(env) {
+function onGet(env) {
     return {
         value: "Handlebars.java",
         start1: 11,
