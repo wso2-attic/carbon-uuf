@@ -14,7 +14,6 @@
  *  limitations under the License.
  */
 
-//noinspection JSUnusedGlobalSymbols
 function onGet(env) {
     return {"tags": getTags(env.pathParams['id'])};
 }
