@@ -31,7 +31,7 @@ public class I18nHelper implements Helper<String> {
     private static final String DEFAULT_LOCALE = "en-us";
     private static final String LOCALE_HEADER = "Accept-Language";
     private static final String LOCALE = "locale";
-    private static final String CURRENT_LOCALE = "CURRENT_LOCALE";
+    private static final String DATA_KEY_CURRENT_LOCALE = "CURRENT_LOCALE";
 
     @Override
     public CharSequence apply(String key, Options options) throws IOException {
@@ -43,7 +43,7 @@ public class I18nHelper implements Helper<String> {
         Lookup lookup = options.data(HbsRenderable.DATA_KEY_LOOKUP);
 
         // Check whether the current locale is already available in the options.
-        String currentLocale = options.data(CURRENT_LOCALE);
+        String currentLocale = options.data(DATA_KEY_CURRENT_LOCALE);
         // If not available, get the current locale.
         if (currentLocale == null) {
             Object localeHeaderValue;
@@ -64,7 +64,7 @@ public class I18nHelper implements Helper<String> {
             }
             // Add the locale to the helper options. This will be used when evaluating this helper again in the same
             // request. This is done to increase the performance.
-            options.data(CURRENT_LOCALE, currentLocale);
+            options.data(DATA_KEY_CURRENT_LOCALE, currentLocale);
         }
         Properties props = lookup.getI18nResources().getI18nResource(currentLocale);
         return props != null ? props.getProperty(key, key) : key;
