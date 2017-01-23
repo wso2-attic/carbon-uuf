@@ -30,7 +30,6 @@ public class I18nHelper implements Helper<String> {
     public static final String HELPER_NAME = "i18n";
     private static final String DEFAULT_LOCALE = "en-us";
     private static final String LOCALE_HEADER = "Accept-Language";
-    private static final String LOCALE = "locale";
     private static final String DATA_KEY_CURRENT_LOCALE = "CURRENT_LOCALE";
 
     @Override
@@ -47,7 +46,7 @@ public class I18nHelper implements Helper<String> {
         // If not available, get the current locale.
         if (currentLocale == null) {
             Object localeHeaderValue;
-            Object localeParam = options.hash.get(LOCALE);
+            Object localeParam = options.hash.get("locale");
             if (localeParam != null) {
                 currentLocale = localeParam.toString();
             } else if ((localeHeaderValue = requestLookup.getRequest().getHeaders().get(LOCALE_HEADER)) != null) {
