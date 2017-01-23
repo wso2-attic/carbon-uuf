@@ -1,3 +1,9 @@
+# TOC
+1. [Basics](#basics)
+2. How to Write an App
+3. Best Practices
+4. [Reference Guide](ref_guide.md)
+
 # Basics
 
 ## UUF Apps
