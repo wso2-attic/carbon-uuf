@@ -26,7 +26,7 @@ import java.util.Collections;
 import java.util.Set;
 
 /**
- * Test cases for API.
+ * Test cases for Lookup.
  *
  * @since 1.0.0
  */

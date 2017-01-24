@@ -27,6 +27,11 @@ import java.util.Optional;
 
 import static java.util.Collections.emptySet;
 
+/**
+ * Test cases for component.
+ *
+ * @since 1.0.0
+ */
 public class ComponentTest {
 
     private static Page createPage(String uriPattern, String content) {
