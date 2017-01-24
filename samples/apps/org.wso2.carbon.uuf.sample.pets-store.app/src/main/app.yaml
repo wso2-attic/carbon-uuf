@@ -15,7 +15,7 @@ menus :
         submenus:
           - text: "See all our amazing pets"
             link: "/pets"
-          - text: "Add a new pets"
+          - text: "Add a new pet"
             link: "/pets/new"
             icon: "fw fw-add"
           - text: "Pet of the month"
