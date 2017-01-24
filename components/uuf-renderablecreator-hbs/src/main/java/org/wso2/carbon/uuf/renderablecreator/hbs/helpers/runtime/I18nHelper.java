@@ -27,10 +27,10 @@ import java.util.Properties;
 
 public class I18nHelper implements Helper<String> {
 
-    public static final String HELPER_NAME = "t";
-    private static final String DEFAULT_LOCALE = "en_US";
+    public static final String HELPER_NAME = "i18n";
+    private static final String DEFAULT_LOCALE = "en-us";
     private static final String LOCALE_HEADER = "Accept-Language";
-    private static final String LOCALE = "locale";
+    private static final String DATA_KEY_CURRENT_LOCALE = "CURRENT_LOCALE";
 
     @Override
     public CharSequence apply(String key, Options options) throws IOException {
@@ -40,28 +40,31 @@ public class I18nHelper implements Helper<String> {
 
         RequestLookup requestLookup = options.data(HbsRenderable.DATA_KEY_REQUEST_LOOKUP);
         Lookup lookup = options.data(HbsRenderable.DATA_KEY_LOOKUP);
-        Object localParam = options.hash.get(LOCALE);
-        Object localeRequest;
-        String currentLocale;
 
-        if (localParam != null) {
-            currentLocale = localParam.toString();
-        } else if ((localeRequest = requestLookup.getRequest().getHeaders().get(LOCALE_HEADER)) != null) {
-            // example: en,en-US;q=0.7,en-AU;q=0.3
-            // https://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.4
-            String locale = localeRequest.toString().split(",")[0].replace("-", "_");
-            if (locale.contains("_")) {
-                currentLocale = locale;
-            } else {
+        // Check whether the current locale is already available in the options.
+        String currentLocale = options.data(DATA_KEY_CURRENT_LOCALE);
+        // If not available, get the current locale.
+        if (currentLocale == null) {
+            Object localeHeaderValue;
+            Object localeParam = options.hash.get("locale");
+            if (localeParam != null) {
+                currentLocale = localeParam.toString();
+            } else if ((localeHeaderValue = requestLookup.getRequest().getHeaders().get(LOCALE_HEADER)) != null) {
+                // example: en,en-us;q=0.7, en-au;q=0.3
+                // https://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.4
+                // Change the locale value to lower case because we store the language keys in lower case.
+                String locale = localeHeaderValue.toString().toLowerCase().split(",")[0].replace("-", "_");
                 currentLocale = lookup.getI18nResources().getAvailableLanguages().stream()
                         .filter(language -> language.startsWith(locale))
                         .findFirst()
                         .orElse(DEFAULT_LOCALE);
+            } else {
+                currentLocale = DEFAULT_LOCALE;
             }
-        } else {
-            currentLocale = DEFAULT_LOCALE;
+            // Add the locale to the helper options. This will be used when evaluating this helper again in the same
+            // request. This is done to increase the performance.
+            options.data(DATA_KEY_CURRENT_LOCALE, currentLocale);
         }
-
         Properties props = lookup.getI18nResources().getI18nResource(currentLocale);
         return props != null ? props.getProperty(key, key) : key;
     }

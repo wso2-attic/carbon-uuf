@@ -18,10 +18,10 @@
 
 package org.wso2.carbon.uuf.api.config;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 /**
  * Holds the i18n language resources of an UUF App.
@@ -30,7 +30,7 @@ import java.util.Set;
  */
 public class I18nResources {
 
-    private final Map<String, Properties> i18nResources = new HashMap<>();
+    private final SortedMap<String, Properties> i18nResources = new TreeMap<>();
 
     /**
      * Adds the given language.
@@ -39,6 +39,9 @@ public class I18nResources {
      * @param i18n     properties
      */
     public void addI18nResource(String language, Properties i18n) {
+        // Convert the language key to lower case before adding to the map. This is done because various browsers
+        // send the locale in different formats.
+        language = language.toLowerCase();
         Properties i18nResource = this.i18nResources.get(language);
         if (i18nResource == null) {
             this.i18nResources.put(language, i18n);
