@@ -9,27 +9,27 @@
     <p>In your JS file;</p>
     <pre>
         function onGet(env) {
-            var PetsStoreDAO = Java.type("org.wso2.carbon.uuf.sample.petsstore.bundle.PetsStoreDAO");
-            var petsStore = new PetsStoreDAO();
-            return {petData: petsStore.getPet("1234")};
+            var Library = Java.type("org.wso2.carbon.uuf.sample.featuresapp.bundle.Library");
+            var libraryObj = new Library();
+            return {bookData: libraryObj.getBook("1234")};
         }
     </pre>
     <p>Then, you can use the return value in your Handlebars template;</p>
     <pre>
-        \{{petData.id}}
-        \{{petData.name}}
-        \{{petData.home}}
+        \{{bookData.id}}
+        \{{bookData.title}}
+        \{{bookData.author}}
     </pre>
     <h3>Output:</h3>
-    {{petData.id}}<br/>
-    {{petData.name}}<br/>
-    {{petData.home}}<br/>
+    {{bookData.id}}<br/>
+    {{bookData.title}}<br/>
+    {{bookData.author}}<br/>
     <h3>Note:</h3>
     <p>Remember to import the package of the calling class in your component's pom.xml.</p>
     <pre>
         &lt;configuration&gt;
             &lt;instructions&gt;
-                &lt;Import-Package&gt;org.wso2.carbon.uuf.sample.petsstore.bundle&lt;/Import-Package&gt;
+                &lt;Import-Package&gt;org.wso2.carbon.uuf.sample.featuresapp.bundle&lt;/Import-Package&gt;
             &lt;/instructions&gt;
         &lt;/configuration&gt;
     </pre>

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2017, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,17 @@
  * limitations under the License.
  */
 
-//noinspection JSUnusedGlobalSymbols
-function onGet(env) {
-    var Library = Java.type("org.wso2.carbon.uuf.sample.featuresapp.bundle.Library");
-    var libraryObj = new Library();
-    return {bookData: libraryObj.getBook("1234")};
+package org.wso2.carbon.uuf.sample.featuresapp.bundle;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class Library {
+    public Map<String, String> getBook(String id) {
+        Map<String, String> bookData = new HashMap<>();
+        bookData.put("id", id);
+        bookData.put("title", "Harry Potter and the Deathly Hallows");
+        bookData.put("author", "J. K. Rowling");
+        return bookData;
+    }
 }
