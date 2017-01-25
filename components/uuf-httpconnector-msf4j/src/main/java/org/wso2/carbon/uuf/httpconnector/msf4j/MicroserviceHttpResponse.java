@@ -110,8 +110,13 @@ public class MicroserviceHttpResponse implements HttpResponse {
         return headers;
     }
 
-    public void setCookie(String name, String value) {
+    public void addCookie(String name, String value) {
         cookies.put(name, value);
+    }
+
+    @Override
+    public String getCookie(String name) {
+        return cookies.get(name);
     }
 
     public Response build() {

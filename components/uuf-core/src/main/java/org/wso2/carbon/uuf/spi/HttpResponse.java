@@ -97,5 +97,7 @@ public interface HttpResponse {
 
     MultivaluedMap<String, String> getHeaders();
 
-    void setCookie(String name, String value);
+    void addCookie(String name, String value);
+
+    String getCookie(String name);
 }
