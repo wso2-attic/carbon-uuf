@@ -23,6 +23,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
+import com.google.gson.JsonObject;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.wso2.carbon.uuf.api.config.Configuration;
@@ -137,13 +138,13 @@ public class AppTest {
 
         HttpRequest request = createRequest(app.getContextPath(), "/fragments/cmp.f1");
         when(request.getFormParams()).thenReturn(emptyMap());
-        String html = app.renderFragment(request, null);
-        Assert.assertEquals(html, fragment1Content);
+        JsonObject renderedFragment = app.renderFragment(request, null);
+        Assert.assertEquals(renderedFragment.get("html").getAsString(), fragment1Content);
 
         request = createRequest(app.getContextPath(), "/fragments/cmp.f2");
         when(request.getFormParams()).thenReturn(emptyMap());
-        html = app.renderFragment(request, null);
-        Assert.assertEquals(html, fragment2Content);
+        renderedFragment = app.renderFragment(request, null);
+        Assert.assertEquals(renderedFragment.get("html").getAsString(), fragment2Content);
     }
 
     @Test
@@ -161,8 +162,8 @@ public class AppTest {
 
         HttpRequest request = createRequest(app.getContextPath(), "/fragments/cmp.f1");
         when(request.getFormParams()).thenReturn(formParams);
-        String html = app.renderFragment(request, null);
-        Assert.assertEquals(html, (fragment1Content + formParams.toString()));
+        JsonObject renderedFragment = app.renderFragment(request, null);
+        Assert.assertEquals(renderedFragment.get("html").getAsString(), (fragment1Content + formParams.toString()));
     }
 
     @Test

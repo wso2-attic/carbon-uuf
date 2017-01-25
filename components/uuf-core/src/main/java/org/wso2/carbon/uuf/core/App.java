@@ -18,6 +18,8 @@
 
 package org.wso2.carbon.uuf.core;
 
+import com.google.gson.JsonObject;
+import org.wso2.carbon.uuf.api.Placeholder;
 import org.wso2.carbon.uuf.api.auth.Session;
 import org.wso2.carbon.uuf.api.config.Bindings;
 import org.wso2.carbon.uuf.api.config.Configuration;
@@ -202,9 +204,9 @@ public class App {
     /**
      * @param request  HTTP request
      * @param response HTTP response
-     * @return rendered HTML output
+     * @return rendered HTML,CSS and JS outputs as JSON
      */
-    public String renderFragment(HttpRequest request, HttpResponse response) {
+    public JsonObject renderFragment(HttpRequest request, HttpResponse response) {
         String uriWithoutContextPath = request.getUriWithoutContextPath();
         String uriPart = uriWithoutContextPath.substring(UriUtils.FRAGMENTS_URI_PREFIX.length());
         String fragmentName = NameUtils.getFullyQualifiedName(rootComponent.getName(), uriPart);
@@ -217,7 +219,16 @@ public class App {
         Model model = new MapModel(request.getFormParams());
         RequestLookup requestLookup = createRequestLookup(request, response);
         API api = new API(sessionRegistry, requestLookup);
-        return fragment.render(model, lookup, requestLookup, api);
+
+        JsonObject renderedFragment = new JsonObject();
+        renderedFragment.addProperty("html", fragment.render(model, lookup, requestLookup, api));
+        renderedFragment.addProperty(Placeholder.headJs.name(),
+                                     requestLookup.getPlaceholderContent(Placeholder.headJs).orElse(null));
+        renderedFragment.addProperty(Placeholder.js.name(),
+                                     requestLookup.getPlaceholderContent(Placeholder.js).orElse(null));
+        renderedFragment.addProperty(Placeholder.css.name(),
+                                     requestLookup.getPlaceholderContent(Placeholder.css).orElse(null));
+        return renderedFragment;
     }
 
     private boolean hasPage(String uriWithoutContextPath) {
