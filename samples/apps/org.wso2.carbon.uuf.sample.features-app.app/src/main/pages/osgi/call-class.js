@@ -18,5 +18,5 @@
 function onGet(env) {
     var Library = Java.type("org.wso2.carbon.uuf.sample.featuresapp.bundle.Library");
     var libraryObj = new Library();
-    return {bookData: libraryObj.getBook("1234")};
+    return {book: libraryObj.getBook(1234)};
 }

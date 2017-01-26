@@ -11,19 +11,23 @@
         function onGet(env) {
             var Library = Java.type("org.wso2.carbon.uuf.sample.featuresapp.bundle.Library");
             var libraryObj = new Library();
-            return {bookData: libraryObj.getBook("1234")};
+            return {book: libraryObj.getBook(1234)};
         }
     </pre>
     <p>Then, you can use the return value in your Handlebars template;</p>
     <pre>
-        \{{bookData.id}}
-        \{{bookData.title}}
-        \{{bookData.author}}
+        \{{book.id}}
+        \{{book.title}}
+        \{{book.author}}
     </pre>
     <h3>Output:</h3>
-    {{bookData.id}}<br/>
-    {{bookData.title}}<br/>
-    {{bookData.author}}<br/>
+    {{#if book}}
+        {{book.id}}<br/>
+        {{book.title}}<br/>
+        {{book.author}}<br/>
+    {{else}}
+        <p>Cannot find the book!</p>
+    {{/if}}
     <h3>Note:</h3>
     <p>Remember to import the package of the calling class in your component's pom.xml.</p>
     <pre>
