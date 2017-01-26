@@ -65,9 +65,9 @@ import java.util.Set;
  *
  * @since 1.0.0
  */
-public class HbsHelperRegistry implements HelperRegistry {
+public class RuntimeHelperRegistry implements HelperRegistry {
 
-    private final Logger logger = LoggerFactory.getLogger(HbsHelperRegistry.class);
+    private final Logger logger = LoggerFactory.getLogger(RuntimeHelperRegistry.class);
 
     /**
      * The helper registry.
@@ -82,7 +82,7 @@ public class HbsHelperRegistry implements HelperRegistry {
     /**
      * Default constructor that registers all the default hbs helpers and additionally registers UUF related helpers
      */
-    public HbsHelperRegistry() {
+    public RuntimeHelperRegistry() {
         registerDefaultHelpers(this);
     }
 

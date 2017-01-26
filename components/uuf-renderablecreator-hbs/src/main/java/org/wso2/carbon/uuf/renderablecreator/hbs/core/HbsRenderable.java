@@ -24,7 +24,7 @@ import org.wso2.carbon.uuf.core.API;
 import org.wso2.carbon.uuf.core.Lookup;
 import org.wso2.carbon.uuf.core.RequestLookup;
 import org.wso2.carbon.uuf.exception.UUFException;
-import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.registry.HbsHelperRegistry;
+import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.registry.RuntimeHelperRegistry;
 import org.wso2.carbon.uuf.spi.Renderable;
 import org.wso2.carbon.uuf.spi.model.Model;
 
@@ -40,7 +40,7 @@ public abstract class HbsRenderable implements Renderable {
     public static final String DATA_KEY_API = HbsRenderable.class.getName() + "#api";
     public static final String DATA_KEY_CURRENT_WRITER = HbsRenderable.class.getName() + "#writer";
     public static final String DATA_KEY_RESOLVED_RESOURCES = HbsRenderable.class.getName() + "#resolved-resources";
-    private static final Handlebars HANDLEBARS = new Handlebars().with(new HbsHelperRegistry());
+    private static final Handlebars HANDLEBARS = new Handlebars().with(new RuntimeHelperRegistry());
 
     private final Template template;
     private final String absolutePath;
