@@ -16,7 +16,7 @@
 
 //noinspection JSUnusedGlobalSymbols
 function onGet(env) {
-    var PetsStoreDAO = Java.type("org.wso2.carbon.uuf.sample.petsstore.bundle.PetsStoreDAO");
-    var petsStore = new PetsStoreDAO();
-    return {petData: petsStore.getPet("1234")};
+    var Library = Java.type("org.wso2.carbon.uuf.sample.featuresapp.bundle.Library");
+    var libraryObj = new Library();
+    return {book: libraryObj.getBook(1234)};
 }

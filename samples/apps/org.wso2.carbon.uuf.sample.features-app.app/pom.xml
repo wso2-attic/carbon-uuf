@@ -89,7 +89,8 @@
                         <configuration>
                             <instructions>
                                 <Import-Package>
-                                    org.wso2.carbon.uuf.sample.featuresapp.bundle
+                                    org.wso2.carbon.uuf.sample.featuresapp.bundle,
+                                    org.wso2.carbon.uuf.sample.simpleauth.bundle
                                 </Import-Package>
                             </instructions>
                             <bundles>
