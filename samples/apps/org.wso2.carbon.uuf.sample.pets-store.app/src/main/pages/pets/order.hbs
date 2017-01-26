@@ -19,7 +19,7 @@
             </button>
         </div>
     {{/if}}
-    <form class="form-horizontal" method="post">
+    {{#form "order-pet" class="form-horizontal" method="post"}}
         <div class="form-group">
             <div class="col-sm-12">
                 <label class="control-label">Pet's category</label>
@@ -61,5 +61,5 @@
                 <button type="submit" class="btn btn-default btn-primary">Order</button>
             </div>
         </div>
-    </form>
+    {{/form}}
 {{/fillZone}}

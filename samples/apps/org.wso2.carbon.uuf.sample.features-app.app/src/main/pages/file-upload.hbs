@@ -27,7 +27,7 @@
             </button>
         </div>
     {{/if}}
-    <form class="form-horizontal" method="post" enctype="multipart/form-data">
+    {{#form "fileupload-form" class="form-horizontal" method="post" enctype="multipart/form-data"}}
         <label class="control-label">Select your file here.</label>
         <input type="file" name="file-content" />
         <div class="input-group-btn">
@@ -36,5 +36,5 @@
                 <span class="hidden-xs">Upload</span>
             </button>
         </div>
-    </form>
+    {{/form}}
 {{/fillZone}}
