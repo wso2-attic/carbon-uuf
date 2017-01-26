@@ -219,9 +219,9 @@
 
             <!--UUF Sample Themes-->
             <dependency>
-                <groupId>org.wso2.carbon.uuf.sample</groupId>
-                <artifactId>org.wso2.carbon.uuf.sample.default.theme</artifactId>
-                <version>${carbon.uuf.version}</version>
+                <groupId>org.wso2.carbon.uuf.common</groupId>
+                <artifactId>org.wso2.carbon.uuf.common.default.theme</artifactId>
+                <version>${carbon.uuf.theme.version}</version>
                 <type>zip</type>
                 <classifier>uuf-theme</classifier>
             </dependency>
@@ -596,6 +596,9 @@
         <carbon.messaging.version>1.0.11</carbon.messaging.version>
         <carbon.messaging.version.range>[1.0.11, 2.0.0)</carbon.messaging.version.range>
         <carbon.transport.http.netty.version>2.1.4</carbon.transport.http.netty.version>
+
+        <!-- UUF Theme -->
+        <carbon.uuf.theme.version>1.0.0-SNAPSHOT</carbon.uuf.theme.version>
 
         <!-- Handlebars -->
         <orbit.com.github.jknack.handlebars.version>4.0.3.wso2v1</orbit.com.github.jknack.handlebars.version>

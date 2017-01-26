@@ -55,8 +55,8 @@
         </dependency>
         <!--UUF Themes-->
         <dependency>
-            <groupId>org.wso2.carbon.uuf.sample</groupId>
-            <artifactId>org.wso2.carbon.uuf.sample.default.theme</artifactId>
+            <groupId>org.wso2.carbon.uuf.common</groupId>
+            <artifactId>org.wso2.carbon.uuf.common.default.theme</artifactId>
             <type>zip</type>
             <classifier>uuf-theme</classifier>
         </dependency>
