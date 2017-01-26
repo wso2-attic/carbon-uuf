@@ -22,6 +22,7 @@ import com.github.jknack.handlebars.io.TemplateSource;
 import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.init.LayoutHelper;
 import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.init.SecuredHelper;
+import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.registry.InitHelperRegistry;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -31,13 +32,7 @@ public class HbsPreprocessor {
 
     public static final String DATA_KEY_CURRENT_LAYOUT = HbsPreprocessor.class.getName() + "#layout";
     public static final String DATA_KEY_IS_SECURED = HbsPreprocessor.class.getName() + "#secured";
-    private static final Handlebars HANDLEBARS = new Handlebars();
-
-    static {
-        HANDLEBARS.registerHelper(LayoutHelper.HELPER_NAME, new LayoutHelper());
-        HANDLEBARS.registerHelper(SecuredHelper.HELPER_NAME, new SecuredHelper());
-        HANDLEBARS.registerHelperMissing((context, options) -> "");
-    }
+    private static final Handlebars HANDLEBARS = new Handlebars().with(new InitHelperRegistry());
 
     private final Optional<String> layout;
     private final boolean isSecured;

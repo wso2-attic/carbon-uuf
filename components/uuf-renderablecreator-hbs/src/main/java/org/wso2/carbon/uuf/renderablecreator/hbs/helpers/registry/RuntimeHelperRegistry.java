@@ -59,7 +59,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Default implementation of {@link HelperRegistry} used in UUF.
+ * Handlebars helpers registry for runtime.
  * Reusing the some code from {@link com.github.jknack.handlebars.helper.DefaultHelperRegistry} and additionally
  * including helpers written for UUF.
  *
@@ -197,9 +197,9 @@ public class RuntimeHelperRegistry implements HelperRegistry {
      * Register built-in and default helpers. We are not registering some of the unwanted helpers (partial, embedded,
      * i18n. etc) as they are replaced by the custom helpers written for UUF.
      *
-     * @param registry The handlebars instance.
+     * @param registry the Handlebars registry to be used for helper registration
      */
-    private void registerDefaultHelpers(final HelperRegistry registry) {
+    protected void registerDefaultHelpers(final HelperRegistry registry) {
         registry.registerHelper(WithHelper.NAME, WithHelper.INSTANCE);
         registry.registerHelper(IfHelper.NAME, IfHelper.INSTANCE);
         registry.registerHelper(UnlessHelper.NAME, UnlessHelper.INSTANCE);
@@ -225,8 +225,6 @@ public class RuntimeHelperRegistry implements HelperRegistry {
         registry.registerHelper(I18nHelper.HELPER_NAME, new I18nHelper());
         registry.registerHelper(TemplateHelper.HELPER_NAME, new TemplateHelper());
         registry.registerHelperMissing(new MissingHelper());
-        // decorator
-        registry.registerDecorator("inline", InlineDecorator.INSTANCE);
     }
 
     /**
