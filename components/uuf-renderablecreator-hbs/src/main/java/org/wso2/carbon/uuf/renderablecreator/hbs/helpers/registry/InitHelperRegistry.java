@@ -26,7 +26,7 @@ import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.init.SecuredHelper;
  * Handlebars helpers registry for pre-compilation stage.
  * Secured, Layout, I18n and Missing helper is used in this registry.
  *
- * @Since 1.0.0
+ * @since 1.0.0
  */
 public class InitHelperRegistry extends RuntimeHelperRegistry {
 
