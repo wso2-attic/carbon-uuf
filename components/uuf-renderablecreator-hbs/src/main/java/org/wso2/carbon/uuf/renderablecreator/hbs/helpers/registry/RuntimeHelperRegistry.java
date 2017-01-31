@@ -25,7 +25,6 @@ import com.github.jknack.handlebars.HelperRegistry;
 import com.github.jknack.handlebars.helper.BlockHelper;
 import com.github.jknack.handlebars.helper.EachHelper;
 import com.github.jknack.handlebars.helper.IfHelper;
-import com.github.jknack.handlebars.helper.InlineDecorator;
 import com.github.jknack.handlebars.helper.LogHelper;
 import com.github.jknack.handlebars.helper.LookupHelper;
 import com.github.jknack.handlebars.helper.StringHelpers;
@@ -38,7 +37,7 @@ import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.DefinePlacehold
 import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.DefineZoneHelper;
 import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.FaviconHelper;
 import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.FillZoneHelper;
-import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.FormHelper;
+import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.CSRFTokenHelper;
 import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.FragmentHelper;
 import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.HeadJsHelper;
 import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.HeadOtherHelper;
@@ -225,7 +224,7 @@ public class RuntimeHelperRegistry implements HelperRegistry {
         registry.registerHelper(JsHelper.HELPER_NAME, new JsHelper());
         registry.registerHelper(I18nHelper.HELPER_NAME, new I18nHelper());
         registry.registerHelper(TemplateHelper.HELPER_NAME, new TemplateHelper());
-        registry.registerHelper(FormHelper.HELPER_NAME, new FormHelper());
+        registry.registerHelper(CSRFTokenHelper.HELPER_NAME, new CSRFTokenHelper());
         registry.registerHelperMissing(new MissingHelper());
     }
 

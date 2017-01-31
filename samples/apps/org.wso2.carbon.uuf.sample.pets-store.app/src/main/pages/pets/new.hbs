@@ -18,7 +18,7 @@
             </button>
         </div>
     {{/if}}
-    {{#form "add-pet" class="form-horizontal" method="post"}}
+    <form class="form-horizontal" method="post">
         <div class="form-group">
             <div class="col-sm-12">
                 <label for="input-name" class="control-label">{{i18n "pets-store.add.pet.name"}} <span class="">*</span></label>
@@ -61,5 +61,6 @@
                 <button type="submit" class="btn btn-default btn-primary">{{i18n "pets-store.add.pet.submit"}}</button>
             </div>
         </div>
-    {{/form}}
+        {{csrfToken}}
+    </form>
 {{/fillZone}}

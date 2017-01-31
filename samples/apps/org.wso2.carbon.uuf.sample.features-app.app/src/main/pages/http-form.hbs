@@ -3,13 +3,14 @@
 {{#fillZone "content"}}
     <h3>HTTP Form Sample.</h3>
     <hr />
-    {{#form "sample-form" form method="post"}}
+    <form method="post">
         <div class="form-group">
             <label for="inputName">Name</label>
             <input type="text" name="name" id="inputName" class="form-control" placeholder="Name" />
         </div>
         <input type="submit" value="Submit" />
-    {{/form}}
+        {{csrfToken}}
+    </form>
     {{#if prevName}}
         Submitted name: {{prevName}}
     {{/if}}

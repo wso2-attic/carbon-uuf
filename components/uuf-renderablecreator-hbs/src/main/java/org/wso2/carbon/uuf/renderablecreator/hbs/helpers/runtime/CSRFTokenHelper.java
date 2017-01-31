@@ -24,28 +24,24 @@ import org.wso2.carbon.uuf.renderablecreator.hbs.core.HbsRenderable;
 
 import java.io.IOException;
 
-import static org.wso2.carbon.uuf.spi.HttpRequest.COOKIE_UUFSESSIONID;
+import static org.wso2.carbon.uuf.spi.HttpRequest.COOKIE_CSRFTOKEN;
 
-public class FormHelper implements Helper<String> {
+public class CSRFTokenHelper implements Helper<Object> {
 
-    public static final String HELPER_NAME = "form";
+    public static final String HELPER_NAME = "csrfToken";
 
     @Override
-    public CharSequence apply(String name, Options options) throws IOException {
+    public CharSequence apply(Object name, Options options) throws IOException {
         StringBuilder buffer = new StringBuilder();
-
         RequestLookup requestLookup = options.data(HbsRenderable.DATA_KEY_REQUEST_LOOKUP);
-        String cookieValue = requestLookup.getRequest().getCookieValue(COOKIE_UUFSESSIONID);
+        String cookieValue = requestLookup.getRequest().getCookieValue(COOKIE_CSRFTOKEN);
 
-        buffer.append("<form name=\"" + name + "\"");
-        // set all the form attributes, such as "action", "method" etc
-        options.hash.entrySet().forEach(entry -> buffer.append(" " + entry.getKey() + "=\"" + entry.getValue() + "\""));
-        buffer.append(">").append(options.fn().toString());
-        // append the CSRFTOKEN cookie value as a hidden filed
         if (cookieValue != null) {
-            buffer.append("\t<input type=\"hidden\" name=\"csrftoken\" id=\"csrftoken\" value=\"" + cookieValue + "\"/>\n");
+            buffer.append("<input type=\"hidden\" name=\"csrftoken\" id=\"csrftoken\" value=\"")
+                    .append(cookieValue)
+                    .append("\"/>");
         }
-        buffer.append("</form>");
+
         return new Handlebars.SafeString(buffer.toString());
     }
 }

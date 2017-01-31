@@ -45,6 +45,7 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
+import static org.wso2.carbon.uuf.spi.HttpRequest.COOKIE_CSRFTOKEN;
 
 public class HbsHelperTest {
 
@@ -345,5 +346,20 @@ public class HbsHelperTest {
                 "type=\"text/css\" />\n<script src=\"/myapp/public/component/base/js/my-script.js\" " +
                 "type=\"text/javascript\"></script>\n";
         Assert.assertEquals(pageRenderable.render(null, lookup, requestLookup, createAPI()), expected);
+    }
+
+    @Test
+    public void testCSRFTokenHelper() {
+        RequestLookup requestLookup = createRequestLookup();
+        when(requestLookup.getRequest().getCookieValue(COOKIE_CSRFTOKEN)).thenReturn("A45B3DDE4CF00891E7A9F3B752F18F92");
+
+        String output = createRenderable("{{csrfToken}}").render(null, createLookup(), requestLookup, createAPI());
+        String expected = "<input type=\"hidden\" name=\"csrftoken\" id=\"csrftoken\" " +
+                "value=\"A45B3DDE4CF00891E7A9F3B752F18F92\"/>";
+        Assert.assertEquals(output, expected);
+
+        String formoutput = createRenderable("<form>{{csrfToken}}</form>").render(null, createLookup(),
+                requestLookup, createAPI());
+        Assert.assertEquals(formoutput, "<form>" + expected + "</form>");
     }
 }
