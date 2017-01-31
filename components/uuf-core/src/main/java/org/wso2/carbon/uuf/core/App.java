@@ -220,15 +220,13 @@ public class App {
         RequestLookup requestLookup = createRequestLookup(request, response);
         API api = new API(sessionRegistry, requestLookup);
 
-        JsonObject renderedFragment = new JsonObject();
-        renderedFragment.addProperty("html", fragment.render(model, lookup, requestLookup, api));
-        renderedFragment.addProperty(Placeholder.headJs.name(),
-                                     requestLookup.getPlaceholderContent(Placeholder.headJs).orElse(null));
-        renderedFragment.addProperty(Placeholder.js.name(),
-                                     requestLookup.getPlaceholderContent(Placeholder.js).orElse(null));
-        renderedFragment.addProperty(Placeholder.css.name(),
-                                     requestLookup.getPlaceholderContent(Placeholder.css).orElse(null));
-        return renderedFragment;
+        JsonObject output = new JsonObject();
+        output.addProperty("html", fragment.render(model, lookup, requestLookup, api));
+        output.addProperty(Placeholder.headJs.name(),
+                           requestLookup.getPlaceholderContent(Placeholder.headJs).orElse(null));
+        output.addProperty(Placeholder.js.name(), requestLookup.getPlaceholderContent(Placeholder.js).orElse(null));
+        output.addProperty(Placeholder.css.name(), requestLookup.getPlaceholderContent(Placeholder.css).orElse(null));
+        return output;
     }
 
     private boolean hasPage(String uriWithoutContextPath) {

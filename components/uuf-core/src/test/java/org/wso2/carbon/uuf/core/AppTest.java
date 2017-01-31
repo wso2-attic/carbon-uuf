@@ -71,11 +71,9 @@ public class AppTest {
     }
 
     private static Fragment createFragmentWithResources(String name, String content) {
-        Renderable renderable = (model, l, rl, a) -> content + (model.toMap().isEmpty() ? "" : model.toMap());
-        return new Fragment(name, renderable, false) {
+        return new Fragment(name, null, false) {
             @Override
             public String render(Model model, Lookup lookup, RequestLookup requestLookup, API api) {
-                //requestLookup.addToPlaceholder("html", content);
                 requestLookup.addToPlaceholder(Placeholder.css, "CSS Content");
                 requestLookup.addToPlaceholder(Placeholder.js, "JS Content");
                 requestLookup.addToPlaceholder(Placeholder.headJs, "Head JS Content");
@@ -153,13 +151,13 @@ public class AppTest {
 
         HttpRequest request = createRequest(app.getContextPath(), "/fragments/cmp.f1");
         when(request.getFormParams()).thenReturn(emptyMap());
-        JsonObject renderedFragment = app.renderFragment(request, null);
-        Assert.assertEquals(renderedFragment.get("html").getAsString(), fragment1Content);
+        JsonObject output = app.renderFragment(request, null);
+        Assert.assertEquals(output.get("html").getAsString(), fragment1Content);
 
         request = createRequest(app.getContextPath(), "/fragments/cmp.f2");
         when(request.getFormParams()).thenReturn(emptyMap());
-        renderedFragment = app.renderFragment(request, null);
-        Assert.assertEquals(renderedFragment.get("html").getAsString(), fragment2Content);
+        output = app.renderFragment(request, null);
+        Assert.assertEquals(output.get("html").getAsString(), fragment2Content);
     }
 
     @Test
@@ -175,11 +173,11 @@ public class AppTest {
 
         HttpRequest request = createRequest(app.getContextPath(), "/fragments/cmp.f1");
         when(request.getFormParams()).thenReturn(emptyMap());
-        JsonObject renderedFragment = app.renderFragment(request, null);
-        Assert.assertEquals(renderedFragment.get("html").getAsString(), fragment1Content);
-        Assert.assertEquals(renderedFragment.get("css").getAsString(), "CSS Content");
-        Assert.assertEquals(renderedFragment.get("js").getAsString(), "JS Content");
-        Assert.assertEquals(renderedFragment.get("headJs").getAsString(), "Head JS Content");
+        JsonObject output = app.renderFragment(request, null);
+        Assert.assertEquals(output.get("html").getAsString(), fragment1Content);
+        Assert.assertEquals(output.get("css").getAsString(), "CSS Content");
+        Assert.assertEquals(output.get("js").getAsString(), "JS Content");
+        Assert.assertEquals(output.get("headJs").getAsString(), "Head JS Content");
     }
 
     @Test
@@ -197,8 +195,8 @@ public class AppTest {
 
         HttpRequest request = createRequest(app.getContextPath(), "/fragments/cmp.f1");
         when(request.getFormParams()).thenReturn(formParams);
-        JsonObject renderedFragment = app.renderFragment(request, null);
-        Assert.assertEquals(renderedFragment.get("html").getAsString(), (fragment1Content + formParams.toString()));
+        JsonObject output = app.renderFragment(request, null);
+        Assert.assertEquals(output.get("html").getAsString(), (fragment1Content + formParams.toString()));
     }
 
     @Test
