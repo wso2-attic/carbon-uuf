@@ -354,12 +354,8 @@ public class HbsHelperTest {
         when(requestLookup.getRequest().getCookieValue(COOKIE_CSRFTOKEN)).thenReturn("A45B3DDE4CF00891E7A9F3B752F18F92");
 
         String output = createRenderable("{{csrfToken}}").render(null, createLookup(), requestLookup, createAPI());
-        String expected = "<input type=\"hidden\" name=\"csrftoken\" id=\"csrftoken\" " +
+        String expected = "<input type=\"hidden\" name=\"uuf-csrftoken\" " +
                 "value=\"A45B3DDE4CF00891E7A9F3B752F18F92\"/>";
         Assert.assertEquals(output, expected);
-
-        String formoutput = createRenderable("<form>{{csrfToken}}</form>").render(null, createLookup(),
-                requestLookup, createAPI());
-        Assert.assertEquals(formoutput, "<form>" + expected + "</form>");
     }
 }

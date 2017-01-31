@@ -31,13 +31,13 @@ public class CSRFTokenHelper implements Helper<Object> {
     public static final String HELPER_NAME = "csrfToken";
 
     @Override
-    public CharSequence apply(Object name, Options options) throws IOException {
+    public CharSequence apply(Object context, Options options) throws IOException {
         StringBuilder buffer = new StringBuilder();
         RequestLookup requestLookup = options.data(HbsRenderable.DATA_KEY_REQUEST_LOOKUP);
         String cookieValue = requestLookup.getRequest().getCookieValue(COOKIE_CSRFTOKEN);
 
         if (cookieValue != null) {
-            buffer.append("<input type=\"hidden\" name=\"csrftoken\" id=\"csrftoken\" value=\"")
+            buffer.append("<input type=\"hidden\" name=\"uuf-csrftoken\" value=\"")
                     .append(cookieValue)
                     .append("\"/>");
         }
