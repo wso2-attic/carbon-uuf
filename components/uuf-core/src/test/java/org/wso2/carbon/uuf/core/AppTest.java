@@ -26,6 +26,7 @@ import com.google.common.collect.ImmutableSortedSet;
 import com.google.gson.JsonObject;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import org.wso2.carbon.uuf.api.Placeholder;
 import org.wso2.carbon.uuf.api.config.Configuration;
 import org.wso2.carbon.uuf.api.model.MapModel;
 import org.wso2.carbon.uuf.exception.PageRedirectException;
@@ -67,6 +68,20 @@ public class AppTest {
     private static Fragment createFragment(String name, String content) {
         Renderable renderable = (model, l, rl, a) -> content + (model.toMap().isEmpty() ? "" : model.toMap());
         return new Fragment(name, renderable, false);
+    }
+
+    private static Fragment createFragmentWithResources(String name, String content) {
+        Renderable renderable = (model, l, rl, a) -> content + (model.toMap().isEmpty() ? "" : model.toMap());
+        return new Fragment(name, renderable, false) {
+            @Override
+            public String render(Model model, Lookup lookup, RequestLookup requestLookup, API api) {
+                //requestLookup.addToPlaceholder("html", content);
+                requestLookup.addToPlaceholder(Placeholder.css, "CSS Content");
+                requestLookup.addToPlaceholder(Placeholder.js, "JS Content");
+                requestLookup.addToPlaceholder(Placeholder.headJs, "Head JS Content");
+                return content;
+            }
+        };
     }
 
     private static HttpRequest createRequest(String contextPath, String uriWithoutContextPath) {
@@ -145,6 +160,37 @@ public class AppTest {
         when(request.getFormParams()).thenReturn(emptyMap());
         renderedFragment = app.renderFragment(request, null);
         Assert.assertEquals(renderedFragment.get("html").getAsString(), fragment2Content);
+    }
+
+    @Test
+    public void testRenderFragmentWithResources() {
+        final String fragment1Content = "Fragment 1 with Resource content.";
+        Fragment f1 = createFragmentWithResources("cmp.f1", fragment1Content);
+        final String fragment2Content = "Fragment 2 with Resource content.";
+        Fragment f2 = createFragmentWithResources("cmp.f2", fragment2Content);
+        Component cmp = new Component("cmp", null, "/cmp", emptySortedSet(), ImmutableSet.of(f1, f2), emptySet(),
+                                      emptySet(), null);
+        Component rootComponent = new Component("root", null, Component.ROOT_COMPONENT_CONTEXT_PATH, emptySortedSet(),
+                                                emptySet(), emptySet(), singleton(cmp), null);
+        App app = new App(null, "/test", ImmutableSet.of(cmp, rootComponent), emptySet(), createConfiguration(), null,
+                          null);
+
+        HttpRequest request = createRequest(app.getContextPath(), "/fragments/cmp.f1");
+        when(request.getFormParams()).thenReturn(emptyMap());
+        JsonObject renderedFragment = app.renderFragment(request, null);
+        Assert.assertEquals(renderedFragment.get("html").getAsString(), fragment1Content);
+        Assert.assertEquals(renderedFragment.get("css").getAsString(), "CSS Content");
+        Assert.assertEquals(renderedFragment.get("js").getAsString(), "JS Content");
+        Assert.assertEquals(renderedFragment.get("headJs").getAsString(), "Head JS Content");
+
+        request = createRequest(app.getContextPath(), "/fragments/cmp.f2");
+        when(request.getFormParams()).thenReturn(emptyMap());
+        renderedFragment = app.renderFragment(request, null);
+        Assert.assertEquals(renderedFragment.get("html").getAsString(), fragment2Content);
+        Assert.assertEquals(renderedFragment.get("css").getAsString(), "CSS Content");
+        Assert.assertEquals(renderedFragment.get("js").getAsString(), "JS Content");
+        Assert.assertEquals(renderedFragment.get("headJs").getAsString(), "Head JS Content");
+
     }
 
     @Test
