@@ -166,9 +166,7 @@ public class AppTest {
     public void testRenderFragmentWithResources() {
         final String fragment1Content = "Fragment 1 with Resource content.";
         Fragment f1 = createFragmentWithResources("cmp.f1", fragment1Content);
-        final String fragment2Content = "Fragment 2 with Resource content.";
-        Fragment f2 = createFragmentWithResources("cmp.f2", fragment2Content);
-        Component cmp = new Component("cmp", null, "/cmp", emptySortedSet(), ImmutableSet.of(f1, f2), emptySet(),
+        Component cmp = new Component("cmp", null, "/cmp", emptySortedSet(), ImmutableSet.of(f1), emptySet(),
                                       emptySet(), null);
         Component rootComponent = new Component("root", null, Component.ROOT_COMPONENT_CONTEXT_PATH, emptySortedSet(),
                                                 emptySet(), emptySet(), singleton(cmp), null);
@@ -182,15 +180,6 @@ public class AppTest {
         Assert.assertEquals(renderedFragment.get("css").getAsString(), "CSS Content");
         Assert.assertEquals(renderedFragment.get("js").getAsString(), "JS Content");
         Assert.assertEquals(renderedFragment.get("headJs").getAsString(), "Head JS Content");
-
-        request = createRequest(app.getContextPath(), "/fragments/cmp.f2");
-        when(request.getFormParams()).thenReturn(emptyMap());
-        renderedFragment = app.renderFragment(request, null);
-        Assert.assertEquals(renderedFragment.get("html").getAsString(), fragment2Content);
-        Assert.assertEquals(renderedFragment.get("css").getAsString(), "CSS Content");
-        Assert.assertEquals(renderedFragment.get("js").getAsString(), "JS Content");
-        Assert.assertEquals(renderedFragment.get("headJs").getAsString(), "Head JS Content");
-
     }
 
     @Test
