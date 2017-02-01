@@ -17,6 +17,8 @@
 package org.wso2.carbon.uuf.renderablecreator.hbs.impl;
 
 import org.wso2.carbon.uuf.core.API;
+import org.wso2.carbon.uuf.core.Lookup;
+import org.wso2.carbon.uuf.core.RequestLookup;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.MutableExecutable;
 
 import java.util.concurrent.locks.Lock;
@@ -37,10 +39,10 @@ public class MutableJsExecutable extends JsExecutable implements MutableExecutab
     }
 
     @Override
-    public Object execute(Object context, API api) {
+    public Object execute(Object context, API api, Lookup lookup, RequestLookup requestLookup) {
         try {
             readLock.lock();
-            return super.execute(context, api);
+            return super.execute(context, api, lookup, requestLookup);
         } finally {
             readLock.unlock();
         }

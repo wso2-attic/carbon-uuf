@@ -72,7 +72,8 @@ public class HbsPageRenderable extends HbsRenderable {
         if (executable == null) {
             context = Context.newContext(getTemplateModel(model, lookup, requestLookup, api));
         } else {
-            Map executeOutput = execute(executable, getExecutableContext(model, lookup, requestLookup), api);
+            Map executeOutput = execute(executable, getExecutableContext(model, lookup, requestLookup), api, lookup,
+                                        requestLookup);
             if (log.isDebugEnabled()) {
                 log.debug("Executable output \"" + DebugUtil.safeJsonString(executeOutput) + "\".");
             }
@@ -120,8 +121,9 @@ public class HbsPageRenderable extends HbsRenderable {
         return context;
     }
 
-    protected static Map execute(Executable executable, Object context, API api) {
-        Object executableOutput = executable.execute(context, api);
+    protected static Map execute(Executable executable, Object context, API api, Lookup lookup,
+                                 RequestLookup requestLookup) {
+        Object executableOutput = executable.execute(context, api, lookup, requestLookup);
         if (executableOutput == null) {
             return Collections.emptyMap();
         }

@@ -18,6 +18,7 @@
 
 package org.wso2.carbon.uuf.api.config;
 
+import java.util.Locale;
 import java.util.Properties;
 import java.util.Set;
 import java.util.SortedMap;
@@ -35,16 +36,15 @@ public class I18nResources {
     /**
      * Adds the given language.
      *
-     * @param language language to be add
-     * @param i18n     properties
+     * @param locale language to be add
+     * @param i18n   properties
      */
-    public void addI18nResource(String language, Properties i18n) {
+    public void addI18nResource(Locale locale, Properties i18n) {
         // Convert the language key to lower case before adding to the map. This is done because various browsers
         // send the locale in different formats.
-        language = language.toLowerCase();
-        Properties i18nResource = this.i18nResources.get(language);
+        Properties i18nResource = this.i18nResources.get(locale.toLanguageTag());
         if (i18nResource == null) {
-            this.i18nResources.put(language, i18n);
+            this.i18nResources.put(locale.toLanguageTag(), i18n);
         } else {
             i18nResource.putAll(i18n);
         }
@@ -62,10 +62,10 @@ public class I18nResources {
     /**
      * Returns the i18n resource for the given language.
      *
-     * @param language language of the i18n resource
+     * @param locale Locale of the i18n resource
      * @return i18n resource
      */
-    public Properties getI18nResource(String language) {
-        return i18nResources.get(language);
+    public Properties getI18nResource(Locale locale) {
+        return i18nResources.get(locale.toLanguageTag());
     }
 }

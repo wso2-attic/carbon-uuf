@@ -65,7 +65,8 @@ public class HbsFragmentRenderable extends HbsPageRenderable {
                 context = Context.newContext(templateModel);
             }
         } else {
-            Map executeOutput = execute(executable, getExecutableContext(model, lookup, requestLookup), api);
+            Map executeOutput = execute(executable, getExecutableContext(model, lookup, requestLookup), api, lookup,
+                                        requestLookup);
             if (log.isDebugEnabled()) {
                 log.debug("Executable output \"" + DebugUtil.safeJsonString(executeOutput) + "\".");
             }

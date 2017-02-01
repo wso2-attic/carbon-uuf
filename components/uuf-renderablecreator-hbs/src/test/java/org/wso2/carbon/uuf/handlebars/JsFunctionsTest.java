@@ -21,7 +21,9 @@ import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import org.wso2.carbon.uuf.api.Placeholder;
+import org.wso2.carbon.uuf.api.config.Configuration;
 import org.wso2.carbon.uuf.core.API;
+import org.wso2.carbon.uuf.core.Lookup;
 import org.wso2.carbon.uuf.core.RequestLookup;
 import org.wso2.carbon.uuf.renderablecreator.hbs.impl.js.JsFunctionsImpl;
 import org.wso2.carbon.uuf.spi.HttpRequest;
@@ -30,8 +32,10 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Collections;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 /**
@@ -58,7 +62,7 @@ public class JsFunctionsTest {
     @Test(dataProvider = "sendToClientJS")
     public void testSendToClient(String varName, String inputJS, String outputJS) {
         API api = createAPI();
-        JsFunctionsImpl jsFunctions = new JsFunctionsImpl(api);
+        JsFunctionsImpl jsFunctions = new JsFunctionsImpl(api, createLookup(), createRequestLookup());
         jsFunctions.getSendToClientFunction().call(varName, inputJS);
         Assert.assertEquals(api.getRequestLookup().getPlaceholderContent(Placeholder.js).get(), outputJS);
     }
@@ -67,5 +71,19 @@ public class JsFunctionsTest {
         API api = mock(API.class);
         when(api.getRequestLookup()).thenReturn(new RequestLookup("/contextPath", mock(HttpRequest.class), null));
         return api;
+    }
+
+    private static Lookup createLookup() {
+        Configuration configuration = mock(Configuration.class);
+        when(configuration.other()).thenReturn(Collections.emptyMap());
+        Lookup lookup = mock(Lookup.class);
+        when(lookup.getConfiguration()).thenReturn(configuration);
+        return lookup;
+    }
+
+    private static RequestLookup createRequestLookup() {
+        HttpRequest request = mock(HttpRequest.class);
+        when(request.getQueryParams()).thenReturn(Collections.emptyMap());
+        return spy(new RequestLookup("/contextPath", request, null));
     }
 }

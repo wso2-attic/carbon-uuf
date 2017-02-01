@@ -14,13 +14,12 @@
  *  limitations under the License.
  */
 
-package org.wso2.carbon.uuf.renderablecreator.hbs.core;
+package org.wso2.carbon.uuf.renderablecreator.hbs.core.js;
 
-import org.wso2.carbon.uuf.core.API;
-import org.wso2.carbon.uuf.core.Lookup;
-import org.wso2.carbon.uuf.core.RequestLookup;
+@FunctionalInterface
+public interface I18nFunction {
 
-public interface Executable {
+    String NAME = "i18n";
 
-    Object execute(Object context, API api, Lookup lookup, RequestLookup requestLookup);
+    String call(String name, String ... values);
 }

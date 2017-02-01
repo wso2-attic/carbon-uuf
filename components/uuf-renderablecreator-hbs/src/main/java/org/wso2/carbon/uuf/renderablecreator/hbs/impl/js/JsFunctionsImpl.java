@@ -27,6 +27,8 @@ import com.google.gson.JsonSerializer;
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
 import org.wso2.carbon.uuf.api.Placeholder;
 import org.wso2.carbon.uuf.core.API;
+import org.wso2.carbon.uuf.core.Lookup;
+import org.wso2.carbon.uuf.core.RequestLookup;
 import org.wso2.carbon.uuf.exception.FileOperationException;
 import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.CallMicroServiceFunction;
@@ -35,6 +37,7 @@ import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.CreateSessionFunction;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.DestroySessionFunction;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.GetOSGiServicesFunction;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.GetSessionFunction;
+import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.I18nFunction;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.ModuleFunction;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.SendErrorFunction;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.SendRedirectFunction;
@@ -48,6 +51,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.MessageFormat;
+import java.util.Locale;
+import java.util.Properties;
 
 public class JsFunctionsImpl {
 
@@ -59,10 +65,13 @@ public class JsFunctionsImpl {
     private static final Gson GSON;
 
     private final API api;
+    private final Lookup lookup;
+    private final RequestLookup requestLookup;
     private CreateSessionFunction createSessionFunction;
     private GetSessionFunction getSessionFunction;
     private DestroySessionFunction destroySessionFunction;
     private SendToClientFunction sendToClientFunction;
+    private I18nFunction i18nFunction;
 
     static {
         CALL_OSGI_SERVICE_FUNCTION = API::callOSGiService;
@@ -71,11 +80,13 @@ public class JsFunctionsImpl {
         SEND_ERROR_FUNCTION = API::sendError;
         SEND_REDIRECT_FUNCTION = API::sendRedirect;
         GSON = new GsonBuilder().registerTypeAdapter(ScriptObjectMirror.class,
-                new ScriptObjectMirrorSerializer()).create();
+                                                     new ScriptObjectMirrorSerializer()).create();
     }
 
-    public JsFunctionsImpl(API api) {
+    public JsFunctionsImpl(API api, Lookup lookup, RequestLookup requestLookup) {
         this.api = api;
+        this.lookup = lookup;
+        this.requestLookup = requestLookup;
     }
 
     public static CallOSGiServiceFunction getCallOsgiServiceFunction() {
@@ -155,6 +166,39 @@ public class JsFunctionsImpl {
             };
         }
         return sendToClientFunction;
+    }
+
+    public I18nFunction getI18nFunction() {
+        if (i18nFunction == null) {
+            i18nFunction = (String key, String... values) -> {
+                // Check whether the current locale is already available in the options.
+                Locale currentLocale;
+                Object localeHeaderValue;
+                if ((localeHeaderValue = this.requestLookup.getRequest().getHeaders().get("Accept-Language")) != null) {
+                    String languageCode = localeHeaderValue.toString().toLowerCase().split(",")[0].replace("-", "_");
+                    Locale locale = Locale.forLanguageTag(languageCode);
+                    String currentLocalCode = lookup.getI18nResources().getAvailableLanguages().stream()
+                            .filter(language -> language.equals(locale.toLanguageTag()))
+                            .findFirst().filter(language -> language.startsWith(locale.getLanguage()))
+                            .orElse("en-us");
+                    currentLocale = Locale.forLanguageTag(currentLocalCode);
+                } else {
+                    currentLocale = Locale.forLanguageTag("en-us");
+                }
+                Properties props = lookup.getI18nResources().getI18nResource(currentLocale);
+                if (props != null) {
+                    if (values.length == 0) {
+                        return props.getProperty(key, key);
+                    } else {
+                        MessageFormat format = new MessageFormat(props.getProperty(key, key));
+                        return format.format(values);
+                    }
+                } else {
+                    return key;
+                }
+            };
+        }
+        return i18nFunction;
     }
 
     /**

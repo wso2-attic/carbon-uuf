@@ -56,6 +56,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -270,7 +271,14 @@ public class AppCreator {
         if ((componentI18nResources == null) || componentI18nResources.isEmpty()) {
             return;
         }
-        componentI18nResources.forEach(i18nResources::addI18nResource);
+        componentI18nResources.forEach((localString, properties) -> {
+            Locale locale = Locale.forLanguageTag(localString.replace("_", "-"));
+            if (!locale.getLanguage().isEmpty()) {
+                i18nResources.addI18nResource(locale, properties);
+            } else {
+                throw new UUFException("Cannot deploy language file for " + localString);
+            }
+        });
     }
 
     private Page createPage(PageReference pageReference, ClassLoader classLoader, Map<String, Layout> availableLayouts,
