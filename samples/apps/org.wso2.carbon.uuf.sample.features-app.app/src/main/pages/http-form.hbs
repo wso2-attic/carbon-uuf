@@ -9,6 +9,7 @@
             <input type="text" name="name" id="inputName" class="form-control" placeholder="Name" />
         </div>
         <input type="submit" value="Submit" />
+        {{csrfToken}}
     </form>
     {{#if prevName}}
         Submitted name: {{prevName}}
