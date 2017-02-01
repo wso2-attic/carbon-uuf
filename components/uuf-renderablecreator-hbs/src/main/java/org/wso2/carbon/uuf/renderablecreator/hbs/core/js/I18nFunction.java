@@ -21,5 +21,5 @@ public interface I18nFunction {
 
     String NAME = "i18n";
 
-    String call(String name, String ... values);
+    String call(String key, String ... values);
 }
