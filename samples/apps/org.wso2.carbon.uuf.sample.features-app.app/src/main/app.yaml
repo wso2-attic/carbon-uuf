@@ -49,3 +49,9 @@ menus:
 errorPages:
   404: /foundation/error/404
   default: /foundation/error/default
+
+security:
+  csrfIgnoreUris:
+    - /http-form
+    - /file-upload
+  xssIgnoreUris: []
