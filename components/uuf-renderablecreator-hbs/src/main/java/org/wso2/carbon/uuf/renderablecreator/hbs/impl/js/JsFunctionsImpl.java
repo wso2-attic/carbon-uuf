@@ -172,25 +172,14 @@ public class JsFunctionsImpl {
         if (i18nFunction == null) {
             i18nFunction = (String key, String... values) -> {
                 // Check whether the current locale is already available in the options.
-                Locale currentLocale;
-                Object localeHeaderValue;
-                if ((localeHeaderValue = this.requestLookup.getRequest().getHeaders().get("Accept-Language")) != null) {
-                    String languageCode = localeHeaderValue.toString().toLowerCase().split(",")[0].replace("-", "_");
-                    Locale locale = Locale.forLanguageTag(languageCode);
-                    String currentLocalCode = lookup.getI18nResources().getAvailableLanguages().stream()
-                            .filter(language -> language.equals(locale.toLanguageTag()))
-                            .findFirst().filter(language -> language.startsWith(locale.getLanguage()))
-                            .orElse("en-us");
-                    currentLocale = Locale.forLanguageTag(currentLocalCode);
-                } else {
-                    currentLocale = Locale.forLanguageTag("en-us");
-                }
+                Object localeHeaderValue = this.requestLookup.getRequest().getHeaders().get("Accept-Language");
+                Locale currentLocale = lookup.getI18nResources().getLocale(localeHeaderValue.toString());
                 Properties props = lookup.getI18nResources().getI18nResource(currentLocale);
                 if (props != null) {
                     if (values.length == 0) {
                         return props.getProperty(key, key);
                     } else {
-                        MessageFormat format = new MessageFormat(props.getProperty(key, key));
+                        MessageFormat format = new MessageFormat(props.getProperty(key, key), currentLocale);
                         return format.format(values);
                     }
                 } else {

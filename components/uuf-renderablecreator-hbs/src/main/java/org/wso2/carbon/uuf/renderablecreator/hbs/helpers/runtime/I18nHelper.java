@@ -47,24 +47,12 @@ public class I18nHelper implements Helper<String> {
         Locale currentLocale = options.data(DATA_KEY_CURRENT_LOCALE);
         // If not available, get the current locale.
         if (currentLocale == null) {
-            Object localeHeaderValue;
             Object localeParam = options.hash.get("locale");
             if (localeParam != null) {
                 currentLocale = Locale.forLanguageTag(localeParam.toString());
-            } else if ((localeHeaderValue = requestLookup.getRequest().getHeaders().get(LOCALE_HEADER)) != null) {
-                // example: en,en-us;q=0.7, en-au;q=0.3
-                // https://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.4
-                // Change the locale value to lower case because we store the language keys in lower case.
-                String languageCode = localeHeaderValue.toString().toLowerCase().split(",")[0].replace("-", "_");
-                Locale locale = Locale.forLanguageTag(languageCode);
-                String currentLang = lookup.getI18nResources().getAvailableLanguages().stream()
-                        .filter(language -> language.equals(locale.toLanguageTag()))
-                        .findFirst().filter(language -> language.startsWith(locale.getLanguage()))
-                        .orElse(DEFAULT_LOCALE.replace("_", "-"));
-                currentLocale = Locale.forLanguageTag(currentLang);
-
             } else {
-                currentLocale = Locale.forLanguageTag(DEFAULT_LOCALE.replace("_", "-"));
+                Object localeHeaderValue = requestLookup.getRequest().getHeaders().get(LOCALE_HEADER);
+                currentLocale = lookup.getI18nResources().getLocale(localeHeaderValue.toString());
             }
             // Add the locale to the helper options. This will be used when evaluating this helper again in the same
             // request. This is done to increase the performance.
