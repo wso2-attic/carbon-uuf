@@ -81,27 +81,27 @@ public class I18nResources {
      * @return Locale object for language support
      */
     public Locale getLocale(String localeHeaderValue) {
-        if (localeHeaderValue != null) {
-            // example: en,en-us;q=0.7, en-au;q=0.3
-            // https://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.4
-            // Change the locale value to lower case because we store the language keys in lower case.
-            String languageCode = localeHeaderValue.toLowerCase().split(",")[0];
-            Locale locale = Locale.forLanguageTag(languageCode);
-            String currentLang = null;
-            for (String language : getAvailableLanguages()) {
-                if (StringUtils.isNotEmpty(locale.toLanguageTag()) && language.equalsIgnoreCase(
-                        locale.toLanguageTag())) {
-                    currentLang = language;
-                } else if (StringUtils.isNotEmpty(locale.getLanguage()) && language.startsWith(locale.getLanguage())) {
-                    currentLang = language;
-                }
-            }
-            if (currentLang == null) {
-                currentLang = DEFAULT_LOCALE.replace("_", "-");
-            }
-            return Locale.forLanguageTag(currentLang);
-        } else {
+        if (localeHeaderValue == null) {
             return Locale.forLanguageTag(DEFAULT_LOCALE.replace("_", "-"));
         }
+
+        // example: en,en-us;q=0.7, en-au;q=0.3
+        // https://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.4
+        // Change the locale value to lower case because we store the language keys in lower case.
+        String languageCode = localeHeaderValue.toLowerCase().split(",")[0];
+        Locale locale = Locale.forLanguageTag(languageCode);
+        String currentLang = null;
+        for (String language : getAvailableLanguages()) {
+            if (StringUtils.isNotEmpty(locale.toLanguageTag()) && language.equalsIgnoreCase(
+                    locale.toLanguageTag())) {
+                currentLang = language;
+            } else if (StringUtils.isNotEmpty(locale.getLanguage()) && language.startsWith(locale.getLanguage())) {
+                currentLang = language;
+            }
+        }
+        if (currentLang == null) {
+            currentLang = DEFAULT_LOCALE.replace("_", "-");
+        }
+        return Locale.forLanguageTag(currentLang);
     }
 }
