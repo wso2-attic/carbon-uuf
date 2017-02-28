@@ -18,6 +18,7 @@
 
 package org.wso2.carbon.uuf.internal;
 
+import com.google.gson.JsonObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.core.App;
@@ -29,6 +30,7 @@ import org.wso2.carbon.uuf.internal.io.StaticResolver;
 import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.carbon.uuf.spi.HttpResponse;
 
+import static org.wso2.carbon.uuf.spi.HttpResponse.CONTENT_TYPE_APPLICATION_JSON;
 import static org.wso2.carbon.uuf.spi.HttpResponse.CONTENT_TYPE_TEXT_HTML;
 import static org.wso2.carbon.uuf.spi.HttpResponse.HEADER_CACHE_CONTROL;
 import static org.wso2.carbon.uuf.spi.HttpResponse.HEADER_EXPIRES;
@@ -84,16 +86,14 @@ public class RequestDispatcher {
 
     private void servePageOrFragment(App app, HttpRequest request, HttpResponse response) {
         try {
-            String html;
-            // set default and configured http response headers for security purpose
-            setResponseSecurityHeaders(app, response);
             if (request.isFragmentRequest()) {
-                html = app.renderFragment(request, response);
+                JsonObject renderedFragment = app.renderFragment(request, response);
+                response.setContent(STATUS_OK, renderedFragment.toString(), CONTENT_TYPE_APPLICATION_JSON);
             } else {
                 // Request for a page.
-                html = app.renderPage(request, response);
+                String html = app.renderPage(request, response);
+                response.setContent(STATUS_OK, html, CONTENT_TYPE_TEXT_HTML);
             }
-            response.setContent(STATUS_OK, html, CONTENT_TYPE_TEXT_HTML);
         } catch (UUFException e) {
             throw e;
         } catch (Exception e) {

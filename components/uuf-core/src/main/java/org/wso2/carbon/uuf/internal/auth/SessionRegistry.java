@@ -33,9 +33,13 @@ import javax.cache.configuration.MutableConfiguration;
 import javax.cache.expiry.AccessedExpiryPolicy;
 import javax.cache.expiry.Duration;
 
+import static org.wso2.carbon.uuf.spi.HttpRequest.COOKIE_CSRFTOKEN;
+import static org.wso2.carbon.uuf.spi.HttpRequest.COOKIE_UUFSESSIONID;
+
 public class SessionRegistry implements Closeable {
 
-    public static final String SESSION_COOKIE_NAME = "UUFSESSIONID";
+    public static final String SESSION_COOKIE_NAME = COOKIE_UUFSESSIONID;
+    public static final String CSRF_TOKEN = COOKIE_CSRFTOKEN;
     private static final Object LOCK = new Object();
 
     private final Cache<String, Session> cache;

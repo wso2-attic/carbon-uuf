@@ -75,11 +75,11 @@ public class APITest {
         when(request.getContextPath()).thenReturn("/test");
         // Creating response.
         HttpResponse response = mock(HttpResponse.class);
-        final Map<String, String> headers = new HashMap<>();
+        final Map<String, String> cookies = new HashMap<>();
         doAnswer(invocation -> {
-            headers.put(invocation.getArgument(0), invocation.getArgument(1));
+            cookies.put(invocation.getArgument(0), invocation.getArgument(1));
             return null;
-        }).when(response).setHeader(any(), any());
+        }).when(response).addCookie(any(), any());
         // Creating API.
         RequestLookup requestLookup = new RequestLookup("/test", request, response);
         API api = new API(new SessionRegistry("test"), requestLookup);
@@ -92,9 +92,10 @@ public class APITest {
         // create session
         Session createdSession = api.createSession(user);
         Assert.assertEquals(createdSession.getUser(), user);
-        Assert.assertEquals(headers.get("Set-Cookie"),
-                            SessionRegistry.SESSION_COOKIE_NAME + "=" + createdSession.getSessionId() + "; Path=" +
-                                    requestLookup.getContextPath() + "; Secure; HTTPOnly");
+        Assert.assertEquals(cookies.get(SessionRegistry.SESSION_COOKIE_NAME),
+                createdSession.getSessionId() + "; Path=" + requestLookup.getContextPath() + "; Secure; HTTPOnly");
+        Assert.assertEquals(cookies.get(SessionRegistry.CSRF_TOKEN),
+                createdSession.getCsrfToken() + "; Path=" + requestLookup.getContextPath() + "; Secure");
     }
 
     @Test
@@ -140,15 +141,16 @@ public class APITest {
         doAnswer(invocation -> {
             headers.put(invocation.getArgument(0), invocation.getArgument(1));
             return null;
-        }).when(response).setHeader(any(), any());
+        }).when(response).addCookie(any(), any());
         // Creating API.
         RequestLookup requestLookup = new RequestLookup("/test", request, response);
         API api = new API(new SessionRegistry("test"), requestLookup);
 
         Assert.assertEquals(api.destroySession(), true);
-        Assert.assertEquals(headers.get("Set-Cookie"), SessionRegistry.SESSION_COOKIE_NAME +
-                "=; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:01 GMT; Path=" + requestLookup.getContextPath() +
-                "; Secure; HTTPOnly");
+        Assert.assertEquals(headers.get(SessionRegistry.SESSION_COOKIE_NAME),
+                "Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:01 GMT; Path=" + requestLookup.getContextPath() + "; Secure; HTTPOnly");
+        Assert.assertEquals(headers.get(SessionRegistry.CSRF_TOKEN),
+                "Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:01 GMT; Path=" + requestLookup.getContextPath() + "; Secure; HTTPOnly");
         Assert.assertEquals(api.getSession().isPresent(), false);
         Assert.assertEquals(sessionRegistry.getSession(currentSession.getSessionId()).isPresent(), false);
     }

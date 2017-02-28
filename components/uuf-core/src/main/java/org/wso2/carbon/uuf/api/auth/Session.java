@@ -45,11 +45,13 @@ public class Session implements Serializable {
 
     private final String sessionId;
     private final User user;
+    private final String csrfToken;
     private String themeName;
 
     public Session(User user) {
         this.sessionId = sessionIdGenerator.generateId();
         this.user = user;
+        this.csrfToken = sessionIdGenerator.generateId();
     }
 
     public String getSessionId() {
@@ -62,6 +64,10 @@ public class Session implements Serializable {
 
     public String getThemeName() {
         return themeName;
+    }
+
+    public String getCsrfToken() {
+        return csrfToken;
     }
 
     public void setThemeName(String themeName) {

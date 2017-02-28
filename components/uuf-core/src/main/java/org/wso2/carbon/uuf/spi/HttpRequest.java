@@ -29,6 +29,8 @@ public interface HttpRequest {
 
     String HEADER_CONTENT_TYPE = "Content-Type";
     String HEADER_CONTENT_LENGTH = "Content-Length";
+    String COOKIE_UUFSESSIONID = "UUFSESSIONID";
+    String COOKIE_CSRFTOKEN = "CSRFTOKEN";
 
     /**
      * Returns the name of the HTTP method with which this request was made, for example, GET, POST.
