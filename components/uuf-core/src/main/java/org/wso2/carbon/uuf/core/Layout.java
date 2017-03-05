@@ -49,15 +49,18 @@ public class Layout {
     }
 
     public String render(Lookup lookup, RequestLookup requestLookup, API api) {
-        // Rendering flow tracking in.
-        requestLookup.tracker().in(this);
-        Component currentComponent = lookup.getComponent(requestLookup.tracker().getCurrentComponentName()).get();
-        requestLookup.pushToPublicUriStack(UriUtils.getPublicUri(currentComponent, this));
-        String output = renderer.render(null, lookup, requestLookup, api);
-        // Rendering flow tracking out.
-        requestLookup.popPublicUriStack();
-        requestLookup.tracker().out(this);
-        return output;
+        try {
+            // Rendering flow tracking in.
+            requestLookup.tracker().in(this);
+            Component currentComponent = lookup.getComponent(requestLookup.tracker().getCurrentComponentName()).get();
+            requestLookup.pushToPublicUriStack(UriUtils.getPublicUri(currentComponent, this));
+
+            return renderer.render(null, lookup, requestLookup, api);
+        } finally {
+            // Rendering flow tracking out.
+            requestLookup.popPublicUriStack();
+            requestLookup.tracker().out(this);
+        }
     }
 
     @Override
