@@ -188,11 +188,11 @@ public class RequestLookup {
         }
 
         public boolean isInPage() {
-            return rendererStack.peekFirst().equals(TYPE_PAGE);
+            return TYPE_PAGE.equals(rendererStack.peekFirst());
         }
 
         public boolean isInFragment() {
-            return rendererStack.peekLast().equals(TYPE_FRAGMENT);
+            return TYPE_FRAGMENT.equals(rendererStack.peekLast());
         }
 
         public boolean isInLayout() {

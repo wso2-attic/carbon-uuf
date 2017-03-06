@@ -27,6 +27,11 @@ import java.util.Map;
 
 import static java.lang.Integer.signum;
 
+/**
+ * Test cases for URI pattern.
+ *
+ * @since 1.0.0
+ */
 public class UriPattenTest {
 
     @DataProvider

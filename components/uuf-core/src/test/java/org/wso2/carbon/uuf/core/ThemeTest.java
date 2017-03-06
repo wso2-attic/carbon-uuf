@@ -26,6 +26,11 @@ import org.wso2.carbon.uuf.api.Placeholder;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Test cases for theme.
+ *
+ * @since 1.0.0
+ */
 public class ThemeTest {
 
     @Test
