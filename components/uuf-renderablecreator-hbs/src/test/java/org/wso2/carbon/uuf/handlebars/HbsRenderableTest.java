@@ -108,7 +108,7 @@ public class HbsRenderableTest {
 
     @Test
     public void testPageTemplateWithExecutable() {
-        Executable executable = (context, api) -> ImmutableMap.of("name", "Alice");
+        Executable executable = (context, api,lookup,requestLookup) -> ImmutableMap.of("name", "Alice");
         HbsPageRenderable pageRenderable = createPageRenderable("Hello {{name}}! Have a good day.", executable);
         Model model = new MapModel(new HashMap<>());
 
@@ -138,7 +138,7 @@ public class HbsRenderableTest {
 
     @Test
     public void testFragmentTemplateWithExecutable() {
-        Executable executable = (context, api) -> ImmutableMap.of("name", "Alice");
+        Executable executable = (context, api,lookup, requestLookup) -> ImmutableMap.of("name", "Alice");
         HbsFragmentRenderable fragmentRenderable = createFragmentRenderable("Hello {{name}}! Have a good day.",
                                                                             executable);
         Model model = new MapModel(new HashMap<>());
