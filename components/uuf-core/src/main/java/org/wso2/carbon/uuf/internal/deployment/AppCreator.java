@@ -124,6 +124,8 @@ public class AppCreator {
         configuration.setContextPath(appConfig.getContextPath());
         configuration.setThemeName(appConfig.getTheme());
         configuration.setLoginPageUri(appConfig.getLoginPageUri());
+        configuration.setLogoutPageUri(appConfig.getLogoutPageUri());
+        configuration.setAuthenticator(appConfig.getAuthenticator());
         Map<Integer, String> errorPageUris = appConfig.getErrorPages().entrySet().stream()
                 .filter(entry -> NumberUtils.isNumber(entry.getKey()))
                 .collect(toMap(entry -> Integer.valueOf(entry.getKey()), Map.Entry::getValue));

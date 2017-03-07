@@ -25,6 +25,7 @@ import org.wso2.carbon.uuf.api.config.Bindings;
 import org.wso2.carbon.uuf.api.config.Configuration;
 import org.wso2.carbon.uuf.api.config.I18nResources;
 import org.wso2.carbon.uuf.api.model.MapModel;
+import org.wso2.carbon.uuf.exception.AuthenticationException;
 import org.wso2.carbon.uuf.exception.FragmentNotFoundException;
 import org.wso2.carbon.uuf.exception.HttpErrorException;
 import org.wso2.carbon.uuf.exception.PageNotFoundException;
@@ -36,6 +37,7 @@ import org.wso2.carbon.uuf.internal.util.NameUtils;
 import org.wso2.carbon.uuf.internal.util.UriUtils;
 import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.carbon.uuf.spi.HttpResponse;
+import org.wso2.carbon.uuf.spi.auth.Authenticator;
 import org.wso2.carbon.uuf.spi.model.Model;
 
 import java.util.HashMap;
@@ -125,7 +127,19 @@ public class App {
         API api = new API(sessionRegistry, requestLookup);
         Theme theme = getRenderingTheme(api);
         try {
+            if (isLoginRequest(request) || isLogoutRequest(request)) {
+                handleAuthentication(request, response, api, requestLookup, theme);
+            }
             return renderPageUri(request.getUriWithoutContextPath(), null, requestLookup, api, theme);
+        } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
+            throw new UUFException(e);
+        } catch (AuthenticationException e) {
+            String loginPageUri = configuration.getLoginPageUri().orElseThrow(() -> e);
+            Map<String, Object> modelMap = new HashMap<>(2);
+            modelMap.put("status", HttpResponse.STATUS_UNAUTHORIZED);
+            modelMap.put("errorMessage", e.getMessage());
+            requestLookup.tracker().reset(); // reset rendering tracking
+            return renderPageUri(loginPageUri, new MapModel(modelMap), requestLookup, api, theme);
         } catch (SessionNotFoundException e) {
             String loginPageUri = configuration.getLoginPageUri().orElseThrow(() -> e);
             // Redirect to the login page.
@@ -154,6 +168,63 @@ public class App {
         } catch (UUFException e) {
             return renderErrorPage(new HttpErrorException(HttpResponse.STATUS_INTERNAL_SERVER_ERROR, e.getMessage(), e),
                                    requestLookup, api, theme);
+        }
+    }
+
+    private boolean isLogoutRequest(HttpRequest request) {
+        return configuration.getLogoutPageUriPatten() != null && configuration.getLogoutPageUriPatten().matches(
+                request.getUriWithoutContextPath());
+    }
+
+    private boolean isLoginRequest(HttpRequest request) {
+        return configuration.getLoginPageUriPatten() != null && configuration.getLoginPageUriPatten().matches(
+                request.getUriWithoutContextPath());
+    }
+
+    private void handleAuthentication(HttpRequest request, HttpResponse response, API api, RequestLookup requestLookup,
+                                      Theme theme)
+            throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+        if (isLoginRequest(request)) {
+            Class classDefinition = Class.forName(configuration.getAuthenticator());
+            Authenticator authHandler = (Authenticator) classDefinition.newInstance();
+
+            //AuthHandler authHandler = new SimpleAuthHandler();
+            Authenticator.Result result = authHandler.login(configuration, api, request, response);
+
+            if (Authenticator.Status.SUCESS == result.getStatus()) {
+                throw new PageRedirectException(
+                        request.getContextPath() + configuration.other().get("loginRedirectUri").toString());
+            } else if (Authenticator.Status.ERROR == result.getStatus()) {
+                if (result.getErrorMessage() != null && result.getRedirectURL() != null) {
+                    throw new PageRedirectException(result.getRedirectURL(),
+                                                    new UUFException(result.getErrorMessage()));
+                } else {
+                    throw new AuthenticationException(result.getErrorMessage());
+                }
+            } else if (Authenticator.Status.CONTINUE == result.getStatus()) {
+                return;
+            } else if (Authenticator.Status.REDIRECT == result.getStatus()) {
+                throw new PageRedirectException(result.getRedirectURL());
+            }
+        } else if (isLogoutRequest(request)) {
+            Class classDefinition = Class.forName(configuration.getAuthenticator());
+            Authenticator authHandler = (Authenticator) classDefinition.newInstance();
+
+            Authenticator.Result result = authHandler.logout(configuration, api, request, response);
+            if (Authenticator.Status.REDIRECT == result.getStatus()) {
+                throw new PageRedirectException(result.getRedirectURL());
+            } else if (Authenticator.Status.CONTINUE == result.getStatus()) {
+                return;
+            } else if (Authenticator.Status.ERROR == result.getStatus()) {
+                if (result.getErrorMessage() != null && result.getRedirectURL() != null) {
+                    throw new PageRedirectException(result.getRedirectURL(),
+                                                    new UUFException(result.getErrorMessage()));
+                } else {
+                    throw new AuthenticationException(result.getErrorMessage());
+                }
+            } else if (Authenticator.Status.SUCESS == result.getStatus()) {
+                throw new PageRedirectException(result.getRedirectURL());
+            }
         }
     }
 

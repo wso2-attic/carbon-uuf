@@ -30,6 +30,8 @@ errorPages:
 
 # URI of the login page in this app.
 loginPageUri: "/simple-auth/login"
+authenticator: org.wso2.carbon.uuf.sample.simpleauth.bundle.DefaultAuthenticator
+logoutPageUri: "/simple-auth/logout"
 
 # Security related configurations for this app.
 security:
