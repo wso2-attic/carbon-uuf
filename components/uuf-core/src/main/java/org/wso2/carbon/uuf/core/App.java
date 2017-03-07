@@ -191,40 +191,40 @@ public class App {
             //AuthHandler authHandler = new SimpleAuthHandler();
             Authenticator.Result result = authHandler.login(configuration, api, request, response);
 
-            if (Authenticator.Status.SUCESS == result.getStatus()) {
-                throw new PageRedirectException(
-                        request.getContextPath() + configuration.other().get("loginRedirectUri").toString());
-            } else if (Authenticator.Status.ERROR == result.getStatus()) {
-                if (result.getErrorMessage() != null && result.getRedirectURL() != null) {
-                    throw new PageRedirectException(result.getRedirectURL(),
-                                                    new UUFException(result.getErrorMessage()));
-                } else {
-                    throw new AuthenticationException(result.getErrorMessage());
-                }
-            } else if (Authenticator.Status.CONTINUE == result.getStatus()) {
-                return;
-            } else if (Authenticator.Status.REDIRECT == result.getStatus()) {
-                throw new PageRedirectException(result.getRedirectURL());
-            }
+            handleResult(request, result);
         } else if (isLogoutRequest(request)) {
             Class classDefinition = Class.forName(configuration.getAuthenticator());
             Authenticator authHandler = (Authenticator) classDefinition.newInstance();
 
             Authenticator.Result result = authHandler.logout(configuration, api, request, response);
-            if (Authenticator.Status.REDIRECT == result.getStatus()) {
+            handleResult(request, result);
+        }
+    }
+
+    /**
+     * This method handle the Authenticator result based in information availbale in Result object.
+     * @param request
+     * @param result
+     */
+    private void handleResult(HttpRequest request, Authenticator.Result result) {
+        if (Authenticator.Status.SUCESS == result.getStatus()) {
+            if (result.getRedirectURL() == null) {
                 throw new PageRedirectException(result.getRedirectURL());
-            } else if (Authenticator.Status.CONTINUE == result.getStatus()) {
-                return;
-            } else if (Authenticator.Status.ERROR == result.getStatus()) {
-                if (result.getErrorMessage() != null && result.getRedirectURL() != null) {
-                    throw new PageRedirectException(result.getRedirectURL(),
-                                                    new UUFException(result.getErrorMessage()));
-                } else {
-                    throw new AuthenticationException(result.getErrorMessage());
-                }
-            } else if (Authenticator.Status.SUCESS == result.getStatus()) {
-                throw new PageRedirectException(result.getRedirectURL());
+            } else {
+                throw new PageRedirectException(
+                        request.getContextPath() + configuration.other().get("loginRedirectUri").toString());
             }
+        } else if (Authenticator.Status.ERROR == result.getStatus()) {
+            if (result.getErrorMessage() != null && result.getRedirectURL() != null) {
+                throw new PageRedirectException(result.getRedirectURL(),
+                                                new UUFException(result.getErrorMessage()));
+            } else {
+                throw new AuthenticationException(result.getErrorMessage());
+            }
+        } else if (Authenticator.Status.CONTINUE == result.getStatus()) {
+            return;
+        } else if (Authenticator.Status.REDIRECT == result.getStatus()) {
+            throw new PageRedirectException(result.getRedirectURL());
         }
     }
 
