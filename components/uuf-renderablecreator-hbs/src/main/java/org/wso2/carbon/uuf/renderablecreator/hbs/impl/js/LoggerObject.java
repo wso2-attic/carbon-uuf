@@ -48,7 +48,7 @@ public class LoggerObject {
         this.logger = org.slf4j.LoggerFactory.getLogger(name);
     }
 
-    private String getLogMessage(Object obj) {
+    private static String getLogMessage(Object obj) {
         if (obj instanceof ScriptObjectMirror) {
             return GSON.toJson((ScriptObjectMirror) obj);
         } else {
@@ -190,6 +190,11 @@ public class LoggerObject {
             System.arraycopy(stackTrace, startIndex, modifiedStackTrace, 0, stackTrace.length - 1);
             this.setStackTrace(modifiedStackTrace);
             this.printStackTrace(printWriter);
+        }
+
+        @Override
+        public String toString() {
+            return "";
         }
     }
 }
