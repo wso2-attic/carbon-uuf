@@ -73,7 +73,6 @@ public class I18nResources {
         return i18nResources.get(locale.toLanguageTag());
     }
 
-
     /**
      * Returns the local for the supported language.
      *

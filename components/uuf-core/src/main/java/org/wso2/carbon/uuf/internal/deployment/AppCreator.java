@@ -273,10 +273,11 @@ public class AppCreator {
         }
         componentI18nResources.forEach((localString, properties) -> {
             Locale locale = Locale.forLanguageTag(localString.replace("_", "-"));
-            if (!locale.getLanguage().isEmpty()) {
-                i18nResources.addI18nResource(locale, properties);
+            if (locale.getLanguage().isEmpty()) {
+                throw new UUFException("Locale is not found for the given language code. Hence language file will not" +
+                                               " be deployed for" + localString);
             } else {
-                throw new UUFException("Cannot deploy language file for " + localString);
+                i18nResources.addI18nResource(locale, properties);
             }
         });
     }
