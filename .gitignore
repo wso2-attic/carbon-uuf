@@ -180,5 +180,8 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
+#################
+## Maven
+#################
 target
 dependency-reduced-pom.xml
