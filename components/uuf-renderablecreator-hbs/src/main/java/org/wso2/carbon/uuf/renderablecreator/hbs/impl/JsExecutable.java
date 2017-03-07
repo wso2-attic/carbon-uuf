@@ -20,6 +20,8 @@ import jdk.nashorn.api.scripting.NashornScriptEngine;
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
 import org.wso2.carbon.uuf.core.API;
+import org.wso2.carbon.uuf.core.Lookup;
+import org.wso2.carbon.uuf.core.RequestLookup;
 import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.Executable;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.CallMicroServiceFunction;
@@ -124,10 +126,10 @@ public class JsExecutable implements Executable {
     }
 
     @Override
-    public Object execute(Object context, API api) {
+    public Object execute(Object context, API api, Lookup lookup, RequestLookup requestLookup) {
         String functionName = null;
         try {
-            engineBindings.setJSFunctionProvider(new JsFunctionsImpl(api));
+            engineBindings.setJSFunctionProvider(new JsFunctionsImpl(api, lookup, requestLookup));
             if (api.getRequestLookup().getRequest().isGetRequest()) {
                 functionName = FUNCTION_ON_GET;
                 return hasOnGetFunction ? engine.invokeFunction(FUNCTION_ON_GET, context) : null;
