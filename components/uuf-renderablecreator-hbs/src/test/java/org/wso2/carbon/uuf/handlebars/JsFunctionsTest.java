@@ -67,6 +67,22 @@ public class JsFunctionsTest {
         Assert.assertEquals(api.getRequestLookup().getPlaceholderContent(Placeholder.js).get(), outputJS);
     }
 
+    @Test(dataProvider = "sendToClientJS")
+    public void testSendToClientWithJs(String varName, String inputJS, String outputJS) {
+        API api = createAPI();
+        JsFunctionsImpl jsFunctions = new JsFunctionsImpl(api, createLookup(), createRequestLookup());
+        jsFunctions.getSendToClientFunction().call(varName, inputJS, "js");
+        Assert.assertEquals(api.getRequestLookup().getPlaceholderContent(Placeholder.js).get(), outputJS);
+    }
+
+    @Test(dataProvider = "sendToClientJS")
+    public void testSendToClientWithHeadJs(String varName, String inputJS, String outputJS) {
+        API api = createAPI();
+        JsFunctionsImpl jsFunctions = new JsFunctionsImpl(api, createLookup(), createRequestLookup());
+        jsFunctions.getSendToClientFunction().call(varName, inputJS, "headJs");
+        Assert.assertEquals(api.getRequestLookup().getPlaceholderContent(Placeholder.headJs).get(), outputJS);
+    }
+
     private static API createAPI() {
         API api = mock(API.class);
         when(api.getRequestLookup()).thenReturn(new RequestLookup("/contextPath", mock(HttpRequest.class), null));

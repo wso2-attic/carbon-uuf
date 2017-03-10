@@ -16,6 +16,7 @@
 
 package org.wso2.carbon.uuf.renderablecreator.hbs.impl.js;
 
+import com.github.jknack.handlebars.Handlebars;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -159,10 +160,13 @@ public class JsFunctionsImpl {
 
     public SendToClientFunction getSendToClientFunction() {
         if (sendToClientFunction == null) {
-            sendToClientFunction = (name, value) -> {
-                String scriptTag = "<script type=\"text/javascript\">var " + name + "=" + GSON.toJson(value) +
+            sendToClientFunction = (name, values) -> {
+                String scriptTag = "<script type=\"text/javascript\">var " + Handlebars.Utils.escapeExpression(name) +
+                        "=" + GSON.toJson(values[0]) +
                         ";</script>";
-                api.getRequestLookup().addToPlaceholder(Placeholder.js, scriptTag);
+                api.getRequestLookup().addToPlaceholder(
+                        (values.length == 2 && "headJs".equalsIgnoreCase((String) values[1])) ? Placeholder.headJs :
+                                Placeholder.js, scriptTag);
             };
         }
         return sendToClientFunction;
