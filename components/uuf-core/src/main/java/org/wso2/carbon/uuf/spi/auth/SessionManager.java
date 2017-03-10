@@ -18,16 +18,17 @@
 package org.wso2.carbon.uuf.spi.auth;
 
 import org.wso2.carbon.uuf.api.auth.Session;
+import org.wso2.carbon.uuf.spi.HttpRequest;
+import org.wso2.carbon.uuf.spi.HttpResponse;
 
 import java.io.Closeable;
 import java.util.Optional;
 
 public interface SessionManager extends Closeable {
-    void addSession(String identifier, Session session);
 
-    Optional<Session> getSession(String identifier, String sessionId);
+    Session createSession(String identifier, User user, HttpRequest request, HttpResponse response);
 
-    boolean removeSession(String identifier,String sessionId);
+    Optional<Session> getSession(String identifier, HttpRequest request, HttpResponse response);
 
-    void removeAllSessions(String identifier);
+    boolean removeSession(String identifier, HttpRequest request, HttpResponse response);
 }

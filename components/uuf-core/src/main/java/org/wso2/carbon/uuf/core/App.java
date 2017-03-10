@@ -33,11 +33,13 @@ import org.wso2.carbon.uuf.exception.PageRedirectException;
 import org.wso2.carbon.uuf.exception.SessionNotFoundException;
 import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.internal.auth.SessionRegistry;
+import org.wso2.carbon.uuf.internal.util.DataHolder;
 import org.wso2.carbon.uuf.internal.util.NameUtils;
 import org.wso2.carbon.uuf.internal.util.UriUtils;
 import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.carbon.uuf.spi.HttpResponse;
 import org.wso2.carbon.uuf.spi.auth.Authenticator;
+import org.wso2.carbon.uuf.spi.auth.SessionManager;
 import org.wso2.carbon.uuf.spi.model.Model;
 
 import java.util.HashMap;
@@ -60,8 +62,10 @@ public class App {
     private final SessionRegistry sessionRegistry;
 
     public App(String name, String contextPath, Set<Component> components, Set<Theme> themes,
-               Configuration configuration, Bindings bindings, I18nResources i18nResources) {
-        this(name, contextPath, components, themes, configuration, bindings, i18nResources, new SessionRegistry(name));
+               Configuration configuration, Bindings bindings, I18nResources i18nResources,
+               SessionManager sessionManager) {
+        this(name, contextPath, components, themes, configuration, bindings, i18nResources,
+             new SessionRegistry(name, sessionManager));
     }
 
     App(String name, String contextPath, Set<Component> components, Set<Theme> themes, Configuration configuration,
@@ -184,18 +188,11 @@ public class App {
     private void handleAuthentication(HttpRequest request, HttpResponse response, API api, RequestLookup requestLookup,
                                       Theme theme)
             throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+        Authenticator authHandler = DataHolder.getInstance().getAuthenticator(configuration.getAuthenticator());
         if (isLoginRequest(request)) {
-            Class classDefinition = Class.forName(configuration.getAuthenticator());
-            Authenticator authHandler = (Authenticator) classDefinition.newInstance();
-
-            //AuthHandler authHandler = new SimpleAuthHandler();
             Authenticator.Result result = authHandler.login(configuration, api, request, response);
-
             handleResult(request, result);
         } else if (isLogoutRequest(request)) {
-            Class classDefinition = Class.forName(configuration.getAuthenticator());
-            Authenticator authHandler = (Authenticator) classDefinition.newInstance();
-
             Authenticator.Result result = authHandler.logout(configuration, api, request, response);
             handleResult(request, result);
         }
@@ -209,10 +206,10 @@ public class App {
     private void handleResult(HttpRequest request, Authenticator.Result result) {
         if (Authenticator.Status.SUCESS == result.getStatus()) {
             if (result.getRedirectURL() == null) {
-                throw new PageRedirectException(result.getRedirectURL());
-            } else {
                 throw new PageRedirectException(
                         request.getContextPath() + configuration.other().get("loginRedirectUri").toString());
+            } else {
+                throw new PageRedirectException(result.getRedirectURL());
             }
         } else if (Authenticator.Status.ERROR == result.getStatus()) {
             if (result.getErrorMessage() != null && result.getRedirectURL() != null) {
