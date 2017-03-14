@@ -165,8 +165,8 @@ public class JsFunctionsImpl {
                         "=" + GSON.toJson(values[0]) +
                         ";</script>";
                 api.getRequestLookup().addToPlaceholder(
-                        (values.length == 2 && "headJs".equalsIgnoreCase((String) values[1])) ? Placeholder.headJs :
-                                Placeholder.js, scriptTag);
+                        (values.length == 2 && Placeholder.headJs.name().equalsIgnoreCase((String) values[1])) ?
+                                Placeholder.headJs : Placeholder.js, scriptTag);
             };
         }
         return sendToClientFunction;
