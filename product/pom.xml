@@ -122,6 +122,12 @@
             <type>zip</type>
         </dependency>
         <dependency>
+            <groupId>org.wso2.carbon.transport</groupId>
+            <artifactId>org.wso2.carbon.connector.framework.feature</artifactId>
+            <version>${carbon.transport.http.netty.version}</version>
+            <type>zip</type>
+        </dependency>
+        <dependency>
             <groupId>org.wso2.carbon.metrics</groupId>
             <artifactId>org.wso2.carbon.metrics.core.feature</artifactId>
             <version>${carbon.metrics.version}</version>
@@ -170,7 +176,7 @@
         <!--Sample bundles-->
         <dependency>
             <groupId>org.wso2.carbon.security.userstore</groupId>
-            <artifactId>org.wso2.carbon.security.userstore.jdbc.feature</artifactId>
+            <artifactId>org.wso2.carbon.identity.mgt.store.connector.jdbc.feature</artifactId>
             <version>${carbon.security.userstore.jdbc.version}</version>
             <type>zip</type>
         </dependency>
@@ -178,6 +184,30 @@
             <groupId>org.wso2.carbon.security.caas</groupId>
             <artifactId>org.wso2.carbon.security.caas.feature</artifactId>
             <version>${carbon.security.caas.version}</version>
+            <type>zip</type>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.identity.mgt</groupId>
+            <artifactId>org.wso2.carbon.identity.mgt.feature</artifactId>
+            <version>${org.wso2.carbon.identity.mgt.version}</version>
+            <type>zip</type>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.identity.commons</groupId>
+            <artifactId>org.wso2.carbon.identity.common.feature</artifactId>
+            <version>0.1.24</version>
+            <type>zip</type>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.lcm</groupId>
+            <artifactId>org.wso2.carbon.lcm.core.feature</artifactId>
+            <version>1.0.3</version>
+            <type>zip</type>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.lcm</groupId>
+            <artifactId>org.wso2.carbon.lcm.sql.feature</artifactId>
+            <version>1.0.3</version>
             <type>zip</type>
         </dependency>
     </dependencies>
@@ -277,6 +307,10 @@
                                     <version>${carbon.transport.http.netty.version}</version>
                                 </feature>
                                 <feature>
+                                    <id>org.wso2.carbon.connector.framework.feature</id>
+                                    <version>${carbon.transport.http.netty.version}</version>
+                                </feature>
+                                <feature>
                                     <id>org.wso2.carbon.uuf.core.feature</id>
                                     <version>${carbon.uuf.version}</version>
                                 </feature>
@@ -313,7 +347,7 @@
                                     <version>${carbon.datasources.version}</version>
                                 </feature>
                                 <feature>
-                                    <id>org.wso2.carbon.security.userstore.jdbc.feature</id>
+                                    <id>org.wso2.carbon.identity.mgt.store.connector.jdbc.feature</id>
                                     <version>${carbon.security.userstore.jdbc.version}</version>
                                 </feature>
                                 <feature>
@@ -328,6 +362,22 @@
                                 <feature>
                                     <id>org.wso2.carbon.uuf.sample.features-app.feature</id>
                                     <version>${carbon.uuf.version}</version>
+                                </feature>
+                                <feature>
+                                    <id>org.wso2.carbon.identity.mgt.feature</id>
+                                    <version>${org.wso2.carbon.identity.mgt.version}</version>
+                                </feature>
+                                <feature>
+                                    <id>org.wso2.carbon.identity.common.feature</id>
+                                    <version>0.1.24</version>
+                                </feature>
+                                <feature>
+                                    <id>org.wso2.carbon.lcm.core.feature</id>
+                                    <version>1.0.3</version>
+                                </feature>
+                                <feature>
+                                    <id>org.wso2.carbon.lcm.sql.feature</id>
+                                    <version>1.0.3</version>
                                 </feature>
                                 <!--Sample bundles-->
                             </features>
@@ -348,7 +398,7 @@
                             <repositoryURL>file:${basedir}/target/p2-repo</repositoryURL>
                         </configuration>
                     </execution>
-                    <execution>
+                    <!--execution>
                         <id>materialize-product</id>
                         <phase>package</phase>
                         <goals>
@@ -363,6 +413,20 @@
                             </targetPath>
                             <profile>profiles/default</profile>
                         </configuration>
+                    </execution-->
+                    <execution>
+                        <id>materialize-product</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>generate-runtime</goal>
+                        </goals>
+                        <configuration>
+                            <productConfigurationFile>${basedir}/carbon.product</productConfigurationFile>
+                            <repositoryURL>file:${basedir}/target/p2-repo</repositoryURL>
+                            <targetPath>file:${basedir}/target/wso2carbon-kernel-${carbon.kernel.version}/wso2
+                            </targetPath>
+                            <runtime>default</runtime>
+                        </configuration>
                     </execution>
                     <execution>
                         <id>feature-installation</id>
@@ -371,12 +435,14 @@
                             <goal>install</goal>
                         </goals>
                         <configuration>
-                            <profile>profiles/default</profile>
+                            <runtime>default</runtime>
+                            <!--profile>profiles/default</profile-->
                             <repositoryURL>file:${basedir}/target/p2-repo</repositoryURL>
                             <destination>
                                 ${basedir}/target/wso2carbon-kernel-${carbon.kernel.version}/osgi
                             </destination>
-                            <deleteOldProfileFiles>true</deleteOldProfileFiles>
+                            <!--deleteOldProfileFiles>true</deleteOldProfileFiles-->
+                            <deleteOldRuntimeFiles>true</deleteOldRuntimeFiles>
                             <features>
                                 <feature>
                                     <id>org.wso2.carbon.kernel.feature.group</id>
@@ -452,12 +518,16 @@
                                     <version>${carbon.uuf.version}</version>
                                 </feature>
                                 <feature>
-                                    <id>org.wso2.carbon.security.userstore.jdbc.feature.group</id>
+                                    <id>org.wso2.carbon.identity.mgt.store.connector.jdbc.feature</id>
                                     <version>${carbon.security.userstore.jdbc.version}</version>
                                 </feature>
                                 <feature>
                                     <id>org.wso2.carbon.security.caas.feature.group</id>
                                     <version>${carbon.security.caas.version}</version>
+                                </feature>
+                                <feature>
+                                    <id>org.wso2.carbon.connector.framework.feature</id>
+                                    <version>${carbon.transport.http.netty.version}</version>
                                 </feature>
                             </features>
                         </configuration>
