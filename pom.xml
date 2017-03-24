@@ -131,10 +131,16 @@
                 <artifactId>gson</artifactId>
                 <version>${gson.version}</version>
             </dependency>
-            <dependency>
+            <!--dependency>
+                <groupId>org.wso2.orbit.org.yaml</groupId>
                 <groupId>org.wso2.orbit.org.yaml</groupId>
                 <artifactId>snakeyaml</artifactId>
                 <version>${orbit.org.yaml.version}</version>
+            </dependency-->
+            <dependency>
+                <groupId>org.yaml</groupId>
+                <artifactId>snakeyaml</artifactId>
+                <version>${org.snakeyaml.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.ow2.asm</groupId>
@@ -189,11 +195,11 @@
                 <artifactId>org.wso2.carbon.security.caas</artifactId>
                 <version>${carbon.security.caas.version}</version>
             </dependency>
-            <dependency>
+            <!--dependency>
                 <groupId>org.wso2.carbon.security.userstore</groupId>
                 <artifactId>org.wso2.carbon.identity.mgt.store.connector.jdbc</artifactId>
                 <version>${carbon.security.userstore.jdbc.version}</version>
-            </dependency>
+            </dependency-->
 
             <!--UUF Sample Components-->
             <dependency>
@@ -596,8 +602,8 @@
         <guava.version.range>[18.0,19.0)</guava.version.range>
         <gson.version>2.6.2</gson.version>
         <gson.version.range>[2.6.2,3)</gson.version.range>
-        <orbit.org.yaml.version>1.16.0.wso2v1</orbit.org.yaml.version>
-        <orbit.org.yaml.version.range>[1.16.0, 1.17.0)</orbit.org.yaml.version.range>
+        <org.snakeyaml.version>1.17</org.snakeyaml.version>
+        <orbit.org.yaml.version.range>[1.17.0,2.0.0)</orbit.org.yaml.version.range>
         <org.objectweb.asm.version>5.1</org.objectweb.asm.version>
         <org.objectweb.asm.version.range>[5.1, 6.0)</org.objectweb.asm.version.range>
         <javax.ws.rs.version.range>[2.0.0, 3.0.0)</javax.ws.rs.version.range>
@@ -607,7 +613,7 @@
         <carbon.metrics.version>2.0.1</carbon.metrics.version>
         <carbon.messaging.version>2.3.1</carbon.messaging.version>
         <carbon.messaging.version.range>[2.0.0, 3.0.0)</carbon.messaging.version.range>
-        <carbon.transport.http.netty.version>4.3.0-m1</carbon.transport.http.netty.version>
+        <carbon.transport.http.netty.version>4.3.0-SNAPSHOT</carbon.transport.http.netty.version>
 
         <!-- Handlebars -->
         <orbit.com.github.jknack.handlebars.version>4.0.3.wso2v1</orbit.com.github.jknack.handlebars.version>
@@ -615,15 +621,16 @@
         <antlr-version>4.5.1-1</antlr-version>
 
         <!-- MSF4J -->
-        <msf4j.version>2.3.0-m1</msf4j.version>
+        <msf4j.version>2.3.0-SNAPSHOT</msf4j.version>
         <msf4j.version.range>[2.1.0, 3.0.0)</msf4j.version.range>
 
         <!-- Authentication and Authorization -->
         <carbon.security.caas.version>1.0.2-m1</carbon.security.caas.version>
-        <carbon.security.userstore.jdbc.version>0.1.3</carbon.security.userstore.jdbc.version>
+        <carbon.security.caas.version.range>[1.0.0, 2.0.0)</carbon.security.caas.version.range>
+        <!--carbon.security.userstore.jdbc.version>0.1.3</carbon.security.userstore.jdbc.version-->
 
         <!-- Maven Plugins -->
-        <carbon-uuf-maven-plugin.version>1.0.0-m11</carbon-uuf-maven-plugin.version>
+        <carbon-uuf-maven-plugin.version>1.0.0-SNAPSHOT</carbon-uuf-maven-plugin.version>
         <carbon.feature.plugin.version>3.0.0</carbon.feature.plugin.version>
         <maven.bundle.plugin.version>2.5.0</maven.bundle.plugin.version>
 

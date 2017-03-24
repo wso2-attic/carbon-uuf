@@ -42,10 +42,10 @@
             <groupId>org.wso2.carbon.messaging</groupId>
             <artifactId>org.wso2.carbon.messaging</artifactId>
         </dependency>
-        <dependency>
+        <!--dependency>
             <groupId>org.wso2.carbon.security.userstore</groupId>
             <artifactId>org.wso2.carbon.identity.mgt.store.connector.jdbc</artifactId>
-        </dependency>
+        </dependency-->
         <dependency>
             <groupId>org.wso2.carbon.uuf</groupId>
             <artifactId>org.wso2.carbon.uuf.core</artifactId>
@@ -60,15 +60,17 @@
                 <configuration>
                     <instructions>
                         <Import-Package>
+                            org.wso2.carbon.security.caas.api.module.*; version="${carbon.security.caas.version.range}",
                             <!-- todo 2017/01/04 Add version range for CAAS once the version 1.0.0 releases -->
-                            org.wso2.carbon.security.caas.api.*,
-                            org.wso2.carbon.security.caas.user.core.*,
+                            org.wso2.carbon.security.caas.api.*; version="${carbon.security.caas.version.range}",
+                            org.wso2.carbon.security.caas.user.core.*; version="${carbon.security.caas.version.range}",
                             org.wso2.carbon.kernel.utils; version="${carbon.kernel.version.range}",
                             org.wso2.carbon.kernel.context; version="${carbon.kernel.version.range}",
                             org.wso2.carbon.messaging; version="${carbon.messaging.version.range}",
                             org.wso2.carbon.uuf.api.auth.*; version="${carbon.uuf.version}",
                             org.wso2.carbon.uuf.spi.auth.*; version="${carbon.uuf.version}",
                         </Import-Package>
+                        <DynamicImport-Package>*</DynamicImport-Package>
                         <Private-Package>org.wso2.carbon.uuf.sample.simpleauth.bundle.internal.*</Private-Package>
                         <Export-Package>
                             !org.wso2.carbon.uuf.sample.simpleauth.bundle.internal.*,

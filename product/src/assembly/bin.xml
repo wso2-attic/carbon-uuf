@@ -46,7 +46,7 @@
 
         <fileSet>
             <directory>carbon-home/conf/osgi</directory>
-            <outputDirectory>conf/osgi</outputDirectory>
+            <outputDirectory>conf/wso2</outputDirectory>
             <fileMode>644</fileMode>
         </fileSet>
 

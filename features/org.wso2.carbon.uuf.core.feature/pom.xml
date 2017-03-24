@@ -38,6 +38,10 @@
             <artifactId>org.wso2.carbon.uuf.core</artifactId>
             <version>${carbon.uuf.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -70,8 +74,8 @@
                                     <version>${carbon.uuf.version}</version>
                                 </bundle>
                                 <bundle>
-                                    <symbolicName>snakeyaml</symbolicName>
-                                    <version>${orbit.org.yaml.version}</version>
+                                    <symbolicName>org.yaml.snakeyaml</symbolicName>
+                                    <version>${org.snakeyaml.version}</version>
                                 </bundle>
                                 <bundle>
                                     <symbolicName>org.objectweb.asm</symbolicName>
