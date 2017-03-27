@@ -137,7 +137,7 @@ public class AppCreator {
         configuration.setRejectingCsrfPatterns(Sets.newHashSet(appConfig.getSecurity().getCsrfPatterns().getReject()));
         configuration.setAcceptingXssPatterns(Sets.newHashSet(appConfig.getSecurity().getXssPatterns().getAccept()));
         configuration.setRejectingXssPatterns(Sets.newHashSet(appConfig.getSecurity().getXssPatterns().getReject()));
-        configuration.setResponseHeaders(appConfig.getSecurity().getResponseHeaders());
+        configuration.setResponseHeaders(appConfig.getSecurity().getResponseHeaders().toConfigurationResponseHeaders());
         configuration.setOther(appConfig.getOther());
         return configuration;
     }

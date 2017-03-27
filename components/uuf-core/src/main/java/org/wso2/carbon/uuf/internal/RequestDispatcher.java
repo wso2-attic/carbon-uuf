@@ -87,6 +87,7 @@ public class RequestDispatcher {
     private void servePageOrFragment(App app, HttpRequest request, HttpResponse response) {
         DebugLogger.startRequest(request);
         try {
+            setResponseSecurityHeaders(app, response);
             if (request.isFragmentRequest()) {
                 JsonObject renderedFragment = app.renderFragment(request, response);
                 response.setContent(STATUS_OK, renderedFragment.toString(), CONTENT_TYPE_APPLICATION_JSON);
@@ -135,6 +136,6 @@ public class RequestDispatcher {
         httpResponse.setHeader(HEADER_PRAGMA, "no-cache");
 
         // if there are any headers configured by the user for this app, then add them also to the response
-        app.getConfiguration().getResponseHeaders().forEach(httpResponse::setHeader);
+        app.getConfiguration().getResponseHeaders().getPages().forEach(httpResponse::setHeader);
     }
 }
