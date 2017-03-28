@@ -61,10 +61,10 @@ public class SimpleAuthHandler {
 
         CarbonMessage carbonMessage = new DefaultCarbonMessage();
         carbonMessage.setHeader("Authorization", "Basic " + Base64.getEncoder()
-                .encodeToString("admin:admin".getBytes()));
-        UsernamePasswordCallbackHandler callbackHandler = new UsernamePasswordCallbackHandler();
-        callbackHandler.setCarbonMessage(carbonMessage);
+                .encodeToString((userName + ":" + password).getBytes())
+        );
 
+        ProxyCallbackHandler callbackHandler = new ProxyCallbackHandler(carbonMessage);
         LoginContext loginContext = new LoginContext("CarbonSecurityConfig", callbackHandler);
         loginContext.login();
         CarbonPrincipal principal = (CarbonPrincipal)PrivilegedCarbonContext.getCurrentContext().getUserPrincipal();

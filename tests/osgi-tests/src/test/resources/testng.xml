@@ -19,8 +19,8 @@
 
 <suite name="osgi-tests" verbose="1">
     <test name="osgi-tests">
-        <packages>
-            <package name="org.wso2.carbon.uuf.osgi" />
-        </packages>
+        <classes>
+            <class name="org.wso2.carbon.uuf.osgi.OSGiServicesTest" />
+        </classes>
     </test>
 </suite>
