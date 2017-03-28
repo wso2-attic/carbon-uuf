@@ -770,29 +770,5 @@
                 <enabled>false</enabled>
             </releases>
         </repository>
-        <repository>
-            <id>wso2-snapshot</id>
-            <name>WSO2 Snapshot Repository</name>
-            <url>https://maven.wso2.org/nexus/content/repositories/orgwso2carbonsecuritycaas-1009/</url>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>daily</updatePolicy>
-            </snapshots>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-        </repository>
-        <repository>
-            <id>wso2-msf4j</id>
-            <name>WSO2 Snapshot Repository</name>
-            <url>https://maven.wso2.org/nexus/content/repositories/orgwso2msf4j-1016/</url>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>daily</updatePolicy>
-            </snapshots>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-        </repository>
     </repositories>
 </project>
