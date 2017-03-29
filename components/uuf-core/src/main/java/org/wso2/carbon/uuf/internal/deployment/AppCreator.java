@@ -48,6 +48,7 @@ import org.wso2.carbon.uuf.internal.deployment.parser.ThemeConfig;
 import org.wso2.carbon.uuf.internal.deployment.parser.YamlFileParser;
 import org.wso2.carbon.uuf.internal.util.NameUtils;
 import org.wso2.carbon.uuf.spi.RenderableCreator;
+import org.wso2.carbon.uuf.spi.auth.SessionManager;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -76,8 +77,9 @@ public class AppCreator {
     private final Map<String, RenderableCreator> renderableCreators;
     private final Set<String> supportedExtensions;
     private final ClassLoaderProvider classLoaderProvider;
+    private final SessionManager sessionManager;
 
-    public AppCreator(Set<RenderableCreator> renderableCreators, ClassLoaderProvider classLoaderProvider) {
+    public AppCreator(Set<RenderableCreator> renderableCreators, ClassLoaderProvider classLoaderProvider, SessionManager sessionManager) {
         this.renderableCreators = new HashMap<>();
         this.supportedExtensions = new HashSet<>();
         for (RenderableCreator renderableCreator : renderableCreators) {
@@ -87,6 +89,7 @@ public class AppCreator {
             supportedExtensions.addAll(renderableCreator.getSupportedFileExtensions());
         }
         this.classLoaderProvider = classLoaderProvider;
+        this.sessionManager = sessionManager;
     }
 
     public App createApp(AppReference appReference, String contextPath) {
@@ -116,7 +119,7 @@ public class AppCreator {
 
         // Create App.
         return new App(appName, appContextPath, new HashSet<>(createdComponents.values()), themes, configuration,
-                       bindings, i18nResources);
+                       bindings, i18nResources, sessionManager);
     }
 
     private Configuration createConfiguration(AppReference appReference) {
@@ -125,6 +128,8 @@ public class AppCreator {
         configuration.setContextPath(appConfig.getContextPath());
         configuration.setThemeName(appConfig.getTheme());
         configuration.setLoginPageUri(appConfig.getLoginPageUri());
+        configuration.setLogoutPageUri(appConfig.getLogoutPageUri());
+        configuration.setAuthenticator(appConfig.getAuthenticator());
         Map<Integer, String> errorPageUris = appConfig.getErrorPages().entrySet().stream()
                 .filter(entry -> NumberUtils.isNumber(entry.getKey()))
                 .collect(toMap(entry -> Integer.valueOf(entry.getKey()), Map.Entry::getValue));

@@ -19,106 +19,39 @@
 package org.wso2.carbon.uuf.internal.auth;
 
 import org.wso2.carbon.uuf.api.auth.Session;
-import org.wso2.carbon.uuf.exception.UUFException;
+import org.wso2.carbon.uuf.spi.HttpRequest;
+import org.wso2.carbon.uuf.spi.HttpResponse;
+import org.wso2.carbon.uuf.spi.auth.SessionManager;
+import org.wso2.carbon.uuf.spi.auth.User;
 
-import java.io.Closeable;
-import java.io.IOException;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
-import javax.cache.Cache;
-import javax.cache.CacheException;
-import javax.cache.CacheManager;
-import javax.cache.Caching;
-import javax.cache.configuration.MutableConfiguration;
-import javax.cache.expiry.AccessedExpiryPolicy;
-import javax.cache.expiry.Duration;
 
 import static org.wso2.carbon.uuf.spi.HttpRequest.COOKIE_CSRFTOKEN;
 import static org.wso2.carbon.uuf.spi.HttpRequest.COOKIE_UUFSESSIONID;
 
-public class SessionRegistry implements Closeable {
+public class SessionRegistry {
 
     public static final String SESSION_COOKIE_NAME = COOKIE_UUFSESSIONID;
     public static final String CSRF_TOKEN = COOKIE_CSRFTOKEN;
-    private static final Object LOCK = new Object();
+    private SessionManager sessionManager = null;
+    private String appName;
 
-    private final Cache<String, Session> cache;
 
-    private static Cache<String, Session> getCache(String cacheName,
-                                                   MutableConfiguration<String, Session> cacheConfig) {
-        CacheManager cacheManager = Caching.getCachingProvider().getCacheManager();
-        Cache<String, Session> cache;
-        try {
-            synchronized (LOCK) {
-                cache = cacheManager.getCache(cacheName, String.class, Session.class);
-                if (cache == null) {
-                    cache = cacheManager.createCache(cacheName, cacheConfig);
-                }
-            }
-            return cache;
-        } catch (IllegalStateException e) {
-            throw new UUFException("Cannot create cache '" + cacheName + "' for session management. Cache manager '" +
-                                           cacheManager.getURI() + "' is closed.", e);
-        } catch (CacheException e) {
-            throw new UUFException("Cannot create cache '" + cacheName + "' for session management.", e);
-        } catch (IllegalArgumentException e) {
-            throw new UUFException("Cannot create cache '" + cacheName +
-                                           "' for session management. Invalid cache configuration.", e);
-        } catch (UnsupportedOperationException e) {
-            throw new UUFException(
-                    "Cannot create cache '" + cacheName +
-                            "' for session management. Cache configuration specifies an unsupported feature.", e);
-        }
+    public SessionRegistry(String name, SessionManager sessionManager) {
+        this.sessionManager = sessionManager;
+        this.appName = name;
     }
 
-    public SessionRegistry(String name) {
-        // TODO: 1/15/17  read session expire time from configuration
-        this(name, (20 * 60)); // default session timeout is 20 minutes.
+    public Session addSession(User user, HttpRequest request, HttpResponse response) {
+        return sessionManager.createSession(appName, user, request, response);
     }
 
-    SessionRegistry(String appName, int sessionTimeoutDuration) {
-        MutableConfiguration<String, Session> cacheConfig = new MutableConfiguration<>();
-        cacheConfig.setTypes(String.class, Session.class);
-        cacheConfig.setStoreByValue(false);
-        Duration sessionTimeout = new Duration(TimeUnit.SECONDS, sessionTimeoutDuration);
-        cacheConfig.setExpiryPolicyFactory(AccessedExpiryPolicy.factoryOf(sessionTimeout));
-        String cacheName = this.getClass().getName() + "-" + appName + "-sessions_cache";
-        cache = getCache(cacheName, cacheConfig);
+    public Optional<Session> getSession(HttpRequest request, HttpResponse response) {
+        return sessionManager.getSession(appName, request, response);
     }
 
-    public void addSession(Session session) {
-        cache.put(session.getSessionId(), session);
+    public boolean removeSession(HttpRequest request, HttpResponse response) {
+        return sessionManager.removeSession(appName, request, response);
     }
 
-    public Optional<Session> getSession(String sessionId) {
-        if (!Session.isValidSessionId(sessionId)) {
-            throw new IllegalArgumentException("Session ID '" + sessionId + "' is invalid.");
-        }
-        return Optional.ofNullable(cache.get(sessionId));
-    }
-
-    public boolean removeSession(String sessionId) {
-        if (!Session.isValidSessionId(sessionId)) {
-            throw new IllegalArgumentException("Session ID '" + sessionId + "' is invalid.");
-        }
-        return cache.remove(sessionId);
-    }
-
-    public void removeAllSessions() {
-        cache.clear();
-    }
-
-    @Override
-    public void close() throws IOException {
-        if (!cache.isClosed()) {
-            cache.clear();
-            cache.close();
-        }
-    }
-
-    @Override
-    protected void finalize() throws Throwable {
-        close();
-        super.finalize();
-    }
 }

@@ -20,7 +20,21 @@ package org.wso2.carbon.uuf.internal.auth;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import org.wso2.carbon.uuf.api.auth.DefaultSessionManager;
 import org.wso2.carbon.uuf.api.auth.Session;
+import org.wso2.carbon.uuf.spi.HttpRequest;
+import org.wso2.carbon.uuf.spi.HttpResponse;
+import org.wso2.carbon.uuf.spi.auth.SessionManager;
+import org.wso2.carbon.uuf.spi.auth.User;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Test cases for bindings.
@@ -30,21 +44,31 @@ import org.wso2.carbon.uuf.api.auth.Session;
 public class SessionRegistryTest {
 
     private static SessionRegistry createSessionRegistry() {
-        return new SessionRegistry("test", 2);
-    }
-
-    private static Session createSession() {
-        return new Session(null);
+        SessionManager sessionManager = new DefaultSessionManager();
+        return new SessionRegistry("test",sessionManager);
     }
 
     @Test
     public void testSessionAddAndRemove() {
+        // Creating request.
+        HttpRequest request = mock(HttpRequest.class);
+        when(request.getContextPath()).thenReturn("/test");
+        // Creating response.
+        HttpResponse response = mock(HttpResponse.class);
+        final Map<String, String> cookies = new HashMap<>();
+        doAnswer(invocation -> {
+            cookies.put(invocation.getArgument(0), invocation.getArgument(1));
+            return null;
+        }).when(response).addCookie(any(), any());
+        User user = mock(User.class);
+        when(user.getUsername()).thenReturn("admin");
         SessionRegistry sessionRegistry = createSessionRegistry();
-        Session session = createSession();
 
-        sessionRegistry.addSession(session);
-        Assert.assertEquals(sessionRegistry.getSession(session.getSessionId()).get(), session);
-        sessionRegistry.removeSession(session.getSessionId());
-        Assert.assertEquals(sessionRegistry.getSession(session.getSessionId()).isPresent(), false);
+        Session session = sessionRegistry.addSession(user, request, response);
+        when(request.getCookieValue(eq(SessionRegistry.SESSION_COOKIE_NAME)))
+                .thenReturn(session.getSessionId());
+        Assert.assertEquals(sessionRegistry.getSession(request, response).get(), session);
+        sessionRegistry.removeSession(request, response);
+        Assert.assertEquals(sessionRegistry.getSession(request, response).isPresent(), false);
     }
 }

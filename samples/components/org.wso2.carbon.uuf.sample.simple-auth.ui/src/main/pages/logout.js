@@ -15,7 +15,7 @@
  */
 
 function onGet(env) {
-    if (destroySession()) {
+    /*if (destroySession()) {
         sendRedirect(env.contextPath + env.config['logoutRedirectUri']);
-    }
+    }*/
 }

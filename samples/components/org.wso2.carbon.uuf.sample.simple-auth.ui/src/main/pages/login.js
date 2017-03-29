@@ -20,7 +20,7 @@ function onPost(env) {
         sendRedirect(env.contextPath + env.config['loginRedirectUri']);
     }
 
-    var username = env.request.formParams['username'];
+    /*var username = env.request.formParams['username'];
     var password = env.request.formParams['password'];
     // calling dummy authentication service
     var result = authenticate(username, password);
@@ -29,7 +29,7 @@ function onPost(env) {
         sendRedirect(env.contextPath + env.config['loginRedirectUri']);
     } else {
         return {errorMessage: result.message};
-    }
+    }*/
 }
 
 function authenticate(username, password) {

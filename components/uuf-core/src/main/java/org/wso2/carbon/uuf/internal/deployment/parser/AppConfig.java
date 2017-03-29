@@ -27,9 +27,10 @@ import java.util.stream.Collectors;
 
 /**
  * Bean class that represents the app's config file of an UUF App.
+ * <p>
+ * Getters and setters of this class should match with getters and setters in org.wso2.carbon.uuf.maven.bean.AppConfig
+ * class.
  *
- * Getters and setters of this class should match with getters and setters in
- * org.wso2.carbon.uuf.maven.bean.AppConfig class.
  * @since 1.0.0
  */
 public class AppConfig {
@@ -37,6 +38,8 @@ public class AppConfig {
     private String contextPath;
     private String theme;
     private String loginPageUri;
+    private String logoutPageUri;
+    private String authenticator;
     private Map<String, String> errorPages = Collections.emptyMap();
     private List<Menu> menus = Collections.emptyList();
     private SecurityConfig security = new SecurityConfig();
@@ -94,6 +97,42 @@ public class AppConfig {
      */
     public void setLoginPageUri(String loginPageUri) {
         this.loginPageUri = loginPageUri;
+    }
+
+    /**
+     * Returns the logout page URI in this app's config.
+     *
+     * @return URI of the logout page in this app's config
+     */
+    public String getLogoutPageUri() {
+        return logoutPageUri;
+    }
+
+    /**
+     * Sets the logout page URI in this app's config. This logout page URI is not a mandatory field.
+     *
+     * @param logoutPageUri URI of the logout to be set
+     */
+    public void setLogoutPageUri(String logoutPageUri) {
+        this.logoutPageUri = logoutPageUri;
+    }
+
+    /**
+     * Returns the authenticator class in this app's config.
+     *
+     * @return Authenticator class name in this app's config
+     */
+    public String getAuthenticator() {
+        return authenticator;
+    }
+
+    /**
+     * Sets the authenticator class in this app's config.
+     *
+     * @param authenticator Authenticator class name to be set
+     */
+    public void setAuthenticator(String authenticator) {
+        this.authenticator = authenticator;
     }
 
     /**

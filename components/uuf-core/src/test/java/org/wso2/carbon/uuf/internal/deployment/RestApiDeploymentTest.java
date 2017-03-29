@@ -20,9 +20,11 @@ package org.wso2.carbon.uuf.internal.deployment;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import org.wso2.carbon.uuf.api.auth.DefaultSessionManager;
 import org.wso2.carbon.uuf.api.reference.AppReference;
 import org.wso2.carbon.uuf.api.reference.ComponentReference;
 import org.wso2.carbon.uuf.api.reference.FileReference;
+import org.wso2.carbon.uuf.spi.auth.SessionManager;
 import org.wso2.msf4j.Microservice;
 
 import java.util.Collections;
@@ -93,9 +95,10 @@ public class RestApiDeploymentTest {
             apiContextPath[0] = serviceProperties.get("contextPath");
             return null;
         }).when(classLoaderProvider).deployAPI(any(), any());
+        SessionManager sessionManager = new DefaultSessionManager();
 
         // Create app creator.
-        AppCreator appCreator = new AppCreator(Collections.emptySet(), classLoaderProvider);
+        AppCreator appCreator = new AppCreator(Collections.emptySet(), classLoaderProvider, sessionManager);
         appCreator.createApp(appReference, appContextPath);
 
         String expectedApiContextPath = appContextPath + "/root/apis" + apiUri;

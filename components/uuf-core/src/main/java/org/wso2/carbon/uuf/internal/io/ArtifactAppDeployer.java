@@ -31,6 +31,7 @@ import org.wso2.carbon.uuf.internal.deployment.ClassLoaderProvider;
 import org.wso2.carbon.uuf.internal.io.util.ZipArtifactHandler;
 import org.wso2.carbon.uuf.internal.util.NameUtils;
 import org.wso2.carbon.uuf.spi.RenderableCreator;
+import org.wso2.carbon.uuf.spi.auth.SessionManager;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -56,17 +57,17 @@ public class ArtifactAppDeployer implements AppDeployer {
     private final ConcurrentMap<String, AppArtifact> pendingToDeployArtifacts;
     private final Object lock;
 
-    public ArtifactAppDeployer(Set<RenderableCreator> renderableCreators) {
-        this(Paths.get(System.getProperty("carbon.home", "."), "deployment", "uufapps").toString(), renderableCreators);
+    public ArtifactAppDeployer(Set<RenderableCreator> renderableCreators, SessionManager sessionManager) {
+        this(Paths.get(System.getProperty("carbon.home", "."), "deployment", "uufapps").toString(), renderableCreators, sessionManager);
     }
 
-    public ArtifactAppDeployer(String appsRepositoryPath, Set<RenderableCreator> renderableCreators) {
-        this(appsRepositoryPath, renderableCreators, new BundleClassLoaderProvider());
+    public ArtifactAppDeployer(String appsRepositoryPath, Set<RenderableCreator> renderableCreators, SessionManager sessionManager) {
+        this(appsRepositoryPath, renderableCreators, new BundleClassLoaderProvider(), sessionManager);
     }
 
     public ArtifactAppDeployer(String appsRepositoryPath, Set<RenderableCreator> renderableCreators,
-                               ClassLoaderProvider classLoaderProvider) {
-        this(Paths.get(appsRepositoryPath), new AppCreator(renderableCreators, classLoaderProvider));
+                               ClassLoaderProvider classLoaderProvider, SessionManager sessionManager) {
+        this(Paths.get(appsRepositoryPath), new AppCreator(renderableCreators, classLoaderProvider, sessionManager));
     }
 
     public ArtifactAppDeployer(Path appsRepository, AppCreator appCreator) {

@@ -4,10 +4,10 @@
 {{css "css/login.css"}}
 
 {{#fillZone "content"}}
-    {{#if errorMessage}}
+    {{#if @params.errorMessage}}
         <div class="alert alert-danger" role="alert">
             <i class="icon fw fw-error"></i><strong>Login Error!</strong>
-            {{errorMessage}}
+            {{@params.errorMessage}}
             <button type="button" class="close" aria-label="close" data-dismiss="alert">
                 <span aria-hidden="true">
                     <i class="fw fw-cancel"></i>

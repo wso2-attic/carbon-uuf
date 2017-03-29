@@ -134,7 +134,14 @@
                             org.wso2.carbon.uuf.core.*;version="${carbon.uuf.version}",
                             org.wso2.carbon.uuf.exception.*;version="${carbon.uuf.version}",
                             org.wso2.carbon.uuf.spi.*;version="${carbon.uuf.version}"
+                            org.wso2.carbon.uuf.spi.auth.*;version="${carbon.uuf.version}",
+                            org.wso2.carbon.uuf.spi.model.*;version="${carbon.uuf.version}",
+                            org.wso2.carbon.uuf.api.auth.*;version="${carbon.uuf.version}",
+                            org.wso2.carbon.uuf.api.config.*;version="${carbon.uuf.version}",
+                            org.wso2.carbon.uuf.api.model.*;version="${carbon.uuf.version}",
+                            org.wso2.carbon.uuf.api.reference.*;version="${carbon.uuf.version}",
                         </Export-Package>
+                        <DynamicImport-Package>*</DynamicImport-Package>
                         <Carbon-Component>
                             startup.listener;componentName="wso2-uuf-server";
                             requiredService="org.wso2.carbon.uuf.spi.RenderableCreator",

@@ -20,6 +20,7 @@ package org.wso2.carbon.uuf.api.config;
 
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ListMultimap;
+import org.wso2.carbon.uuf.core.UriPatten;
 
 import java.util.Collections;
 import java.util.List;
@@ -42,6 +43,10 @@ public class Configuration {
     private String contextPath;
     private String themeName;
     private String loginPageUri;
+    private UriPatten loginPageUriPatten;
+    private UriPatten logoutPageUriPatten;
+    private String authenticator;
+    private String logoutPageUri;
     private Map<Integer, String> errorPageUris;
     private String defaultErrorPageUri;
     private ListMultimap<String, MenuItem> menus;
@@ -128,8 +133,31 @@ public class Configuration {
                 throw new IllegalArgumentException("Login page URI must start with a '/'. Instead found '" +
                                                            loginPageUri.charAt(0) + "' at the beginning.");
             }
+            this.loginPageUriPatten = new UriPatten(loginPageUri);
         }
         this.loginPageUri = loginPageUri;
+    }
+
+    public UriPatten getLoginPageUriPatten() {
+        return loginPageUriPatten;
+    }
+
+    public UriPatten getLogoutPageUriPatten() {
+        return logoutPageUriPatten;
+    }
+
+    public void setLogoutPageUri(String logoutPageUri) {
+        if (logoutPageUri != null && !logoutPageUri.isEmpty()) {
+            this.logoutPageUriPatten = new UriPatten(logoutPageUri);
+        }
+    }
+
+    public String getAuthenticator() {
+        return authenticator;
+    }
+
+    public void setAuthenticator(String authenticator) {
+        this.authenticator = authenticator;
     }
 
     /**
