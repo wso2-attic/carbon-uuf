@@ -133,10 +133,8 @@ public class AppCreator {
         configuration.setMenus(appConfig.getMenus().stream()
                                        .map(AppConfig.Menu::toConfigurationMenu)
                                        .collect(toList()));
-        configuration.setAcceptingCsrfPatterns(Sets.newHashSet(appConfig.getSecurity().getCsrfPatterns().getAccept()));
-        configuration.setRejectingCsrfPatterns(Sets.newHashSet(appConfig.getSecurity().getCsrfPatterns().getReject()));
-        configuration.setAcceptingXssPatterns(Sets.newHashSet(appConfig.getSecurity().getXssPatterns().getAccept()));
-        configuration.setRejectingXssPatterns(Sets.newHashSet(appConfig.getSecurity().getXssPatterns().getReject()));
+        configuration.setCsrfIgnoreUris(Sets.newHashSet(appConfig.getSecurity().getCsrfIgnoreUris()));
+        configuration.setXssIgnoreUris(Sets.newHashSet(appConfig.getSecurity().getXssIgnoreUris()));
         configuration.setResponseHeaders(appConfig.getSecurity().getResponseHeaders());
         configuration.setOther(appConfig.getOther());
         return configuration;
