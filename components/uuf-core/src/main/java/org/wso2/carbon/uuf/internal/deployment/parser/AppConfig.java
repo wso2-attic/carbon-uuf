@@ -325,7 +325,7 @@ public class AppConfig {
 
         private List<String> csrfIgnoreUris = Collections.emptyList();
         private List<String> xssIgnoreUris = Collections.emptyList();
-        private Map<String, String> responseHeaders = Collections.emptyMap();
+        private ResponseHeaders responseHeaders =  new ResponseHeaders();
 
         /**
          * Returns the list of URI's that doesn't require CSRF protection.
@@ -368,7 +368,7 @@ public class AppConfig {
          *
          * @return HTTP response headers
          */
-        public Map<String, String> getResponseHeaders() {
+        public ResponseHeaders getResponseHeaders() {
             return responseHeaders;
         }
 
@@ -377,8 +377,59 @@ public class AppConfig {
          *
          * @param responseHeaders HTTP response headers to be set
          */
-        public void setResponseHeaders(Map<String, String> responseHeaders) {
-            this.responseHeaders = (responseHeaders == null) ? Collections.emptyMap() : responseHeaders;
+        public void setResponseHeaders(ResponseHeaders responseHeaders) {
+            this.responseHeaders = (responseHeaders == null) ? new ResponseHeaders() : responseHeaders;
+        }
+    }
+
+    /**
+     * Bean class that represents security headers configurations in the app's config file of an UUF App.
+     *
+     * @since 1.0.0
+     */
+    public static class ResponseHeaders {
+
+        private Map<String, String> staticResources = Collections.emptyMap();
+        private Map<String, String> pages = Collections.emptyMap();
+
+        /**
+         * Returns HTTP response headers for static contents.
+         *
+         * @return HTTP response headers
+         */
+        public Map<String, String> getStaticResources() {
+            return staticResources;
+        }
+
+        /**
+         * Sets the HTTP response headers for static contents.
+         *
+         * @param staticResources HTTP response headers to be set
+         */
+        public void setStaticResources(Map<String, String> staticResources) {
+            this.staticResources = staticResources;
+        }
+
+        /**
+         * Returns HTTP response headers for pages.
+         *
+         * @return HTTP response headers
+         */
+        public Map<String, String> getPages() {
+            return pages;
+        }
+
+        /**
+         * Sets the HTTP response headers for pages.
+         *
+         * @param pages HTTP response headers to be set
+         */
+        public void setPages(Map<String, String> pages) {
+            this.pages = pages;
+        }
+
+        public Configuration.ResponseHeaders toConfigurationResponseHeaders() {
+            return new Configuration.ResponseHeaders(staticResources, pages);
         }
     }
 }

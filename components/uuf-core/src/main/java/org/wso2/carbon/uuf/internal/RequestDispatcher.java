@@ -137,6 +137,6 @@ public class RequestDispatcher {
         httpResponse.setHeader(HEADER_PRAGMA, "no-cache");
 
         // if there are any headers configured by the user for this app, then add them also to the response
-        app.getConfiguration().getResponseHeaders().forEach(httpResponse::setHeader);
+        app.getConfiguration().getResponseHeaders().getPages().forEach(httpResponse::setHeader);
     }
 }

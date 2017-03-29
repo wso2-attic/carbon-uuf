@@ -117,6 +117,7 @@ public class StaticResolver {
     public void serve(App app, HttpRequest request, HttpResponse response) {
         Path resourcePath;
         ZonedDateTime lastModifiedDate;
+        setResponseSecurityHeaders(app, response);
         try {
             if (request.isComponentStaticResourceRequest()) {
                 // /public/components/...
@@ -294,6 +295,10 @@ public class StaticResolver {
             LOGGER.warn("Cannot parse 'If-Modified-Since' HTTP header value '{}'.", ifModifiedSinceHeader, e);
             return null;
         }
+    }
+
+    private void setResponseSecurityHeaders(App app, HttpResponse response) {
+        app.getConfiguration().getResponseHeaders().getStaticResources().forEach(response::setHeader);
     }
 
     private void setCacheHeaders(ZonedDateTime lastModifiedDate, HttpResponse response) {
