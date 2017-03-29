@@ -33,6 +33,7 @@ import org.wso2.carbon.kernel.startupresolver.RequiredCapabilityListener;
 import org.wso2.carbon.uuf.api.Server;
 import org.wso2.carbon.uuf.core.App;
 import org.wso2.carbon.uuf.exception.UUFException;
+import org.wso2.carbon.uuf.internal.auth.SessionRegistry;
 import org.wso2.carbon.uuf.internal.deployment.AppDeployer;
 import org.wso2.carbon.uuf.internal.deployment.DeploymentNotifier;
 import org.wso2.carbon.uuf.internal.io.ArtifactAppDeployer;
@@ -48,6 +49,7 @@ import java.util.Set;
 import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_BAD_REQUEST;
 import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_INTERNAL_SERVER_ERROR;
 import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_NOT_FOUND;
+import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_UNAUTHORIZED;
 
 @Component(name = "org.wso2.carbon.uuf.internal.UUFServer",
            service = RequiredCapabilityListener.class,
@@ -171,6 +173,18 @@ public class UUFServer implements Server, RequiredCapabilityListener {
             LOGGER.error(msg, e);
             requestDispatcher.serveDefaultErrorPage(STATUS_INTERNAL_SERVER_ERROR, msg, response);
             return;
+        }
+
+        // Logic to validate against CSRF attacks
+        if (request.getMethod().equals("POST") &&
+                !app.getConfiguration().getCsrfIgnoreUris().contains(request.getUriWithoutContextPath())) {
+            // POST request where the URI isn't in the CSRF ignore list, hence validate the CSRF Token
+            if (request.getCookieValue(SessionRegistry.CSRF_TOKEN) == null ||
+                    request.getFormParams().get("uuf-csrftoken") == null ||
+                    !request.getFormParams().get("uuf-csrftoken").equals(request.getCookieValue(SessionRegistry.CSRF_TOKEN))) {
+                requestDispatcher.serveDefaultErrorPage(STATUS_UNAUTHORIZED, "CSRF threat detected", response);
+                return;
+            }
         }
 
         if (app != null) {

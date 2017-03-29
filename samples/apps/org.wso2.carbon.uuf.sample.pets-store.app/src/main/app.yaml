@@ -33,7 +33,9 @@ loginPageUri: "/simple-auth/login"
 
 # Security related configurations for this app.
 security:
-  csrfIgnoreUris: []
+  csrfIgnoreUris:
+    - /simple-auth/login
+    - /simple-auth/register
   xssIgnoreUris: []
   responseHeaders:
      staticResources:

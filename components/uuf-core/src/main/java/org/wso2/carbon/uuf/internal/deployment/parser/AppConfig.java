@@ -323,44 +323,44 @@ public class AppConfig {
      */
     public static class SecurityConfig {
 
-        private PatternsConfig csrfPatterns = new PatternsConfig();
-        private PatternsConfig xssPatterns = new PatternsConfig();
+        private List<String> csrfIgnoreUris = Collections.emptyList();
+        private List<String> xssIgnoreUris = Collections.emptyList();
         private ResponseHeaders responseHeaders =  new ResponseHeaders();
 
         /**
-         * Returns CSRF URI patterns of this security configuration.
+         * Returns the list of URI's that doesn't require CSRF protection.
          *
-         * @return CSRF URI patterns
+         * @return list of URI's that doesn't require CSRF protection.
          */
-        public PatternsConfig getCsrfPatterns() {
-            return csrfPatterns;
+        public List<String> getCsrfIgnoreUris() {
+            return csrfIgnoreUris;
         }
 
         /**
-         * Sets the CSRF URI patterns of this security configuration.
+         * Sets the list of URI's that doesn't require CSRF protection.
          *
-         * @param csrfPatterns CSRF URI patterns to be set
+         * @param csrfIgnoreUris list of URI's that doesn't require CSRF protection.
          */
-        public void setCsrfPatterns(PatternsConfig csrfPatterns) {
-            this.csrfPatterns = (csrfPatterns == null) ? new PatternsConfig() : csrfPatterns;
+        public void setCsrfIgnoreUris(List<String> csrfIgnoreUris) {
+            this.csrfIgnoreUris = (csrfIgnoreUris == null) ? Collections.emptyList() : csrfIgnoreUris;
         }
 
         /**
-         * Returns XSS URI patterns of this security configuration.
+         * Returns the list of URI's that doesn't require XSS protection.
          *
-         * @return XSS URI patterns
+         * @return list of URI's that doesn't require XSS protection.
          */
-        public PatternsConfig getXssPatterns() {
-            return xssPatterns;
+        public List<String> getXssIgnoreUris() {
+            return xssIgnoreUris;
         }
 
         /**
-         * Sets the XSS URI patterns of this security configuration.
+         * Sets the list of URI's that doesn't require XSS protection.
          *
-         * @param xssPatterns XSS URI patterns to be set
+         * @param xssIgnoreUris list of URI's that doesn't require XSS protection.
          */
-        public void setXssPatterns(PatternsConfig xssPatterns) {
-            this.xssPatterns = (xssPatterns == null) ? new PatternsConfig() : xssPatterns;
+        public void setXssIgnoreUris(List<String> xssIgnoreUris) {
+            this.xssIgnoreUris = (xssIgnoreUris == null) ? Collections.emptyList() : xssIgnoreUris;
         }
 
         /**
@@ -430,53 +430,6 @@ public class AppConfig {
 
         public Configuration.ResponseHeaders toConfigurationResponseHeaders() {
             return new Configuration.ResponseHeaders(staticResources, pages);
-        }
-    }
-
-    /**
-     * Bean class that represents security related URI patterns configurations in the app's config file of an UUF App.
-     *
-     * @since 1.0.0
-     */
-    public static class PatternsConfig {
-
-        private List<String> accept = Collections.emptyList();
-        private List<String> reject = Collections.emptyList();
-
-        /**
-         * Returns allowing URI patterns of this URI pattern configuration.
-         *
-         * @return allowing URI patterns
-         */
-        public List<String> getAccept() {
-            return accept;
-        }
-
-        /**
-         * Sets the allowing URI patterns of this URI pattern configuration.
-         *
-         * @param accept allowing URI patterns to be set
-         */
-        public void setAccept(List<String> accept) {
-            this.accept = (accept == null) ? Collections.emptyList() : accept;
-        }
-
-        /**
-         * Returns denying URI patterns of this URI pattern configuration.
-         *
-         * @return denying URI patterns
-         */
-        public List<String> getReject() {
-            return reject;
-        }
-
-        /**
-         * Sets the denying URI patterns of this URI pattern configuration.
-         *
-         * @param reject denying URI patterns to be set
-         */
-        public void setReject(List<String> reject) {
-            this.reject = (reject == null) ? Collections.emptyList() : reject;
         }
     }
 }

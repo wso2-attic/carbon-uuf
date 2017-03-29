@@ -87,6 +87,7 @@ public class RequestDispatcher {
     private void servePageOrFragment(App app, HttpRequest request, HttpResponse response) {
         DebugLogger.startRequest(request);
         try {
+            // set default and configured http response headers for security purpose
             setResponseSecurityHeaders(app, response);
             if (request.isFragmentRequest()) {
                 JsonObject renderedFragment = app.renderFragment(request, response);
