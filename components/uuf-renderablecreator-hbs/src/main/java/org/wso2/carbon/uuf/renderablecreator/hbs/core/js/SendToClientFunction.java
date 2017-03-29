@@ -21,5 +21,5 @@ public interface SendToClientFunction {
 
     String NAME = "sendToClient";
 
-    void call(String name, Object value);
+    void call(String name, Object... value);
 }
