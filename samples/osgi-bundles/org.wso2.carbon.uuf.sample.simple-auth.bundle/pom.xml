@@ -70,7 +70,6 @@
                             org.wso2.carbon.uuf.api.auth.*; version="${carbon.uuf.version}",
                             org.wso2.carbon.uuf.spi.auth.*; version="${carbon.uuf.version}",
                         </Import-Package>
-                        <DynamicImport-Package>*</DynamicImport-Package>
                         <Private-Package>org.wso2.carbon.uuf.sample.simpleauth.bundle.internal.*</Private-Package>
                         <Export-Package>
                             !org.wso2.carbon.uuf.sample.simpleauth.bundle.internal.*,
