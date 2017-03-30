@@ -175,18 +175,6 @@ public class UUFServer implements Server, RequiredCapabilityListener {
             return;
         }
 
-        // Logic to validate against CSRF attacks
-        if (request.getMethod().equals("POST") &&
-                !app.getConfiguration().getCsrfIgnoreUris().contains(request.getUriWithoutContextPath())) {
-            // POST request where the URI isn't in the CSRF ignore list, hence validate the CSRF Token
-            if (request.getCookieValue(SessionRegistry.CSRF_TOKEN) == null ||
-                    request.getFormParams().get("uuf-csrftoken") == null ||
-                    !request.getFormParams().get("uuf-csrftoken").equals(request.getCookieValue(SessionRegistry.CSRF_TOKEN))) {
-                requestDispatcher.serveDefaultErrorPage(STATUS_UNAUTHORIZED, "CSRF threat detected", response);
-                return;
-            }
-        }
-
         if (app != null) {
             requestDispatcher.serve(app, request, response);
         } else {

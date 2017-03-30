@@ -35,6 +35,7 @@
 
     <modules>
         <module>dummy-http-connector</module>
+        <module>tests-distribution</module>
         <module>osgi-tests</module>
     </modules>
 

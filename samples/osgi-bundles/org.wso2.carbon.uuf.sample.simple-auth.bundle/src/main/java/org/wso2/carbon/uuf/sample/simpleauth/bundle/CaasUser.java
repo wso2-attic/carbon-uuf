@@ -17,7 +17,7 @@
 package org.wso2.carbon.uuf.sample.simpleauth.bundle;
 
 import org.wso2.carbon.security.caas.api.CarbonPrincipal;
-import org.wso2.carbon.security.caas.user.core.bean.Permission;
+import org.wso2.carbon.security.caas.api.CarbonPermission;
 import org.wso2.carbon.uuf.spi.auth.User;
 
 public class CaasUser implements User {
@@ -37,9 +37,9 @@ public class CaasUser implements User {
 
     @Override
     public boolean hasPermission(String resourceUri, String action) {
-        Permission permission = new Permission(resourceUri, action);
+        CarbonPermission permission = new CarbonPermission(resourceUri, action);
         try {
-            return principal.getUser().isAuthorized(permission);
+            return principal.getUser().isUserAuthorized(permission);
          //TODO catch generic carbon-security exception once confirmed by the identity team
         } catch (Exception e) {
         }
