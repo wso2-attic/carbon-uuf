@@ -52,7 +52,6 @@
             <fileMode>644</fileMode>
         </fileSet>
 
-
         <fileSet>
             <directory>carbon-home/conf/osgi</directory>
             <outputDirectory>conf/wso2</outputDirectory>
