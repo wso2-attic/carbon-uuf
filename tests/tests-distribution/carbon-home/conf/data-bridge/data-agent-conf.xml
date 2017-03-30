@@ -59,4 +59,3 @@
         <SecureMinIdleTimeInPool>5000</SecureMinIdleTimeInPool>
     </Agent>
 </DataAgentsConfiguration>
-

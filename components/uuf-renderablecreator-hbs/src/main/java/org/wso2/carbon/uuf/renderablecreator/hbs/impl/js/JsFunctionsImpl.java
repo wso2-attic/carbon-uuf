@@ -165,11 +165,17 @@ public class JsFunctionsImpl {
                         "=" + GSON.toJson(values[0]) +
                         ";</script>";
                 api.getRequestLookup().addToPlaceholder(
-                        (values.length == 2 && Placeholder.headJs.name().equalsIgnoreCase((String) values[1])) ?
-                                Placeholder.headJs : Placeholder.js, scriptTag);
+                        isHeadJsPlaceholder(values) ? Placeholder.headJs : Placeholder.js, scriptTag);
             };
         }
         return sendToClientFunction;
+    }
+
+    private boolean isHeadJsPlaceholder(Object[] values) {
+        // this method check whether the user wants to push javascript into HeadJs placeholder.
+        // argument length is one means that, user haven't passed any placeholder.
+        // argument length two means that user passed a placeholder. so are checking pass argument value is HeadJs.
+        return values.length == 2 && Placeholder.headJs.name().equalsIgnoreCase((String) values[1]);
     }
 
     public I18nFunction getI18nFunction() {

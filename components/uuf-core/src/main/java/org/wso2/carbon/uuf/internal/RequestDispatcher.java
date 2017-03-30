@@ -96,8 +96,6 @@ public class RequestDispatcher {
                 response.setContent(STATUS_OK, renderedFragment.toString(), CONTENT_TYPE_APPLICATION_JSON);
             } else {
                 // Request for a page.
-
-
                 // Logic to validate against CSRF attacks
                 if (request.getMethod().equals("POST") &&
                         !app.getConfiguration().getCsrfIgnoreUris().contains(request.getUriWithoutContextPath())) {

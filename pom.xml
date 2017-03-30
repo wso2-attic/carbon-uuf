@@ -131,12 +131,6 @@
                 <artifactId>gson</artifactId>
                 <version>${gson.version}</version>
             </dependency>
-            <!--dependency>
-                <groupId>org.wso2.orbit.org.yaml</groupId>
-                <groupId>org.wso2.orbit.org.yaml</groupId>
-                <artifactId>snakeyaml</artifactId>
-                <version>${orbit.org.yaml.version}</version>
-            </dependency-->
             <dependency>
                 <groupId>org.yaml</groupId>
                 <artifactId>snakeyaml</artifactId>
@@ -195,11 +189,6 @@
                 <artifactId>org.wso2.carbon.security.caas</artifactId>
                 <version>${carbon.security.caas.version}</version>
             </dependency>
-            <!--dependency>
-                <groupId>org.wso2.carbon.security.userstore</groupId>
-                <artifactId>org.wso2.carbon.identity.mgt.store.connector.jdbc</artifactId>
-                <version>${carbon.security.userstore.jdbc.version}</version>
-            </dependency-->
 
             <!--UUF Sample Components-->
             <dependency>
@@ -505,11 +494,6 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
-                <groupId>org.wso2.carbon.identity.mgt</groupId>
-                <artifactId>org.wso2.carbon.identity.mgt</artifactId>
-                <version>${org.wso2.carbon.identity.mgt.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.wso2.carbon</groupId>
                 <artifactId>org.wso2.carbon.pax.exam.feature</artifactId>
                 <version>${carbon.kernel.version}</version>
@@ -638,7 +622,6 @@
         <!-- Authentication and Authorization -->
         <carbon.security.caas.version>1.0.2-m1</carbon.security.caas.version>
         <carbon.security.caas.version.range>[1.0.0, 2.0.0)</carbon.security.caas.version.range>
-        <!--carbon.security.userstore.jdbc.version>0.1.3</carbon.security.userstore.jdbc.version-->
 
         <!-- Maven Plugins -->
         <carbon-uuf-maven-plugin.version>1.0.0-SNAPSHOT</carbon-uuf-maven-plugin.version>
@@ -648,8 +631,6 @@
         <!-- Test -->
         <testng.version>6.9.10</testng.version>
         <mockito-core.version>2.4.2</mockito-core.version>
-
-        <org.wso2.carbon.identity.mgt.version>0.1.38</org.wso2.carbon.identity.mgt.version>
 
         <!-- OSGi Tests -->
         <pax.logging.api.version>1.8.4</pax.logging.api.version>
