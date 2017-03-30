@@ -34,6 +34,8 @@
                 <exclude>**/*.ipr</exclude>
                 <exclude>**/*.iwr</exclude>
                 <exclude>**/*.eclipse</exclude>
+                <exclude>**/carbon.sh</exclude>
+                <exclude>**/carbon.bat</exclude>
                 <exclude>**/netty-transports.yml</exclude>
             </excludes>
         </fileSet>
@@ -43,6 +45,13 @@
             <outputDirectory>conf/transports</outputDirectory>
             <fileMode>644</fileMode>
         </fileSet>
+
+        <fileSet>
+            <directory>carbon-home/bin</directory>
+            <outputDirectory>bin</outputDirectory>
+            <fileMode>644</fileMode>
+        </fileSet>
+
 
         <fileSet>
             <directory>carbon-home/conf/osgi</directory>
