@@ -21,16 +21,23 @@ package org.wso2.carbon.uuf.internal;
 import com.google.gson.JsonObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.uuf.api.config.Configuration;
 import org.wso2.carbon.uuf.core.App;
 import org.wso2.carbon.uuf.exception.HttpErrorException;
 import org.wso2.carbon.uuf.exception.PageRedirectException;
 import org.wso2.carbon.uuf.exception.UUFException;
-import org.wso2.carbon.uuf.internal.auth.SessionRegistry;
 import org.wso2.carbon.uuf.internal.debug.DebugLogger;
 import org.wso2.carbon.uuf.internal.debug.Debugger;
+import org.wso2.carbon.uuf.internal.filter.CsrfFilter;
+import org.wso2.carbon.uuf.internal.filter.Filter;
+import org.wso2.carbon.uuf.internal.filter.FilterResult;
 import org.wso2.carbon.uuf.internal.io.StaticResolver;
 import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.carbon.uuf.spi.HttpResponse;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.wso2.carbon.uuf.spi.HttpResponse.CONTENT_TYPE_APPLICATION_JSON;
 import static org.wso2.carbon.uuf.spi.HttpResponse.CONTENT_TYPE_TEXT_HTML;
@@ -43,7 +50,6 @@ import static org.wso2.carbon.uuf.spi.HttpResponse.HEADER_X_XSS_PROTECTION;
 import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_FOUND;
 import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_INTERNAL_SERVER_ERROR;
 import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_OK;
-import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_UNAUTHORIZED;
 
 public class RequestDispatcher {
 
@@ -51,6 +57,7 @@ public class RequestDispatcher {
 
     private final StaticResolver staticResolver;
     private final Debugger debugger;
+    private List<Filter> filters;
 
     public RequestDispatcher() {
         this(new StaticResolver(), (Debugger.isDebuggingEnabled() ? new Debugger() : null));
@@ -59,6 +66,9 @@ public class RequestDispatcher {
     public RequestDispatcher(StaticResolver staticResolver, Debugger debugger) {
         this.staticResolver = staticResolver;
         this.debugger = debugger;
+
+        // Add filters
+        filters = new ArrayList<>(Arrays.asList(new CsrfFilter()));
     }
 
     public void serve(App app, HttpRequest request, HttpResponse response) {
@@ -95,16 +105,13 @@ public class RequestDispatcher {
                 JsonObject renderedFragment = app.renderFragment(request, response);
                 response.setContent(STATUS_OK, renderedFragment.toString(), CONTENT_TYPE_APPLICATION_JSON);
             } else {
-                // Request for a page.
-                // Logic to validate against CSRF attacks
-                if (request.getMethod().equals("POST") &&
-                        !app.getConfiguration().getCsrfIgnoreUris().contains(request.getUriWithoutContextPath())) {
-                    // POST request where the URI isn't in the CSRF ignore list, hence validate the CSRF Token
-                    if (request.getCookieValue(SessionRegistry.CSRF_TOKEN) == null ||
-                            request.getFormParams().get("uuf-csrftoken") == null ||
-                            !request.getFormParams().get("uuf-csrftoken").equals(
-                                    request.getCookieValue(SessionRegistry.CSRF_TOKEN))) {
-                        serveDefaultErrorPage(STATUS_UNAUTHORIZED, "CSRF threat detected", response);
+                // Execute filters
+                Configuration configuration = app.getConfiguration();
+                for (Filter filter : filters) {
+                    FilterResult result = filter.doFilter(configuration, request, response);
+                    if (!result.isContinue()) {
+                        serveDefaultErrorPage(result.getStatusCode().orElse(STATUS_INTERNAL_SERVER_ERROR),
+                                result.getMessage().orElse("Internal Server Error"), response);
                         return;
                     }
                 }
@@ -140,7 +147,7 @@ public class RequestDispatcher {
     /**
      * Sets some default mandatory and user configured security related headers to the response path.
      *
-     * @param app the application used with getting the security related configuration.
+     * @param app          the application used with getting the security related configuration.
      * @param httpResponse the http response instance used with setting the headers.
      */
     private void setResponseSecurityHeaders(App app, HttpResponse httpResponse) {

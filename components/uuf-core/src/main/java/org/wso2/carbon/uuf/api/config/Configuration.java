@@ -20,8 +20,10 @@ package org.wso2.carbon.uuf.api.config;
 
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ListMultimap;
+import org.wso2.carbon.uuf.core.UriPatten;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -45,8 +47,8 @@ public class Configuration {
     private Map<Integer, String> errorPageUris;
     private String defaultErrorPageUri;
     private ListMultimap<String, MenuItem> menus;
-    private Set<String> csrfIgnoreUris;
-    private Set<String> xssIgnoreUris;
+    private Set<UriPatten> csrfIgnoreUris;
+    private Set<UriPatten> xssIgnoreUris;
     private ResponseHeaders responseHeaders;
     private Map<String, Object> otherConfigurations;
 
@@ -243,7 +245,7 @@ public class Configuration {
      *
      * @return set of URI's that doesn't require CSRF protection.
      */
-    public Set<String> getCsrfIgnoreUris() {
+    public Set<UriPatten> getCsrfIgnoreUris() {
         return csrfIgnoreUris;
     }
 
@@ -257,6 +259,7 @@ public class Configuration {
         if (csrfIgnoreUris == null) {
             this.csrfIgnoreUris = emptySet();
         } else {
+            Set<UriPatten> csrfIgnoreUriPatterns = new HashSet<>();
             for (String csrfUri : csrfIgnoreUris) {
                 if (csrfUri == null) {
                     throw new IllegalArgumentException("CSRF ignore URI cannot be null.");
@@ -264,8 +267,9 @@ public class Configuration {
                     throw new IllegalArgumentException("CSRF ignore URI cannot be empty.");
                 }
                 // TODO: 12/31/16 check whether the 'acceptingCsrfPattern' is a valid URI pattern
+                csrfIgnoreUriPatterns.add(new UriPatten(csrfUri));
             }
-            this.csrfIgnoreUris = unmodifiableSet(csrfIgnoreUris);
+            this.csrfIgnoreUris = unmodifiableSet(csrfIgnoreUriPatterns);
         }
     }
 
@@ -274,7 +278,7 @@ public class Configuration {
      *
      * @return set of URI's that doesn't require XSS protection.
      */
-    public Set<String> getXssIgnoreUris() {
+    public Set<UriPatten> getXssIgnoreUris() {
         return xssIgnoreUris;
     }
 
@@ -288,6 +292,7 @@ public class Configuration {
         if (xssIgnoreUris == null) {
             this.xssIgnoreUris = emptySet();
         } else {
+            Set<UriPatten> xssIgnoreUriPatterns = new HashSet<>();
             for (String xssUri : xssIgnoreUris) {
                 if (xssUri == null) {
                     throw new IllegalArgumentException("XSS ignore URI cannot be null.");
@@ -295,8 +300,9 @@ public class Configuration {
                     throw new IllegalArgumentException("XSS ignore URI cannot be empty.");
                 }
                 // TODO: 12/31/16 check whether the 'rejectingCsrfPattern' is a valid URI pattern
+                xssIgnoreUriPatterns.add(new UriPatten(xssUri));
             }
-            this.xssIgnoreUris = unmodifiableSet(xssIgnoreUris);
+            this.xssIgnoreUris = unmodifiableSet(xssIgnoreUriPatterns);
         }
     }
 
