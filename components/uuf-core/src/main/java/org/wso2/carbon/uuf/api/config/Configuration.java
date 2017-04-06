@@ -40,7 +40,6 @@ import static java.util.Collections.unmodifiableSet;
  * @since 1.0.0
  */
 public class Configuration {
-
     private String contextPath;
     private String themeName;
     private String loginPageUri;
@@ -77,7 +76,7 @@ public class Configuration {
                 throw new IllegalArgumentException("Context path cannot be empty.");
             } else if (contextPath.charAt(0) != '/') {
                 throw new IllegalArgumentException("Context path must start with a '/'. Instead found '" +
-                                                           contextPath.charAt(0) + "' at the beginning.");
+                        contextPath.charAt(0) + "' at the beginning.");
             }
         }
         this.contextPath = contextPath;
@@ -128,7 +127,7 @@ public class Configuration {
                 throw new IllegalArgumentException("Login page URI cannot be empty.");
             } else if (loginPageUri.charAt(0) != '/') {
                 throw new IllegalArgumentException("Login page URI must start with a '/'. Instead found '" +
-                                                           loginPageUri.charAt(0) + "' at the beginning.");
+                        loginPageUri.charAt(0) + "' at the beginning.");
             }
         }
         this.loginPageUri = loginPageUri;
@@ -262,12 +261,15 @@ public class Configuration {
             Set<UriPatten> csrfIgnoreUriPatterns = new HashSet<>();
             for (String csrfUri : csrfIgnoreUris) {
                 if (csrfUri == null) {
-                    throw new IllegalArgumentException("CSRF ignore URI cannot be null.");
+                    throw new IllegalArgumentException("CSRF ignore URI pattern cannot be null.");
                 } else if (csrfUri.isEmpty()) {
-                    throw new IllegalArgumentException("CSRF ignore URI cannot be empty.");
+                    throw new IllegalArgumentException("CSRF ignore URI pattern cannot be empty.");
                 }
-                // TODO: 12/31/16 check whether the 'acceptingCsrfPattern' is a valid URI pattern
-                csrfIgnoreUriPatterns.add(new UriPatten(csrfUri));
+                try {
+                    csrfIgnoreUriPatterns.add(new UriPatten(csrfUri));
+                } catch (IllegalArgumentException e) {
+                    throw new IllegalArgumentException("CSRF ignore URI pattern '" + csrfUri + "' is invalid.", e);
+                }
             }
             this.csrfIgnoreUris = unmodifiableSet(csrfIgnoreUriPatterns);
         }
@@ -295,12 +297,16 @@ public class Configuration {
             Set<UriPatten> xssIgnoreUriPatterns = new HashSet<>();
             for (String xssUri : xssIgnoreUris) {
                 if (xssUri == null) {
-                    throw new IllegalArgumentException("XSS ignore URI cannot be null.");
+                    throw new IllegalArgumentException("XSS ignore URI pattern cannot be null.");
                 } else if (xssUri.isEmpty()) {
-                    throw new IllegalArgumentException("XSS ignore URI cannot be empty.");
+                    throw new IllegalArgumentException("XSS ignore URI pattern cannot be empty.");
                 }
-                // TODO: 12/31/16 check whether the 'rejectingCsrfPattern' is a valid URI pattern
-                xssIgnoreUriPatterns.add(new UriPatten(xssUri));
+
+                try {
+                    xssIgnoreUriPatterns.add(new UriPatten(xssUri));
+                } catch (IllegalArgumentException e) {
+                    throw new IllegalArgumentException("XSS ignore URI pattern '" + xssUri + "' is invalid.", e);
+                }
             }
             this.xssIgnoreUris = unmodifiableSet(xssIgnoreUriPatterns);
         }

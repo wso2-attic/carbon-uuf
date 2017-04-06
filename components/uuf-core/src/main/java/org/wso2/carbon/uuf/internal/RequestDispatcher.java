@@ -18,6 +18,7 @@
 
 package org.wso2.carbon.uuf.internal;
 
+import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,8 +36,6 @@ import org.wso2.carbon.uuf.internal.io.StaticResolver;
 import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.carbon.uuf.spi.HttpResponse;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.wso2.carbon.uuf.spi.HttpResponse.CONTENT_TYPE_APPLICATION_JSON;
@@ -57,7 +56,7 @@ public class RequestDispatcher {
 
     private final StaticResolver staticResolver;
     private final Debugger debugger;
-    private List<Filter> filters;
+    private final List<Filter> filters;
 
     public RequestDispatcher() {
         this(new StaticResolver(), (Debugger.isDebuggingEnabled() ? new Debugger() : null));
@@ -66,9 +65,7 @@ public class RequestDispatcher {
     public RequestDispatcher(StaticResolver staticResolver, Debugger debugger) {
         this.staticResolver = staticResolver;
         this.debugger = debugger;
-
-        // Add filters
-        filters = new ArrayList<>(Arrays.asList(new CsrfFilter()));
+        this.filters = ImmutableList.of(new CsrfFilter());
     }
 
     public void serve(App app, HttpRequest request, HttpResponse response) {
@@ -108,10 +105,9 @@ public class RequestDispatcher {
                 // Execute filters
                 Configuration configuration = app.getConfiguration();
                 for (Filter filter : filters) {
-                    FilterResult result = filter.doFilter(configuration, request, response);
+                    FilterResult result = filter.doFilter(request, configuration);
                     if (!result.isContinue()) {
-                        serveDefaultErrorPage(result.getStatusCode().orElse(STATUS_INTERNAL_SERVER_ERROR),
-                                result.getMessage().orElse("Internal Server Error"), response);
+                        serveDefaultErrorPage(result.getHttpStatusCode(), result.getMessage(), response);
                         return;
                     }
                 }

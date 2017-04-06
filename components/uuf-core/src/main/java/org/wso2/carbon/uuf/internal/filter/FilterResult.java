@@ -15,68 +15,79 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.wso2.carbon.uuf.internal.filter;
 
-import java.util.Optional;
+import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_OK;
 
 /**
- * Bean class for holding the filter result.
+ * Bean class for holding the result of a HTTP request filtering.
  *
  * @since 1.0.0
  */
 public class FilterResult {
 
-    private Integer statusCode;
-    private String message;
-    private boolean isContinue;
+    private static final String SUCCESS_MESSAGE = "Successful";
 
-    public FilterResult(boolean isContinue) {
+    private final int httpStatusCode;
+    private final String message;
+    private final boolean isContinue;
+
+    /**
+     * Constructs a new FilterResult instance.
+     *
+     * @param isContinue     whether the filtering process should be continued
+     * @param httpStatusCode HTTP status code to be returned after executing the filter
+     * @param message        filter result message
+     */
+    public FilterResult(boolean isContinue, int httpStatusCode, String message) {
         this.isContinue = isContinue;
-    }
-
-    public FilterResult(boolean isContinue, int statusCode) {
-        this(isContinue);
-        this.statusCode = statusCode;
-    }
-
-    public FilterResult(boolean isContinue, int statusCode, String message) {
-        this(isContinue, statusCode);
+        this.httpStatusCode = httpStatusCode;
         this.message = message;
     }
 
     /**
-     * Get status code.
+     * Creates a new success FilterResult.
      *
-     * @return optional status code
+     * @return success FilterResult
      */
-    public Optional<Integer> getStatusCode() {
-        return Optional.ofNullable(statusCode);
+    public static FilterResult success() {
+        return new FilterResult(true, STATUS_OK, SUCCESS_MESSAGE);
     }
 
     /**
-     * Get message.
+     * Creates a new error FilterResult.
      *
-     * @return optional message
+     * @return error FilterResult
      */
-    public Optional<String> getMessage() {
-        return Optional.ofNullable(message);
+    public static FilterResult error(int httpStatusCode, String message) {
+        return new FilterResult(false, httpStatusCode, message);
     }
 
     /**
-     * Get is continue.
+     * Returns the HTTP status code of this filter result.
      *
-     * @return is continue
+     * @return http status code of the filter result
+     */
+    public int getHttpStatusCode() {
+        return httpStatusCode;
+    }
+
+    /**
+     * Returns the filter result message.
+     *
+     * @return filter result message
+     */
+    public String getMessage() {
+        return message;
+    }
+
+    /**
+     * Returns whether the filtering process should continue or not.
+     *
+     * @return whether the filtering process should continue or not
      */
     public boolean isContinue() {
         return isContinue;
-    }
-
-    /**
-     * Set result message.
-     *
-     * @param message result message
-     */
-    public void setMessage(String message) {
-        this.message = message;
     }
 }

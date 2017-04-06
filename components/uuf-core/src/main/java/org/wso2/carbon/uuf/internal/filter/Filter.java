@@ -15,27 +15,25 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.wso2.carbon.uuf.internal.filter;
 
 import org.wso2.carbon.uuf.api.config.Configuration;
-import org.wso2.carbon.uuf.internal.RequestDispatcher;
 import org.wso2.carbon.uuf.spi.HttpRequest;
-import org.wso2.carbon.uuf.spi.HttpResponse;
 
 /**
- * A filter is an object that performs filtering tasks based on the request and the UUF configuration.
+ * A HTTP filter that filters incoming HTTP requests to pages.
  *
  * @since 1.0.0
  */
 public interface Filter {
 
     /**
-     * This method will be executed by the {@link RequestDispatcher} when the request is being dispatched.
+     * Filters the given HTTP request.
      *
-     * @param configuration final UUF configuration
      * @param request       http request instance
-     * @param response      http response instance
-     * @return Result after filtering
+     * @param configuration final UUF configuration
+     * @return FilterResult depicting the success or the failure of the filter
      */
-    FilterResult doFilter(Configuration configuration, HttpRequest request, HttpResponse response);
+    FilterResult doFilter(HttpRequest request, Configuration configuration);
 }
