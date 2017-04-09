@@ -16,6 +16,7 @@
 
 package org.wso2.carbon.uuf.renderablecreator.hbs.impl.js;
 
+import com.github.jknack.handlebars.Handlebars;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -159,13 +160,22 @@ public class JsFunctionsImpl {
 
     public SendToClientFunction getSendToClientFunction() {
         if (sendToClientFunction == null) {
-            sendToClientFunction = (name, value) -> {
-                String scriptTag = "<script type=\"text/javascript\">var " + name + "=" + GSON.toJson(value) +
+            sendToClientFunction = (name, values) -> {
+                String scriptTag = "<script type=\"text/javascript\">var " + Handlebars.Utils.escapeExpression(name) +
+                        "=" + GSON.toJson(values[0]) +
                         ";</script>";
-                api.getRequestLookup().addToPlaceholder(Placeholder.js, scriptTag);
+                api.getRequestLookup().addToPlaceholder(
+                        isHeadJsPlaceholder(values) ? Placeholder.headJs : Placeholder.js, scriptTag);
             };
         }
         return sendToClientFunction;
+    }
+
+    private boolean isHeadJsPlaceholder(Object[] values) {
+        // this method check whether the user wants to push javascript into HeadJs placeholder.
+        // argument length is one means that, user haven't passed any placeholder.
+        // argument length two means that user passed a placeholder. so are checking pass argument value is HeadJs.
+        return values.length == 2 && Placeholder.headJs.name().equalsIgnoreCase((String) values[1]);
     }
 
     public I18nFunction getI18nFunction() {

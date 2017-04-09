@@ -51,9 +51,10 @@
         <module>features/org.wso2.carbon.uuf.renderablecreator.html.feature</module>
         <module>features/org.wso2.carbon.uuf.httpconnector.msf4j.feature</module>
         <module>samples</module>
+        <module>product</module>
         <module>tests</module>
         <!--<module>perf-benchmark/tests/handlebars-n-msf4j/org.wso2.carbon.uuf.sample.perf-bnchmrk</module>-->
-        <module>product</module>
+
     </modules>
 
     <dependencyManagement>
@@ -131,9 +132,9 @@
                 <version>${gson.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.wso2.orbit.org.yaml</groupId>
+                <groupId>org.yaml</groupId>
                 <artifactId>snakeyaml</artifactId>
-                <version>${orbit.org.yaml.version}</version>
+                <version>${org.snakeyaml.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.ow2.asm</groupId>
@@ -187,11 +188,6 @@
                 <groupId>org.wso2.carbon.security.caas</groupId>
                 <artifactId>org.wso2.carbon.security.caas</artifactId>
                 <version>${carbon.security.caas.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.wso2.carbon.security.userstore</groupId>
-                <artifactId>org.wso2.carbon.security.userstore.jdbc</artifactId>
-                <version>${carbon.security.userstore.jdbc.version}</version>
             </dependency>
 
             <!--UUF Sample Components-->
@@ -491,6 +487,18 @@
                 <version>${disruptor.orbit.version}</version>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon</groupId>
+                <artifactId>org.wso2.carbon.container</artifactId>
+                <version>${carbon.kernel.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon</groupId>
+                <artifactId>org.wso2.carbon.pax.exam.feature</artifactId>
+                <version>${carbon.kernel.version}</version>
+                <type>zip</type>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -549,6 +557,11 @@
                     <artifactId>build-helper-maven-plugin</artifactId>
                     <version>1.8</version>
                 </plugin>
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>${maven.jacocoplugin.version}</version>
+                </plugin>
             </plugins>
         </pluginManagement>
     </build>
@@ -557,11 +570,11 @@
         <carbon.uuf.version>1.0.0-SNAPSHOT</carbon.uuf.version>
 
         <!-- UUF -->
-        <carbon.kernel.version>5.1.0</carbon.kernel.version>
+        <carbon.kernel.version>5.2.0-m3</carbon.kernel.version>
         <carbon.kernel.version.range>[5.0,6)</carbon.kernel.version.range>
-        <carbon.deployment.version>5.0.0</carbon.deployment.version>
+        <carbon.deployment.version>5.1.0</carbon.deployment.version>
         <carbon.jndi.version>1.0.0</carbon.jndi.version>
-        <carbon.cache.version>1.0.0</carbon.cache.version>
+        <carbon.cache.version>1.1.3</carbon.cache.version>
         <javax.cache-api.version>1.0.0</javax.cache-api.version>
         <javax.cache-api.version.range>[1.0.0, 2.0.0)</javax.cache-api.version.range>
         <javax.naming.version.range>[0.0.0, 1.0.0)</javax.naming.version.range>
@@ -584,18 +597,18 @@
         <guava.version.range>[18.0,19.0)</guava.version.range>
         <gson.version>2.6.2</gson.version>
         <gson.version.range>[2.6.2,3)</gson.version.range>
-        <orbit.org.yaml.version>1.16.0.wso2v1</orbit.org.yaml.version>
-        <orbit.org.yaml.version.range>[1.16.0, 1.17.0)</orbit.org.yaml.version.range>
+        <org.snakeyaml.version>1.17</org.snakeyaml.version>
+        <orbit.org.yaml.version.range>[1.17.0,2.0.0)</orbit.org.yaml.version.range>
         <org.objectweb.asm.version>5.1</org.objectweb.asm.version>
         <org.objectweb.asm.version.range>[5.1, 6.0)</org.objectweb.asm.version.range>
         <javax.ws.rs.version.range>[2.0.0, 3.0.0)</javax.ws.rs.version.range>
 
         <!-- UUF Product -->
         <carbon.datasources.version>1.0.0</carbon.datasources.version>
-        <carbon.metrics.version>2.0.0</carbon.metrics.version>
-        <carbon.messaging.version>1.0.11</carbon.messaging.version>
-        <carbon.messaging.version.range>[1.0.11, 2.0.0)</carbon.messaging.version.range>
-        <carbon.transport.http.netty.version>2.1.4</carbon.transport.http.netty.version>
+        <carbon.metrics.version>2.0.1</carbon.metrics.version>
+        <carbon.messaging.version>2.3.1</carbon.messaging.version>
+        <carbon.messaging.version.range>[2.0.0, 3.0.0)</carbon.messaging.version.range>
+        <carbon.transport.http.netty.version>4.3.0-m2</carbon.transport.http.netty.version>
 
         <!-- Handlebars -->
         <orbit.com.github.jknack.handlebars.version>4.0.3.wso2v1</orbit.com.github.jknack.handlebars.version>
@@ -603,16 +616,16 @@
         <antlr-version>4.5.1-1</antlr-version>
 
         <!-- MSF4J -->
-        <msf4j.version>2.1.0</msf4j.version>
+        <msf4j.version>2.3.0-m1</msf4j.version>
         <msf4j.version.range>[2.1.0, 3.0.0)</msf4j.version.range>
 
         <!-- Authentication and Authorization -->
-        <carbon.security.caas.version>1.0.0-m2</carbon.security.caas.version>
-        <carbon.security.userstore.jdbc.version>1.0.0-m2</carbon.security.userstore.jdbc.version>
+        <carbon.security.caas.version>1.0.2-m1</carbon.security.caas.version>
+        <carbon.security.caas.version.range>[1.0.0, 2.0.0)</carbon.security.caas.version.range>
 
         <!-- Maven Plugins -->
-        <carbon-uuf-maven-plugin.version>1.0.0-m11</carbon-uuf-maven-plugin.version>
-        <carbon.feature.plugin.version>2.0.1</carbon.feature.plugin.version>
+        <carbon-uuf-maven-plugin.version>1.0.0-m13</carbon-uuf-maven-plugin.version>
+        <carbon.feature.plugin.version>3.0.0</carbon.feature.plugin.version>
         <maven.bundle.plugin.version>2.5.0</maven.bundle.plugin.version>
 
         <!-- Test -->
@@ -628,6 +641,8 @@
         <pax.exam.link.mvn.version>4.6.0</pax.exam.link.mvn.version>
         <pax.url.aether.version>1.6.0</pax.url.aether.version>
         <maven.paxexam.plugin.version>1.2.4</maven.paxexam.plugin.version>
+        <maven.jacocoplugin.version>0.7.5.201505241946</maven.jacocoplugin.version>
+        <org.jacoco.ant.version>0.7.5.201505241946</org.jacoco.ant.version>
         <equinox.simpleconfigurator.version>1.1.0.v20131217-1203</equinox.simpleconfigurator.version>
         <apache.felix.gogo.command.version>0.10.0.v201209301215</apache.felix.gogo.command.version>
         <apache.felix.gogo.runtime.version>0.10.0.v201209301036</apache.felix.gogo.runtime.version>

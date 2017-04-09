@@ -45,11 +45,9 @@ public class Configuration {
     private Map<Integer, String> errorPageUris;
     private String defaultErrorPageUri;
     private ListMultimap<String, MenuItem> menus;
-    private Set<String> acceptingCsrfPatterns;
-    private Set<String> rejectingCsrfPatterns;
-    private Set<String> acceptingXssPatterns;
-    private Set<String> rejectingXssPatterns;
-    private Map<String, String> responseHeaders;
+    private Set<String> csrfIgnoreUris;
+    private Set<String> xssIgnoreUris;
+    private ResponseHeaders responseHeaders;
     private Map<String, Object> otherConfigurations;
 
     public Configuration() {
@@ -241,130 +239,64 @@ public class Configuration {
     }
 
     /**
-     * Returns the configured accepting CSRF URI patterns in the security configuration.
+     * Returns the list of URI's that doesn't require CSRF protection.
      *
-     * @return accepting CSRF URI patterns
-     * @see #getRejectingCsrfPatterns()
+     * @return set of URI's that doesn't require CSRF protection.
      */
-    public Set<String> getAcceptingCsrfPatterns() {
-        return acceptingCsrfPatterns;
+    public Set<String> getCsrfIgnoreUris() {
+        return csrfIgnoreUris;
     }
 
     /**
-     * Sets the accepting CSRF patterns for the app.
+     * Sets the list of URI's that doesn't require CSRF protection.
      *
-     * @param acceptingCsrfPatterns accepting CSRF patterns to be set
-     * @throws IllegalArgumentException if a pattern is null or empty
+     * @param csrfIgnoreUris set of URI's that doesn't require CSRF protection.
+     * @throws IllegalArgumentException if a URI is null or empty.
      */
-    public void setAcceptingCsrfPatterns(Set<String> acceptingCsrfPatterns) {
-        if (acceptingCsrfPatterns == null) {
-            this.acceptingCsrfPatterns = emptySet();
+    public void setCsrfIgnoreUris(Set<String> csrfIgnoreUris) {
+        if (csrfIgnoreUris == null) {
+            this.csrfIgnoreUris = emptySet();
         } else {
-            for (String acceptingCsrfPattern : acceptingCsrfPatterns) {
-                if (acceptingCsrfPattern == null) {
-                    throw new IllegalArgumentException("An accepting CSRF pattern cannot be null.");
-                } else if (acceptingCsrfPattern.isEmpty()) {
-                    throw new IllegalArgumentException("An accepting CSRF pattern cannot be empty.");
+            for (String csrfUri : csrfIgnoreUris) {
+                if (csrfUri == null) {
+                    throw new IllegalArgumentException("CSRF ignore URI cannot be null.");
+                } else if (csrfUri.isEmpty()) {
+                    throw new IllegalArgumentException("CSRF ignore URI cannot be empty.");
                 }
                 // TODO: 12/31/16 check whether the 'acceptingCsrfPattern' is a valid URI pattern
             }
-            this.acceptingCsrfPatterns = unmodifiableSet(acceptingCsrfPatterns);
+            this.csrfIgnoreUris = unmodifiableSet(csrfIgnoreUris);
         }
     }
 
     /**
-     * Returns the configured rejecting CSRF URI patterns in the security configuration.
+     * Returns the list of URI's that doesn't require XSS protection.
      *
-     * @return rejecting CSRF URI patterns
-     * @see #getAcceptingCsrfPatterns()
+     * @return set of URI's that doesn't require XSS protection.
      */
-    public Set<String> getRejectingCsrfPatterns() {
-        return rejectingCsrfPatterns;
+    public Set<String> getXssIgnoreUris() {
+        return xssIgnoreUris;
     }
 
     /**
-     * Sets the rejecting CSRF patterns for the app.
+     * Sets the list of URI's that doesn't require XSS protection.
      *
-     * @param rejectingCsrfPatterns rejecting CSRF patterns to be set
+     * @param xssIgnoreUris set of URI's that doesn't require CSRF protection.
      * @throws IllegalArgumentException if a pattern is null or empty
      */
-    public void setRejectingCsrfPatterns(Set<String> rejectingCsrfPatterns) {
-        if (rejectingCsrfPatterns == null) {
-            this.rejectingCsrfPatterns = emptySet();
+    public void setXssIgnoreUris(Set<String> xssIgnoreUris) {
+        if (xssIgnoreUris == null) {
+            this.xssIgnoreUris = emptySet();
         } else {
-            for (String rejectingCsrfPattern : rejectingCsrfPatterns) {
-                if (rejectingCsrfPattern == null) {
-                    throw new IllegalArgumentException("A rejecting CSRF pattern cannot be null.");
-                } else if (rejectingCsrfPattern.isEmpty()) {
-                    throw new IllegalArgumentException("A rejecting CSRF pattern cannot be empty.");
+            for (String xssUri : xssIgnoreUris) {
+                if (xssUri == null) {
+                    throw new IllegalArgumentException("XSS ignore URI cannot be null.");
+                } else if (xssUri.isEmpty()) {
+                    throw new IllegalArgumentException("XSS ignore URI cannot be empty.");
                 }
                 // TODO: 12/31/16 check whether the 'rejectingCsrfPattern' is a valid URI pattern
             }
-            this.rejectingCsrfPatterns = unmodifiableSet(rejectingCsrfPatterns);
-        }
-    }
-
-    /**
-     * Returns the configured accepting XSS URI patterns in the security configuration.
-     *
-     * @return accepting XSS URI patterns
-     * @see #getRejectingXssPatterns()
-     */
-    public Set<String> getAcceptingXssPatterns() {
-        return acceptingXssPatterns;
-    }
-
-    /**
-     * Sets the accepting XSS patterns for the app.
-     *
-     * @param acceptingXssPatterns accepting XSS patterns to be set
-     * @throws IllegalArgumentException if a pattern is null or empty
-     */
-    public void setAcceptingXssPatterns(Set<String> acceptingXssPatterns) {
-        if (acceptingXssPatterns == null) {
-            this.acceptingXssPatterns = emptySet();
-        } else {
-            for (String acceptingXssPattern : acceptingXssPatterns) {
-                if (acceptingXssPattern == null) {
-                    throw new IllegalArgumentException("An accepting XSS pattern cannot be null.");
-                } else if (acceptingXssPattern.isEmpty()) {
-                    throw new IllegalArgumentException("An accepting XSS pattern cannot be empty.");
-                }
-                // TODO: 12/31/16 check whether the 'acceptingXssPattern' is a valid URI pattern
-            }
-            this.acceptingXssPatterns = unmodifiableSet(acceptingXssPatterns);
-        }
-    }
-
-    /**
-     * Returns the configured rejecting XSS URI patterns in the security configuration.
-     *
-     * @return rejecting XSS URI patterns
-     * @see #getAcceptingXssPatterns()
-     */
-    public Set<String> getRejectingXssPatterns() {
-        return rejectingXssPatterns;
-    }
-
-    /**
-     * Sets the rejecting XSS patterns for the app.
-     *
-     * @param rejectingXssPatterns rejecting XSS patterns to be set
-     * @throws IllegalArgumentException if a pattern is null or empty
-     */
-    public void setRejectingXssPatterns(Set<String> rejectingXssPatterns) {
-        if (rejectingXssPatterns == null) {
-            this.rejectingXssPatterns = emptySet();
-        } else {
-            for (String rejectingXssPattern : rejectingXssPatterns) {
-                if (rejectingXssPattern == null) {
-                    throw new IllegalArgumentException("An rejecting XSS pattern cannot be null.");
-                } else if (rejectingXssPattern.isEmpty()) {
-                    throw new IllegalArgumentException("An rejecting XSS pattern cannot be empty.");
-                }
-                // TODO: 12/31/16 check whether the 'rejectingXssPattern' is a valid URI pattern
-            }
-            this.rejectingXssPatterns = unmodifiableSet(rejectingXssPatterns);
+            this.xssIgnoreUris = unmodifiableSet(xssIgnoreUris);
         }
     }
 
@@ -373,12 +305,12 @@ public class Configuration {
      *
      * @return HTTP headers for the response
      */
-    public Map<String, String> getResponseHeaders() {
+    public ResponseHeaders getResponseHeaders() {
         return responseHeaders;
     }
 
-    public void setResponseHeaders(Map<String, String> responseHeaders) {
-        this.responseHeaders = (responseHeaders == null) ? emptyMap() : unmodifiableMap(responseHeaders);
+    public void setResponseHeaders(ResponseHeaders responseHeaders) {
+        this.responseHeaders = responseHeaders;
     }
 
     /**
@@ -392,6 +324,57 @@ public class Configuration {
 
     public void setOther(Map<String, Object> other) {
         this.otherConfigurations = (other == null) ? emptyMap() : unmodifiableMap(other);
+    }
+
+    /**
+     * Bean class that represents security headers configurations in the app's config file of an UUF App.
+     *
+     * @since 1.0.0
+     */
+    public static class ResponseHeaders {
+        private Map<String, String> staticResources = Collections.emptyMap();
+        private Map<String, String> pages = Collections.emptyMap();
+
+        public ResponseHeaders(Map<String, String> staticResources, Map<String, String> pages) {
+            this.staticResources = staticResources;
+            this.pages = pages;
+        }
+
+        /**
+         * Returns HTTP response headers for static contents.
+         *
+         * @return HTTP response headers
+         */
+        public Map<String, String> getStaticResources() {
+            return staticResources;
+        }
+
+        /**
+         * Sets the HTTP response headers for static contents.
+         *
+         * @param staticResources HTTP response headers to be set
+         */
+        public void setStaticResources(Map<String, String> staticResources) {
+            this.staticResources = staticResources;
+        }
+
+        /**
+         * Returns HTTP response headers for pages.
+         *
+         * @return HTTP response headers
+         */
+        public Map<String, String> getPages() {
+            return pages;
+        }
+
+        /**
+         * Sets the HTTP response headers for pages.
+         *
+         * @param pages HTTP response headers to be set
+         */
+        public void setPages(Map<String, String> pages) {
+            this.pages = pages;
+        }
     }
 
     /**

@@ -27,6 +27,7 @@ import org.wso2.carbon.messaging.DefaultCarbonMessage;
 import org.wso2.carbon.security.caas.api.CarbonPrincipal;
 import org.wso2.carbon.security.caas.api.ProxyCallbackHandler;
 
+import org.wso2.carbon.security.caas.api.handler.UsernamePasswordCallbackHandler;
 import org.wso2.carbon.uuf.api.auth.Session;
 import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
@@ -57,6 +58,7 @@ public class SimpleAuthHandler {
      */
     public static CaasUser authenticate(String userName, String password) throws LoginException {
         PrivilegedCarbonContext.destroyCurrentContext();
+
         CarbonMessage carbonMessage = new DefaultCarbonMessage();
         carbonMessage.setHeader("Authorization", "Basic " + Base64.getEncoder()
                 .encodeToString((userName + ":" + password).getBytes())
