@@ -26,6 +26,8 @@ public interface FileReference {
 
     String getExtension();
 
+    String getNameWithoutExtension();
+
     String getContent();
 
     String getRelativePath();
