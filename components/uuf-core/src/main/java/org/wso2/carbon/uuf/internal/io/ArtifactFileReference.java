@@ -50,6 +50,11 @@ public class ArtifactFileReference implements FileReference {
     }
 
     @Override
+    public String getNameWithoutExtension() {
+        return FilenameUtils.removeExtension(getName());
+    }
+
+    @Override
     public String getContent() {
         try {
             return new String(Files.readAllBytes(path), StandardCharsets.UTF_8);

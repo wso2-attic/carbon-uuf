@@ -19,6 +19,8 @@
 package org.wso2.carbon.uuf.internal.deployment.parser;
 
 import org.wso2.carbon.uuf.api.reference.FileReference;
+import org.wso2.carbon.uuf.exception.ConfigurationException;
+import org.wso2.carbon.uuf.exception.FileOperationException;
 import org.wso2.carbon.uuf.exception.MalformedConfigurationException;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
@@ -33,24 +35,27 @@ public class YamlFileParser {
     /**
      * Parses the given YAML configuration file and de-serialize the content into given bean type.
      *
-     * @param configFile reference to the YAML configuration file
+     * @param yamlFile reference to the YAML configuration file
      * @param type       class of the bean to be used when de-serializing
      * @param <T>        type of the bean class to be used when de-serializing
      * @return returns the populated bean instance
-     * @throws MalformedConfigurationException if cannot read or parse the content of the specified YAML file
+     * @throws ConfigurationException if cannot read or parse the content of the specified YAML file
      */
-    public static <T> T parse(FileReference configFile, Class<T> type) throws MalformedConfigurationException {
+    public static <T> T parse(FileReference yamlFile, Class<T> type) throws ConfigurationException {
         T loadedBean;
         try {
-            loadedBean = new Yaml(new CustomClassLoaderConstructor()).loadAs(configFile.getContent(), type);
+            loadedBean = new Yaml(new CustomClassLoaderConstructor()).loadAs(yamlFile.getContent(), type);
+        } catch (FileOperationException e) {
+            throw new ConfigurationException(
+                    "Cannot read the configuration file '" + yamlFile.getAbsolutePath() + "'.", e);
         } catch (Exception e) {
             throw new MalformedConfigurationException(
-                    "Cannot parse the configuration file '" + configFile.getAbsolutePath() + "'.", e);
+                    "Cannot parse the configuration file '" + yamlFile.getAbsolutePath() + "'.", e);
         }
         if (loadedBean == null) {
-            // Either configuration file is empty or has oly comments.
+            // Either configuration file is empty or has only comments.
             throw new MalformedConfigurationException(
-                    "Cannot parse the configuration file '" + configFile.getAbsolutePath() + "' as it is empty.");
+                    "Cannot load the configuration file '" + yamlFile.getAbsolutePath() + "' as it is empty.");
         }
         return loadedBean;
     }

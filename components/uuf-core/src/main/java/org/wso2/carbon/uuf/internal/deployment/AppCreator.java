@@ -44,6 +44,7 @@ import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.internal.deployment.parser.AppConfig;
 import org.wso2.carbon.uuf.internal.deployment.parser.ComponentConfig;
 import org.wso2.carbon.uuf.internal.deployment.parser.DependencyNode;
+import org.wso2.carbon.uuf.internal.deployment.parser.PropertyFileParser;
 import org.wso2.carbon.uuf.internal.deployment.parser.ThemeConfig;
 import org.wso2.carbon.uuf.internal.deployment.parser.YamlFileParser;
 import org.wso2.carbon.uuf.internal.util.NameUtils;
@@ -58,7 +59,6 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -177,7 +177,16 @@ public class AppCreator {
                                                                ComponentConfig.class);
         addBindings(componentConfig.getBindings(), bindings, componentName, fragments, dependencies);
         addAPIs(componentConfig.getApis(), appContextPath, componentContextPath, componentName, classLoader);
-        addI18nResources(componentReference.getI18nFiles(), i18nResources);
+
+        componentReference.getI18nFiles().forEach(i18nFile -> {
+            Locale locale = Locale.forLanguageTag(i18nFile.getNameWithoutExtension());
+            if (locale.getLanguage().isEmpty()) {
+                throw new MalformedConfigurationException(
+                        "Cannot identify the locale of the language file '" + i18nFile.getAbsolutePath() +
+                                "' of component '" + componentName + "'.");
+            }
+            i18nResources.addI18nResource(locale, PropertyFileParser.parse(i18nFile));
+        });
 
         return new Component(componentName, componentVersion, componentContextPath, pages, fragments, layouts,
                              dependencies, componentReference.getPath());
@@ -263,21 +272,6 @@ public class AppCreator {
             LOGGER.info("Deployed REST API '{}' for component '{}' with context path '{}'.", className, componentName,
                         uri);
         }
-    }
-
-    private void addI18nResources(Map<String, Properties> componentI18nResources, I18nResources i18nResources) {
-        if ((componentI18nResources == null) || componentI18nResources.isEmpty()) {
-            return;
-        }
-        componentI18nResources.forEach((localString, properties) -> {
-            Locale locale = Locale.forLanguageTag(localString.replace("_", "-"));
-            if (locale.getLanguage().isEmpty()) {
-                throw new UUFException("Locale is not found for the given language code. Hence language file will not" +
-                                               " be deployed for" + localString);
-            } else {
-                i18nResources.addI18nResource(locale, properties);
-            }
-        });
     }
 
     private Page createPage(PageReference pageReference, ClassLoader classLoader, Map<String, Layout> availableLayouts,

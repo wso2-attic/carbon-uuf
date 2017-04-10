@@ -19,7 +19,6 @@
 package org.wso2.carbon.uuf.internal.io;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 import org.wso2.carbon.uuf.api.reference.ComponentReference;
 import org.wso2.carbon.uuf.api.reference.FileReference;
 import org.wso2.carbon.uuf.api.reference.FragmentReference;
@@ -27,16 +26,10 @@ import org.wso2.carbon.uuf.api.reference.LayoutReference;
 import org.wso2.carbon.uuf.api.reference.PageReference;
 import org.wso2.carbon.uuf.exception.FileOperationException;
 
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
-import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -122,41 +115,18 @@ public class ArtifactComponentReference implements ComponentReference {
     }
 
     @Override
-    public Map<String, Properties> getI18nFiles() {
+    public Stream<FileReference> getI18nFiles() {
         Path lang = componentDirectory.resolve(DIR_NAME_LANGUAGE);
-        Map<String, Properties> i18n = new HashMap<>();
-        DirectoryStream<Path> stream = null;
         if (!Files.exists(lang)) {
-            return i18n;
+            return Stream.<FileReference>empty();
         }
-
         try {
-            stream = Files.newDirectoryStream(lang, "*.{properties}");
-            for (Path entry : stream) {
-                if (Files.isRegularFile(entry)) {
-                    Properties props = new Properties();
-                    InputStreamReader is = null;
-                    String file = entry.toString();
-                    try {
-                        is = new InputStreamReader(new FileInputStream(file), CHAR_ENCODING);
-                        props.load(is);
-                    } finally {
-                        IOUtils.closeQuietly(is);
-                    }
-
-                    Path path = entry.getFileName();
-                    if (path != null) {
-                        String fileName = path.toString();
-                        i18n.put(fileName.substring(0, fileName.indexOf('.')), props);
-                    }
-                }
-            }
+            return Files.list(lang)
+                    .filter(path -> Files.isRegularFile(path) && "properties".equals(getExtension(path)))
+                    .map(path -> new ArtifactFileReference(path, appReference));
         } catch (IOException e) {
-            throw new FileOperationException("An error occurred while reading locale files in '" + lang + "'.", e);
-        } finally {
-            IOUtils.closeQuietly(stream);
+            throw new FileOperationException("An error occurred while listing language files in '" + lang + "'.", e);
         }
-        return i18n;
     }
 
     @Override

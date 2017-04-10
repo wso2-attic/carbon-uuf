@@ -18,7 +18,12 @@
 
 package org.wso2.carbon.uuf.exception;
 
-public class MalformedConfigurationException extends UUFException {
+/**
+ * Thrown when invalid or incorrect or illegal configuration is found.
+ *
+ * @since 1.0.0
+ */
+public class MalformedConfigurationException extends ConfigurationException {
 
     public MalformedConfigurationException() {
     }
