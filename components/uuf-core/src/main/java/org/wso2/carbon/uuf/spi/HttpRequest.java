@@ -29,6 +29,7 @@ public interface HttpRequest {
 
     String HEADER_CONTENT_TYPE = "Content-Type";
     String HEADER_CONTENT_LENGTH = "Content-Length";
+    String HEADER_ACCEPT_LANGUAGE = "Accept-Language";
     String COOKIE_UUFSESSIONID = "UUFSESSIONID";
     String COOKIE_CSRFTOKEN = "CSRFTOKEN";
 

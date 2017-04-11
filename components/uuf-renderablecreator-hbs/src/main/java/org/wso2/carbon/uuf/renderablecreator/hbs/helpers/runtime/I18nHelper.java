@@ -18,21 +18,23 @@ package org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime;
 
 import com.github.jknack.handlebars.Helper;
 import com.github.jknack.handlebars.Options;
+import org.wso2.carbon.uuf.api.config.Configuration;
+import org.wso2.carbon.uuf.api.config.I18nResources;
 import org.wso2.carbon.uuf.core.Lookup;
 import org.wso2.carbon.uuf.core.RequestLookup;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.HbsRenderable;
+import org.wso2.carbon.uuf.spi.HttpRequest;
 
 import java.io.IOException;
-import java.text.MessageFormat;
 import java.util.Locale;
-import java.util.Properties;
+import java.util.Map;
 
 public class I18nHelper implements Helper<String> {
 
     public static final String HELPER_NAME = "i18n";
-    private static final String DEFAULT_LOCALE = "en-us";
-    private static final String LOCALE_HEADER = "Accept-Language";
-    private static final String DATA_KEY_CURRENT_LOCALE = "CURRENT_LOCALE";
+
+    private static final Locale FALLBACK_LOCALE = Locale.ENGLISH;
+    private static final String DATA_KEY_CURRENT_REQUEST_LOCALE = "CURRENT_LOCALE";
 
     @Override
     public CharSequence apply(String key, Options options) throws IOException {
@@ -40,34 +42,57 @@ public class I18nHelper implements Helper<String> {
             throw new IllegalArgumentException("Key of a translating string cannot be null.");
         }
 
-        RequestLookup requestLookup = options.data(HbsRenderable.DATA_KEY_REQUEST_LOOKUP);
+        Locale locale;
         Lookup lookup = options.data(HbsRenderable.DATA_KEY_LOOKUP);
 
-        // Check whether the current locale is already available in the options.
-        Locale currentLocale = options.data(DATA_KEY_CURRENT_LOCALE);
-        // If not available, get the current locale.
-        if (currentLocale == null) {
-            Object localeParam = options.hash.get("locale");
-            if (localeParam != null) {
-                currentLocale = Locale.forLanguageTag(localeParam.toString());
+        // First priority is given to the passed locale parameter. {{i18n "key" locale="en-US"}}
+        locale = computeLocale(options.hash);
+        if (locale == null) {
+            // Check whether we have already computed the locale for this request.
+            Locale currentRequestLocale = options.data(DATA_KEY_CURRENT_REQUEST_LOCALE);
+            if (currentRequestLocale == null) {
+                // Second priority is given to the accept language header of the request.
+                RequestLookup requestLookup = options.data(HbsRenderable.DATA_KEY_REQUEST_LOOKUP);
+                locale = computeLocale(requestLookup.getRequest(), lookup.getI18nResources());
+                if (locale == null) {
+                    // Seems like we have failed to compute a locale in above approaches.
+                    // Let's check whether a default locale is configured in the configuration.
+                    locale = computeLocale(lookup.getConfiguration());
+                    if (locale == null) {
+                        // Since there is no other option, we choose fallback locale.
+                        locale = FALLBACK_LOCALE;
+                    }
+                }
+
+                options.data(DATA_KEY_CURRENT_REQUEST_LOCALE, locale);
             } else {
-                Object localeHeaderValue = requestLookup.getRequest().getHeaders().get(LOCALE_HEADER);
-                currentLocale = lookup.getI18nResources().getLocale(localeHeaderValue.toString());
+                locale = currentRequestLocale;
             }
-            // Add the locale to the helper options. This will be used when evaluating this helper again in the same
-            // request. This is done to increase the performance.
-            options.data(DATA_KEY_CURRENT_LOCALE, currentLocale);
         }
-        Properties props = lookup.getI18nResources().getI18nResource(currentLocale);
-        if (props != null) {
-            if (options.params.length == 0) {
-                return props.getProperty(key, key);
-            } else {
-                MessageFormat format = new MessageFormat(props.getProperty(key, key), currentLocale);
-                return format.format(options.params);
-            }
+
+        return lookup.getI18nResources().getMessage(locale, key, options.params, key);
+    }
+
+    private static Locale computeLocale(Map<String, Object> hashParams) {
+        Object localeParam = hashParams.get("locale");
+        if ((localeParam instanceof String) && !localeParam.toString().isEmpty()) {
+            return Locale.forLanguageTag(localeParam.toString());
         } else {
-            return key;
+            return null;
+        }
+    }
+
+    private static Locale computeLocale(HttpRequest request, I18nResources i18nResources) {
+        String headerLocale = request.getHeaders().get(HttpRequest.HEADER_ACCEPT_LANGUAGE);
+        return i18nResources.getLocale(headerLocale);
+    }
+
+    private static Locale computeLocale(Configuration configuration) {
+        Object defaultLocale = configuration.other().get("defaultLocale");
+        if ((defaultLocale instanceof String) && !defaultLocale.toString().isEmpty()) {
+            return Locale.forLanguageTag(defaultLocale.toString());
+        } else {
+            return null;
         }
     }
 }

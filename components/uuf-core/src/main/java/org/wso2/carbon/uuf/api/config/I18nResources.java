@@ -18,13 +18,11 @@
 
 package org.wso2.carbon.uuf.api.config;
 
-import org.apache.commons.lang3.StringUtils;
-
+import java.text.MessageFormat;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 /**
  * Holds the i18n language resources of an UUF App.
@@ -33,9 +31,7 @@ import java.util.TreeMap;
  */
 public class I18nResources {
 
-    private static final String DEFAULT_LOCALE = "en-us";
-
-    private final SortedMap<String, Properties> i18nResources = new TreeMap<>();
+    private final Map<Locale, Properties> i18nResources = new HashMap<>();
 
     /**
      * Adds the given language.
@@ -44,63 +40,57 @@ public class I18nResources {
      * @param i18n   properties
      */
     public void addI18nResource(Locale locale, Properties i18n) {
-        // Convert the language key to lower case before adding to the map. This is done because various browsers
-        // send the locale in different formats.
-        Properties i18nResource = this.i18nResources.get(locale.toLanguageTag());
+        Properties i18nResource = this.i18nResources.get(locale);
         if (i18nResource == null) {
-            this.i18nResources.put(locale.toLanguageTag(), i18n);
+            this.i18nResources.put(locale, i18n);
         } else {
             i18nResource.putAll(i18n);
         }
     }
 
     /**
-     * Returns available languages in this resources collection.
+     * Returns the best matching locale chosen from the available locales for the given language ranges.
      *
-     * @return available languages
+     * @param languageRanges a list of comma-separated language ranges or a list of language ranges in the form of
+     *                       the "Accept-Language" header defined in
+     *                       <a href="https://tools.ietf.org/html/rfc2616#section-14.4">RFC 2616</a>
+     * @return Locale the best matching locale, or {@code null} if nothing matches
      */
-    public Set<String> getAvailableLanguages() {
-        return i18nResources.keySet();
+    public Locale getLocale(String languageRanges) {
+        if ((languageRanges == null) || languageRanges.isEmpty()) {
+            return null;
+        }
+
+        try {
+            return Locale.lookup(Locale.LanguageRange.parse(languageRanges), i18nResources.keySet());
+        } catch (IllegalArgumentException e) {
+            // languageRanges is ill formed
+            return null;
+        }
     }
 
     /**
-     * Returns the i18n resource for the given language.
-     *
-     * @param locale Locale of the i18n resource
-     * @return i18n resource
+     * Returns the formatted message of the given message key in the given locale. If no message is found for the
+     * given message key in the given locale, then the specified default message will be returned.
+     * @param locale locale of the message
+     * @param messageKey key of the message
+     * @param messageParams parameters to format the message, or {@code null} if there are no parameters
+     * @param defaultMessage default message, which will be returned if no message is found for the given message key
+     *                       in the given locale
+     * @return the formatted message or the default message if no message was found for the given message key in the
+     * given locale
      */
-    public Properties getI18nResource(Locale locale) {
-        return i18nResources.get(locale.toLanguageTag());
-    }
-
-    /**
-     * Returns the local for the supported language.
-     *
-     * @param localeHeaderValue local header value
-     * @return Locale object for language support
-     */
-    public Locale getLocale(String localeHeaderValue) {
-        if (localeHeaderValue == null) {
-            return Locale.forLanguageTag(DEFAULT_LOCALE.replace("_", "-"));
+    public String getMessage(Locale locale, String messageKey, Object[] messageParams, String defaultMessage) {
+        Properties messages = i18nResources.get(locale);
+        if (messages == null) {
+            return defaultMessage;
+        }
+        String message = messages.getProperty(messageKey);
+        if (message == null) {
+            return defaultMessage;
         }
 
-        // example: en,en-us;q=0.7, en-au;q=0.3
-        // https://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.4
-        // Change the locale value to lower case because we store the language keys in lower case.
-        String languageCode = localeHeaderValue.toLowerCase().split(",")[0];
-        Locale locale = Locale.forLanguageTag(languageCode);
-        String currentLang = null;
-        for (String language : getAvailableLanguages()) {
-            if (StringUtils.isNotEmpty(locale.toLanguageTag()) && language.equalsIgnoreCase(
-                    locale.toLanguageTag())) {
-                currentLang = language;
-            } else if (StringUtils.isNotEmpty(locale.getLanguage()) && language.startsWith(locale.getLanguage())) {
-                currentLang = language;
-            }
-        }
-        if (currentLang == null) {
-            currentLang = DEFAULT_LOCALE.replace("_", "-");
-        }
-        return Locale.forLanguageTag(currentLang);
+        return ((messageParams == null) || (messageParams.length == 0)) ? message :
+                new MessageFormat(message, locale).format(messageParams);
     }
 }
