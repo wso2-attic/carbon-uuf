@@ -30,7 +30,6 @@ import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.CreateSessionFunction;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.DestroySessionFunction;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.GetOSGiServicesFunction;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.GetSessionFunction;
-import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.I18nFunction;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.ModuleFunction;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.SendErrorFunction;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.SendRedirectFunction;
@@ -202,8 +201,6 @@ public class JsExecutable implements Executable {
                     return threadLocalFunctionProvider.get().getDestroySessionFunction();
                 case SendToClientFunction.NAME:
                     return threadLocalFunctionProvider.get().getSendToClientFunction();
-                case I18nFunction.NAME:
-                    return threadLocalFunctionProvider.get().getI18nFunction();
                 default:
                     return super.get(key);
             }
