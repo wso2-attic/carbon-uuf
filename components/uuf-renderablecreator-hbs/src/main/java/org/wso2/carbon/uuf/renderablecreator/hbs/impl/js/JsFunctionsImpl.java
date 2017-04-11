@@ -172,7 +172,7 @@ public class JsFunctionsImpl {
 
     public I18nFunction getI18nFunction() {
         if (i18nFunction == null) {
-            i18nFunction = (String key, String... params) -> {
+            i18nFunction = (String messageKey, String... messageParams) -> {
                 Locale locale;
 
                 String headerLocale = requestLookup.getRequest().getHeaders().get(HttpRequest.HEADER_ACCEPT_LANGUAGE);
@@ -189,7 +189,7 @@ public class JsFunctionsImpl {
                     }
                 }
 
-                return lookup.getI18nResources().getMessage(locale, key, params, key);
+                return lookup.getI18nResources().getMessage(locale, messageKey, messageParams, messageKey);
             };
         }
         return i18nFunction;
