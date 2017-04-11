@@ -43,18 +43,17 @@ import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.ModuleFunction;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.SendErrorFunction;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.SendRedirectFunction;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.SendToClientFunction;
+import org.wso2.carbon.uuf.spi.HttpRequest;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptException;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.MessageFormat;
 import java.util.Locale;
-import java.util.Properties;
+import javax.script.ScriptEngine;
+import javax.script.ScriptException;
 
 public class JsFunctionsImpl {
 
@@ -171,33 +170,36 @@ public class JsFunctionsImpl {
         return sendToClientFunction;
     }
 
+    public I18nFunction getI18nFunction() {
+        if (i18nFunction == null) {
+            i18nFunction = (String key, String... params) -> {
+                Locale locale;
+
+                String headerLocale = requestLookup.getRequest().getHeaders().get(HttpRequest.HEADER_ACCEPT_LANGUAGE);
+                locale = lookup.getI18nResources().getLocale(headerLocale);
+                if (locale == null) {
+                    // Seems like request doesn't carry a locale.
+                    // So let's check whether a default locale is configured in the configuration.
+                    Object defaultLocale = lookup.getConfiguration().other().get("defaultLocale");
+                    if ((defaultLocale instanceof String) && !defaultLocale.toString().isEmpty()) {
+                        locale = Locale.forLanguageTag(defaultLocale.toString());
+                    } else {
+                        // Since there is no other way to compute the locale, let's fall back to 'en'.
+                        locale = Locale.ENGLISH;
+                    }
+                }
+
+                return lookup.getI18nResources().getMessage(locale, key, params, key);
+            };
+        }
+        return i18nFunction;
+    }
+
     private boolean isHeadJsPlaceholder(Object[] values) {
         // this method check whether the user wants to push javascript into HeadJs placeholder.
         // argument length is one means that, user haven't passed any placeholder.
         // argument length two means that user passed a placeholder. so are checking pass argument value is HeadJs.
         return values.length == 2 && Placeholder.headJs.name().equalsIgnoreCase((String) values[1]);
-    }
-
-    public I18nFunction getI18nFunction() {
-        if (i18nFunction == null) {
-            i18nFunction = (String key, String... values) -> {
-                // Check whether the current locale is already available in the options.
-                Object localeHeaderValue = this.requestLookup.getRequest().getHeaders().get("Accept-Language");
-                Locale currentLocale = lookup.getI18nResources().getLocale(localeHeaderValue.toString());
-                Properties props = lookup.getI18nResources().getI18nResource(currentLocale);
-                if (props != null) {
-                    if (values.length == 0) {
-                        return props.getProperty(key, key);
-                    } else {
-                        MessageFormat format = new MessageFormat(props.getProperty(key, key), currentLocale);
-                        return format.format(values);
-                    }
-                } else {
-                    return key;
-                }
-            };
-        }
-        return i18nFunction;
     }
 
     /**
