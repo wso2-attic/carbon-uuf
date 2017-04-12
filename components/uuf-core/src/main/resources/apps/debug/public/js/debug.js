@@ -38,6 +38,10 @@ $(document).ready(function () {
                 showThemes();
                 $(this).parent().addClass("active");
                 break;
+            case "profiler":
+                showProfiler();
+                $(this).parent().addClass("active");
+                break;
         }
         e.preventDefault();
     });
@@ -228,6 +232,13 @@ function populateThemes(treeData) {
     $('#themes-tree').html(themesTreeString);
     $('#themes-tree').tree_view();
 }
+
+function showProfiler() {
+    $(".info-container").hide();
+    $("#profiler").show();
+    $("#main-header").text("Profiler");
+}
+
 
 requestUtil = new function () {
     this.makeRequest = function (type, url, data, callback) {

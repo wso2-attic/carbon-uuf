@@ -13,21 +13,23 @@
     {{placeholder "headOther"}}
 </head>
 
-<body>
+<body class="sticky-footer">
 <header class="header header-default">
     <div class="container-fluid">
-        <div class="pull-left brand float-remove-xs text-center-xs">
+        <div class="pull-left brand">
             <a href="{{@contextPath}}/">
-                <img src="{{public "images/logo.png"}}" class="logo" />
-                <h1>{{@config.appName}}</h1>
+                <img src="{{public "images/logo.png"}}" alt="wso2" title="wso2" class="logo" />
+                <span>{{@config.appName}}</span>
             </a>
         </div>
     </div>
 </header>
 
 <div class="page-content-wrapper">
-    <div class="container-fluid body-wrapper">
-        {{defineZone "content"}}
+    <div class="container-fluid">
+        <div class="body-wrapper">
+            {{defineZone "content"}}
+        </div>
     </div>
 </div>
 <!-- footer -->

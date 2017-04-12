@@ -28,6 +28,7 @@
     
     <!-- bootstrap -->
     <link href="public/lib/bootstrap-3.3.6/css/bootstrap.min.css" rel="stylesheet">
+    <link href="public/lib/visjs/vis-timeline-graph2d.min.css" rel="stylesheet">
     <!-- custom css -->
     <link href="public/css/debug.css" rel="stylesheet">
 </head>
@@ -58,6 +59,7 @@
             <li class=""><a data-href="fragments">Fragments</a></li>
             <li class=""><a data-href="layouts">Layouts</a></li>
             <li class=""><a data-href="themes">Themes</a></li>
+            <li class=""><a data-href="profiler">Profiler</a></li>
         </ul>
     </div>
     <!-- /.left-sidebar -->
@@ -73,103 +75,29 @@
             <div class="container-wrapper">
                 <div class="preloader"></div>
                 <div id="pages" class="info-container">
-
-                    <!-- Nav tabs -->
-                    <ul class="nav nav-tabs" role="tablist">
-                        <li role="presentation" class="active">
-                            <a data-target="#pages-details" aria-controls="pages-details" role="tab" data-toggle="tab">
-                                Details
-                            </a>
-                        </li>
-                        <li role="presentation">
-                            <a data-target="#pages-json" aria-controls="pages-json" role="tab" data-toggle="tab">
-                                JSON
-                            </a>
-                        </li>
-                    </ul>
-
-                    <!-- Tab panes -->
-                    <div class="tab-content">
-                        <div id="pages-details" class="tab-pane active" role="tabpanel"></div>
-                        <div id="pages-json" class="tab-pane" role="tabpanel"><pre><code></code></pre></div>
-                    </div>
-
+                    <div id="pages-details"></div>
                 </div>
 
                 <div id="fragments" class="info-container">
-                    <!-- Nav tabs -->
-                    <ul class="nav nav-tabs" role="tablist">
-                        <li role="presentation" class="active">
-                            <a data-target="#fragments-details" aria-controls="fragments-details" role="tab" data-toggle="tab">
-                                Details
-                            </a>
-                        </li>
-                        <li role="presentation">
-                            <a data-target="#fragments-json" aria-controls="fragments-json" role="tab" data-toggle="tab">
-                                JSON
-                            </a>
-                        </li>
-                    </ul>
-
-                    <!-- Tab panes -->
-                    <div class="tab-content">
-                        <div id="fragments-details" class="tab-pane active" role="tabpanel">
-                            <ul id="fragments-tree" class="tree-view tree-view-lines"></ul>
-                        </div>
-                        <div id="fragments-json"  class="tab-pane" role="tabpanel">
-                            <pre><code></code></pre>
-                        </div>
+                    <div id="fragments-details">
+                        <ul id="fragments-tree" class="tree-view tree-view-lines"></ul>
                     </div>
                 </div>
+
                 <div id="layouts" class="info-container">
-                    <!-- Nav tabs -->
-                    <ul class="nav nav-tabs" role="tablist">
-                        <li role="presentation" class="active">
-                            <a data-target="#layouts-details" aria-controls="layouts-details" role="tab" data-toggle="tab">
-                                Details
-                            </a>
-                        </li>
-                        <li role="presentation">
-                            <a data-target="#layouts-json" aria-controls="layouts-json" role="tab" data-toggle="tab">
-                                JSON
-                            </a>
-                        </li>
-                    </ul>
-
-                    <!-- Tab panes -->
-                    <div class="tab-content">
-                        <div id="layouts-details" class="tab-pane active" role="tabpanel">
-                            <ul id="layouts-tree" class="tree-view tree-view-lines"></ul>
-                        </div>
-                        <div id="layouts-json"  class="tab-pane" role="tabpanel">
-                            <pre><code></code></pre>
-                        </div>
+                    <div id="layouts-details">
+                        <ul id="layouts-tree" class="tree-view tree-view-lines"></ul>
                     </div>
                 </div>
-                <div id="themes" class="info-container">
-                    <!-- Nav tabs -->
-                    <ul class="nav nav-tabs" role="tablist">
-                        <li role="presentation" class="active">
-                            <a data-target="#themes-details" aria-controls="themes-details" role="tab" data-toggle="tab">
-                                Details
-                            </a>
-                        </li>
-                        <li role="presentation">
-                            <a data-target="#themes-json" aria-controls="themes-json" role="tab" data-toggle="tab">
-                                JSON
-                            </a>
-                        </li>
-                    </ul>
 
-                    <!-- Tab panes -->
-                    <div class="tab-content">
-                        <div id="themes-details" class="tab-pane active" role="tabpanel">
-                            <ul id="themes-tree" class="tree-view tree-view-lines"></ul>
-                        </div>
-                        <div id="themes-json"  class="tab-pane" role="tabpanel">
-                            <pre><code></code></pre>
-                        </div>
+                <div id="themes" class="info-container">
+                    <div id="themes-details">
+                        <ul id="themes-tree" class="tree-view tree-view-lines"></ul>
                     </div>
+                </div>
+
+                <div id="profiler" class="info-container">
+                    <div id="visualization"></div>
                 </div>
             </div>
         </div>
@@ -192,9 +120,11 @@
 <!-- jquery -->
 <script src="public/lib/jquery-2.2.1/js/jquery-2.2.1.min.js"></script>
 <script src="public/lib/bootstrap-3.3.6/js/bootstrap.min.js"></script>
+<script src="public/lib/visjs/vis.min.js"></script>
 <!-- app script -->
 <script src="public/js/app.js"></script>
 <script src="public/js/debug.js"></script>
+<script src="public/js/profiler.js"></script>
 
 </body>
 </html>
