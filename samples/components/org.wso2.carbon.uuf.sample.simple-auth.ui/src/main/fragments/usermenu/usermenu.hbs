@@ -1,9 +1,9 @@
-{{css "css/usermenu.css"}}
+{{css "css/usermenu.css"~}}
 <ul class="nav navbar-right float-remove-xs text-center-xs">
     {{#if enableLogin}}
         <li class="login-label">
             <a href="{{@contextPath}}/simple-auth/login">
-                <span class="hidden-xs">Login</span>
+                <span class="hidden-xs">{{i18n "simple-auth.fragment.usermenu.link.login"}}</span>
             </a>
         </li>
     {{else if enableLogout}}
@@ -17,9 +17,15 @@
             </a>
             <ul class="dropdown-menu dropdown-menu-right float-remove-xs position-static-xs text-center-xs remove-margin-xs slideInDown"
                 role="menu">
-                <li class="dropdown-header visible-xs">{{username}}<span class="caret"></span></li>
+                <li class="dropdown-header visible-xs">
+                    {{username}}<span class="caret"></span>
+                </li>
                 <li class="divider visible-xs"></li>
-                <li><a href="{{@contextPath}}/simple-auth/logout">Logout</a></li>
+                <li>
+                    <a href="{{@contextPath}}/simple-auth/logout">
+                        {{i18n "simple-auth.fragment.usermenu.link.logout"}}
+                    </a>
+                </li>
             </ul>
         </li>
     {{/if}}

@@ -3,7 +3,6 @@ apis: [] # No APIs.
 bindings: [] # No bindings.
 
 config:
-    appName: "Simple Auth"
     # User will be redirected to following URI after logging-in successfully.
     loginRedirectUri: "/"
     # User will be redirected to following URI after registering successfully.

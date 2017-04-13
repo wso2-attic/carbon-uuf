@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,7 +7,7 @@
     {{#placeholder "favicon"}}
         <link rel="shortcut icon" href="{{public "images/default-favicon.png"}}" type="image/png" />
     {{/placeholder}}
-    <title>{{#placeholder "title"}}Simple Auth{{/placeholder}}</title>
+    <title>{{#placeholder "title"}}{{i18n "app.name"}}{{/placeholder}}</title>
     {{placeholder "css"}}
     {{placeholder "headJs"}}
     {{placeholder "headOther"}}
@@ -18,13 +18,11 @@
     <div class="container-fluid">
         <div class="pull-left brand float-remove-xs text-center-xs">
             <a href="{{@contextPath}}/">
-                <img src="{{public "images/logo.png"}}" class="logo" />
-                <h1>{{@config.appName}}</h1>
+                <img src="{{public "images/logo.png"}}" class="logo" /><h1>{{i18n "app.name"}}</h1>
             </a>
         </div>
     </div>
 </header>
-
 <div class="page-content-wrapper">
     <div class="container-fluid body-wrapper">
         {{defineZone "content"}}
@@ -34,8 +32,7 @@
 <footer class="footer">
     <div class="container-fluid">
         <p>
-            WSO2 | &copy; 2016
-            <a href="http://wso2.com/" target="_blank"><i class="icon fw fw-wso2"></i> Inc</a>.
+            WSO2 | &copy; 2016<a href="http://wso2.com/" target="_blank"><i class="icon fw fw-wso2"></i> Inc</a>.
         </p>
     </div>
 </footer>
