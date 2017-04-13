@@ -67,6 +67,12 @@ public class API {
      * @param serviceMethodName method name
      * @param args              method arguments
      * @return invoked OSGi service instance
+     * @exception IllegalArgumentException if cannot find a method that accepts specified arguments in the specified
+     * OSGi service class
+     * @exception UUFException if cannot create JNDI context
+     * @exception UUFException if cannot find the specified OSGi service
+     * @exception UUFException if some other error occurred when calling the specified method on the OSGi class
+     * @throws Exception the exception thrown by the calling method of the specified OSGi service class
      */
     public static Object callOSGiService(String serviceClassName, String serviceMethodName, Object... args)
             throws Exception {
@@ -94,15 +100,16 @@ public class API {
                             ")' in OSGi service '" + serviceInstance.getClass().getName() + "' with service class '" +
                             serviceClassName + "'.", e);
         } catch (InvocationTargetException e) {
+            // Calling method has thrown an exception.
             Throwable cause = e.getCause();
             if (cause instanceof Exception) {
                 throw (Exception) cause;
-            } else {
-                throw new UUFException(
-                        "Invoking method '" + serviceMethodName + "(" + joinClassNames(args) + ")' on OSGi service '" +
-                                serviceInstance.getClass().getName() + "' with service class '" + serviceClassName +
-                                "' failed.", e);
             }
+            // Seems like that cause is a Throwable.
+            throw new UUFException(
+                    "Invoking method '" + serviceMethodName + "(" + joinClassNames(args) + ")' on OSGi service '" +
+                            serviceInstance.getClass().getName() + "' with service class '" + serviceClassName +
+                            "' caused a Throwable.", e);
         } catch (Exception e) {
             throw new UUFException(
                     "Invoking method '" + serviceMethodName + "(" + joinClassNames(args) + ")' on OSGi service '" +
