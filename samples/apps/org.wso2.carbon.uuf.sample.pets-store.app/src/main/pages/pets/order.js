@@ -18,8 +18,8 @@ function onPost(env) {
         var email = env.request.formParams['user-email'];
         var category = env.request.formParams['pet-category'];
         return {
-            "madeOrder": true,
-            "userEmail": email,
-            "petCategory": category
+            madeOrder: true,
+            userEmail: email,
+            petCategory: category
         };
 }

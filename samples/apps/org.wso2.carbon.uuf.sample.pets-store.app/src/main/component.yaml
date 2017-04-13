@@ -30,12 +30,10 @@ bindings:
 
 # Business logic related configurations.
 # In Handlebars templates, these configurations can be access using {{@config}} variable.
-# e.g.  {{@config.appName}} will output "Pets Store"
+# e.g.  {{@config.pageSize}} will output "10"
 # In server-side JS 'onGet(env)', 'onPost(env)' functions, these configurations cab access via 'env.config' variable.
-# e.g.  env.config['appName'] will give "Pets Store" value
+# e.g.  env.config['pageSize'] will give "10 value
 config:
-  # Overrrding 'appName' configuration from 'foundation' and 'simple-auth' components.
-  appName: "Pet Store"
   pageSize: 10
   # Overriding 'loginRedirectUri' configuration from 'simple-auth' component.
   loginRedirectUri: "/pets"

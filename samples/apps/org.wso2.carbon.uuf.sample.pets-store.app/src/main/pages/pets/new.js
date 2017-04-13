@@ -15,10 +15,11 @@
  */
 
 function onPost(env) {
-    var name = env.request.formParams['pet-name'];
-    var category = env.request.formParams['pet-category'];
+    var name = env.request.formParams['name'];
+    var category = env.request.formParams['category'];
     return {
-        "petName": name,
-        "petCategory": category
+        success: true,
+        petName: name,
+        petCategory: category
     };
 }
