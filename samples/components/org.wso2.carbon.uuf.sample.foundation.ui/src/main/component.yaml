@@ -2,5 +2,4 @@ apis: # No APIs.
 
 bindings: # No bindings.
 
-config:
-  appName: "Unified UI Foundation"
+config: # No configs.
