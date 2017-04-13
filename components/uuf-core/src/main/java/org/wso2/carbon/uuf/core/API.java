@@ -76,14 +76,14 @@ public class API {
             initialContext = new InitialContext();
         } catch (NamingException e) {
             throw new UUFException(
-                    "Cannot create the JNDI initial context when calling OSGi service '" + serviceClassName + "'.");
+                    "Cannot create the JNDI initial context when calling OSGi service '" + serviceClassName + "'.", e);
         }
 
         try {
             serviceInstance = initialContext.lookup("osgi:service/" + serviceClassName);
         } catch (NamingException e) {
             throw new UUFException(
-                    "Cannot find any OSGi service registered with the name '" + serviceClassName + "'.");
+                    "Cannot find any OSGi service registered with the name '" + serviceClassName + "'.", e);
         }
 
         try {
@@ -92,7 +92,7 @@ public class API {
             throw new IllegalArgumentException(
                     "Cannot find any method with the signature '" + serviceMethodName + "(" + joinClassNames(args) +
                             ")' in OSGi service '" + serviceInstance.getClass().getName() + "' with service class '" +
-                            serviceClassName + "'.");
+                            serviceClassName + "'.", e);
         } catch (InvocationTargetException e) {
             Throwable cause = e.getCause();
             if (cause instanceof Exception) {
