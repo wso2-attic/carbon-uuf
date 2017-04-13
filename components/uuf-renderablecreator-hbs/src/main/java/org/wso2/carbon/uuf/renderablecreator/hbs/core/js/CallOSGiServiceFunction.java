@@ -21,5 +21,5 @@ public interface CallOSGiServiceFunction {
 
     String NAME = "callOSGiService";
 
-    Object call(String serviceClassName, String serviceMethodName, Object... args);
+    Object call(String serviceClassName, String serviceMethodName, Object... args) throws Exception;
 }

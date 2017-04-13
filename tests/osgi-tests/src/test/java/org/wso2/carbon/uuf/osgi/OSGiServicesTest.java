@@ -65,7 +65,7 @@ public class OSGiServicesTest {
     }
 
     @Test
-    public void testOSGiServicesAPI() {
+    public void testOSGiServicesAPI() throws Exception {
         String outputForCallOSGiService = API.callOSGiService(
                 "org.wso2.carbon.uuf.sample.petsstore.bundle.service.PetsStoreService",
                 "getHelloMessage", "Bob").toString();

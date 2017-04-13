@@ -27,6 +27,7 @@ import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.internal.auth.SessionRegistry;
 import org.wso2.carbon.uuf.spi.auth.User;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -67,7 +68,8 @@ public class API {
      * @param args              method arguments
      * @return invoked OSGi service instance
      */
-    public static Object callOSGiService(String serviceClassName, String serviceMethodName, Object... args) {
+    public static Object callOSGiService(String serviceClassName, String serviceMethodName, Object... args)
+            throws Exception {
         Object serviceInstance;
         InitialContext initialContext;
         try {
@@ -91,6 +93,16 @@ public class API {
                     "Cannot find any method with the signature '" + serviceMethodName + "(" + joinClassNames(args) +
                             ")' in OSGi service '" + serviceInstance.getClass().getName() + "' with service class '" +
                             serviceClassName + "'.");
+        } catch (InvocationTargetException e) {
+            Throwable cause = e.getCause();
+            if (cause instanceof Exception) {
+                throw (Exception) cause;
+            } else {
+                throw new UUFException(
+                        "Invoking method '" + serviceMethodName + "(" + joinClassNames(args) + ")' on OSGi service '" +
+                                serviceInstance.getClass().getName() + "' with service class '" + serviceClassName +
+                                "' failed.", e);
+            }
         } catch (Exception e) {
             throw new UUFException(
                     "Invoking method '" + serviceMethodName + "(" + joinClassNames(args) + ")' on OSGi service '" +
