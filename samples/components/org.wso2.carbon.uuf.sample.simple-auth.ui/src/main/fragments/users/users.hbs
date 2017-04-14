@@ -1,0 +1,24 @@
+{{secured}}
+<div class="page-header">
+    <h1>{{i18n "simple-auth.fragment.users.heading"}}</h1>
+</div>
+<table id="members" class="table table-responsive table-striped">
+    <thead>
+    <tr>
+        <th>#</th>
+        <th>{{i18n "simple-auth.fragment.users.table.column.name"}}</th>
+        <th>{{i18n "simple-auth.fragment.users.table.column.email"}}</th>
+        <th>{{i18n "simple-auth.fragment.users.table.column.organization"}}</th>
+    </tr>
+    </thead>
+    <tbody>
+    {{#each users}}
+        <tr>
+            <td>{{@index}}</td>
+            <td>{{name}}</td>
+            <td>{{email}}</td>
+            <td>{{organization}}</td>
+        </tr>
+    {{/each}}
+    </tbody>
+</table>
