@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,7 +7,7 @@
     {{#placeholder "favicon"}}
         <link rel="shortcut icon" href="{{public "images/default-favicon.png"}}" type="image/png" />
     {{/placeholder}}
-    <title>{{#placeholder "title"}}UUF Foundation{{/placeholder}}</title>
+    <title>{{#placeholder "title"}}{{i18n "app.name"}}{{/placeholder}}</title>
     {{placeholder "css"}}
     {{placeholder "headJs"}}
     {{placeholder "headOther"}}
@@ -19,7 +19,7 @@
         <div class="pull-left brand float-remove-xs text-center-xs">
             <a href="{{@contextPath}}/">
                 <img src="{{public "images/logo.png"}}" class="logo" />
-                <h1>{{@config.appName}}</h1>
+                <h1>{{i18n "app.name"}}</h1>
             </a>
         </div>
         <div class="pull-right auth float-remove-xs text-center-xs">

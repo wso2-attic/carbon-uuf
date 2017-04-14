@@ -1,20 +1,19 @@
 {{secured}}
 {{layout "org.wso2.carbon.uuf.sample.foundation.ui.main"}}
-{{favicon "images/favicon.png" type="image/png"}}
-{{title "Pets | " @config.appName}}
+{{title (i18n "pets-store.page.pets.title") " | " (i18n "app.name")}}
 
 {{#fillZone "content"}}
     <div class="page-header">
-        <h1>{{i18n "pets-store.list"}}</h1>
-        <p class="lead">{{i18n "pets-store.info"}}</p>
+        <h1>{{i18n "pets-store.page.pets.heading"}}</h1>
+        <p class="lead">{{i18n "pets-store.page.pets.sub-heading"}}</p>
     </div>
     <table class="table table-responsive table-striped" id="members">
         <thead>
         <tr>
             <th>#</th>
-            <th>{{i18n "pets-store.add.pet.name"}}</th>
-            <th>{{i18n "pets-store.add.pet.category"}}</th>
-            <th>{{i18n "pets-store.add.pet.color"}}</th>
+            <th>{{i18n "pets-store.page.pets.table-head.name"}}</th>
+            <th>{{i18n "pets-store.page.pets.table-head.category"}}</th>
+            <th>{{i18n "pets-store.page.pets.table-head.colour"}}</th>
         </tr>
         </thead>
         <tbody>

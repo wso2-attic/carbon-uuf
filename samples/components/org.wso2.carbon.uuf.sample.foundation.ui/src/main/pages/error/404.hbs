@@ -1,8 +1,9 @@
 {{layout "main"}}
-{{title "Page Not Found | " @config.appName}}
+{{title (i18n "foundation.page.404.title") " | " (i18n "app.name")}}
+
 {{#fillZone "content"}}
     <div class="message message-danger">
-        <h4><i class="icon fw fw-error"></i>Page Not Found!</h4>
+        <h4><i class="icon fw fw-error"></i>{{i18n "foundation.page.404.heading"}}</h4>
 
         <div style="padding-left: 25px;">
             <p style="white-space: pre-wrap;">{{@params.message}}</p>

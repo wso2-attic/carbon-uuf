@@ -7,20 +7,20 @@ theme : "org.wso2.carbon.uuf.sample.default.theme"
 menus :
   - name: "main"
     items:
-      - text: "Home"
+      - text: "menu.main.home"
         link: "#"
         icon: "fw-home"
-      - text: "Pets"
+      - text: "menu.main.pets"
         link: ""
         submenus:
-          - text: "See all our amazing pets"
+          - text: "menu.main.see-all"
             link: "/pets"
-          - text: "Add a new pet"
+          - text: "menu.main.add-new"
             link: "/pets/new"
             icon: "fw fw-add"
-          - text: "Pet of the month"
+          - text: "menu.main.month-pet"
             link: "/pets/snowball"
-          - text: "Order new pets"
+          - text: "menu.main.order-new"
             link: "/pets/order"
 
 # Error pages for this app.
@@ -38,8 +38,7 @@ security:
     - /simple-auth/register
   xssIgnoreUris: []
   responseHeaders:
-     staticResources:
+    staticResources:
       "Content-Security-Policy": "default-src 'none'; script-src 'self' ssl.google-analytics.com;"
-     pages:
+    pages:
       "X-Frame-Options": "DENY"
-

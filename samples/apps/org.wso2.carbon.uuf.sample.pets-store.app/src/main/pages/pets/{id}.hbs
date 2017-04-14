@@ -1,17 +1,17 @@
 {{secured}}
 {{layout "org.wso2.carbon.uuf.sample.foundation.ui.main"}}
-{{title @config.appName " | " @pathParams.id}}
+{{title @pathParams.id " | " (i18n "app.name")}}
 
 {{#fillZone "content"}}
     {{css "css/pet-store.css"}}
     <div class="page-header">
-        <h1>{{i18n "pets-store.pet.info"}}</h1>
+        <h1>{{i18n "pets-store.page.view.heading" @pathParams.id}}</h1>
     </div>
     <div class="col-md-8">
         {{fragment "thumbnail"}}
         <br />
         <div class="pet-info">
-            {{i18n "pets-store.pet.name"}} : {{@pathParams.id}}
+            {{i18n "pets-store.page.view.label.name"}} : {{@pathParams.id}}
         </div>
     </div>
     <div class="col-md-4">
