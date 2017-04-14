@@ -27,6 +27,7 @@ import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.internal.auth.SessionRegistry;
 import org.wso2.carbon.uuf.spi.auth.User;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -66,22 +67,29 @@ public class API {
      * @param serviceMethodName method name
      * @param args              method arguments
      * @return invoked OSGi service instance
+     * @exception IllegalArgumentException if cannot find a method that accepts specified arguments in the specified
+     * OSGi service class
+     * @exception UUFException if cannot create JNDI context
+     * @exception UUFException if cannot find the specified OSGi service
+     * @exception UUFException if some other error occurred when calling the specified method on the OSGi class
+     * @throws Exception the exception thrown by the calling method of the specified OSGi service class
      */
-    public static Object callOSGiService(String serviceClassName, String serviceMethodName, Object... args) {
+    public static Object callOSGiService(String serviceClassName, String serviceMethodName, Object... args)
+            throws Exception {
         Object serviceInstance;
         InitialContext initialContext;
         try {
             initialContext = new InitialContext();
         } catch (NamingException e) {
             throw new UUFException(
-                    "Cannot create the JNDI initial context when calling OSGi service '" + serviceClassName + "'.");
+                    "Cannot create the JNDI initial context when calling OSGi service '" + serviceClassName + "'.", e);
         }
 
         try {
             serviceInstance = initialContext.lookup("osgi:service/" + serviceClassName);
         } catch (NamingException e) {
             throw new UUFException(
-                    "Cannot find any OSGi service registered with the name '" + serviceClassName + "'.");
+                    "Cannot find any OSGi service registered with the name '" + serviceClassName + "'.", e);
         }
 
         try {
@@ -90,7 +98,18 @@ public class API {
             throw new IllegalArgumentException(
                     "Cannot find any method with the signature '" + serviceMethodName + "(" + joinClassNames(args) +
                             ")' in OSGi service '" + serviceInstance.getClass().getName() + "' with service class '" +
-                            serviceClassName + "'.");
+                            serviceClassName + "'.", e);
+        } catch (InvocationTargetException e) {
+            // Calling method has thrown an exception.
+            Throwable cause = e.getCause();
+            if (cause instanceof Exception) {
+                throw (Exception) cause;
+            }
+            // Seems like that cause is a Throwable.
+            throw new UUFException(
+                    "Invoking method '" + serviceMethodName + "(" + joinClassNames(args) + ")' on OSGi service '" +
+                            serviceInstance.getClass().getName() + "' with service class '" + serviceClassName +
+                            "' caused a Throwable.", e);
         } catch (Exception e) {
             throw new UUFException(
                     "Invoking method '" + serviceMethodName + "(" + joinClassNames(args) + ")' on OSGi service '" +
