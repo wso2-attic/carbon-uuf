@@ -21,7 +21,18 @@ package org.wso2.carbon.uuf.api;
 import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.carbon.uuf.spi.HttpResponse;
 
+/**
+ * A server that serves for HTTP requests.
+ *
+ * @since 1.0.0
+ */
 public interface Server {
 
+    /**
+     * Serves for the specified HTTP request and writes the output to the given HTTP response.
+     *
+     * @param request  HTTP request to be served
+     * @param response HTTP response which will carry the result of this serve
+     */
     void serve(HttpRequest request, HttpResponse response);
 }
