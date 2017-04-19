@@ -21,45 +21,37 @@ import org.wso2.carbon.uuf.core.Lookup;
 import org.wso2.carbon.uuf.core.RequestLookup;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.MutableExecutable;
 
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
+public class MutableJsExecutable implements MutableExecutable {
 
-public class MutableJsExecutable extends JsExecutable implements MutableExecutable {
+    private final ClassLoader componentClassLoader;
+    private final String absolutePath;
+    private final String relativePath;
+    private final String componentPath;
 
-    private final Lock readLock;
-    private final Lock writeLock;
+    private JsExecutable jsExecutable;
 
     public MutableJsExecutable(String scriptSource, ClassLoader componentClassLoader, String absolutePath,
                                String relativePath, String componentPath) {
-        super(scriptSource, componentClassLoader, absolutePath, relativePath, componentPath);
-        ReadWriteLock lock = new ReentrantReadWriteLock();
-        this.readLock = lock.readLock();
-        this.writeLock = lock.writeLock();
+        this.componentClassLoader = componentClassLoader;
+        this.absolutePath = absolutePath;
+        this.relativePath = relativePath;
+        this.componentPath = componentPath;
+
+        this.jsExecutable = new JsExecutable(scriptSource, componentClassLoader, absolutePath, relativePath, componentPath);
     }
 
     @Override
     public Object execute(Object context, API api, Lookup lookup, RequestLookup requestLookup) {
-        try {
-            readLock.lock();
-            return super.execute(context, api, lookup, requestLookup);
-        } finally {
-            readLock.unlock();
-        }
+        return jsExecutable.execute(context, api, lookup, requestLookup);
     }
 
     @Override
     public String getPath() {
-        return getAbsolutePath();
+        return jsExecutable.getAbsolutePath();
     }
 
     @Override
     public void reload(String scriptSource) {
-        try {
-            writeLock.lock();
-            compile(scriptSource);
-        } finally {
-            writeLock.unlock();
-        }
+        this.jsExecutable = new JsExecutable(scriptSource, componentClassLoader, absolutePath, relativePath, componentPath);
     }
 }
