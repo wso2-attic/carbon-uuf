@@ -61,12 +61,9 @@ public class JsExecutable implements Executable {
     private final String absolutePath;
     private final String relativePath;
     private final String componentPath;
-    private boolean hasOnGetFunction;
-    private boolean hasOnPostFunction;
+    private final boolean hasOnGetFunction;
+    private final boolean hasOnPostFunction;
 
-    public JsExecutable(String scriptSource, ClassLoader componentClassLoader) {
-        this(scriptSource, componentClassLoader, null, null, null);
-    }
 
     public JsExecutable(String scriptSource, ClassLoader componentClassLoader, String absolutePath, String relativePath,
                         String componentPath) {
@@ -79,10 +76,24 @@ public class JsExecutable implements Executable {
                                                                                   componentClassLoader);
         this.engineBindings = new UUFBindings();
         this.engine.setBindings(engineBindings, ScriptContext.ENGINE_SCOPE);
-        compile(scriptSource);
+
+        Set<String> availableFunctions = compile(scriptSource);
+        this.hasOnGetFunction = availableFunctions.contains(FUNCTION_ON_GET);
+        this.hasOnPostFunction = availableFunctions.contains(FUNCTION_ON_POST);
+
+        if (!hasOnGetFunction && !hasOnPostFunction) {
+            throw new UUFException(
+                    "Neither '" + FUNCTION_ON_GET + "' nor '" + FUNCTION_ON_POST + "' can be found in " +
+                            "JavaScript file '" + absolutePath + "'. Please implement at least one of them.");
+        }
     }
 
-    protected void compile(String scriptSource) {
+
+    /**
+     * @param scriptSource JS to be compiled
+     * @return Set of available top level functions.
+     */
+    private Set<String> compile(String scriptSource) {
         engineBindings.unlock();
         engineBindings.clear();
 
@@ -94,19 +105,6 @@ public class JsExecutable implements Executable {
             throw new UUFException("An error occurred while evaluating the JavaScript file '" + absolutePath + "'.", e);
         }
 
-        Set<String> availableFunctions = ((ScriptObjectMirror) engineBindings.get("nashorn.global")).keySet();
-        if (availableFunctions.contains(FUNCTION_ON_GET)) {
-            hasOnGetFunction = true;
-        }
-        if (availableFunctions.contains(FUNCTION_ON_POST)) {
-            hasOnPostFunction = true;
-        }
-        if (!hasOnGetFunction && !hasOnPostFunction) {
-            throw new UUFException(
-                    "Either '" + FUNCTION_ON_GET + "' or '" + FUNCTION_ON_POST + "' cannot be found in " +
-                            "JavaScript file '" + absolutePath + "'. Please implement at least one of them.");
-        }
-
         engineBindings.remove(ModuleFunction.NAME); // removing 'module' function
         engineBindings.put(CallOSGiServiceFunction.NAME, JsFunctionsImpl.getCallOsgiServiceFunction());
         engineBindings.put(GetOSGiServicesFunction.NAME, JsFunctionsImpl.getGetOsgiServicesFunction());
@@ -116,6 +114,8 @@ public class JsExecutable implements Executable {
         engineBindings.put(LoggerObject.NAME, JsFunctionsImpl.getLoggerObject(relativePath));
 
         engineBindings.lock();
+
+        return ((ScriptObjectMirror) engineBindings.get("nashorn.global")).keySet();
     }
 
     protected String getAbsolutePath() {
