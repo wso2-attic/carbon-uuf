@@ -140,20 +140,12 @@ public class App {
                     uriWithoutContextPath.substring(0, uriWithoutContextPath.length() - 1) :
                     (uriWithoutContextPath + "/");
             if (hasPage(correctedUriWithoutContextPath)) {
-                if (request.isGetRequest()) {
-                    // Redirecting to the correct page.
-                    String correctedUri = request.getContextPath() + correctedUriWithoutContextPath;
-                    if (request.getQueryString() != null) {
-                        correctedUri = correctedUri + '?' + request.getQueryString();
-                    }
-                    throw new PageRedirectException(correctedUri, e);
-                } else {
-                    // If GET, we correct, since this can be an end-user error. But if POST it's the responsibility of
-                    // the dev to use correct URL. Because HTTP POST redirect is not well supported.
-                    // See : https://softwareengineering.stackexchange.com/q/99894
-                    String message = e.getMessage() + " Retry with correct URI ending " + correctedUriWithoutContextPath;
-                    return renderErrorPage(new PageNotFoundException(message, e), requestLookup, api, theme);
+                // Redirecting to the correct page.
+                String correctedUri = request.getContextPath() + correctedUriWithoutContextPath;
+                if (request.getQueryString() != null) {
+                    correctedUri = correctedUri + '?' + request.getQueryString();
                 }
+                throw new PageRedirectException(correctedUri, e);
             } else {
                 return renderErrorPage(e, requestLookup, api, theme);
             }
