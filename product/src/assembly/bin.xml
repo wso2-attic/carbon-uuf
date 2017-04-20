@@ -49,7 +49,7 @@
         <fileSet>
             <directory>carbon-home/bin</directory>
             <outputDirectory>bin</outputDirectory>
-            <fileMode>644</fileMode>
+            <fileMode>755</fileMode>
         </fileSet>
 
         <fileSet>
