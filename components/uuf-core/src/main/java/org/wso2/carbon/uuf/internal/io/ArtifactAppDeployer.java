@@ -28,6 +28,7 @@ import org.wso2.carbon.uuf.internal.UUFServer;
 import org.wso2.carbon.uuf.internal.deployment.AppCreator;
 import org.wso2.carbon.uuf.internal.deployment.AppDeployer;
 import org.wso2.carbon.uuf.internal.deployment.ClassLoaderProvider;
+import org.wso2.carbon.uuf.internal.io.reference.ArtifactAppReference;
 import org.wso2.carbon.uuf.internal.io.util.ZipArtifactHandler;
 import org.wso2.carbon.uuf.internal.util.NameUtils;
 import org.wso2.carbon.uuf.spi.RenderableCreator;
