@@ -24,12 +24,24 @@ import java.util.Map;
 
 /**
  * Represent a HTTP request.
+ *
+ * @since 1.0.0
  */
 public interface HttpRequest {
 
+    /**
+     * HTTP header <a href="https://tools.ietf.org/html/rfc2616#section-14.17">content type</a>.
+     */
     String HEADER_CONTENT_TYPE = "Content-Type";
+    /**
+     * HTTP header <a href="https://tools.ietf.org/html/rfc2616#section-14.13">content length</a>.
+     */
     String HEADER_CONTENT_LENGTH = "Content-Length";
+    /**
+     * HTTP header <a href="https://tools.ietf.org/html/rfc2616#section-14.4">accept language</a>.
+     */
     String HEADER_ACCEPT_LANGUAGE = "Accept-Language";
+
     String COOKIE_UUFSESSIONID = "UUFSESSIONID";
     String COOKIE_CSRFTOKEN = "CSRFTOKEN";
 
@@ -42,7 +54,8 @@ public interface HttpRequest {
 
     /**
      * Return whether this request is a GET request or not.
-     * @return {@code true} if this is a GET request and {@code false} if this is a POST request
+     *
+     * @return {@code true} if this is a GET request, {@code false} if this is not a GET request (POST)
      */
     boolean isGetRequest();
 
@@ -200,8 +213,18 @@ public interface HttpRequest {
      */
     int getRemotePort();
 
+    /**
+     * Returns a string representation of this request.
+     *
+     * @return a string representation of this request
+     */
     String toString();
 
+    /**
+     * Returns whether this is a valid request or not.
+     *
+     * @return {@code true} if this is a valid request, {@code false} if not
+     */
     default boolean isValid() {
         String uri = getUri();
 
@@ -227,30 +250,67 @@ public interface HttpRequest {
         return true;
     }
 
+    /**
+     * Returns whether this request is for a static resource.
+     *
+     * @return {@code true} if this is a request to a static resource, {@code false} if not
+     */
     default boolean isStaticResourceRequest() {
         return getUriWithoutContextPath().startsWith("/public/");
     }
 
+    /**
+     * Returns whether this request is for a static resource in a component.
+     *
+     * @return {@code true} if this is a request to a static resource in a component, {@code false} if not
+     */
     default boolean isComponentStaticResourceRequest() {
         return getUriWithoutContextPath().startsWith(UriUtils.COMPONENT_STATIC_RESOURCES_URI_PREFIX);
     }
 
+    /**
+     * Returns whether this request is for a static resource in a theme.
+     *
+     * @return {@code true} if this is a request to a static resource in a theme, {@code false} if not
+     */
     default boolean isThemeStaticResourceRequest() {
         return getUriWithoutContextPath().startsWith(UriUtils.THEMES_STATIC_RESOURCES_URI_PREFIX);
     }
 
+    /**
+     * Returns whether this request is for the debugger.
+     *
+     * @return {@code true} if this is a request to the debugger, {@code false} if not
+     */
     default boolean isDebugRequest() {
         return getUriWithoutContextPath().startsWith("/debug/");
     }
 
+    /**
+     * Returns whether this request is for a fragment
+     *
+     * @return {@code true} if this is a request to a fragment, {@code false} if not
+     */
     default boolean isFragmentRequest() {
         return getUriWithoutContextPath().startsWith(UriUtils.FRAGMENTS_URI_PREFIX);
     }
 
+    /**
+     * Returns whether this request is for the default favicon.
+     *
+     * @return {@code true} if this is a request to the default favicon, {@code false} if not
+     */
     default boolean isDefaultFaviconRequest() {
         return getUri().equals("/favicon.ico");
     }
 
+    /**
+     * Returns the context path of the specified URI.
+     *
+     * @param uri URI
+     * @return context path of the specified URI
+     * @see #getContextPath()
+     */
     static String getContextPath(String uri) {
         int secondSlash = uri.indexOf('/', 1); // An URI must start with a slash.
         if (secondSlash == -1) {
@@ -261,6 +321,13 @@ public interface HttpRequest {
         }
     }
 
+    /**
+     * Returns the part of the specified URI from the end of the context path to the end of the URI.
+     *
+     * @param uri URI
+     * @return part of the URI without the context path
+     * @see #getUriWithoutContextPath()
+     */
     static String getUriWithoutContextPath(String uri) {
         int secondSlash = uri.indexOf('/', 1); // An URI must start with a slash.
         if (secondSlash == -1) {

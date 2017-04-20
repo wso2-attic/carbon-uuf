@@ -23,21 +23,34 @@ import org.wso2.carbon.uuf.spi.model.Model;
 import java.util.Map;
 
 /**
- * Implements the {@link Model} interface to provide a Map based model.
+ * Implements the {@link Model} interface to provide a {@link java.util.Map map} based model.
+ *
+ * @since 1.0.0
  */
 public class MapModel implements Model {
 
     private Map<String, Object> map;
 
+    /**
+     * Creates a new model with the specified map.
+     *
+     * @param map data of the model
+     */
     public MapModel(Map<String, Object> map) {
         this.map = map;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void combine(Map<String, Object> other) {
         map.putAll(other);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Map<String, Object> toMap() {
         return map;

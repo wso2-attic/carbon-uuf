@@ -20,9 +20,23 @@ package org.wso2.carbon.uuf.spi.model;
 
 import java.util.Map;
 
+/**
+ * Represents the data model passed to a {@link org.wso2.carbon.uuf.spi.Renderable} when rendering.
+ *
+ * @since 1.0.0
+ */
 public interface Model {
 
+    /**
+     * Combines the specified map with the this data model.
+     *
+     * @param other map of data to be combined
+     */
     void combine(Map<String, Object> other);
 
+    /**
+     * Converts and returns this data model as a map.
+     * @return map representation of this data model
+     */
     Map<String, Object> toMap();
 }

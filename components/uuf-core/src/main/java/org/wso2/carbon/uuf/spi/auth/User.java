@@ -21,15 +21,40 @@ package org.wso2.carbon.uuf.spi.auth;
 
 import java.io.Serializable;
 
+/**
+ * Represents an user.
+ *
+ * @since 1.0.0
+ */
 public interface User extends Serializable {
 
+    /**
+     * Returns the username of this user.
+     *
+     * @return username of this user
+     */
     String getUsername();
 
+    /**
+     * Checks whether this user has the specified permission.
+     * @param resourceUri resource of the permission to be checked
+     * @param action action of the permission to be checked
+     * @return {@code true} if this user has the permission, {@code false} if not
+     */
     boolean hasPermission(String resourceUri, String action);
 
+    /**
+     * {@inheritDoc}
+     */
     int hashCode();
 
+    /**
+     * {@inheritDoc}
+     */
     boolean equals(Object obj);
 
+    /**
+     * {@inheritDoc}
+     */
     String toString();
 }

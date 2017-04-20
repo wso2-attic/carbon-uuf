@@ -34,6 +34,8 @@ import java.util.concurrent.ThreadLocalRandom;
  * The {@link org.wso2.carbon.uuf.internal.auth.SessionRegistry SessionRegistry} uses this class to create a session
  * between an HTTP client and an HTTP server. The session persists for a specified time period, across more than one
  * connection or page request from the user.
+ *
+ * @since 1.0.0
  */
 public class Session implements Serializable {
 
@@ -48,24 +50,49 @@ public class Session implements Serializable {
     private final String csrfToken;
     private String themeName;
 
+    /**
+     * Creates a new session instance with the specified user.
+     *
+     * @param user user of the session.
+     */
     public Session(User user) {
         this.sessionId = sessionIdGenerator.generateId();
         this.user = user;
         this.csrfToken = sessionIdGenerator.generateId();
     }
 
+    /**
+     * Returns the ID of this session.
+     *
+     * @return ID of this session
+     */
     public String getSessionId() {
         return sessionId;
     }
 
+    /**
+     * Returns the user of this session.
+     *
+     * @return user of this session
+     */
     public User getUser() {
         return user;
     }
 
+    /**
+     * Returns the name of the theme of this session.
+     *
+     * @return theme name of this session
+     */
     public String getThemeName() {
         return themeName;
     }
 
+    /**
+     * Returns the CSRF token of this session.
+     *
+     * @return CSRF token of this session
+     */
     public String getCsrfToken() {
         return csrfToken;
     }
@@ -77,21 +104,36 @@ public class Session implements Serializable {
         this.themeName = themeName;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int hashCode() {
         return Objects.hash(sessionId);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean equals(Object obj) {
         return (obj != null) && (obj instanceof Session) && (sessionId.equals(((Session) obj).sessionId));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return "{\"sessionId\": \"" + sessionId + "\", \"user\": \"" + user + "\", \"theme\": \"" + themeName + "\"}";
     }
 
+    /**
+     * Validates the given session ID.
+     *
+     * @param sessionId session ID to validate
+     * @return {@code true} if session ID is valid, {@code false} if not
+     */
     public static boolean isValidSessionId(String sessionId) {
         return (sessionId != null) && !sessionId.isEmpty() && (sessionId.length() == Session.SESSION_ID_LENGTH * 2);
     }
@@ -128,6 +170,11 @@ public class Session implements Serializable {
             this.sessionIdLength = sessionIdLength;
         }
 
+        /**
+         * Generates and returns a new session ID.
+         *
+         * @return session ID
+         */
         public synchronized String generateId() {
             byte randomBytes[] = new byte[16];
             // Render the result as a String of hexadecimal digits
