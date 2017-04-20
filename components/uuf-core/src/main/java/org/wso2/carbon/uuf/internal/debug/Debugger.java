@@ -55,7 +55,7 @@ public class Debugger {
     private static final UriPatten URI_PATTEN_PAGE_INDEX = new UriPatten("/debug/");
     private static final UriPatten URI_PATTEN_RESOURCES = new UriPatten("/debug/{+resource}");
 
-    private final static JsonParser JSON_PARSER = new JsonParser();
+    private static final JsonParser JSON_PARSER = new JsonParser();
     private static final Logger LOGGER = LoggerFactory.getLogger(Debugger.class);
     private static final boolean IS_DEBUGGING_ENABLED = UUFServer.isDevModeEnabled();
 
