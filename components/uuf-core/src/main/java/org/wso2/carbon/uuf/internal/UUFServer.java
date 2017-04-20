@@ -33,10 +33,9 @@ import org.wso2.carbon.kernel.startupresolver.RequiredCapabilityListener;
 import org.wso2.carbon.uuf.api.Server;
 import org.wso2.carbon.uuf.core.App;
 import org.wso2.carbon.uuf.exception.UUFException;
-import org.wso2.carbon.uuf.internal.auth.SessionRegistry;
 import org.wso2.carbon.uuf.internal.deployment.AppDeployer;
 import org.wso2.carbon.uuf.internal.deployment.DeploymentNotifier;
-import org.wso2.carbon.uuf.internal.io.ArtifactAppDeployer;
+import org.wso2.carbon.uuf.internal.io.deployment.ArtifactAppDeployer;
 import org.wso2.carbon.uuf.spi.HttpConnector;
 import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.carbon.uuf.spi.HttpResponse;
@@ -49,7 +48,6 @@ import java.util.Set;
 import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_BAD_REQUEST;
 import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_INTERNAL_SERVER_ERROR;
 import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_NOT_FOUND;
-import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_UNAUTHORIZED;
 
 @Component(name = "org.wso2.carbon.uuf.internal.UUFServer",
            service = RequiredCapabilityListener.class,
