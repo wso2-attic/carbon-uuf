@@ -19,14 +19,14 @@ package org.wso2.carbon.uuf.httpconnector.msf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.wso2.carbon.uuf.spi.HttpResponse;
 
-import javax.ws.rs.core.MultivaluedHashMap;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.NewCookie;
-import javax.ws.rs.core.Response;
 import java.io.File;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import javax.ws.rs.core.MultivaluedHashMap;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.NewCookie;
+import javax.ws.rs.core.Response;
 
 /**
  * UUF HttpResponse implementation based on JAX-RS Response.
@@ -91,8 +91,8 @@ public class MicroserviceHttpResponse implements HttpResponse {
     }
 
     @Override
-    public void setContentType(String type) {
-        this.contentType = type;
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
     }
 
     @Override
