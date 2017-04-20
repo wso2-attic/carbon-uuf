@@ -22,7 +22,6 @@ import org.apache.commons.io.FilenameUtils;
 import org.wso2.carbon.uuf.api.reference.ComponentReference;
 import org.wso2.carbon.uuf.api.reference.FileReference;
 import org.wso2.carbon.uuf.api.reference.PageReference;
-import org.wso2.carbon.uuf.internal.io.ArtifactFileReference;
 
 import java.nio.file.Path;
 
