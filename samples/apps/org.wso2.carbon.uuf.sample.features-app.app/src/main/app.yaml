@@ -43,8 +43,6 @@ menus:
             submenus:
               - text: "Block Helpers"
                 link: "/helpers/block-helpers"
-              - text: "String Helpers"
-                link: "/helpers/string-helpers"
 
 errorPages:
   404: /foundation/error/404
