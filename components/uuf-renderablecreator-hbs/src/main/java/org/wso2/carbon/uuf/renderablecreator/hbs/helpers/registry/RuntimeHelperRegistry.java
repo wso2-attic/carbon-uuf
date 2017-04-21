@@ -27,17 +27,16 @@ import com.github.jknack.handlebars.helper.EachHelper;
 import com.github.jknack.handlebars.helper.IfHelper;
 import com.github.jknack.handlebars.helper.LogHelper;
 import com.github.jknack.handlebars.helper.LookupHelper;
-import com.github.jknack.handlebars.helper.StringHelpers;
 import com.github.jknack.handlebars.helper.UnlessHelper;
 import com.github.jknack.handlebars.helper.WithHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.CSRFTokenHelper;
 import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.CssHelper;
 import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.DefinePlaceholderHelper;
 import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.DefineZoneHelper;
 import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.FaviconHelper;
 import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.FillZoneHelper;
-import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.CSRFTokenHelper;
 import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.FragmentHelper;
 import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.HeadJsHelper;
 import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.HeadOtherHelper;
@@ -125,7 +124,7 @@ public class RuntimeHelperRegistry implements HelperRegistry {
 
     /**
      * {@inheritDoc}
-     *
+     * <p>
      * This will register only the class source of enum with {@link Helper} implementation.
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
@@ -207,7 +206,6 @@ public class RuntimeHelperRegistry implements HelperRegistry {
         registry.registerHelper(BlockHelper.NAME, BlockHelper.INSTANCE);
         registry.registerHelper(LookupHelper.NAME, LookupHelper.INSTANCE);
         registry.registerHelper(LogHelper.NAME, LogHelper.INSTANCE);
-        registry.registerHelpers(StringHelpers.class);
         //UUF related helpers
         registry.registerHelper(FragmentHelper.HELPER_NAME, new FragmentHelper());
         registry.registerHelper(SecuredHelper.HELPER_NAME, new SecuredHelper());
