@@ -62,7 +62,7 @@
                         <Private-Package>org.wso2.carbon.uuf.sample.petsstore.bundle.internal.*</Private-Package>
                         <Export-Package>
                             !org.wso2.carbon.uuf.sample.petsstore.bundle.internal.*,
-                            org.wso2.carbon.uuf.sample.petsstore.bundle.*;version="${version}"
+                            org.wso2.carbon.uuf.sample.petsstore.bundle.*;version="${project.version}"
                         </Export-Package>
                         <Bundle-Activator>
                             org.wso2.carbon.uuf.sample.petsstore.bundle.internal.Activator

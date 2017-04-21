@@ -52,7 +52,7 @@
                             javax.ws.rs.*; version="${javax.ws.rs.version.range}"
                         </Import-Package>
                         <Export-Package>
-                            org.wso2.carbon.uuf.sample.api.*;version="${version}"
+                            org.wso2.carbon.uuf.sample.api.*;version="${project.version}"
                         </Export-Package>
                     </instructions>
                 </configuration>

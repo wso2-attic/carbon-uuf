@@ -69,7 +69,7 @@
                         <Private-Package>org.wso2.carbon.uuf.sample.simpleauth.bundle.internal.*</Private-Package>
                         <Export-Package>
                             !org.wso2.carbon.uuf.sample.simpleauth.bundle.internal.*,
-                            org.wso2.carbon.uuf.sample.simpleauth.bundle.*;version="${version}"
+                            org.wso2.carbon.uuf.sample.simpleauth.bundle.*;version="${project.version}"
                         </Export-Package>
                         <Carbon-Component>
                             requiredByComponent="org.wso2.carbon.security.caas.internal.CarbonSecurityComponent"
