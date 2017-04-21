@@ -32,16 +32,13 @@ public class CSRFTokenHelper implements Helper<Object> {
 
     @Override
     public CharSequence apply(Object context, Options options) throws IOException {
-        StringBuilder buffer = new StringBuilder();
         RequestLookup requestLookup = options.data(HbsRenderable.DATA_KEY_REQUEST_LOOKUP);
         String cookieValue = requestLookup.getRequest().getCookieValue(COOKIE_CSRFTOKEN);
-
-        if (cookieValue != null) {
-            buffer.append("<input type=\"hidden\" name=\"uuf-csrftoken\" value=\"")
-                    .append(cookieValue)
-                    .append("\"/>");
+        if (cookieValue == null) {
+            return "";
+        } else {
+            return new Handlebars.SafeString("<input type=\"hidden\" name=\"" + COOKIE_CSRFTOKEN + "\" value=\""
+                    + cookieValue + "\"/>");
         }
-
-        return new Handlebars.SafeString(buffer.toString());
     }
 }

@@ -20,8 +20,10 @@ package org.wso2.carbon.uuf.api.config;
 
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ListMultimap;
+import org.wso2.carbon.uuf.core.UriPatten;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -38,15 +40,14 @@ import static java.util.Collections.unmodifiableSet;
  * @since 1.0.0
  */
 public class Configuration {
-
     private String contextPath;
     private String themeName;
     private String loginPageUri;
     private Map<Integer, String> errorPageUris;
     private String defaultErrorPageUri;
     private ListMultimap<String, MenuItem> menus;
-    private Set<String> csrfIgnoreUris;
-    private Set<String> xssIgnoreUris;
+    private Set<UriPatten> csrfIgnoreUris;
+    private Set<UriPatten> xssIgnoreUris;
     private ResponseHeaders responseHeaders;
     private Map<String, Object> otherConfigurations;
 
@@ -75,7 +76,7 @@ public class Configuration {
                 throw new IllegalArgumentException("Context path cannot be empty.");
             } else if (contextPath.charAt(0) != '/') {
                 throw new IllegalArgumentException("Context path must start with a '/'. Instead found '" +
-                                                           contextPath.charAt(0) + "' at the beginning.");
+                        contextPath.charAt(0) + "' at the beginning.");
             }
         }
         this.contextPath = contextPath;
@@ -126,7 +127,7 @@ public class Configuration {
                 throw new IllegalArgumentException("Login page URI cannot be empty.");
             } else if (loginPageUri.charAt(0) != '/') {
                 throw new IllegalArgumentException("Login page URI must start with a '/'. Instead found '" +
-                                                           loginPageUri.charAt(0) + "' at the beginning.");
+                        loginPageUri.charAt(0) + "' at the beginning.");
             }
         }
         this.loginPageUri = loginPageUri;
@@ -243,7 +244,7 @@ public class Configuration {
      *
      * @return set of URI's that doesn't require CSRF protection.
      */
-    public Set<String> getCsrfIgnoreUris() {
+    public Set<UriPatten> getCsrfIgnoreUris() {
         return csrfIgnoreUris;
     }
 
@@ -257,15 +258,20 @@ public class Configuration {
         if (csrfIgnoreUris == null) {
             this.csrfIgnoreUris = emptySet();
         } else {
+            Set<UriPatten> csrfIgnoreUriPatterns = new HashSet<>();
             for (String csrfUri : csrfIgnoreUris) {
                 if (csrfUri == null) {
-                    throw new IllegalArgumentException("CSRF ignore URI cannot be null.");
+                    throw new IllegalArgumentException("CSRF ignore URI pattern cannot be null.");
                 } else if (csrfUri.isEmpty()) {
-                    throw new IllegalArgumentException("CSRF ignore URI cannot be empty.");
+                    throw new IllegalArgumentException("CSRF ignore URI pattern cannot be empty.");
                 }
-                // TODO: 12/31/16 check whether the 'acceptingCsrfPattern' is a valid URI pattern
+                try {
+                    csrfIgnoreUriPatterns.add(new UriPatten(csrfUri));
+                } catch (IllegalArgumentException e) {
+                    throw new IllegalArgumentException("CSRF ignore URI pattern '" + csrfUri + "' is invalid.", e);
+                }
             }
-            this.csrfIgnoreUris = unmodifiableSet(csrfIgnoreUris);
+            this.csrfIgnoreUris = unmodifiableSet(csrfIgnoreUriPatterns);
         }
     }
 
@@ -274,7 +280,7 @@ public class Configuration {
      *
      * @return set of URI's that doesn't require XSS protection.
      */
-    public Set<String> getXssIgnoreUris() {
+    public Set<UriPatten> getXssIgnoreUris() {
         return xssIgnoreUris;
     }
 
@@ -288,15 +294,21 @@ public class Configuration {
         if (xssIgnoreUris == null) {
             this.xssIgnoreUris = emptySet();
         } else {
+            Set<UriPatten> xssIgnoreUriPatterns = new HashSet<>();
             for (String xssUri : xssIgnoreUris) {
                 if (xssUri == null) {
-                    throw new IllegalArgumentException("XSS ignore URI cannot be null.");
+                    throw new IllegalArgumentException("XSS ignore URI pattern cannot be null.");
                 } else if (xssUri.isEmpty()) {
-                    throw new IllegalArgumentException("XSS ignore URI cannot be empty.");
+                    throw new IllegalArgumentException("XSS ignore URI pattern cannot be empty.");
                 }
-                // TODO: 12/31/16 check whether the 'rejectingCsrfPattern' is a valid URI pattern
+
+                try {
+                    xssIgnoreUriPatterns.add(new UriPatten(xssUri));
+                } catch (IllegalArgumentException e) {
+                    throw new IllegalArgumentException("XSS ignore URI pattern '" + xssUri + "' is invalid.", e);
+                }
             }
-            this.xssIgnoreUris = unmodifiableSet(xssIgnoreUris);
+            this.xssIgnoreUris = unmodifiableSet(xssIgnoreUriPatterns);
         }
     }
 
