@@ -562,6 +562,16 @@
                     <artifactId>jacoco-maven-plugin</artifactId>
                     <version>${maven.jacocoplugin.version}</version>
                 </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>buildnumber-maven-plugin</artifactId>
+                    <version>${org.codehaus.mojo.buildnumber.maven.plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-checkstyle-plugin</artifactId>
+                    <version>${maven.checkstyle.plugin.version}</version>
+                </plugin>
             </plugins>
         </pluginManagement>
     </build>
@@ -602,6 +612,7 @@
         <org.objectweb.asm.version>5.1</org.objectweb.asm.version>
         <org.objectweb.asm.version.range>[5.1, 6.0)</org.objectweb.asm.version.range>
         <javax.ws.rs.version.range>[2.0.0, 3.0.0)</javax.ws.rs.version.range>
+        <org.codehaus.mojo.buildnumber.maven.plugin.version>1.4</org.codehaus.mojo.buildnumber.maven.plugin.version>
 
         <!-- UUF Product -->
         <carbon.datasources.version>1.0.0</carbon.datasources.version>
@@ -627,6 +638,7 @@
         <carbon-uuf-maven-plugin.version>1.0.0-m13</carbon-uuf-maven-plugin.version>
         <carbon.feature.plugin.version>3.0.0</carbon.feature.plugin.version>
         <maven.bundle.plugin.version>2.5.0</maven.bundle.plugin.version>
+        <maven.checkstyle.plugin.version>2.17</maven.checkstyle.plugin.version>
 
         <!-- Test -->
         <testng.version>6.9.10</testng.version>
