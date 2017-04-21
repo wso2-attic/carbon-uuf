@@ -109,10 +109,7 @@
                 <configuration>
                     <instructions>
                         <Import-Package>
-                            org.wso2.carbon.deployment.engine.*; version="${carbon.kernel.version.range}",
-                            org.wso2.carbon.deployment.notifier.*; version="${carbon.kernel.version.range}",
                             org.wso2.carbon.kernel.startupresolver.*; version="${carbon.kernel.version.range}",
-                            org.wso2.carbon.kernel.transports.*; version="${carbon.kernel.version.range}",
                             org.wso2.msf4j; version="${msf4j.version.range}",
                             javax.naming; version="${javax.naming.version.range}",
                             javax.cache.*; version="${javax.cache-api.version.range}",
