@@ -1,22 +1,22 @@
 /*
- *  Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
- *  WSO2 Inc. licenses this file to you under the Apache License,
- *  Version 2.0 (the "License"); you may not use this file except
- *  in compliance with the License.
- *  You may obtain a copy of the License at
+ * WSO2 Inc. licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing,
- *  software distributed under the License is distributed on an
- *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *  KIND, either express or implied.  See the License for the
- *  specific language governing permissions and limitations
- *  under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 
-package org.wso2.carbon.uuf.internal.io;
+package org.wso2.carbon.uuf.internal.io.deployment;
 
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Label;
@@ -73,7 +73,8 @@ public class BundleClassLoaderProvider implements ClassLoaderProvider {
     public void deployAPI(Object serviceImplementation, Dictionary<String, ?> properties) {
         if (!(serviceImplementation instanceof Microservice)) {
             throw new UUFException("Cannot deploy REST API '" + serviceImplementation.getClass().getName() +
-                    "' as a micro-service because it does not implement '" + Microservice.class.getName() + "'");
+                                           "' as a micro-service because it does not implement '" +
+                                           Microservice.class.getName() + "'");
         }
         BundleContext bundleContext = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
         bundleContext.registerService(Microservice.class, (Microservice) serviceImplementation, properties);
