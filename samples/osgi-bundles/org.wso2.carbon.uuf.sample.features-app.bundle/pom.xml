@@ -41,7 +41,7 @@
                 <configuration>
                     <instructions>
                         <Export-Package>
-                            org.wso2.carbon.uuf.sample.featuresapp.bundle;version="${version}"
+                            org.wso2.carbon.uuf.sample.featuresapp.bundle;version="${project.version}"
                         </Export-Package>
                     </instructions>
                 </configuration>

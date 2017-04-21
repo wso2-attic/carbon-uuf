@@ -57,7 +57,6 @@
                     <instructions>
                         <Import-Package>
                             org.wso2.carbon.uuf.*;version="${carbon.uuf.version}",
-                            org.osgi.service.component.annotations.*,
                             com.google.common.*;version="${guava.version.range}",
                             org.slf4j.*;version="${slf4j.version.range}"
                         </Import-Package>
