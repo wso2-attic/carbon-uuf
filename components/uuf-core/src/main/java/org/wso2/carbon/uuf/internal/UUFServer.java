@@ -35,6 +35,7 @@ import org.wso2.carbon.uuf.core.App;
 import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.internal.deployment.AppDeployer;
 import org.wso2.carbon.uuf.internal.deployment.DeploymentNotifier;
+import org.wso2.carbon.uuf.internal.deployment.PluginProvider;
 import org.wso2.carbon.uuf.internal.io.deployment.ArtifactAppDeployer;
 import org.wso2.carbon.uuf.spi.HttpConnector;
 import org.wso2.carbon.uuf.spi.HttpRequest;
@@ -65,6 +66,7 @@ public class UUFServer implements Server, RequiredCapabilityListener {
     private final Set<RenderableCreator> renderableCreators;
     private final RequestDispatcher requestDispatcher;
     private AppDeployer appDeployer;
+    private PluginProvider pluginProvider;
     private DeploymentNotifier deploymentNotifier;
     private BundleContext bundleContext;
     private ServiceRegistration serverServiceRegistration;
@@ -89,7 +91,7 @@ public class UUFServer implements Server, RequiredCapabilityListener {
                cardinality = ReferenceCardinality.AT_LEAST_ONE,
                policy = ReferencePolicy.DYNAMIC,
                unbind = "unsetRenderableCreator")
-    public void setRenderableCreator(RenderableCreator renderableCreator) {
+    protected void setRenderableCreator(RenderableCreator renderableCreator) {
         if (!renderableCreators.add(renderableCreator)) {
             throw new IllegalArgumentException(
                     "A RenderableCreator for '" + renderableCreator.getSupportedFileExtensions() +
@@ -104,7 +106,7 @@ public class UUFServer implements Server, RequiredCapabilityListener {
      *
      * @param renderableCreator unregistered renderable creator
      */
-    public void unsetRenderableCreator(RenderableCreator renderableCreator) {
+    protected void unsetRenderableCreator(RenderableCreator renderableCreator) {
         renderableCreators.remove(renderableCreator);
         LOGGER.info("RenderableCreator '{}' unregistered for {} extensions.",
                     renderableCreator.getClass().getName(), renderableCreator.getSupportedFileExtensions());
@@ -113,6 +115,19 @@ public class UUFServer implements Server, RequiredCapabilityListener {
             without the removed RenderableCreator. */
             appDeployer = createAppDeployer();
         }
+    }
+
+    @Reference(name = "pluginProvider",
+               service = PluginProvider.class,
+               cardinality = ReferenceCardinality.MANDATORY,
+               policy = ReferencePolicy.DYNAMIC,
+               unbind = "unsetPluginProvider")
+    protected void setPluginProvider(PluginProvider pluginProvider){
+        this.pluginProvider = pluginProvider;
+    }
+
+    protected void unsetPluginProvider(PluginProvider pluginProvider){
+        this.pluginProvider = null;
     }
 
     @Activate
@@ -142,8 +157,8 @@ public class UUFServer implements Server, RequiredCapabilityListener {
 
     private AppDeployer createAppDeployer() {
         return (appRepositoryPath == null) ?
-                new ArtifactAppDeployer(renderableCreators) :
-                new ArtifactAppDeployer(appRepositoryPath, renderableCreators);
+                new ArtifactAppDeployer(renderableCreators, pluginProvider) :
+                new ArtifactAppDeployer(appRepositoryPath, renderableCreators, pluginProvider);
     }
 
     @Override
