@@ -95,7 +95,7 @@ public class RestApiDeploymentTest {
         }).when(classLoaderProvider).deployAPI(any(), any());
 
         // Create app creator.
-        AppCreator appCreator = new AppCreator(Collections.emptySet(), classLoaderProvider);
+        AppCreator appCreator = new AppCreator(Collections.emptySet(), classLoaderProvider, null);
         appCreator.createApp(appReference, appContextPath);
 
         String expectedApiContextPath = appContextPath + "/root/apis" + apiUri;
