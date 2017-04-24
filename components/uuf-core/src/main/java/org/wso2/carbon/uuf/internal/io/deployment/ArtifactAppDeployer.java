@@ -59,10 +59,12 @@ public class ArtifactAppDeployer implements AppDeployer {
     private final Object lock;
 
     public ArtifactAppDeployer(Set<RenderableCreator> renderableCreators, PluginProvider pluginProvider) {
-        this(Paths.get(System.getProperty("carbon.home", "."), "deployment", "uufapps").toString(), renderableCreators, pluginProvider);
+        this(Paths.get(System.getProperty("carbon.home", "."), "deployment", "uufapps").toString(), renderableCreators,
+             pluginProvider);
     }
 
-    public ArtifactAppDeployer(String appsRepositoryPath, Set<RenderableCreator> renderableCreators, PluginProvider pluginProvider) {
+    public ArtifactAppDeployer(String appsRepositoryPath, Set<RenderableCreator> renderableCreators,
+                               PluginProvider pluginProvider) {
         this(appsRepositoryPath, renderableCreators, new BundleClassLoaderProvider(), pluginProvider);
     }
 
