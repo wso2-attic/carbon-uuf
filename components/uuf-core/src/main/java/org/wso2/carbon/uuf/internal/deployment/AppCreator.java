@@ -79,7 +79,8 @@ public class AppCreator {
     private final ClassLoaderProvider classLoaderProvider;
     private final PluginProvider pluginProvider;
 
-    public AppCreator(Set<RenderableCreator> renderableCreators, ClassLoaderProvider classLoaderProvider, PluginProvider pluginProvider) {
+    public AppCreator(Set<RenderableCreator> renderableCreators, ClassLoaderProvider classLoaderProvider,
+                      PluginProvider pluginProvider) {
         this.renderableCreators = new HashMap<>();
         this.supportedExtensions = new HashSet<>();
         for (RenderableCreator renderableCreator : renderableCreators) {
