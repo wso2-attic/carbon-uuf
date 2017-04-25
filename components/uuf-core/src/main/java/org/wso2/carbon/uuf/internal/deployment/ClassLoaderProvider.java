@@ -23,19 +23,19 @@ import org.wso2.carbon.uuf.api.reference.ComponentReference;
 import java.util.Dictionary;
 
 /**
- * A provider that gives the class loader for a given component.
+ * A provider that gives class loaders for UUF components.
  *
  * @since 1.0.0
  */
 public interface ClassLoaderProvider {
 
     /**
-     * Returns class loader of the given component.
+     * Returns a class loader of the specified UUF component.
      *
-     * @param componentName      full component name
-     * @param componentVersion   component version
-     * @param componentReference component reference
-     * @return class loader for specified component
+     * @param componentName      fully qualified name of the component
+     * @param componentVersion   version of the component
+     * @param componentReference reference to the component
+     * @return class loader for the specified component
      */
     ClassLoader getClassLoader(String componentName, String componentVersion, ComponentReference componentReference);
 

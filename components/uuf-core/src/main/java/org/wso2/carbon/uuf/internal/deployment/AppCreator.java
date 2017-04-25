@@ -73,11 +73,14 @@ import static org.wso2.carbon.uuf.internal.util.NameUtils.getFullyQualifiedName;
 public class AppCreator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AppCreator.class);
+
     private final Map<String, RenderableCreator> renderableCreators;
     private final Set<String> supportedExtensions;
     private final ClassLoaderProvider classLoaderProvider;
+    private final PluginProvider pluginProvider;
 
-    public AppCreator(Set<RenderableCreator> renderableCreators, ClassLoaderProvider classLoaderProvider) {
+    public AppCreator(Set<RenderableCreator> renderableCreators, ClassLoaderProvider classLoaderProvider,
+                      PluginProvider pluginProvider) {
         this.renderableCreators = new HashMap<>();
         this.supportedExtensions = new HashSet<>();
         for (RenderableCreator renderableCreator : renderableCreators) {
@@ -87,6 +90,7 @@ public class AppCreator {
             supportedExtensions.addAll(renderableCreator.getSupportedFileExtensions());
         }
         this.classLoaderProvider = classLoaderProvider;
+        this.pluginProvider = pluginProvider;
     }
 
     public App createApp(AppReference appReference, String contextPath) {
