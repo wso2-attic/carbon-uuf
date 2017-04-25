@@ -40,9 +40,11 @@ import static java.util.Collections.unmodifiableSet;
  * @since 1.0.0
  */
 public class Configuration {
+
     private String contextPath;
     private String themeName;
     private String loginPageUri;
+    private String sessionManager;
     private Map<Integer, String> errorPageUris;
     private String defaultErrorPageUri;
     private ListMultimap<String, MenuItem> menus;
@@ -131,6 +133,24 @@ public class Configuration {
             }
         }
         this.loginPageUri = loginPageUri;
+    }
+
+    /**
+     * Get session manager implementation class.
+     *
+     * @return session manager implementation class
+     */
+    public String getSessionManager() {
+        return sessionManager;
+    }
+
+    /**
+     * Set session manager implementation class.
+     *
+     * @param sessionManager session manager implementation class
+     */
+    public void setSessionManager(String sessionManager) {
+        this.sessionManager = sessionManager;
     }
 
     /**

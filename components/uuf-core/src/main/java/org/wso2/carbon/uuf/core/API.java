@@ -24,7 +24,7 @@ import org.wso2.carbon.uuf.api.auth.Session;
 import org.wso2.carbon.uuf.exception.HttpErrorException;
 import org.wso2.carbon.uuf.exception.PageRedirectException;
 import org.wso2.carbon.uuf.exception.UUFException;
-import org.wso2.carbon.uuf.internal.auth.SessionRegistry;
+import org.wso2.carbon.uuf.spi.auth.SessionManager;
 import org.wso2.carbon.uuf.spi.auth.User;
 
 import java.lang.reflect.InvocationTargetException;
@@ -41,12 +41,12 @@ import javax.naming.NamingException;
 @SuppressWarnings("PackageAccessibility")
 public class API {
 
-    private final SessionRegistry sessionRegistry;
+    private final SessionManager sessionManager;
     private final RequestLookup requestLookup;
     private Optional<Session> currentSession;
 
-    API(SessionRegistry sessionRegistry, RequestLookup requestLookup) {
-        this.sessionRegistry = sessionRegistry;
+    API(SessionManager sessionManager, RequestLookup requestLookup) {
+        this.sessionManager = sessionManager;
         this.requestLookup = requestLookup;
         this.currentSession = Optional.<Session>empty();
     }
@@ -67,12 +67,12 @@ public class API {
      * @param serviceMethodName method name
      * @param args              method arguments
      * @return invoked OSGi service instance
-     * @exception IllegalArgumentException if cannot find a method that accepts specified arguments in the specified
-     * OSGi service class
-     * @exception UUFException if cannot create JNDI context
-     * @exception UUFException if cannot find the specified OSGi service
-     * @exception UUFException if some other error occurred when calling the specified method on the OSGi class
-     * @throws Exception the exception thrown by the calling method of the specified OSGi service class
+     * @throws IllegalArgumentException if cannot find a method that accepts specified arguments in the specified
+     *                                  OSGi service class
+     * @throws UUFException             if cannot create JNDI context
+     * @throws UUFException             if cannot find the specified OSGi service
+     * @throws UUFException             if some other error occurred when calling the specified method on the OSGi class
+     * @throws Exception                the exception thrown by the calling method of the specified OSGi service class
      */
     public static Object callOSGiService(String serviceClassName, String serviceMethodName, Object... args)
             throws Exception {
@@ -137,7 +137,7 @@ public class API {
             return services;
         } catch (NamingException e) {
             throw new UUFException("Cannot create the initial context when calling OSGi service '" +
-                                           serviceClassName + "'.");
+                    serviceClassName + "'.");
         }
     }
 
@@ -176,21 +176,22 @@ public class API {
         }
 
         destroySession();
-        Session session = new Session(user);
-        sessionRegistry.addSession(session);
-        requestLookup.getResponse().addCookie(SessionRegistry.SESSION_COOKIE_NAME, session.getSessionId() + "; Path=" +
-                requestLookup.getContextPath() + "; Secure; HTTPOnly");
-        requestLookup.getResponse().addCookie(SessionRegistry.CSRF_TOKEN, session.getCsrfToken() + "; Path=" +
-                requestLookup.getContextPath() + "; Secure");
+        Session session = sessionManager.createSession(user, requestLookup.getRequest(),
+                requestLookup.getResponse());
+        requestLookup.getResponse().addCookie(Session.SESSION_COOKIE_NAME, session.getSessionId() +
+                "; Path=" + requestLookup.getContextPath() + "; Secure; HTTPOnly");
+        requestLookup.getResponse().addCookie(Session.CSRF_TOKEN, session.getCsrfToken() +
+                "; Path=" + requestLookup.getContextPath() + "; Secure");
         return session;
     }
 
     public Optional<Session> getSession() {
         if (!currentSession.isPresent()) {
             // Since an API object lives in the request scope, it is safe to cache the current Session object.
-            String sessionId = requestLookup.getRequest().getCookieValue(SessionRegistry.SESSION_COOKIE_NAME);
+            String sessionId = requestLookup.getRequest().getCookieValue(Session.SESSION_COOKIE_NAME);
             if (!StringUtils.isEmpty(sessionId)) {
-                currentSession = sessionRegistry.getSession(sessionId);
+                currentSession = sessionManager.getSession(requestLookup.getRequest(),
+                        requestLookup.getResponse());
             }
         }
         return currentSession;
@@ -206,12 +207,12 @@ public class API {
         // Remove cached session.
         currentSession = Optional.empty();
         // Remove session from the SessionRegistry.
-        sessionRegistry.removeSession(session.get().getSessionId());
+        sessionManager.destroySession(requestLookup.getRequest(), requestLookup.getResponse());
         // Clear the session cookie by setting its value to an empty string, Max-Age to zero, & Expires to a past date.
         String expiredCookie = "Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:01 GMT; Path=" +
                 requestLookup.getContextPath() + "; Secure; HTTPOnly";
-        requestLookup.getResponse().addCookie(SessionRegistry.SESSION_COOKIE_NAME, expiredCookie);
-        requestLookup.getResponse().addCookie(SessionRegistry.CSRF_TOKEN, expiredCookie);
+        requestLookup.getResponse().addCookie(Session.SESSION_COOKIE_NAME, expiredCookie);
+        requestLookup.getResponse().addCookie(Session.CSRF_TOKEN, expiredCookie);
         return true;
     }
 

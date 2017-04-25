@@ -23,6 +23,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.api.RestApi;
+import org.wso2.carbon.uuf.api.auth.InMemorySessionManager;
 import org.wso2.carbon.uuf.api.config.Bindings;
 import org.wso2.carbon.uuf.api.config.Configuration;
 import org.wso2.carbon.uuf.api.config.I18nResources;
@@ -50,6 +51,7 @@ import org.wso2.carbon.uuf.internal.deployment.parser.ThemeConfig;
 import org.wso2.carbon.uuf.internal.deployment.parser.YamlFileParser;
 import org.wso2.carbon.uuf.internal.util.NameUtils;
 import org.wso2.carbon.uuf.spi.RenderableCreator;
+import org.wso2.carbon.uuf.spi.auth.SessionManager;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -119,9 +121,15 @@ public class AppCreator {
         // Create Themes.
         final Set<Theme> themes = appReference.getThemeReferences().map(this::createTheme).collect(toSet());
 
+        // Create session manager
+        SessionManager sessionManager = configuration.getSessionManager() == null
+                ? new InMemorySessionManager()
+                : pluginProvider.getPluginInstance(SessionManager.class, configuration.getSessionManager(),
+                this.getClass().getClassLoader());
+
         // Create App.
         return new App(appName, appContextPath, new HashSet<>(createdComponents.values()), themes, configuration,
-                       bindings, i18nResources);
+                bindings, i18nResources, sessionManager);
     }
 
     private Configuration createConfiguration(AppReference appReference) {
@@ -130,6 +138,7 @@ public class AppCreator {
         configuration.setContextPath(appConfig.getContextPath());
         configuration.setThemeName(appConfig.getTheme());
         configuration.setLoginPageUri(appConfig.getLoginPageUri());
+        configuration.setSessionManager(appConfig.getSessionManager());
         Map<Integer, String> errorPageUris = appConfig.getErrorPages().entrySet().stream()
                 .filter(entry -> NumberUtils.isNumber(entry.getKey()))
                 .collect(toMap(entry -> Integer.valueOf(entry.getKey()), Map.Entry::getValue));

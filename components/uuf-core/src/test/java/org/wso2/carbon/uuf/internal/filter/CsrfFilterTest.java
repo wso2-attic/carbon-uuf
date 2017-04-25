@@ -25,7 +25,6 @@ import org.testng.annotations.Test;
 import org.wso2.carbon.uuf.api.auth.Session;
 import org.wso2.carbon.uuf.api.config.Configuration;
 import org.wso2.carbon.uuf.core.UriPatten;
-import org.wso2.carbon.uuf.internal.auth.SessionRegistry;
 import org.wso2.carbon.uuf.spi.HttpRequest;
 
 import java.util.Collections;

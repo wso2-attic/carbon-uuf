@@ -20,6 +20,7 @@ package org.wso2.carbon.uuf.core;
 
 import com.google.gson.JsonObject;
 import org.wso2.carbon.uuf.api.Placeholder;
+import org.wso2.carbon.uuf.api.auth.InMemorySessionManager;
 import org.wso2.carbon.uuf.api.auth.Session;
 import org.wso2.carbon.uuf.api.config.Bindings;
 import org.wso2.carbon.uuf.api.config.Configuration;
@@ -31,11 +32,11 @@ import org.wso2.carbon.uuf.exception.PageNotFoundException;
 import org.wso2.carbon.uuf.exception.PageRedirectException;
 import org.wso2.carbon.uuf.exception.SessionNotFoundException;
 import org.wso2.carbon.uuf.exception.UUFException;
-import org.wso2.carbon.uuf.internal.auth.SessionRegistry;
 import org.wso2.carbon.uuf.internal.util.NameUtils;
 import org.wso2.carbon.uuf.internal.util.UriUtils;
 import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.carbon.uuf.spi.HttpResponse;
+import org.wso2.carbon.uuf.spi.auth.SessionManager;
 import org.wso2.carbon.uuf.spi.model.Model;
 
 import java.util.HashMap;
@@ -55,15 +56,17 @@ public class App {
     private final Map<String, Theme> themes;
     private final Theme defaultTheme;
     private final Configuration configuration;
-    private final SessionRegistry sessionRegistry;
+    private final SessionManager sessionManager;
 
     public App(String name, String contextPath, Set<Component> components, Set<Theme> themes,
                Configuration configuration, Bindings bindings, I18nResources i18nResources) {
-        this(name, contextPath, components, themes, configuration, bindings, i18nResources, new SessionRegistry(name));
+        this(name, contextPath, components, themes, configuration, bindings, i18nResources,
+                new InMemorySessionManager());
     }
 
-    App(String name, String contextPath, Set<Component> components, Set<Theme> themes, Configuration configuration,
-        Bindings bindings, I18nResources i18nResources, SessionRegistry sessionRegistry) {
+    public App(String name, String contextPath, Set<Component> components, Set<Theme> themes,
+               Configuration configuration, Bindings bindings, I18nResources i18nResources,
+               SessionManager sessionManager) {
         this.name = name;
         this.contextPath = contextPath;
 
@@ -84,7 +87,8 @@ public class App {
 
         this.lookup = new Lookup(components, configuration, bindings, i18nResources);
         this.configuration = configuration;
-        this.sessionRegistry = sessionRegistry;
+        this.sessionManager = sessionManager;
+        this.sessionManager.init(configuration);
     }
 
     public String getName() {
@@ -122,7 +126,7 @@ public class App {
      */
     public String renderPage(HttpRequest request, HttpResponse response) {
         RequestLookup requestLookup = createRequestLookup(request, response);
-        API api = new API(sessionRegistry, requestLookup);
+        API api = new API(sessionManager, requestLookup);
         Theme theme = getRenderingTheme(api);
         try {
             return renderPageUri(request.getUriWithoutContextPath(), null, requestLookup, api, theme);
@@ -153,7 +157,7 @@ public class App {
             return renderErrorPage(e, requestLookup, api, theme);
         } catch (UUFException e) {
             return renderErrorPage(new HttpErrorException(HttpResponse.STATUS_INTERNAL_SERVER_ERROR, e.getMessage(), e),
-                                   requestLookup, api, theme);
+                    requestLookup, api, theme);
         }
     }
 
@@ -218,12 +222,12 @@ public class App {
 
         Model model = new MapModel(request.getFormParams());
         RequestLookup requestLookup = createRequestLookup(request, response);
-        API api = new API(sessionRegistry, requestLookup);
+        API api = new API(sessionManager, requestLookup);
 
         JsonObject output = new JsonObject();
         output.addProperty("html", fragment.render(model, lookup, requestLookup, api));
         output.addProperty(Placeholder.headJs.name(),
-                           requestLookup.getPlaceholderContent(Placeholder.headJs).orElse(null));
+                requestLookup.getPlaceholderContent(Placeholder.headJs).orElse(null));
         output.addProperty(Placeholder.js.name(), requestLookup.getPlaceholderContent(Placeholder.js).orElse(null));
         output.addProperty(Placeholder.css.name(), requestLookup.getPlaceholderContent(Placeholder.css).orElse(null));
         return output;
