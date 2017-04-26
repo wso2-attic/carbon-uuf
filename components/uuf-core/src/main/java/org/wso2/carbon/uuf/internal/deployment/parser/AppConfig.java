@@ -98,7 +98,7 @@ public class AppConfig {
     }
 
     /**
-     * Get session manager implementation class.
+     * Returns the session manager implementation class.
      *
      * @return session manager implementation class
      */
@@ -107,7 +107,7 @@ public class AppConfig {
     }
 
     /**
-     * Set session manager implementation class.
+     * Sets the session manager implementation class.
      *
      * @param sessionManager session manager implementation class
      */

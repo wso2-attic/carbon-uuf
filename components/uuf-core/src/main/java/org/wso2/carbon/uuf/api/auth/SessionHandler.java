@@ -1,12 +1,12 @@
 /*
- *  Copyright (c) 2017, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2017, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
- *  WSO2 Inc. licenses this file to you under the Apache License,
- *  Version 2.0 (the "License"); you may not use this file except
- *  in compliance with the License.
- *  You may obtain a copy of the License at
+ * WSO2 Inc. licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -18,6 +18,8 @@
 
 package org.wso2.carbon.uuf.api.auth;
 
+import org.wso2.carbon.uuf.api.config.Configuration;
+import org.wso2.carbon.uuf.exception.SessionManagerException;
 import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.carbon.uuf.spi.HttpResponse;
 import org.wso2.carbon.uuf.spi.auth.User;
@@ -25,37 +27,46 @@ import org.wso2.carbon.uuf.spi.auth.User;
 import java.util.Optional;
 
 /**
- * Do operations related to session instances.
+ * Handle session state across requests and instances.
  *
  * @since 1.0.0
  */
 public interface SessionHandler {
 
     /**
-     * Create a session.
+     * Creates a new session for the specified user.
      *
-     * @param user     User of the session
-     * @param request  http request instance
-     * @param response http response instance
+     * @param user          user of the session
+     * @param request       HTTP request instance
+     * @param response      HTTP response instance
+     * @param configuration app configuration
      * @return created session instance
+     * @throws SessionManagerException if the creation of the session fails
      */
-    Session createSession(User user, HttpRequest request, HttpResponse response);
+    Session createSession(User user, HttpRequest request, HttpResponse response, Configuration configuration)
+            throws SessionManagerException;
 
     /**
-     * Get session instance.
+     * Returns the current session of the specified request.
      *
-     * @param request  http request instance
-     * @param response http response instance
+     * @param request       HTTP request instance
+     * @param response      HTTP response instance
+     * @param configuration app configuration
      * @return UUF session instance
+     * @throws SessionManagerException if obtaining the session fails
      */
-    Optional<Session> getSession(HttpRequest request, HttpResponse response);
+    Optional<Session> getSession(HttpRequest request, HttpResponse response, Configuration configuration)
+            throws SessionManagerException;
 
     /**
-     * Destroy the session.
+     * Destroys the current session of the specified request.
      *
-     * @param request  http request instance
-     * @param response http response instance
-     * @return true if the session is successfully destroyed
+     * @param request       HTTP request instance
+     * @param response      HTTP response instance
+     * @param configuration app configuration
+     * @return {@code true} if the session is successfully destroyed, {@code false} otherwise
+     * @throws SessionManagerException if destroying the session fails
      */
-    boolean destroySession(HttpRequest request, HttpResponse response);
+    boolean destroySession(HttpRequest request, HttpResponse response, Configuration configuration)
+            throws SessionManagerException;
 }

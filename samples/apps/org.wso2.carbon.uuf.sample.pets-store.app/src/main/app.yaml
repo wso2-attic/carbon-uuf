@@ -3,7 +3,7 @@
 # Default theme for this app.
 theme : "org.wso2.carbon.uuf.sample.default.theme"
 
-# Session manager for the app
+# Session manager for this app
 sessionManager: "org.wso2.carbon.uuf.sample.simpleauth.bundle.api.auth.PersistentSessionManager"
 
 # Menus in this app.

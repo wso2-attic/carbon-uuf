@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.emptySet;
@@ -40,6 +41,10 @@ import static java.util.Collections.unmodifiableSet;
  * @since 1.0.0
  */
 public class Configuration {
+
+    private static final Pattern FULLY_QUALIFIED_CLASS_NAME_PATTERN =
+            Pattern.compile("\\p{javaJavaIdentifierStart}\\p{javaJavaIdentifierPart}*" +
+                    "(\\.\\p{javaJavaIdentifierStart}\\p{javaJavaIdentifierPart}*)*");
 
     private String contextPath;
     private String themeName;
@@ -136,12 +141,12 @@ public class Configuration {
     }
 
     /**
-     * Get session manager implementation class.
+     * Returns the session manager implementation class.
      *
      * @return session manager implementation class
      */
-    public String getSessionManager() {
-        return sessionManager;
+    public Optional<String> getSessionManager() {
+        return Optional.ofNullable(sessionManager);
     }
 
     /**
@@ -150,6 +155,15 @@ public class Configuration {
      * @param sessionManager session manager implementation class
      */
     public void setSessionManager(String sessionManager) {
+        if (sessionManager != null) {
+            if (sessionManager.isEmpty()) {
+                throw new IllegalArgumentException("Session Manager cannot be empty.");
+            }
+            if (!FULLY_QUALIFIED_CLASS_NAME_PATTERN.matcher(sessionManager).matches()) {
+                throw new IllegalArgumentException("Session Manager class name is invalid and do not comprehend to be" +
+                        " a fully qualified java class name.");
+            }
+        }
         this.sessionManager = sessionManager;
     }
 

@@ -65,6 +65,21 @@ public class ConfigurationTest {
     }
 
     @Test
+    public void testSessionManagerValidations() {
+        Configuration configuration = createConfiguration();
+        Assert.assertThrows(IllegalArgumentException.class, () -> configuration.setSessionManager(""));
+        Assert.assertThrows(IllegalArgumentException.class, () -> configuration.setSessionManager("c/lass"));
+        Assert.assertThrows(IllegalArgumentException.class, () -> configuration.setSessionManager("c*lass"));
+
+        // Null class name
+        configuration.setSessionManager(null);
+
+        // Valid class names
+        configuration.setSessionManager("PersistentSessionManager");
+        configuration.setSessionManager("org.wso2.carbon.uuf.sample.simpleauth.bundle.api.auth.PersistentSessionManager");
+    }
+
+    @Test
     public void testErrorPageUrisValidation() {
         Configuration configuration = createConfiguration();
         Assert.assertThrows(IllegalArgumentException.class,

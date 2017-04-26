@@ -35,5 +35,3 @@ config:
   pageSize: 10
   # Overriding 'loginRedirectUri' configuration from 'simple-auth' component.
   loginRedirectUri: "/pets"
-  # Overriding 'sessionTimeoutDuration' default value of 20 minutes to 10 minutes
-  sessionTimeoutDuration: 10

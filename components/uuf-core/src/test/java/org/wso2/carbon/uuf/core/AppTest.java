@@ -27,13 +27,16 @@ import com.google.gson.JsonObject;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.wso2.carbon.uuf.api.Placeholder;
+import org.wso2.carbon.uuf.api.auth.InMemorySessionManager;
 import org.wso2.carbon.uuf.api.config.Configuration;
 import org.wso2.carbon.uuf.api.model.MapModel;
 import org.wso2.carbon.uuf.exception.PageRedirectException;
 import org.wso2.carbon.uuf.exception.UUFException;
+import org.wso2.carbon.uuf.internal.deployment.PluginProvider;
 import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.carbon.uuf.spi.HttpResponse;
 import org.wso2.carbon.uuf.spi.Renderable;
+import org.wso2.carbon.uuf.spi.auth.SessionManager;
 import org.wso2.carbon.uuf.spi.model.Model;
 
 import java.util.Map;
@@ -91,7 +94,16 @@ public class AppTest {
     }
 
     private static Configuration createConfiguration() {
-        return new Configuration();
+        Configuration configuration = new Configuration();
+        configuration.setSessionManager("org.wso2.carbon.uuf.api.auth.InMemorySessionManager");
+        return configuration;
+    }
+
+    private static PluginProvider createPluginProvider(Configuration configuration) {
+        PluginProvider pluginProvider = mock(PluginProvider.class);
+        when(pluginProvider.getPluginInstance(SessionManager.class, configuration.getSessionManager().get(),
+                APITest.class.getClassLoader())).thenReturn(new InMemorySessionManager());
+        return pluginProvider;
     }
 
     @Test
@@ -104,8 +116,10 @@ public class AppTest {
                                       emptySet(), null);
         Component rootComponent = new Component("root", null, Component.ROOT_COMPONENT_CONTEXT_PATH, emptySortedSet(),
                                                 emptySet(), emptySet(), singleton(cmp), null);
+        Configuration configuration = createConfiguration();
+        PluginProvider pluginProvider = createPluginProvider(configuration);
         App app = new App(null, "/test", ImmutableSet.of(cmp, rootComponent), emptySet(), createConfiguration(), null,
-                          null);
+                          null, pluginProvider);
         String html = app.renderPage(createRequest(app.getContextPath(), "/cmp/a/b"), null);
         Assert.assertEquals(html, page1Content);
 
@@ -126,8 +140,10 @@ public class AppTest {
         Component rootComponent = new Component("root", null, Component.ROOT_COMPONENT_CONTEXT_PATH,
                                                 ImmutableSortedSet.of(rootP1, rootP2), emptySet(), emptySet(),
                                                 singleton(cmp), null);
+        Configuration configuration = createConfiguration();
+        PluginProvider pluginProvider = createPluginProvider(configuration);
         App app = new App(null, "/test", ImmutableSet.of(cmp, rootComponent), emptySet(), createConfiguration(), null,
-                          null);
+                          null, pluginProvider);
 
         String html = app.renderPage(createRequest(app.getContextPath(), "/a/b"), null);
         Assert.assertEquals(html, page1Content);
@@ -146,8 +162,10 @@ public class AppTest {
                                       emptySet(), null);
         Component rootComponent = new Component("root", null, Component.ROOT_COMPONENT_CONTEXT_PATH, emptySortedSet(),
                                                 emptySet(), emptySet(), singleton(cmp), null);
+        Configuration configuration = createConfiguration();
+        PluginProvider pluginProvider = createPluginProvider(configuration);
         App app = new App(null, "/test", ImmutableSet.of(cmp, rootComponent), emptySet(), createConfiguration(), null,
-                          null);
+                          null, pluginProvider);
 
         HttpRequest request = createRequest(app.getContextPath(), "/fragments/cmp.f1");
         when(request.getFormParams()).thenReturn(emptyMap());
@@ -168,8 +186,10 @@ public class AppTest {
                                       emptySet(), null);
         Component rootComponent = new Component("root", null, Component.ROOT_COMPONENT_CONTEXT_PATH, emptySortedSet(),
                                                 emptySet(), emptySet(), singleton(cmp), null);
+        Configuration configuration = createConfiguration();
+        PluginProvider pluginProvider = createPluginProvider(configuration);
         App app = new App(null, "/test", ImmutableSet.of(cmp, rootComponent), emptySet(), createConfiguration(), null,
-                          null);
+                          null, pluginProvider);
 
         HttpRequest request = createRequest(app.getContextPath(), "/fragments/cmp.f1");
         when(request.getFormParams()).thenReturn(emptyMap());
@@ -189,8 +209,10 @@ public class AppTest {
                                       emptySet(), null);
         Component rootComponent = new Component("root", null, Component.ROOT_COMPONENT_CONTEXT_PATH, emptySortedSet(),
                                                 emptySet(), emptySet(), singleton(cmp), null);
+        Configuration configuration = createConfiguration();
+        PluginProvider pluginProvider = createPluginProvider(configuration);
         App app = new App(null, "/test", ImmutableSet.of(cmp, rootComponent), emptySet(), createConfiguration(), null,
-                          null);
+                          null, pluginProvider);
         Map<String, Object> formParams = ImmutableMap.of("key1", "value1", "key2", ImmutableList.of("v2-1", "v2-2"));
 
         HttpRequest request = createRequest(app.getContextPath(), "/fragments/cmp.f1");
@@ -208,8 +230,10 @@ public class AppTest {
         Component rootComponent = new Component("root", null, Component.ROOT_COMPONENT_CONTEXT_PATH,
                                                 ImmutableSortedSet.of(rootPage), emptySet(), emptySet(),
                                                 singleton(cmp), null);
+        Configuration configuration = createConfiguration();
+        PluginProvider pluginProvider = createPluginProvider(configuration);
         App app = new App(null, "/test", ImmutableSet.of(cmp, rootComponent), emptySet(), createConfiguration(), null,
-                          null);
+                          null, pluginProvider);
         PageRedirectException pre;
 
         pre = Assert.expectThrows(PageRedirectException.class,
@@ -244,10 +268,12 @@ public class AppTest {
                                                 null);
         // Creating configuration.
         Configuration configuration = createConfiguration();
+        PluginProvider pluginProvider = createPluginProvider(configuration);
         configuration.setErrorPageUris(ImmutableMap.of(404, "/cmp/error/404", 500, "/cmp/error/500"));
         configuration.setDefaultErrorPageUri("/cmp/error/default");
         // Creating app.
-        App app = new App(null, "/test", ImmutableSet.of(cmp, rootComponent), emptySet(), configuration, null, null);
+        App app = new App(null, "/test", ImmutableSet.of(cmp, rootComponent), emptySet(), configuration,
+                null, null, pluginProvider);
         String html;
         Map<String, Object> params;
 
@@ -274,10 +300,12 @@ public class AppTest {
                                                 ImmutableSortedSet.of(page), emptySet(), emptySet(), emptySet(), null);
         // Creating configuration.
         Configuration configuration = createConfiguration();
+        PluginProvider pluginProvider = createPluginProvider(configuration);
         String loginPageUri = "/some/login/page";
         configuration.setLoginPageUri(loginPageUri);
         // Creating app.
-        App app = new App(null, "/test", singleton(rootComponent), emptySet(), configuration, null, null);
+        App app = new App(null, "/test", singleton(rootComponent), emptySet(), configuration,
+                null, null, pluginProvider);
 
         PageRedirectException pre = Assert.expectThrows(PageRedirectException.class, () ->
                 app.renderPage(createRequest(app.getContextPath(), "/a"), null));

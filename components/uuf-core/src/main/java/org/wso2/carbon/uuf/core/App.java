@@ -20,8 +20,8 @@ package org.wso2.carbon.uuf.core;
 
 import com.google.gson.JsonObject;
 import org.wso2.carbon.uuf.api.Placeholder;
-import org.wso2.carbon.uuf.api.auth.InMemorySessionManager;
 import org.wso2.carbon.uuf.api.auth.Session;
+import org.wso2.carbon.uuf.api.auth.SessionHandler;
 import org.wso2.carbon.uuf.api.config.Bindings;
 import org.wso2.carbon.uuf.api.config.Configuration;
 import org.wso2.carbon.uuf.api.config.I18nResources;
@@ -32,6 +32,7 @@ import org.wso2.carbon.uuf.exception.PageNotFoundException;
 import org.wso2.carbon.uuf.exception.PageRedirectException;
 import org.wso2.carbon.uuf.exception.SessionNotFoundException;
 import org.wso2.carbon.uuf.exception.UUFException;
+import org.wso2.carbon.uuf.internal.deployment.PluginProvider;
 import org.wso2.carbon.uuf.internal.util.NameUtils;
 import org.wso2.carbon.uuf.internal.util.UriUtils;
 import org.wso2.carbon.uuf.spi.HttpRequest;
@@ -56,17 +57,11 @@ public class App {
     private final Map<String, Theme> themes;
     private final Theme defaultTheme;
     private final Configuration configuration;
-    private final SessionManager sessionManager;
-
-    public App(String name, String contextPath, Set<Component> components, Set<Theme> themes,
-               Configuration configuration, Bindings bindings, I18nResources i18nResources) {
-        this(name, contextPath, components, themes, configuration, bindings, i18nResources,
-                new InMemorySessionManager());
-    }
+    private final PluginProvider pluginProvider;
 
     public App(String name, String contextPath, Set<Component> components, Set<Theme> themes,
                Configuration configuration, Bindings bindings, I18nResources i18nResources,
-               SessionManager sessionManager) {
+               PluginProvider pluginProvider) {
         this.name = name;
         this.contextPath = contextPath;
 
@@ -87,8 +82,7 @@ public class App {
 
         this.lookup = new Lookup(components, configuration, bindings, i18nResources);
         this.configuration = configuration;
-        this.sessionManager = sessionManager;
-        this.sessionManager.init(configuration);
+        this.pluginProvider = pluginProvider;
     }
 
     public String getName() {
@@ -126,7 +120,8 @@ public class App {
      */
     public String renderPage(HttpRequest request, HttpResponse response) {
         RequestLookup requestLookup = createRequestLookup(request, response);
-        API api = new API(sessionManager, requestLookup);
+        SessionHandler sessionHandler = getSessionHandler();
+        API api = new API(sessionHandler, requestLookup, configuration);
         Theme theme = getRenderingTheme(api);
         try {
             return renderPageUri(request.getUriWithoutContextPath(), null, requestLookup, api, theme);
@@ -157,7 +152,7 @@ public class App {
             return renderErrorPage(e, requestLookup, api, theme);
         } catch (UUFException e) {
             return renderErrorPage(new HttpErrorException(HttpResponse.STATUS_INTERNAL_SERVER_ERROR, e.getMessage(), e),
-                    requestLookup, api, theme);
+                                   requestLookup, api, theme);
         }
     }
 
@@ -222,12 +217,13 @@ public class App {
 
         Model model = new MapModel(request.getFormParams());
         RequestLookup requestLookup = createRequestLookup(request, response);
-        API api = new API(sessionManager, requestLookup);
+        SessionHandler sessionHandler = getSessionHandler();
+        API api = new API(sessionHandler, requestLookup, configuration);
 
         JsonObject output = new JsonObject();
         output.addProperty("html", fragment.render(model, lookup, requestLookup, api));
         output.addProperty(Placeholder.headJs.name(),
-                requestLookup.getPlaceholderContent(Placeholder.headJs).orElse(null));
+                           requestLookup.getPlaceholderContent(Placeholder.headJs).orElse(null));
         output.addProperty(Placeholder.js.name(), requestLookup.getPlaceholderContent(Placeholder.js).orElse(null));
         output.addProperty(Placeholder.css.name(), requestLookup.getPlaceholderContent(Placeholder.css).orElse(null));
         return output;
@@ -269,6 +265,12 @@ public class App {
 
     private RequestLookup createRequestLookup(HttpRequest request, HttpResponse response) {
         return new RequestLookup((configuration.getContextPath().orElse(null)), request, response);
+    }
+
+    private SessionHandler getSessionHandler() {
+        return configuration.getSessionManager()
+                .map(sessionManagerClass -> pluginProvider.getPluginInstance(SessionManager.class, sessionManagerClass,
+                        this.getClass().getClassLoader())).orElse(null);
     }
 
     @Override

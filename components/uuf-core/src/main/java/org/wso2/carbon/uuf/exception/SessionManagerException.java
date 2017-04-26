@@ -15,29 +15,25 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
-package org.wso2.carbon.uuf.spi.auth;
-
-import org.wso2.carbon.uuf.api.auth.SessionHandler;
-
-import java.io.Closeable;
+package org.wso2.carbon.uuf.exception;
 
 /**
- * Manages user sessions in UUF apps.
+ * Indicates an error occurred when creating a session, obtaining a session, destroying a session or when the session
+ * manager is not set.
  *
  * @since 1.0.0
  */
-public interface SessionManager extends SessionHandler, Closeable {
+public class SessionManagerException extends UUFException {
 
-    /**
-     * Returns number of active sessions managed by this session manager.
-     *
-     * @return number of active sessions
-     */
-    int getCount();
+    public SessionManagerException() {
+        super();
+    }
 
-    /**
-     * Closes this session manager and releases any associated resources.
-     */
-    void close();
+    public SessionManagerException(String message) {
+        super(message);
+    }
+
+    public SessionManagerException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

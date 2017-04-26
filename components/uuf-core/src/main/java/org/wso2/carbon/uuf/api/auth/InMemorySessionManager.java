@@ -1,12 +1,12 @@
 /*
- *  Copyright (c) 2017, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2017, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
- *  WSO2 Inc. licenses this file to you under the Apache License,
- *  Version 2.0 (the "License"); you may not use this file except
- *  in compliance with the License.
- *  You may obtain a copy of the License at
+ * WSO2 Inc. licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -20,6 +20,7 @@ package org.wso2.carbon.uuf.api.auth;
 
 import com.google.common.collect.Iterables;
 import org.wso2.carbon.uuf.api.config.Configuration;
+import org.wso2.carbon.uuf.exception.SessionManagerException;
 import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.carbon.uuf.spi.HttpResponse;
@@ -38,47 +39,47 @@ import javax.cache.expiry.AccessedExpiryPolicy;
 import javax.cache.expiry.Duration;
 
 /**
- * Manage session instances.
+ * Manage sessions in memory.
+ * <p>
+ * This session manager uses the {@link javax.cache.Cache} for saving the state of the sessions
+ * </p>
+ *
+ * @since 1.0.0
  */
 public class InMemorySessionManager implements SessionManager {
 
     private static final Object LOCK = new Object();
     private static final String SESSION_TIME_OUT = "sessionTimeoutDuration";
     private static final int DEFAULT_SESSION_TIMEOUT_DURATION = 20 * 60;
+    private static final String SESSION_COOKIE_NAME = "UUFSESSIONID";
+    private static final String CSRF_TOKEN = "CSRFTOKEN";
 
-    private MutableConfiguration<String, Session> cacheConfiguration;
-    private CacheManager cacheManager;
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void init(Configuration configuration) {
-        MutableConfiguration<String, Session> cacheConfig = new MutableConfiguration<>();
-        cacheConfig.setTypes(String.class, Session.class);
-        cacheConfig.setStoreByValue(false);
-
-        Map<String, Object> otherConfigurations = configuration.other();
-        int sessionTimeoutDuration = DEFAULT_SESSION_TIMEOUT_DURATION;
-        if (otherConfigurations != null) {
-            sessionTimeoutDuration = (int) otherConfigurations.getOrDefault(SESSION_TIME_OUT,
-                    DEFAULT_SESSION_TIMEOUT_DURATION);
-        }
-        Duration sessionTimeout = new Duration(TimeUnit.SECONDS, sessionTimeoutDuration);
-        cacheConfig.setExpiryPolicyFactory(AccessedExpiryPolicy.factoryOf(sessionTimeout));
-        this.cacheConfiguration = cacheConfig;
-        this.cacheManager = Caching.getCachingProvider().getCacheManager();
-    }
-
-    @Override
-    public Session createSession(User user, HttpRequest request, HttpResponse response) {
+    public Session createSession(User user, HttpRequest request, HttpResponse response, Configuration configuration)
+            throws SessionManagerException {
         String contextPath = request.getContextPath();
-        Cache<String, Session> cache = getCache(contextPath, cacheConfiguration);
+        Cache<String, Session> cache = getCache(contextPath, configuration);
         Session session = new Session(user);
         cache.put(session.getSessionId(), session);
+
+        // Create cookies
+        response.addCookie(SESSION_COOKIE_NAME, session.getSessionId() +
+                "; Path=" + request.getContextPath() + "; Secure; HTTPOnly");
+        response.addCookie(CSRF_TOKEN, session.getCsrfToken() + "; Path=" +
+                request.getContextPath() + "; Secure");
         return session;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Optional<Session> getSession(HttpRequest request, HttpResponse response) {
-        String sessionId = request.getCookieValue(Session.SESSION_COOKIE_NAME);
+    public Optional<Session> getSession(HttpRequest request, HttpResponse response, Configuration configuration)
+            throws SessionManagerException {
+        String sessionId = request.getCookieValue(SESSION_COOKIE_NAME);
         if (sessionId == null) {
             return Optional.empty();
         }
@@ -86,13 +87,17 @@ public class InMemorySessionManager implements SessionManager {
             throw new IllegalArgumentException("Session ID '" + sessionId + "' is invalid.");
         }
         String contextPath = request.getContextPath();
-        Cache<String, Session> cache = getCache(contextPath, cacheConfiguration);
+        Cache<String, Session> cache = getCache(contextPath, configuration);
         return Optional.ofNullable(cache.get(sessionId));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public boolean destroySession(HttpRequest request, HttpResponse response) {
-        String sessionId = request.getCookieValue(Session.SESSION_COOKIE_NAME);
+    public boolean destroySession(HttpRequest request, HttpResponse response, Configuration configuration)
+            throws SessionManagerException {
+        String sessionId = request.getCookieValue(SESSION_COOKIE_NAME);
         if (sessionId == null) {
             return true; // Session not available
         }
@@ -100,31 +105,35 @@ public class InMemorySessionManager implements SessionManager {
             throw new IllegalArgumentException("Session ID '" + sessionId + "' is invalid.");
         }
         String contextPath = request.getContextPath();
-        Cache<String, Session> cache = getCache(contextPath, cacheConfiguration);
+        Cache<String, Session> cache = getCache(contextPath, configuration);
+
+        // Clear the session cookie by setting its value to an empty string, Max-Age to zero, & Expires to a past date.
+        String expiredCookie = "Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:01 GMT; Path=" + request.getContextPath() +
+                "; Secure; HTTPOnly";
+        response.addCookie(SESSION_COOKIE_NAME, expiredCookie);
+        response.addCookie(CSRF_TOKEN, expiredCookie);
         return cache.remove(sessionId);
     }
 
-    @Override
-    public void clear() {
-        cacheManager.getCacheNames().forEach(cacheName -> {
-            Cache<String, Session> cache = cacheManager.getCache(cacheName);
-            if (!cache.isClosed()) {
-                cache.clear();
-            }
-        });
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getCount() {
         int size = 0;
+        CacheManager cacheManager = Caching.getCachingProvider().getCacheManager();
         for (String cacheName : cacheManager.getCacheNames()) {
             size += Iterables.size(cacheManager.getCache(cacheName));
         }
         return size;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void close() {
+        CacheManager cacheManager = Caching.getCachingProvider().getCacheManager();
         if (!cacheManager.isClosed()) {
             cacheManager.getCacheNames().forEach(cacheName -> {
                 Cache<String, Session> cache = cacheManager.getCache(cacheName);
@@ -137,13 +146,24 @@ public class InMemorySessionManager implements SessionManager {
         cacheManager.close();
     }
 
-    @Override
-    protected void finalize() throws Throwable {
-        close();
-        super.finalize();
-    }
+    /**
+     * Returns cache for the specified cache name.
+     *
+     * @param cacheName     name of the cache
+     * @param configuration app configuration
+     * @return carbon cache for the specified cache name
+     */
+    private Cache<String, Session> getCache(String cacheName, Configuration configuration) {
+        // Create cache config
+        MutableConfiguration<String, Session> cacheConfig = new MutableConfiguration<>();
+        cacheConfig.setTypes(String.class, Session.class);
+        cacheConfig.setStoreByValue(false);
+        Duration sessionTimeOut = getSessionTimeOutDuration(configuration);
+        cacheConfig.setExpiryPolicyFactory(AccessedExpiryPolicy.factoryOf(sessionTimeOut));
 
-    private Cache<String, Session> getCache(String cacheName, MutableConfiguration<String, Session> cacheConfig) {
+        // Get cache manager
+        CacheManager cacheManager = Caching.getCachingProvider().getCacheManager();
+
         try {
             synchronized (LOCK) {
                 Cache<String, Session> cache = cacheManager.getCache(cacheName, String.class, Session.class);
@@ -153,16 +173,32 @@ public class InMemorySessionManager implements SessionManager {
                 return cache;
             }
         } catch (IllegalStateException e) {
-            throw new UUFException("Cannot create cache '" + cacheName + "' for session management. Cache manager " +
-                    "'" + cacheManager.getURI() + "' is closed.", e);
+            throw new UUFException("Cannot create cache '" + cacheName + "' for session management. Cache manager '" +
+                    cacheManager.getURI() + "' is closed.", e);
         } catch (CacheException e) {
             throw new UUFException("Cannot create cache '" + cacheName + "' for session management.", e);
         } catch (IllegalArgumentException e) {
-            throw new UUFException("Cannot create cache '" + cacheName + "' for session management. Invalid " +
-                    "cache configuration.", e);
+            throw new UUFException("Cannot create cache '" + cacheName +
+                    "' for session management. Invalid cache configuration.", e);
         } catch (UnsupportedOperationException e) {
-            throw new UUFException("Cannot create cache '" + cacheName + "' for session management. Cache " +
-                    "configuration specifies an unsupported feature.", e);
+            throw new UUFException("Cannot create cache '" + cacheName +
+                    "' for session management. Cache configuration specifies an unsupported feature.", e);
         }
+    }
+
+    /**
+     * Returns the session time-out duration from the configuration.
+     *
+     * @param configuration app configuration
+     * @return session time-out duration
+     */
+    private Duration getSessionTimeOutDuration(Configuration configuration) {
+        Map<String, Object> otherConfigurations = configuration.other();
+        int sessionTimeoutDuration = DEFAULT_SESSION_TIMEOUT_DURATION;
+        if (otherConfigurations != null) {
+            sessionTimeoutDuration = (int) otherConfigurations.getOrDefault(SESSION_TIME_OUT,
+                    DEFAULT_SESSION_TIMEOUT_DURATION);
+        }
+        return new Duration(TimeUnit.SECONDS, sessionTimeoutDuration);
     }
 }
