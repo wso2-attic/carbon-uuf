@@ -18,6 +18,7 @@
 
 package org.wso2.carbon.uuf.internal.deployment;
 
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -68,27 +69,53 @@ public class OsgiPluginProvider implements PluginProvider {
     @Override
     public <T> T getPluginInstance(Class<T> type, String className, ClassLoader classLoader)
             throws PluginLoadingException {
-        T plugin = loadOsgiPlugin(type, className);
-        return (plugin != null) ? plugin : loadNonOsgiPlugin(type, className, classLoader);
+        if (bundleContext == null) {
+            return loadNonOsgiPlugin(type, className, classLoader);
+        }
+        return loadOsgiPlugin(type, className);
     }
 
+    /**
+     * Creates an instance of the specified class type in OSGi mode.
+     * This method will throw {@link PluginLoadingException} when the relevant bundle is not found or on any other
+     * exception
+     *
+     * @param type      type of the instance to be created
+     * @param className name of the class
+     * @param <T>       type of the instance to be created
+     * @return instance of the specified class type
+     */
     private <T> T loadOsgiPlugin(Class<T> type, String className) {
         if (bundleContext == null) {
-            return null;
+            throw new PluginLoadingException("Bundle context is null");
         }
-
-        ServiceTracker<T, T> serviceTracker = getServiceTracker(type);
-        @SuppressWarnings("unchecked")
-        T[] services = serviceTracker.getServices((T[]) new Object[serviceTracker.size()]);
-        for (T service : services) {
-            if ((service != null) && (service.getClass().getName().equals(className))) {
-                return service;
+        Class<?> clazz = null;
+        for (Bundle bundle : bundleContext.getBundles()) {
+            try {
+                clazz = bundle.loadClass(className);
+            } catch (ClassNotFoundException e) {
+                // This bundle doesn't have the class
             }
         }
-
-        return null;
+        if (clazz == null) {
+            throw new PluginLoadingException("Class " + className + " do not exist in any bundle");
+        }
+        try {
+            return type.cast(clazz.newInstance());
+        } catch (IllegalAccessException | InstantiationException e) {
+            throw new PluginLoadingException("Cannot instantiate plugin for type " + className, e);
+        }
     }
 
+    /**
+     * Creates an instance of the specified class type in OSGi mode.
+     *
+     * @param type        type of the instance to be created
+     * @param className   name of the class
+     * @param classLoader class loader to be used to load the plugin class
+     * @param <T>         type of the instance to be created
+     * @return instance of the specified class type
+     */
     private <T> T loadNonOsgiPlugin(Class<T> type, String className, ClassLoader classLoader) {
         Object pluginInstance;
         try {
@@ -108,16 +135,5 @@ public class OsgiPluginProvider implements PluginProvider {
             throw new PluginLoadingException(
                     "Plugin '" + className + "' is not a sub class of the plugin type '" + type.getName() + "'.", e);
         }
-    }
-
-    private <T> ServiceTracker<T, T> getServiceTracker(Class<T> serviceClass) {
-        @SuppressWarnings("unchecked")
-        ServiceTracker<T, T> serviceTracker = serviceTrackers.get(serviceClass);
-        if (serviceTracker == null) {
-            serviceTracker = new ServiceTracker<>(bundleContext, serviceClass, null);
-            serviceTracker.open();
-            serviceTrackers.put(serviceClass, serviceTracker);
-        }
-        return serviceTracker;
     }
 }
