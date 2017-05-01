@@ -23,7 +23,9 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
 /**
- * Hello service sample API.
+ * A sample UI-specific REST API.
+ *
+ * @since 1.0.0
  */
 public class HelloService implements Microservice, RestApi {
 
