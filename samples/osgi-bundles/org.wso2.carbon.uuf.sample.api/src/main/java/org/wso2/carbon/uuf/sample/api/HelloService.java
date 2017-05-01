@@ -16,6 +16,7 @@
 
 package org.wso2.carbon.uuf.sample.api;
 
+import org.wso2.carbon.uuf.api.RestApi;
 import org.wso2.msf4j.Microservice;
 
 import javax.ws.rs.GET;
@@ -24,7 +25,7 @@ import javax.ws.rs.Path;
 /**
  * Hello service sample API.
  */
-public class HelloService implements Microservice {
+public class HelloService implements Microservice, RestApi {
 
     @GET
     @Path("/name")
