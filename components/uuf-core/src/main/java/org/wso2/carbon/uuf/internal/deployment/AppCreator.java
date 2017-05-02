@@ -181,7 +181,7 @@ public class AppCreator {
         ComponentConfig componentConfig = YamlFileParser.parse(componentReference.getConfiguration(),
                                                                ComponentConfig.class);
         addBindings(componentConfig.getBindings(), bindings, componentName, fragments, dependencies);
-        addAPIs(componentConfig.getApis(), appContextPath, componentContextPath, classLoader);
+        addRestApis(componentConfig.getApis(), appContextPath, componentContextPath, classLoader);
 
         componentReference.getI18nFiles().forEach(i18nFile -> {
             Locale locale = Locale.forLanguageTag(i18nFile.getNameWithoutExtension());
@@ -255,8 +255,8 @@ public class AppCreator {
         }
     }
 
-    private void addAPIs(List<ComponentConfig.API> apis, String appContextPath, String componentContextPath,
-                         ClassLoader classLoader) {
+    private void addRestApis(List<ComponentConfig.API> apis, String appContextPath, String componentContextPath,
+                             ClassLoader classLoader) {
         if ((apis == null) || apis.isEmpty()) {
             return;
         }
