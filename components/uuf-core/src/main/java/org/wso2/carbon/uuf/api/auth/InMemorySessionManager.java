@@ -39,9 +39,9 @@ import javax.cache.expiry.AccessedExpiryPolicy;
 import javax.cache.expiry.Duration;
 
 /**
- * Manage sessions in memory.
+ * Manages sessions in memory.
  * <p>
- * This session manager uses the {@link javax.cache.Cache} for saving the state of the sessions
+ * This session manager uses the {@link javax.cache.Cache} for saving the state of the sessions.
  * </p>
  *
  * @since 1.0.0
@@ -49,10 +49,10 @@ import javax.cache.expiry.Duration;
 public class InMemorySessionManager implements SessionManager {
 
     private static final Object LOCK = new Object();
-    private static final String SESSION_TIME_OUT = "sessionTimeoutDuration";
+    private static final String CONFIGURATION_SESSION_TIMEOUT_DURATION = "sessionTimeoutDuration";
     private static final int DEFAULT_SESSION_TIMEOUT_DURATION = 20 * 60;
-    private static final String SESSION_COOKIE_NAME = "UUFSESSIONID";
-    private static final String CSRF_TOKEN = "CSRFTOKEN";
+    private static final String COOKIE_SESSION_NAME = "UUFSESSIONID";
+    private static final String COOKIE_CSRF_TOKEN = "CSRFTOKEN";
 
     /**
      * {@inheritDoc}
@@ -66,9 +66,9 @@ public class InMemorySessionManager implements SessionManager {
         cache.put(session.getSessionId(), session);
 
         // Create cookies
-        response.addCookie(SESSION_COOKIE_NAME, session.getSessionId() +
+        response.addCookie(COOKIE_SESSION_NAME, session.getSessionId() +
                 "; Path=" + request.getContextPath() + "; Secure; HTTPOnly");
-        response.addCookie(CSRF_TOKEN, session.getCsrfToken() + "; Path=" +
+        response.addCookie(COOKIE_CSRF_TOKEN, session.getCsrfToken() + "; Path=" +
                 request.getContextPath() + "; Secure");
         return session;
     }
@@ -79,7 +79,7 @@ public class InMemorySessionManager implements SessionManager {
     @Override
     public Optional<Session> getSession(HttpRequest request, HttpResponse response, Configuration configuration)
             throws SessionManagerException {
-        String sessionId = request.getCookieValue(SESSION_COOKIE_NAME);
+        String sessionId = request.getCookieValue(COOKIE_SESSION_NAME);
         if (sessionId == null) {
             return Optional.empty();
         }
@@ -97,7 +97,7 @@ public class InMemorySessionManager implements SessionManager {
     @Override
     public boolean destroySession(HttpRequest request, HttpResponse response, Configuration configuration)
             throws SessionManagerException {
-        String sessionId = request.getCookieValue(SESSION_COOKIE_NAME);
+        String sessionId = request.getCookieValue(COOKIE_SESSION_NAME);
         if (sessionId == null) {
             return true; // Session not available
         }
@@ -110,8 +110,8 @@ public class InMemorySessionManager implements SessionManager {
         // Clear the session cookie by setting its value to an empty string, Max-Age to zero, & Expires to a past date.
         String expiredCookie = "Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:01 GMT; Path=" + request.getContextPath() +
                 "; Secure; HTTPOnly";
-        response.addCookie(SESSION_COOKIE_NAME, expiredCookie);
-        response.addCookie(CSRF_TOKEN, expiredCookie);
+        response.addCookie(COOKIE_SESSION_NAME, expiredCookie);
+        response.addCookie(COOKIE_CSRF_TOKEN, expiredCookie);
         return cache.remove(sessionId);
     }
 
@@ -191,13 +191,19 @@ public class InMemorySessionManager implements SessionManager {
      *
      * @param configuration app configuration
      * @return session time-out duration
+     * @throws SessionManagerException if session timeout duration in configuration is not an integer value
      */
-    private Duration getSessionTimeOutDuration(Configuration configuration) {
+    private Duration getSessionTimeOutDuration(Configuration configuration) throws SessionManagerException {
         Map<String, Object> otherConfigurations = configuration.other();
         int sessionTimeoutDuration = DEFAULT_SESSION_TIMEOUT_DURATION;
         if (otherConfigurations != null) {
-            sessionTimeoutDuration = (int) otherConfigurations.getOrDefault(SESSION_TIME_OUT,
-                    DEFAULT_SESSION_TIMEOUT_DURATION);
+            try {
+                sessionTimeoutDuration = (int) otherConfigurations.getOrDefault(CONFIGURATION_SESSION_TIMEOUT_DURATION,
+                        DEFAULT_SESSION_TIMEOUT_DURATION);
+            } catch (ClassCastException e) {
+                throw new SessionManagerException(CONFIGURATION_SESSION_TIMEOUT_DURATION + " in app.yaml " +
+                        "configuration should be an integer value", e);
+            }
         }
         return new Duration(TimeUnit.SECONDS, sessionTimeoutDuration);
     }

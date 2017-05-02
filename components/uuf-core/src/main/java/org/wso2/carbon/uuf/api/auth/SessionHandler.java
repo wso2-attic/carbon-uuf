@@ -27,7 +27,7 @@ import org.wso2.carbon.uuf.spi.auth.User;
 import java.util.Optional;
 
 /**
- * Handle session state across requests and instances.
+ * Handles session state across requests and instances.
  *
  * @since 1.0.0
  */
