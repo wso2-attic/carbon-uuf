@@ -207,7 +207,7 @@ public class UUFServer implements Server, RequiredCapabilityListener {
         }
 
         if (app != null) {
-            requestDispatcher.serve(app, request, response);
+            requestDispatcher.serve(app, request, response, pluginProvider);
         } else {
             requestDispatcher.serveDefaultErrorPage(STATUS_NOT_FOUND, "Cannot find an app for context path '" +
                     request.getContextPath() + "'.", response);

@@ -76,11 +76,10 @@ public class AppCreator {
     private final Map<String, RenderableCreator> renderableCreators;
     private final Set<String> supportedExtensions;
     private final ClassLoaderProvider classLoaderProvider;
-    private final PluginProvider pluginProvider;
     private final RestApiDeployer restApiDeployer;
 
     public AppCreator(Set<RenderableCreator> renderableCreators, ClassLoaderProvider classLoaderProvider,
-                      PluginProvider pluginProvider, RestApiDeployer restApiDeployer) {
+                      RestApiDeployer restApiDeployer) {
         this.renderableCreators = new HashMap<>();
         this.supportedExtensions = new HashSet<>();
         for (RenderableCreator renderableCreator : renderableCreators) {
@@ -90,7 +89,6 @@ public class AppCreator {
             supportedExtensions.addAll(renderableCreator.getSupportedFileExtensions());
         }
         this.classLoaderProvider = classLoaderProvider;
-        this.pluginProvider = pluginProvider;
         this.restApiDeployer = restApiDeployer;
     }
 
@@ -121,7 +119,7 @@ public class AppCreator {
 
         // Create App.
         return new App(appName, appContextPath, new HashSet<>(createdComponents.values()), themes, configuration,
-                       bindings, i18nResources, pluginProvider);
+                       bindings, i18nResources);
     }
 
     private Configuration createConfiguration(AppReference appReference) {

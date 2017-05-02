@@ -57,11 +57,9 @@ public class App {
     private final Map<String, Theme> themes;
     private final Theme defaultTheme;
     private final Configuration configuration;
-    private final PluginProvider pluginProvider;
 
     public App(String name, String contextPath, Set<Component> components, Set<Theme> themes,
-               Configuration configuration, Bindings bindings, I18nResources i18nResources,
-               PluginProvider pluginProvider) {
+               Configuration configuration, Bindings bindings, I18nResources i18nResources) {
         this.name = name;
         this.contextPath = contextPath;
 
@@ -82,7 +80,6 @@ public class App {
 
         this.lookup = new Lookup(components, configuration, bindings, i18nResources);
         this.configuration = configuration;
-        this.pluginProvider = pluginProvider;
     }
 
     public String getName() {
@@ -114,13 +111,14 @@ public class App {
     }
 
     /**
-     * @param request  HTTP request
-     * @param response HTTP response
+     * @param request        HTTP request
+     * @param response       HTTP response
+     * @param pluginProvider plugin provider
      * @return rendered HTML output
      */
-    public String renderPage(HttpRequest request, HttpResponse response) {
+    public String renderPage(HttpRequest request, HttpResponse response, PluginProvider pluginProvider) {
         RequestLookup requestLookup = createRequestLookup(request, response);
-        SessionHandler sessionHandler = getSessionHandler();
+        SessionHandler sessionHandler = getSessionHandler(pluginProvider);
         API api = new API(sessionHandler, requestLookup, configuration);
         Theme theme = getRenderingTheme(api);
         try {
@@ -205,7 +203,7 @@ public class App {
      * @param response HTTP response
      * @return rendered HTML,CSS and JS outputs as JSON
      */
-    public JsonObject renderFragment(HttpRequest request, HttpResponse response) {
+    public JsonObject renderFragment(HttpRequest request, HttpResponse response, PluginProvider pluginProvider) {
         String uriWithoutContextPath = request.getUriWithoutContextPath();
         String uriPart = uriWithoutContextPath.substring(UriUtils.FRAGMENTS_URI_PREFIX.length());
         String fragmentName = NameUtils.getFullyQualifiedName(rootComponent.getName(), uriPart);
@@ -217,7 +215,7 @@ public class App {
 
         Model model = new MapModel(request.getFormParams());
         RequestLookup requestLookup = createRequestLookup(request, response);
-        SessionHandler sessionHandler = getSessionHandler();
+        SessionHandler sessionHandler = getSessionHandler(pluginProvider);
         API api = new API(sessionHandler, requestLookup, configuration);
 
         JsonObject output = new JsonObject();
@@ -267,7 +265,7 @@ public class App {
         return new RequestLookup((configuration.getContextPath().orElse(null)), request, response);
     }
 
-    private SessionHandler getSessionHandler() {
+    private SessionHandler getSessionHandler(PluginProvider pluginProvider) {
         return configuration.getSessionManager()
                 .map(sessionManagerClass -> pluginProvider.getPluginInstance(SessionManager.class, sessionManagerClass,
                         this.getClass().getClassLoader())).orElse(null);
