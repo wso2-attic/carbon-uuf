@@ -264,7 +264,7 @@ public class AppCreator {
         for (ComponentConfig.API api : apis) {
             String apiContextPath = appContextPath + componentContextPath + "/apis" + api.getUri();
             RestApi restApi = pluginProvider.getPluginInstance(RestApi.class, api.getClassName(), classLoader);
-            restApiDeployer.deployRestApi(restApi, apiContextPath);
+            restApiDeployer.deploy(restApi, apiContextPath);
         }
     }
 

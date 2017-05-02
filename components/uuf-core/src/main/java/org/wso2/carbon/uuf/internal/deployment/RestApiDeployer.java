@@ -36,5 +36,5 @@ public interface RestApiDeployer {
      * @param apiContextPath context path of the REST API to use
      * @throws RestApiDeploymentException if an error occurred during REST API deployment
      */
-    void deployRestApi(RestApi restApi, String apiContextPath) throws RestApiDeploymentException;
+    void deploy(RestApi restApi, String apiContextPath) throws RestApiDeploymentException;
 }

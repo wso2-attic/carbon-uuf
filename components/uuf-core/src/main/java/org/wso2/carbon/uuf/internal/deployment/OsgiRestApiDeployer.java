@@ -68,7 +68,7 @@ public class OsgiRestApiDeployer implements RestApiDeployer {
      *                                    Microservice}
      */
     @Override
-    public void deployRestApi(RestApi restApi, String apiContextPath) throws RestApiDeploymentException {
+    public void deploy(RestApi restApi, String apiContextPath) throws RestApiDeploymentException {
         if (bundleContext == null) {
             throw new RestApiDeploymentException(
                     "Cannot deploy UI-specific REST API '" + restApi + "' for context path '" + apiContextPath +
