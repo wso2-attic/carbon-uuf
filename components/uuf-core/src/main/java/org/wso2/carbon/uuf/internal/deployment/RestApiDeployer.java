@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2017, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  * WSO2 Inc. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
@@ -18,22 +18,23 @@
 
 package org.wso2.carbon.uuf.internal.deployment;
 
-import org.wso2.carbon.uuf.api.reference.ComponentReference;
+
+import org.wso2.carbon.uuf.api.RestApi;
+import org.wso2.carbon.uuf.internal.exception.RestApiDeploymentException;
 
 /**
- * A provider that gives class loaders for UUF components.
+ * A deployer that can deploy UI-specific REST APIs of an UUF component.
  *
  * @since 1.0.0
  */
-public interface ClassLoaderProvider {
+public interface RestApiDeployer {
 
     /**
-     * Returns a class loader of the specified UUF component.
+     * Deploys the given REST API for specified context path.
      *
-     * @param componentName      fully qualified name of the component
-     * @param componentVersion   version of the component
-     * @param componentReference reference to the component
-     * @return class loader for the specified component
+     * @param restApi        REST API to be deployed
+     * @param apiContextPath context path of the REST API to use
+     * @throws RestApiDeploymentException if an error occurred during REST API deployment
      */
-    ClassLoader getClassLoader(String componentName, String componentVersion, ComponentReference componentReference);
+    void deploy(RestApi restApi, String apiContextPath) throws RestApiDeploymentException;
 }

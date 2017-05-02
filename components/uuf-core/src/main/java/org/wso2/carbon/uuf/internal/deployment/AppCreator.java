@@ -22,6 +22,7 @@ import com.google.common.collect.Sets;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.uuf.api.RestApi;
 import org.wso2.carbon.uuf.api.config.Bindings;
 import org.wso2.carbon.uuf.api.config.Configuration;
 import org.wso2.carbon.uuf.api.config.I18nResources;
@@ -52,10 +53,8 @@ import org.wso2.carbon.uuf.spi.RenderableCreator;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -78,9 +77,10 @@ public class AppCreator {
     private final Set<String> supportedExtensions;
     private final ClassLoaderProvider classLoaderProvider;
     private final PluginProvider pluginProvider;
+    private final RestApiDeployer restApiDeployer;
 
     public AppCreator(Set<RenderableCreator> renderableCreators, ClassLoaderProvider classLoaderProvider,
-                      PluginProvider pluginProvider) {
+                      PluginProvider pluginProvider, RestApiDeployer restApiDeployer) {
         this.renderableCreators = new HashMap<>();
         this.supportedExtensions = new HashSet<>();
         for (RenderableCreator renderableCreator : renderableCreators) {
@@ -91,6 +91,7 @@ public class AppCreator {
         }
         this.classLoaderProvider = classLoaderProvider;
         this.pluginProvider = pluginProvider;
+        this.restApiDeployer = restApiDeployer;
     }
 
     public App createApp(AppReference appReference, String contextPath) {
@@ -180,7 +181,7 @@ public class AppCreator {
         ComponentConfig componentConfig = YamlFileParser.parse(componentReference.getConfiguration(),
                                                                ComponentConfig.class);
         addBindings(componentConfig.getBindings(), bindings, componentName, fragments, dependencies);
-        addAPIs(componentConfig.getApis(), appContextPath, componentContextPath, componentName, classLoader);
+        addRestApis(componentConfig.getApis(), appContextPath, componentContextPath, classLoader);
 
         componentReference.getI18nFiles().forEach(i18nFile -> {
             Locale locale = Locale.forLanguageTag(i18nFile.getNameWithoutExtension());
@@ -254,27 +255,16 @@ public class AppCreator {
         }
     }
 
-    private void addAPIs(List<ComponentConfig.API> apis, String appContextPath, String componentContextPath,
-                         String componentName, ClassLoader classLoader) {
+    private void addRestApis(List<ComponentConfig.API> apis, String appContextPath, String componentContextPath,
+                             ClassLoader classLoader) {
         if ((apis == null) || apis.isEmpty()) {
             return;
         }
 
         for (ComponentConfig.API api : apis) {
-            String className = api.getClassName();
-            String uri = appContextPath + componentContextPath + "/apis" + api.getUri();
-            Object apiImplementation;
-            try {
-                apiImplementation = classLoader.loadClass(className).newInstance();
-            } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
-                throw new UUFException(
-                        "Cannot deploy REST API '" + className + "' for component '" + componentName + "'.", e);
-            }
-            Dictionary<String, String> serviceProperties = new Hashtable<>();
-            serviceProperties.put("contextPath", uri);
-            classLoaderProvider.deployAPI(apiImplementation, serviceProperties);
-            LOGGER.info("Deployed REST API '{}' for component '{}' with context path '{}'.", className, componentName,
-                        uri);
+            String apiContextPath = appContextPath + componentContextPath + "/apis" + api.getUri();
+            RestApi restApi = pluginProvider.getPluginInstance(RestApi.class, api.getClassName(), classLoader);
+            restApiDeployer.deploy(restApi, apiContextPath);
         }
     }
 

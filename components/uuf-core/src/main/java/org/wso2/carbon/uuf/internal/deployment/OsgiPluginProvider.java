@@ -23,6 +23,8 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.util.tracker.ServiceTracker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.exception.PluginLoadingException;
 
 import java.util.HashMap;
@@ -37,17 +39,19 @@ import java.util.Map;
            service = PluginProvider.class,
            immediate = true,
            property = {
-                   "componentName=wso2-uuf-server"
+                   "componentName=wso2-uuf-OSGi-plugin-provider"
            }
 )
 public class OsgiPluginProvider implements PluginProvider {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(OsgiPluginProvider.class);
     private final Map<Class, ServiceTracker> serviceTrackers = new HashMap<>();
     private BundleContext bundleContext = null;
 
     @Activate
     protected void activate(BundleContext bundleContext) {
         this.bundleContext = bundleContext;
+        LOGGER.debug("OsgiPluginProvider activated.");
     }
 
     @Deactivate
@@ -55,6 +59,7 @@ public class OsgiPluginProvider implements PluginProvider {
         serviceTrackers.values().forEach(ServiceTracker::close);
         serviceTrackers.clear();
         this.bundleContext = null;
+        LOGGER.debug("OsgiPluginProvider deactivated.");
     }
 
     /**

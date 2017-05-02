@@ -36,6 +36,7 @@ import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.internal.deployment.AppDeployer;
 import org.wso2.carbon.uuf.internal.deployment.DeploymentNotifier;
 import org.wso2.carbon.uuf.internal.deployment.PluginProvider;
+import org.wso2.carbon.uuf.internal.deployment.RestApiDeployer;
 import org.wso2.carbon.uuf.internal.io.deployment.ArtifactAppDeployer;
 import org.wso2.carbon.uuf.spi.HttpConnector;
 import org.wso2.carbon.uuf.spi.HttpRequest;
@@ -67,6 +68,7 @@ public class UUFServer implements Server, RequiredCapabilityListener {
     private final RequestDispatcher requestDispatcher;
     private AppDeployer appDeployer;
     private PluginProvider pluginProvider;
+    private RestApiDeployer restApiDeployer;
     private DeploymentNotifier deploymentNotifier;
     private BundleContext bundleContext;
     private ServiceRegistration serverServiceRegistration;
@@ -122,12 +124,25 @@ public class UUFServer implements Server, RequiredCapabilityListener {
                cardinality = ReferenceCardinality.MANDATORY,
                policy = ReferencePolicy.DYNAMIC,
                unbind = "unsetPluginProvider")
-    protected void setPluginProvider(PluginProvider pluginProvider){
+    protected void setPluginProvider(PluginProvider pluginProvider) {
         this.pluginProvider = pluginProvider;
     }
 
-    protected void unsetPluginProvider(PluginProvider pluginProvider){
+    protected void unsetPluginProvider(PluginProvider pluginProvider) {
         this.pluginProvider = null;
+    }
+
+    @Reference(name = "restApiDeployer",
+               service = RestApiDeployer.class,
+               cardinality = ReferenceCardinality.MANDATORY,
+               policy = ReferencePolicy.DYNAMIC,
+               unbind = "unsetRestApiDeployer")
+    protected void setRestApiDeployer(RestApiDeployer restApiDeployer) {
+        this.restApiDeployer = restApiDeployer;
+    }
+
+    protected void unsetRestApiDeployer(RestApiDeployer restApiDeployer) {
+        this.restApiDeployer = null;
     }
 
     @Activate
@@ -157,10 +172,13 @@ public class UUFServer implements Server, RequiredCapabilityListener {
 
     private AppDeployer createAppDeployer() {
         return (appRepositoryPath == null) ?
-                new ArtifactAppDeployer(renderableCreators, pluginProvider) :
-                new ArtifactAppDeployer(appRepositoryPath, renderableCreators, pluginProvider);
+                new ArtifactAppDeployer(renderableCreators, pluginProvider, restApiDeployer) :
+                new ArtifactAppDeployer(appRepositoryPath, renderableCreators, pluginProvider, restApiDeployer);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void serve(HttpRequest request, HttpResponse response) {
         if (!request.isValid()) {

@@ -32,7 +32,6 @@ import org.wso2.carbon.uuf.api.reference.FileReference;
 import org.wso2.carbon.uuf.exception.FileOperationException;
 import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.internal.deployment.ClassLoaderProvider;
-import org.wso2.msf4j.Microservice;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -40,7 +39,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Dictionary;
 import java.util.List;
 import java.util.Optional;
 import java.util.jar.Attributes;
@@ -67,17 +65,6 @@ public class BundleClassLoaderProvider implements ClassLoaderProvider {
         Bundle bundle = getBundle(componentName, componentVersion, componentReference);
         BundleWiring bundleWiring = bundle.adapt(BundleWiring.class);
         return bundleWiring.getClassLoader();
-    }
-
-    @Override
-    public void deployAPI(Object serviceImplementation, Dictionary<String, ?> properties) {
-        if (!(serviceImplementation instanceof Microservice)) {
-            throw new UUFException("Cannot deploy REST API '" + serviceImplementation.getClass().getName() +
-                                           "' as a micro-service because it does not implement '" +
-                                           Microservice.class.getName() + "'");
-        }
-        BundleContext bundleContext = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
-        bundleContext.registerService(Microservice.class, (Microservice) serviceImplementation, properties);
     }
 
     /**

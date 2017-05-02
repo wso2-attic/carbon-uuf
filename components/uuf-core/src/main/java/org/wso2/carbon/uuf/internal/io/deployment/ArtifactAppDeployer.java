@@ -29,6 +29,7 @@ import org.wso2.carbon.uuf.internal.deployment.AppCreator;
 import org.wso2.carbon.uuf.internal.deployment.AppDeployer;
 import org.wso2.carbon.uuf.internal.deployment.ClassLoaderProvider;
 import org.wso2.carbon.uuf.internal.deployment.PluginProvider;
+import org.wso2.carbon.uuf.internal.deployment.RestApiDeployer;
 import org.wso2.carbon.uuf.internal.io.reference.ArtifactAppReference;
 import org.wso2.carbon.uuf.internal.io.util.ZipArtifactHandler;
 import org.wso2.carbon.uuf.internal.util.NameUtils;
@@ -58,19 +59,22 @@ public class ArtifactAppDeployer implements AppDeployer {
     private final ConcurrentMap<String, AppArtifact> pendingToDeployArtifacts;
     private final Object lock;
 
-    public ArtifactAppDeployer(Set<RenderableCreator> renderableCreators, PluginProvider pluginProvider) {
+    public ArtifactAppDeployer(Set<RenderableCreator> renderableCreators, PluginProvider pluginProvider,
+                               RestApiDeployer restApiDeployer) {
         this(Paths.get(System.getProperty("carbon.home", "."), "deployment", "uufapps").toString(), renderableCreators,
-             pluginProvider);
+             pluginProvider, restApiDeployer);
     }
 
     public ArtifactAppDeployer(String appsRepositoryPath, Set<RenderableCreator> renderableCreators,
-                               PluginProvider pluginProvider) {
-        this(appsRepositoryPath, renderableCreators, new BundleClassLoaderProvider(), pluginProvider);
+                               PluginProvider pluginProvider, RestApiDeployer restApiDeployer) {
+        this(appsRepositoryPath, renderableCreators, new BundleClassLoaderProvider(), pluginProvider, restApiDeployer);
     }
 
     public ArtifactAppDeployer(String appsRepositoryPath, Set<RenderableCreator> renderableCreators,
-                               ClassLoaderProvider classLoaderProvider, PluginProvider pluginProvider) {
-        this(Paths.get(appsRepositoryPath), new AppCreator(renderableCreators, classLoaderProvider, pluginProvider));
+                               ClassLoaderProvider classLoaderProvider, PluginProvider pluginProvider,
+                               RestApiDeployer restApiDeployer) {
+        this(Paths.get(appsRepositoryPath),
+             new AppCreator(renderableCreators, classLoaderProvider, pluginProvider, restApiDeployer));
     }
 
     public ArtifactAppDeployer(Path appsRepository, AppCreator appCreator) {
