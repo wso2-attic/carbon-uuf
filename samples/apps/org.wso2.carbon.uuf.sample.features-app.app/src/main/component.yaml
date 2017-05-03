@@ -1,3 +1,7 @@
+apis:
+  - className: "org.wso2.carbon.uuf.sample.api.HelloService"
+    uri: "/hello"
+
 bindings:
   - zoneName: "org.wso2.carbon.uuf.sample.foundation.ui.footer"
     mode: "append"

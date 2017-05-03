@@ -59,11 +59,12 @@
                         <Export-Package>
                             org.wso2.carbon.uuf.sample.api.*;version="${project.version}"
                         </Export-Package>
+                        <Carbon-Component>
+                            osgi.service;objectClass="org.wso2.carbon.uuf.api.RestApi
+                        </Carbon-Component>
                     </instructions>
                 </configuration>
             </plugin>
         </plugins>
     </build>
-
-
 </project>

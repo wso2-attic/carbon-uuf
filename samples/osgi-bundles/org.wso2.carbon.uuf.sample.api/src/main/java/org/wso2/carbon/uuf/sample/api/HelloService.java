@@ -16,22 +16,33 @@
 
 package org.wso2.carbon.uuf.sample.api;
 
+import org.osgi.service.component.annotations.Component;
 import org.wso2.carbon.uuf.api.RestApi;
 import org.wso2.msf4j.Microservice;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 
 /**
- * A sample UI-specific REST API.
+ * A sample UI-specific REST API that produces simple hello greeting messages.
  *
  * @since 1.0.0
  */
+@Component(name = "org.wso2.carbon.uuf.sample.api.HelloService",
+           service = RestApi.class,
+           immediate = true)
 public class HelloService implements Microservice, RestApi {
 
+    /**
+     * Returns a simple hello greeting for a given person name.
+     *
+     * @param name person name
+     * @return hello greeting message
+     */
     @GET
-    @Path("/name")
-    public String getName() {
-        return "Hey!, this is the /name resource of the Hello Service sample API.";
+    @Path("/{name}")
+    public String hello(@PathParam("name") String name) {
+        return "Hello " + name + "!";
     }
 }
