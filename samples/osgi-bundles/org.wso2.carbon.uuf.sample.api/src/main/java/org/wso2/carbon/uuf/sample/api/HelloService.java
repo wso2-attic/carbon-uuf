@@ -16,6 +16,7 @@
 
 package org.wso2.carbon.uuf.sample.api;
 
+import org.osgi.service.component.annotations.Component;
 import org.wso2.carbon.uuf.api.RestApi;
 import org.wso2.msf4j.Microservice;
 
@@ -28,6 +29,9 @@ import javax.ws.rs.PathParam;
  *
  * @since 1.0.0
  */
+@Component(name = "org.wso2.carbon.uuf.sample.api.HelloService",
+           service = RestApi.class,
+           immediate = true)
 public class HelloService implements Microservice, RestApi {
 
     /**
