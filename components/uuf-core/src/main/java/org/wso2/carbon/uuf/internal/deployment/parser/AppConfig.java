@@ -27,9 +27,10 @@ import java.util.stream.Collectors;
 
 /**
  * Bean class that represents the app's config file of an UUF App.
- *
+ * <p>
  * Getters and setters of this class should match with getters and setters in
  * org.wso2.carbon.uuf.maven.bean.AppConfig class.
+ *
  * @since 1.0.0
  */
 public class AppConfig {
@@ -37,7 +38,7 @@ public class AppConfig {
     private String contextPath;
     private String theme;
     private String loginPageUri;
-    private String sessionManager;
+    private SessionConfig sessionManagement = new SessionConfig();
     private Map<String, String> errorPages = Collections.emptyMap();
     private List<Menu> menus = Collections.emptyList();
     private SecurityConfig security = new SecurityConfig();
@@ -98,21 +99,21 @@ public class AppConfig {
     }
 
     /**
-     * Returns the session manager implementation class.
+     * Returns the session management configuration in this app's config.
      *
-     * @return session manager implementation class
+     * @return session management configuration
      */
-    public String getSessionManager() {
-        return sessionManager;
+    public SessionConfig getSessionManagement() {
+        return sessionManagement;
     }
 
     /**
-     * Sets the session manager implementation class.
+     * Sets the session management configuration in this app's config.
      *
-     * @param sessionManager session manager implementation class
+     * @param sessionManagement session management configuration
      */
-    public void setSessionManager(String sessionManager) {
-        this.sessionManager = sessionManager;
+    public void setSessionManagement(SessionConfig sessionManagement) {
+        this.sessionManagement = (sessionManagement == null) ? new SessionConfig() : sessionManagement;
     }
 
     /**
@@ -185,6 +186,53 @@ public class AppConfig {
      */
     public void setOther(Map<String, Object> otherConfigurations) {
         this.otherConfigurations = (otherConfigurations == null) ? Collections.emptyMap() : otherConfigurations;
+    }
+
+    /**
+     * Bean class that represents the session management config of an UUF app.
+     *
+     * @since 1.0.0
+     */
+    public static class SessionConfig {
+
+        private String factoryClassName;
+        private long timeout;
+
+        /**
+         * Returns the session manager factory class name for this configuration.
+         *
+         * @return session manager factory class name
+         */
+        public String getFactoryClassName() {
+            return factoryClassName;
+        }
+
+        /**
+         * Sets the session manager factory class name for this configuration.
+         *
+         * @param factoryClassName session manager factory class name
+         */
+        public void setFactoryClassName(String factoryClassName) {
+            this.factoryClassName = factoryClassName;
+        }
+
+        /**
+         * Returns the session timeout in seconds for this configuration.
+         *
+         * @return session timeout in seconds
+         */
+        public long getTimeout() {
+            return timeout;
+        }
+
+        /**
+         * Sets the session timeout in seconds for this configuration.
+         *
+         * @param timeout session timeout in seconds
+         */
+        public void setTimeout(long timeout) {
+            this.timeout = timeout;
+        }
     }
 
     /**
@@ -344,7 +392,7 @@ public class AppConfig {
 
         private List<String> csrfIgnoreUris = Collections.emptyList();
         private List<String> xssIgnoreUris = Collections.emptyList();
-        private ResponseHeaders responseHeaders =  new ResponseHeaders();
+        private ResponseHeaders responseHeaders = new ResponseHeaders();
 
         /**
          * Returns the list of URI's that doesn't require CSRF protection.

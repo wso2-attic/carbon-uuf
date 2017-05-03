@@ -49,7 +49,8 @@ public class Configuration {
     private String contextPath;
     private String themeName;
     private String loginPageUri;
-    private String sessionManager;
+    private String sessionManagerFactoryClassName;
+    private long sessionTimeout;
     private Map<Integer, String> errorPageUris;
     private String defaultErrorPageUri;
     private ListMultimap<String, MenuItem> menus;
@@ -141,30 +142,51 @@ public class Configuration {
     }
 
     /**
-     * Returns the session manager implementation class.
+     * Returns the session manager factory class name for the app.
      *
-     * @return session manager implementation class
+     * @return session manager factory class name
      */
-    public Optional<String> getSessionManager() {
-        return Optional.ofNullable(sessionManager);
+    public Optional<String> getSessionManagerFactoryClassName() {
+        return Optional.ofNullable(sessionManagerFactoryClassName);
     }
 
     /**
-     * Set session manager implementation class.
+     * Sets the session manager factory class name for the app.
      *
-     * @param sessionManager session manager implementation class
+     * @param sessionManagerFactoryClassName session manager factory class name
      */
-    public void setSessionManager(String sessionManager) {
-        if (sessionManager != null) {
-            if (sessionManager.isEmpty()) {
-                throw new IllegalArgumentException("Session Manager cannot be empty.");
+    public void setSessionManagerFactoryClassName(String sessionManagerFactoryClassName) {
+        if (sessionManagerFactoryClassName != null) {
+            if (sessionManagerFactoryClassName.isEmpty()) {
+                throw new IllegalArgumentException("Session Manager Factory cannot be empty.");
             }
-            if (!FULLY_QUALIFIED_CLASS_NAME_PATTERN.matcher(sessionManager).matches()) {
-                throw new IllegalArgumentException("Session Manager class name is invalid and do not comprehend to be" +
-                        " a fully qualified java class name.");
+            if (!FULLY_QUALIFIED_CLASS_NAME_PATTERN.matcher(sessionManagerFactoryClassName).matches()) {
+                throw new IllegalArgumentException("Session Manager Factory class name is invalid and do not " +
+                        "comprehend to be a fully qualified java class name.");
             }
         }
-        this.sessionManager = sessionManager;
+        this.sessionManagerFactoryClassName = sessionManagerFactoryClassName;
+    }
+
+    /**
+     * Returns the session timeout in seconds for the app.
+     *
+     * @return session timeout in seconds
+     */
+    public long getSessionTimeout() {
+        return sessionTimeout;
+    }
+
+    /**
+     * Sets the session timeout in seconds for the app.
+     *
+     * @param sessionTimeout session timeout in seconds
+     */
+    public void setSessionTimeout(long sessionTimeout) {
+        if (sessionTimeout < 0) {
+            throw new IllegalArgumentException("Session timeout should not be a negative value.");
+        }
+        this.sessionTimeout = sessionTimeout;
     }
 
     /**

@@ -18,16 +18,50 @@
 
 package org.wso2.carbon.uuf.spi.auth;
 
-import org.wso2.carbon.uuf.api.auth.SessionHandler;
+import org.wso2.carbon.uuf.api.auth.Session;
+import org.wso2.carbon.uuf.exception.SessionManagementException;
+import org.wso2.carbon.uuf.spi.HttpRequest;
+import org.wso2.carbon.uuf.spi.HttpResponse;
 
-import java.io.Closeable;
+import java.util.Optional;
 
 /**
- * Manages user sessions in UUF apps.
+ * Manages user sessions for a single UUF app.
  *
  * @since 1.0.0
  */
-public interface SessionManager extends SessionHandler, Closeable {
+public interface SessionManager {
+
+    /**
+     * Creates a new session for the specified user.
+     *
+     * @param user     user of the session
+     * @param request  HTTP request
+     * @param response HTTP response
+     * @return created session
+     * @throws SessionManagementException if the creation of the session fails
+     */
+    Session createSession(User user, HttpRequest request, HttpResponse response) throws SessionManagementException;
+
+    /**
+     * Returns the current session of the specified request.
+     *
+     * @param request  HTTP request
+     * @param response HTTP response
+     * @return UUF session
+     * @throws SessionManagementException if obtaining the session fails
+     */
+    Optional<Session> getSession(HttpRequest request, HttpResponse response) throws SessionManagementException;
+
+    /**
+     * Destroys the current session of the specified request.
+     *
+     * @param request  HTTP request
+     * @param response HTTP response
+     * @return {@code true} if the session is successfully destroyed, {@code false} otherwise
+     * @throws SessionManagementException if destroying the session fails
+     */
+    boolean destroySession(HttpRequest request, HttpResponse response) throws SessionManagementException;
 
     /**
      * Returns number of active sessions managed by this session manager.
@@ -35,9 +69,4 @@ public interface SessionManager extends SessionHandler, Closeable {
      * @return number of active sessions
      */
     int getCount();
-
-    /**
-     * Closes this session manager and releases any associated resources.
-     */
-    void close();
 }

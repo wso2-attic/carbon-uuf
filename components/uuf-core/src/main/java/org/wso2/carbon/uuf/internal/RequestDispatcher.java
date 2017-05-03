@@ -69,14 +69,14 @@ public class RequestDispatcher {
         this.filters = ImmutableList.of(new CsrfFilter());
     }
 
-    public void serve(App app, HttpRequest request, HttpResponse response, PluginProvider pluginProvider) {
+    public void serve(App app, HttpRequest request, HttpResponse response) {
         try {
             if (request.isStaticResourceRequest()) {
                 staticResolver.serve(app, request, response);
             } else if (Debugger.isDebuggingEnabled() && request.isDebugRequest()) {
                 debugger.serve(app, request, response);
             } else {
-                servePageOrFragment(app, request, response, pluginProvider);
+                servePageOrFragment(app, request, response);
             }
         } catch (PageRedirectException e) {
             response.setStatus(STATUS_FOUND);
@@ -94,14 +94,13 @@ public class RequestDispatcher {
         }
     }
 
-    private void servePageOrFragment(App app, HttpRequest request, HttpResponse response,
-                                     PluginProvider pluginProvider) {
+    private void servePageOrFragment(App app, HttpRequest request, HttpResponse response) {
         DebugLogger.startRequest(request);
         try {
             // set default and configured http response headers for security purpose
             setResponseSecurityHeaders(app, response);
             if (request.isFragmentRequest()) {
-                JsonObject renderedFragment = app.renderFragment(request, response, pluginProvider);
+                JsonObject renderedFragment = app.renderFragment(request, response);
                 response.setContent(STATUS_OK, renderedFragment.toString(), CONTENT_TYPE_APPLICATION_JSON);
             } else {
                 // Execute filters
@@ -113,7 +112,7 @@ public class RequestDispatcher {
                         return;
                     }
                 }
-                String html = app.renderPage(request, response, pluginProvider);
+                String html = app.renderPage(request, response);
                 response.setContent(STATUS_OK, html, CONTENT_TYPE_TEXT_HTML);
             }
         } catch (UUFException e) {

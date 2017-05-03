@@ -23,6 +23,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.api.RestApi;
+import org.wso2.carbon.uuf.api.auth.InMemorySessionManagerFactory;
 import org.wso2.carbon.uuf.api.config.Bindings;
 import org.wso2.carbon.uuf.api.config.Configuration;
 import org.wso2.carbon.uuf.api.config.I18nResources;
@@ -50,6 +51,8 @@ import org.wso2.carbon.uuf.internal.deployment.parser.ThemeConfig;
 import org.wso2.carbon.uuf.internal.deployment.parser.YamlFileParser;
 import org.wso2.carbon.uuf.internal.util.NameUtils;
 import org.wso2.carbon.uuf.spi.RenderableCreator;
+import org.wso2.carbon.uuf.spi.auth.SessionManager;
+import org.wso2.carbon.uuf.spi.auth.SessionManagerFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -76,10 +79,11 @@ public class AppCreator {
     private final Map<String, RenderableCreator> renderableCreators;
     private final Set<String> supportedExtensions;
     private final ClassLoaderProvider classLoaderProvider;
+    private final PluginProvider pluginProvider;
     private final RestApiDeployer restApiDeployer;
 
     public AppCreator(Set<RenderableCreator> renderableCreators, ClassLoaderProvider classLoaderProvider,
-                      RestApiDeployer restApiDeployer) {
+                      PluginProvider pluginProvider, RestApiDeployer restApiDeployer) {
         this.renderableCreators = new HashMap<>();
         this.supportedExtensions = new HashSet<>();
         for (RenderableCreator renderableCreator : renderableCreators) {
@@ -89,6 +93,7 @@ public class AppCreator {
             supportedExtensions.addAll(renderableCreator.getSupportedFileExtensions());
         }
         this.classLoaderProvider = classLoaderProvider;
+        this.pluginProvider = pluginProvider;
         this.restApiDeployer = restApiDeployer;
     }
 
@@ -117,9 +122,18 @@ public class AppCreator {
         // Create Themes.
         final Set<Theme> themes = appReference.getThemeReferences().map(this::createTheme).collect(toSet());
 
+        // Get session manager
+        SessionManagerFactory sessionManagerFactory = configuration.getSessionManagerFactoryClassName()
+                .map(sessionManagerFactoryClass -> pluginProvider
+                        .getPluginInstance(SessionManagerFactory.class, sessionManagerFactoryClass,
+                                this.getClass().getClassLoader()))
+                .orElse(pluginProvider.getPluginInstance(SessionManagerFactory.class,
+                        InMemorySessionManagerFactory.class.getName(), this.getClass().getClassLoader()));
+        SessionManager sessionManager = sessionManagerFactory.getSessionManager(appName, configuration);
+
         // Create App.
         return new App(appName, appContextPath, new HashSet<>(createdComponents.values()), themes, configuration,
-                       bindings, i18nResources);
+                       bindings, i18nResources, sessionManager);
     }
 
     private Configuration createConfiguration(AppReference appReference) {
@@ -128,7 +142,8 @@ public class AppCreator {
         configuration.setContextPath(appConfig.getContextPath());
         configuration.setThemeName(appConfig.getTheme());
         configuration.setLoginPageUri(appConfig.getLoginPageUri());
-        configuration.setSessionManager(appConfig.getSessionManager());
+        configuration.setSessionManagerFactoryClassName(appConfig.getSessionManagement().getFactoryClassName());
+        configuration.setSessionTimeout(appConfig.getSessionManagement().getTimeout());
         Map<Integer, String> errorPageUris = appConfig.getErrorPages().entrySet().stream()
                 .filter(entry -> NumberUtils.isNumber(entry.getKey()))
                 .collect(toMap(entry -> Integer.valueOf(entry.getKey()), Map.Entry::getValue));

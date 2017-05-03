@@ -39,7 +39,7 @@ public interface AppDeployer {
     /**
      * Returns the deployed app corresponds for the specified context path.
      *
-     * @param contextPath context path of the app
+     * @param contextPath    context path of the app
      * @return deployed app or {@code null} is there is no app associated with the specified context path
      */
     App getApp(String contextPath);

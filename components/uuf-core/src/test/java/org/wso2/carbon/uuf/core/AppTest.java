@@ -27,12 +27,10 @@ import com.google.gson.JsonObject;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.wso2.carbon.uuf.api.Placeholder;
-import org.wso2.carbon.uuf.api.auth.InMemorySessionManager;
 import org.wso2.carbon.uuf.api.config.Configuration;
 import org.wso2.carbon.uuf.api.model.MapModel;
 import org.wso2.carbon.uuf.exception.PageRedirectException;
 import org.wso2.carbon.uuf.exception.UUFException;
-import org.wso2.carbon.uuf.internal.deployment.PluginProvider;
 import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.carbon.uuf.spi.HttpResponse;
 import org.wso2.carbon.uuf.spi.Renderable;
@@ -95,15 +93,8 @@ public class AppTest {
 
     private static Configuration createConfiguration() {
         Configuration configuration = new Configuration();
-        configuration.setSessionManager("org.wso2.carbon.uuf.api.auth.InMemorySessionManager");
+        configuration.setSessionManagerFactoryClassName("org.wso2.carbon.uuf.api.auth.InMemorySessionManagerFactory");
         return configuration;
-    }
-
-    private static PluginProvider createPluginProvider(Configuration configuration) {
-        PluginProvider pluginProvider = mock(PluginProvider.class);
-        when(pluginProvider.getPluginInstance(SessionManager.class, configuration.getSessionManager().get(),
-                APITest.class.getClassLoader())).thenReturn(new InMemorySessionManager());
-        return pluginProvider;
     }
 
     @Test
@@ -117,14 +108,13 @@ public class AppTest {
         Component rootComponent = new Component("root", null, Component.ROOT_COMPONENT_CONTEXT_PATH, emptySortedSet(),
                                                 emptySet(), emptySet(), singleton(cmp), null);
         Configuration configuration = createConfiguration();
-        PluginProvider pluginProvider = createPluginProvider(configuration);
-        App app = new App(null, "/test", ImmutableSet.of(cmp, rootComponent), emptySet(), createConfiguration(), null,
-                          null);
-        String html = app.renderPage(createRequest(app.getContextPath(), "/cmp/a/b"), null,
-                pluginProvider);
+        SessionManager sessionManager = mock(SessionManager.class);
+        App app = new App(null, "/test", ImmutableSet.of(cmp, rootComponent), emptySet(), configuration, null,
+                          null, sessionManager);
+        String html = app.renderPage(createRequest(app.getContextPath(), "/cmp/a/b"), null);
         Assert.assertEquals(html, page1Content);
 
-        html = app.renderPage(createRequest(app.getContextPath(), "/cmp/x/y"), null, pluginProvider);
+        html = app.renderPage(createRequest(app.getContextPath(), "/cmp/x/y"), null);
         Assert.assertEquals(html, page2Content);
     }
 
@@ -142,14 +132,14 @@ public class AppTest {
                                                 ImmutableSortedSet.of(rootP1, rootP2), emptySet(), emptySet(),
                                                 singleton(cmp), null);
         Configuration configuration = createConfiguration();
-        PluginProvider pluginProvider = createPluginProvider(configuration);
-        App app = new App(null, "/test", ImmutableSet.of(cmp, rootComponent), emptySet(), createConfiguration(), null,
-                          null);
+        SessionManager sessionManager = mock(SessionManager.class);
+        App app = new App(null, "/test", ImmutableSet.of(cmp, rootComponent), emptySet(), configuration, null,
+                          null, sessionManager);
 
-        String html = app.renderPage(createRequest(app.getContextPath(), "/a/b"), null, pluginProvider);
+        String html = app.renderPage(createRequest(app.getContextPath(), "/a/b"), null);
         Assert.assertEquals(html, page1Content);
 
-        html = app.renderPage(createRequest(app.getContextPath(), "/x/y"), null, pluginProvider);
+        html = app.renderPage(createRequest(app.getContextPath(), "/x/y"), null);
         Assert.assertEquals(html, page2Content);
     }
 
@@ -164,18 +154,17 @@ public class AppTest {
         Component rootComponent = new Component("root", null, Component.ROOT_COMPONENT_CONTEXT_PATH, emptySortedSet(),
                                                 emptySet(), emptySet(), singleton(cmp), null);
         Configuration configuration = createConfiguration();
-        PluginProvider pluginProvider = createPluginProvider(configuration);
-        App app = new App(null, "/test", ImmutableSet.of(cmp, rootComponent), emptySet(), createConfiguration(), null,
-                          null);
+        App app = new App(null, "/test", ImmutableSet.of(cmp, rootComponent), emptySet(), configuration, null,
+                          null, null);
 
         HttpRequest request = createRequest(app.getContextPath(), "/fragments/cmp.f1");
         when(request.getFormParams()).thenReturn(emptyMap());
-        JsonObject output = app.renderFragment(request, null, pluginProvider);
+        JsonObject output = app.renderFragment(request, null);
         Assert.assertEquals(output.get("html").getAsString(), fragment1Content);
 
         request = createRequest(app.getContextPath(), "/fragments/cmp.f2");
         when(request.getFormParams()).thenReturn(emptyMap());
-        output = app.renderFragment(request, null, pluginProvider);
+        output = app.renderFragment(request, null);
         Assert.assertEquals(output.get("html").getAsString(), fragment2Content);
     }
 
@@ -188,13 +177,12 @@ public class AppTest {
         Component rootComponent = new Component("root", null, Component.ROOT_COMPONENT_CONTEXT_PATH, emptySortedSet(),
                                                 emptySet(), emptySet(), singleton(cmp), null);
         Configuration configuration = createConfiguration();
-        PluginProvider pluginProvider = createPluginProvider(configuration);
-        App app = new App(null, "/test", ImmutableSet.of(cmp, rootComponent), emptySet(), createConfiguration(), null,
-                          null);
+        App app = new App(null, "/test", ImmutableSet.of(cmp, rootComponent), emptySet(), configuration, null,
+                          null, null);
 
         HttpRequest request = createRequest(app.getContextPath(), "/fragments/cmp.f1");
         when(request.getFormParams()).thenReturn(emptyMap());
-        JsonObject output = app.renderFragment(request, null, pluginProvider);
+        JsonObject output = app.renderFragment(request, null);
         Assert.assertEquals(output.get("html").getAsString(), fragment1Content);
         Assert.assertEquals(output.get("css").getAsString(), "CSS Content");
         Assert.assertEquals(output.get("js").getAsString(), "JS Content");
@@ -211,14 +199,13 @@ public class AppTest {
         Component rootComponent = new Component("root", null, Component.ROOT_COMPONENT_CONTEXT_PATH, emptySortedSet(),
                                                 emptySet(), emptySet(), singleton(cmp), null);
         Configuration configuration = createConfiguration();
-        PluginProvider pluginProvider = createPluginProvider(configuration);
-        App app = new App(null, "/test", ImmutableSet.of(cmp, rootComponent), emptySet(), createConfiguration(), null,
-                          null);
+        App app = new App(null, "/test", ImmutableSet.of(cmp, rootComponent), emptySet(), configuration, null,
+                          null, null);
         Map<String, Object> formParams = ImmutableMap.of("key1", "value1", "key2", ImmutableList.of("v2-1", "v2-2"));
 
         HttpRequest request = createRequest(app.getContextPath(), "/fragments/cmp.f1");
         when(request.getFormParams()).thenReturn(formParams);
-        JsonObject output = app.renderFragment(request, null, pluginProvider);
+        JsonObject output = app.renderFragment(request, null);
         Assert.assertEquals(output.get("html").getAsString(), (fragment1Content + formParams.toString()));
     }
 
@@ -232,20 +219,18 @@ public class AppTest {
                                                 ImmutableSortedSet.of(rootPage), emptySet(), emptySet(),
                                                 singleton(cmp), null);
         Configuration configuration = createConfiguration();
-        PluginProvider pluginProvider = createPluginProvider(configuration);
-        App app = new App(null, "/test", ImmutableSet.of(cmp, rootComponent), emptySet(), createConfiguration(), null,
-                          null);
+        SessionManager sessionManager = mock(SessionManager.class);
+        App app = new App(null, "/test", ImmutableSet.of(cmp, rootComponent), emptySet(), configuration, null,
+                          null, sessionManager);
         PageRedirectException pre;
 
         pre = Assert.expectThrows(PageRedirectException.class,
-                                  () -> app.renderPage(createRequest(app.getContextPath(), "/cmp/a/b/"), null,
-                                          pluginProvider));
+                                  () -> app.renderPage(createRequest(app.getContextPath(), "/cmp/a/b/"), null));
         Assert.assertEquals(pre.getHttpStatusCode(), HttpResponse.STATUS_FOUND);
         Assert.assertEquals(pre.getRedirectUrl(), "/test/cmp/a/b");
 
         pre = Assert.expectThrows(PageRedirectException.class,
-                                  () -> app.renderPage(createRequest(app.getContextPath(), "/x/y"), null,
-                                          pluginProvider));
+                                  () -> app.renderPage(createRequest(app.getContextPath(), "/x/y"), null));
         Assert.assertEquals(pre.getHttpStatusCode(), HttpResponse.STATUS_FOUND);
         Assert.assertEquals(pre.getRedirectUrl(), "/test/x/y/");
     }
@@ -271,26 +256,26 @@ public class AppTest {
                                                 null);
         // Creating configuration.
         Configuration configuration = createConfiguration();
-        PluginProvider pluginProvider = createPluginProvider(configuration);
         configuration.setErrorPageUris(ImmutableMap.of(404, "/cmp/error/404", 500, "/cmp/error/500"));
         configuration.setDefaultErrorPageUri("/cmp/error/default");
         // Creating app.
+        SessionManager sessionManager = mock(SessionManager.class);
         App app = new App(null, "/test", ImmutableSet.of(cmp, rootComponent), emptySet(), configuration,
-                null, null);
+                null, null, sessionManager);
         String html;
         Map<String, Object> params;
 
         // 404 - PageNotFoundException
-        html = app.renderPage(createRequest(app.getContextPath(), "/x"), null, pluginProvider);
+        html = app.renderPage(createRequest(app.getContextPath(), "/x"), null);
         params = ImmutableMap.of("status", HttpResponse.STATUS_NOT_FOUND,
                                  "message", "Requested page '/x' does not exists.");
         Assert.assertEquals(html, page404.render(new MapModel(params), null, null, null));
         // 500
-        html = app.renderPage(createRequest(app.getContextPath(), "/a"), null, pluginProvider);
+        html = app.renderPage(createRequest(app.getContextPath(), "/a"), null);
         params = ImmutableMap.of("status", HttpResponse.STATUS_INTERNAL_SERVER_ERROR, "message", "Some error.");
         Assert.assertEquals(html, pageDefault.render(new MapModel(params), null, null, null));
         // 418
-        html = app.renderPage(createRequest(app.getContextPath(), "/b"), null, pluginProvider);
+        html = app.renderPage(createRequest(app.getContextPath(), "/b"), null);
         params = ImmutableMap.of("status", 418, "message", "I’m a Teapot!");
         Assert.assertEquals(html, page500.render(new MapModel(params), null, null, null));
     }
@@ -303,16 +288,15 @@ public class AppTest {
                                                 ImmutableSortedSet.of(page), emptySet(), emptySet(), emptySet(), null);
         // Creating configuration.
         Configuration configuration = createConfiguration();
-        PluginProvider pluginProvider = createPluginProvider(configuration);
         String loginPageUri = "/some/login/page";
         configuration.setLoginPageUri(loginPageUri);
         // Creating app.
+        SessionManager sessionManager = mock(SessionManager.class);
         App app = new App(null, "/test", singleton(rootComponent), emptySet(), configuration,
-                null, null);
+                null, null, sessionManager);
 
         PageRedirectException pre = Assert.expectThrows(PageRedirectException.class, () ->
-                app.renderPage(createRequest(app.getContextPath(), "/a"), null,
-                        pluginProvider));
+                app.renderPage(createRequest(app.getContextPath(), "/a"), null));
         Assert.assertEquals(pre.getHttpStatusCode(), HttpResponse.STATUS_FOUND);
         Assert.assertEquals(pre.getRedirectUrl(), app.getContextPath() + loginPageUri);
     }

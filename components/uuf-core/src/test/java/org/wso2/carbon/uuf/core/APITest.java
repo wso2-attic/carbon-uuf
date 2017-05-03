@@ -18,21 +18,21 @@
 
 package org.wso2.carbon.uuf.core;
 
+import org.mockito.stubbing.Answer;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import org.wso2.carbon.uuf.api.auth.InMemorySessionManager;
 import org.wso2.carbon.uuf.api.auth.Session;
-import org.wso2.carbon.uuf.api.auth.SessionHandler;
 import org.wso2.carbon.uuf.api.config.Configuration;
 import org.wso2.carbon.uuf.exception.HttpErrorException;
 import org.wso2.carbon.uuf.exception.PageRedirectException;
-import org.wso2.carbon.uuf.exception.SessionManagerException;
 import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.carbon.uuf.spi.HttpResponse;
+import org.wso2.carbon.uuf.spi.auth.SessionManager;
 import org.wso2.carbon.uuf.spi.auth.User;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -47,8 +47,8 @@ import static org.mockito.Mockito.when;
  */
 public class APITest {
 
-    private static final String SESSION_COOKIE_NAME = "UUFSESSIONID";
-    private static final String CSRF_TOKEN = "CSRFTOKEN";
+    private static final String COOKIE_SESSION_ID = "UUFSESSIONID";
+    private static final String COOKIE_CSRF_TOKEN = "CSRFTOKEN";
 
     @Test
     public void testSendError() {
@@ -69,7 +69,7 @@ public class APITest {
         Assert.assertThrows(IllegalArgumentException.class, () -> API.sendRedirect(""));
 
         PageRedirectException pre = Assert.expectThrows(PageRedirectException.class,
-                                                        () -> API.sendRedirect("/some/uri"));
+                () -> API.sendRedirect("/some/uri"));
         Assert.assertEquals(pre.getHttpStatusCode(), HttpResponse.STATUS_FOUND);
         Assert.assertEquals(pre.getRedirectUrl(), "/some/uri");
     }
@@ -88,66 +88,59 @@ public class APITest {
             cookies.put(invocation.getArgument(0), invocation.getArgument(1));
             return null;
         }).when(response).addCookie(any(), any());
-        // Creating API.
-        RequestLookup requestLookup = new RequestLookup("/test", request, response);
-        SessionHandler sessionHandler = new InMemorySessionManager();
-        API api = new API(sessionHandler, requestLookup, configuration);
         // Creating user.
         User user = mock(User.class);
         when(user.getUsername()).thenReturn("admin");
+        // Creating API.
+        RequestLookup requestLookup = new RequestLookup("/test", request, response);
+        SessionManager sessionManager = createSessionManager(user, request, response, true, false, false);
+        API api = new API(sessionManager, requestLookup);
 
         // create session with null user
         Assert.assertThrows(IllegalArgumentException.class, () -> api.createSession(null));
         // create session
         Session createdSession = api.createSession(user);
         Assert.assertEquals(createdSession.getUser(), user);
-        Assert.assertEquals(cookies.get(SESSION_COOKIE_NAME),
+        Assert.assertEquals(cookies.get(COOKIE_SESSION_ID),
                 createdSession.getSessionId() + "; Path=" + requestLookup.getContextPath() + "; Secure; HTTPOnly");
-        Assert.assertEquals(cookies.get(CSRF_TOKEN),
+        Assert.assertEquals(cookies.get(COOKIE_CSRF_TOKEN),
                 createdSession.getCsrfToken() + "; Path=" + requestLookup.getContextPath() + "; Secure");
-    }
-
-    @Test
-    public void testCreateSessionWithNoSessionManager() {
-        API api = new API(null, null, null);
-        User user = mock(User.class);
-        when(user.getUsername()).thenReturn("admin");
-        Assert.assertThrows(SessionManagerException.class, () -> api.createSession(user));
     }
 
     @Test
     public void testGetSession() {
         Configuration configuration = mock(Configuration.class);
+        when(configuration.getSessionTimeout()).thenReturn(600L);
         HttpRequest request = mock(HttpRequest.class);
         HttpResponse response = mock(HttpResponse.class);
         when(request.getContextPath()).thenReturn("/test");
 
-        SessionHandler sessionHandler = new InMemorySessionManager();
-        Session currentSession = sessionHandler.createSession(null, request, response, configuration);
+        User user = mock(User.class);
+        when(user.getUsername()).thenReturn("admin");
 
-        when(request.getCookieValue(eq(SESSION_COOKIE_NAME)))
+        SessionManager sessionManager = createSessionManager(user, request, response, true, true, false);
+        API api = new API(sessionManager, new RequestLookup(null, request, response));
+        Session currentSession = api.createSession(user);
+
+        when(request.getCookieValue(eq(COOKIE_SESSION_ID)))
                 .thenReturn(currentSession.getSessionId());
-        API api = new API(sessionHandler, new RequestLookup(null, request, response), configuration);
 
         Assert.assertEquals(api.getSession().isPresent(), true);
-    }
-
-    @Test
-    public void testGetSessionWithNoSessionManager() {
-        API api = new API(null, null, null);
-        Assert.assertEquals(api.getSession().isPresent(), false);
     }
 
     @Test
     public void testGetSessionWhenSessionNotAvailable() {
         Configuration configuration = mock(Configuration.class);
         HttpRequest request = mock(HttpRequest.class);
+        HttpResponse response = mock(HttpResponse.class);
         when(request.getContextPath()).thenReturn("/test");
-        when(request.getCookieValue(eq(SESSION_COOKIE_NAME)))
-                .thenReturn("2B2F3466F1937F70B50A610453509EEB");
 
-        SessionHandler sessionHandler = new InMemorySessionManager();
-        API api = new API(sessionHandler, new RequestLookup(null, request, null), configuration);
+        User user = mock(User.class);
+        when(user.getUsername()).thenReturn("admin");
+
+        SessionManager sessionManager = createSessionManager(user, request, response, false, false, false);
+        when(sessionManager.getSession(request, response)).thenReturn(Optional.empty());
+        API api = new API(sessionManager, new RequestLookup(null, request, response));
         Assert.assertEquals(api.getSession().isPresent(), false);
     }
 
@@ -155,40 +148,51 @@ public class APITest {
     public void testDestroySession() {
         // Creating session manager.
         Configuration configuration = mock(Configuration.class);
-        SessionHandler sessionHandler = new InMemorySessionManager();
+        when(configuration.getSessionTimeout()).thenReturn(600L);
 
         HttpRequest request = mock(HttpRequest.class);
         HttpResponse response = mock(HttpResponse.class);
         when(request.getContextPath()).thenReturn("/test");
 
-        // Create session
-        Session currentSession = sessionHandler.createSession(null, request, response, configuration);
+        User user = mock(User.class);
+        when(user.getUsername()).thenReturn("admin");
 
-        when(request.getCookieValue(eq(SESSION_COOKIE_NAME)))
-                .thenReturn(currentSession.getSessionId());
-
-        final Map<String, String> headers = new HashMap<>();
-        doAnswer(invocation -> {
-            headers.put(invocation.getArgument(0), invocation.getArgument(1));
-            return null;
-        }).when(response).addCookie(any(), any());
+        SessionManager sessionManager = createSessionManager(user, request, response, true, true, true);
 
         // Creating API.
         RequestLookup requestLookup = new RequestLookup("/test", request, response);
-        API api = new API(sessionHandler, requestLookup, configuration);
+        API api = new API(sessionManager, requestLookup);
+
+        // Create session
+        Session currentSession = api.createSession(user);
+        when(request.getCookieValue(eq(COOKIE_SESSION_ID)))
+                .thenReturn(currentSession.getSessionId());
 
         Assert.assertEquals(api.destroySession(), true);
-        Assert.assertEquals(headers.get(SESSION_COOKIE_NAME),
-                "Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:01 GMT; Path=" + requestLookup.getContextPath() + "; Secure; HTTPOnly");
-        Assert.assertEquals(headers.get(CSRF_TOKEN),
-                "Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:01 GMT; Path=" + requestLookup.getContextPath() + "; Secure; HTTPOnly");
-        Assert.assertEquals(api.getSession().isPresent(), false);
-        Assert.assertEquals(sessionHandler.getSession(request, response, configuration).isPresent(), false);
     }
 
-    @Test
-    public void testDestroySessionWithNoSessionManager() {
-        API api = new API(null, null, null);
-        Assert.assertEquals(api.destroySession(), false);
+    private SessionManager createSessionManager(User user, HttpRequest request, HttpResponse response,
+                                                boolean isMockCreate, boolean isMockGet, boolean isMockDestroy) {
+        SessionManager sessionManager = mock(SessionManager.class);
+        Session session = new Session(user);
+        if (isMockCreate) {
+            Answer<Session> answer = createCookie(request, response, session);
+            when(sessionManager.createSession(user, request, response)).thenAnswer(answer);
+        }
+        if (isMockGet) {
+            when(sessionManager.getSession(request, response)).thenReturn(Optional.of(session));
+        }
+        if (isMockDestroy) {
+            when(sessionManager.destroySession(request, response)).thenReturn(true);
+        }
+        return sessionManager;
+    }
+
+    private Answer<Session> createCookie(HttpRequest request, HttpResponse response, Session session) {
+        response.addCookie(COOKIE_SESSION_ID, session.getSessionId() +
+                "; Path=" + request.getContextPath() + "; Secure; HTTPOnly");
+        response.addCookie(COOKIE_CSRF_TOKEN, session.getCsrfToken() + "; Path=" +
+                request.getContextPath() + "; Secure");
+        return invocation -> session;
     }
 }

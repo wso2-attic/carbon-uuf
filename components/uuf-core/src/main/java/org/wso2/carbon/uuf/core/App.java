@@ -21,7 +21,6 @@ package org.wso2.carbon.uuf.core;
 import com.google.gson.JsonObject;
 import org.wso2.carbon.uuf.api.Placeholder;
 import org.wso2.carbon.uuf.api.auth.Session;
-import org.wso2.carbon.uuf.api.auth.SessionHandler;
 import org.wso2.carbon.uuf.api.config.Bindings;
 import org.wso2.carbon.uuf.api.config.Configuration;
 import org.wso2.carbon.uuf.api.config.I18nResources;
@@ -32,7 +31,6 @@ import org.wso2.carbon.uuf.exception.PageNotFoundException;
 import org.wso2.carbon.uuf.exception.PageRedirectException;
 import org.wso2.carbon.uuf.exception.SessionNotFoundException;
 import org.wso2.carbon.uuf.exception.UUFException;
-import org.wso2.carbon.uuf.internal.deployment.PluginProvider;
 import org.wso2.carbon.uuf.internal.util.NameUtils;
 import org.wso2.carbon.uuf.internal.util.UriUtils;
 import org.wso2.carbon.uuf.spi.HttpRequest;
@@ -56,10 +54,12 @@ public class App {
     private final Component rootComponent;
     private final Map<String, Theme> themes;
     private final Theme defaultTheme;
+    private final SessionManager sessionManager;
     private final Configuration configuration;
 
     public App(String name, String contextPath, Set<Component> components, Set<Theme> themes,
-               Configuration configuration, Bindings bindings, I18nResources i18nResources) {
+               Configuration configuration, Bindings bindings, I18nResources i18nResources,
+               SessionManager sessionManager) {
         this.name = name;
         this.contextPath = contextPath;
 
@@ -80,6 +80,7 @@ public class App {
 
         this.lookup = new Lookup(components, configuration, bindings, i18nResources);
         this.configuration = configuration;
+        this.sessionManager = sessionManager;
     }
 
     public String getName() {
@@ -111,15 +112,13 @@ public class App {
     }
 
     /**
-     * @param request        HTTP request
-     * @param response       HTTP response
-     * @param pluginProvider plugin provider
+     * @param request  HTTP request
+     * @param response HTTP response
      * @return rendered HTML output
      */
-    public String renderPage(HttpRequest request, HttpResponse response, PluginProvider pluginProvider) {
+    public String renderPage(HttpRequest request, HttpResponse response) {
         RequestLookup requestLookup = createRequestLookup(request, response);
-        SessionHandler sessionHandler = getSessionHandler(pluginProvider);
-        API api = new API(sessionHandler, requestLookup, configuration);
+        API api = new API(sessionManager, requestLookup);
         Theme theme = getRenderingTheme(api);
         try {
             return renderPageUri(request.getUriWithoutContextPath(), null, requestLookup, api, theme);
@@ -203,7 +202,7 @@ public class App {
      * @param response HTTP response
      * @return rendered HTML,CSS and JS outputs as JSON
      */
-    public JsonObject renderFragment(HttpRequest request, HttpResponse response, PluginProvider pluginProvider) {
+    public JsonObject renderFragment(HttpRequest request, HttpResponse response) {
         String uriWithoutContextPath = request.getUriWithoutContextPath();
         String uriPart = uriWithoutContextPath.substring(UriUtils.FRAGMENTS_URI_PREFIX.length());
         String fragmentName = NameUtils.getFullyQualifiedName(rootComponent.getName(), uriPart);
@@ -215,8 +214,7 @@ public class App {
 
         Model model = new MapModel(request.getFormParams());
         RequestLookup requestLookup = createRequestLookup(request, response);
-        SessionHandler sessionHandler = getSessionHandler(pluginProvider);
-        API api = new API(sessionHandler, requestLookup, configuration);
+        API api = new API(sessionManager, requestLookup);
 
         JsonObject output = new JsonObject();
         output.addProperty("html", fragment.render(model, lookup, requestLookup, api));
@@ -263,12 +261,6 @@ public class App {
 
     private RequestLookup createRequestLookup(HttpRequest request, HttpResponse response) {
         return new RequestLookup((configuration.getContextPath().orElse(null)), request, response);
-    }
-
-    private SessionHandler getSessionHandler(PluginProvider pluginProvider) {
-        return configuration.getSessionManager()
-                .map(sessionManagerClass -> pluginProvider.getPluginInstance(SessionManager.class, sessionManagerClass,
-                        this.getClass().getClassLoader())).orElse(null);
     }
 
     @Override

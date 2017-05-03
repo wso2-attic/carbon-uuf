@@ -59,20 +59,22 @@ public class ArtifactAppDeployer implements AppDeployer {
     private final ConcurrentMap<String, AppArtifact> pendingToDeployArtifacts;
     private final Object lock;
 
-    public ArtifactAppDeployer(Set<RenderableCreator> renderableCreators, RestApiDeployer restApiDeployer) {
-        this(Paths.get(System.getProperty("carbon.home", "."), "deployment", "uufapps").toString(), renderableCreators,
-             restApiDeployer);
-    }
-
-    public ArtifactAppDeployer(String appsRepositoryPath, Set<RenderableCreator> renderableCreators,
+    public ArtifactAppDeployer(Set<RenderableCreator> renderableCreators, PluginProvider pluginProvider,
                                RestApiDeployer restApiDeployer) {
-        this(appsRepositoryPath, renderableCreators, new BundleClassLoaderProvider(), restApiDeployer);
+        this(Paths.get(System.getProperty("carbon.home", "."), "deployment", "uufapps").toString(),
+                renderableCreators, pluginProvider, restApiDeployer);
     }
 
     public ArtifactAppDeployer(String appsRepositoryPath, Set<RenderableCreator> renderableCreators,
-                               ClassLoaderProvider classLoaderProvider, RestApiDeployer restApiDeployer) {
+                               PluginProvider pluginProvider, RestApiDeployer restApiDeployer) {
+        this(appsRepositoryPath, renderableCreators, new BundleClassLoaderProvider(), pluginProvider, restApiDeployer);
+    }
+
+    public ArtifactAppDeployer(String appsRepositoryPath, Set<RenderableCreator> renderableCreators,
+                               ClassLoaderProvider classLoaderProvider, PluginProvider pluginProvider,
+                               RestApiDeployer restApiDeployer) {
         this(Paths.get(appsRepositoryPath),
-             new AppCreator(renderableCreators, classLoaderProvider, restApiDeployer));
+             new AppCreator(renderableCreators, classLoaderProvider, pluginProvider, restApiDeployer));
     }
 
     public ArtifactAppDeployer(Path appsRepository, AppCreator appCreator) {

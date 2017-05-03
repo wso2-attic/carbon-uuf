@@ -1,8 +1,5 @@
 theme: "org.wso2.carbon.uuf.sample.default.theme"
 
-# Session manager for this app
-sessionManager: "org.wso2.carbon.uuf.api.auth.InMemorySessionManager"
-
 menus:
   - name: "main"
     items:

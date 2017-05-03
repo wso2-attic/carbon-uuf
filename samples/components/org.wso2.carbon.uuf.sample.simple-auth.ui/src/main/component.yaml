@@ -9,6 +9,3 @@ config:
     registerRedirectUri: "/"
     # User will be redirected to following URI after logging-out successfully.
     logoutRedirectUri: "/simple-auth/login"
-    # This configuration is used by the 'PersistentSessionManager.java' to specify the session
-    # time-out duration in seconds.
-    sessionTimeoutDuration: 600

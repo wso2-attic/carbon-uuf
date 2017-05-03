@@ -40,62 +40,27 @@ public class InMemorySessionManagerTest {
 
     private static final String SESSION_COOKIE_NAME = "UUFSESSIONID";
 
-    private static SessionManager createSessionManager() {
-        return new InMemorySessionManager();
+    private static SessionManager createSessionManager(String appName) {
+        Configuration configuration = mock(Configuration.class);
+        when(configuration.getSessionTimeout()).thenReturn(600L);
+        return new InMemorySessionManager(appName, configuration);
     }
 
     @Test
     public void testSessionAddAndRemove() {
-        SessionManager sessionManager = createSessionManager();
-        Configuration configuration = mock(Configuration.class);
         User user = mock(User.class);
         HttpRequest request = mock(HttpRequest.class);
         HttpResponse response = mock(HttpResponse.class);
         when(request.getContextPath()).thenReturn("/testSessionAddAndRemove");
+        SessionManager sessionManager = createSessionManager(request.getContextPath());
 
-        Session session = sessionManager.createSession(user, request, response, configuration);
+        Session session = sessionManager.createSession(user, request, response);
         when(request.getCookieValue(SESSION_COOKIE_NAME))
                 .thenReturn(session.getSessionId());
-        Assert.assertEquals(sessionManager.getSession(request, response, configuration).get(), session);
+        Assert.assertEquals(sessionManager.getSession(request, response).get(), session);
 
-        boolean isDestroyed = sessionManager.destroySession(request, response, configuration);
+        boolean isDestroyed = sessionManager.destroySession(request, response);
         Assert.assertEquals(isDestroyed, true);
-        Assert.assertEquals(sessionManager.getSession(request, response, configuration).isPresent(), false);
+        Assert.assertEquals(sessionManager.getSession(request, response).isPresent(), false);
     }
-
-    @Test
-    public void testSessionEncapsulation() {
-        SessionManager sessionManager = createSessionManager();
-        Configuration configuration = mock(Configuration.class);
-        User user = mock(User.class);
-
-        // Session for context path A
-        HttpRequest requestContextPathA = mock(HttpRequest.class);
-        HttpResponse responseContextPathA = mock(HttpResponse.class);
-        when(requestContextPathA.getContextPath()).thenReturn("/contextPathA");
-        Session sessionContextPathA = sessionManager.createSession(user, requestContextPathA, responseContextPathA,
-                configuration);
-        when(requestContextPathA.getCookieValue(SESSION_COOKIE_NAME))
-                .thenReturn(sessionContextPathA.getSessionId());
-
-        // Session for context path B
-        HttpRequest requestContextPathB = mock(HttpRequest.class);
-        HttpResponse responseContextPathB = mock(HttpResponse.class);
-        when(requestContextPathB.getContextPath()).thenReturn("/contextPathB");
-        Session sessionContextPathB = sessionManager.createSession(user, requestContextPathB, responseContextPathB,
-                configuration);
-        when(requestContextPathB.getCookieValue(SESSION_COOKIE_NAME))
-                .thenReturn(sessionContextPathB.getSessionId());
-
-        Assert.assertNotEquals(sessionManager.getSession(requestContextPathA, null, configuration).get(),
-                sessionManager.getSession(requestContextPathB, null, configuration).get());
-
-        // Try to get a session for a different context path
-        HttpRequest requestContextPathC = mock(HttpRequest.class);
-        HttpResponse responseContextPathC = mock(HttpResponse.class);
-        when(requestContextPathC.getContextPath()).thenReturn("/contextPathC");
-        Assert.assertEquals(sessionManager.getSession(requestContextPathC, responseContextPathC,
-                configuration).isPresent(), false);
-    }
-
 }
