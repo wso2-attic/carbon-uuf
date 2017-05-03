@@ -3,10 +3,8 @@
 # Classes of Microservices that implements UI specific REST APIs.
 # example entry:
 #   - className: "org.wso2.carbon.uuf.sample.pets-store.PetsStoreMicroservice"
-#     uri: "/pets/"
-apis:
-  - className: "org.wso2.carbon.uuf.sample.api.HelloService"
-    uri: "/hello-service/"
+#     uri: "/pets"
+apis: []
 
 # Binding fragments into zones.
 # Modes:
