@@ -18,8 +18,14 @@
 
 $(function () {
     $('#hello-btn').on('click', function (e) {
+        var name = $('#username').val();
+        if (!name) {
+            alert("Please enter a name.");
+            return;
+        }
+
         $.ajax({
-            url: "/features-app/root/apis/hello/" + $('#username').val(),
+            url: "/features-app/root/apis/hello/" + name,
             type: "GET",
             success: function (result, status, xhr) {
                 alert(result);
