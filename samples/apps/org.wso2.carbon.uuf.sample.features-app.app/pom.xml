@@ -98,6 +98,10 @@
                                     <symbolicName>org.wso2.carbon.uuf.sample.features-app.bundle</symbolicName>
                                     <version>${carbon.uuf.version}</version>
                                 </bundle>
+                                <bundle>
+                                    <symbolicName>org.wso2.carbon.uuf.sample.api</symbolicName>
+                                    <version>${carbon.uuf.version}</version>
+                                </bundle>
                             </bundles>
                         </configuration>
                     </execution>
