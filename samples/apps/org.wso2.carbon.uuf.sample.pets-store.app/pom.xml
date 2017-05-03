@@ -65,10 +65,6 @@
             <groupId>org.wso2.carbon.uuf.sample</groupId>
             <artifactId>org.wso2.carbon.uuf.sample.pets-store.bundle</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon.uuf.sample</groupId>
-            <artifactId>org.wso2.carbon.uuf.sample.api</artifactId>
-        </dependency>
     </dependencies>
 
 
@@ -89,18 +85,13 @@
                         <configuration>
                             <instructions>
                                 <Import-Package>
-                                    org.wso2.carbon.uuf.sample.simpleauth.bundle,
-                                    org.wso2.carbon.uuf.sample.api
+                                    org.wso2.carbon.uuf.sample.simpleauth.bundle
                                 </Import-Package>
                             </instructions>
                             <!--All backend dependencies should be specified here-->
                             <bundles>
                                 <bundle>
                                     <symbolicName>org.wso2.carbon.uuf.sample.pets-store.bundle</symbolicName>
-                                    <version>${carbon.uuf.version}</version>
-                                </bundle>
-                                <bundle>
-                                    <symbolicName>org.wso2.carbon.uuf.sample.api</symbolicName>
                                     <version>${carbon.uuf.version}</version>
                                 </bundle>
                             </bundles>
