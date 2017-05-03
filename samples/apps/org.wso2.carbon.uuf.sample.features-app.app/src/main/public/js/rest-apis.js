@@ -16,15 +16,15 @@
  * under the License.
  */
 
-$(function() {
+$(function () {
     $('#hello-btn').on('click', function (e) {
         $.ajax({
             url: "/features-app/root/apis/hello/" + $('#username').val(),
             type: "GET",
-            success: function(result,status,xhr){
+            success: function (result, status, xhr) {
                 alert(result);
             },
-            error: function(xhr,status,error){
+            error: function (xhr, status, error) {
                 alert(error);
             }
         });
