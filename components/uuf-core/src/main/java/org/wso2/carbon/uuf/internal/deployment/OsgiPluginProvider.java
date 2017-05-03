@@ -25,7 +25,7 @@ import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.uuf.exception.PluginLoadingException;
+import org.wso2.carbon.uuf.internal.exception.PluginLoadingException;
 
 import java.util.HashMap;
 import java.util.Map;
