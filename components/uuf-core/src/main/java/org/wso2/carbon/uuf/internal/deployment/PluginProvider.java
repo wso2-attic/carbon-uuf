@@ -19,7 +19,7 @@
 package org.wso2.carbon.uuf.internal.deployment;
 
 
-import org.wso2.carbon.uuf.exception.PluginLoadingException;
+import org.wso2.carbon.uuf.internal.exception.PluginLoadingException;
 
 /**
  * A provider that gives instances of plugins for an uuf app.
