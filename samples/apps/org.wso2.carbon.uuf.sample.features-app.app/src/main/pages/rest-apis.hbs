@@ -1,0 +1,49 @@
+{{layout "org.wso2.carbon.uuf.sample.foundation.ui.main"}}
+{{title "UI-specific REST API Sample | " @config.appName}}
+{{fragment "org.wso2.carbon.uuf.sample.foundation.ui.highlight" theme="tomorrow"}}
+{{js "js/rest-apis.js"}}
+
+{{#fillZone "content"}}
+    <h3>UI-specific REST APIs</h3>
+    <hr />
+    <p>
+        UI-specific REST APIs are REST APIs that resides in the app context and <b>only</b> used in your UI.
+        You can define REST APIs for your components in <code>component.yaml</code> configuration file as follows.
+        <figure class="highlight">
+        <pre class="code lang-yaml">
+            apis:
+                - className: "org.wso2.carbon.uuf.sample.api.HelloService"
+                  uri: "/hello"</pre>
+        </figure>
+    </p>
+    <p>
+        Above, <code>className</code> should be the fully qualified class name of the REST API class. The
+        <code>HelloService</code> class should implement the <code>org.wso2.carbon.uuf.api.RestApi</code> interface
+        in order to indicate that its an UI-specific REST API. Since we use MSF4J microservices to implement REST APIs,
+        <code>HelloService</code> class should also implement the <code>org.wso2.msf4j.Microservice</code> interface.
+        <figure class="highlight">
+        <pre class="code lang-java">
+            public class HelloService implements Microservice, RestApi {
+            }</pre>
+        </figure>
+    </p>
+    <p>
+        <code>uri</code> will be the relative URI of the REST API. The final URI of an UI-specific REST API follows the
+        <tt>/{appContext}/{componentContext}/apis/{uri}</tt> URI pattern. <br />
+        For example, let's assume that above <code>component.yaml</code> configuration belongs to the
+        <code>org.wso2.carbon.uuf.sample.foundation.ui</code> component. Then<code>HelloService</code> will be deployed
+        under <tt>/features-app/foundation/apis/hello</tt> URI. If the <code>HelloService</code> is
+        configured as an UI-specific REST API of the <code>org.wso2.carbon.uuf.sample.features-app.app</code>
+        app itself, then it will deployed under <tt>/features-app/root/apis/hello</tt> as the app is the root
+        component.
+    </p>
+    <h3>Demo:</h3>
+    <hr/>
+    <form>
+        <div class="form-group">
+            <label for="username">Name</label>
+            <input type="text" id="username" name="username" class="form-control" placeholder="Type name here">
+        </div>
+        <button type="button" id="hello-btn" class="btn btn-primary">Say Hello!</button>
+    </form>
+{{/fillZone}}

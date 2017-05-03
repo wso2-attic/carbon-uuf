@@ -38,6 +38,8 @@ menus:
           - text: "File Upload"
             link: "/file-upload"
             icon: "fw fw-upload"
+          - text: "UI-specific REST APIs"
+            link: "/rest-apis"
           - text: "Helpers"
             link: "/helpers"
             submenus:
