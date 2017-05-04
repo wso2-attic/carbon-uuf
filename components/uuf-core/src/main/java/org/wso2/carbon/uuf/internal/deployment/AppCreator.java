@@ -40,7 +40,7 @@ import org.wso2.carbon.uuf.core.Layout;
 import org.wso2.carbon.uuf.core.Page;
 import org.wso2.carbon.uuf.core.Theme;
 import org.wso2.carbon.uuf.core.UriPatten;
-import org.wso2.carbon.uuf.exception.MalformedConfigurationException;
+import org.wso2.carbon.uuf.exception.ConfigurationException;
 import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.internal.deployment.parser.AppConfig;
 import org.wso2.carbon.uuf.internal.deployment.parser.ComponentConfig;
@@ -186,7 +186,7 @@ public class AppCreator {
         componentReference.getI18nFiles().forEach(i18nFile -> {
             Locale locale = Locale.forLanguageTag(i18nFile.getNameWithoutExtension());
             if (locale.getLanguage().isEmpty()) {
-                throw new MalformedConfigurationException(
+                throw new ConfigurationException(
                         "Cannot identify the locale of the language file '" + i18nFile.getAbsolutePath() +
                                 "' of component '" + componentName + "'.");
             }
@@ -224,18 +224,18 @@ public class AppCreator {
 
         for (ComponentConfig.Binding entry : bindingEntries) {
             if (entry.getZoneName() == null) {
-                throw new MalformedConfigurationException(
+                throw new ConfigurationException(
                         "Zone name of a binding entry cannot be null. Found such binding entry in component '" +
                                 componentName + "'.");
             } else if (entry.getZoneName().isEmpty()) {
-                throw new MalformedConfigurationException(
+                throw new ConfigurationException(
                         "Zone name of a binding entry cannot be empty. Found such binding entry in component '" +
                                 componentName + "'.");
             }
             String zoneName = NameUtils.getFullyQualifiedName(componentName, entry.getZoneName());
 
             if (entry.getFragments() == null) {
-                throw new MalformedConfigurationException(
+                throw new ConfigurationException(
                         "Fragments in a binding entry cannot be null. Found such binding entry in component '" +
                                 componentName + "'.");
             }

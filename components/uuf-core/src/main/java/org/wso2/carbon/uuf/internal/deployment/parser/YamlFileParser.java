@@ -21,7 +21,6 @@ package org.wso2.carbon.uuf.internal.deployment.parser;
 import org.wso2.carbon.uuf.api.reference.FileReference;
 import org.wso2.carbon.uuf.exception.ConfigurationException;
 import org.wso2.carbon.uuf.exception.FileOperationException;
-import org.wso2.carbon.uuf.exception.MalformedConfigurationException;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 
@@ -36,8 +35,8 @@ public class YamlFileParser {
      * Parses the given YAML configuration file and de-serialize the content into given bean type.
      *
      * @param yamlFile reference to the YAML configuration file
-     * @param type       class of the bean to be used when de-serializing
-     * @param <T>        type of the bean class to be used when de-serializing
+     * @param type     class of the bean to be used when de-serializing
+     * @param <T>      type of the bean class to be used when de-serializing
      * @return returns the populated bean instance
      * @throws ConfigurationException if cannot read or parse the content of the specified YAML file
      */
@@ -49,12 +48,12 @@ public class YamlFileParser {
             throw new ConfigurationException(
                     "Cannot read the configuration file '" + yamlFile.getAbsolutePath() + "'.", e);
         } catch (Exception e) {
-            throw new MalformedConfigurationException(
+            throw new ConfigurationException(
                     "Cannot parse the configuration file '" + yamlFile.getAbsolutePath() + "'.", e);
         }
         if (loadedBean == null) {
             // Either configuration file is empty or has only comments.
-            throw new MalformedConfigurationException(
+            throw new ConfigurationException(
                     "Cannot load the configuration file '" + yamlFile.getAbsolutePath() + "' as it is empty.");
         }
         return loadedBean;

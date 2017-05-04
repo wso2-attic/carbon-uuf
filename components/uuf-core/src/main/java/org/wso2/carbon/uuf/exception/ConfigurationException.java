@@ -21,7 +21,6 @@ package org.wso2.carbon.uuf.exception;
 /**
  * Indicates an error happens when reading or parsing or loading or processing configuration.
  *
- * @see MalformedConfigurationException
  * @since 1.0.0
  */
 public class ConfigurationException extends UUFException {
