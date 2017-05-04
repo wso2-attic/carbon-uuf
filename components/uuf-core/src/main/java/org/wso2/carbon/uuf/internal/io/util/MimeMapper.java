@@ -18,8 +18,8 @@
 
 package org.wso2.carbon.uuf.internal.io.util;
 
+import org.wso2.carbon.uuf.exception.ConfigurationException;
 import org.wso2.carbon.uuf.exception.FileOperationException;
-import org.wso2.carbon.uuf.exception.MalformedConfigurationException;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -45,7 +45,7 @@ public class MimeMapper {
             }
             mimeMap.load(inputStream);
         } catch (IllegalArgumentException e) {
-            throw new MalformedConfigurationException(
+            throw new ConfigurationException(
                     "MIME types property file is '" + MIME_PROPERTY_FILE + "' is invalid.", e);
         } catch (IOException e) {
             throw new FileOperationException("Cannot read MIME types property file '" + MIME_PROPERTY_FILE + "'.", e);

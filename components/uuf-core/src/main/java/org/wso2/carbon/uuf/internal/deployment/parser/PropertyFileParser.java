@@ -21,7 +21,6 @@ package org.wso2.carbon.uuf.internal.deployment.parser;
 import org.wso2.carbon.uuf.api.reference.FileReference;
 import org.wso2.carbon.uuf.exception.ConfigurationException;
 import org.wso2.carbon.uuf.exception.FileOperationException;
-import org.wso2.carbon.uuf.exception.MalformedConfigurationException;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -52,7 +51,7 @@ public class PropertyFileParser {
             throw new ConfigurationException(
                     "Cannot read the properties file '" + propertiesFile.getAbsolutePath() + "'.", e);
         } catch (IllegalArgumentException e) {
-            throw new MalformedConfigurationException(
+            throw new ConfigurationException(
                     "Cannot parse the properties file '" + propertiesFile.getAbsolutePath() + "'.", e);
         } catch (IOException e) {
             throw new ConfigurationException(
