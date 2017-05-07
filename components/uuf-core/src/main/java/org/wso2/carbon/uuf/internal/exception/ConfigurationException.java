@@ -18,14 +18,12 @@
 
 package org.wso2.carbon.uuf.internal.exception;
 
-import org.wso2.carbon.uuf.exception.UUFException;
-
 /**
  * Indicates an error happens when reading or parsing or loading or processing configuration.
  *
  * @since 1.0.0
  */
-public class ConfigurationException extends UUFException {
+public class ConfigurationException extends DeploymentException {
 
     /**
      * Constructs a new exception with {@code null} as its detail message. The cause is not initialized, and may
