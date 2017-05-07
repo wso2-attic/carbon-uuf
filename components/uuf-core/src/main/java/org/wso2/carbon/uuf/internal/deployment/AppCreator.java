@@ -244,7 +244,7 @@ public class AppCreator {
                 Fragment fragment = availableFragments.get(NameUtils.getFullyQualifiedName(componentName,
                                                                                            fragmentName));
                 if (fragment == null) {
-                    throw new IllegalArgumentException(
+                    throw new ConfigurationException(
                             "Fragment '" + fragmentName + "' given in the binding entry '" + entry +
                                     "' does not exists in component '" + componentName + "' or its dependencies " +
                                     componentDependencies.stream().map(Component::getName).collect(joining(",")) + ".");
@@ -281,7 +281,7 @@ public class AppCreator {
             if (layout != null) {
                 return new Page(uriPatten, prd.getRenderable(), prd.isSecured(), layout);
             } else {
-                throw new IllegalArgumentException(
+                throw new DeploymentException(
                         "Layout '" + layoutName + "' used in page '" + pageRenderingFile.getRelativePath() +
                                 "' does not exists in component '" + componentName + "' or its dependencies.");
             }
