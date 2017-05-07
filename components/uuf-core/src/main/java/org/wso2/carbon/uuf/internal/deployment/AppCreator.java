@@ -40,7 +40,6 @@ import org.wso2.carbon.uuf.core.Layout;
 import org.wso2.carbon.uuf.core.Page;
 import org.wso2.carbon.uuf.core.Theme;
 import org.wso2.carbon.uuf.core.UriPatten;
-import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.internal.deployment.parser.AppConfig;
 import org.wso2.carbon.uuf.internal.deployment.parser.ComponentConfig;
 import org.wso2.carbon.uuf.internal.deployment.parser.DependencyNode;
@@ -48,6 +47,7 @@ import org.wso2.carbon.uuf.internal.deployment.parser.PropertyFileParser;
 import org.wso2.carbon.uuf.internal.deployment.parser.ThemeConfig;
 import org.wso2.carbon.uuf.internal.deployment.parser.YamlFileParser;
 import org.wso2.carbon.uuf.internal.exception.ConfigurationException;
+import org.wso2.carbon.uuf.internal.exception.DeploymentException;
 import org.wso2.carbon.uuf.internal.util.NameUtils;
 import org.wso2.carbon.uuf.spi.RenderableCreator;
 
@@ -294,7 +294,7 @@ public class AppCreator {
     private RenderableCreator getRenderableCreator(FileReference fileReference) {
         RenderableCreator renderableCreator = renderableCreators.get(fileReference.getExtension());
         if (renderableCreator == null) {
-            throw new UUFException(
+            throw new DeploymentException(
                     "Cannot find a RenderableCreator for file type '" + fileReference.getExtension() + "'.");
         }
         return renderableCreator;
