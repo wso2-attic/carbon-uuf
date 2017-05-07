@@ -19,8 +19,8 @@
 package org.wso2.carbon.uuf.internal.deployment.parser;
 
 import org.wso2.carbon.uuf.api.reference.FileReference;
-import org.wso2.carbon.uuf.exception.ConfigurationException;
 import org.wso2.carbon.uuf.exception.FileOperationException;
+import org.wso2.carbon.uuf.internal.exception.ConfigurationException;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 

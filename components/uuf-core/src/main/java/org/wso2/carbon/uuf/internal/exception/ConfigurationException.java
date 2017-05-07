@@ -16,7 +16,9 @@
  * under the License.
  */
 
-package org.wso2.carbon.uuf.exception;
+package org.wso2.carbon.uuf.internal.exception;
+
+import org.wso2.carbon.uuf.exception.UUFException;
 
 /**
  * Indicates an error happens when reading or parsing or loading or processing configuration.

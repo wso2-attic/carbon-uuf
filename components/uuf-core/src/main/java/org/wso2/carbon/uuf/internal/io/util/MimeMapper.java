@@ -18,8 +18,8 @@
 
 package org.wso2.carbon.uuf.internal.io.util;
 
-import org.wso2.carbon.uuf.exception.ConfigurationException;
 import org.wso2.carbon.uuf.exception.FileOperationException;
+import org.wso2.carbon.uuf.internal.exception.ConfigurationException;
 
 import java.io.IOException;
 import java.io.InputStream;
