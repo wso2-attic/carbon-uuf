@@ -86,6 +86,7 @@ public class StartupListener implements RequiredCapabilityListener {
 
     @Deactivate
     protected void deactivate(BundleContext bundleContext) {
+        uufServer.stop();
         uufServer = null;
         LOGGER.debug("StartupListener deactivated.");
     }
