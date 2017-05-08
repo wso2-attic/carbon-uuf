@@ -19,9 +19,6 @@
 package org.wso2.carbon.uuf.internal.deployment;
 
 import org.osgi.framework.BundleContext;
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.api.RestApi;
@@ -37,28 +34,14 @@ import java.util.Hashtable;
  *
  * @since 1.0.0
  */
-@Component(name = "org.wso2.carbon.uuf.internal.deployment.OsgiRestApiDeployer",
-           service = RestApiDeployer.class,
-           immediate = true,
-           property = {
-                   "componentName=wso2-uuf-OSGi-REST-API-deployer"
-           }
-)
 public class OsgiRestApiDeployer implements RestApiDeployer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OsgiRestApiDeployer.class);
-    private BundleContext bundleContext;
 
-    @Activate
-    protected void activate(BundleContext bundleContext) {
+    private final BundleContext bundleContext;
+
+    public OsgiRestApiDeployer(BundleContext bundleContext) {
         this.bundleContext = bundleContext;
-        LOGGER.debug("OsgiRestApiDeployer activated.");
-    }
-
-    @Deactivate
-    protected void deactivate(BundleContext bundleContext) {
-        this.bundleContext = null;
-        LOGGER.debug("OsgiRestApiDeployer deactivated.");
     }
 
     /**
