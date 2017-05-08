@@ -19,10 +19,6 @@
 package org.wso2.carbon.uuf.internal.io.deployment;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.osgi.framework.BundleContext;
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.api.reference.AppReference;
@@ -49,13 +45,6 @@ import java.util.stream.Collectors;
  *
  * @since 1.0.0
  */
-@Component(name = "org.wso2.carbon.uuf.internal.io.deployment.ArtifactAppFinder",
-           service = AppFinder.class,
-           immediate = true,
-           property = {
-                   "componentName=wso2-uuf-app-finder"
-           }
-)
 public class ArtifactAppFinder implements AppFinder {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ArtifactAppFinder.class);
@@ -78,16 +67,6 @@ public class ArtifactAppFinder implements AppFinder {
     public ArtifactAppFinder(Path appsRepository) {
         this.appsRepository = appsRepository;
         this.availableApps = new HashMap<>();
-    }
-
-    @Activate
-    protected void activate(BundleContext bundleContext) {
-        LOGGER.debug("ArtifactAppFinder activated.");
-    }
-
-    @Deactivate
-    protected void deactivate(BundleContext bundleContext) {
-        LOGGER.debug("ArtifactAppFinder deactivated.");
     }
 
     /**
