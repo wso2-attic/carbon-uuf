@@ -35,6 +35,8 @@ import org.wso2.carbon.uuf.core.App;
 import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.internal.deployment.AppDeployer;
 import org.wso2.carbon.uuf.internal.deployment.DeploymentNotifier;
+import org.wso2.carbon.uuf.internal.deployment.OsgiPluginProvider;
+import org.wso2.carbon.uuf.internal.deployment.OsgiRestApiDeployer;
 import org.wso2.carbon.uuf.internal.deployment.PluginProvider;
 import org.wso2.carbon.uuf.internal.deployment.RestApiDeployer;
 import org.wso2.carbon.uuf.internal.io.deployment.ArtifactAppDeployer;
@@ -119,32 +121,6 @@ public class UUFServer implements Server, RequiredCapabilityListener {
         }
     }
 
-    @Reference(name = "pluginProvider",
-               service = PluginProvider.class,
-               cardinality = ReferenceCardinality.MANDATORY,
-               policy = ReferencePolicy.DYNAMIC,
-               unbind = "unsetPluginProvider")
-    protected void setPluginProvider(PluginProvider pluginProvider) {
-        this.pluginProvider = pluginProvider;
-    }
-
-    protected void unsetPluginProvider(PluginProvider pluginProvider) {
-        this.pluginProvider = null;
-    }
-
-    @Reference(name = "restApiDeployer",
-               service = RestApiDeployer.class,
-               cardinality = ReferenceCardinality.MANDATORY,
-               policy = ReferencePolicy.DYNAMIC,
-               unbind = "unsetRestApiDeployer")
-    protected void setRestApiDeployer(RestApiDeployer restApiDeployer) {
-        this.restApiDeployer = restApiDeployer;
-    }
-
-    protected void unsetRestApiDeployer(RestApiDeployer restApiDeployer) {
-        this.restApiDeployer = null;
-    }
-
     @Activate
     protected void activate(BundleContext bundleContext) {
         this.bundleContext = bundleContext;
@@ -155,6 +131,8 @@ public class UUFServer implements Server, RequiredCapabilityListener {
     protected void deactivate(BundleContext bundleContext) {
         stop();
         this.bundleContext = null;
+        pluginProvider = null;
+        restApiDeployer = null;
         deploymentNotifier = null;
         serverServiceRegistration.unregister();
         LOGGER.debug("UUF Server deactivated.");
@@ -163,6 +141,8 @@ public class UUFServer implements Server, RequiredCapabilityListener {
     @Override
     public void onAllRequiredCapabilitiesAvailable() {
         deploymentNotifier = new WhiteboardDeploymentNotifier(bundleContext);
+        pluginProvider = new OsgiPluginProvider(bundleContext);
+        restApiDeployer = new OsgiRestApiDeployer(bundleContext);
         appDeployer = createAppDeployer();
         LOGGER.debug("ArtifactAppDeployer is ready.");
 
