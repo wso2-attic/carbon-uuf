@@ -40,13 +40,13 @@ import org.wso2.carbon.uuf.core.Layout;
 import org.wso2.carbon.uuf.core.Page;
 import org.wso2.carbon.uuf.core.Theme;
 import org.wso2.carbon.uuf.core.UriPatten;
-import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.internal.deployment.parser.AppConfig;
 import org.wso2.carbon.uuf.internal.deployment.parser.ComponentConfig;
 import org.wso2.carbon.uuf.internal.deployment.parser.DependencyNode;
 import org.wso2.carbon.uuf.internal.deployment.parser.PropertyFileParser;
 import org.wso2.carbon.uuf.internal.deployment.parser.ThemeConfig;
 import org.wso2.carbon.uuf.internal.deployment.parser.YamlFileParser;
+import org.wso2.carbon.uuf.internal.exception.AppCreationException;
 import org.wso2.carbon.uuf.internal.exception.ConfigurationException;
 import org.wso2.carbon.uuf.internal.util.NameUtils;
 import org.wso2.carbon.uuf.spi.RenderableCreator;
@@ -244,7 +244,7 @@ public class AppCreator {
                 Fragment fragment = availableFragments.get(NameUtils.getFullyQualifiedName(componentName,
                                                                                            fragmentName));
                 if (fragment == null) {
-                    throw new IllegalArgumentException(
+                    throw new ConfigurationException(
                             "Fragment '" + fragmentName + "' given in the binding entry '" + entry +
                                     "' does not exists in component '" + componentName + "' or its dependencies " +
                                     componentDependencies.stream().map(Component::getName).collect(joining(",")) + ".");
@@ -281,7 +281,7 @@ public class AppCreator {
             if (layout != null) {
                 return new Page(uriPatten, prd.getRenderable(), prd.isSecured(), layout);
             } else {
-                throw new IllegalArgumentException(
+                throw new AppCreationException(
                         "Layout '" + layoutName + "' used in page '" + pageRenderingFile.getRelativePath() +
                                 "' does not exists in component '" + componentName + "' or its dependencies.");
             }
@@ -294,7 +294,7 @@ public class AppCreator {
     private RenderableCreator getRenderableCreator(FileReference fileReference) {
         RenderableCreator renderableCreator = renderableCreators.get(fileReference.getExtension());
         if (renderableCreator == null) {
-            throw new UUFException(
+            throw new AppCreationException(
                     "Cannot find a RenderableCreator for file type '" + fileReference.getExtension() + "'.");
         }
         return renderableCreator;

@@ -19,17 +19,17 @@
 package org.wso2.carbon.uuf.internal.exception;
 
 /**
- * Indicates an error happens when reading or parsing or loading or processing configuration.
+ * Indicates an error occurred when creating an app.
  *
  * @since 1.0.0
  */
-public class ConfigurationException extends DeploymentException {
+public class AppCreationException extends DeploymentException {
 
     /**
      * Constructs a new exception with {@code null} as its detail message. The cause is not initialized, and may
      * subsequently be initialized by a call to {@link #initCause(Throwable)}.
      */
-    public ConfigurationException() {
+    public AppCreationException() {
     }
 
     /**
@@ -38,7 +38,7 @@ public class ConfigurationException extends DeploymentException {
      *
      * @param message the detail message of the exception
      */
-    public ConfigurationException(String message) {
+    public AppCreationException(String message) {
         super(message);
     }
 
@@ -48,7 +48,7 @@ public class ConfigurationException extends DeploymentException {
      *
      * @param cause the cause of the exception
      */
-    public ConfigurationException(Throwable cause) {
+    public AppCreationException(Throwable cause) {
         super(cause);
     }
 
@@ -58,7 +58,7 @@ public class ConfigurationException extends DeploymentException {
      * @param message the detail message of the exception
      * @param cause   the cause of the exception
      */
-    public ConfigurationException(String message, Throwable cause) {
+    public AppCreationException(String message, Throwable cause) {
         super(message, cause);
     }
 }
