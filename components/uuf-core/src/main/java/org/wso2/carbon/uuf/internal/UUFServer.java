@@ -18,6 +18,7 @@
 
 package org.wso2.carbon.uuf.internal;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.annotations.Activate;
@@ -26,27 +27,30 @@ import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
-import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.kernel.startupresolver.RequiredCapabilityListener;
 import org.wso2.carbon.uuf.api.Server;
 import org.wso2.carbon.uuf.core.App;
 import org.wso2.carbon.uuf.exception.UUFException;
-import org.wso2.carbon.uuf.internal.deployment.AppDeployer;
+import org.wso2.carbon.uuf.internal.deployment.AppCreator;
+import org.wso2.carbon.uuf.internal.deployment.AppFinder;
+import org.wso2.carbon.uuf.internal.deployment.AppRegistry;
+import org.wso2.carbon.uuf.internal.deployment.ClassLoaderProvider;
 import org.wso2.carbon.uuf.internal.deployment.DeploymentNotifier;
+import org.wso2.carbon.uuf.internal.deployment.HttpConnectorDeploymentNotifier;
 import org.wso2.carbon.uuf.internal.deployment.OsgiPluginProvider;
 import org.wso2.carbon.uuf.internal.deployment.OsgiRestApiDeployer;
 import org.wso2.carbon.uuf.internal.deployment.PluginProvider;
 import org.wso2.carbon.uuf.internal.deployment.RestApiDeployer;
-import org.wso2.carbon.uuf.internal.io.deployment.ArtifactAppDeployer;
-import org.wso2.carbon.uuf.spi.HttpConnector;
+import org.wso2.carbon.uuf.internal.io.deployment.ArtifactAppFinder;
+import org.wso2.carbon.uuf.internal.io.deployment.BundleClassLoaderProvider;
 import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.carbon.uuf.spi.HttpResponse;
 import org.wso2.carbon.uuf.spi.RenderableCreator;
 
 import java.util.HashSet;
-import java.util.Map;
+import java.util.List;
 import java.util.Set;
 
 import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_BAD_REQUEST;
@@ -65,25 +69,16 @@ public class UUFServer implements Server, RequiredCapabilityListener {
     private static final boolean DEV_MODE_ENABLED = Boolean.getBoolean("devmode");
     private static final Logger LOGGER = LoggerFactory.getLogger(UUFServer.class);
 
-    private final String appRepositoryPath;
-    private final Set<RenderableCreator> renderableCreators;
-    private final RequestDispatcher requestDispatcher;
-    private AppDeployer appDeployer;
+    private AppRegistry appRegistry;
+    private final AppFinder appFinder = new ArtifactAppFinder();
+    private Set<RenderableCreator> renderableCreators = new HashSet<>();
+    private final ClassLoaderProvider classLoaderProvider = new BundleClassLoaderProvider();
     private PluginProvider pluginProvider;
     private RestApiDeployer restApiDeployer;
+    private final RequestDispatcher requestDispatcher = new RequestDispatcher();
     private DeploymentNotifier deploymentNotifier;
     private BundleContext bundleContext;
     private ServiceRegistration serverServiceRegistration;
-
-    public UUFServer() {
-        this(null);
-    }
-
-    public UUFServer(String appRepositoryPath) {
-        this.appRepositoryPath = appRepositoryPath;
-        this.renderableCreators = new HashSet<>();
-        this.requestDispatcher = new RequestDispatcher();
-    }
 
     /**
      * This bind method is invoked by OSGi framework whenever a new RenderableCreator is registered.
@@ -114,46 +109,46 @@ public class UUFServer implements Server, RequiredCapabilityListener {
         renderableCreators.remove(renderableCreator);
         LOGGER.info("RenderableCreator '{}' unregistered for {} extensions.",
                     renderableCreator.getClass().getName(), renderableCreator.getSupportedFileExtensions());
-        if (appDeployer != null) {
-            /* We have created the 'appDeployer' with the removed RenderableCreator. So we need to create it again
-            without the removed RenderableCreator. */
-            appDeployer = createAppDeployer();
+        if (appRegistry != null) {
+            // Remove apps that might have used the removed renderable creator to create.
+            appRegistry.clear();
+            appRegistry = createAppRegistry();
         }
     }
 
     @Activate
     protected void activate(BundleContext bundleContext) {
         this.bundleContext = bundleContext;
-        LOGGER.debug("UUF Server activated.");
+        LOGGER.debug("UUFServer activated.");
     }
 
     @Deactivate
     protected void deactivate(BundleContext bundleContext) {
         stop();
         this.bundleContext = null;
+        serverServiceRegistration.unregister();
         pluginProvider = null;
         restApiDeployer = null;
         deploymentNotifier = null;
-        serverServiceRegistration.unregister();
-        LOGGER.debug("UUF Server deactivated.");
+        appRegistry = null;
+        LOGGER.debug("UUFServer deactivated.");
     }
 
     @Override
     public void onAllRequiredCapabilitiesAvailable() {
-        deploymentNotifier = new WhiteboardDeploymentNotifier(bundleContext);
-        pluginProvider = new OsgiPluginProvider(bundleContext);
-        restApiDeployer = new OsgiRestApiDeployer(bundleContext);
-        appDeployer = createAppDeployer();
-        LOGGER.debug("ArtifactAppDeployer is ready.");
-
         serverServiceRegistration = bundleContext.registerService(Server.class, this, null);
         LOGGER.info("'{}' registered as a Server.", getClass().getName());
+
+        pluginProvider = new OsgiPluginProvider(bundleContext);
+        restApiDeployer = new OsgiRestApiDeployer(bundleContext);
+        appRegistry = createAppRegistry();
+        deploymentNotifier = new HttpConnectorDeploymentNotifier(bundleContext);
     }
 
-    private AppDeployer createAppDeployer() {
-        return (appRepositoryPath == null) ?
-                new ArtifactAppDeployer(renderableCreators, pluginProvider, restApiDeployer) :
-                new ArtifactAppDeployer(appRepositoryPath, renderableCreators, pluginProvider, restApiDeployer);
+    private AppRegistry createAppRegistry() {
+        AppCreator appCreator = new AppCreator(renderableCreators, classLoaderProvider, pluginProvider,
+                                               restApiDeployer);
+        return new AppRegistry(appFinder, appCreator);
     }
 
     /**
@@ -173,7 +168,7 @@ public class UUFServer implements Server, RequiredCapabilityListener {
 
         App app;
         try {
-            app = appDeployer.getApp(request.getContextPath());
+            app = appRegistry.getApp(request.getContextPath());
         } catch (UUFException e) {
             String msg = "A server error occurred while serving for request '" + request + "'.";
             LOGGER.error(msg, e);
@@ -195,35 +190,15 @@ public class UUFServer implements Server, RequiredCapabilityListener {
     }
 
     public void start() {
-        Map<String, String> deployedApps = appDeployer.deploy();
-        deploymentNotifier.notify(deployedApps);
+        List<Pair<String, String>> availableApps = appFinder.getAvailableApps();
+        deploymentNotifier.notify(availableApps);
     }
 
     public void stop() {
-        renderableCreators.clear();
-        appDeployer = null;
+        appRegistry.clear();
     }
 
     public static boolean isDevModeEnabled() {
         return DEV_MODE_ENABLED;
-    }
-
-    private static class WhiteboardDeploymentNotifier extends DeploymentNotifier {
-
-        private final ServiceTracker serviceTracker;
-
-        public WhiteboardDeploymentNotifier(BundleContext bundleContext) {
-            serviceTracker = new ServiceTracker<HttpConnector, HttpConnector>(bundleContext, HttpConnector.class, null);
-            serviceTracker.open();
-        }
-
-        @Override
-        protected Set<HttpConnector> getHttpConnectors() {
-            Set<HttpConnector> rv = new HashSet<>();
-            for (Object service : serviceTracker.getServices()) {
-                rv.add((HttpConnector) service);
-            }
-            return rv;
-        }
     }
 }

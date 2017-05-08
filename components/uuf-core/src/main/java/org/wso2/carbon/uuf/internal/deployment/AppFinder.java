@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2017, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  * WSO2 Inc. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
@@ -19,20 +19,29 @@
 package org.wso2.carbon.uuf.internal.deployment;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.wso2.carbon.uuf.api.reference.AppReference;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
- * A notifier that notify app deployment event to others.
+ * A locator that finds UUF apps from an app repository.
  *
  * @since 1.0.0
  */
-public interface DeploymentNotifier {
+public interface AppFinder {
 
     /**
-     * Notifies relevant components/services about the availability of the specified apps.
-     *
-     * @param appNamesContextPaths names and context paths of the available apps
+     * Returns names and context path of the available apps.
+     * @return names and context paths of the available apps
      */
-    void notify(List<Pair<String, String>> appNamesContextPaths);
+    List<Pair<String, String>> getAvailableApps();
+
+    /**
+     * Returns an app reference to the app which is specified by the given context path.
+     *
+     * @param appContextPath app's context path
+     * @return app reference for the given app
+     */
+    Optional<AppReference> getAppReference(String appContextPath);
 }
