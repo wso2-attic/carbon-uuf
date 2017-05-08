@@ -34,6 +34,7 @@ import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.carbon.uuf.spi.HttpResponse;
 import org.wso2.carbon.uuf.spi.Renderable;
+import org.wso2.carbon.uuf.spi.auth.SessionManager;
 import org.wso2.carbon.uuf.spi.model.Model;
 
 import java.util.Map;
@@ -91,7 +92,9 @@ public class AppTest {
     }
 
     private static Configuration createConfiguration() {
-        return new Configuration();
+        Configuration configuration = new Configuration();
+        configuration.setSessionManagerFactoryClassName("org.wso2.carbon.uuf.api.auth.InMemorySessionManagerFactory");
+        return configuration;
     }
 
     @Test
@@ -104,8 +107,10 @@ public class AppTest {
                                       emptySet(), null);
         Component rootComponent = new Component("root", null, Component.ROOT_COMPONENT_CONTEXT_PATH, emptySortedSet(),
                                                 emptySet(), emptySet(), singleton(cmp), null);
-        App app = new App(null, "/test", ImmutableSet.of(cmp, rootComponent), emptySet(), createConfiguration(), null,
-                          null);
+        Configuration configuration = createConfiguration();
+        SessionManager sessionManager = mock(SessionManager.class);
+        App app = new App(null, "/test", ImmutableSet.of(cmp, rootComponent), emptySet(), configuration, null,
+                          null, sessionManager);
         String html = app.renderPage(createRequest(app.getContextPath(), "/cmp/a/b"), null);
         Assert.assertEquals(html, page1Content);
 
@@ -126,8 +131,10 @@ public class AppTest {
         Component rootComponent = new Component("root", null, Component.ROOT_COMPONENT_CONTEXT_PATH,
                                                 ImmutableSortedSet.of(rootP1, rootP2), emptySet(), emptySet(),
                                                 singleton(cmp), null);
-        App app = new App(null, "/test", ImmutableSet.of(cmp, rootComponent), emptySet(), createConfiguration(), null,
-                          null);
+        Configuration configuration = createConfiguration();
+        SessionManager sessionManager = mock(SessionManager.class);
+        App app = new App(null, "/test", ImmutableSet.of(cmp, rootComponent), emptySet(), configuration, null,
+                          null, sessionManager);
 
         String html = app.renderPage(createRequest(app.getContextPath(), "/a/b"), null);
         Assert.assertEquals(html, page1Content);
@@ -146,8 +153,9 @@ public class AppTest {
                                       emptySet(), null);
         Component rootComponent = new Component("root", null, Component.ROOT_COMPONENT_CONTEXT_PATH, emptySortedSet(),
                                                 emptySet(), emptySet(), singleton(cmp), null);
-        App app = new App(null, "/test", ImmutableSet.of(cmp, rootComponent), emptySet(), createConfiguration(), null,
-                          null);
+        Configuration configuration = createConfiguration();
+        App app = new App(null, "/test", ImmutableSet.of(cmp, rootComponent), emptySet(), configuration, null,
+                          null, null);
 
         HttpRequest request = createRequest(app.getContextPath(), "/fragments/cmp.f1");
         when(request.getFormParams()).thenReturn(emptyMap());
@@ -168,8 +176,9 @@ public class AppTest {
                                       emptySet(), null);
         Component rootComponent = new Component("root", null, Component.ROOT_COMPONENT_CONTEXT_PATH, emptySortedSet(),
                                                 emptySet(), emptySet(), singleton(cmp), null);
-        App app = new App(null, "/test", ImmutableSet.of(cmp, rootComponent), emptySet(), createConfiguration(), null,
-                          null);
+        Configuration configuration = createConfiguration();
+        App app = new App(null, "/test", ImmutableSet.of(cmp, rootComponent), emptySet(), configuration, null,
+                          null, null);
 
         HttpRequest request = createRequest(app.getContextPath(), "/fragments/cmp.f1");
         when(request.getFormParams()).thenReturn(emptyMap());
@@ -189,8 +198,9 @@ public class AppTest {
                                       emptySet(), null);
         Component rootComponent = new Component("root", null, Component.ROOT_COMPONENT_CONTEXT_PATH, emptySortedSet(),
                                                 emptySet(), emptySet(), singleton(cmp), null);
-        App app = new App(null, "/test", ImmutableSet.of(cmp, rootComponent), emptySet(), createConfiguration(), null,
-                          null);
+        Configuration configuration = createConfiguration();
+        App app = new App(null, "/test", ImmutableSet.of(cmp, rootComponent), emptySet(), configuration, null,
+                          null, null);
         Map<String, Object> formParams = ImmutableMap.of("key1", "value1", "key2", ImmutableList.of("v2-1", "v2-2"));
 
         HttpRequest request = createRequest(app.getContextPath(), "/fragments/cmp.f1");
@@ -208,8 +218,10 @@ public class AppTest {
         Component rootComponent = new Component("root", null, Component.ROOT_COMPONENT_CONTEXT_PATH,
                                                 ImmutableSortedSet.of(rootPage), emptySet(), emptySet(),
                                                 singleton(cmp), null);
-        App app = new App(null, "/test", ImmutableSet.of(cmp, rootComponent), emptySet(), createConfiguration(), null,
-                          null);
+        Configuration configuration = createConfiguration();
+        SessionManager sessionManager = mock(SessionManager.class);
+        App app = new App(null, "/test", ImmutableSet.of(cmp, rootComponent), emptySet(), configuration, null,
+                          null, sessionManager);
         PageRedirectException pre;
 
         pre = Assert.expectThrows(PageRedirectException.class,
@@ -247,7 +259,9 @@ public class AppTest {
         configuration.setErrorPageUris(ImmutableMap.of(404, "/cmp/error/404", 500, "/cmp/error/500"));
         configuration.setDefaultErrorPageUri("/cmp/error/default");
         // Creating app.
-        App app = new App(null, "/test", ImmutableSet.of(cmp, rootComponent), emptySet(), configuration, null, null);
+        SessionManager sessionManager = mock(SessionManager.class);
+        App app = new App(null, "/test", ImmutableSet.of(cmp, rootComponent), emptySet(), configuration,
+                null, null, sessionManager);
         String html;
         Map<String, Object> params;
 
@@ -277,7 +291,9 @@ public class AppTest {
         String loginPageUri = "/some/login/page";
         configuration.setLoginPageUri(loginPageUri);
         // Creating app.
-        App app = new App(null, "/test", singleton(rootComponent), emptySet(), configuration, null, null);
+        SessionManager sessionManager = mock(SessionManager.class);
+        App app = new App(null, "/test", singleton(rootComponent), emptySet(), configuration,
+                null, null, sessionManager);
 
         PageRedirectException pre = Assert.expectThrows(PageRedirectException.class, () ->
                 app.renderPage(createRequest(app.getContextPath(), "/a"), null));

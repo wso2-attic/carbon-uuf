@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.emptySet;
@@ -40,9 +41,16 @@ import static java.util.Collections.unmodifiableSet;
  * @since 1.0.0
  */
 public class Configuration {
+
+    private static final Pattern FULLY_QUALIFIED_CLASS_NAME_PATTERN =
+            Pattern.compile("\\p{javaJavaIdentifierStart}\\p{javaJavaIdentifierPart}*" +
+                    "(\\.\\p{javaJavaIdentifierStart}\\p{javaJavaIdentifierPart}*)*");
+
     private String contextPath;
     private String themeName;
     private String loginPageUri;
+    private String sessionManagerFactoryClassName;
+    private long sessionTimeout;
     private Map<Integer, String> errorPageUris;
     private String defaultErrorPageUri;
     private ListMultimap<String, MenuItem> menus;
@@ -131,6 +139,54 @@ public class Configuration {
             }
         }
         this.loginPageUri = loginPageUri;
+    }
+
+    /**
+     * Returns the session manager factory class name for the app.
+     *
+     * @return session manager factory class name
+     */
+    public Optional<String> getSessionManagerFactoryClassName() {
+        return Optional.ofNullable(sessionManagerFactoryClassName);
+    }
+
+    /**
+     * Sets the session manager factory class name for the app.
+     *
+     * @param sessionManagerFactoryClassName session manager factory class name
+     */
+    public void setSessionManagerFactoryClassName(String sessionManagerFactoryClassName) {
+        if (sessionManagerFactoryClassName != null) {
+            if (sessionManagerFactoryClassName.isEmpty()) {
+                throw new IllegalArgumentException("Session Manager Factory cannot be empty.");
+            }
+            if (!FULLY_QUALIFIED_CLASS_NAME_PATTERN.matcher(sessionManagerFactoryClassName).matches()) {
+                throw new IllegalArgumentException("Session Manager Factory class name is invalid and do not " +
+                        "comprehend to be a fully qualified java class name.");
+            }
+        }
+        this.sessionManagerFactoryClassName = sessionManagerFactoryClassName;
+    }
+
+    /**
+     * Returns the session timeout in seconds for the app.
+     *
+     * @return session timeout in seconds
+     */
+    public long getSessionTimeout() {
+        return sessionTimeout;
+    }
+
+    /**
+     * Sets the session timeout in seconds for the app.
+     *
+     * @param sessionTimeout session timeout in seconds
+     */
+    public void setSessionTimeout(long sessionTimeout) {
+        if (sessionTimeout < 0) {
+            throw new IllegalArgumentException("Session timeout should not be a negative value.");
+        }
+        this.sessionTimeout = sessionTimeout;
     }
 
     /**

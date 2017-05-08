@@ -23,6 +23,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.api.RestApi;
+import org.wso2.carbon.uuf.api.auth.InMemorySessionManagerFactory;
 import org.wso2.carbon.uuf.api.config.Bindings;
 import org.wso2.carbon.uuf.api.config.Configuration;
 import org.wso2.carbon.uuf.api.config.I18nResources;
@@ -50,6 +51,8 @@ import org.wso2.carbon.uuf.internal.exception.AppCreationException;
 import org.wso2.carbon.uuf.internal.exception.ConfigurationException;
 import org.wso2.carbon.uuf.internal.util.NameUtils;
 import org.wso2.carbon.uuf.spi.RenderableCreator;
+import org.wso2.carbon.uuf.spi.auth.SessionManager;
+import org.wso2.carbon.uuf.spi.auth.SessionManagerFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -119,9 +122,18 @@ public class AppCreator {
         // Create Themes.
         final Set<Theme> themes = appReference.getThemeReferences().map(this::createTheme).collect(toSet());
 
+        // Get session manager
+        SessionManagerFactory sessionManagerFactory = configuration.getSessionManagerFactoryClassName()
+                .map(sessionManagerFactoryClass -> pluginProvider
+                        .getPluginInstance(SessionManagerFactory.class, sessionManagerFactoryClass,
+                                this.getClass().getClassLoader()))
+                .orElse(pluginProvider.getPluginInstance(SessionManagerFactory.class,
+                        InMemorySessionManagerFactory.class.getName(), this.getClass().getClassLoader()));
+        SessionManager sessionManager = sessionManagerFactory.getSessionManager(appName, configuration);
+
         // Create App.
         return new App(appName, appContextPath, new HashSet<>(createdComponents.values()), themes, configuration,
-                       bindings, i18nResources);
+                       bindings, i18nResources, sessionManager);
     }
 
     private Configuration createConfiguration(AppReference appReference) {
@@ -130,6 +142,8 @@ public class AppCreator {
         configuration.setContextPath(appConfig.getContextPath());
         configuration.setThemeName(appConfig.getTheme());
         configuration.setLoginPageUri(appConfig.getLoginPageUri());
+        configuration.setSessionManagerFactoryClassName(appConfig.getSessionManagement().getFactoryClassName());
+        configuration.setSessionTimeout(appConfig.getSessionManagement().getTimeout());
         Map<Integer, String> errorPageUris = appConfig.getErrorPages().entrySet().stream()
                 .filter(entry -> NumberUtils.isNumber(entry.getKey()))
                 .collect(toMap(entry -> Integer.valueOf(entry.getKey()), Map.Entry::getValue));

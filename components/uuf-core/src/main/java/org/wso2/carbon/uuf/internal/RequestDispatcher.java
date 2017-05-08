@@ -29,6 +29,7 @@ import org.wso2.carbon.uuf.exception.PageRedirectException;
 import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.internal.debug.DebugLogger;
 import org.wso2.carbon.uuf.internal.debug.Debugger;
+import org.wso2.carbon.uuf.internal.deployment.PluginProvider;
 import org.wso2.carbon.uuf.internal.filter.CsrfFilter;
 import org.wso2.carbon.uuf.internal.filter.Filter;
 import org.wso2.carbon.uuf.internal.filter.FilterResult;

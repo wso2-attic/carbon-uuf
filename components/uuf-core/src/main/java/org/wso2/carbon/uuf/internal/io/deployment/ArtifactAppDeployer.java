@@ -61,8 +61,8 @@ public class ArtifactAppDeployer implements AppDeployer {
 
     public ArtifactAppDeployer(Set<RenderableCreator> renderableCreators, PluginProvider pluginProvider,
                                RestApiDeployer restApiDeployer) {
-        this(Paths.get(System.getProperty("carbon.home", "."), "deployment", "uufapps").toString(), renderableCreators,
-             pluginProvider, restApiDeployer);
+        this(Paths.get(System.getProperty("carbon.home", "."), "deployment", "uufapps").toString(),
+                renderableCreators, pluginProvider, restApiDeployer);
     }
 
     public ArtifactAppDeployer(String appsRepositoryPath, Set<RenderableCreator> renderableCreators,

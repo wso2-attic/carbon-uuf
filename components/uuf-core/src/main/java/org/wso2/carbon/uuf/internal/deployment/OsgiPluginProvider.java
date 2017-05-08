@@ -72,6 +72,16 @@ public class OsgiPluginProvider implements PluginProvider {
         return (plugin != null) ? plugin : loadNonOsgiPlugin(type, className, classLoader);
     }
 
+    /**
+     * Creates an instance of the specified class type in OSGi mode.
+     * This method will throw {@link PluginLoadingException} when the relevant bundle is not found or on any other
+     * exception
+     *
+     * @param type      type of the instance to be created
+     * @param className name of the class
+     * @param <T>       type of the instance to be created
+     * @return instance of the specified class type
+     */
     private <T> T loadOsgiPlugin(Class<T> type, String className) {
         if (bundleContext == null) {
             return null;
@@ -89,6 +99,15 @@ public class OsgiPluginProvider implements PluginProvider {
         return null;
     }
 
+    /**
+     * Creates an instance of the specified class type in OSGi mode.
+     *
+     * @param type        type of the instance to be created
+     * @param className   name of the class
+     * @param classLoader class loader to be used to load the plugin class
+     * @param <T>         type of the instance to be created
+     * @return instance of the specified class type
+     */
     private <T> T loadNonOsgiPlugin(Class<T> type, String className, ClassLoader classLoader) {
         Object pluginInstance;
         try {

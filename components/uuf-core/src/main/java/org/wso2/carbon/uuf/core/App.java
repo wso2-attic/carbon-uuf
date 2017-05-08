@@ -31,11 +31,11 @@ import org.wso2.carbon.uuf.exception.PageNotFoundException;
 import org.wso2.carbon.uuf.exception.PageRedirectException;
 import org.wso2.carbon.uuf.exception.SessionNotFoundException;
 import org.wso2.carbon.uuf.exception.UUFException;
-import org.wso2.carbon.uuf.internal.auth.SessionRegistry;
 import org.wso2.carbon.uuf.internal.util.NameUtils;
 import org.wso2.carbon.uuf.internal.util.UriUtils;
 import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.carbon.uuf.spi.HttpResponse;
+import org.wso2.carbon.uuf.spi.auth.SessionManager;
 import org.wso2.carbon.uuf.spi.model.Model;
 
 import java.util.HashMap;
@@ -54,16 +54,12 @@ public class App {
     private final Component rootComponent;
     private final Map<String, Theme> themes;
     private final Theme defaultTheme;
+    private final SessionManager sessionManager;
     private final Configuration configuration;
-    private final SessionRegistry sessionRegistry;
 
     public App(String name, String contextPath, Set<Component> components, Set<Theme> themes,
-               Configuration configuration, Bindings bindings, I18nResources i18nResources) {
-        this(name, contextPath, components, themes, configuration, bindings, i18nResources, new SessionRegistry(name));
-    }
-
-    App(String name, String contextPath, Set<Component> components, Set<Theme> themes, Configuration configuration,
-        Bindings bindings, I18nResources i18nResources, SessionRegistry sessionRegistry) {
+               Configuration configuration, Bindings bindings, I18nResources i18nResources,
+               SessionManager sessionManager) {
         this.name = name;
         this.contextPath = contextPath;
 
@@ -84,7 +80,7 @@ public class App {
 
         this.lookup = new Lookup(components, configuration, bindings, i18nResources);
         this.configuration = configuration;
-        this.sessionRegistry = sessionRegistry;
+        this.sessionManager = sessionManager;
     }
 
     public String getName() {
@@ -122,7 +118,7 @@ public class App {
      */
     public String renderPage(HttpRequest request, HttpResponse response) {
         RequestLookup requestLookup = createRequestLookup(request, response);
-        API api = new API(sessionRegistry, requestLookup);
+        API api = new API(sessionManager, requestLookup);
         Theme theme = getRenderingTheme(api);
         try {
             return renderPageUri(request.getUriWithoutContextPath(), null, requestLookup, api, theme);
@@ -218,7 +214,7 @@ public class App {
 
         Model model = new MapModel(request.getFormParams());
         RequestLookup requestLookup = createRequestLookup(request, response);
-        API api = new API(sessionRegistry, requestLookup);
+        API api = new API(sessionManager, requestLookup);
 
         JsonObject output = new JsonObject();
         output.addProperty("html", fragment.render(model, lookup, requestLookup, api));

@@ -23,7 +23,8 @@ import org.wso2.carbon.uuf.spi.auth.User;
 public class CaasUser implements User {
 
     private final String username;
-    private final CarbonPrincipal principal;
+    // TODO: 26/04/2017 This field should be serializable and should be changed in CAAS
+    private final transient CarbonPrincipal principal;
 
     public CaasUser(String username, CarbonPrincipal principal) {
         this.username = username;

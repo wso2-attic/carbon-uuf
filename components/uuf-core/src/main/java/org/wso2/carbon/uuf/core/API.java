@@ -18,13 +18,12 @@
 
 package org.wso2.carbon.uuf.core;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.wso2.carbon.uuf.api.auth.Session;
 import org.wso2.carbon.uuf.exception.HttpErrorException;
 import org.wso2.carbon.uuf.exception.PageRedirectException;
 import org.wso2.carbon.uuf.exception.UUFException;
-import org.wso2.carbon.uuf.internal.auth.SessionRegistry;
+import org.wso2.carbon.uuf.spi.auth.SessionManager;
 import org.wso2.carbon.uuf.spi.auth.User;
 
 import java.lang.reflect.InvocationTargetException;
@@ -41,14 +40,13 @@ import javax.naming.NamingException;
 @SuppressWarnings("PackageAccessibility")
 public class API {
 
-    private final SessionRegistry sessionRegistry;
+    private final SessionManager sessionManager;
     private final RequestLookup requestLookup;
-    private Optional<Session> currentSession;
+    private Session currentSession;
 
-    API(SessionRegistry sessionRegistry, RequestLookup requestLookup) {
-        this.sessionRegistry = sessionRegistry;
+    API(SessionManager sessionManager, RequestLookup requestLookup) {
+        this.sessionManager = sessionManager;
         this.requestLookup = requestLookup;
-        this.currentSession = Optional.<Session>empty();
     }
 
     /**
@@ -174,45 +172,39 @@ public class API {
         if (user == null) {
             throw new IllegalArgumentException("User of a session cannot be null.");
         }
-
         destroySession();
-        Session session = new Session(user);
-        sessionRegistry.addSession(session);
-        requestLookup.getResponse().addCookie(SessionRegistry.SESSION_COOKIE_NAME, session.getSessionId() + "; Path=" +
-                requestLookup.getContextPath() + "; Secure; HTTPOnly");
-        requestLookup.getResponse().addCookie(SessionRegistry.CSRF_TOKEN, session.getCsrfToken() + "; Path=" +
-                requestLookup.getContextPath() + "; Secure");
-        return session;
+        return sessionManager.createSession(user, requestLookup.getRequest(), requestLookup.getResponse());
     }
 
+    /**
+     * Returns the current session of the request.
+     *
+     * @return current session of the request
+     */
     public Optional<Session> getSession() {
-        if (!currentSession.isPresent()) {
-            // Since an API object lives in the request scope, it is safe to cache the current Session object.
-            String sessionId = requestLookup.getRequest().getCookieValue(SessionRegistry.SESSION_COOKIE_NAME);
-            if (!StringUtils.isEmpty(sessionId)) {
-                currentSession = sessionRegistry.getSession(sessionId);
-            }
+        if (currentSession != null) {
+            return Optional.of(currentSession);
         }
-        return currentSession;
+        // Since an API object lives in the request scope, it is safe to cache the current Session object.
+        currentSession = sessionManager.getSession(requestLookup.getRequest(), requestLookup.getResponse())
+                .orElse(null);
+        return Optional.ofNullable(currentSession);
     }
 
+    /**
+     * Destroys the current session of the request.
+     *
+     * @return {@code true} if the session is successfully destroyed, {@code false} otherwise
+     */
     public boolean destroySession() {
         Optional<Session> session = getSession();
         if (!session.isPresent()) {
             // No session found in the current request.
             return false;
         }
-
         // Remove cached session.
-        currentSession = Optional.empty();
-        // Remove session from the SessionRegistry.
-        sessionRegistry.removeSession(session.get().getSessionId());
-        // Clear the session cookie by setting its value to an empty string, Max-Age to zero, & Expires to a past date.
-        String expiredCookie = "Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:01 GMT; Path=" +
-                requestLookup.getContextPath() + "; Secure; HTTPOnly";
-        requestLookup.getResponse().addCookie(SessionRegistry.SESSION_COOKIE_NAME, expiredCookie);
-        requestLookup.getResponse().addCookie(SessionRegistry.CSRF_TOKEN, expiredCookie);
-        return true;
+        currentSession = null;
+        return sessionManager.destroySession(requestLookup.getRequest(), requestLookup.getResponse());
     }
 
     private static String joinClassNames(Object[] args) {

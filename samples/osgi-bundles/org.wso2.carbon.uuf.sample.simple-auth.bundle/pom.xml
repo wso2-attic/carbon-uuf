@@ -61,8 +61,9 @@
                             org.wso2.carbon.kernel.utils; version="${carbon.kernel.version.range}",
                             org.wso2.carbon.kernel.context; version="${carbon.kernel.version.range}",
                             org.wso2.carbon.messaging; version="${carbon.messaging.version.range}",
-                            org.wso2.carbon.uuf.api.auth.*; version="${carbon.uuf.version}",
-                            org.wso2.carbon.uuf.spi.auth.*; version="${carbon.uuf.version}",
+                            org.wso2.carbon.uuf.api.*; version="${carbon.uuf.version}",
+                            org.wso2.carbon.uuf.exception.*; version="${carbon.uuf.version}",
+                            org.wso2.carbon.uuf.spi.*; version="${carbon.uuf.version}"
                         </Import-Package>
                         <Export-Package>
                             org.wso2.carbon.uuf.sample.simpleauth.bundle.*;version="${project.version}"

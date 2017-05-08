@@ -65,6 +65,28 @@ public class ConfigurationTest {
     }
 
     @Test
+    public void testSessionManagerValidations() {
+        Configuration configuration = createConfiguration();
+
+        // Session manager factory class validations
+        Assert.assertThrows(IllegalArgumentException.class, () ->
+                configuration.setSessionManagerFactoryClassName(""));
+        Assert.assertThrows(IllegalArgumentException.class, () ->
+                configuration.setSessionManagerFactoryClassName("c/lass"));
+        Assert.assertThrows(IllegalArgumentException.class, () ->
+                configuration.setSessionManagerFactoryClassName("c*lass"));
+        configuration.setSessionManagerFactoryClassName(null);
+        configuration.setSessionManagerFactoryClassName("PersistentSessionManager");
+        configuration.setSessionManagerFactoryClassName("org.wso2.carbon.uuf.sample.simpleauth.bundle.api.auth." +
+                "PersistentSessionManagerFactory");
+
+        // Session timeout validations
+        Assert.assertEquals(0L, configuration.getSessionTimeout());
+        Assert.assertThrows(IllegalArgumentException.class, () -> configuration.setSessionTimeout(-1));
+        configuration.setSessionTimeout(0);
+    }
+
+    @Test
     public void testErrorPageUrisValidation() {
         Configuration configuration = createConfiguration();
         Assert.assertThrows(IllegalArgumentException.class,
