@@ -18,36 +18,21 @@
 
 package org.wso2.carbon.uuf.internal.deployment;
 
-import org.wso2.carbon.uuf.spi.HttpConnector;
+import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.Map;
-import java.util.Set;
+import java.util.List;
 
 /**
  * A notifier that notify app deployment event to others.
  *
  * @since 1.0.0
  */
-public abstract class DeploymentNotifier {
+public interface DeploymentNotifier {
 
     /**
-     * Returns the HTTP connectors that need to notified.
+     * Notifies relevant components/services about the availability of the specified apps.
      *
-     * @return HTTP connectors
+     * @param appNamesContextPaths names and context paths of the available apps
      */
-    protected abstract Set<HttpConnector> getHttpConnectors();
-
-    /**
-     * Notifies all the HTTP connectors that the specified apps are available now.
-     *
-     * @param deployedApps context paths of deployed apps, key = app name and value = context path
-     * @see #getHttpConnectors()
-     */
-    public void notify(Map<String, String> deployedApps) {
-        for (HttpConnector httpConnector : getHttpConnectors()) {
-            for (Map.Entry<String, String> appNameContextPath : deployedApps.entrySet()) {
-                httpConnector.registerApp(appNameContextPath.getKey(), appNameContextPath.getValue());
-            }
-        }
-    }
+    void notify(List<Pair<String, String>> appNamesContextPaths);
 }
