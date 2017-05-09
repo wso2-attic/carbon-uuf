@@ -90,7 +90,7 @@ public class UUFServer implements Server, RequiredCapabilityListener {
                     "A RenderableCreator for '" + renderableCreator.getSupportedFileExtensions() +
                             "' extensions is already registered");
         }
-        LOGGER.info("RenderableCreator '{}' registered for {} extensions.",
+        LOGGER.debug("RenderableCreator '{}' registered for {} extensions.",
                     renderableCreator.getClass().getName(), renderableCreator.getSupportedFileExtensions());
     }
 
@@ -101,7 +101,7 @@ public class UUFServer implements Server, RequiredCapabilityListener {
      */
     protected void unsetRenderableCreator(RenderableCreator renderableCreator) {
         renderableCreators.remove(renderableCreator);
-        LOGGER.info("RenderableCreator '{}' unregistered for {} extensions.",
+        LOGGER.debug("RenderableCreator '{}' unregistered for {} extensions.",
                     renderableCreator.getClass().getName(), renderableCreator.getSupportedFileExtensions());
         if (appRegistry != null) {
             // Remove apps that might have used the removed renderable creator to create.
@@ -131,7 +131,7 @@ public class UUFServer implements Server, RequiredCapabilityListener {
     @Override
     public void onAllRequiredCapabilitiesAvailable() {
         serverServiceRegistration = bundleContext.registerService(Server.class, this, null);
-        LOGGER.info("'{}' registered as a Server.", getClass().getName());
+        LOGGER.debug("'{}' registered as a Server.", getClass().getName());
 
         pluginProvider = new OsgiPluginProvider(bundleContext);
         restApiDeployer = new OsgiRestApiDeployer(bundleContext);
