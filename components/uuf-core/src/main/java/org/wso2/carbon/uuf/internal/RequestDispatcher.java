@@ -29,7 +29,8 @@ import org.wso2.carbon.uuf.exception.PageRedirectException;
 import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.internal.debug.DebugLogger;
 import org.wso2.carbon.uuf.internal.debug.Debugger;
-import org.wso2.carbon.uuf.internal.deployment.PluginProvider;
+import org.wso2.carbon.uuf.internal.deployment.AppRegistry;
+import org.wso2.carbon.uuf.internal.exception.DeploymentException;
 import org.wso2.carbon.uuf.internal.filter.CsrfFilter;
 import org.wso2.carbon.uuf.internal.filter.Filter;
 import org.wso2.carbon.uuf.internal.filter.FilterResult;
@@ -47,8 +48,10 @@ import static org.wso2.carbon.uuf.spi.HttpResponse.HEADER_LOCATION;
 import static org.wso2.carbon.uuf.spi.HttpResponse.HEADER_PRAGMA;
 import static org.wso2.carbon.uuf.spi.HttpResponse.HEADER_X_CONTENT_TYPE_OPTIONS;
 import static org.wso2.carbon.uuf.spi.HttpResponse.HEADER_X_XSS_PROTECTION;
+import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_BAD_REQUEST;
 import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_FOUND;
 import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_INTERNAL_SERVER_ERROR;
+import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_NOT_FOUND;
 import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_OK;
 
 public class RequestDispatcher {
@@ -69,7 +72,35 @@ public class RequestDispatcher {
         this.filters = ImmutableList.of(new CsrfFilter());
     }
 
-    public void serve(App app, HttpRequest request, HttpResponse response) {
+    public void serve(HttpRequest request, HttpResponse response, AppRegistry appRegistry) {
+        if (!request.isValid()) {
+            serveDefaultErrorPage(STATUS_BAD_REQUEST, "Invalid URI '" + request.getUri() + "'.", response);
+            return;
+        }
+        if (request.isDefaultFaviconRequest()) {
+            serveDefaultFavicon(request, response);
+            return;
+        }
+
+        App app;
+        try {
+            app = appRegistry.getApp(request.getContextPath());
+        } catch (DeploymentException e) {
+            String msg = "Cannot deploy an app for context path '" + request.getContextPath() + "'.";
+            LOGGER.error(msg, e);
+            serveDefaultErrorPage(STATUS_INTERNAL_SERVER_ERROR, msg, response);
+            return;
+        }
+        if (app == null) {
+            serveDefaultErrorPage(STATUS_NOT_FOUND,
+                                  "Cannot find an app for context path '" + request.getContextPath() + "'.", response);
+            return;
+        }
+
+        serve(app, request, response);
+    }
+
+    private void serve(App app, HttpRequest request, HttpResponse response) {
         try {
             if (request.isStaticResourceRequest()) {
                 staticResolver.serve(app, request, response);
@@ -133,11 +164,11 @@ public class RequestDispatcher {
         }
     }
 
-    public void serveDefaultErrorPage(int httpStatusCode, String content, HttpResponse response) {
+    private void serveDefaultErrorPage(int httpStatusCode, String content, HttpResponse response) {
         response.setContent(httpStatusCode, content);
     }
 
-    public void serveDefaultFavicon(HttpRequest request, HttpResponse response) {
+    private void serveDefaultFavicon(HttpRequest request, HttpResponse response) {
         staticResolver.serveDefaultFavicon(request, response);
     }
 
