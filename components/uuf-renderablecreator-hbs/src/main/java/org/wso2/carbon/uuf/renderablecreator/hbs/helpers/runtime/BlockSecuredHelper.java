@@ -14,24 +14,27 @@
  *  limitations under the License.
  */
 
-package org.wso2.carbon.uuf.renderablecreator.hbs.helpers.init;
+package org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime;
 
 import com.github.jknack.handlebars.Helper;
 import com.github.jknack.handlebars.Options;
-import org.wso2.carbon.uuf.renderablecreator.hbs.internal.HbsPreprocessor;
+import org.wso2.carbon.uuf.api.auth.Permission;
+import org.wso2.carbon.uuf.core.API;
+import org.wso2.carbon.uuf.renderablecreator.hbs.core.HbsRenderable;
+import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.init.InlineSecuredHelper;
 
 import java.io.IOException;
 
-public class SecuredHelper implements Helper<Object> {
-
-    public static final String HELPER_NAME = "secured";
+public class BlockSecuredHelper extends InlineSecuredHelper implements Helper<Object> {
 
     @Override
     public CharSequence apply(Object context, Options options) throws IOException {
         if (options.tagType.inline()) {
-            // Is a {{secured}} inline helper, not the block version.
-            options.data(HbsPreprocessor.DATA_KEY_IS_SECURED, Boolean.TRUE);
+            return "";
         }
-        return "";
+
+        API api = options.data(HbsRenderable.DATA_KEY_API);
+        Permission permission = getPermission(context, options);
+        return api.hasPermission(permission) ? options.fn() : options.inverse();
     }
 }

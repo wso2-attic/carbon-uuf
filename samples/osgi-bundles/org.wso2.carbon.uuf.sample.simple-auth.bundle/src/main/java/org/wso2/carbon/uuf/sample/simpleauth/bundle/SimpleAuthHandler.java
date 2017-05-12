@@ -23,15 +23,13 @@ import org.wso2.carbon.kernel.context.PrivilegedCarbonContext;
 import org.wso2.carbon.kernel.utils.Utils;
 import org.wso2.carbon.messaging.CarbonMessage;
 import org.wso2.carbon.messaging.DefaultCarbonMessage;
-
-import org.wso2.carbon.security.caas.api.CarbonPrincipal;
 import org.wso2.carbon.security.caas.api.ProxyCallbackHandler;
+import org.wso2.carbon.uuf.api.auth.User;
 
-import org.wso2.carbon.security.caas.api.handler.UsernamePasswordCallbackHandler;
-import org.wso2.carbon.uuf.api.auth.Session;
+import java.util.Base64;
+import java.util.Collections;
 import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
-import java.util.Base64;
 
 @Component(
         name = "org.wso2.carbon.uuf.sample.simpleauth.bundle.SimpleAuthHandler",
@@ -56,7 +54,7 @@ public class SimpleAuthHandler {
      * @param password password
      * @throws LoginException
      */
-    public static CaasUser authenticate(String userName, String password) throws LoginException {
+    public static User authenticate(String userName, String password) throws LoginException {
         PrivilegedCarbonContext.destroyCurrentContext();
 
         CarbonMessage carbonMessage = new DefaultCarbonMessage();
@@ -67,10 +65,6 @@ public class SimpleAuthHandler {
         ProxyCallbackHandler callbackHandler = new ProxyCallbackHandler(carbonMessage);
         LoginContext loginContext = new LoginContext("CarbonSecurityConfig", callbackHandler);
         loginContext.login();
-        CarbonPrincipal principal = (CarbonPrincipal)PrivilegedCarbonContext.getCurrentContext().getUserPrincipal();
-
-        CaasUser caas = new CaasUser(userName, principal);
-        new Session(caas);
-        return caas;
+        return new User(userName, Collections.emptyMap());
     }
 }

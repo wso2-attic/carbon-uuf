@@ -65,6 +65,20 @@ public class ConfigurationTest {
     }
 
     @Test
+    public void testAuthorizerValidations() {
+        Configuration configuration = createConfiguration();
+
+        Assert.assertThrows(IllegalArgumentException.class, () -> configuration.setAuthorizer(""));
+        Assert.assertThrows(IllegalArgumentException.class, () -> configuration.setAuthorizer("c/lass"));
+        Assert.assertThrows(IllegalArgumentException.class, () -> configuration.setAuthorizer("c*lass"));
+
+        configuration.setAuthorizer(null);
+        configuration.setAuthorizer("CaasAuthorizer");
+        configuration.setAuthorizer("org.wso2.carbon.uuf.sample.simpleauth.bundle.api.auth." +
+                "CaasAuthorizer");
+    }
+
+    @Test
     public void testSessionManagerValidations() {
         Configuration configuration = createConfiguration();
 

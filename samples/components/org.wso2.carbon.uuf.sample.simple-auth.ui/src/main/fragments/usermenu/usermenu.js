@@ -19,5 +19,5 @@ function onGet(env) {
     if (!session) {
         return {enableLogin: true, enableLogout: false};
     }
-    return {enableLogin: false, enableLogout: true, username: session.getUser().getUsername()};
+    return {enableLogin: false, enableLogout: true, username: session.getUser().getId()};
 }

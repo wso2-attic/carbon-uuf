@@ -18,6 +18,7 @@
 
 package org.wso2.carbon.uuf.spi;
 
+import org.wso2.carbon.uuf.api.auth.Permission;
 import org.wso2.carbon.uuf.api.reference.FragmentReference;
 import org.wso2.carbon.uuf.api.reference.LayoutReference;
 import org.wso2.carbon.uuf.api.reference.PageReference;
@@ -42,35 +43,52 @@ public interface RenderableCreator {
     class FragmentRenderableData {
 
         private final Renderable renderable;
-        private final boolean isSecured;
+        private final Permission permission;
 
-        public FragmentRenderableData(Renderable renderable, boolean isSecured) {
+        /**
+         * Constructs a fragment renderable data bean.
+         *
+         * @param renderable renderable
+         * @param permission permission for the renderable
+         */
+        public FragmentRenderableData(Renderable renderable, Permission permission) {
             this.renderable = renderable;
-            this.isSecured = isSecured;
+            this.permission = permission;
         }
 
         public Renderable getRenderable() {
             return renderable;
         }
 
-        public boolean isSecured() {
-            return isSecured;
+        /**
+         * Returns the permission for the fragment renderable.
+         *
+         * @return permission for the fragment renderable
+         */
+        public Permission getPermission() {
+            return permission;
         }
     }
 
     class PageRenderableData {
 
         private final Renderable renderable;
-        private final boolean isSecured;
+        private final Permission permission;
         private final String layoutName;
 
-        public PageRenderableData(Renderable renderable, boolean isSecured) {
-            this(renderable, isSecured, null);
+        /**
+         * Constructs a page renderable data bean.
+         *
+         * @param renderable renderable
+         * @param permission permission for the renderable
+         */
+        public PageRenderableData(Renderable renderable, Permission permission) {
+            this(renderable, permission, null);
         }
 
-        public PageRenderableData(Renderable renderable, boolean isSecured, String layoutName) {
+        public PageRenderableData(Renderable renderable, Permission permission, String layoutName) {
             this.renderable = renderable;
-            this.isSecured = isSecured;
+            this.permission = permission;
             this.layoutName = layoutName;
         }
 
@@ -78,8 +96,13 @@ public interface RenderableCreator {
             return renderable;
         }
 
-        public boolean isSecured() {
-            return isSecured;
+        /**
+         * Returns the permission for the page renderable.
+         *
+         * @return permission for the page renderable
+         */
+        public Permission getPermission() {
+            return permission;
         }
 
         public Optional<String> getLayoutName() {

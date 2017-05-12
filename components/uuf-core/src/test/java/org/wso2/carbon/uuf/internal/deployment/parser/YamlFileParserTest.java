@@ -84,7 +84,8 @@ public class YamlFileParserTest {
                                                        "theme: org.wso2.carbon.uuf.sample.default.theme\n" +
                                                        "sessionManagement:\n" +
                                                        "  factoryClassName: org.wso2.carbon.uuf.auth.SMFactory\n" +
-                                                       "  timeout: 600");
+                                                       "  timeout: 600\n" +
+                                                       "authorizer: org.wso2.carbon.uuf.auth.CaasAuthorizer");
 
         AppConfig appConfig = YamlFileParser.parse(yamlFile, AppConfig.class);
         Assert.assertEquals(appConfig.getContextPath(), null);
@@ -100,6 +101,7 @@ public class YamlFileParserTest {
         Assert.assertNotEquals(appConfig.getSessionManagement(), null);
         Assert.assertEquals(appConfig.getSessionManagement().getFactoryClassName(), "org.wso2.carbon.uuf.auth.SMFactory");
         Assert.assertEquals(appConfig.getSessionManagement().getTimeout(), 600);
+        Assert.assertEquals(appConfig.getAuthorizer(), "org.wso2.carbon.uuf.auth.CaasAuthorizer");
     }
 
     @Test

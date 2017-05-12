@@ -19,7 +19,6 @@
 package org.wso2.carbon.uuf.api.auth;
 
 import org.wso2.carbon.uuf.core.Theme;
-import org.wso2.carbon.uuf.spi.auth.User;
 
 import java.io.Serializable;
 import java.security.SecureRandom;

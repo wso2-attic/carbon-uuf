@@ -26,7 +26,7 @@ import org.wso2.carbon.uuf.api.config.Configuration;
 import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.carbon.uuf.spi.HttpResponse;
 import org.wso2.carbon.uuf.spi.auth.SessionManager;
-import org.wso2.carbon.uuf.spi.auth.User;
+import org.wso2.carbon.uuf.api.auth.User;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;

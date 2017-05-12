@@ -51,6 +51,7 @@ import org.wso2.carbon.uuf.internal.exception.AppCreationException;
 import org.wso2.carbon.uuf.internal.exception.ConfigurationException;
 import org.wso2.carbon.uuf.internal.util.NameUtils;
 import org.wso2.carbon.uuf.spi.RenderableCreator;
+import org.wso2.carbon.uuf.spi.auth.Authorizer;
 import org.wso2.carbon.uuf.spi.auth.SessionManager;
 import org.wso2.carbon.uuf.spi.auth.SessionManagerFactory;
 
@@ -122,7 +123,7 @@ public class AppCreator {
         // Create Themes.
         final Set<Theme> themes = appReference.getThemeReferences().map(this::createTheme).collect(toSet());
 
-        // Get session manager
+        // Get session manager.
         SessionManagerFactory sessionManagerFactory = configuration.getSessionManagerFactoryClassName()
                 .map(sessionManagerFactoryClass -> pluginProvider
                         .getPluginInstance(SessionManagerFactory.class, sessionManagerFactoryClass,
@@ -131,9 +132,15 @@ public class AppCreator {
                         InMemorySessionManagerFactory.class.getName(), this.getClass().getClassLoader()));
         SessionManager sessionManager = sessionManagerFactory.getSessionManager(appName, configuration);
 
+        // Get Authorizer.
+        Authorizer authorizer = configuration.getAuthorizer()
+                .map(authorizerClass -> pluginProvider.getPluginInstance(Authorizer.class, authorizerClass,
+                        this.getClass().getClassLoader()))
+                .orElse(null);
+
         // Create App.
         return new App(appName, appContextPath, new HashSet<>(createdComponents.values()), themes, configuration,
-                       bindings, i18nResources, sessionManager);
+                       bindings, i18nResources, sessionManager, authorizer);
     }
 
     private Configuration createConfiguration(AppReference appReference) {
@@ -142,6 +149,7 @@ public class AppCreator {
         configuration.setContextPath(appConfig.getContextPath());
         configuration.setThemeName(appConfig.getTheme());
         configuration.setLoginPageUri(appConfig.getLoginPageUri());
+        configuration.setAuthorizer(appConfig.getAuthorizer());
         configuration.setSessionManagerFactoryClassName(appConfig.getSessionManagement().getFactoryClassName());
         configuration.setSessionTimeout(appConfig.getSessionManagement().getTimeout());
         Map<Integer, String> errorPageUris = appConfig.getErrorPages().entrySet().stream()
@@ -223,7 +231,7 @@ public class AppCreator {
         RenderableCreator.FragmentRenderableData frd = renderableCreator.createFragmentRenderable(fragmentReference,
                                                                                                   classLoader);
         String fragmentName = getFullyQualifiedName(componentName, fragmentReference.getName());
-        return new Fragment(fragmentName, frd.getRenderable(), frd.isSecured());
+        return new Fragment(fragmentName, frd.getRenderable(), frd.getPermission());
     }
 
     private void addBindings(List<ComponentConfig.Binding> bindingEntries, Bindings bindings, String componentName,
@@ -293,7 +301,7 @@ public class AppCreator {
             String layoutName = NameUtils.getFullyQualifiedName(componentName, prd.getLayoutName().get());
             Layout layout = availableLayouts.get(layoutName);
             if (layout != null) {
-                return new Page(uriPatten, prd.getRenderable(), prd.isSecured(), layout);
+                return new Page(uriPatten, prd.getRenderable(), prd.getPermission(), layout);
             } else {
                 throw new AppCreationException(
                         "Layout '" + layoutName + "' used in page '" + pageRenderingFile.getRelativePath() +
@@ -301,7 +309,7 @@ public class AppCreator {
             }
         } else {
             // This page does not have a layout.
-            return new Page(uriPatten, prd.getRenderable(), prd.isSecured());
+            return new Page(uriPatten, prd.getRenderable(), prd.getPermission());
         }
     }
 

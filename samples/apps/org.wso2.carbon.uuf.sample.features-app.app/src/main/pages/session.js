@@ -22,5 +22,5 @@ function onGet(env) {
        var user = SimpleAuthHandler.authenticate("admin", "admin");
        session = createSession(user);
     }
-    return {"username": session.getUser().getUsername()};
+    return {"id": session.getUser().getId()};
 }

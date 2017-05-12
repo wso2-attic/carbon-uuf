@@ -33,7 +33,7 @@ import java.util.Set;
 public class LookupTest {
 
     private static Fragment createFragment(String name) {
-        return new Fragment(name, null, false);
+        return new Fragment(name, null, null);
     }
 
     private static Component createComponent(String name, Set<Fragment> fragments, Set<Component> dependencies) {

@@ -49,6 +49,7 @@ public class Configuration {
     private String contextPath;
     private String themeName;
     private String loginPageUri;
+    private String authorizer;
     private String sessionManagerFactoryClassName;
     private long sessionTimeout;
     private Map<Integer, String> errorPageUris;
@@ -139,6 +140,33 @@ public class Configuration {
             }
         }
         this.loginPageUri = loginPageUri;
+    }
+
+    /**
+     * Returns the authorizer class name for the app.
+     *
+     * @return authorizer class name
+     */
+    public Optional<String> getAuthorizer() {
+        return Optional.ofNullable(authorizer);
+    }
+
+    /**
+     * Sets the authorizer class name for the app.
+     *
+     * @param authorizer authorizer class name
+     */
+    public void setAuthorizer(String authorizer) {
+        if (authorizer != null) {
+            if (authorizer.isEmpty()) {
+                throw new IllegalArgumentException("Authorizer cannot be empty.");
+            }
+            if (!FULLY_QUALIFIED_CLASS_NAME_PATTERN.matcher(authorizer).matches()) {
+                throw new IllegalArgumentException("Authorizer class name is invalid and do not " +
+                        "comprehend to be a fully qualified java class name.");
+            }
+        }
+        this.authorizer = authorizer;
     }
 
     /**

@@ -19,12 +19,14 @@
 package org.wso2.carbon.uuf.core;
 
 import org.apache.commons.lang3.reflect.MethodUtils;
+import org.wso2.carbon.uuf.api.auth.Permission;
 import org.wso2.carbon.uuf.api.auth.Session;
+import org.wso2.carbon.uuf.api.auth.User;
 import org.wso2.carbon.uuf.exception.HttpErrorException;
 import org.wso2.carbon.uuf.exception.PageRedirectException;
 import org.wso2.carbon.uuf.exception.UUFException;
+import org.wso2.carbon.uuf.spi.auth.Authorizer;
 import org.wso2.carbon.uuf.spi.auth.SessionManager;
-import org.wso2.carbon.uuf.spi.auth.User;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
@@ -41,11 +43,13 @@ import javax.naming.NamingException;
 public class API {
 
     private final SessionManager sessionManager;
+    private final Authorizer authorizer;
     private final RequestLookup requestLookup;
     private Session currentSession;
 
-    API(SessionManager sessionManager, RequestLookup requestLookup) {
+    API(SessionManager sessionManager, Authorizer authorizer, RequestLookup requestLookup) {
         this.sessionManager = sessionManager;
+        this.authorizer = authorizer;
         this.requestLookup = requestLookup;
     }
 
@@ -189,6 +193,18 @@ public class API {
         currentSession = sessionManager.getSession(requestLookup.getRequest(), requestLookup.getResponse())
                 .orElse(null);
         return Optional.ofNullable(currentSession);
+    }
+
+    /**
+     * Returns whether the current user has the given permission.
+     *
+     * @param permission permission to be checked
+     * @return {@code true} if the user has the given permission, otherwise {@code false}
+     */
+    public boolean hasPermission(Permission permission) {
+        Optional<Session> session = getSession();
+        return session.isPresent() && ((permission.equals(Permission.ANY_PERMISSION) ||
+                ((authorizer != null) && authorizer.hasPermission(session.get().getUser(), permission))));
     }
 
     /**

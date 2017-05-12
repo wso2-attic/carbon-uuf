@@ -18,7 +18,9 @@
 
 package org.wso2.carbon.uuf.core;
 
+import org.wso2.carbon.uuf.api.auth.Permission;
 import org.wso2.carbon.uuf.exception.SessionNotFoundException;
+import org.wso2.carbon.uuf.exception.UnauthorizedException;
 import org.wso2.carbon.uuf.internal.debug.DebugLogger;
 import org.wso2.carbon.uuf.internal.util.UriUtils;
 import org.wso2.carbon.uuf.spi.Renderable;
@@ -30,17 +32,17 @@ public class Page implements Comparable<Page> {
 
     private final UriPatten uriPatten;
     private final Renderable renderer;
-    private final boolean isSecured;
+    private final Permission permission;
     private final Layout layout;
 
-    public Page(UriPatten uriPatten, Renderable renderer, boolean isSecured) {
-        this(uriPatten, renderer, isSecured, null);
+    public Page(UriPatten uriPatten, Renderable renderer, Permission permission) {
+        this(uriPatten, renderer, permission, null);
     }
 
-    public Page(UriPatten uriPatten, Renderable renderer, boolean isSecured, Layout layout) {
+    public Page(UriPatten uriPatten, Renderable renderer, Permission permission, Layout layout) {
         this.uriPatten = uriPatten;
         this.renderer = renderer;
-        this.isSecured = isSecured;
+        this.permission = permission;
         this.layout = layout;
     }
 
@@ -49,9 +51,14 @@ public class Page implements Comparable<Page> {
     }
 
     public String render(Model model, Lookup lookup, RequestLookup requestLookup, API api) {
-        if (isSecured && !api.getSession().isPresent()) {
-            throw new SessionNotFoundException(
-                    "Page '" + this + "' is secured and required an user session to render.");
+        if (permission != null) {
+            if (!api.getSession().isPresent()) {
+                throw new SessionNotFoundException(
+                        "Page '" + this + "' is secured and required an user session to render.");
+            }
+            if (!api.hasPermission(permission)) {
+                throw new UnauthorizedException("You do not have enough permission to view this page.");
+            }
         }
 
         try {
@@ -94,7 +101,7 @@ public class Page implements Comparable<Page> {
 
     @Override
     public String toString() {
-        return "{\"uriPattern\": " + uriPatten + ", \"renderer\": " + renderer + ", \"secured\": " + isSecured +
+        return "{\"uriPattern\": " + uriPatten + ", \"renderer\": " + renderer + ", \"permission\": " + permission +
                 (layout == null ? "}" : ", \"layout\": " + layout + "}");
     }
 }
