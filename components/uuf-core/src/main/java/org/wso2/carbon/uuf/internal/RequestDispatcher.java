@@ -48,6 +48,7 @@ import static org.wso2.carbon.uuf.spi.HttpResponse.HEADER_LOCATION;
 import static org.wso2.carbon.uuf.spi.HttpResponse.HEADER_PRAGMA;
 import static org.wso2.carbon.uuf.spi.HttpResponse.HEADER_X_CONTENT_TYPE_OPTIONS;
 import static org.wso2.carbon.uuf.spi.HttpResponse.HEADER_X_XSS_PROTECTION;
+import static org.wso2.carbon.uuf.spi.HttpResponse.HEADER_UPGRADE_INSECURE_REQUESTS;
 import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_BAD_REQUEST;
 import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_FOUND;
 import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_INTERNAL_SERVER_ERROR;
@@ -184,6 +185,7 @@ public class RequestDispatcher {
         httpResponse.setHeader(HEADER_CACHE_CONTROL, "no-store, no-cache, must-revalidate, private");
         httpResponse.setHeader(HEADER_EXPIRES, "0");
         httpResponse.setHeader(HEADER_PRAGMA, "no-cache");
+        httpResponse.setHeader(HEADER_UPGRADE_INSECURE_REQUESTS, "1");
 
         // if there are any headers configured by the user for this app, then add them also to the response
         app.getConfiguration().getResponseHeaders().getPages().forEach(httpResponse::setHeader);
