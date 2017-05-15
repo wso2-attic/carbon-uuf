@@ -20,7 +20,6 @@ package org.wso2.carbon.uuf.api.auth;
 
 
 import java.io.Serializable;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -33,7 +32,7 @@ import java.util.Objects;
 public class User implements Serializable {
 
     private final String id;
-    private Map<String, Serializable> properties = new HashMap<>();
+    private final Map<String, Serializable> properties;
 
     /**
      * Constructs an user.
@@ -43,7 +42,7 @@ public class User implements Serializable {
      */
     public User(String id, Map<String, Serializable> properties) {
         this.id = id;
-        this.properties = Collections.unmodifiableMap(properties);
+        this.properties = new HashMap<>(properties);
     }
 
     /**
@@ -56,12 +55,13 @@ public class User implements Serializable {
     }
 
     /**
-     * Returns the properties related to this user.
+     * Returns the value for the given property key.
      *
-     * @return properties related to this user
+     * @param propertyKey the key whose associated value is to be returned
+     * @return property value of the given key
      */
-    public Map<String, Serializable> getProperties() {
-        return properties;
+    public Serializable getProperty(String propertyKey) {
+        return properties.get(propertyKey);
     }
 
     /**

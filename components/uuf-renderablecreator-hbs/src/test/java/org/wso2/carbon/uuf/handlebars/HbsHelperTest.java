@@ -120,8 +120,7 @@ public class HbsHelperTest {
     @Test
     public void testTitle() {
         RequestLookup requestLookup = createRequestLookup();
-        createRenderable("{{title \"page-title\"}}").render(null, createLookup(), requestLookup,
-                createAPI());
+        createRenderable("{{title \"page-title\"}}").render(null, createLookup(), requestLookup, createAPI());
         String expected = "page-title";
 
         Assert.assertEquals(requestLookup.getPlaceholderContent(Placeholder.title).get(), expected);
@@ -133,8 +132,7 @@ public class HbsHelperTest {
     @Test
     public void testTitleWithMultipleParameters() {
         RequestLookup requestLookup = createRequestLookup();
-        createRenderable("{{title \"page\" \"-\" \"title\"}}").render(null, createLookup(), requestLookup,
-                createAPI());
+        createRenderable("{{title \"page\" \"-\" \"title\"}}").render(null, createLookup(), requestLookup, createAPI());
         Assert.assertEquals(requestLookup.getPlaceholderContent(Placeholder.title).get(), "page-title");
 
     }
@@ -258,8 +256,7 @@ public class HbsHelperTest {
     @Test
     public void testSecured() {
         String content = "{{#secured}} secured content {{else}} un-secured content {{/secured}}";
-        String output = createRenderable(content).render(null, createLookup(), createRequestLookup(),
-                createAPI());
+        String output = createRenderable(content).render(null, createLookup(), createRequestLookup(), createAPI());
         Assert.assertEquals(output, " un-secured content ");
     }
 
@@ -359,8 +356,7 @@ public class HbsHelperTest {
         RequestLookup requestLookup = createRequestLookup();
         when(requestLookup.getRequest().getCookieValue(COOKIE_CSRFTOKEN)).thenReturn("A45B3DDE4CF00891E7A9F3B752F18F92");
 
-        String output = createRenderable("{{csrfToken}}").render(null, createLookup(), requestLookup,
-                createAPI());
+        String output = createRenderable("{{csrfToken}}").render(null, createLookup(), requestLookup, createAPI());
         String expected = "<input type=\"hidden\" name=\"" + HttpRequest.COOKIE_CSRFTOKEN +
                 "\" value=\"A45B3DDE4CF00891E7A9F3B752F18F92\"/>";
         Assert.assertEquals(output, expected);

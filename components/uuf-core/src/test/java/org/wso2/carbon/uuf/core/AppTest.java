@@ -37,7 +37,6 @@ import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.carbon.uuf.spi.HttpResponse;
 import org.wso2.carbon.uuf.spi.Renderable;
-import org.wso2.carbon.uuf.spi.auth.Authorizer;
 import org.wso2.carbon.uuf.spi.auth.SessionManager;
 import org.wso2.carbon.uuf.spi.model.Model;
 

@@ -16,7 +16,6 @@
 
 package org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime;
 
-import com.github.jknack.handlebars.Helper;
 import com.github.jknack.handlebars.Options;
 import org.wso2.carbon.uuf.api.auth.Permission;
 import org.wso2.carbon.uuf.core.API;
@@ -25,8 +24,33 @@ import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.init.InlineSecuredHelpe
 
 import java.io.IOException;
 
-public class BlockSecuredHelper extends InlineSecuredHelper implements Helper<Object> {
+/**
+ * Implements handlebars {@code {{#secured}}} block helper.
+ * <p>
+ * Block {@code {{#secured}}} handlebars helper can be used to secure a section of a page or a fragment.
+ * <p>
+ * The block {@code {{#secured}}} handlebars helper can be used in two ways:
+ * <ul>
+ * <li>{@code {{#secured}}} Some content {{/secured}}</li>
+ * <li>{@code {{#secured "some/resource/uri" "someAction"}}} Some content {{/secured}}</li>
+ * </ul>
+ * <p>
+ * When the {@code {{#secured}}} is used, this means that the permission is for any resource URI and for any action
+ * (refer {@link Permission}) and would therefore only check if a user {@link org.wso2.carbon.uuf.api.auth.Session}
+ * is available when evaluating the permission.
+ * <p>
+ * When the {@code {{#secured "some/resource/uri" "someAction"}}} is used, this means that the permission is for
+ * resource URI "some/resource/uri" and for action "someAction" and would therefore check if a user
+ * {@link org.wso2.carbon.uuf.api.auth.Session} is available, if an {@link org.wso2.carbon.uuf.spi.auth.Authorizer}
+ * is configured and if the user has the permission when evaluating the permission.
+ *
+ * @since 1.0.0
+ */
+public class BlockSecuredHelper extends InlineSecuredHelper {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public CharSequence apply(Object context, Options options) throws IOException {
         if (options.tagType.inline()) {

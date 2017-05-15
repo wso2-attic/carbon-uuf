@@ -16,35 +16,37 @@
  * under the License.
  */
 
-package org.wso2.carbon.uuf.sample.simpleauth.bundle.api.auth;
+package org.wso2.carbon.uuf.sample.featuresapp.bundle.api.auth;
 
+import com.google.common.collect.ImmutableMap;
 import org.osgi.service.component.annotations.Component;
-import org.wso2.carbon.kernel.context.CarbonContext;
-import org.wso2.carbon.security.caas.api.CarbonPermission;
-import org.wso2.carbon.security.caas.api.CarbonPrincipal;
 import org.wso2.carbon.uuf.api.auth.Permission;
 import org.wso2.carbon.uuf.api.auth.User;
 import org.wso2.carbon.uuf.exception.UnauthorizedException;
 import org.wso2.carbon.uuf.spi.auth.Authorizer;
 
+import java.util.Map;
+
 /**
- * Manages authorization for resources.
- * <p>
- * This authorizer will take advantage of the <tt>org.wso2.carbon.security.caas.api</tt> authorization implementation.
+ * Evaluates permissions for users.
  * <p>
  * Please make note to specify the authorizer class name in the <tt>app.yaml</tt> configuration file under the
- * <tt>authorizer</tt> key in order for this authorizer to be used in the application.
+ * <tt>authorizer</tt> key in order for this authorizer to be used in the app.
  * <p>
  * eg:
- * authorizer: "org.wso2.carbon.uuf.sample.simpleauth.bundle.api.auth.CaasAuthorizer"
+ * authorizer: "org.wso2.carbon.uuf.sample.featuresapp.bundle.api.auth.DemoAuthorizer"
  *
  * @since 1.0.0
  */
-@Component(name = "org.wso2.carbon.uuf.sample.simpleauth.bundle.api.auth.CaasAuthorizer",
+@Component(name = "org.wso2.carbon.uuf.sample.featuresapp.bundle.api.auth.DemoAuthorizer",
         service = Authorizer.class,
         immediate = true
 )
-public class CaasAuthorizer implements Authorizer {
+// TODO: Write a proper CAAS Authorizer
+public class DemoAuthorizer implements Authorizer {
+
+    private static final Map<String, Permission> permissions =
+            ImmutableMap.of("admin", new Permission("helpers/uuf-helpers/secured", "view"));
 
     /**
      * {@inheritDoc}
@@ -57,9 +59,11 @@ public class CaasAuthorizer implements Authorizer {
         if (permission.getResourceUri() == null || permission.getResourceUri().trim().isEmpty()) {
             throw new UnauthorizedException("Permission resource URI cannot be null or empty.");
         }
-        CarbonPrincipal carbonPrincipal = (CarbonPrincipal) CarbonContext.getCurrentContext().getUserPrincipal();
-        CarbonPermission carbonPermission = new CarbonPermission(permission.getResourceUri(), permission.getAction());
-        // TODO: 09/05/2017 - CarbonPrincipal.hasPermission always returns false according to CAAS implementation
-        return carbonPrincipal.isAuthorized(carbonPermission);
+        for (Map.Entry<String, Permission> entry : permissions.entrySet()) {
+            if (entry.getKey().equals(user.getId()) && entry.getValue().equals(permission)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -19,6 +19,8 @@
 package org.wso2.carbon.uuf.core;
 
 import org.apache.commons.lang3.reflect.MethodUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.api.auth.Permission;
 import org.wso2.carbon.uuf.api.auth.Session;
 import org.wso2.carbon.uuf.api.auth.User;
@@ -41,6 +43,8 @@ import javax.naming.NamingException;
 // TODO remove this SuppressWarnings
 @SuppressWarnings("PackageAccessibility")
 public class API {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(API.class);
 
     private final SessionManager sessionManager;
     private final Authorizer authorizer;
@@ -203,8 +207,16 @@ public class API {
      */
     public boolean hasPermission(Permission permission) {
         Optional<Session> session = getSession();
-        return session.isPresent() && ((permission.equals(Permission.ANY_PERMISSION) ||
-                ((authorizer != null) && authorizer.hasPermission(session.get().getUser(), permission))));
+        if (!session.isPresent()) {
+            return false;
+        }
+        if (permission.equals(Permission.ANY_PERMISSION)) {
+            return true;
+        }
+        if (authorizer == null) {
+            return false;
+        }
+        return authorizer.hasPermission(session.get().getUser(), permission);
     }
 
     /**

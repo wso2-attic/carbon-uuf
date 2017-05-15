@@ -23,6 +23,16 @@ import org.wso2.carbon.uuf.api.auth.User;
 
 /**
  * Evaluates permissions for users.
+ * <p>
+ * Please make note to specify the authorizer class name in the <tt>app.yaml</tt> configuration file under the
+ * <tt>authorizer</tt> key in order for the implemented authorizer to be used in the app.
+ * <p>
+ * eg:
+ * authorizer: "org.wso2.carbon.uuf.sample.featuresapp.bundle.api.auth.DemoAuthorizer"
+ * <p>
+ * The logic for persisting and retrieving permissions are expected to be implemented by the web developer. The
+ * {@code hasPermission(User user, Permission permission)} method will be called internally by the UUF framework when
+ * it is required to evaluate permissions.
  *
  * @since 1.0.0
  */

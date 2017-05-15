@@ -137,6 +137,9 @@ public class AppCreator {
                 .map(authorizerClass -> pluginProvider.getPluginInstance(Authorizer.class, authorizerClass,
                         this.getClass().getClassLoader()))
                 .orElse(null);
+        if (authorizer == null) {
+            LOGGER.warn("No authorizer is configured for '{}' app.", appName);
+        }
 
         // Create App.
         return new App(appName, appContextPath, new HashSet<>(createdComponents.values()), themes, configuration,

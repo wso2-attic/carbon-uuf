@@ -18,15 +18,22 @@
 
 package org.wso2.carbon.uuf.api.auth;
 
-import java.io.Serializable;
 import java.util.Objects;
 
 /**
  * Represents a permission of a resource.
+ * <p>
+ * A permission consists of a resource URI and an action. The wild card "*" can be used to describe "any" resource
+ * URI or an action as a convention.
+ * <p>
+ * e.g:- {@code new Permission("*", "*")} means that the permission is applicable for any resource URI and any action.
+ * <p>
+ * The implementation of how permissions are evaluated are expected to be implemented by the web developer using the
+ * {@link org.wso2.carbon.uuf.spi.auth.Authorizer} interface.
  *
  * @since 1.0.0
  */
-public class Permission implements Serializable {
+public class Permission {
 
     /**
      * Permission representing any permission for a resource.

@@ -23,10 +23,37 @@ import org.wso2.carbon.uuf.renderablecreator.hbs.internal.HbsPreprocessor;
 
 import java.io.IOException;
 
+/**
+ * Implements handlebars {@code {{#secured}}} inline helper.
+ * <p>
+ * Inline {@code {{secured}}} handlebars helper can be used to secure an entire {@link org.wso2.carbon.uuf.core.Page}
+ * or an entire {@link org.wso2.carbon.uuf.core.Fragment}.
+ * <p>
+ * The inline {@code {{secured}}} handlebars helper can be used in two ways:
+ * <ul>
+ * <li>{@code {{secured}}}</li>
+ * <li>{@code {{secured "some/resource/uri" "someAction"}}}</li>
+ * </ul>
+ * <p>
+ * When the {@code {{secured}}} is used, this means that the permission for the secured page / fragment is for any
+ * resource URI and for any action (refer {@link Permission}) and would therefore only check if a user
+ * {@link org.wso2.carbon.uuf.api.auth.Session} is available when evaluating the permission.
+ * <p>
+ * When the {@code {{secured "some/resource/uri" "someAction"}}} is used, this means that the permission for the
+ * secured page / fragment is for resource URI "some/resource/uri" and for action "someAction" and would therefore check
+ * if a user {@link org.wso2.carbon.uuf.api.auth.Session} is available, if an
+ * {@link org.wso2.carbon.uuf.spi.auth.Authorizer} is configured and if the user has the permission when evaluating
+ * the permission.
+ *
+ * @since 1.0.0
+ */
 public class InlineSecuredHelper implements Helper<Object> {
 
     public static final String HELPER_NAME = "secured";
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public CharSequence apply(Object context, Options options) throws IOException {
         if (!options.tagType.inline()) {
@@ -39,7 +66,7 @@ public class InlineSecuredHelper implements Helper<Object> {
     }
 
     /**
-     * Returns the permission from the handle bar context.
+     * Returns the permission from the handlebars context.
      *
      * @param context handlebars context
      * @param options handlebars options

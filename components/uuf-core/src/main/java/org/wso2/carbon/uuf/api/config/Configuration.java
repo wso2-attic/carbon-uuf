@@ -159,11 +159,11 @@ public class Configuration {
     public void setAuthorizer(String authorizer) {
         if (authorizer != null) {
             if (authorizer.isEmpty()) {
-                throw new IllegalArgumentException("Authorizer cannot be empty.");
+                throw new IllegalArgumentException("Authorizer class name cannot be empty.");
             }
             if (!FULLY_QUALIFIED_CLASS_NAME_PATTERN.matcher(authorizer).matches()) {
-                throw new IllegalArgumentException("Authorizer class name is invalid and do not " +
-                        "comprehend to be a fully qualified java class name.");
+                throw new IllegalArgumentException("Authorizer class name '" + authorizer +
+                        "' is not a fully qualified Java class name.");
             }
         }
         this.authorizer = authorizer;
@@ -181,19 +181,19 @@ public class Configuration {
     /**
      * Sets the session manager factory class name for the app.
      *
-     * @param sessionManagerFactoryClassName session manager factory class name
+     * @param factoryClassName session manager factory class name
      */
-    public void setSessionManagerFactoryClassName(String sessionManagerFactoryClassName) {
-        if (sessionManagerFactoryClassName != null) {
-            if (sessionManagerFactoryClassName.isEmpty()) {
-                throw new IllegalArgumentException("Session Manager Factory cannot be empty.");
+    public void setSessionManagerFactoryClassName(String factoryClassName) {
+        if (factoryClassName != null) {
+            if (factoryClassName.isEmpty()) {
+                throw new IllegalArgumentException("Session Manager Factory class name cannot be empty.");
             }
-            if (!FULLY_QUALIFIED_CLASS_NAME_PATTERN.matcher(sessionManagerFactoryClassName).matches()) {
-                throw new IllegalArgumentException("Session Manager Factory class name is invalid and do not " +
-                        "comprehend to be a fully qualified java class name.");
+            if (!FULLY_QUALIFIED_CLASS_NAME_PATTERN.matcher(factoryClassName).matches()) {
+                throw new IllegalArgumentException("Session Manager Factory class name '" + factoryClassName +
+                        "' is not a fully qualified Java class name.");
             }
         }
-        this.sessionManagerFactoryClassName = sessionManagerFactoryClassName;
+        this.sessionManagerFactoryClassName = factoryClassName;
     }
 
     /**
