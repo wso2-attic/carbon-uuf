@@ -17,7 +17,7 @@
 package org.wso2.carbon.uuf.renderablecreator.hbs.core.js;
 
 import org.wso2.carbon.uuf.api.auth.Session;
-import org.wso2.carbon.uuf.spi.auth.User;
+import org.wso2.carbon.uuf.api.auth.User;
 
 @FunctionalInterface
 public interface CreateSessionFunction {

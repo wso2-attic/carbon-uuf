@@ -19,9 +19,8 @@ package org.wso2.carbon.uuf.renderablecreator.hbs.internal;
 import com.github.jknack.handlebars.Context;
 import com.github.jknack.handlebars.Handlebars;
 import com.github.jknack.handlebars.io.TemplateSource;
+import org.wso2.carbon.uuf.api.auth.Permission;
 import org.wso2.carbon.uuf.exception.UUFException;
-import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.init.LayoutHelper;
-import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.init.SecuredHelper;
 import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.registry.InitHelperRegistry;
 
 import java.io.IOException;
@@ -31,11 +30,11 @@ import java.util.Optional;
 public class HbsPreprocessor {
 
     public static final String DATA_KEY_CURRENT_LAYOUT = HbsPreprocessor.class.getName() + "#layout";
-    public static final String DATA_KEY_IS_SECURED = HbsPreprocessor.class.getName() + "#secured";
+    public static final String DATA_KEY_SECURED = HbsPreprocessor.class.getName() + "#secured";
     private static final Handlebars HANDLEBARS = new Handlebars().with(new InitHelperRegistry());
 
     private final Optional<String> layout;
-    private final boolean isSecured;
+    private final Permission permission;
 
     public HbsPreprocessor(TemplateSource template) {
         String templatePath = template.filename();
@@ -47,14 +46,19 @@ public class HbsPreprocessor {
                     "An error occurred when pre-processing the Handlebars template '" + templatePath + "'.", e);
         }
         layout = Optional.ofNullable(context.data(DATA_KEY_CURRENT_LAYOUT));
-        isSecured = Boolean.TRUE.equals(context.data(DATA_KEY_IS_SECURED));
+        permission = context.data(DATA_KEY_SECURED);
     }
 
     public Optional<String> getLayoutName() {
         return layout;
     }
 
-    public boolean isSecured() {
-        return isSecured;
+    /**
+     * Returns the permission related to the handlebars {{secured}} tag.
+     *
+     * @return permission related to the handlebars {{secured}} tag.
+     */
+    public Permission getPermission() {
+        return permission;
     }
 }

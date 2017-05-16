@@ -27,6 +27,9 @@ import com.google.gson.JsonObject;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.wso2.carbon.uuf.api.Placeholder;
+import org.wso2.carbon.uuf.api.auth.Permission;
+import org.wso2.carbon.uuf.api.auth.Session;
+import org.wso2.carbon.uuf.api.auth.User;
 import org.wso2.carbon.uuf.api.config.Configuration;
 import org.wso2.carbon.uuf.api.model.MapModel;
 import org.wso2.carbon.uuf.exception.PageRedirectException;
@@ -38,11 +41,13 @@ import org.wso2.carbon.uuf.spi.auth.SessionManager;
 import org.wso2.carbon.uuf.spi.model.Model;
 
 import java.util.Map;
+import java.util.Optional;
 
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.emptySortedSet;
 import static java.util.Collections.singleton;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -53,12 +58,19 @@ import static org.mockito.Mockito.when;
  */
 public class AppTest {
 
+    private static SessionManager createSessionManager() {
+        User user = mock(User.class);
+        SessionManager sessionManager = mock(SessionManager.class);
+        when(sessionManager.getSession(any(HttpRequest.class), any())).thenReturn(Optional.of(new Session(user)));
+        return sessionManager;
+    }
+
     private static Page createPage(String uri, String content) {
-        return new Page(new UriPatten(uri), (model, lookup, requestLookup, api) -> content, false);
+        return new Page(new UriPatten(uri), (model, lookup, requestLookup, api) -> content, null);
     }
 
     private static Page createErrorPage(String uri) {
-        return new Page(new UriPatten(uri), null, false) {
+        return new Page(new UriPatten(uri), null, null) {
             @Override
             public String render(Model model, Lookup lookup, RequestLookup requestLookup, API api) {
                 return model.toMap().get("status") + ":" + model.toMap().get("message");
@@ -68,11 +80,11 @@ public class AppTest {
 
     private static Fragment createFragment(String name, String content) {
         Renderable renderable = (model, l, rl, a) -> content + (model.toMap().isEmpty() ? "" : model.toMap());
-        return new Fragment(name, renderable, false);
+        return new Fragment(name, renderable, null);
     }
 
     private static Fragment createFragmentWithResources(String name, String content) {
-        return new Fragment(name, null, false) {
+        return new Fragment(name, null, null) {
             @Override
             public String render(Model model, Lookup lookup, RequestLookup requestLookup, API api) {
                 requestLookup.addToPlaceholder(Placeholder.css, "CSS Content");
@@ -92,9 +104,7 @@ public class AppTest {
     }
 
     private static Configuration createConfiguration() {
-        Configuration configuration = new Configuration();
-        configuration.setSessionManagerFactoryClassName("org.wso2.carbon.uuf.api.auth.InMemorySessionManagerFactory");
-        return configuration;
+        return new Configuration();
     }
 
     @Test
@@ -108,9 +118,9 @@ public class AppTest {
         Component rootComponent = new Component("root", null, Component.ROOT_COMPONENT_CONTEXT_PATH, emptySortedSet(),
                                                 emptySet(), emptySet(), singleton(cmp), null);
         Configuration configuration = createConfiguration();
-        SessionManager sessionManager = mock(SessionManager.class);
+        SessionManager sessionManager = createSessionManager();
         App app = new App(null, "/test", ImmutableSet.of(cmp, rootComponent), emptySet(), configuration, null,
-                          null, sessionManager);
+                          null, sessionManager, null);
         String html = app.renderPage(createRequest(app.getContextPath(), "/cmp/a/b"), null);
         Assert.assertEquals(html, page1Content);
 
@@ -132,9 +142,9 @@ public class AppTest {
                                                 ImmutableSortedSet.of(rootP1, rootP2), emptySet(), emptySet(),
                                                 singleton(cmp), null);
         Configuration configuration = createConfiguration();
-        SessionManager sessionManager = mock(SessionManager.class);
+        SessionManager sessionManager = createSessionManager();
         App app = new App(null, "/test", ImmutableSet.of(cmp, rootComponent), emptySet(), configuration, null,
-                          null, sessionManager);
+                          null, sessionManager, null);
 
         String html = app.renderPage(createRequest(app.getContextPath(), "/a/b"), null);
         Assert.assertEquals(html, page1Content);
@@ -154,8 +164,9 @@ public class AppTest {
         Component rootComponent = new Component("root", null, Component.ROOT_COMPONENT_CONTEXT_PATH, emptySortedSet(),
                                                 emptySet(), emptySet(), singleton(cmp), null);
         Configuration configuration = createConfiguration();
+        SessionManager sessionManager = createSessionManager();
         App app = new App(null, "/test", ImmutableSet.of(cmp, rootComponent), emptySet(), configuration, null,
-                          null, null);
+                          null, sessionManager, null);
 
         HttpRequest request = createRequest(app.getContextPath(), "/fragments/cmp.f1");
         when(request.getFormParams()).thenReturn(emptyMap());
@@ -178,7 +189,7 @@ public class AppTest {
                                                 emptySet(), emptySet(), singleton(cmp), null);
         Configuration configuration = createConfiguration();
         App app = new App(null, "/test", ImmutableSet.of(cmp, rootComponent), emptySet(), configuration, null,
-                          null, null);
+                          null, null, null);
 
         HttpRequest request = createRequest(app.getContextPath(), "/fragments/cmp.f1");
         when(request.getFormParams()).thenReturn(emptyMap());
@@ -199,13 +210,15 @@ public class AppTest {
         Component rootComponent = new Component("root", null, Component.ROOT_COMPONENT_CONTEXT_PATH, emptySortedSet(),
                                                 emptySet(), emptySet(), singleton(cmp), null);
         Configuration configuration = createConfiguration();
+        SessionManager sessionManager = createSessionManager();
         App app = new App(null, "/test", ImmutableSet.of(cmp, rootComponent), emptySet(), configuration, null,
-                          null, null);
+                          null, sessionManager, null);
         Map<String, Object> formParams = ImmutableMap.of("key1", "value1", "key2", ImmutableList.of("v2-1", "v2-2"));
 
         HttpRequest request = createRequest(app.getContextPath(), "/fragments/cmp.f1");
         when(request.getFormParams()).thenReturn(formParams);
-        JsonObject output = app.renderFragment(request, null);
+        HttpResponse response = mock(HttpResponse.class);
+        JsonObject output = app.renderFragment(request, response);
         Assert.assertEquals(output.get("html").getAsString(), (fragment1Content + formParams.toString()));
     }
 
@@ -219,9 +232,9 @@ public class AppTest {
                                                 ImmutableSortedSet.of(rootPage), emptySet(), emptySet(),
                                                 singleton(cmp), null);
         Configuration configuration = createConfiguration();
-        SessionManager sessionManager = mock(SessionManager.class);
+        SessionManager sessionManager = createSessionManager();
         App app = new App(null, "/test", ImmutableSet.of(cmp, rootComponent), emptySet(), configuration, null,
-                          null, sessionManager);
+                          null, sessionManager, null);
         PageRedirectException pre;
 
         pre = Assert.expectThrows(PageRedirectException.class,
@@ -246,11 +259,11 @@ public class AppTest {
         // Creating root component.
         Page p1 = new Page(new UriPatten("/a"), (m, l, rl, a) -> {
             throw new UUFException("Some error.");
-        }, false);
+        }, null);
         Page p2 = new Page(new UriPatten("/b"), (m, l, rl, a) -> {
             API.sendError(418, "I’m a Teapot!");
             return null;
-        }, false);
+        }, null);
         Component rootComponent = new Component("root", null, Component.ROOT_COMPONENT_CONTEXT_PATH,
                                                 ImmutableSortedSet.of(p1, p2), emptySet(), emptySet(), singleton(cmp),
                                                 null);
@@ -259,9 +272,9 @@ public class AppTest {
         configuration.setErrorPageUris(ImmutableMap.of(404, "/cmp/error/404", 500, "/cmp/error/500"));
         configuration.setDefaultErrorPageUri("/cmp/error/default");
         // Creating app.
-        SessionManager sessionManager = mock(SessionManager.class);
+        SessionManager sessionManager = createSessionManager();
         App app = new App(null, "/test", ImmutableSet.of(cmp, rootComponent), emptySet(), configuration,
-                null, null, sessionManager);
+                null, null, sessionManager, null);
         String html;
         Map<String, Object> params;
 
@@ -283,18 +296,21 @@ public class AppTest {
     @Test
     public void testRedirectingToLoginPage() {
         // Creating root component with secured page.
-        Page page = new Page(new UriPatten("/a"), (m, l, rl, a) -> "Secured page.", true);
+        String pageUri = "/a";
+        Page page = new Page(new UriPatten(pageUri), (m, l, rl, a) -> "Secured page.", Permission.ANY_PERMISSION);
         Component rootComponent = new Component("root", null, Component.ROOT_COMPONENT_CONTEXT_PATH,
-                                                ImmutableSortedSet.of(page), emptySet(), emptySet(), emptySet(), null);
+                ImmutableSortedSet.of(page), emptySet(), emptySet(), emptySet(), null);
         // Creating configuration.
         Configuration configuration = createConfiguration();
         String loginPageUri = "/some/login/page";
         configuration.setLoginPageUri(loginPageUri);
-        // Creating app.
+        // Create session manager
         SessionManager sessionManager = mock(SessionManager.class);
+        when(sessionManager.getSession(any(HttpRequest.class), any(HttpResponse.class)))
+                .thenReturn(Optional.empty());
+        // Creating app.
         App app = new App(null, "/test", singleton(rootComponent), emptySet(), configuration,
-                null, null, sessionManager);
-
+                null, null, sessionManager, null);
         PageRedirectException pre = Assert.expectThrows(PageRedirectException.class, () ->
                 app.renderPage(createRequest(app.getContextPath(), "/a"), null));
         Assert.assertEquals(pre.getHttpStatusCode(), HttpResponse.STATUS_FOUND);

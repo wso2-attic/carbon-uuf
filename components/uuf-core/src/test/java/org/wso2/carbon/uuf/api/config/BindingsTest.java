@@ -40,7 +40,7 @@ public class BindingsTest {
     }
 
     private static Fragment createFragment(String name) {
-        return new Fragment(name, null, false);
+        return new Fragment(name, null, null);
     }
 
     @Test

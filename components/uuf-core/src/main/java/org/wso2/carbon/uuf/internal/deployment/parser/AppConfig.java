@@ -38,6 +38,7 @@ public class AppConfig {
     private String contextPath;
     private String theme;
     private String loginPageUri;
+    private String authorizer;
     private SessionConfig sessionManagement = new SessionConfig();
     private Map<String, String> errorPages = Collections.emptyMap();
     private List<Menu> menus = Collections.emptyList();
@@ -96,6 +97,24 @@ public class AppConfig {
      */
     public void setLoginPageUri(String loginPageUri) {
         this.loginPageUri = loginPageUri;
+    }
+
+    /**
+     * Returns the authorizer in this app's config.
+     *
+     * @return authorizer in this app's config
+     */
+    public String getAuthorizer() {
+        return authorizer;
+    }
+
+    /**
+     * Sets the authorizer in this app's config.
+     *
+     * @param authorizer in this app's config
+     */
+    public void setAuthorizer(String authorizer) {
+        this.authorizer = authorizer;
     }
 
     /**

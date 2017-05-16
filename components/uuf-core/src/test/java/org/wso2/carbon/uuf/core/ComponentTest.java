@@ -21,6 +21,7 @@ package org.wso2.carbon.uuf.core;
 import com.google.common.collect.ImmutableSortedSet;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import org.wso2.carbon.uuf.api.auth.Permission;
 import org.wso2.carbon.uuf.spi.model.Model;
 
 import java.util.Optional;
@@ -35,7 +36,7 @@ import static java.util.Collections.emptySet;
 public class ComponentTest {
 
     private static Page createPage(String uriPattern, String content) {
-        return new Page(new UriPatten(uriPattern), null, false) {
+        return new Page(new UriPatten(uriPattern), null, null) {
             @Override
             public String render(Model model, Lookup lookup, RequestLookup requestLookup, API api) {
                 return content;

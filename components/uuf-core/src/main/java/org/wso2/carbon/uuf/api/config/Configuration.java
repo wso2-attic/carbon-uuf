@@ -49,6 +49,7 @@ public class Configuration {
     private String contextPath;
     private String themeName;
     private String loginPageUri;
+    private String authorizer;
     private String sessionManagerFactoryClassName;
     private long sessionTimeout;
     private Map<Integer, String> errorPageUris;
@@ -142,6 +143,33 @@ public class Configuration {
     }
 
     /**
+     * Returns the authorizer class name for the app.
+     *
+     * @return authorizer class name
+     */
+    public Optional<String> getAuthorizer() {
+        return Optional.ofNullable(authorizer);
+    }
+
+    /**
+     * Sets the authorizer class name for the app.
+     *
+     * @param authorizer authorizer class name
+     */
+    public void setAuthorizer(String authorizer) {
+        if (authorizer != null) {
+            if (authorizer.isEmpty()) {
+                throw new IllegalArgumentException("Authorizer class name cannot be empty.");
+            }
+            if (!FULLY_QUALIFIED_CLASS_NAME_PATTERN.matcher(authorizer).matches()) {
+                throw new IllegalArgumentException("Authorizer class name '" + authorizer +
+                        "' is not a fully qualified Java class name.");
+            }
+        }
+        this.authorizer = authorizer;
+    }
+
+    /**
      * Returns the session manager factory class name for the app.
      *
      * @return session manager factory class name
@@ -153,19 +181,19 @@ public class Configuration {
     /**
      * Sets the session manager factory class name for the app.
      *
-     * @param sessionManagerFactoryClassName session manager factory class name
+     * @param factoryClassName session manager factory class name
      */
-    public void setSessionManagerFactoryClassName(String sessionManagerFactoryClassName) {
-        if (sessionManagerFactoryClassName != null) {
-            if (sessionManagerFactoryClassName.isEmpty()) {
-                throw new IllegalArgumentException("Session Manager Factory cannot be empty.");
+    public void setSessionManagerFactoryClassName(String factoryClassName) {
+        if (factoryClassName != null) {
+            if (factoryClassName.isEmpty()) {
+                throw new IllegalArgumentException("Session Manager Factory class name cannot be empty.");
             }
-            if (!FULLY_QUALIFIED_CLASS_NAME_PATTERN.matcher(sessionManagerFactoryClassName).matches()) {
-                throw new IllegalArgumentException("Session Manager Factory class name is invalid and do not " +
-                        "comprehend to be a fully qualified java class name.");
+            if (!FULLY_QUALIFIED_CLASS_NAME_PATTERN.matcher(factoryClassName).matches()) {
+                throw new IllegalArgumentException("Session Manager Factory class name '" + factoryClassName +
+                        "' is not a fully qualified Java class name.");
             }
         }
-        this.sessionManagerFactoryClassName = sessionManagerFactoryClassName;
+        this.sessionManagerFactoryClassName = factoryClassName;
     }
 
     /**

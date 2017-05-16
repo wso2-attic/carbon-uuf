@@ -45,7 +45,7 @@ import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.JsHelper;
 import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.MenuHelper;
 import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.MissingHelper;
 import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.PublicHelper;
-import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.SecuredHelper;
+import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.BlockSecuredHelper;
 import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.TemplateHelper;
 import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.TitleHelper;
 
@@ -208,7 +208,7 @@ public class RuntimeHelperRegistry implements HelperRegistry {
         registry.registerHelper(LogHelper.NAME, LogHelper.INSTANCE);
         //UUF related helpers
         registry.registerHelper(FragmentHelper.HELPER_NAME, new FragmentHelper());
-        registry.registerHelper(SecuredHelper.HELPER_NAME, new SecuredHelper());
+        registry.registerHelper(BlockSecuredHelper.HELPER_NAME, new BlockSecuredHelper());
         registry.registerHelper(PublicHelper.HELPER_NAME, new PublicHelper());
         registry.registerHelper(MenuHelper.HELPER_NAME, new MenuHelper());
         registry.registerHelper(DefineZoneHelper.HELPER_NAME, new DefineZoneHelper());

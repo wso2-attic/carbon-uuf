@@ -18,7 +18,8 @@
 
 package org.wso2.carbon.uuf.core;
 
-import org.wso2.carbon.uuf.exception.SessionNotFoundException;
+import org.wso2.carbon.uuf.api.auth.Permission;
+import org.wso2.carbon.uuf.exception.UnauthorizedException;
 import org.wso2.carbon.uuf.internal.debug.DebugLogger;
 import org.wso2.carbon.uuf.internal.util.NameUtils;
 import org.wso2.carbon.uuf.internal.util.UriUtils;
@@ -32,18 +33,20 @@ public class Fragment {
     private final String name;
     private final String simpleName;
     private final Renderable renderer;
-    private final boolean isSecured;
+    private final Permission permission;
 
     /**
-     * @param name      fully qualified name
-     * @param renderer  renderer
-     * @param isSecured secured fragment or not
+     * Constructs an UUF fragment.
+     *
+     * @param name       fully qualified name
+     * @param renderer   renderer
+     * @param permission permission of this fragment
      */
-    public Fragment(String name, Renderable renderer, boolean isSecured) {
+    public Fragment(String name, Renderable renderer, Permission permission) {
         this.name = name;
         this.simpleName = NameUtils.getSimpleName(name);
         this.renderer = renderer;
-        this.isSecured = isSecured;
+        this.permission = permission;
     }
 
     public String getName() {
@@ -59,15 +62,14 @@ public class Fragment {
     }
 
     public String render(Model model, Lookup lookup, RequestLookup requestLookup, API api) {
-        if (isSecured && !api.getSession().isPresent()) {
+        if ((permission != null) && (!api.hasPermission(permission))) {
             if (requestLookup.tracker().isInPage() || requestLookup.tracker().isInLayout() ||
                     requestLookup.tracker().isInFragment()) {
                 // This fragment is included in a page/fragment/layout which is not secured.
                 return "";
             } else {
-                // This fragment is called directly.
-                throw new SessionNotFoundException(
-                        "Fragment '" + name + "' is secured and required an user session to render.");
+                throw new UnauthorizedException("You do not have enough permission to view this fragment '" + name
+                        + "'.");
             }
         }
 
@@ -102,6 +104,6 @@ public class Fragment {
 
     @Override
     public String toString() {
-        return "{\"name\": \"" + name + "\", \"renderer\": " + renderer + ", \"secured\": " + isSecured + "}";
+        return "{\"name\": \"" + name + "\", \"renderer\": " + renderer + ", \"permission\": " + permission + "}";
     }
 }

@@ -15,7 +15,7 @@
             if (!session) {
                 session = createSession("admin");
             }
-            return {"username": session.getUser().getUsername()};
+            return {"id": session.getUser().getId()};
         }
     </pre>
     <p>Then, you can use this variable in your handlebars;</p>

@@ -24,7 +24,7 @@ import org.wso2.carbon.uuf.exception.SessionManagementException;
 import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.carbon.uuf.spi.HttpResponse;
 import org.wso2.carbon.uuf.spi.auth.SessionManager;
-import org.wso2.carbon.uuf.spi.auth.User;
+import org.wso2.carbon.uuf.api.auth.User;
 
 import java.io.File;
 import java.io.FileInputStream;

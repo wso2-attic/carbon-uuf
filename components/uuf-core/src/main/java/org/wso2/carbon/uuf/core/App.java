@@ -35,6 +35,7 @@ import org.wso2.carbon.uuf.internal.util.NameUtils;
 import org.wso2.carbon.uuf.internal.util.UriUtils;
 import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.carbon.uuf.spi.HttpResponse;
+import org.wso2.carbon.uuf.spi.auth.Authorizer;
 import org.wso2.carbon.uuf.spi.auth.SessionManager;
 import org.wso2.carbon.uuf.spi.model.Model;
 
@@ -55,11 +56,12 @@ public class App {
     private final Map<String, Theme> themes;
     private final Theme defaultTheme;
     private final SessionManager sessionManager;
+    private final Authorizer authorizer;
     private final Configuration configuration;
 
     public App(String name, String contextPath, Set<Component> components, Set<Theme> themes,
                Configuration configuration, Bindings bindings, I18nResources i18nResources,
-               SessionManager sessionManager) {
+               SessionManager sessionManager, Authorizer authorizer) {
         this.name = name;
         this.contextPath = contextPath;
 
@@ -81,6 +83,7 @@ public class App {
         this.lookup = new Lookup(components, configuration, bindings, i18nResources);
         this.configuration = configuration;
         this.sessionManager = sessionManager;
+        this.authorizer = authorizer;
     }
 
     public String getName() {
@@ -118,7 +121,7 @@ public class App {
      */
     public String renderPage(HttpRequest request, HttpResponse response) {
         RequestLookup requestLookup = createRequestLookup(request, response);
-        API api = new API(sessionManager, requestLookup);
+        API api = new API(sessionManager, authorizer, requestLookup);
         Theme theme = getRenderingTheme(api);
         try {
             return renderPageUri(request.getUriWithoutContextPath(), null, requestLookup, api, theme);
@@ -214,7 +217,7 @@ public class App {
 
         Model model = new MapModel(request.getFormParams());
         RequestLookup requestLookup = createRequestLookup(request, response);
-        API api = new API(sessionManager, requestLookup);
+        API api = new API(sessionManager, authorizer, requestLookup);
 
         JsonObject output = new JsonObject();
         output.addProperty("html", fragment.render(model, lookup, requestLookup, api));

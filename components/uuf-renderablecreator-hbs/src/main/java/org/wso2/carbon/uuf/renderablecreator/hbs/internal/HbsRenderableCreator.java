@@ -25,6 +25,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.uuf.api.auth.Permission;
 import org.wso2.carbon.uuf.api.reference.ComponentReference;
 import org.wso2.carbon.uuf.api.reference.FileReference;
 import org.wso2.carbon.uuf.api.reference.FragmentReference;
@@ -109,8 +110,8 @@ public class HbsRenderableCreator implements RenderableCreator {
             fragmentRenderable = new HbsFragmentRenderable(templateSource, file.getAbsolutePath(),
                                                            file.getRelativePath(), executable);
         }
-        boolean isSecured = new HbsPreprocessor(templateSource).isSecured();
-        return new RenderableCreator.FragmentRenderableData(fragmentRenderable, isSecured);
+        Permission permission = new HbsPreprocessor(templateSource).getPermission();
+        return new RenderableCreator.FragmentRenderableData(fragmentRenderable, permission);
     }
 
     @Override
@@ -131,7 +132,8 @@ public class HbsRenderableCreator implements RenderableCreator {
         }
         HbsPreprocessor preprocessor = new HbsPreprocessor(templateSource);
         String layoutName = preprocessor.getLayoutName().orElse(null);
-        return new RenderableCreator.PageRenderableData(pageRenderable, preprocessor.isSecured(), layoutName);
+        Permission permission = preprocessor.getPermission();
+        return new RenderableCreator.PageRenderableData(pageRenderable, permission, layoutName);
     }
 
     @Override

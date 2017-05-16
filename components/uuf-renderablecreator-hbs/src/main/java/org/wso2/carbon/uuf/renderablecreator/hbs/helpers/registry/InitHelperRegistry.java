@@ -20,7 +20,7 @@ package org.wso2.carbon.uuf.renderablecreator.hbs.helpers.registry;
 
 import com.github.jknack.handlebars.HelperRegistry;
 import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.init.LayoutHelper;
-import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.init.SecuredHelper;
+import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.init.InlineSecuredHelper;
 
 /**
  * Handlebars helpers registry for pre-compilation stage.
@@ -37,7 +37,7 @@ public class InitHelperRegistry extends RuntimeHelperRegistry {
      * @param registry the Handlebars registry to be used for helper registration
      */
     protected void registerDefaultHelpers(final HelperRegistry registry) {
-        registry.registerHelper(SecuredHelper.HELPER_NAME, new SecuredHelper());
+        registry.registerHelper(InlineSecuredHelper.HELPER_NAME, new InlineSecuredHelper());
         registry.registerHelper(LayoutHelper.HELPER_NAME, new LayoutHelper());
         registry.registerHelperMissing((context, options) -> "");
     }

@@ -80,13 +80,13 @@ public class HtmlRenderableCreator implements RenderableCreator {
     public FragmentRenderableData createFragmentRenderable(FragmentReference fragmentReference,
                                                            ClassLoader classLoader) {
         return new RenderableCreator.FragmentRenderableData(getHtmlRenderable(fragmentReference.getRenderingFile()),
-                                                            false);
+                                                            null);
     }
 
     @Override
     public PageRenderableData createPageRenderable(PageReference pageReference,
                                                    ClassLoader classLoader) {
-        return new RenderableCreator.PageRenderableData(getHtmlRenderable(pageReference.getRenderingFile()), false);
+        return new RenderableCreator.PageRenderableData(getHtmlRenderable(pageReference.getRenderingFile()), null);
     }
 
     @Override

@@ -33,6 +33,13 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.wso2.carbon.uuf</groupId>
+            <artifactId>org.wso2.carbon.uuf.core</artifactId>
+        </dependency>
+    </dependencies>
+
     <build>
         <plugins>
             <plugin>
@@ -40,8 +47,14 @@
                 <artifactId>maven-bundle-plugin</artifactId>
                 <configuration>
                     <instructions>
+                        <Import-Package>
+                            org.wso2.carbon.uuf.api.*; version="${carbon.uuf.version}",
+                            org.wso2.carbon.uuf.exception.*; version="${carbon.uuf.version}",
+                            org.wso2.carbon.uuf.spi.*; version="${carbon.uuf.version}",
+                            com.google.common.*; version="${guava.version.range}"
+                        </Import-Package>
                         <Export-Package>
-                            org.wso2.carbon.uuf.sample.featuresapp.bundle;version="${project.version}"
+                            org.wso2.carbon.uuf.sample.featuresapp.bundle.*;version="${project.version}"
                         </Export-Package>
                     </instructions>
                 </configuration>

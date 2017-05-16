@@ -21,6 +21,7 @@ import com.github.jknack.handlebars.HandlebarsException;
 import com.github.jknack.handlebars.io.StringTemplateSource;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import org.wso2.carbon.uuf.api.auth.Permission;
 import org.wso2.carbon.uuf.renderablecreator.hbs.internal.HbsPreprocessor;
 
 import java.util.Optional;
@@ -55,7 +56,7 @@ public class HbsPreprocessorTest {
     @Test
     public void testSecured() {
         String templateContent = "foo\nbar\n{{secured}}bla bla\nfoobar";
-        boolean isSecured = createHbsPagePreprocessor(templateContent).isSecured();
-        Assert.assertTrue(isSecured, "This page/fragment is secured");
+        Permission permission = createHbsPagePreprocessor(templateContent).getPermission();
+        Assert.assertEquals(permission, Permission.ANY_PERMISSION);
     }
 }
