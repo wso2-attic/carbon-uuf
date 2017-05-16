@@ -1,0 +1,217 @@
+{{layout "org.wso2.carbon.uuf.sample.foundation.ui.main"}}
+{{title "secured | UUF Helper Sample | " @config.appName}}
+{{fragment "org.wso2.carbon.uuf.sample.foundation.ui.highlight" theme=@config.highlightjsTheme}}
+
+{{#fillZone "content"}}
+    <h3><b><code>secured</code></b> Helper</h3>
+    <hr/>
+
+    <h3>Inline <code>\{{secured}}</code> helper.</h3>
+    <p>
+        Inline <code>secured</code> helper can be used to secure an entire page or an entire
+        fragment. The inline <code>secured</code> helper can be used in two ways:
+    </p>
+    <h4><b>Example 1 - <code>\{{secured}}</code> helper with no permission</b></h4>
+    <p>
+        Inline <code>secured</code> helper <b>with no permission means</b> that the permission for
+        the secured page or fragment is for any resource URI and for any action and would therefore
+        only check if a user session is available when evaluating the permission.
+    </p>
+    <figure class="highlight">
+        <pre class="code lang-handlebars">
+            \{{secured}}
+            In order to view this content, you must have:
+            &lt;ul&gt;
+                &lt;li&gt;A UUF session created.&lt;\li&gt;
+            &lt;\ul&gt;
+        </pre>
+    </figure>
+
+    <p>will result in:</p>
+    <figure class="highlight">
+        <pre class="code lang-html">
+         In order to view this content, you must have:
+         &lt;ul&gt;
+             &lt;li&gt;A UUF session created.&lt;/li&gt;
+         &lt;/ul&gt;
+        </pre>
+    </figure>
+
+    {{#if @user}}
+        <p>output:</p>
+        <div class="output">
+            <ul style="margin-bottom: 0">
+                {{fragment "secured-inline"}}
+            </ul>
+        </div>
+    {{/if}}
+    <a href="{{@contextPath}}/helpers/uuf-helpers/secured?executeSamples=true" class="btn btn-info">
+        {{#if @user}}
+            <b>Click Here To Rerun Demo</b>
+        {{else}}
+            <b>Click Here To Run Demo</b>
+        {{/if}}
+    </a>
+
+    <h4><b>Example 2 - <code>\{{secured}}</code> helper with permission</b></h4>
+    <p>
+        Inline <code>secured</code> helper <b>with permission</b> means that the permission for the
+        secured page or fragment is for resource URI "some/resource/uri" and for action "someAction"
+        and would therefore check if a user session is available, if an authorizer is configured and
+        if the user has the permission when evaluating the permission.
+    </p>
+    <figure class="highlight">
+        <pre class="code lang-handlebars">
+            \{{secured "helpers/uuf-helpers/secured" "view"}}
+            In order to view this content, you must have:
+            &lt;ul&gt;
+                &lt;li&gt;A UUF session created.&lt;/li&gt;
+                &lt;li&gt;An authorizer configured in the 'app.yaml' configuration.&lt;/li&gt;
+                &lt;li&gt;User must have the specified permission for resource URI
+                    "helpers/uuf-helpers/secured" and action "view".&lt;/li&gt;
+            &lt;/ul&gt;
+        </pre>
+    </figure>
+
+    <p>will result in:</p>
+    <figure class="highlight">
+        <pre class="code lang-html">
+            In order to view this content, you must have:
+            &lt;ul&gt;
+                &lt;li&gt;A UUF session created.&lt;/li&gt;
+                &lt;li&gt;An authorizer configured in the 'app.yaml' configuration.&lt;/li&gt;
+                &lt;li&gt;User must have the specified permission for resource URI
+                    "helpers/uuf-helpers/secured" and action "view".&lt;/li&gt;
+            &lt;/ul&gt;
+        </pre>
+    </figure>
+
+    {{#if @user}}
+        <p>output:</p>
+        <div class="output">
+            <ul style="margin-bottom: 0">
+                {{fragment "secured-inline-with-permission"}}
+            </ul>
+        </div>
+    {{/if}}
+    <a href="{{@contextPath}}/helpers/uuf-helpers/secured?executeSamples=true" class="btn btn-info">
+        {{#if @user}}
+            <b>Click Here To Rerun Demo</b>
+        {{else}}
+            <b>Click Here To Run Demo</b>
+        {{/if}}
+    </a>
+
+    <h3>Block <code>\{{#secured}}</code> helper.</h3>
+    <p>
+        Block <code>secured</code> helper can be used to secure a section of a page or a fragment.
+        The block <code>secured</code> helper can be used in two ways:
+    </p>
+    <h4><b>Example 1 - <code>\{{#secured}}</code> helper with no permission</b></h4>
+    <p>
+        Block <code>secured</code> helper <b>with no permission means</b> that the permission for
+        the secured section is for any resource URI and for any action and would therefore only
+        check if a user session is available when evaluating the permission.
+    </p>
+    <figure class="highlight">
+        <pre class="code lang-handlebars">
+            \{{#secured}}
+            In order to view this content, you must have:
+            &lt;ul&gt;
+                &lt;li&gt;A UUF session created.&lt;\li&gt;
+            &lt;\ul&gt;
+            \{{/secured}}
+        </pre>
+    </figure>
+
+    <p>will result in:</p>
+    <figure class="highlight">
+        <pre class="code lang-html">
+         In order to view this content, you must have:
+         &lt;ul&gt;
+             &lt;li&gt;A UUF session created.&lt;/li&gt;
+         &lt;/ul&gt;
+        </pre>
+    </figure>
+
+    {{#if @user}}
+        <p>output:</p>
+        <div class="output">
+            <ul style="margin-bottom: 0">
+                {{#secured}}
+                    In order to view this content, you must have:
+                    <ul>
+                        <li>A UUF session created.</li>
+                    </ul>
+                {{/secured}}
+            </ul>
+        </div>
+    {{/if}}
+    <a href="{{@contextPath}}/helpers/uuf-helpers/secured?executeSamples=true" class="btn btn-info">
+        {{#if @user}}
+            <b>Click Here To Rerun Demo</b>
+        {{else}}
+            <b>Click Here To Run Demo</b>
+        {{/if}}
+    </a>
+
+    <h4><b>Example 2 - <code>\{{#secured}}</code> helper with permission</b></h4>
+    <p>
+        Block <code>secured</code> helper <b>with permission</b> means that the permission for the
+        secured section is for resource URI "some/resource/uri" and for action "someAction" and
+        would therefore check if a user session is available, if an authorizer is configured and if
+        the user has the permission when evaluating the permission.
+    </p>
+    <figure class="highlight">
+        <pre class="code lang-handlebars">
+            \{{#secured "helpers/uuf-helpers/secured" "view"}}
+            In order to view this content, you must have:
+            &lt;ul&gt;
+                &lt;li&gt;A UUF session created.&lt;/li&gt;
+                &lt;li&gt;An authorizer configured in the 'app.yaml' configuration.&lt;/li&gt;
+                &lt;li&gt;User must have the specified permission for resource URI
+                    "helpers/uuf-helpers/secured" and action "view".&lt;/li&gt;
+            &lt;/ul&gt;
+            \{{/secured}}
+        </pre>
+    </figure>
+
+    <p>will result in:</p>
+    <figure class="highlight">
+        <pre class="code lang-html">
+            In order to view this content, you must have:
+            &lt;ul&gt;
+                &lt;li&gt;A UUF session created.&lt;/li&gt;
+                &lt;li&gt;An authorizer configured in the 'app.yaml' configuration.&lt;/li&gt;
+                &lt;li&gt;User must have the specified permission for resource URI
+                    "helpers/uuf-helpers/secured" and action "view".&lt;/li&gt;
+            &lt;/ul&gt;
+        </pre>
+    </figure>
+
+    {{#if @user}}
+        <p>output:</p>
+        <div class="output">
+            <ul style="margin-bottom: 0">
+                {{#secured "helpers/uuf-helpers/secured" "view"}}
+                    In order to view this content, you must have:
+                    <ul>
+                        <li>A UUF session created.</li>
+                        <li>An authorizer configured in the 'app.yaml' configuration.</li>
+                        <li>User must have the specified permission for resource URI
+                            "helpers/uuf-helpers/secured" and action "view".
+                        </li>
+                    </ul>
+                {{/secured}}
+            </ul>
+        </div>
+    {{/if}}
+    <a href="{{@contextPath}}/helpers/uuf-helpers/secured?executeSamples=true"
+       class="btn btn-info">
+        {{#if @user}}
+            <b>Click Here To Rerun Demo</b>
+        {{else}}
+            <b>Click Here To Run Demo</b>
+        {{/if}}
+    </a>
+{{/fillZone}}

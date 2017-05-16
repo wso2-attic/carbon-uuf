@@ -1,5 +1,7 @@
 theme: "org.wso2.carbon.uuf.sample.default.theme"
 
+authorizer: "org.wso2.carbon.uuf.sample.featuresapp.bundle.api.auth.DemoAuthorizer"
+
 menus:
   - name: "main"
     items:
@@ -45,6 +47,8 @@ menus:
             submenus:
               - text: "Block Helpers"
                 link: "/helpers/block-helpers"
+              - text: "UUF Helpers"
+                link: "/helpers/uuf-helpers"
 
 errorPages:
   404: /foundation/error/404
