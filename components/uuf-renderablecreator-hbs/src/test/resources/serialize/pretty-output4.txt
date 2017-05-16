@@ -1,0 +1,17 @@
+{
+  "a": null,
+  "b": null,
+  "c": "",
+  "d": "function someFunction(param1, param2)",
+  "e": "function ()",
+  "f": [
+    "A",
+    "B",
+    "C"
+  ],
+  "g": [
+    1,
+    2,
+    3
+  ]
+}
