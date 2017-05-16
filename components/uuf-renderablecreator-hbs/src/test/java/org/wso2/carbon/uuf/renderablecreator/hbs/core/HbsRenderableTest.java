@@ -47,6 +47,11 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
+/**
+ * Test cases for Handlebars renderables.
+ *
+ * @since 1.0.0
+ */
 public class HbsRenderableTest {
 
     private static HbsPageRenderable createPageRenderable(String sourceStr) {
@@ -109,7 +114,7 @@ public class HbsRenderableTest {
 
     @Test
     public void testPageTemplateWithExecutable() {
-        Executable executable = (context, api,lookup,requestLookup) -> ImmutableMap.of("name", "Alice");
+        Executable executable = (context, api, lookup, requestLookup) -> ImmutableMap.of("name", "Alice");
         HbsPageRenderable pageRenderable = createPageRenderable("Hello {{name}}! Have a good day.", executable);
         Model model = new MapModel(new HashMap<>());
 
@@ -139,7 +144,7 @@ public class HbsRenderableTest {
 
     @Test
     public void testFragmentTemplateWithExecutable() {
-        Executable executable = (context, api,lookup, requestLookup) -> ImmutableMap.of("name", "Alice");
+        Executable executable = (context, api, lookup, requestLookup) -> ImmutableMap.of("name", "Alice");
         HbsFragmentRenderable fragmentRenderable = createFragmentRenderable("Hello {{name}}! Have a good day.",
                                                                             executable);
         Model model = new MapModel(new HashMap<>());
