@@ -208,6 +208,17 @@ public interface HttpResponse {
     void addCookie(String name, String value);
 
     /**
+     * Adds a cookie to this response
+     *
+     * @param name       name of the cookie
+     * @param value      value of the cookie
+     * @param path       path of the cookie; if {@code null} path will not be set
+     * @param isSecure   if Secure flag should be set
+     * @param isHttpOnly if HTTPOnly flag should be set
+     */
+    void addCookie(String name, String value, String path, boolean isSecure, boolean isHttpOnly);
+
+    /**
      * Returns the value of the specified cookie of this response.
      *
      * @param name name of the cookie

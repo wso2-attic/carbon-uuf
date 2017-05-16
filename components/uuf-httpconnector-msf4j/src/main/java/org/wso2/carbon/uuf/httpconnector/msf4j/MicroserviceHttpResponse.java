@@ -115,6 +115,20 @@ public class MicroserviceHttpResponse implements HttpResponse {
     }
 
     @Override
+    public void addCookie(String name, String value, String path, boolean isSecure, boolean isHttpOnly) {
+        if (path != null) {
+            value += "; Path=" + path;
+        }
+        if (isSecure) {
+            value += "; Secure";
+        }
+        if (isHttpOnly) {
+            value += "; HTTPOnly";
+        }
+        addCookie(name, value);
+    }
+
+    @Override
     public String getCookie(String name) {
         return cookies.get(name);
     }
