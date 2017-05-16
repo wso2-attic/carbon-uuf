@@ -1,0 +1,27 @@
+{
+  "url": [
+    "http://www.example.com/",
+    "https://www.example.com/",
+    "http://www.example.com?param1=a&param2=b",
+    "https://localhost:9443/carbon/console"
+  ],
+  "uri": [
+    "/a/b/c",
+    "/a/b/c?param1=A&param2=B",
+    "jdbc:microsoft:sqlserver://localhost:1433;DatabaseName=abc"
+  ],
+  "script": [
+    "<script>alert('some message');</script>",
+    "onClick=\"showMessage();\""
+  ],
+  "html": [
+    "<div>some text</div>",
+    "<a href=\"some/uri\">Click</a>"
+  ],
+  "query": [
+    "SET NOCOUNT ON;select test='test';",
+    "SELECT * FROM table1 INNER JOIN table2 ON table1.column_name=table2.column_name;",
+    "select * from Employee where Rowid= select max(Rowid) from Employee",
+    "Select * from Employee a where row_id!=select max(row_id) for Employee b where a.Employee_num=b.Employee_num;"
+  ]
+}
