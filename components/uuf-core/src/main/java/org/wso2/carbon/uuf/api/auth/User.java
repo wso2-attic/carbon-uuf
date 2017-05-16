@@ -20,7 +20,7 @@ package org.wso2.carbon.uuf.api.auth;
 
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 
@@ -42,7 +42,7 @@ public class User implements Serializable {
      */
     public User(String id, Map<String, Serializable> properties) {
         this.id = id;
-        this.properties = new HashMap<>(properties);
+        this.properties = (properties == null) ? Collections.emptyMap() : properties;
     }
 
     /**
