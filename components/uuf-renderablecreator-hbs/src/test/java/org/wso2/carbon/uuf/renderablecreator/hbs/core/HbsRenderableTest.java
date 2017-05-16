@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.wso2.carbon.uuf.handlebars;
+package org.wso2.carbon.uuf.renderablecreator.hbs.core;
 
 import com.github.jknack.handlebars.Context;
 import com.github.jknack.handlebars.io.StringTemplateSource;
@@ -28,7 +28,6 @@ import org.wso2.carbon.uuf.core.API;
 import org.wso2.carbon.uuf.core.Fragment;
 import org.wso2.carbon.uuf.core.Lookup;
 import org.wso2.carbon.uuf.core.RequestLookup;
-import org.wso2.carbon.uuf.renderablecreator.hbs.core.Executable;
 import org.wso2.carbon.uuf.renderablecreator.hbs.impl.HbsFragmentRenderable;
 import org.wso2.carbon.uuf.renderablecreator.hbs.impl.HbsPageRenderable;
 import org.wso2.carbon.uuf.renderablecreator.hbs.model.ContextModel;
