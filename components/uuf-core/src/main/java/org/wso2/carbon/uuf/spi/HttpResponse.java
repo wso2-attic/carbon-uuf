@@ -53,6 +53,7 @@ public interface HttpResponse {
     String HEADER_LAST_MODIFIED = "Last-Modified";
     String HEADER_EXPIRES = "Expires";
     String HEADER_PRAGMA = "Pragma";
+    String HEADER_X_FRAME_OPTIONS = "X-Frame-Options";
 
     /**
      * Sets the <a href="https://tools.ietf.org/html/rfc2616#section-10">HTTP status code</a> of this response to the
