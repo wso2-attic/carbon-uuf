@@ -48,19 +48,32 @@ public abstract class FillPlaceholderHelper<T> implements Helper<T> {
         return requestLookup.getPlaceholderContent(placeholder);
     }
 
-    protected String getResourceIdentifier(RequestLookup requestLookup, String relativePath) {
+    protected static boolean isResourceAlreadyResolved(String resourceRelativePath, Options handlebarsOptions) {
+        RequestLookup requestLookup = handlebarsOptions.data(HbsRenderable.DATA_KEY_REQUEST_LOOKUP);
         RequestLookup.RenderingFlowTracker tracker = requestLookup.tracker();
-        // unique resource identifier is calculated as fragment/component name:relativePath
-        String resourceIdentifier = tracker.isInFragment() ? tracker.getCurrentFragment().get().getName()
+        Set<String> resolvedResources = handlebarsOptions.data(HbsRenderable.DATA_KEY_RESOLVED_RESOURCES);
+
+        // unique resource identifier is computed as fragment/component name+relativePath
+        String resourceIdentifierPrefix = tracker.isInFragment() ? tracker.getCurrentFragment().get().getName()
                 : tracker.getCurrentComponentName();
-        return resourceIdentifier + relativePath;
+        String resourceIdentifier =  resourceIdentifierPrefix + resourceRelativePath;
+
+        if (resolvedResources == null) {
+            resolvedResources = new HashSet<>();
+            handlebarsOptions.data(HbsRenderable.DATA_KEY_RESOLVED_RESOURCES, resolvedResources);
+        }
+        return !resolvedResources.add(resourceIdentifier);
     }
 
-    protected boolean isResourceAlreadyResolved(String resourceIdentifier, Options handlebarsOptions) {
-        if (handlebarsOptions.data(HbsRenderable.DATA_KEY_RESOLVED_RESOURCES) == null) {
-            handlebarsOptions.data(HbsRenderable.DATA_KEY_RESOLVED_RESOURCES, new HashSet<>());
-            return false;
+    protected static String concatParams(String firstParam, Object[] otherParams) {
+        if ((otherParams == null) || (otherParams.length == 0)) {
+            return firstParam;
         }
-        return ((Set) handlebarsOptions.data(HbsRenderable.DATA_KEY_RESOLVED_RESOURCES)).contains(resourceIdentifier);
+
+        StringBuilder builder = new StringBuilder(firstParam);
+        for (Object param : otherParams) {
+            builder.append(param);
+        }
+        return builder.toString();
     }
 }
