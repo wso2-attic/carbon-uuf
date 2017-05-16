@@ -40,7 +40,7 @@ import static org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.RuntimeH
 import static org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.RuntimeHelpersTestUtil.createRequestLookup;
 
 /**
- * Test cases for the i18n helper.
+ * Test cases for the {@code {{i18n}}} helper.
  *
  * @since 1.0.0
  */
@@ -48,39 +48,6 @@ public class I18nHelperTest {
 
     private static final String MESSAGE_KEY_HELLO = "test.hello";
     private static final String MESSAGE_KEY_HELLO_NAME = "test.hello.name";
-
-    private static Lookup createLookup() {
-        Lookup lookup = RuntimeHelpersTestUtil.createLookup();
-        I18nResources i18nResources = createI18nResources();
-        when(lookup.getI18nResources()).thenReturn(i18nResources);
-        return lookup;
-    }
-
-    private static I18nResources createI18nResources() {
-        I18nResources i18nResources = new I18nResources();
-
-        Properties japaneseMessages = new Properties();
-        japaneseMessages.put(MESSAGE_KEY_HELLO, "こんにちは");
-        japaneseMessages.put(MESSAGE_KEY_HELLO_NAME, "こんにちは{0}");
-        i18nResources.addI18nResource(Locale.JAPANESE, japaneseMessages);
-
-        Properties frenchMessages = new Properties();
-        frenchMessages.put(MESSAGE_KEY_HELLO, "Bonjour");
-        frenchMessages.put(MESSAGE_KEY_HELLO_NAME, "Bonjour {0}");
-        i18nResources.addI18nResource(Locale.FRENCH, frenchMessages);
-
-        Properties sinhalaMessages = new Properties();
-        sinhalaMessages.put(MESSAGE_KEY_HELLO, "හෙලෝ");
-        sinhalaMessages.put(MESSAGE_KEY_HELLO_NAME, "හෙලෝ {0}");
-        i18nResources.addI18nResource(Locale.forLanguageTag("si"), sinhalaMessages);
-
-        Properties englishMessages = new Properties();
-        englishMessages.put(MESSAGE_KEY_HELLO, "Hello");
-        englishMessages.put(MESSAGE_KEY_HELLO_NAME, "Hello {0}");
-        i18nResources.addI18nResource(Locale.ENGLISH, englishMessages);
-
-        return i18nResources;
-    }
 
     @Test
     public void testLocaleFromParam() {
@@ -126,5 +93,38 @@ public class I18nHelperTest {
         HbsRenderable renderable = createRenderable("{{i18n \"" + MESSAGE_KEY_HELLO + "\"}}");
         String output = renderable.render(null, createLookup(), createRequestLookup(), createAPI());
         Assert.assertEquals(output, "Hello");
+    }
+
+    private static Lookup createLookup() {
+        Lookup lookup = RuntimeHelpersTestUtil.createLookup();
+        I18nResources i18nResources = createI18nResources();
+        when(lookup.getI18nResources()).thenReturn(i18nResources);
+        return lookup;
+    }
+
+    private static I18nResources createI18nResources() {
+        I18nResources i18nResources = new I18nResources();
+
+        Properties japaneseMessages = new Properties();
+        japaneseMessages.put(MESSAGE_KEY_HELLO, "こんにちは");
+        japaneseMessages.put(MESSAGE_KEY_HELLO_NAME, "こんにちは{0}");
+        i18nResources.addI18nResource(Locale.JAPANESE, japaneseMessages);
+
+        Properties frenchMessages = new Properties();
+        frenchMessages.put(MESSAGE_KEY_HELLO, "Bonjour");
+        frenchMessages.put(MESSAGE_KEY_HELLO_NAME, "Bonjour {0}");
+        i18nResources.addI18nResource(Locale.FRENCH, frenchMessages);
+
+        Properties sinhalaMessages = new Properties();
+        sinhalaMessages.put(MESSAGE_KEY_HELLO, "හෙලෝ");
+        sinhalaMessages.put(MESSAGE_KEY_HELLO_NAME, "හෙලෝ {0}");
+        i18nResources.addI18nResource(Locale.forLanguageTag("si"), sinhalaMessages);
+
+        Properties englishMessages = new Properties();
+        englishMessages.put(MESSAGE_KEY_HELLO, "Hello");
+        englishMessages.put(MESSAGE_KEY_HELLO_NAME, "Hello {0}");
+        i18nResources.addI18nResource(Locale.ENGLISH, englishMessages);
+
+        return i18nResources;
     }
 }
