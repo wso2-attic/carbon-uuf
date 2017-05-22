@@ -635,7 +635,7 @@
         <carbon.security.caas.version.range>[1.0.0, 2.0.0)</carbon.security.caas.version.range>
 
         <!-- Maven Plugins -->
-        <carbon-uuf-maven-plugin.version>1.0.0-SNAPSHOT</carbon-uuf-maven-plugin.version>
+        <carbon-uuf-maven-plugin.version>1.0.0-14</carbon-uuf-maven-plugin.version>
         <carbon.feature.plugin.version>3.0.0</carbon.feature.plugin.version>
         <maven.bundle.plugin.version>2.5.0</maven.bundle.plugin.version>
         <maven.checkstyle.plugin.version>2.17</maven.checkstyle.plugin.version>
