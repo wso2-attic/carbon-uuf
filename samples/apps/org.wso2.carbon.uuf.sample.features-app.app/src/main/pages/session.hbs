@@ -5,7 +5,7 @@
     <h3>Create, Get & Destroy Session.</h3>
     <hr />
     <p>You can get already existing session and create a new user session using your executable.</p>
-    <p>Syntax : <code>createSession(username);</code></p>
+    <p>Syntax : <code>createSession(user);</code></p>
     <p>Syntax : <code>getSession();</code></p>
     <p>Syntax : <code>destroySession();</code></p>
     <p>In your JS file;</p>
@@ -13,18 +13,19 @@
         function onGet(context) {
             var session = getSession();
             if (!session) {
-                session = createSession("admin");
+                var user = login("admin", "admin"); // call some login function
+                session = createSession(user);
             }
             return {"id": session.getUser().getId()};
         }
     </pre>
     <p>Then, you can use this variable in your handlebars;</p>
     <pre>
-        \{{username}}
+        \{{id}}
     </pre>
     <h3>Notes:</h3>
     <ol>
-        <li>The above code will print "{{username}}".</li>
+        <li>The above code will print "{{id}}".</li>
         <li>Once session is created; you can access the same session from any page with getSession().</li>
         <li>Session is implemented on top of Carbon Cache.</li>
     </ol>
