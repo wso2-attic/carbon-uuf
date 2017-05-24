@@ -20,7 +20,7 @@
 
     <groupId>org.wso2.carbon.uuf.sample</groupId>
     <artifactId>org.wso2.carbon.uuf.sample.store-common.ui</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0-m15</version>
     <packaging>uuf-component</packaging>
 
     <name>WSO2 UUF Sample - Component - Store Common Component</name>
@@ -29,7 +29,7 @@
     <parent>
         <groupId>org.wso2.carbon.uuf.sample</groupId>
         <artifactId>sample-parent</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.0-m15</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
