@@ -23,7 +23,7 @@ package org.wso2.carbon.uuf.exception;
  *
  * @since 1.0.0
  */
-public class SessionManagementException extends UUFException {
+public class SessionManagementException extends UUFRuntimeException {
 
     /**
      * Constructs a new exception with {@code null} as its detail message. The cause is not initialized, and may

@@ -18,7 +18,7 @@
 
 package org.wso2.carbon.uuf.exception;
 
-public class FileOperationException extends UUFException {
+public class FileOperationException extends UUFRuntimeException {
 
     public FileOperationException() {
     }

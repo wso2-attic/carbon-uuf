@@ -18,7 +18,7 @@
 
 package org.wso2.carbon.uuf.exception;
 
-public class HttpErrorException extends UUFException {
+public class HttpErrorException extends UUFRuntimeException {
 
     private final int httpStatusCode;
 

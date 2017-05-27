@@ -18,7 +18,7 @@
 
 package org.wso2.carbon.uuf.exception;
 
-public class InvalidTypeException extends UUFException {
+public class InvalidTypeException extends UUFRuntimeException {
 
     public InvalidTypeException() {
     }

@@ -18,14 +18,14 @@
 
 package org.wso2.carbon.uuf.internal.exception;
 
-import org.wso2.carbon.uuf.exception.UUFException;
+import org.wso2.carbon.uuf.exception.UUFRuntimeException;
 
 /**
  * Indicates an error occurred during loading and instantiation of a plugin.
  *
  * @since 1.0.0
  */
-public class PluginLoadingException extends UUFException {
+public class PluginLoadingException extends UUFRuntimeException {
 
     /**
      * Constructs a new exception with {@code null} as its detail message. The cause is not initialized, and may
