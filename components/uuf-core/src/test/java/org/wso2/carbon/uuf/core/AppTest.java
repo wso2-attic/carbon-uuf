@@ -100,6 +100,7 @@ public class AppTest {
         when(request.getContextPath()).thenReturn(contextPath);
         when(request.getUri()).thenReturn(contextPath + uriWithoutContextPath);
         when(request.getUriWithoutContextPath()).thenReturn(uriWithoutContextPath);
+        when(request.isGetRequest()).thenReturn(true);
         return request;
     }
 
