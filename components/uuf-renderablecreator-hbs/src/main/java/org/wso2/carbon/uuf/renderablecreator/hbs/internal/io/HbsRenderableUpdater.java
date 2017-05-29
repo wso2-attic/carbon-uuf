@@ -26,7 +26,6 @@ import org.wso2.carbon.uuf.api.reference.FileReference;
 import org.wso2.carbon.uuf.api.reference.FragmentReference;
 import org.wso2.carbon.uuf.api.reference.LayoutReference;
 import org.wso2.carbon.uuf.api.reference.PageReference;
-import org.wso2.carbon.uuf.exception.FileOperationException;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.MutableExecutable;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.MutableHbsRenderable;
 import org.wso2.carbon.uuf.renderablecreator.hbs.exception.ExecutableUpdateException;
@@ -69,7 +68,7 @@ public class HbsRenderableUpdater {
         try {
             this.watcher = FileSystems.getDefault().newWatchService();
         } catch (IOException e) {
-            throw new FileOperationException("Cannot create file watch service.", e);
+            throw new HbsRenderableUpdateException("Cannot create file watch service for Handlebars renderables.", e);
         }
         this.watchService = new Thread(this::run, HbsRenderableUpdater.class.getName() + "-WatchService");
         this.isWatchServiceStopped = false;
@@ -97,10 +96,11 @@ public class HbsRenderableUpdater {
                 throw new HbsRenderableUpdateException("File watch service is closed.", e);
             } catch (NotDirectoryException e) {
                 throw new HbsRenderableUpdateException("Cannot register path '" + parentDirectory +
-                                                         "' to file watch service as it is not a directory.", e);
+                                                               "' to file watch service as it is not a directory.", e);
             } catch (IOException e) {
-                throw new HbsRenderableUpdateException("An IO error occurred when registering path '" + parentDirectory +
-                                                         "' to file watch service.'", e);
+                throw new HbsRenderableUpdateException(
+                        "An IO error occurred when registering path '" + parentDirectory +
+                                "' to file watch service.'", e);
             }
         }
         watchingRenderables.put(renderablePath, mutableRenderable);
