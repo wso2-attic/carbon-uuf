@@ -18,8 +18,6 @@
 
 package org.wso2.carbon.uuf.api.exception;
 
-import org.wso2.carbon.uuf.exception.UUFRuntimeException;
-
 /**
  * Indicates a exception occurred when creating a {@link org.wso2.carbon.uuf.spi.Renderable}.
  *

@@ -16,7 +16,7 @@
  * under the License.
  */
 
-package org.wso2.carbon.uuf.exception;
+package org.wso2.carbon.uuf.api.exception;
 
 /**
  * Indicates a generic runtime exception occurred in UUF.

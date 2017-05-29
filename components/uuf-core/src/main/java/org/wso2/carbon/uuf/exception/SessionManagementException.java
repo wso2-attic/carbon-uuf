@@ -18,6 +18,8 @@
 
 package org.wso2.carbon.uuf.exception;
 
+import org.wso2.carbon.uuf.api.exception.UUFRuntimeException;
+
 /**
  * Indicates an error occurred when creating a session, obtaining a session, destroying a session.
  *

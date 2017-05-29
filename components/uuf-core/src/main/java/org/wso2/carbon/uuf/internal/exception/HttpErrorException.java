@@ -18,7 +18,7 @@
 
 package org.wso2.carbon.uuf.internal.exception;
 
-import org.wso2.carbon.uuf.exception.UUFRuntimeException;
+import org.wso2.carbon.uuf.api.exception.UUFRuntimeException;
 
 public class HttpErrorException extends UUFRuntimeException {
 

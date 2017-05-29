@@ -18,7 +18,7 @@
 
 package org.wso2.carbon.uuf.internal.exception;
 
-import org.wso2.carbon.uuf.exception.UUFRuntimeException;
+import org.wso2.carbon.uuf.api.exception.UUFRuntimeException;
 
 /**
  * Indicates an error occurred during loading and instantiation of a plugin.
