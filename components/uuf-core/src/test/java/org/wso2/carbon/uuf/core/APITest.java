@@ -24,18 +24,15 @@ import org.wso2.carbon.uuf.api.auth.Permission;
 import org.wso2.carbon.uuf.api.auth.Session;
 import org.wso2.carbon.uuf.api.auth.User;
 import org.wso2.carbon.uuf.api.config.Configuration;
-import org.wso2.carbon.uuf.exception.HttpErrorException;
 import org.wso2.carbon.uuf.exception.PageRedirectException;
+import org.wso2.carbon.uuf.internal.exception.HttpErrorException;
 import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.carbon.uuf.spi.HttpResponse;
 import org.wso2.carbon.uuf.spi.auth.SessionManager;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -57,7 +54,7 @@ public class APITest {
         Assert.assertThrows(IllegalArgumentException.class, () -> API.sendError(500, ""));
 
         HttpErrorException exception = Assert.expectThrows(HttpErrorException.class,
-                () -> API.sendError(500, "Some internal server error!"));
+                                                           () -> API.sendError(500, "Some internal server error!"));
         Assert.assertEquals(exception.getHttpStatusCode(), 500);
         Assert.assertEquals(exception.getMessage(), "Some internal server error!");
     }
@@ -68,7 +65,7 @@ public class APITest {
         Assert.assertThrows(IllegalArgumentException.class, () -> API.sendRedirect(""));
 
         PageRedirectException pre = Assert.expectThrows(PageRedirectException.class,
-                () -> API.sendRedirect("/some/uri"));
+                                                        () -> API.sendRedirect("/some/uri"));
         Assert.assertEquals(pre.getHttpStatusCode(), HttpResponse.STATUS_FOUND);
         Assert.assertEquals(pre.getRedirectUrl(), "/some/uri");
     }

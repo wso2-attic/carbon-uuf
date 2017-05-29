@@ -18,6 +18,7 @@
 
 package org.wso2.carbon.uuf.exception;
 
+import org.wso2.carbon.uuf.internal.exception.HttpErrorException;
 import org.wso2.carbon.uuf.spi.HttpResponse;
 
 public class PageRedirectException extends HttpErrorException {

@@ -24,9 +24,9 @@ import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.api.auth.Permission;
 import org.wso2.carbon.uuf.api.auth.Session;
 import org.wso2.carbon.uuf.api.auth.User;
-import org.wso2.carbon.uuf.exception.HttpErrorException;
 import org.wso2.carbon.uuf.exception.PageRedirectException;
 import org.wso2.carbon.uuf.exception.UUFException;
+import org.wso2.carbon.uuf.internal.exception.HttpErrorException;
 import org.wso2.carbon.uuf.spi.auth.Authorizer;
 import org.wso2.carbon.uuf.spi.auth.SessionManager;
 
@@ -73,12 +73,13 @@ public class API {
      * @param serviceMethodName method name
      * @param args              method arguments
      * @return invoked OSGi service instance
-     * @exception IllegalArgumentException if cannot find a method that accepts specified arguments in the specified
-     * OSGi service class
-     * @exception UUFException if cannot create JNDI context
-     * @exception UUFException if cannot find the specified OSGi service
-     * @exception UUFException if some other error occurred when calling the specified method on the OSGi class
-     * @throws Exception the exception thrown by the calling method of the specified OSGi service class
+     * @throws IllegalArgumentException if cannot find a method that accepts specified arguments in the specified OSGi
+     *                                  service class
+     * @throws UUFException             if cannot create JNDI context
+     * @throws UUFException             if cannot find the specified OSGi service
+     * @throws UUFException             if some other error occurred when calling the specified method on the OSGi
+     *                                  class
+     * @throws Exception                the exception thrown by the calling method of the specified OSGi service class
      */
     public static Object callOSGiService(String serviceClassName, String serviceMethodName, Object... args)
             throws Exception {
