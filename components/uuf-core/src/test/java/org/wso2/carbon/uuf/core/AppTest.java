@@ -32,8 +32,8 @@ import org.wso2.carbon.uuf.api.auth.Session;
 import org.wso2.carbon.uuf.api.auth.User;
 import org.wso2.carbon.uuf.api.config.Configuration;
 import org.wso2.carbon.uuf.api.model.MapModel;
-import org.wso2.carbon.uuf.exception.PageRedirectException;
 import org.wso2.carbon.uuf.exception.UUFException;
+import org.wso2.carbon.uuf.internal.exception.PageRedirectException;
 import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.carbon.uuf.spi.HttpResponse;
 import org.wso2.carbon.uuf.spi.Renderable;
@@ -275,7 +275,7 @@ public class AppTest {
         // Creating app.
         SessionManager sessionManager = createSessionManager();
         App app = new App(null, "/test", ImmutableSet.of(cmp, rootComponent), emptySet(), configuration,
-                null, null, sessionManager, null);
+                          null, null, sessionManager, null);
         String html;
         Map<String, Object> params;
 
@@ -300,7 +300,7 @@ public class AppTest {
         String pageUri = "/a";
         Page page = new Page(new UriPatten(pageUri), (m, l, rl, a) -> "Secured page.", Permission.ANY_PERMISSION);
         Component rootComponent = new Component("root", null, Component.ROOT_COMPONENT_CONTEXT_PATH,
-                ImmutableSortedSet.of(page), emptySet(), emptySet(), emptySet(), null);
+                                                ImmutableSortedSet.of(page), emptySet(), emptySet(), emptySet(), null);
         // Creating configuration.
         Configuration configuration = createConfiguration();
         String loginPageUri = "/some/login/page";
@@ -311,7 +311,7 @@ public class AppTest {
                 .thenReturn(Optional.empty());
         // Creating app.
         App app = new App(null, "/test", singleton(rootComponent), emptySet(), configuration,
-                null, null, sessionManager, null);
+                          null, null, sessionManager, null);
         PageRedirectException pre = Assert.expectThrows(PageRedirectException.class, () ->
                 app.renderPage(createRequest(app.getContextPath(), "/a"), null));
         Assert.assertEquals(pre.getHttpStatusCode(), HttpResponse.STATUS_FOUND);
