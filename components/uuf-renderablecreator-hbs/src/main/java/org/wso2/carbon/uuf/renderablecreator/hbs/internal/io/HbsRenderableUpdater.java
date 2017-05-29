@@ -27,9 +27,11 @@ import org.wso2.carbon.uuf.api.reference.FragmentReference;
 import org.wso2.carbon.uuf.api.reference.LayoutReference;
 import org.wso2.carbon.uuf.api.reference.PageReference;
 import org.wso2.carbon.uuf.exception.FileOperationException;
-import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.MutableExecutable;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.MutableHbsRenderable;
+import org.wso2.carbon.uuf.renderablecreator.hbs.exception.ExecutableUpdateException;
+import org.wso2.carbon.uuf.renderablecreator.hbs.exception.HbsRenderableCreationException;
+import org.wso2.carbon.uuf.renderablecreator.hbs.exception.HbsRenderableUpdateException;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -92,12 +94,12 @@ public class HbsRenderableUpdater {
             try {
                 parentDirectory.register(watcher, StandardWatchEventKinds.ENTRY_MODIFY);
             } catch (ClosedWatchServiceException e) {
-                throw new UUFException("File watch service is closed.", e);
+                throw new HbsRenderableUpdateException("File watch service is closed.", e);
             } catch (NotDirectoryException e) {
-                throw new FileOperationException("Cannot register path '" + parentDirectory +
+                throw new HbsRenderableUpdateException("Cannot register path '" + parentDirectory +
                                                          "' to file watch service as it is not a directory.", e);
             } catch (IOException e) {
-                throw new FileOperationException("An IO error occurred when registering path '" + parentDirectory +
+                throw new HbsRenderableUpdateException("An IO error occurred when registering path '" + parentDirectory +
                                                          "' to file watch service.'", e);
             }
         }
@@ -156,7 +158,7 @@ public class HbsRenderableUpdater {
                                 LOGGER.info("Handlebars template '{}' reloaded successfully.", entry);
                             } catch (IOException e) {
                                 LOGGER.error("An error occurred while reloading Handlebars template '{}'.", entry, e);
-                            } catch (UUFException e) {
+                            } catch (HbsRenderableCreationException e) {
                                 LOGGER.error("An error occurred while compiling Handlebars template '{}'.", entry, e);
                             } catch (Exception e) {
                                 LOGGER.error("An unexpected error occurred while reloading Handlebars template '{}'.",
@@ -173,7 +175,7 @@ public class HbsRenderableUpdater {
                                 LOGGER.info("JavaScript file '{}' reloaded successfully.", entry);
                             } catch (IOException e) {
                                 LOGGER.error("An error occurred while reloading JavaScript file '{}'.", entry, e);
-                            } catch (UUFException e) {
+                            } catch (ExecutableUpdateException e) {
                                 LOGGER.error("An error occurred while compiling JavaScript file '{}'.", entry, e);
                             } catch (Exception e) {
                                 LOGGER.error("An unexpected error occurred while reloading JavaScript file '{}'.",
