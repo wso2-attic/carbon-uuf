@@ -75,9 +75,9 @@ public class API {
      * @return invoked OSGi service instance
      * @throws IllegalArgumentException if cannot find a method that accepts specified arguments in the specified OSGi
      *                                  service class
-     * @throws UUFRuntimeException             if cannot create JNDI context
-     * @throws UUFRuntimeException             if cannot find the specified OSGi service
-     * @throws UUFRuntimeException             if some other error occurred when calling the specified method on the OSGi
+     * @throws UUFRuntimeException      if cannot create JNDI context
+     * @throws UUFRuntimeException      if cannot find the specified OSGi service
+     * @throws UUFRuntimeException      if some other error occurred when calling the specified method on the OSGi
      *                                  class
      * @throws Exception                the exception thrown by the calling method of the specified OSGi service class
      */
@@ -102,10 +102,10 @@ public class API {
         try {
             return MethodUtils.invokeMethod(serviceInstance, serviceMethodName, args);
         } catch (NoSuchMethodException e) {
-            throw new IllegalArgumentException(
+            throw new UUFRuntimeException(
                     "Cannot find any method with the signature '" + serviceMethodName + "(" + joinClassNames(args) +
-                            ")' in OSGi service '" + serviceInstance.getClass().getName() + "' with service class '" +
-                            serviceClassName + "'.", e);
+                    ")' in OSGi service '" + serviceInstance.getClass().getName() + "' with service class '" +
+                    serviceClassName + "'.", e);
         } catch (InvocationTargetException e) {
             // Calling method has thrown an exception.
             Throwable cause = e.getCause();
@@ -115,13 +115,13 @@ public class API {
             // Seems like that cause is a Throwable.
             throw new UUFRuntimeException(
                     "Invoking method '" + serviceMethodName + "(" + joinClassNames(args) + ")' on OSGi service '" +
-                            serviceInstance.getClass().getName() + "' with service class '" + serviceClassName +
-                            "' caused a Throwable.", e);
+                    serviceInstance.getClass().getName() + "' with service class '" + serviceClassName +
+                    "' caused a Throwable.", e);
         } catch (Exception e) {
             throw new UUFRuntimeException(
                     "Invoking method '" + serviceMethodName + "(" + joinClassNames(args) + ")' on OSGi service '" +
-                            serviceInstance.getClass().getName() + "' with service class '" + serviceClassName +
-                            "' failed.", e);
+                    serviceInstance.getClass().getName() + "' with service class '" + serviceClassName + "' failed.",
+                    e);
         }
     }
 

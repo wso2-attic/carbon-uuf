@@ -56,7 +56,7 @@ public class ArtifactFragmentReference implements FragmentReference {
             }
         }
         throw new UUFRuntimeException("Fragment '" + fragmentName + "' of component '" + componentReference.getPath() +
-                                              "' is empty.");
+                                      "' is empty.");
     }
 
     @Override

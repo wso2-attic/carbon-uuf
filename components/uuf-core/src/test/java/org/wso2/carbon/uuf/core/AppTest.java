@@ -274,8 +274,8 @@ public class AppTest {
         configuration.setDefaultErrorPageUri("/cmp/error/default");
         // Creating app.
         SessionManager sessionManager = createSessionManager();
-        App app = new App(null, "/test", ImmutableSet.of(cmp, rootComponent), emptySet(), configuration,
-                          null, null, sessionManager, null);
+        App app = new App(null, "/test", ImmutableSet.of(cmp, rootComponent), emptySet(), configuration, null, null,
+                          sessionManager, null);
         String html;
         Map<String, Object> params;
 
@@ -310,8 +310,8 @@ public class AppTest {
         when(sessionManager.getSession(any(HttpRequest.class), any(HttpResponse.class)))
                 .thenReturn(Optional.empty());
         // Creating app.
-        App app = new App(null, "/test", singleton(rootComponent), emptySet(), configuration,
-                          null, null, sessionManager, null);
+        App app = new App(null, "/test", singleton(rootComponent), emptySet(), configuration, null, null,
+                          sessionManager, null);
         PageRedirectException pre = Assert.expectThrows(PageRedirectException.class, () ->
                 app.renderPage(createRequest(app.getContextPath(), "/a"), null));
         Assert.assertEquals(pre.getHttpStatusCode(), HttpResponse.STATUS_FOUND);
