@@ -20,8 +20,8 @@ package org.wso2.carbon.uuf.core;
 
 import org.wso2.carbon.uuf.api.auth.Permission;
 import org.wso2.carbon.uuf.exception.SessionNotFoundException;
-import org.wso2.carbon.uuf.exception.UnauthorizedException;
 import org.wso2.carbon.uuf.internal.debug.DebugLogger;
+import org.wso2.carbon.uuf.internal.exception.UnauthorizedException;
 import org.wso2.carbon.uuf.internal.util.UriUtils;
 import org.wso2.carbon.uuf.spi.Renderable;
 import org.wso2.carbon.uuf.spi.model.Model;
