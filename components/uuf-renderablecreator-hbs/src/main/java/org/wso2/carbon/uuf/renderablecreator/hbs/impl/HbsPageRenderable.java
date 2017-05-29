@@ -23,9 +23,9 @@ import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.core.API;
 import org.wso2.carbon.uuf.core.Lookup;
 import org.wso2.carbon.uuf.core.RequestLookup;
-import org.wso2.carbon.uuf.exception.InvalidTypeException;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.Executable;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.HbsRenderable;
+import org.wso2.carbon.uuf.renderablecreator.hbs.exception.ExecutionException;
 import org.wso2.carbon.uuf.renderablecreator.hbs.exception.HbsRenderingException;
 import org.wso2.carbon.uuf.renderablecreator.hbs.internal.io.PlaceholderWriter;
 import org.wso2.carbon.uuf.spi.model.Model;
@@ -130,8 +130,8 @@ public class HbsPageRenderable extends HbsRenderable {
         if ((executableOutput instanceof Map)) {
             return (Map) executableOutput;
         } else {
-            throw new InvalidTypeException("Expected a Map as the output from executing the executable '" + executable +
-                                                   "'. Instead found '" + executableOutput.getClass().getName() + "'.");
+            throw new ExecutionException("Expected a Map as the output from executing the executable '" + executable +
+                                                 "'. Instead found '" + executableOutput.getClass().getName() + "'.");
         }
     }
 }
