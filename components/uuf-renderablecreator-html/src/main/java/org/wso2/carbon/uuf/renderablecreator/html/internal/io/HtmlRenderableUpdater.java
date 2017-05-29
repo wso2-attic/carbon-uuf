@@ -19,7 +19,6 @@ package org.wso2.carbon.uuf.renderablecreator.html.internal.io;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.uuf.exception.FileOperationException;
 import org.wso2.carbon.uuf.renderablecreator.html.core.MutableHtmlRenderable;
 import org.wso2.carbon.uuf.renderablecreator.html.exception.HtmlRenderableUpdateException;
 
@@ -57,7 +56,7 @@ public class HtmlRenderableUpdater {
         try {
             this.watchService = FileSystems.getDefault().newWatchService();
         } catch (IOException e) {
-            throw new FileOperationException("Cannot create file watch service.", e);
+            throw new HtmlRenderableUpdateException("Cannot create file watch service for HTML renderables.", e);
         }
         this.watchServiceThread = new Thread(this::run, HtmlRenderableUpdater.class.getName() + "-WatchService");
         this.isWatchServiceStopped = false;
