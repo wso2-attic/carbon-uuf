@@ -24,7 +24,7 @@ import org.wso2.carbon.uuf.api.reference.FileReference;
 import org.wso2.carbon.uuf.api.reference.FragmentReference;
 import org.wso2.carbon.uuf.api.reference.LayoutReference;
 import org.wso2.carbon.uuf.api.reference.PageReference;
-import org.wso2.carbon.uuf.exception.FileOperationException;
+import org.wso2.carbon.uuf.internal.exception.FileOperationException;
 
 import java.io.IOException;
 import java.nio.file.Files;

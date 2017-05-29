@@ -21,8 +21,8 @@ package org.wso2.carbon.uuf.internal.deployment.parser;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.wso2.carbon.uuf.api.reference.FileReference;
-import org.wso2.carbon.uuf.exception.FileOperationException;
 import org.wso2.carbon.uuf.internal.exception.ConfigurationException;
+import org.wso2.carbon.uuf.internal.exception.FileOperationException;
 
 import java.util.Properties;
 
