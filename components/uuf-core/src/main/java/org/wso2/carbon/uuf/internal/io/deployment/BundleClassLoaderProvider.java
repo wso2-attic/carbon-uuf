@@ -27,9 +27,9 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.wiring.BundleWiring;
+import org.wso2.carbon.uuf.api.exception.UUFRuntimeException;
 import org.wso2.carbon.uuf.api.reference.ComponentReference;
 import org.wso2.carbon.uuf.api.reference.FileReference;
-import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.internal.deployment.ClassLoaderProvider;
 import org.wso2.carbon.uuf.internal.exception.FileOperationException;
 
@@ -55,7 +55,7 @@ public class BundleClassLoaderProvider implements ClassLoaderProvider {
         try {
             dummyBundleClassByteCodes = DummyBundleClass.dump();
         } catch (Exception e) {
-            throw new UUFException("Cannot create the dummy class for OSGi bundle creation.");
+            throw new UUFRuntimeException("Cannot create the dummy class for OSGi bundle creation.", e);
         }
     }
 
@@ -86,8 +86,9 @@ public class BundleClassLoaderProvider implements ClassLoaderProvider {
             throw new FileOperationException("Error while creating the OSGi bundle for component '" + componentName +
                                                      "-" + componentVersion + "'.", e);
         } catch (BundleException e) {
-            throw new UUFException("Error while installing the OSGi bundle of component '" + componentName + "-" +
-                                           componentVersion + "'.", e);
+            throw new UUFRuntimeException(
+                    "Error while installing the OSGi bundle of component '" + componentName + "-" + componentVersion +
+                            "'.", e);
         }
     }
 
