@@ -21,7 +21,7 @@ package org.wso2.carbon.uuf.renderablecreator.hbs.helpers.init;
 import com.github.jknack.handlebars.HandlebarsException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import org.wso2.carbon.uuf.exception.UUFException;
+import org.wso2.carbon.uuf.renderablecreator.hbs.exception.HbsRenderableCreationException;
 
 import java.util.Optional;
 
@@ -49,9 +49,9 @@ public class LayoutHelperTest {
             Optional<String> layoutName = createHbsPagePreprocessor(pageTemplateContent).getLayoutName();
             Assert.fail("{{layout}} helper can be called twice in a page!");
         } catch (HandlebarsException e) {
-            Assert.assertTrue((e.getCause() instanceof UUFException),
-                              "Cause of the thrown exception should be '" + UUFException.class + "'. Instead found '" +
-                                      e.getCause().getClass() + "'.");
+            Assert.assertTrue((e.getCause() instanceof HbsRenderableCreationException),
+                              "Cause of the thrown exception should be '" + HbsRenderableCreationException.class +
+                                      "'. Instead found '" + e.getCause().getClass() + "'.");
         }
     }
 }

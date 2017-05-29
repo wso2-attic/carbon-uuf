@@ -19,8 +19,8 @@ package org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime;
 import com.github.jknack.handlebars.Helper;
 import com.github.jknack.handlebars.Options;
 import org.wso2.carbon.uuf.core.RequestLookup;
-import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.HbsRenderable;
+import org.wso2.carbon.uuf.renderablecreator.hbs.exception.HbsRenderingException;
 
 import java.io.IOException;
 
@@ -33,7 +33,7 @@ public class FillZoneHelper implements Helper<String> {
         RequestLookup requestLookup = options.data(HbsRenderable.DATA_KEY_REQUEST_LOOKUP);
         if (!requestLookup.tracker().isInPage()) {
             // helper is called inside a fragment or a layout
-            throw new UUFException("'#" + HELPER_NAME + "' helper is only allowed inside pages.");
+            throw new HbsRenderingException("'#" + HELPER_NAME + "' helper is only allowed inside pages.");
         }
 
         if ((zoneName == null) || zoneName.isEmpty()) {

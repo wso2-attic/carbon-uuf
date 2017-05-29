@@ -18,7 +18,7 @@ package org.wso2.carbon.uuf.renderablecreator.hbs.helpers.init;
 
 import com.github.jknack.handlebars.Helper;
 import com.github.jknack.handlebars.Options;
-import org.wso2.carbon.uuf.exception.UUFException;
+import org.wso2.carbon.uuf.renderablecreator.hbs.exception.HbsRenderingException;
 import org.wso2.carbon.uuf.renderablecreator.hbs.internal.HbsPreprocessor;
 
 import java.io.IOException;
@@ -30,13 +30,13 @@ public class LayoutHelper implements Helper<String> {
     @Override
     public CharSequence apply(String layoutName, Options options) throws IOException {
         if ((layoutName == null) || layoutName.isEmpty()) {
-            throw new IllegalArgumentException("Layout name cannot be null or empty.");
+            throw new HbsRenderingException("Layout name cannot be null or empty.");
         }
 
         Object currentLayout = options.data(HbsPreprocessor.DATA_KEY_CURRENT_LAYOUT);
         if (currentLayout != null) {
-            throw new UUFException("Cannot set layout '" + layoutName + "' to this page because layout '" +
-                                           currentLayout + "' is already set.");
+            throw new HbsRenderingException("Cannot set layout '" + layoutName + "' to this page because layout '" +
+                                                    currentLayout + "' is already set.");
         }
         options.data(HbsPreprocessor.DATA_KEY_CURRENT_LAYOUT, layoutName);
         return "";

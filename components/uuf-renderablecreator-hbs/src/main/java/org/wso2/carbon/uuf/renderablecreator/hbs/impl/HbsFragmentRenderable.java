@@ -20,21 +20,23 @@ import com.github.jknack.handlebars.Context;
 import com.github.jknack.handlebars.io.TemplateSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.uuf.api.exception.RenderingException;
 import org.wso2.carbon.uuf.core.API;
 import org.wso2.carbon.uuf.core.Lookup;
 import org.wso2.carbon.uuf.core.RequestLookup;
-import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.Executable;
-import org.wso2.carbon.uuf.renderablecreator.hbs.internal.DebugUtil;
+import org.wso2.carbon.uuf.renderablecreator.hbs.exception.HbsRenderingException;
 import org.wso2.carbon.uuf.renderablecreator.hbs.model.ContextModel;
 import org.wso2.carbon.uuf.spi.model.Model;
 
 import java.io.IOException;
 import java.util.Map;
 
+import static org.wso2.carbon.uuf.renderablecreator.hbs.internal.serialize.JsonSerializer.toPrettyJson;
+
 public class HbsFragmentRenderable extends HbsPageRenderable {
 
-    private static final Logger log = LoggerFactory.getLogger(HbsFragmentRenderable.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(HbsFragmentRenderable.class);
 
     public HbsFragmentRenderable(TemplateSource templateSource) {
         super(templateSource);
@@ -54,7 +56,7 @@ public class HbsFragmentRenderable extends HbsPageRenderable {
     }
 
     @Override
-    public String render(Model model, Lookup lookup, RequestLookup requestLookup, API api) {
+    public String render(Model model, Lookup lookup, RequestLookup requestLookup, API api) throws RenderingException {
         Context context;
         Executable executable = getExecutable();
         if (executable == null) {
@@ -67,8 +69,8 @@ public class HbsFragmentRenderable extends HbsPageRenderable {
         } else {
             Map executeOutput = execute(executable, getExecutableContext(model, lookup, requestLookup), api, lookup,
                                         requestLookup);
-            if (log.isDebugEnabled()) {
-                log.debug("Executable output \"" + DebugUtil.safeJsonString(executeOutput) + "\".");
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Executable output \"" + toPrettyJson(executeOutput) + "\".");
             }
             if (model instanceof ContextModel) {
                 context = Context.newContext(((ContextModel) model).getParentContext(), executeOutput);
@@ -81,14 +83,14 @@ public class HbsFragmentRenderable extends HbsPageRenderable {
         context.data(DATA_KEY_LOOKUP, lookup);
         context.data(DATA_KEY_REQUEST_LOOKUP, requestLookup);
         context.data(DATA_KEY_API, api);
-        if (log.isDebugEnabled()) {
-            log.debug("Template \"" + this + "\" will be applied with context \"" + DebugUtil.safeJsonString(context) +
-                              "\".");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Template \"" + this + "\" will be applied with context \"" + toPrettyJson(context) + "\".");
         }
         try {
             return getTemplate().apply(context);
         } catch (IOException e) {
-            throw new UUFException("An error occurred when writing to the in-memory PlaceholderWriter.", e);
+            throw new HbsRenderingException("Cannot render fragment Handlebars template '" + getAbsolutePath() + "'.",
+                                            e);
         }
     }
 }

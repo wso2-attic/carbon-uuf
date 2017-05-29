@@ -24,10 +24,9 @@ import org.wso2.carbon.uuf.core.API;
 import org.wso2.carbon.uuf.core.Lookup;
 import org.wso2.carbon.uuf.core.RequestLookup;
 import org.wso2.carbon.uuf.exception.InvalidTypeException;
-import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.Executable;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.HbsRenderable;
-import org.wso2.carbon.uuf.renderablecreator.hbs.internal.DebugUtil;
+import org.wso2.carbon.uuf.renderablecreator.hbs.exception.HbsRenderingException;
 import org.wso2.carbon.uuf.renderablecreator.hbs.internal.io.PlaceholderWriter;
 import org.wso2.carbon.uuf.spi.model.Model;
 
@@ -37,9 +36,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import static org.wso2.carbon.uuf.renderablecreator.hbs.internal.serialize.JsonSerializer.toPrettyJson;
+
 public class HbsPageRenderable extends HbsRenderable {
 
-    private static final Logger log = LoggerFactory.getLogger(HbsPageRenderable.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(HbsPageRenderable.class);
 
     private final Executable executable;
 
@@ -74,8 +75,8 @@ public class HbsPageRenderable extends HbsRenderable {
         } else {
             Map executeOutput = execute(executable, getExecutableContext(model, lookup, requestLookup), api, lookup,
                                         requestLookup);
-            if (log.isDebugEnabled()) {
-                log.debug("Executable output \"" + DebugUtil.safeJsonString(executeOutput) + "\".");
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Executable output \"" + toPrettyJson(executeOutput) + "\".");
             }
             context = Context.newContext(executeOutput).combine(getTemplateModel(model, lookup, requestLookup, api));
         }
@@ -83,16 +84,15 @@ public class HbsPageRenderable extends HbsRenderable {
         context.data(DATA_KEY_LOOKUP, lookup);
         context.data(DATA_KEY_REQUEST_LOOKUP, requestLookup);
         context.data(DATA_KEY_API, api);
-        if (log.isDebugEnabled()) {
-            log.debug("Template \"" + this + "\" will be applied with context \"" + DebugUtil.safeJsonString(context) +
-                              "\".");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Template \"" + this + "\" will be applied with context \"" + toPrettyJson(context) + "\".");
         }
         PlaceholderWriter writer = new PlaceholderWriter();
         context.data(DATA_KEY_CURRENT_WRITER, writer);
         try {
             getTemplate().apply(context, writer);
         } catch (IOException e) {
-            throw new UUFException("An error occurred when writing to the in-memory PlaceholderWriter.", e);
+            throw new HbsRenderingException("Cannot render page Handlebars template '" + getAbsolutePath() + "'.", e);
         }
         String out = writer.toString(requestLookup.getPlaceholderContents());
         writer.close();

@@ -26,6 +26,7 @@ import org.osgi.service.component.annotations.Deactivate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.api.auth.Permission;
+import org.wso2.carbon.uuf.api.exception.RenderableCreationException;
 import org.wso2.carbon.uuf.api.reference.ComponentReference;
 import org.wso2.carbon.uuf.api.reference.FileReference;
 import org.wso2.carbon.uuf.api.reference.FragmentReference;
@@ -93,8 +94,8 @@ public class HbsRenderableCreator implements RenderableCreator {
     }
 
     @Override
-    public FragmentRenderableData createFragmentRenderable(FragmentReference fragmentReference,
-                                                           ClassLoader classLoader) {
+    public FragmentRenderableData createFragmentRenderable(FragmentReference fragmentReference, ClassLoader classLoader)
+            throws RenderableCreationException {
         FileReference file = fragmentReference.getRenderingFile();
         TemplateSource templateSource = createTemplateSource(file);
         Executable executable = createExecutable(fragmentReference, classLoader);
@@ -115,7 +116,8 @@ public class HbsRenderableCreator implements RenderableCreator {
     }
 
     @Override
-    public PageRenderableData createPageRenderable(PageReference pageReference, ClassLoader classLoader) {
+    public PageRenderableData createPageRenderable(PageReference pageReference, ClassLoader classLoader)
+            throws RenderableCreationException {
         FileReference file = pageReference.getRenderingFile();
         TemplateSource templateSource = createTemplateSource(file);
         Executable executable = createExecutable(pageReference, classLoader);
@@ -137,7 +139,8 @@ public class HbsRenderableCreator implements RenderableCreator {
     }
 
     @Override
-    public LayoutRenderableData createLayoutRenderable(LayoutReference layoutReference) {
+    public LayoutRenderableData createLayoutRenderable(LayoutReference layoutReference)
+            throws RenderableCreationException {
         FileReference file = layoutReference.getRenderingFile();
         TemplateSource templateSource = createTemplateSource(file);
         Renderable layoutRenderable;

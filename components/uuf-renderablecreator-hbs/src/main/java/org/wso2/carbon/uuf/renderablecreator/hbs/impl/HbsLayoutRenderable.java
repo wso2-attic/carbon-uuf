@@ -21,8 +21,8 @@ import com.github.jknack.handlebars.io.TemplateSource;
 import org.wso2.carbon.uuf.core.API;
 import org.wso2.carbon.uuf.core.Lookup;
 import org.wso2.carbon.uuf.core.RequestLookup;
-import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.HbsRenderable;
+import org.wso2.carbon.uuf.renderablecreator.hbs.exception.HbsRenderingException;
 import org.wso2.carbon.uuf.renderablecreator.hbs.internal.io.PlaceholderWriter;
 import org.wso2.carbon.uuf.spi.model.Model;
 
@@ -53,8 +53,7 @@ public class HbsLayoutRenderable extends HbsRenderable {
         try {
             getTemplate().apply(context, writer);
         } catch (IOException e) {
-            throw new UUFException("An error occurred when rendering the compiled Handlebars template of layout '" +
-                                           getAbsolutePath() + "'.", e);
+            throw new HbsRenderingException("Cannot render layout Handlebars template '" + getAbsolutePath() + "'.", e);
         }
         String out = writer.toString(requestLookup.getPlaceholderContents());
         writer.close();

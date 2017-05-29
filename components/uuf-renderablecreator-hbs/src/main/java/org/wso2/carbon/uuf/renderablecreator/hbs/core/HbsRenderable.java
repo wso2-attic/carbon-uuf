@@ -23,7 +23,7 @@ import com.github.jknack.handlebars.io.TemplateSource;
 import org.wso2.carbon.uuf.core.API;
 import org.wso2.carbon.uuf.core.Lookup;
 import org.wso2.carbon.uuf.core.RequestLookup;
-import org.wso2.carbon.uuf.exception.UUFException;
+import org.wso2.carbon.uuf.renderablecreator.hbs.exception.HbsRenderableCreationException;
 import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.registry.RuntimeHelperRegistry;
 import org.wso2.carbon.uuf.spi.Renderable;
 import org.wso2.carbon.uuf.spi.model.Model;
@@ -74,13 +74,15 @@ public abstract class HbsRenderable implements Renderable {
         return "{\"path\": {\"absolute\": \"" + absolutePath + "\", \"relative\": \"" + relativePath + "\"}}";
     }
 
-    protected static Template compile(TemplateSource templateSource) {
+    protected static Template compile(TemplateSource templateSource) throws HbsRenderableCreationException{
         try {
             return HANDLEBARS.compile(templateSource);
         } catch (IOException e) {
-            throw new UUFException("Cannot load Handlebars template '" + templateSource.filename() + "'.", e);
+            throw new HbsRenderableCreationException(
+                    "Cannot load Handlebars template '" + templateSource.filename() + "'.", e);
         } catch (HandlebarsException e) {
-            throw new UUFException("Cannot compile Handlebars template '" + templateSource.filename() + "'.", e);
+            throw new HbsRenderableCreationException(
+                    "Cannot compile Handlebars template '" + templateSource.filename() + "'.", e);
         }
     }
 

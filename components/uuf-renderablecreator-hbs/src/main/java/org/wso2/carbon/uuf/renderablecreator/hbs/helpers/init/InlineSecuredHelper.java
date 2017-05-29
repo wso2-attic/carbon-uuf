@@ -72,7 +72,7 @@ public class InlineSecuredHelper implements Helper<Object> {
      * @param options handlebars options
      * @return permission from the handle bar context
      */
-    protected Permission getPermission(Object context, Options options) {
+    protected static Permission getPermission(Object context, Options options) {
         Permission permission;
         if (context instanceof String) {
             // {{secured resourceUri action}}
