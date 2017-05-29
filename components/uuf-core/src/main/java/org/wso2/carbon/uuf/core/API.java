@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.api.auth.Permission;
 import org.wso2.carbon.uuf.api.auth.Session;
 import org.wso2.carbon.uuf.api.auth.User;
-import org.wso2.carbon.uuf.exception.UUFException;
+import org.wso2.carbon.uuf.api.exception.UUFRuntimeException;
 import org.wso2.carbon.uuf.internal.exception.HttpErrorException;
 import org.wso2.carbon.uuf.internal.exception.PageRedirectException;
 import org.wso2.carbon.uuf.spi.auth.Authorizer;
@@ -75,9 +75,9 @@ public class API {
      * @return invoked OSGi service instance
      * @throws IllegalArgumentException if cannot find a method that accepts specified arguments in the specified OSGi
      *                                  service class
-     * @throws UUFException             if cannot create JNDI context
-     * @throws UUFException             if cannot find the specified OSGi service
-     * @throws UUFException             if some other error occurred when calling the specified method on the OSGi
+     * @throws UUFRuntimeException             if cannot create JNDI context
+     * @throws UUFRuntimeException             if cannot find the specified OSGi service
+     * @throws UUFRuntimeException             if some other error occurred when calling the specified method on the OSGi
      *                                  class
      * @throws Exception                the exception thrown by the calling method of the specified OSGi service class
      */
@@ -88,14 +88,14 @@ public class API {
         try {
             initialContext = new InitialContext();
         } catch (NamingException e) {
-            throw new UUFException(
+            throw new UUFRuntimeException(
                     "Cannot create the JNDI initial context when calling OSGi service '" + serviceClassName + "'.", e);
         }
 
         try {
             serviceInstance = initialContext.lookup("osgi:service/" + serviceClassName);
         } catch (NamingException e) {
-            throw new UUFException(
+            throw new UUFRuntimeException(
                     "Cannot find any OSGi service registered with the name '" + serviceClassName + "'.", e);
         }
 
@@ -113,12 +113,12 @@ public class API {
                 throw (Exception) cause;
             }
             // Seems like that cause is a Throwable.
-            throw new UUFException(
+            throw new UUFRuntimeException(
                     "Invoking method '" + serviceMethodName + "(" + joinClassNames(args) + ")' on OSGi service '" +
                             serviceInstance.getClass().getName() + "' with service class '" + serviceClassName +
                             "' caused a Throwable.", e);
         } catch (Exception e) {
-            throw new UUFException(
+            throw new UUFRuntimeException(
                     "Invoking method '" + serviceMethodName + "(" + joinClassNames(args) + ")' on OSGi service '" +
                             serviceInstance.getClass().getName() + "' with service class '" + serviceClassName +
                             "' failed.", e);
@@ -143,8 +143,8 @@ public class API {
             }
             return services;
         } catch (NamingException e) {
-            throw new UUFException("Cannot create the initial context when calling OSGi service '" +
-                                           serviceClassName + "'.");
+            throw new UUFRuntimeException("Cannot create the initial context when calling OSGi service '" +
+                                           serviceClassName + "'.", e);
         }
     }
 
