@@ -20,6 +20,7 @@ package org.wso2.carbon.uuf.spi.auth;
 
 import org.wso2.carbon.uuf.api.auth.Permission;
 import org.wso2.carbon.uuf.api.auth.User;
+import org.wso2.carbon.uuf.api.exception.AuthorizationException;
 
 /**
  * Evaluates permissions for users.
@@ -44,6 +45,7 @@ public interface Authorizer {
      * @param user       user to be checked
      * @param permission permission to be checked
      * @return {@code true} if the user has the permission, otherwise {@code false}
+     * @throws AuthorizationException if an error occurs when checking permission
      */
-    boolean hasPermission(User user, Permission permission);
+    boolean hasPermission(User user, Permission permission) throws AuthorizationException;
 }
