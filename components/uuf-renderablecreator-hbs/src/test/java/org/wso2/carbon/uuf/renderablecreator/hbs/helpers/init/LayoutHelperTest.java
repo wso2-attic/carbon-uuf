@@ -18,7 +18,6 @@
 
 package org.wso2.carbon.uuf.renderablecreator.hbs.helpers.init;
 
-import com.github.jknack.handlebars.HandlebarsException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.wso2.carbon.uuf.renderablecreator.hbs.exception.HbsRenderableCreationException;
@@ -45,13 +44,6 @@ public class LayoutHelperTest {
     @Test
     public void testSettingMultiple() {
         String pageTemplateContent = "foo\nbar\n{{layout \"layout-1\"}}bla bla\n{{layout \"layout-2\"}}\nfoobar";
-        try {
-            Optional<String> layoutName = createHbsPagePreprocessor(pageTemplateContent).getLayoutName();
-            Assert.fail("{{layout}} helper can be called twice in a page!");
-        } catch (HandlebarsException e) {
-            Assert.assertTrue((e.getCause() instanceof HbsRenderableCreationException),
-                              "Cause of the thrown exception should be '" + HbsRenderableCreationException.class +
-                                      "'. Instead found '" + e.getCause().getClass() + "'.");
-        }
+        Assert.assertThrows(HbsRenderableCreationException.class, () -> createHbsPagePreprocessor(pageTemplateContent));
     }
 }
