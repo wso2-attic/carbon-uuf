@@ -25,8 +25,10 @@ import org.wso2.carbon.uuf.api.auth.Permission;
 import org.wso2.carbon.uuf.api.auth.Session;
 import org.wso2.carbon.uuf.api.auth.User;
 import org.wso2.carbon.uuf.api.exception.UUFRuntimeException;
+import org.wso2.carbon.uuf.exception.SessionManagementException;
 import org.wso2.carbon.uuf.internal.exception.HttpErrorException;
 import org.wso2.carbon.uuf.internal.exception.PageRedirectException;
+import org.wso2.carbon.uuf.internal.exception.PluginExecutionException;
 import org.wso2.carbon.uuf.spi.auth.Authorizer;
 import org.wso2.carbon.uuf.spi.auth.SessionManager;
 
@@ -176,27 +178,41 @@ public class API {
      * @param user user to create the session
      * @return newly created session
      * @throws IllegalArgumentException if given user is null
+     * @throws PluginExecutionException if some error occurred when creating the session
      */
     public Session createSession(User user) {
         if (user == null) {
             throw new IllegalArgumentException("User of a session cannot be null.");
         }
         destroySession();
-        return sessionManager.createSession(user, requestLookup.getRequest(), requestLookup.getResponse());
+        try {
+            return sessionManager.createSession(user, requestLookup.getRequest(), requestLookup.getResponse());
+        } catch (SessionManagementException e) {
+            throw new PluginExecutionException(
+                    "Cannot create a session for user '" + user.getId() + "' using session manager '" +
+                    sessionManager.getClass().getName() + "'.", e);
+        }
     }
 
     /**
      * Returns the current session of the request.
      *
      * @return current session of the request
+     * @throws PluginExecutionException if some error occurred when retrieving the session
      */
     public Optional<Session> getSession() {
+        // Since an API object lives in the request scope, it is safe to cache the current Session object.
         if (currentSession != null) {
             return Optional.of(currentSession);
         }
-        // Since an API object lives in the request scope, it is safe to cache the current Session object.
-        currentSession = sessionManager.getSession(requestLookup.getRequest(), requestLookup.getResponse())
-                .orElse(null);
+        try {
+            currentSession = sessionManager.getSession(requestLookup.getRequest(), requestLookup.getResponse())
+                    .orElse(null);
+        } catch (SessionManagementException e) {
+            throw new PluginExecutionException(
+                    "Cannot retrieve current session for request '" + requestLookup.getRequest() +
+                    "' using session manager '" + sessionManager.getClass().getName() + "'.", e);
+        }
         return Optional.ofNullable(currentSession);
     }
 
@@ -224,6 +240,7 @@ public class API {
      * Destroys the current session of the request.
      *
      * @return {@code true} if the session is successfully destroyed, {@code false} otherwise
+     * @throws PluginExecutionException if some error occurred when destroying the session
      */
     public boolean destroySession() {
         Optional<Session> session = getSession();
@@ -233,7 +250,13 @@ public class API {
         }
         // Remove cached session.
         currentSession = null;
-        return sessionManager.destroySession(requestLookup.getRequest(), requestLookup.getResponse());
+        try {
+            return sessionManager.destroySession(requestLookup.getRequest(), requestLookup.getResponse());
+        } catch (SessionManagementException e) {
+            throw new PluginExecutionException(
+                    "Cannot destroy current session of request '" + requestLookup.getRequest() +
+                    "' using session manager '" + sessionManager.getClass().getName() + "'.", e);
+        }
     }
 
     private static String joinClassNames(Object[] args) {

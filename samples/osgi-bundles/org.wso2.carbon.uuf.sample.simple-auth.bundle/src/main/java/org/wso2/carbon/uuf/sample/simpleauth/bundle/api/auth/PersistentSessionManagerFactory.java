@@ -24,6 +24,7 @@ import org.wso2.carbon.uuf.exception.SessionManagementException;
 import org.wso2.carbon.uuf.spi.auth.SessionManager;
 import org.wso2.carbon.uuf.spi.auth.SessionManagerFactory;
 
+import java.io.UncheckedIOException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -61,6 +62,11 @@ public class PersistentSessionManagerFactory implements SessionManagerFactory {
     @Override
     public SessionManager getSessionManager(String appName, Configuration configuration)
             throws SessionManagementException {
-        return sessionManagers.computeIfAbsent(appName, name -> new PersistentSessionManager(name, configuration));
+        try {
+            return sessionManagers.computeIfAbsent(appName, name -> new PersistentSessionManager(name, configuration));
+        } catch (UncheckedIOException e) {
+            throw new SessionManagementException("Cannot create persistent session manager for app '" + appName + "'.",
+                                                 e);
+        }
     }
 }

@@ -42,6 +42,7 @@ import org.wso2.carbon.uuf.core.Layout;
 import org.wso2.carbon.uuf.core.Page;
 import org.wso2.carbon.uuf.core.Theme;
 import org.wso2.carbon.uuf.core.UriPatten;
+import org.wso2.carbon.uuf.exception.SessionManagementException;
 import org.wso2.carbon.uuf.internal.deployment.parser.AppConfig;
 import org.wso2.carbon.uuf.internal.deployment.parser.ComponentConfig;
 import org.wso2.carbon.uuf.internal.deployment.parser.DependencyNode;
@@ -131,7 +132,14 @@ public class AppCreator {
                                 this.getClass().getClassLoader()))
                 .orElse(pluginProvider.getPluginInstance(SessionManagerFactory.class,
                         InMemorySessionManagerFactory.class.getName(), this.getClass().getClassLoader()));
-        SessionManager sessionManager = sessionManagerFactory.getSessionManager(appName, configuration);
+        SessionManager sessionManager;
+        try {
+            sessionManager = sessionManagerFactory.getSessionManager(appName, configuration);
+        } catch (SessionManagementException e) {
+            throw new AppCreationException(
+                    "Cannot get session manager for app '" + appName + "' from session manager factory '" +
+                    sessionManagerFactory.getClass().getName() + "'.", e);
+        }
 
         // Get Authorizer.
         Authorizer authorizer = configuration.getAuthorizer()

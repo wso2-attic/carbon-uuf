@@ -19,12 +19,12 @@
 package org.wso2.carbon.uuf.sample.simpleauth.bundle.api.auth;
 
 import org.wso2.carbon.uuf.api.auth.Session;
+import org.wso2.carbon.uuf.api.auth.User;
 import org.wso2.carbon.uuf.api.config.Configuration;
 import org.wso2.carbon.uuf.exception.SessionManagementException;
 import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.carbon.uuf.spi.HttpResponse;
 import org.wso2.carbon.uuf.spi.auth.SessionManager;
-import org.wso2.carbon.uuf.api.auth.User;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -32,6 +32,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -70,6 +71,7 @@ public class PersistentSessionManager implements SessionManager {
      *
      * @param appName       name of the UUF application (or app context)
      * @param configuration app configuration
+     * @throws UncheckedIOException if an error occurred when creating temp directory
      */
     public PersistentSessionManager(String appName, Configuration configuration) {
         this.configuration = configuration;
@@ -77,8 +79,8 @@ public class PersistentSessionManager implements SessionManager {
             tempDirectory = Files.createTempDirectory(SESSION_DIR_PREFIX).toAbsolutePath();
             tempDirectory.toFile().deleteOnExit();
         } catch (IOException e) {
-            throw new SessionManagementException("Error occurred when creating the temp directory " +
-                    SESSION_DIR_PREFIX, e);
+            throw new UncheckedIOException(
+                    "An error occurred when creating the temp directory '" + SESSION_DIR_PREFIX + "'.", e);
         }
     }
 
@@ -87,7 +89,7 @@ public class PersistentSessionManager implements SessionManager {
      */
     @Override
     public int getCount() {
-        throw new SessionManagementException("This operation is not supported");
+        throw new UnsupportedOperationException("This operation is not supported");
     }
 
     /**
@@ -172,14 +174,14 @@ public class PersistentSessionManager implements SessionManager {
      *
      * @param session session to be persisted
      */
-    private void saveSession(Session session) {
+    private void saveSession(Session session) throws SessionManagementException {
         File sessionFile = Paths.get(tempDirectory.toString(), session.getSessionId()).toFile();
         try (FileOutputStream fout = new FileOutputStream(sessionFile);
              ObjectOutputStream oos = new ObjectOutputStream(fout)) {
             oos.writeObject(session);
             sessionFile.deleteOnExit();
         } catch (IOException e) {
-            throw new SessionManagementException("Cannot save session " + session.getSessionId(), e);
+            throw new SessionManagementException("Cannot save session '" + session.getSessionId() + "'.", e);
         }
     }
 

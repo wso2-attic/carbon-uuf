@@ -19,6 +19,7 @@
 package org.wso2.carbon.uuf.api.auth;
 
 import org.wso2.carbon.uuf.api.config.Configuration;
+import org.wso2.carbon.uuf.api.exception.UUFRuntimeException;
 import org.wso2.carbon.uuf.exception.SessionManagementException;
 import org.wso2.carbon.uuf.spi.auth.SessionManager;
 import org.wso2.carbon.uuf.spi.auth.SessionManagerFactory;
@@ -41,6 +42,10 @@ public class InMemorySessionManagerFactory implements SessionManagerFactory {
     @Override
     public SessionManager getSessionManager(String appName, Configuration configuration)
             throws SessionManagementException {
-        return sessionManagers.computeIfAbsent(appName, name -> new InMemorySessionManager(name, configuration));
+        try {
+            return sessionManagers.computeIfAbsent(appName, name -> new InMemorySessionManager(name, configuration));
+        } catch (UUFRuntimeException e) {
+            throw new SessionManagementException("Cannot create a session manager for app '" + appName + "'.", e);
+        }
     }
 }

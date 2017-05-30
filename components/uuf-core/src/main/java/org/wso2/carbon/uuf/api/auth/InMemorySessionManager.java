@@ -20,6 +20,7 @@ package org.wso2.carbon.uuf.api.auth;
 
 import com.google.common.collect.Iterables;
 import org.wso2.carbon.uuf.api.config.Configuration;
+import org.wso2.carbon.uuf.api.exception.UUFRuntimeException;
 import org.wso2.carbon.uuf.exception.SessionManagementException;
 import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.carbon.uuf.spi.HttpResponse;
@@ -55,6 +56,7 @@ public class InMemorySessionManager implements SessionManager {
      *
      * @param appName       name of the UUF application (or app context)
      * @param configuration app configuration
+     * @throws UUFRuntimeException if an error occurred when creating/initializing the cache
      */
     public InMemorySessionManager(String appName, Configuration configuration) {
         this.cache = createCache(appName, configuration);
@@ -81,8 +83,7 @@ public class InMemorySessionManager implements SessionManager {
      * {@inheritDoc}
      */
     @Override
-    public Optional<Session> getSession(HttpRequest request, HttpResponse response)
-            throws SessionManagementException {
+    public Optional<Session> getSession(HttpRequest request, HttpResponse response) throws SessionManagementException {
         String sessionId = request.getCookieValue(COOKIE_SESSION_ID);
         if (sessionId == null) {
             return Optional.empty();
@@ -97,8 +98,7 @@ public class InMemorySessionManager implements SessionManager {
      * {@inheritDoc}
      */
     @Override
-    public boolean destroySession(HttpRequest request, HttpResponse response)
-            throws SessionManagementException {
+    public boolean destroySession(HttpRequest request, HttpResponse response) throws SessionManagementException {
         String sessionId = request.getCookieValue(COOKIE_SESSION_ID);
         if (sessionId == null) {
             return true; // Session not available
@@ -151,16 +151,17 @@ public class InMemorySessionManager implements SessionManager {
             }
             return cache;
         } catch (IllegalStateException e) {
-            throw new SessionManagementException("Cannot create cache '" + cacheName + "' for session management. " +
-                    "Cache manager is closed.", e);
+            throw new UUFRuntimeException("Cannot create cache '" + cacheName + "' for session management. " +
+                                          "Cache manager '" + cacheManager.getClass().getName() + "' is closed.", e);
         } catch (CacheException e) {
-            throw new SessionManagementException("Cannot create cache '" + cacheName + "' for session management.", e);
+            throw new UUFRuntimeException("Cannot create cache '" + cacheName + "' for session management. " +
+                                          "An error occurred configuring the cache.", e);
         } catch (IllegalArgumentException e) {
-            throw new SessionManagementException("Cannot create cache '" + cacheName +
-                    "' for session management. Invalid cache configuration.", e);
+            throw new UUFRuntimeException("Cannot create cache '" + cacheName + "' for session management. " +
+                                          "Invalid cache configuration.", e);
         } catch (UnsupportedOperationException e) {
-            throw new SessionManagementException("Cannot create cache '" + cacheName +
-                    "' for session management. Cache configuration specifies an unsupported feature.", e);
+            throw new UUFRuntimeException("Cannot create cache '" + cacheName + "' for session management. " +
+                                          "Cache configuration specifies an unsupported feature.", e);
         }
     }
 }

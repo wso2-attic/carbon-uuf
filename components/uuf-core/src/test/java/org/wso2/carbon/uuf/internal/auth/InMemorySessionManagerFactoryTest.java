@@ -35,10 +35,8 @@ import static org.mockito.Mockito.when;
  */
 public class InMemorySessionManagerFactoryTest {
 
-    private static final String SESSION_COOKIE_NAME = "UUFSESSIONID";
-
     @Test
-    public void testGetSessionManager() {
+    public void testGetSessionManager() throws Exception {
         SessionManagerFactory sessionManagerFactory = new InMemorySessionManagerFactory();
         Configuration configuration = mock(Configuration.class);
         when(configuration.getSessionTimeout()).thenReturn(600L);
