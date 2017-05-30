@@ -24,8 +24,8 @@ import org.wso2.carbon.uuf.api.auth.Session;
 import org.wso2.carbon.uuf.api.config.Bindings;
 import org.wso2.carbon.uuf.api.config.Configuration;
 import org.wso2.carbon.uuf.api.config.I18nResources;
+import org.wso2.carbon.uuf.api.exception.RenderingException;
 import org.wso2.carbon.uuf.api.model.MapModel;
-import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.internal.exception.FragmentNotFoundException;
 import org.wso2.carbon.uuf.internal.exception.HttpErrorException;
 import org.wso2.carbon.uuf.internal.exception.PageNotFoundException;
@@ -150,8 +150,7 @@ public class App {
                     // If GET, we correct, since this can be an end-user error. But if POST it's the responsibility of
                     // the dev to use correct URL. Because HTTP POST redirect is not well supported.
                     // See : https://softwareengineering.stackexchange.com/q/99894
-                    String message =
-                            e.getMessage() + " Retry with correct URI ending " + correctedUriWithoutContextPath;
+                    String message = e.getMessage() + " Retry with correct URI ending " + correctedUriWithoutContextPath;
                     return renderErrorPage(new PageNotFoundException(message, e), requestLookup, api, theme);
                 }
             } else {
@@ -159,7 +158,7 @@ public class App {
             }
         } catch (HttpErrorException e) {
             return renderErrorPage(e, requestLookup, api, theme);
-        } catch (UUFException e) {
+        } catch (RenderingException e) {
             return renderErrorPage(new HttpErrorException(HttpResponse.STATUS_INTERNAL_SERVER_ERROR, e.getMessage(), e),
                                    requestLookup, api, theme);
         }
