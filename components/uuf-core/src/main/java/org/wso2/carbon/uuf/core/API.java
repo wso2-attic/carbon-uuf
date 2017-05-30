@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.api.auth.Permission;
 import org.wso2.carbon.uuf.api.auth.Session;
 import org.wso2.carbon.uuf.api.auth.User;
+import org.wso2.carbon.uuf.api.exception.AuthorizationException;
 import org.wso2.carbon.uuf.api.exception.SessionManagementException;
 import org.wso2.carbon.uuf.api.exception.UUFRuntimeException;
 import org.wso2.carbon.uuf.internal.exception.HttpErrorException;
@@ -233,7 +234,13 @@ public class API {
         if (authorizer == null) {
             return false;
         }
-        return authorizer.hasPermission(session.get().getUser(), permission);
+        try {
+            return authorizer.hasPermission(session.get().getUser(), permission);
+        } catch (AuthorizationException e) {
+            throw new PluginExecutionException(
+                    "Cannot check permission for user '" + session.get().getUser().getId() + "' using authorizer '" +
+                    authorizer.getClass().getName() + "'.", e);
+        }
     }
 
     /**

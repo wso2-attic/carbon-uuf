@@ -22,6 +22,7 @@ import com.google.common.collect.ImmutableMap;
 import org.osgi.service.component.annotations.Component;
 import org.wso2.carbon.uuf.api.auth.Permission;
 import org.wso2.carbon.uuf.api.auth.User;
+import org.wso2.carbon.uuf.api.exception.AuthorizationException;
 import org.wso2.carbon.uuf.spi.auth.Authorizer;
 
 import java.util.Map;
@@ -51,7 +52,7 @@ public class DemoAuthorizer implements Authorizer {
      * {@inheritDoc}
      */
     @Override
-    public boolean hasPermission(User user, Permission permission) {
+    public boolean hasPermission(User user, Permission permission) throws AuthorizationException {
         if (user == null) {
             return false;
         }
