@@ -22,7 +22,6 @@ import jdk.nashorn.api.scripting.ScriptObjectMirror;
 import org.wso2.carbon.uuf.core.API;
 import org.wso2.carbon.uuf.core.Lookup;
 import org.wso2.carbon.uuf.core.RequestLookup;
-import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.Executable;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.CallMicroServiceFunction;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.CallOSGiServiceFunction;
@@ -35,6 +34,8 @@ import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.ModuleFunction;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.SendErrorFunction;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.SendRedirectFunction;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.SendToClientFunction;
+import org.wso2.carbon.uuf.renderablecreator.hbs.exception.ExecutableCreationException;
+import org.wso2.carbon.uuf.renderablecreator.hbs.exception.ExecutionException;
 import org.wso2.carbon.uuf.renderablecreator.hbs.impl.js.JsFunctionsImpl;
 import org.wso2.carbon.uuf.renderablecreator.hbs.impl.js.LoggerObject;
 
@@ -70,6 +71,7 @@ public class JsExecutable implements Executable {
         this.absolutePath = absolutePath;
         this.relativePath = relativePath;
         this.componentPath = componentPath;
+
         // Even though 'NashornScriptEngineFactory.getParameter("THREADING")' returns null, NashornScriptEngine is
         // thread-safe. See http://stackoverflow.com/a/30159424
         this.engine = (NashornScriptEngine) SCRIPT_ENGINE_FACTORY.getScriptEngine(SCRIPT_ENGINE_ARGS,
@@ -80,20 +82,21 @@ public class JsExecutable implements Executable {
         Set<String> availableFunctions = compile(scriptSource);
         this.hasOnGetFunction = availableFunctions.contains(FUNCTION_ON_GET);
         this.hasOnPostFunction = availableFunctions.contains(FUNCTION_ON_POST);
-
         if (!hasOnGetFunction && !hasOnPostFunction) {
-            throw new UUFException(
+            throw new ExecutableCreationException(
                     "Neither '" + FUNCTION_ON_GET + "' nor '" + FUNCTION_ON_POST + "' can be found in " +
                             "JavaScript file '" + absolutePath + "'. Please implement at least one of them.");
         }
     }
 
-
     /**
+     * Compiles the given JavaScript.
+     *
      * @param scriptSource JS to be compiled
      * @return Set of available top level functions.
+     * @throws ExecutableCreationException if some error occurred when compiling given JavaScript
      */
-    private Set<String> compile(String scriptSource) {
+    private Set<String> compile(String scriptSource) throws ExecutableCreationException {
         engineBindings.unlock();
         engineBindings.clear();
 
@@ -102,7 +105,8 @@ public class JsExecutable implements Executable {
         try {
             engine.eval(scriptSource);
         } catch (ScriptException e) {
-            throw new UUFException("An error occurred while evaluating the JavaScript file '" + absolutePath + "'.", e);
+            throw new ExecutableCreationException(
+                    "An error occurred while evaluating the JavaScript file '" + absolutePath + "'.", e);
         }
 
         engineBindings.remove(ModuleFunction.NAME); // removing 'module' function
@@ -127,7 +131,8 @@ public class JsExecutable implements Executable {
     }
 
     @Override
-    public Object execute(Object context, API api, Lookup lookup, RequestLookup requestLookup) {
+    public Object execute(Object context, API api, Lookup lookup, RequestLookup requestLookup)
+            throws ExecutionException {
         String functionName = null;
         try {
             engineBindings.setJSFunctionProvider(new JsFunctionsImpl(api, lookup, requestLookup));
@@ -139,11 +144,11 @@ public class JsExecutable implements Executable {
                 return hasOnPostFunction ? engine.invokeFunction(FUNCTION_ON_POST, context) : null;
             }
         } catch (ScriptException e) {
-            throw new UUFException(
+            throw new ExecutionException(
                     "An error occurred when executing the '" + functionName + "' function in JavaScript file '" +
                             absolutePath + "' with context '" + context + "'.", e);
         } catch (NoSuchMethodException e) {
-            throw new UUFException(
+            throw new ExecutionException(
                     "Cannot find the '" + functionName + "' function in the JavaScript file '" + absolutePath + "'.",
                     e);
         } finally {

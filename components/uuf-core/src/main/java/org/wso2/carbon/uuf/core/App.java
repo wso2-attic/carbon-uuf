@@ -24,13 +24,13 @@ import org.wso2.carbon.uuf.api.auth.Session;
 import org.wso2.carbon.uuf.api.config.Bindings;
 import org.wso2.carbon.uuf.api.config.Configuration;
 import org.wso2.carbon.uuf.api.config.I18nResources;
+import org.wso2.carbon.uuf.api.exception.RenderingException;
 import org.wso2.carbon.uuf.api.model.MapModel;
-import org.wso2.carbon.uuf.exception.FragmentNotFoundException;
-import org.wso2.carbon.uuf.exception.HttpErrorException;
-import org.wso2.carbon.uuf.exception.PageNotFoundException;
-import org.wso2.carbon.uuf.exception.PageRedirectException;
-import org.wso2.carbon.uuf.exception.SessionNotFoundException;
-import org.wso2.carbon.uuf.exception.UUFException;
+import org.wso2.carbon.uuf.internal.exception.FragmentNotFoundException;
+import org.wso2.carbon.uuf.internal.exception.HttpErrorException;
+import org.wso2.carbon.uuf.internal.exception.PageNotFoundException;
+import org.wso2.carbon.uuf.internal.exception.PageRedirectException;
+import org.wso2.carbon.uuf.internal.exception.SessionNotFoundException;
 import org.wso2.carbon.uuf.internal.util.NameUtils;
 import org.wso2.carbon.uuf.internal.util.UriUtils;
 import org.wso2.carbon.uuf.spi.HttpRequest;
@@ -158,7 +158,7 @@ public class App {
             }
         } catch (HttpErrorException e) {
             return renderErrorPage(e, requestLookup, api, theme);
-        } catch (UUFException e) {
+        } catch (RenderingException e) {
             return renderErrorPage(new HttpErrorException(HttpResponse.STATUS_INTERNAL_SERVER_ERROR, e.getMessage(), e),
                                    requestLookup, api, theme);
         }

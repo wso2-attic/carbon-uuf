@@ -18,14 +18,14 @@
 
 package org.wso2.carbon.uuf.internal.exception;
 
-import org.wso2.carbon.uuf.exception.UUFException;
+import org.wso2.carbon.uuf.api.exception.UUFRuntimeException;
 
 /**
  * Indicates an error occurred when deploying UUF apps and components.
  *
  * @since 1.0.0
  */
-public class DeploymentException extends UUFException {
+public class DeploymentException extends UUFRuntimeException {
 
     /**
      * Constructs a new exception with {@code null} as its detail message. The cause is not initialized, and may

@@ -23,7 +23,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.uuf.exception.FileOperationException;
+import org.wso2.carbon.uuf.internal.exception.FileOperationException;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -48,7 +48,7 @@ public class ZipArtifactHandler {
     /**
      * @param zipFile zip app
      * @return app name
-     * @exception FileOperationException I/O error
+     * @throws FileOperationException I/O error
      */
     public static String getAppName(Path zipFile) {
         ZipFile zip = null;

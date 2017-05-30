@@ -19,8 +19,9 @@ package org.wso2.carbon.uuf.renderablecreator.hbs.core;
 import org.wso2.carbon.uuf.core.API;
 import org.wso2.carbon.uuf.core.Lookup;
 import org.wso2.carbon.uuf.core.RequestLookup;
+import org.wso2.carbon.uuf.renderablecreator.hbs.exception.ExecutionException;
 
 public interface Executable {
 
-    Object execute(Object context, API api, Lookup lookup, RequestLookup requestLookup);
+    Object execute(Object context, API api, Lookup lookup, RequestLookup requestLookup) throws ExecutionException;
 }

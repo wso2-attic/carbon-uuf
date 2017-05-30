@@ -19,8 +19,8 @@
 package org.wso2.carbon.uuf.core;
 
 import org.wso2.carbon.uuf.api.auth.Permission;
-import org.wso2.carbon.uuf.exception.UnauthorizedException;
 import org.wso2.carbon.uuf.internal.debug.DebugLogger;
+import org.wso2.carbon.uuf.internal.exception.UnauthorizedException;
 import org.wso2.carbon.uuf.internal.util.NameUtils;
 import org.wso2.carbon.uuf.internal.util.UriUtils;
 import org.wso2.carbon.uuf.spi.Renderable;
@@ -69,7 +69,7 @@ public class Fragment {
                 return "";
             } else {
                 throw new UnauthorizedException("You do not have enough permission to view this fragment '" + name
-                        + "'.");
+                                                        + "'.");
             }
         }
 

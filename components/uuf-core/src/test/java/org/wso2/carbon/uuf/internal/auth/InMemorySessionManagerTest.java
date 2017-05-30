@@ -47,7 +47,7 @@ public class InMemorySessionManagerTest {
     }
 
     @Test
-    public void testSessionAddAndRemove() {
+    public void testSessionAddAndRemove() throws Exception {
         User user = mock(User.class);
         HttpRequest request = mock(HttpRequest.class);
         HttpResponse response = mock(HttpResponse.class);
@@ -57,7 +57,7 @@ public class InMemorySessionManagerTest {
         Session session = sessionManager.createSession(user, request, response);
         when(request.getCookieValue(SESSION_COOKIE_NAME))
                 .thenReturn(session.getSessionId());
-        Assert.assertEquals(sessionManager.getSession(request, response).get(), session);
+        Assert.assertEquals(sessionManager.getSession(request, response).orElse(null), session);
 
         boolean isDestroyed = sessionManager.destroySession(request, response);
         Assert.assertEquals(isDestroyed, true);

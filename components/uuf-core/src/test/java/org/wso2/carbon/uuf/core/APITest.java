@@ -24,18 +24,15 @@ import org.wso2.carbon.uuf.api.auth.Permission;
 import org.wso2.carbon.uuf.api.auth.Session;
 import org.wso2.carbon.uuf.api.auth.User;
 import org.wso2.carbon.uuf.api.config.Configuration;
-import org.wso2.carbon.uuf.exception.HttpErrorException;
-import org.wso2.carbon.uuf.exception.PageRedirectException;
+import org.wso2.carbon.uuf.internal.exception.HttpErrorException;
+import org.wso2.carbon.uuf.internal.exception.PageRedirectException;
 import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.carbon.uuf.spi.HttpResponse;
 import org.wso2.carbon.uuf.spi.auth.SessionManager;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -57,7 +54,7 @@ public class APITest {
         Assert.assertThrows(IllegalArgumentException.class, () -> API.sendError(500, ""));
 
         HttpErrorException exception = Assert.expectThrows(HttpErrorException.class,
-                () -> API.sendError(500, "Some internal server error!"));
+                                                           () -> API.sendError(500, "Some internal server error!"));
         Assert.assertEquals(exception.getHttpStatusCode(), 500);
         Assert.assertEquals(exception.getMessage(), "Some internal server error!");
     }
@@ -68,13 +65,13 @@ public class APITest {
         Assert.assertThrows(IllegalArgumentException.class, () -> API.sendRedirect(""));
 
         PageRedirectException pre = Assert.expectThrows(PageRedirectException.class,
-                () -> API.sendRedirect("/some/uri"));
+                                                        () -> API.sendRedirect("/some/uri"));
         Assert.assertEquals(pre.getHttpStatusCode(), HttpResponse.STATUS_FOUND);
         Assert.assertEquals(pre.getRedirectUrl(), "/some/uri");
     }
 
     @Test
-    public void testCreateSession() {
+    public void testCreateSession() throws Exception {
         // Creating request.
         HttpRequest request = mock(HttpRequest.class);
         when(request.getContextPath()).thenReturn("/test");
@@ -97,7 +94,7 @@ public class APITest {
     }
 
     @Test
-    public void testGetSession() {
+    public void testGetSession() throws Exception {
         Configuration configuration = mock(Configuration.class);
         when(configuration.getSessionTimeout()).thenReturn(600L);
         HttpRequest request = mock(HttpRequest.class);
@@ -109,7 +106,7 @@ public class APITest {
     }
 
     @Test
-    public void testGetSessionWhenSessionNotAvailable() {
+    public void testGetSessionWhenSessionNotAvailable() throws Exception {
         HttpRequest request = mock(HttpRequest.class);
         when(request.getContextPath()).thenReturn("/test");
         SessionManager sessionManager = createSessionManager();
@@ -119,7 +116,7 @@ public class APITest {
     }
 
     @Test
-    public void testDestroySession() {
+    public void testDestroySession() throws Exception {
         // Creating session manager.
         Configuration configuration = mock(Configuration.class);
         when(configuration.getSessionTimeout()).thenReturn(600L);
@@ -139,7 +136,7 @@ public class APITest {
     }
 
     @Test
-    public void testIsAuthorizedWithAnyPermission() {
+    public void testIsAuthorizedWithAnyPermission() throws Exception {
         HttpRequest request = mock(HttpRequest.class);
         when(request.getContextPath()).thenReturn("/test");
         SessionManager sessionManager = createSessionManager();
@@ -153,7 +150,7 @@ public class APITest {
     }
 
     @Test
-    public void testIsAuthorizedWithNullAuthorizer() {
+    public void testIsAuthorizedWithNullAuthorizer() throws Exception {
         HttpRequest request = mock(HttpRequest.class);
         when(request.getContextPath()).thenReturn("/test");
         SessionManager sessionManager = createSessionManager();
@@ -184,20 +181,20 @@ public class APITest {
         return mock(SessionManager.class);
     }
 
-    private void mockCreateSession(User user, SessionManager sessionManager) {
+    private void mockCreateSession(User user, SessionManager sessionManager) throws Exception {
         Session session = mock(Session.class);
         when(session.getUser()).thenReturn(user);
         when(sessionManager.createSession(any(), any(), any())).thenReturn(session);
     }
 
-    private void mockGetSession(SessionManager sessionManager) {
+    private void mockGetSession(SessionManager sessionManager) throws Exception {
         User user = mock(User.class);
         Session session = mock(Session.class);
         when(session.getUser()).thenReturn(user);
         when(sessionManager.getSession(any(), any())).thenReturn(Optional.of(session));
     }
 
-    private void mockDestroySession(SessionManager sessionManager) {
+    private void mockDestroySession(SessionManager sessionManager) throws Exception {
         when(sessionManager.destroySession(any(), any())).thenReturn(true);
     }
 }

@@ -22,7 +22,7 @@ import org.wso2.carbon.uuf.api.reference.AppReference;
 import org.wso2.carbon.uuf.api.reference.ComponentReference;
 import org.wso2.carbon.uuf.api.reference.FileReference;
 import org.wso2.carbon.uuf.api.reference.ThemeReference;
-import org.wso2.carbon.uuf.exception.FileOperationException;
+import org.wso2.carbon.uuf.internal.exception.FileOperationException;
 
 import java.io.IOException;
 import java.nio.file.Files;

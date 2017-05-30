@@ -27,6 +27,8 @@ import org.wso2.carbon.uuf.api.auth.InMemorySessionManagerFactory;
 import org.wso2.carbon.uuf.api.config.Bindings;
 import org.wso2.carbon.uuf.api.config.Configuration;
 import org.wso2.carbon.uuf.api.config.I18nResources;
+import org.wso2.carbon.uuf.api.exception.RenderableCreationException;
+import org.wso2.carbon.uuf.api.exception.SessionManagementException;
 import org.wso2.carbon.uuf.api.reference.AppReference;
 import org.wso2.carbon.uuf.api.reference.ComponentReference;
 import org.wso2.carbon.uuf.api.reference.FileReference;
@@ -130,7 +132,14 @@ public class AppCreator {
                                 this.getClass().getClassLoader()))
                 .orElse(pluginProvider.getPluginInstance(SessionManagerFactory.class,
                         InMemorySessionManagerFactory.class.getName(), this.getClass().getClassLoader()));
-        SessionManager sessionManager = sessionManagerFactory.getSessionManager(appName, configuration);
+        SessionManager sessionManager;
+        try {
+            sessionManager = sessionManagerFactory.getSessionManager(appName, configuration);
+        } catch (SessionManagementException e) {
+            throw new AppCreationException(
+                    "Cannot get session manager for app '" + appName + "' from session manager factory '" +
+                    sessionManagerFactory.getClass().getName() + "'.", e);
+        }
 
         // Get Authorizer.
         Authorizer authorizer = configuration.getAuthorizer()
@@ -224,15 +233,28 @@ public class AppCreator {
 
     private Layout createLayout(LayoutReference layoutReference, String componentName) {
         RenderableCreator renderableCreator = getRenderableCreator(layoutReference.getRenderingFile());
-        RenderableCreator.LayoutRenderableData lrd = renderableCreator.createLayoutRenderable(layoutReference);
+        RenderableCreator.LayoutRenderableData lrd;
+        try {
+            lrd = renderableCreator.createLayoutRenderable(layoutReference);
+        } catch (RenderableCreationException e) {
+            throw new AppCreationException(
+                    "Cannot create a renderable for the layout '" + layoutReference.getName() + "' of component '" +
+                    componentName + "'.", e);
+        }
         return new Layout(getFullyQualifiedName(componentName, layoutReference.getName()), lrd.getRenderable());
     }
 
     private Fragment createFragment(FragmentReference fragmentReference, String componentName,
                                     ClassLoader classLoader) {
         RenderableCreator renderableCreator = getRenderableCreator(fragmentReference.getRenderingFile());
-        RenderableCreator.FragmentRenderableData frd = renderableCreator.createFragmentRenderable(fragmentReference,
-                                                                                                  classLoader);
+        RenderableCreator.FragmentRenderableData frd;
+        try {
+            frd = renderableCreator.createFragmentRenderable(fragmentReference, classLoader);
+        } catch (RenderableCreationException e) {
+            throw new AppCreationException(
+                    "Cannot create a renderable for the fragment '" + fragmentReference.getName() + "' of component '" +
+                    componentName + "'.", e);
+        }
         String fragmentName = getFullyQualifiedName(componentName, fragmentReference.getName());
         return new Fragment(fragmentName, frd.getRenderable(), frd.getPermission());
     }
@@ -297,7 +319,14 @@ public class AppCreator {
                             String componentName) {
         FileReference pageRenderingFile = pageReference.getRenderingFile();
         RenderableCreator renderableCreator = getRenderableCreator(pageRenderingFile);
-        RenderableCreator.PageRenderableData prd = renderableCreator.createPageRenderable(pageReference, classLoader);
+        RenderableCreator.PageRenderableData prd;
+        try {
+            prd = renderableCreator.createPageRenderable(pageReference, classLoader);
+        } catch (RenderableCreationException e) {
+            throw new AppCreationException(
+                    "Cannot create a renderable for the page '" + pageReference.getPathPattern() + "' of component '" +
+                    componentName + "'.", e);
+        }
         UriPatten uriPatten = new UriPatten(pageReference.getPathPattern());
         if (prd.getLayoutName().isPresent()) {
             // This page has a layout.
@@ -308,7 +337,7 @@ public class AppCreator {
             } else {
                 throw new AppCreationException(
                         "Layout '" + layoutName + "' used in page '" + pageRenderingFile.getRelativePath() +
-                                "' does not exists in component '" + componentName + "' or its dependencies.");
+                        "' does not exists in component '" + componentName + "' or its dependencies.");
             }
         } else {
             // This page does not have a layout.

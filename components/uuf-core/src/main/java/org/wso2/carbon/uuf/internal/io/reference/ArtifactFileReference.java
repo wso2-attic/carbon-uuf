@@ -20,7 +20,7 @@ package org.wso2.carbon.uuf.internal.io.reference;
 
 import org.apache.commons.io.FilenameUtils;
 import org.wso2.carbon.uuf.api.reference.FileReference;
-import org.wso2.carbon.uuf.exception.FileOperationException;
+import org.wso2.carbon.uuf.internal.exception.FileOperationException;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;

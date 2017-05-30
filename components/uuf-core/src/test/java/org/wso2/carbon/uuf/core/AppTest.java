@@ -31,9 +31,9 @@ import org.wso2.carbon.uuf.api.auth.Permission;
 import org.wso2.carbon.uuf.api.auth.Session;
 import org.wso2.carbon.uuf.api.auth.User;
 import org.wso2.carbon.uuf.api.config.Configuration;
+import org.wso2.carbon.uuf.api.exception.RenderingException;
 import org.wso2.carbon.uuf.api.model.MapModel;
-import org.wso2.carbon.uuf.exception.PageRedirectException;
-import org.wso2.carbon.uuf.exception.UUFException;
+import org.wso2.carbon.uuf.internal.exception.PageRedirectException;
 import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.carbon.uuf.spi.HttpResponse;
 import org.wso2.carbon.uuf.spi.Renderable;
@@ -58,7 +58,7 @@ import static org.mockito.Mockito.when;
  */
 public class AppTest {
 
-    private static SessionManager createSessionManager() {
+    private static SessionManager createSessionManager() throws Exception {
         User user = mock(User.class);
         SessionManager sessionManager = mock(SessionManager.class);
         when(sessionManager.getSession(any(HttpRequest.class), any())).thenReturn(Optional.of(new Session(user)));
@@ -109,7 +109,7 @@ public class AppTest {
     }
 
     @Test
-    public void testRenderPage() {
+    public void testRenderPage() throws Exception {
         final String page1Content = "Page 1 content.";
         Page p1 = createPage("/a/b", page1Content);
         final String page2Content = "Page 2 content.";
@@ -130,7 +130,7 @@ public class AppTest {
     }
 
     @Test
-    public void testRenderPageInRootComponent() {
+    public void testRenderPageInRootComponent() throws Exception {
         Page p1 = createPage("/a/b", "Page 1 content.");
         Page p2 = createPage("/x/y", "Page 2 content.");
         Component cmp = new Component("cmp", null, "/cmp", ImmutableSortedSet.of(p1, p2), emptySet(), emptySet(),
@@ -155,7 +155,7 @@ public class AppTest {
     }
 
     @Test
-    public void testRenderFragment() {
+    public void testRenderFragment() throws Exception {
         final String fragment1Content = "Fragment 1 content.";
         Fragment f1 = createFragment("cmp.f1", fragment1Content);
         final String fragment2Content = "Fragment 2 content.";
@@ -181,7 +181,7 @@ public class AppTest {
     }
 
     @Test
-    public void testRenderFragmentWithResources() {
+    public void testRenderFragmentWithResources() throws Exception {
         final String fragment1Content = "Fragment 1 with Resource content.";
         Fragment f1 = createFragmentWithResources("cmp.f1", fragment1Content);
         Component cmp = new Component("cmp", null, "/cmp", emptySortedSet(), ImmutableSet.of(f1), emptySet(),
@@ -202,7 +202,7 @@ public class AppTest {
     }
 
     @Test
-    public void testRenderFragmentWithParams() {
+    public void testRenderFragmentWithParams() throws Exception {
         final String fragment1Content = "Fragment 1 content.";
         Fragment f1 = createFragment("cmp.f1", fragment1Content);
         Fragment f2 = createFragment("cmp.f2", "Fragment 2 content.");
@@ -224,7 +224,7 @@ public class AppTest {
     }
 
     @Test
-    public void testPageUrlCorrection() {
+    public void testPageUrlCorrection() throws Exception {
         Page page = createPage("/a/b", null);
         Component cmp = new Component("cmp", null, "/cmp", ImmutableSortedSet.of(page), emptySet(), emptySet(),
                                       emptySet(), null);
@@ -250,7 +250,7 @@ public class AppTest {
     }
 
     @Test
-    public void testErrorPageRendering() {
+    public void testErrorPageRendering() throws Exception {
         // Creating component with error pages.
         Page page404 = createErrorPage("/error/404");
         Page page500 = createErrorPage("/error/500");
@@ -259,7 +259,7 @@ public class AppTest {
                                       emptySet(), emptySet(), emptySet(), null);
         // Creating root component.
         Page p1 = new Page(new UriPatten("/a"), (m, l, rl, a) -> {
-            throw new UUFException("Some error.");
+            throw new RenderingException("Some error.");
         }, null);
         Page p2 = new Page(new UriPatten("/b"), (m, l, rl, a) -> {
             API.sendError(418, "I’m a Teapot!");
@@ -274,8 +274,8 @@ public class AppTest {
         configuration.setDefaultErrorPageUri("/cmp/error/default");
         // Creating app.
         SessionManager sessionManager = createSessionManager();
-        App app = new App(null, "/test", ImmutableSet.of(cmp, rootComponent), emptySet(), configuration,
-                null, null, sessionManager, null);
+        App app = new App(null, "/test", ImmutableSet.of(cmp, rootComponent), emptySet(), configuration, null, null,
+                          sessionManager, null);
         String html;
         Map<String, Object> params;
 
@@ -295,12 +295,12 @@ public class AppTest {
     }
 
     @Test
-    public void testRedirectingToLoginPage() {
+    public void testRedirectingToLoginPage() throws Exception {
         // Creating root component with secured page.
         String pageUri = "/a";
         Page page = new Page(new UriPatten(pageUri), (m, l, rl, a) -> "Secured page.", Permission.ANY_PERMISSION);
         Component rootComponent = new Component("root", null, Component.ROOT_COMPONENT_CONTEXT_PATH,
-                ImmutableSortedSet.of(page), emptySet(), emptySet(), emptySet(), null);
+                                                ImmutableSortedSet.of(page), emptySet(), emptySet(), emptySet(), null);
         // Creating configuration.
         Configuration configuration = createConfiguration();
         String loginPageUri = "/some/login/page";
@@ -310,8 +310,8 @@ public class AppTest {
         when(sessionManager.getSession(any(HttpRequest.class), any(HttpResponse.class)))
                 .thenReturn(Optional.empty());
         // Creating app.
-        App app = new App(null, "/test", singleton(rootComponent), emptySet(), configuration,
-                null, null, sessionManager, null);
+        App app = new App(null, "/test", singleton(rootComponent), emptySet(), configuration, null, null,
+                          sessionManager, null);
         PageRedirectException pre = Assert.expectThrows(PageRedirectException.class, () ->
                 app.renderPage(createRequest(app.getContextPath(), "/a"), null));
         Assert.assertEquals(pre.getHttpStatusCode(), HttpResponse.STATUS_FOUND);

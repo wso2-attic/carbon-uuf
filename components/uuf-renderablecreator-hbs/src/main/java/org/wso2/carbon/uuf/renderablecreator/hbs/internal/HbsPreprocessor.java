@@ -18,9 +18,10 @@ package org.wso2.carbon.uuf.renderablecreator.hbs.internal;
 
 import com.github.jknack.handlebars.Context;
 import com.github.jknack.handlebars.Handlebars;
+import com.github.jknack.handlebars.HandlebarsException;
 import com.github.jknack.handlebars.io.TemplateSource;
 import org.wso2.carbon.uuf.api.auth.Permission;
-import org.wso2.carbon.uuf.exception.UUFException;
+import org.wso2.carbon.uuf.renderablecreator.hbs.exception.HbsRenderableCreationException;
 import org.wso2.carbon.uuf.renderablecreator.hbs.helpers.registry.InitHelperRegistry;
 
 import java.io.IOException;
@@ -33,24 +34,26 @@ public class HbsPreprocessor {
     public static final String DATA_KEY_SECURED = HbsPreprocessor.class.getName() + "#secured";
     private static final Handlebars HANDLEBARS = new Handlebars().with(new InitHelperRegistry());
 
-    private final Optional<String> layout;
+    private final String layout;
     private final Permission permission;
 
-    public HbsPreprocessor(TemplateSource template) {
-        String templatePath = template.filename();
+    public HbsPreprocessor(TemplateSource templateSource) {
         Context context = Context.newContext(Collections.emptyMap());
         try {
-            HANDLEBARS.compile(template).apply(context);
+            HANDLEBARS.compile(templateSource).apply(context);
         } catch (IOException e) {
-            throw new UUFException(
-                    "An error occurred when pre-processing the Handlebars template '" + templatePath + "'.", e);
+            throw new HbsRenderableCreationException(
+                    "Cannot load Handlebars template '" + templateSource.filename() + "' for pre-processing.", e);
+        } catch (HandlebarsException e) {
+            throw new HbsRenderableCreationException(
+                    "Cannot compile Handlebars template '" + templateSource.filename() + "' for pre-processing.", e);
         }
-        layout = Optional.ofNullable(context.data(DATA_KEY_CURRENT_LAYOUT));
+        layout = context.data(DATA_KEY_CURRENT_LAYOUT);
         permission = context.data(DATA_KEY_SECURED);
     }
 
     public Optional<String> getLayoutName() {
-        return layout;
+        return Optional.ofNullable(layout);
     }
 
     /**

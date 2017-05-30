@@ -22,7 +22,6 @@ import com.google.common.collect.ImmutableMap;
 import org.osgi.service.component.annotations.Component;
 import org.wso2.carbon.uuf.api.auth.Permission;
 import org.wso2.carbon.uuf.api.auth.User;
-import org.wso2.carbon.uuf.exception.UnauthorizedException;
 import org.wso2.carbon.uuf.spi.auth.Authorizer;
 
 import java.util.Map;
@@ -39,8 +38,8 @@ import java.util.Map;
  * @since 1.0.0
  */
 @Component(name = "org.wso2.carbon.uuf.sample.featuresapp.bundle.api.auth.DemoAuthorizer",
-        service = Authorizer.class,
-        immediate = true
+           service = Authorizer.class,
+           immediate = true
 )
 // TODO: Write a proper CAAS Authorizer
 public class DemoAuthorizer implements Authorizer {
@@ -57,7 +56,7 @@ public class DemoAuthorizer implements Authorizer {
             return false;
         }
         if (permission.getResourceUri() == null || permission.getResourceUri().trim().isEmpty()) {
-            throw new UnauthorizedException("Permission resource URI cannot be null or empty.");
+            throw new IllegalArgumentException("Permission resource URI cannot be null or empty.");
         }
         for (Map.Entry<String, Permission> entry : permissions.entrySet()) {
             if (entry.getKey().equals(user.getId()) && entry.getValue().equals(permission)) {

@@ -16,21 +16,22 @@
  * under the License.
  */
 
-package org.wso2.carbon.uuf.exception;
+package org.wso2.carbon.uuf.internal.exception;
+
+import org.wso2.carbon.uuf.api.exception.UUFRuntimeException;
 
 /**
- * Indicates an error occurred when creating a session, obtaining a session, destroying a session.
+ * Indicates an error occurred during execution of a plugin.
  *
  * @since 1.0.0
  */
-public class SessionManagementException extends UUFException {
+public class PluginExecutionException extends UUFRuntimeException {
 
     /**
      * Constructs a new exception with {@code null} as its detail message. The cause is not initialized, and may
      * subsequently be initialized by a call to {@link #initCause(Throwable)}.
      */
-    public SessionManagementException() {
-        super();
+    public PluginExecutionException() {
     }
 
     /**
@@ -39,7 +40,7 @@ public class SessionManagementException extends UUFException {
      *
      * @param message the detail message of the exception
      */
-    public SessionManagementException(String message) {
+    public PluginExecutionException(String message) {
         super(message);
     }
 
@@ -49,7 +50,7 @@ public class SessionManagementException extends UUFException {
      *
      * @param cause the cause of the exception
      */
-    public SessionManagementException(Throwable cause) {
+    public PluginExecutionException(Throwable cause) {
         super(cause);
     }
 
@@ -59,7 +60,7 @@ public class SessionManagementException extends UUFException {
      * @param message the detail message of the exception
      * @param cause   the cause of the exception
      */
-    public SessionManagementException(String message, Throwable cause) {
+    public PluginExecutionException(String message, Throwable cause) {
         super(message, cause);
     }
 }

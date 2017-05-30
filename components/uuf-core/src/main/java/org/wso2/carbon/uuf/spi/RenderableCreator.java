@@ -19,6 +19,7 @@
 package org.wso2.carbon.uuf.spi;
 
 import org.wso2.carbon.uuf.api.auth.Permission;
+import org.wso2.carbon.uuf.api.exception.RenderableCreationException;
 import org.wso2.carbon.uuf.api.reference.FragmentReference;
 import org.wso2.carbon.uuf.api.reference.LayoutReference;
 import org.wso2.carbon.uuf.api.reference.PageReference;
@@ -30,11 +31,13 @@ public interface RenderableCreator {
 
     Set<String> getSupportedFileExtensions();
 
-    FragmentRenderableData createFragmentRenderable(FragmentReference fragmentReference, ClassLoader classLoader);
+    FragmentRenderableData createFragmentRenderable(FragmentReference fragmentReference, ClassLoader classLoader)
+            throws RenderableCreationException;
 
-    PageRenderableData createPageRenderable(PageReference pageReference, ClassLoader classLoader);
+    PageRenderableData createPageRenderable(PageReference pageReference, ClassLoader classLoader)
+            throws RenderableCreationException;
 
-    LayoutRenderableData createLayoutRenderable(LayoutReference layoutReference);
+    LayoutRenderableData createLayoutRenderable(LayoutReference layoutReference) throws RenderableCreationException;
 
     int hashCode();
 

@@ -22,6 +22,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.uuf.api.exception.RenderableCreationException;
 import org.wso2.carbon.uuf.api.reference.FileReference;
 import org.wso2.carbon.uuf.api.reference.FragmentReference;
 import org.wso2.carbon.uuf.api.reference.LayoutReference;
@@ -77,20 +78,21 @@ public class HtmlRenderableCreator implements RenderableCreator {
     }
 
     @Override
-    public FragmentRenderableData createFragmentRenderable(FragmentReference fragmentReference,
-                                                           ClassLoader classLoader) {
+    public FragmentRenderableData createFragmentRenderable(FragmentReference fragmentReference, ClassLoader classLoader)
+            throws RenderableCreationException {
         return new RenderableCreator.FragmentRenderableData(getHtmlRenderable(fragmentReference.getRenderingFile()),
                                                             null);
     }
 
     @Override
-    public PageRenderableData createPageRenderable(PageReference pageReference,
-                                                   ClassLoader classLoader) {
+    public PageRenderableData createPageRenderable(PageReference pageReference, ClassLoader classLoader)
+            throws RenderableCreationException {
         return new RenderableCreator.PageRenderableData(getHtmlRenderable(pageReference.getRenderingFile()), null);
     }
 
     @Override
-    public LayoutRenderableData createLayoutRenderable(LayoutReference layoutReference) {
+    public LayoutRenderableData createLayoutRenderable(LayoutReference layoutReference)
+            throws RenderableCreationException {
         throw new UnsupportedOperationException("Layouts are not supported for html file content");
     }
 

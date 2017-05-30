@@ -19,7 +19,7 @@
 package org.wso2.carbon.uuf.spi.auth;
 
 import org.wso2.carbon.uuf.api.config.Configuration;
-import org.wso2.carbon.uuf.exception.SessionManagementException;
+import org.wso2.carbon.uuf.api.exception.SessionManagementException;
 
 /**
  * Provides session managers for UUF apps.

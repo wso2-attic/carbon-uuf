@@ -21,8 +21,6 @@ import org.wso2.carbon.uuf.api.Placeholder;
 import org.wso2.carbon.uuf.core.API;
 import org.wso2.carbon.uuf.core.Lookup;
 import org.wso2.carbon.uuf.core.RequestLookup;
-import org.wso2.carbon.uuf.exception.FileOperationException;
-import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.CallMicroServiceFunction;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.CallOSGiServiceFunction;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.CreateSessionFunction;
@@ -34,6 +32,7 @@ import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.ModuleFunction;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.SendErrorFunction;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.SendRedirectFunction;
 import org.wso2.carbon.uuf.renderablecreator.hbs.core.js.SendToClientFunction;
+import org.wso2.carbon.uuf.renderablecreator.hbs.exception.ExecutableCreationException;
 import org.wso2.carbon.uuf.renderablecreator.hbs.internal.serialize.JsonSerializer;
 import org.wso2.carbon.uuf.spi.HttpRequest;
 
@@ -111,11 +110,13 @@ public class JsFunctionsImpl {
                 String content = new String(Files.readAllBytes(jsFilePath), StandardCharsets.UTF_8);
                 engine.eval(content);
             } catch (IOException e) {
-                throw new FileOperationException("Cannot read content of JavaScript module '" + moduleName +
-                                                         "' in component module directory '" + modulesDirPath + ".", e);
+                throw new ExecutableCreationException(
+                        "Cannot read JavaScript module '" + moduleName + "' in component module directory '" +
+                                modulesDirPath + ".", e);
             } catch (ScriptException e) {
-                throw new UUFException("An error occurred while evaluating the JavaScript module '" + moduleName +
-                                               "' in component module directory '" + modulesDirPath + ".", e);
+                throw new ExecutableCreationException(
+                        "An error occurred while evaluating the JavaScript module '" + moduleName +
+                                "' in component module directory '" + modulesDirPath + ".", e);
             }
         };
     }

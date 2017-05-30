@@ -20,7 +20,7 @@ package org.wso2.carbon.uuf.spi.auth;
 
 import org.wso2.carbon.uuf.api.auth.Session;
 import org.wso2.carbon.uuf.api.auth.User;
-import org.wso2.carbon.uuf.exception.SessionManagementException;
+import org.wso2.carbon.uuf.api.exception.SessionManagementException;
 import org.wso2.carbon.uuf.spi.HttpRequest;
 import org.wso2.carbon.uuf.spi.HttpResponse;
 

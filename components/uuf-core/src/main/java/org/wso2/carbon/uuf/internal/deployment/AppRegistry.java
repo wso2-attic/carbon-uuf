@@ -22,9 +22,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.api.reference.AppReference;
 import org.wso2.carbon.uuf.core.App;
-import org.wso2.carbon.uuf.exception.FileOperationException;
 import org.wso2.carbon.uuf.internal.exception.AppCreationException;
 import org.wso2.carbon.uuf.internal.exception.DeploymentException;
+import org.wso2.carbon.uuf.internal.exception.FileOperationException;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -56,6 +56,7 @@ public class AppRegistry {
 
     /**
      * Returns the app for the given context path.
+     *
      * @param appContextPath app's context path
      * @return if present the app for the given context path, otherwise {@code null}
      * @throws DeploymentException if some error occurred during app deployment

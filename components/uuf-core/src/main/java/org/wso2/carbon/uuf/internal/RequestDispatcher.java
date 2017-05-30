@@ -23,14 +23,14 @@ import com.google.gson.JsonObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.api.config.Configuration;
+import org.wso2.carbon.uuf.api.exception.UUFRuntimeException;
 import org.wso2.carbon.uuf.core.App;
-import org.wso2.carbon.uuf.exception.HttpErrorException;
-import org.wso2.carbon.uuf.exception.PageRedirectException;
-import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.internal.debug.DebugLogger;
 import org.wso2.carbon.uuf.internal.debug.Debugger;
 import org.wso2.carbon.uuf.internal.deployment.AppRegistry;
 import org.wso2.carbon.uuf.internal.exception.DeploymentException;
+import org.wso2.carbon.uuf.internal.exception.HttpErrorException;
+import org.wso2.carbon.uuf.internal.exception.PageRedirectException;
 import org.wso2.carbon.uuf.internal.filter.CsrfFilter;
 import org.wso2.carbon.uuf.internal.filter.Filter;
 import org.wso2.carbon.uuf.internal.filter.FilterResult;
@@ -47,8 +47,8 @@ import static org.wso2.carbon.uuf.spi.HttpResponse.HEADER_EXPIRES;
 import static org.wso2.carbon.uuf.spi.HttpResponse.HEADER_LOCATION;
 import static org.wso2.carbon.uuf.spi.HttpResponse.HEADER_PRAGMA;
 import static org.wso2.carbon.uuf.spi.HttpResponse.HEADER_X_CONTENT_TYPE_OPTIONS;
-import static org.wso2.carbon.uuf.spi.HttpResponse.HEADER_X_XSS_PROTECTION;
 import static org.wso2.carbon.uuf.spi.HttpResponse.HEADER_X_FRAME_OPTIONS;
+import static org.wso2.carbon.uuf.spi.HttpResponse.HEADER_X_XSS_PROTECTION;
 import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_BAD_REQUEST;
 import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_FOUND;
 import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_INTERNAL_SERVER_ERROR;
@@ -115,7 +115,7 @@ public class RequestDispatcher {
             response.setHeader(HEADER_LOCATION, e.getRedirectUrl());
         } catch (HttpErrorException e) {
             serveDefaultErrorPage(e.getHttpStatusCode(), e.getMessage(), response);
-        } catch (UUFException e) {
+        } catch (UUFRuntimeException e) {
             String msg = "A server error occurred while serving for request '" + request + "'.";
             LOGGER.error(msg, e);
             serveDefaultErrorPage(STATUS_INTERNAL_SERVER_ERROR, msg, response);
@@ -147,15 +147,15 @@ public class RequestDispatcher {
                 String html = app.renderPage(request, response);
                 response.setContent(STATUS_OK, html, CONTENT_TYPE_TEXT_HTML);
             }
-        } catch (UUFException e) {
+        } catch (UUFRuntimeException e) {
             throw e;
         } catch (Exception e) {
-            // May be an UUFException cause this 'e' Exception. Let's unwrap 'e' and find out.
+            // May be an UUFRuntimeException cause this 'e' Exception. Let's unwrap 'e' and find out.
             Throwable th = e;
             while ((th = th.getCause()) != null) {
-                if (th instanceof UUFException) {
-                    // Cause of 'e' is an UUFException. Throw 'th' so that we can handle it properly.
-                    throw (UUFException) th;
+                if (th instanceof UUFRuntimeException) {
+                    // Cause of 'e' is an UUFRuntimeException. Throw 'th' so that we can handle it properly.
+                    throw (UUFRuntimeException) th;
                 }
             }
             // Cause of 'e' is not an UUFException.

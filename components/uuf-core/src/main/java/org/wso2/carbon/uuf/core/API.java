@@ -24,9 +24,11 @@ import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.api.auth.Permission;
 import org.wso2.carbon.uuf.api.auth.Session;
 import org.wso2.carbon.uuf.api.auth.User;
-import org.wso2.carbon.uuf.exception.HttpErrorException;
-import org.wso2.carbon.uuf.exception.PageRedirectException;
-import org.wso2.carbon.uuf.exception.UUFException;
+import org.wso2.carbon.uuf.api.exception.SessionManagementException;
+import org.wso2.carbon.uuf.api.exception.UUFRuntimeException;
+import org.wso2.carbon.uuf.internal.exception.HttpErrorException;
+import org.wso2.carbon.uuf.internal.exception.PageRedirectException;
+import org.wso2.carbon.uuf.internal.exception.PluginExecutionException;
 import org.wso2.carbon.uuf.spi.auth.Authorizer;
 import org.wso2.carbon.uuf.spi.auth.SessionManager;
 
@@ -73,12 +75,13 @@ public class API {
      * @param serviceMethodName method name
      * @param args              method arguments
      * @return invoked OSGi service instance
-     * @exception IllegalArgumentException if cannot find a method that accepts specified arguments in the specified
-     * OSGi service class
-     * @exception UUFException if cannot create JNDI context
-     * @exception UUFException if cannot find the specified OSGi service
-     * @exception UUFException if some other error occurred when calling the specified method on the OSGi class
-     * @throws Exception the exception thrown by the calling method of the specified OSGi service class
+     * @throws IllegalArgumentException if cannot find a method that accepts specified arguments in the specified OSGi
+     *                                  service class
+     * @throws UUFRuntimeException      if cannot create JNDI context
+     * @throws UUFRuntimeException      if cannot find the specified OSGi service
+     * @throws UUFRuntimeException      if some other error occurred when calling the specified method on the OSGi
+     *                                  class
+     * @throws Exception                the exception thrown by the calling method of the specified OSGi service class
      */
     public static Object callOSGiService(String serviceClassName, String serviceMethodName, Object... args)
             throws Exception {
@@ -87,24 +90,24 @@ public class API {
         try {
             initialContext = new InitialContext();
         } catch (NamingException e) {
-            throw new UUFException(
+            throw new UUFRuntimeException(
                     "Cannot create the JNDI initial context when calling OSGi service '" + serviceClassName + "'.", e);
         }
 
         try {
             serviceInstance = initialContext.lookup("osgi:service/" + serviceClassName);
         } catch (NamingException e) {
-            throw new UUFException(
+            throw new UUFRuntimeException(
                     "Cannot find any OSGi service registered with the name '" + serviceClassName + "'.", e);
         }
 
         try {
             return MethodUtils.invokeMethod(serviceInstance, serviceMethodName, args);
         } catch (NoSuchMethodException e) {
-            throw new IllegalArgumentException(
+            throw new UUFRuntimeException(
                     "Cannot find any method with the signature '" + serviceMethodName + "(" + joinClassNames(args) +
-                            ")' in OSGi service '" + serviceInstance.getClass().getName() + "' with service class '" +
-                            serviceClassName + "'.", e);
+                    ")' in OSGi service '" + serviceInstance.getClass().getName() + "' with service class '" +
+                    serviceClassName + "'.", e);
         } catch (InvocationTargetException e) {
             // Calling method has thrown an exception.
             Throwable cause = e.getCause();
@@ -112,15 +115,15 @@ public class API {
                 throw (Exception) cause;
             }
             // Seems like that cause is a Throwable.
-            throw new UUFException(
+            throw new UUFRuntimeException(
                     "Invoking method '" + serviceMethodName + "(" + joinClassNames(args) + ")' on OSGi service '" +
-                            serviceInstance.getClass().getName() + "' with service class '" + serviceClassName +
-                            "' caused a Throwable.", e);
+                    serviceInstance.getClass().getName() + "' with service class '" + serviceClassName +
+                    "' caused a Throwable.", e);
         } catch (Exception e) {
-            throw new UUFException(
+            throw new UUFRuntimeException(
                     "Invoking method '" + serviceMethodName + "(" + joinClassNames(args) + ")' on OSGi service '" +
-                            serviceInstance.getClass().getName() + "' with service class '" + serviceClassName +
-                            "' failed.", e);
+                    serviceInstance.getClass().getName() + "' with service class '" + serviceClassName + "' failed.",
+                    e);
         }
     }
 
@@ -142,8 +145,8 @@ public class API {
             }
             return services;
         } catch (NamingException e) {
-            throw new UUFException("Cannot create the initial context when calling OSGi service '" +
-                                           serviceClassName + "'.");
+            throw new UUFRuntimeException("Cannot create the initial context when calling OSGi service '" +
+                                           serviceClassName + "'.", e);
         }
     }
 
@@ -175,27 +178,41 @@ public class API {
      * @param user user to create the session
      * @return newly created session
      * @throws IllegalArgumentException if given user is null
+     * @throws PluginExecutionException if some error occurred when creating the session
      */
     public Session createSession(User user) {
         if (user == null) {
             throw new IllegalArgumentException("User of a session cannot be null.");
         }
         destroySession();
-        return sessionManager.createSession(user, requestLookup.getRequest(), requestLookup.getResponse());
+        try {
+            return sessionManager.createSession(user, requestLookup.getRequest(), requestLookup.getResponse());
+        } catch (SessionManagementException e) {
+            throw new PluginExecutionException(
+                    "Cannot create a session for user '" + user.getId() + "' using session manager '" +
+                    sessionManager.getClass().getName() + "'.", e);
+        }
     }
 
     /**
      * Returns the current session of the request.
      *
      * @return current session of the request
+     * @throws PluginExecutionException if some error occurred when retrieving the session
      */
     public Optional<Session> getSession() {
+        // Since an API object lives in the request scope, it is safe to cache the current Session object.
         if (currentSession != null) {
             return Optional.of(currentSession);
         }
-        // Since an API object lives in the request scope, it is safe to cache the current Session object.
-        currentSession = sessionManager.getSession(requestLookup.getRequest(), requestLookup.getResponse())
-                .orElse(null);
+        try {
+            currentSession = sessionManager.getSession(requestLookup.getRequest(), requestLookup.getResponse())
+                    .orElse(null);
+        } catch (SessionManagementException e) {
+            throw new PluginExecutionException(
+                    "Cannot retrieve current session for request '" + requestLookup.getRequest() +
+                    "' using session manager '" + sessionManager.getClass().getName() + "'.", e);
+        }
         return Optional.ofNullable(currentSession);
     }
 
@@ -223,6 +240,7 @@ public class API {
      * Destroys the current session of the request.
      *
      * @return {@code true} if the session is successfully destroyed, {@code false} otherwise
+     * @throws PluginExecutionException if some error occurred when destroying the session
      */
     public boolean destroySession() {
         Optional<Session> session = getSession();
@@ -232,7 +250,13 @@ public class API {
         }
         // Remove cached session.
         currentSession = null;
-        return sessionManager.destroySession(requestLookup.getRequest(), requestLookup.getResponse());
+        try {
+            return sessionManager.destroySession(requestLookup.getRequest(), requestLookup.getResponse());
+        } catch (SessionManagementException e) {
+            throw new PluginExecutionException(
+                    "Cannot destroy current session of request '" + requestLookup.getRequest() +
+                    "' using session manager '" + sessionManager.getClass().getName() + "'.", e);
+        }
     }
 
     private static String joinClassNames(Object[] args) {

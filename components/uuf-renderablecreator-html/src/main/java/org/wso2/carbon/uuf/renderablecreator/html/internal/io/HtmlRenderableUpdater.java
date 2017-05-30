@@ -19,9 +19,8 @@ package org.wso2.carbon.uuf.renderablecreator.html.internal.io;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.uuf.exception.FileOperationException;
-import org.wso2.carbon.uuf.exception.UUFException;
 import org.wso2.carbon.uuf.renderablecreator.html.core.MutableHtmlRenderable;
+import org.wso2.carbon.uuf.renderablecreator.html.exception.HtmlRenderableUpdateException;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -57,7 +56,7 @@ public class HtmlRenderableUpdater {
         try {
             this.watchService = FileSystems.getDefault().newWatchService();
         } catch (IOException e) {
-            throw new FileOperationException("Cannot create file watch service.", e);
+            throw new HtmlRenderableUpdateException("Cannot create file watch service for HTML renderables.", e);
         }
         this.watchServiceThread = new Thread(this::run, HtmlRenderableUpdater.class.getName() + "-WatchService");
         this.isWatchServiceStopped = false;
@@ -70,12 +69,12 @@ public class HtmlRenderableUpdater {
             try {
                 parentDirectory.register(watchService, StandardWatchEventKinds.ENTRY_MODIFY);
             } catch (ClosedWatchServiceException e) {
-                throw new UUFException("File watch service is closed.", e);
+                throw new HtmlRenderableUpdateException("File watch service is closed.", e);
             } catch (NotDirectoryException e) {
-                throw new FileOperationException("Cannot register path '" + parentDirectory +
-                                                         "' to file watch service as it is not a directory.", e);
+                throw new HtmlRenderableUpdateException("Cannot register path '" + parentDirectory +
+                                                                "' to file watch service as it is not a directory.", e);
             } catch (IOException e) {
-                throw new FileOperationException(
+                throw new HtmlRenderableUpdateException(
                         "An IO error occurred when registering path '" + parentDirectory + "' to file watch service.'",
                         e);
             }

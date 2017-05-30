@@ -16,10 +16,12 @@
 
 package org.wso2.carbon.uuf.renderablecreator.hbs.core.js;
 
+import org.wso2.carbon.uuf.renderablecreator.hbs.exception.ExecutableCreationException;
+
 @FunctionalInterface
 public interface ModuleFunction {
 
     String NAME = "module";
 
-    void call(String moduleName);
+    void call(String moduleName) throws ExecutableCreationException;
 }
