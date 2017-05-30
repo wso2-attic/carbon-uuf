@@ -16,7 +16,9 @@
  * under the License.
  */
 
-package org.wso2.carbon.uuf.exception;
+package org.wso2.carbon.uuf.api.exception;
+
+import org.wso2.carbon.uuf.exception.UUFException;
 
 /**
  * Indicates an error occurred when creating a session, obtaining a session, destroying a session.

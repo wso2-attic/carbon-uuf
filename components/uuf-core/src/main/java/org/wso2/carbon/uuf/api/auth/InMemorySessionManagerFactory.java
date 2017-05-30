@@ -19,8 +19,8 @@
 package org.wso2.carbon.uuf.api.auth;
 
 import org.wso2.carbon.uuf.api.config.Configuration;
+import org.wso2.carbon.uuf.api.exception.SessionManagementException;
 import org.wso2.carbon.uuf.api.exception.UUFRuntimeException;
-import org.wso2.carbon.uuf.exception.SessionManagementException;
 import org.wso2.carbon.uuf.spi.auth.SessionManager;
 import org.wso2.carbon.uuf.spi.auth.SessionManagerFactory;
 

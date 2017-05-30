@@ -20,7 +20,7 @@ package org.wso2.carbon.uuf.sample.simpleauth.bundle.api.auth;
 
 import org.osgi.service.component.annotations.Component;
 import org.wso2.carbon.uuf.api.config.Configuration;
-import org.wso2.carbon.uuf.exception.SessionManagementException;
+import org.wso2.carbon.uuf.api.exception.SessionManagementException;
 import org.wso2.carbon.uuf.spi.auth.SessionManager;
 import org.wso2.carbon.uuf.spi.auth.SessionManagerFactory;
 
