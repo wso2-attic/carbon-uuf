@@ -123,9 +123,13 @@ public class App {
     }
 
     /**
+     * Renders the relevant page for the given request.
+     *
      * @param request  HTTP request
      * @param response HTTP response
-     * @return rendered HTML output
+     * @return HTML from page rendering
+     * @throws PageRedirectException if a redirection for another page/URL is needed
+     * @throws HttpErrorException    if some other HTTP error occurred
      */
     public String renderPage(HttpRequest request, HttpResponse response) {
         RequestLookup requestLookup = createRequestLookup(request, response);
