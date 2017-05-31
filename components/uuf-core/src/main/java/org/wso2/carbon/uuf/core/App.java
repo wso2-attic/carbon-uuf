@@ -19,6 +19,9 @@
 package org.wso2.carbon.uuf.core;
 
 import com.google.gson.JsonObject;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.api.Placeholder;
 import org.wso2.carbon.uuf.api.auth.Session;
 import org.wso2.carbon.uuf.api.config.Bindings;
@@ -30,6 +33,7 @@ import org.wso2.carbon.uuf.internal.exception.FragmentNotFoundException;
 import org.wso2.carbon.uuf.internal.exception.HttpErrorException;
 import org.wso2.carbon.uuf.internal.exception.PageNotFoundException;
 import org.wso2.carbon.uuf.internal.exception.PageRedirectException;
+import org.wso2.carbon.uuf.internal.exception.PluginExecutionException;
 import org.wso2.carbon.uuf.internal.exception.SessionNotFoundException;
 import org.wso2.carbon.uuf.internal.util.NameUtils;
 import org.wso2.carbon.uuf.internal.util.UriUtils;
@@ -46,7 +50,11 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static org.wso2.carbon.uuf.spi.HttpResponse.STATUS_INTERNAL_SERVER_ERROR;
+
 public class App {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(App.class);
 
     private final String name;
     private final String contextPath;
@@ -151,20 +159,26 @@ public class App {
                     // the dev to use correct URL. Because HTTP POST redirect is not well supported.
                     // See : https://softwareengineering.stackexchange.com/q/99894
                     String message = e.getMessage() + " Retry with correct URI ending " + correctedUriWithoutContextPath;
-                    return renderErrorPage(new PageNotFoundException(message, e), requestLookup, api, theme);
+                    return renderErrorPage(new PageNotFoundException(message, e), request, response, theme);
                 }
             } else {
-                return renderErrorPage(e, requestLookup, api, theme);
+                return renderErrorPage(e, request, response, theme);
             }
         } catch (HttpErrorException e) {
-            return renderErrorPage(e, requestLookup, api, theme);
+            return renderErrorPage(e, request, response, theme);
+        } catch (PluginExecutionException e) {
+            LOGGER.error("An error occurred while executing a plugin.", e);
+            return renderErrorPage(new HttpErrorException(STATUS_INTERNAL_SERVER_ERROR, e.getMessage(), e),
+                                   request, response, theme);
         } catch (RenderingException e) {
-            return renderErrorPage(new HttpErrorException(HttpResponse.STATUS_INTERNAL_SERVER_ERROR, e.getMessage(), e),
-                                   requestLookup, api, theme);
+            LOGGER.error("An error occurred while rendering page for request '{}'.", request, e);
+            String message = (e.getCause() != null) ? ExceptionUtils.getRootCause(e).getMessage() : e.getMessage();
+            return renderErrorPage(new HttpErrorException(STATUS_INTERNAL_SERVER_ERROR, message, e), request, response,
+                                   theme);
         }
     }
 
-    private String renderErrorPage(HttpErrorException e, RequestLookup requestLookup, API api, Theme theme) {
+    private String renderErrorPage(HttpErrorException e, HttpRequest request, HttpResponse response, Theme theme) {
         String errorPageUri = configuration.getErrorPageUri(e.getHttpStatusCode())
                 .orElse(configuration.getDefaultErrorPageUri().orElseThrow(() -> e));
 
@@ -172,8 +186,12 @@ public class App {
         Map<String, Object> modelMap = new HashMap<>(2);
         modelMap.put("status", e.getHttpStatusCode());
         modelMap.put("message", e.getMessage());
-        requestLookup.tracker().reset(); // reset rendering tracking
-        return renderPageUri(errorPageUri, new MapModel(modelMap), requestLookup, api, theme);
+        MapModel model = new MapModel(modelMap);
+
+        RequestLookup requestLookup = createRequestLookup(request, response);
+        API api = new API(sessionManager, authorizer, requestLookup);
+
+        return renderPageUri(errorPageUri, model, requestLookup, api, theme);
     }
 
     private String renderPageUri(String pageUri, Model model, RequestLookup requestLookup, API api, Theme theme) {
