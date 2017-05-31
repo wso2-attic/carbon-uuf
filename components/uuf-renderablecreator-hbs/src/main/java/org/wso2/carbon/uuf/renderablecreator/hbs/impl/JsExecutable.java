@@ -146,11 +146,10 @@ public class JsExecutable implements Executable {
         } catch (ScriptException e) {
             throw new ExecutionException(
                     "An error occurred when executing the '" + functionName + "' function in JavaScript file '" +
-                            absolutePath + "' with context '" + context + "'.", e);
+                    absolutePath + "' with context '" + context + "'.", e);
         } catch (NoSuchMethodException e) {
             throw new ExecutionException(
-                    "Cannot find the '" + functionName + "' function in the JavaScript file '" + absolutePath + "'.",
-                    e);
+                    "Cannot find '" + functionName + "' function in the JavaScript file '" + absolutePath + "'.", e);
         } finally {
             engineBindings.removeJSFunctionProvider();
         }

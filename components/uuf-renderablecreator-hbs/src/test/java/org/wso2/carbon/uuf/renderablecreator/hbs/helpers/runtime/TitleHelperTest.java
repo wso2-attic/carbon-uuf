@@ -18,10 +18,10 @@
 
 package org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime;
 
-import com.github.jknack.handlebars.HandlebarsException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.wso2.carbon.uuf.core.RequestLookup;
+import org.wso2.carbon.uuf.renderablecreator.hbs.exception.HbsRenderingException;
 
 import static org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.RuntimeHelpersTestUtil.createAPI;
 import static org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.RuntimeHelpersTestUtil.createLookup;
@@ -63,26 +63,16 @@ public class TitleHelperTest {
 
     @Test
     public void testSettingMultiple() {
-        try {
-            createRenderable("{{title \"Some Title\"}} bla bla {{title \"Another Title\"}}")
-                    .render(null, createLookup(), createRequestLookup(), createAPI());
-            Assert.fail("{{title}} helper can be called twice in a page!");
-        } catch (HandlebarsException e) {
-            Assert.assertTrue((e.getCause() instanceof IllegalStateException),
-                              "Cause of the thrown exception should be '" + IllegalStateException.class +
-                                      "'. Instead found '" + e.getCause().getClass() + "'.");
-        }
+        String pageTemplate = "{{title \"Some Title\"}} bla bla {{title \"Another Title\"}}";
+        Assert.assertThrows(HbsRenderingException.class,
+                            () -> createRenderable(pageTemplate)
+                                    .render(null, createLookup(), createRequestLookup(), createAPI()));
     }
 
     @Test
     public void testValidation() {
-        try {
-            createRenderable("{{title null}}").render(null, createLookup(), createRequestLookup(), createAPI());
-            Assert.fail("{{title}} helper accepts null parameters!");
-        } catch (HandlebarsException e) {
-            Assert.assertTrue((e.getCause() instanceof IllegalArgumentException),
-                              "Cause of the thrown exception should be '" + IllegalArgumentException.class +
-                                      "'. Instead found '" + e.getCause().getClass() + "'.");
-        }
+        Assert.assertThrows(HbsRenderingException.class,
+                            () -> createRenderable("{{title null}}")
+                                    .render(null, createLookup(), createRequestLookup(), createAPI()));
     }
 }

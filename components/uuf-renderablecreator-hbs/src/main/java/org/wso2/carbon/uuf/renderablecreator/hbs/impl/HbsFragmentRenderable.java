@@ -17,6 +17,7 @@
 package org.wso2.carbon.uuf.renderablecreator.hbs.impl;
 
 import com.github.jknack.handlebars.Context;
+import com.github.jknack.handlebars.HandlebarsException;
 import com.github.jknack.handlebars.io.TemplateSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,6 +90,8 @@ public class HbsFragmentRenderable extends HbsPageRenderable {
         try {
             return getTemplate().apply(context);
         } catch (IOException e) {
+            throw new HbsRenderingException("Cannot load fragment Handlebars template '" + getAbsolutePath() + "'.", e);
+        } catch (HandlebarsException e) {
             throw new HbsRenderingException("Cannot render fragment Handlebars template '" + getAbsolutePath() + "'.",
                                             e);
         }

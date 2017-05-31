@@ -18,10 +18,10 @@
 
 package org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime;
 
-import com.github.jknack.handlebars.HandlebarsException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.wso2.carbon.uuf.core.RequestLookup;
+import org.wso2.carbon.uuf.renderablecreator.hbs.exception.HbsRenderingException;
 
 import static org.mockito.Mockito.when;
 import static org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime.RuntimeHelpersTestUtil.createAPI;
@@ -53,14 +53,9 @@ public class PublicHelperTest {
 
     @Test
     public void testValidation() {
-        try {
-            createRenderable("{{public null}}").render(null, createLookup(), createRequestLookup(), createAPI());
-            Assert.fail("{{public}} helper accepts null parameters!");
-        } catch (HandlebarsException e) {
-            Assert.assertTrue((e.getCause() instanceof IllegalArgumentException),
-                              "Cause of the thrown exception should be '" + IllegalArgumentException.class +
-                                      "'. Instead found '" + e.getCause().getClass() + "'.");
-        }
+        Assert.assertThrows(HbsRenderingException.class,
+                            () -> createRenderable("{{public null}}")
+                                    .render(null, createLookup(), createRequestLookup(), createAPI()));
     }
 
     private static RequestLookup createRequestLookup() {

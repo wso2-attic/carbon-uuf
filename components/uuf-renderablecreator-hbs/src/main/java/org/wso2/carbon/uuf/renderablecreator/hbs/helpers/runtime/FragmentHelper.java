@@ -19,8 +19,6 @@ package org.wso2.carbon.uuf.renderablecreator.hbs.helpers.runtime;
 import com.github.jknack.handlebars.Handlebars;
 import com.github.jknack.handlebars.Helper;
 import com.github.jknack.handlebars.Options;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.wso2.carbon.uuf.core.API;
 import org.wso2.carbon.uuf.core.Fragment;
 import org.wso2.carbon.uuf.core.Lookup;
@@ -35,7 +33,6 @@ import java.util.Optional;
 public class FragmentHelper implements Helper<String> {
 
     public static final String HELPER_NAME = "fragment";
-    private static final Logger log = LoggerFactory.getLogger(FragmentHelper.class);
 
     @Override
     public CharSequence apply(String fragmentName, Options options) throws IOException {
@@ -49,12 +46,8 @@ public class FragmentHelper implements Helper<String> {
                                                            fragmentName);
         if (!fragment.isPresent()) {
             throw new IllegalArgumentException(
-                    "Fragment '" + fragmentName + "' does not exists in Component '" +
+                    "Fragment '" + fragmentName + "' does not exists in component '" +
                             requestLookup.tracker().getCurrentComponentName() + "' or in its dependencies.");
-        }
-
-        if (log.isDebugEnabled()) {
-            log.debug("Fragment \"" + fragment.get() + "\" is called from '" + options.fn.text() + "'.");
         }
 
         Model model = new ContextModel(options.context, options.hash);

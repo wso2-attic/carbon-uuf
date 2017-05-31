@@ -43,7 +43,7 @@ public class LayoutHelperTest {
 
     @Test
     public void testSettingMultiple() {
-        String pageTemplateContent = "foo\nbar\n{{layout \"layout-1\"}}bla bla\n{{layout \"layout-2\"}}\nfoobar";
-        Assert.assertThrows(HbsRenderableCreationException.class, () -> createHbsPagePreprocessor(pageTemplateContent));
+        String pageTemplate = "foo\nbar\n{{layout \"layout-1\"}}bla bla\n{{layout \"layout-2\"}}\nfoobar";
+        Assert.assertThrows(HbsRenderableCreationException.class, () -> createHbsPagePreprocessor(pageTemplate));
     }
 }
