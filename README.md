@@ -1,3 +1,7 @@
+# Note
+We have discontinued UUF in favour of [React.js](https://github.com/facebook/react) based web apps and [Carbon UI Server](https://github.com/wso2/carbon-ui-server). As a result this repository has been deprecated.
+***
+
 # Unified UI Framework
 
 [![Build Status](https://wso2.org/jenkins/buildStatus/icon?job=carbon-uuf)](https://wso2.org/jenkins/view/All%20Builds/job/carbon-uuf/)
