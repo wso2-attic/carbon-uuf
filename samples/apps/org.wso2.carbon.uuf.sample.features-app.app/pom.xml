@@ -18,9 +18,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <!-- TODO: change the module name to org.wso2.carbon.uuf.features-app.feature
-     after fixing the JIRA: https://wso2.org/jira/browse/CMVNPLG-13
-    -->
     <groupId>org.wso2.carbon.uuf.sample</groupId>
     <artifactId>org.wso2.carbon.uuf.sample.features-app.feature</artifactId>
     <version>1.0.0-SNAPSHOT</version>
